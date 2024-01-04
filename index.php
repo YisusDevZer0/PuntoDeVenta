@@ -38,7 +38,7 @@
 </head>
 <body>
     <div class="construction-container">
-        <img src="https://doctorpez.mx/logo.jpg" alt="En Construcción" class="construction-image">
+        <img src="https://doctorpez.mx/logo.png" alt="En Construcción" class="construction-image">
         <h1>Sitio en Construcción</h1>
         <p>Estamos trabajando para mejorar tu experiencia. Vuelve pronto para ver nuestras novedades.</p>
     </div>
