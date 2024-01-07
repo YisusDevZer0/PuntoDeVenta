@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Login</title>
+	<title>Bienvenido al inicio de sesion del punto de venta</title>
 	<link rel="stylesheet" href="css/normalize.css">
 	<link rel="stylesheet" href="css/sweetalert2.css">
 	<link rel="stylesheet" href="css/material.min.css">
@@ -24,18 +24,18 @@
 			<p class="text-center" style="font-size: 80px;">
 				<i class="zmdi zmdi-account-circle"></i>
 			</p>
-			<p class="text-center text-condensedLight">Sign in with your Account</p>
+			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
 			<form action="home.html">
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				    <input class="mdl-textfield__input" type="text" id="userName">
-				    <label class="mdl-textfield__label" for="userName">User Name</label>
+				    <input class="mdl-textfield__input" type="text" id="userName" name="username">
+				    <label class="mdl-textfield__label" for="userName">Correo o nombre de usuario</label>
 				</div>
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				    <input class="mdl-textfield__input" type="password" id="pass">
-				    <label class="mdl-textfield__label" for="pass">Password</label>
+				    <input class="mdl-textfield__input" type="password" id="pass" name="passwordd">
+				    <label class="mdl-textfield__label" for="pass">Ingresa tu contraseña</label>
 				</div>
 				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" style="color: #3F51B5; margin: 0 auto; display: block;">
-					SIGN IN
+					Ingresar
 				</button>
 			</form>
 		</div>
