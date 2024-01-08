@@ -28,12 +28,11 @@
 			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
 			<form action="home.html">
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				<span class="label-input100">Correo electronico</span>
-						<input class="input100" input type="email" autocomplete="off" required placeholder="puntoventa@consulta.com" name="user_email" id="user_email" maxlength="50">
-						<span class="focus-input100" data-symbol="&#xf206;"></span>
+				    <input class="mdl-textfield__input" type="text" name="user_email" id="user_email">
+				    <label class="mdl-textfield__label" for="userName">Correo o nombre de usuario</label>
 				</div>
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-				    <input class="mdl-textfield__input" type="password" id="pass" name="passwordd">
+				    <input class="mdl-textfield__input" type="password" name="password" id="password">
 				    <label class="mdl-textfield__label" for="pass">Ingresa tu contraseña</label>
 				</div>
 				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" style="color: #3F51B5; margin: 0 auto; display: block;">
