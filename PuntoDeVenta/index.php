@@ -45,21 +45,14 @@
 
     </style>
 <div class="loader">
-<div class="absCenter ">
-    <div class="loaderPill">
-        <div class="loaderPill-anim">
-            <div class="loaderPill-anim-bounce">
-                <div class="loaderPill-anim-flop">
-                    <div class="loaderPill-pill"></div>
-                </div>
-            </div>
-        </div>
-        <div class="loaderPill-floor">
-            <div class="loaderPill-floor-shadow"></div>
+    <div class="absCenter">
+        <div class="loaderFish">
+            <!-- Aquí van los elementos de tu pez o peces -->
         </div>
         <div class="loaderPill-text">Cargando... </div>
     </div>
-</div></div>
+</div>
+
 <!--Navbar -->
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark default-color">
   <a class="navbar-brand" href="#">PUNTO DE VENTA  <i  class="fas fa-receipt fa-2x fa-lgfa-2x fa-lg"></i></a>
