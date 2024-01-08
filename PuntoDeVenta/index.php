@@ -1,6 +1,4 @@
-<?include("db_connect.php");
-include("Cookies/Mensaje.php");
-?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
