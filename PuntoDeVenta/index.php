@@ -12,12 +12,12 @@
 	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
 	<link rel="stylesheet" href="css/main.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
-	
+	<script src="js/jquery-3.5.1.slim.min.js"></script>
+<script src="js/jquery-3.5.0.js"></script>
 	<script src="js/material.min.js" ></script>
 	<script src="js/sweetalert2.min.js" ></script>
 	<script src="js/jquery.mCustomScrollbar.concat.min.js" ></script>
-	<script src="js/main.js" defer></script>
+	<script src="js/main.js" ></script>
 	<script type="text/javascript" src="js/validation.min.js"></script>
 	<script type="text/javascript" src="js/login.js"></script>
 
