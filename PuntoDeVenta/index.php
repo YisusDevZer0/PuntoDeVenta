@@ -44,16 +44,11 @@
 }
 
     </style>
-<div class="loader">
-    <div class="absCenter">
-        <div class="fishTank">
-            <div class="loaderFish"></div>
-            <div class="loaderFish"></div>
-            <div class="loaderFish"></div>
-        </div>
-        <div class="loaderPill-text">Cargando... </div>
+<div class="fish-container">
+        <div class="fish"></div>
+        <div class="fish"></div>
+        <div class="fish"></div>
     </div>
-</div>
 
 
 
