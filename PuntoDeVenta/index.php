@@ -28,7 +28,7 @@
 				<i class="zmdi zmdi-account-circle"></i>
 			</p>
 			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
-			<form action="" id="login-form">
+			<form method="post" id="login-form">
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    <input class="mdl-textfield__input" type="text" name="user_email" id="user_email">
 				    <label class="mdl-textfield__label" for="userName">Correo o nombre de usuario</label>
