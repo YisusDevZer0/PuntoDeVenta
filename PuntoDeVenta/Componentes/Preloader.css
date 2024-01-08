@@ -5,32 +5,6 @@
     margin: 0 20px; /* Ajusta el espaciado entre los pescados según sea necesario */
     background-color: #237db5; /* Cambia el color del cuerpo del pez si es necesario */
     border-radius: 15px;
-    animation: fishSwim 2s infinite linear; /* Añade la animación de nado */
-}
-
-.fishFish::before {
-    content: '';
-    width: 20px; /* Ajusta el ancho de la aleta según sea necesario */
-    height: 20px; /* Ajusta la altura de la aleta según sea necesario */
-    position: absolute;
-    top: 5px;
-    right: -10px;
-    border-left: 20px solid transparent; /* Ajusta el tamaño de la aleta izquierda según sea necesario */
-    border-right: 20px solid transparent; /* Ajusta el tamaño de la aleta derecha según sea necesario */
-    border-bottom: 30px solid #237db5; /* Cambia el color de la aleta si es necesario */
-    transform: rotate(45deg);
-}
-
-@keyframes fishSwim {
-    0% {
-        transform: translateY(-10px) translateX(-100%);
-    }
-    50% {
-        transform: translateY(10px) translateX(100%);
-    }
-    100% {
-        transform: translateY(-10px) translateX(-100%);
-    }
 }
 
 .loaderPill-text {
@@ -58,4 +32,14 @@
 
 .fishTank {
     text-align: center;
+    animation: fishTankMove 2s infinite linear;
+}
+
+@keyframes fishTankMove {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
 }
