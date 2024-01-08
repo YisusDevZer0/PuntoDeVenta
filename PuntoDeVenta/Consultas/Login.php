@@ -1,6 +1,6 @@
 <?php
 // Incluir archivo de conexión a la base de datos
-include 'https://doctorpez.mx/PuntoDeVenta/Config/Conexion.php';
+include "https://doctorpez.mx/PuntoDeVenta/Config/Conexion.php";
 
 // Obtener datos del formulario
 $Correo_Electronico = $_POST['username'];
