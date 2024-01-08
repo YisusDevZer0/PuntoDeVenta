@@ -1,21 +1,39 @@
 <?php
+include "https://doctorpez.mx/PuntoDeVenta/Config/Conexion.php";
 // Verificar si se reciben datos por POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Obtener el nombre de usuario y contraseña enviados por el formulario
-    $userName = $_POST["userName"];
+    // Obtener el correo electrónico y contraseña enviados por el formulario
+    $correoElectronico = $_POST["userName"];
     $password = $_POST["pass"];
 
-    // Verificar la autenticación (esto es un ejemplo básico, debes mejorar la seguridad)
-    if ($userName == "admin" && $password == "admin_password") {
-        // Usuario y contraseña son válidos para el administrador
-        $response = array("success" => true, "message" => "Bienvenido administrador");
-    } elseif ($userName == "vendedor" && $password == "vendedor_password") {
-        // Usuario y contraseña son válidos para el vendedor
-        $response = array("success" => true, "message" => "Bienvenido vendedor");
+   
+
+    // Preparar la consulta para seleccionar el usuario por correo electrónico y contraseña
+    $stmt = $con->prepare("SELECT Correo_Electronico, Password, Fk_Usuario FROM tu_tabla WHERE Correo_Electronico = ? AND Password = ?");
+    $stmt->bind_param("ss", $correoElectronico, $password);
+
+    // Ejecutar la consulta
+    $stmt->execute();
+
+    // Obtener el resultado de la consulta
+    $result = $stmt->get_result();
+
+    // Verificar si se encontró un usuario
+    if ($result->num_rows == 1) {
+        // Usuario y contraseña son válidos
+        $response = array("success" => true, "message" => "Inicio de sesión exitoso");
+
+        // Puedes obtener más información del usuario si es necesario
+        $userData = $result->fetch_assoc();
+        $userId = $userData['Fk_Usuario'];
     } else {
         // Usuario o contraseña incorrectos
         $response = array("success" => false, "message" => "Credenciales incorrectas");
     }
+
+    // Cerrar la conexión y liberar los recursos
+    $stmt->close();
+    $mysqli->close();
 
     // Devolver la respuesta en formato JSON
     header('Content-Type: application/json');
