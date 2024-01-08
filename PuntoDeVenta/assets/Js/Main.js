@@ -7,7 +7,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'POST',
-            url: 'https://doctorpez.mx/PuntoDeVenta/Consultas/login.php',
+            url: 'https://doctorpez.mx/PuntoDeVenta/Consultas/Login.php',
             data: { userName: userName, pass: password },
             dataType: 'json',
             success: function (response) {
