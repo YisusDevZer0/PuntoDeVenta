@@ -4,12 +4,12 @@ include "https://doctorpez.mx/PuntoDeVenta/Config/Conexion.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener el correo electrónico y contraseña enviados por el formulario
     $correoElectronico = $_POST["userName"];
-    $password = $_POST["pass"];
+    $password = $_POST["passwordd"];
 
    
 
     // Preparar la consulta para seleccionar el usuario por correo electrónico y contraseña
-    $stmt = $con->prepare("SELECT Correo_Electronico, Password, Fk_Usuario FROM tu_tabla WHERE Correo_Electronico = ? AND Password = ?");
+    $stmt = $con->prepare("SELECT Correo_Electronico, Password, Fk_Usuario FROM Usuarios_PV WHERE Correo_Electronico = ? AND Password = ?");
     $stmt->bind_param("ss", $correoElectronico, $password);
 
     // Ejecutar la consulta
