@@ -26,42 +26,20 @@
 				<i class="zmdi zmdi-account-circle"></i>
 			</p>
 			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
-			<form class="login100-form validate-form" method="post" id="login-form" autocomplete="off">
-
-					<span class="login100-form-title p-b-49">
-						<?echo $mensaje?>
-					</span>
-
-					<div class="wrap-input100 " >
-						<span class="label-input100">Correo electronico</span>
+			<form action="home.html">
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				<span class="label-input100">Correo electronico</span>
 						<input class="input100" input type="email" autocomplete="off" required placeholder="puntoventa@consulta.com" name="user_email" id="user_email" maxlength="50">
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
-					</div>
-
-					<div class="wrap-input100 ">
-						<span class="label-input100">Contraseña</span>
-						<input class="input100" type="password" required placeholder="************" autocomplete="new-password" name="password" id="password"  maxlength="10">
-                       
-						<span class="focus-input100" data-symbol="&#xf190;"></span>
-                        
-                    </div>
-                    <br>
-                    <div class="checkbox">
-    <label>
-    <input id="show_password" type="checkbox" /> Mostrar contraseña
-    </label>
-  </div>   
- 
-					<div class="container-login100-form-btn">
-						<div class="wrap-login100-form-btn">
-							<div class="login100-form-bgbtn"></div>
-							<button class="login100-form-btn" type="submit"  name="login_button" id="login_button"  style="background-color: #C80096;">
-								Ingresar
-							</button>
-						</div>
-					</div>
-                 
-                    </form> 
+				</div>
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+				    <input class="mdl-textfield__input" type="password" id="pass" name="passwordd">
+				    <label class="mdl-textfield__label" for="pass">Ingresa tu contraseña</label>
+				</div>
+				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" style="color: #3F51B5; margin: 0 auto; display: block;">
+					Ingresar
+				</button>
+			</form>
 		</div>
 	</div>
 </body>
