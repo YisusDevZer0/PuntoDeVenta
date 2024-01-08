@@ -47,9 +47,18 @@
 <div class="loader">
     <div class="absCenter">
         <div class="fishTank">
-            <div class="loaderFish"></div>
-            <div class="loaderFish"></div>
-            <div class="loaderFish"></div>
+            <div class="loaderFish">
+                <div class="fishBody"></div>
+                <div class="fishTail"></div>
+            </div>
+            <div class="loaderFish">
+                <div class="fishBody"></div>
+                <div class="fishTail"></div>
+            </div>
+            <div class="loaderFish">
+                <div class="fishBody"></div>
+                <div class="fishTail"></div>
+            </div>
         </div>
         <div class="loaderPill-text">Cargando... </div>
     </div>
