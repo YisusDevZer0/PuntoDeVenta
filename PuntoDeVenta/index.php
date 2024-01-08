@@ -17,7 +17,8 @@
 	<script src="js/sweetalert2.min.js" ></script>
 	<script src="js/jquery.mCustomScrollbar.concat.min.js" ></script>
 	<script src="js/main.js" defer></script>
-	
+	<script type="text/javascript" src="js/login.js"></script>
+
 </head>
 <body>
 	<div class="login-wrap cover">
