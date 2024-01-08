@@ -12,14 +12,14 @@ $result = mysqli_query($con, $query);
 
 if ($row = mysqli_fetch_assoc($result)) {
     // Verificar la contraseña utilizando la función password_verify
-    if (password_verify($Password, $row['contrasena'])) {
+    if (password_verify($Password, $row['Password'])) {
         // Verificar el rol del usuario
-        $rol = $row['rol'];
+        $Fk_Usuario = $row['Fk_Usuario'];
 
-        if ($rol === 'admin') {
+        if ($Fk_Usuario === '1') {
             // Usuario administrador
             echo json_encode(['success' => true, 'message' => 'Inicio de sesión exitoso como administrador']);
-        } elseif ($rol === 'vendedor') {
+        } elseif ($Fk_Usuario === '2') {
             // Usuario vendedor
             echo json_encode(['success' => true, 'message' => 'Inicio de sesión exitoso como vendedor']);
         } else {
