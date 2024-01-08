@@ -4,6 +4,7 @@
     height: 30px; /* Ajusta la altura según sea necesario */
     position: relative;
     margin: 0 20px; /* Ajusta el espaciado entre los pescados según sea necesario */
+    animation: fishSwim 2s infinite linear; /* Añade la animación de nado */
 }
 
 .fishBody {
@@ -23,33 +24,26 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    animation: tailSwing 2s infinite ease-in-out; /* Añade la animación de balanceo de la aleta */
 }
 
-.loaderPill-text {
-    font-weight: bold;
-    color: #C80096;
-    text-transform: uppercase;
+@keyframes fishSwim {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
 }
 
-.absCenter {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+@keyframes tailSwing {
+    0%, 100% {
+        transform: rotate(0);
+    }
+    50% {
+        transform: rotate(45deg);
+    }
 }
-
-.loader {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: 50% 50% no-repeat rgb(249,249,249);
-}
-
-.fishTank {
-    text-align: center;
-}
-/* 
-////cambios aplicados en el csss */
