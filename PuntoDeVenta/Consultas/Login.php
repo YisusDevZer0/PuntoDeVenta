@@ -1,47 +1,69 @@
 <?php
-include "https://doctorpez.mx/PuntoDeVenta/Config/Conexion.php";
-// Verificar si se reciben datos por POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Obtener el correo electrónico y contraseña enviados por el formulario
-    $correoElectronico = $_POST["userName"];
-    $password = $_POST["passwordd"];
+session_start();
+include_once("../db_connect.php");
 
-   
+if(isset($_POST['login_button'])) {
+	
+	
+	$Correo_electronico = trim($_POST['user_email']);
+	$Password = trim($_POST['password']);
+	
+	
+	$sql = "SELECT PersonalPOS.Pos_ID, PersonalPOS.Correo_Electronico, PersonalPOS.Password, PersonalPOS.Estatus,
+        PersonalPOS.Fk_Usuario, Roles_Puestos.ID_rol, Roles_Puestos.Nombre_rol 
+        FROM PersonalPOS, Roles_Puestos
+        WHERE PersonalPOS.Fk_Usuario = Roles_Puestos.ID_rol AND Correo_electronico = ?";
 
-    // Preparar la consulta para seleccionar el usuario por correo electrónico y contraseña
-    $stmt = $con->prepare("SELECT Correo_Electronico, Password, Fk_Usuario FROM Usuarios_PV WHERE Correo_Electronico = ? AND Password = ?");
-    $stmt->bind_param("ss", $correoElectronico, $password);
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "s", $Correo_electronico);
+mysqli_stmt_execute($stmt);
 
-    // Ejecutar la consulta
-    $stmt->execute();
+$resultset = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($resultset);
 
-    // Obtener el resultado de la consulta
-    $result = $stmt->get_result();
+	switch($row){
+	case $row['Password']==$Password and $row['Nombre_rol']=="Administrador" and $row['Estatus']=="Vigente" ;				
+		echo "ok";
+		$_SESSION['AdminPOS'] = $row['Pos_ID'];
+	break;
+	case $row['Password']==$Password and $row['Nombre_rol']=="Ventas" and $row['Estatus']=="Vigente"; 			
+		echo "ok";
+		$_SESSION['VentasPos'] = $row['Pos_ID'];	
+		break;	
+		case $row['Password']==$Password and $row['Nombre_rol']=="ADM Punto de venta" and $row['Estatus']=="Vigente";		
+			echo "ok";
+			$_SESSION['SuperAdmin'] = $row['Pos_ID'];		
+			break;
+		case $row['Password']==$Password and $row['Nombre_rol']=="Logística y compras" and $row['Estatus']=="Vigente";			
+			echo "ok";
+			$_SESSION['LogisticaPOS'] = $row['Pos_ID'];		
+		break;
+		case $row['Password']==$Password and $row['Nombre_rol']=="Administrador CEDIS" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['ResponsableCedis'] = $row['Pos_ID'];		
+		break;
+		case $row['Password']==$Password and $row['Nombre_rol']=="Encargado de inventarios" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['ResponsableInventarios'] = $row['Pos_ID'];	
+			break;	
+			case $row['Password']==$Password and $row['Nombre_rol']=="Responsable de farmacias" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['ResponsableDeFarmacias'] = $row['Pos_ID'];	
+			break;	
+			case $row['Password']==$Password and $row['Nombre_rol']=="Jefe de odontología" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['CoordinadorDental'] = $row['Pos_ID'];	
+			break;	
+			case $row['Password']==$Password and $row['Nombre_rol']=="Supervisor" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['Supervisor'] = $row['Pos_ID'];	 
+			break;	
+			case $row['Password']==$Password and $row['Nombre_rol']=="Jefatura de enfermeria" and $row['Estatus']=="Vigente";				
+			echo "ok";
+			$_SESSION['JefeEnfermeros'] = $row['Pos_ID'];	 
+			break;	
+			
+		} 	
+	}
 
-    // Verificar si se encontró un usuario
-    if ($result->num_rows == 1) {
-        // Usuario y contraseña son válidos
-        $response = array("success" => true, "message" => "Inicio de sesión exitoso");
-
-        // Puedes obtener más información del usuario si es necesario
-        $userData = $result->fetch_assoc();
-        $userId = $userData['Fk_Usuario'];
-    } else {
-        // Usuario o contraseña incorrectos
-        $response = array("success" => false, "message" => "Credenciales incorrectas");
-    }
-
-    // Cerrar la conexión y liberar los recursos
-    $stmt->close();
-    $mysqli->close();
-
-    // Devolver la respuesta en formato JSON
-    header('Content-Type: application/json');
-    echo json_encode($response);
-} else {
-    // Si la solicitud no es por método POST, devolver un mensaje de error
-    $response = array("success" => false, "message" => "Método no permitido");
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}
-?>
+	?>
