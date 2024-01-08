@@ -26,7 +26,7 @@
 				<i class="zmdi zmdi-account-circle"></i>
 			</p>
 			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
-			<form action="home.html">
+			<form action="" id="login-form">
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 				    <input class="mdl-textfield__input" type="text" name="user_email" id="user_email">
 				    <label class="mdl-textfield__label" for="userName">Correo o nombre de usuario</label>
@@ -35,6 +35,12 @@
 				    <input class="mdl-textfield__input" type="password" name="password" id="password">
 				    <label class="mdl-textfield__label" for="pass">Ingresa tu contraseña</label>
 				</div>
+				<br>
+                    <div class="checkbox">
+    <label>
+    <input id="show_password" type="checkbox" /> Mostrar contraseña
+    </label>
+  </div>   
 				<button class="mdl-button mdl-js-button mdl-js-ripple-effect" style="color: #3F51B5; margin: 0 auto; display: block;">
 					Ingresar
 				</button>
@@ -43,3 +49,20 @@
 	</div>
 </body>
 </html>
+<script>
+
+   // Cuando el checkbox cambie de estado.
+$('#show_password').on('change',function(event){
+   // Si el checkbox esta "checkeado"
+   if($('#show_password').is(':checked')){
+      // Convertimos el input de contraseña a texto.
+      $('#password').get(0).type='text';
+   // En caso contrario..
+   } else {
+      // Lo convertimos a contraseña.
+      $('#password').get(0).type='password';
+   }
+});
+
+$('#login-form').attr('autocomplete', 'off');
+</script>
