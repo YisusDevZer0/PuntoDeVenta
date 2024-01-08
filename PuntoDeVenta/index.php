@@ -1,103 +1,32 @@
-<?include("db_connect.php");
-include("Cookies/Mensaje.php");
-?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<title>PUNTO DE VENTA</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
-	<link rel="stylesheet" type="text/css" href="Componentes/fonts/iconic/css/material-design-iconic-font.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Componentes/vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="Componentes/vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Componentes/vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Componentes/vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="Componentes/vendor/daterangepicker/daterangepicker.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="Componentes/css/util.css">
-    <link rel="stylesheet" type="text/css" href="Componentes/css/main.css">
-    <script src="Componentes/sweetalert2@9.js"></script>
-<link rel="stylesheet" href="Componentes/bootstrap.min.css">
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
-<script src="Componentes/jquery.min.js"></script>
-
-  
-<script src="Componentes/fonts.js" crossorigin="anonymous"></script>
-<link rel="stylesheet" type="text/css" href="Componentes/Preloader.css">
-<!--===============================================================================================-->
-<script type="text/javascript" src="Consultas/validation.min.js"></script>
-<script type="text/javascript" src="Consultas/POS3.js"></script>
-<script type="text/javascript" src="Scripts/Soporte.js"></script>
-
+	<title>Bienvenido al inicio de sesion del punto de venta</title>
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/sweetalert2.css">
+	<link rel="stylesheet" href="css/material.min.css">
+	<link rel="stylesheet" href="css/material-design-iconic-font.min.css">
+	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/jquery-1.11.2.min.js"><\/script>')</script>
+	<script src="js/material.min.js" ></script>
+	<script src="js/sweetalert2.min.js" ></script>
+	<script src="js/jquery.mCustomScrollbar.concat.min.js" ></script>
+	<script src="js/main.js" defer></script>
+	
 </head>
-<body style="background-color: #2FDDEE;">
-   <style>
-        .error {
-  color: red;
-  margin-left: 5px; 
-  
-}
-
-    </style>
-<div class="loader">
-<div class="absCenter ">
-    <div class="loaderPill">
-        <div class="loaderPill-anim">
-            <div class="loaderPill-anim-bounce">
-                <div class="loaderPill-anim-flop">
-                    <div class="loaderPill-pill"></div>
-                </div>
-            </div>
-        </div>
-        <div class="loaderPill-floor">
-            <div class="loaderPill-floor-shadow"></div>
-        </div>
-        <div class="loaderPill-text">Cargando... </div>
-    </div>
-</div></div>
-<!--Navbar -->
-<nav class="mb-1 navbar navbar-expand-lg navbar-dark default-color">
-  <a class="navbar-brand" href="#">PUNTO DE VENTA  <i  class="fas fa-receipt fa-2x fa-lgfa-2x fa-lg"></i></a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-333"
-    aria-controls="navbarSupportedContent-333" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent-333">
-    <ul class="navbar-nav mr-auto">
-   
-    </ul>
-    <ul class="navbar-nav ml-auto nav-flex-icons">
-      <li class="nav-item">
-        <a class="nav-link waves-effect waves-light">
-        <i onclick="Home()"class="fas fa-home fa-2x fa-lgfa-2x fa-lg" ></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link waves-effect waves-light">
-       
-        <i  data-toggle="modal" data-target="#centralModalInfo" class="fas fa-tools fa-2x fa-lgfa-2x fa-lg"></i>
-      
-        </a>
-      </li>
-     
-    </ul>
-  </div>
-</nav>
-<!--/.Navbar -->
-
-
-        
-		<div class="container-login100" >
-			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
-    
-				<form class="login100-form validate-form" method="post" id="login-form" autocomplete="off">
+<body>
+	<div class="login-wrap cover">
+		<div class="container-login">
+			<p class="text-center" style="font-size: 80px;">
+				<i class="zmdi zmdi-account-circle"></i>
+			</p>
+			<p class="text-center text-condensedLight">Inicia sesión con tu cuenta</p>
+			<form class="login100-form validate-form" method="post" id="login-form" autocomplete="off">
 
 					<span class="login100-form-title p-b-49">
 						<?echo $mensaje?>
@@ -132,77 +61,8 @@ include("Cookies/Mensaje.php");
 						</div>
 					</div>
                  
-                    </form>  <div id="error">
-  </div>
-  <?include "Modal.php";
-  include "Modales.php";?>
-
-					
-					<!--Start of Tawk.to Script-->
-
-<!--End of Tawk.to Script-->
-			
-			</div>
+                    </form> 
 		</div>
 	</div>
-	
-<!-- Modal hacia soporte -->
-
-    
-    <footer class="page-footer font-small default-color">
-
-  <!-- Copyright -->
-
-  <b>PUNTO DE VENTA</b> | Version 3.0
-  </div>
-  <!-- Copyright -->
-
-</footer>
-<!-- Footer -->
-
-
-<!--===============================================================================================-->
-	
-	<script src="Componentes/vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Componentes/vendor/bootstrap/js/popper.js"></script>
-	<script src="Componentes/vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Componentes/vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="Componentes/vendor/daterangepicker/moment.min.js"></script>
-	<script src="Componentes/vendor/daterangepicker/daterangepicker.js"></script>
-<!--===============================================================================================-->
-	<script src="Componentes/vendor/countdowntime/countdowntime.js"></script>
-<!--===============================================================================================-->
-	<script src="Componentes/js/main.js"></script>
-
 </body>
 </html>
-
-    <script type="text/javascript">
-$(window).load(function() {
-    $(".loader").fadeOut(1000);
-});
-</script>
-
-<script>
-
-   // Cuando el checkbox cambie de estado.
-$('#show_password').on('change',function(event){
-   // Si el checkbox esta "checkeado"
-   if($('#show_password').is(':checked')){
-      // Convertimos el input de contraseña a texto.
-      $('#password').get(0).type='text';
-   // En caso contrario..
-   } else {
-      // Lo convertimos a contraseña.
-      $('#password').get(0).type='password';
-   }
-});
-
-$('#login-form').attr('autocomplete', 'off');
-</script>
-<script src="../Scripts/Redirecciones.js" type="text/javascript"></script>
-
-	<??>
