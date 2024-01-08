@@ -88,7 +88,7 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.success) {
                     // Redirigir o realizar acciones según el tipo de usuario
-                    if (response.message.includes('administrador')) {
+                    if (response.message.includes('Inicio de sesión exitoso')) {
                         // Redirigir a la página de administrador
                         window.location.href = 'admin_home.html';
                     } else if (response.message.includes('vendedor')) {
