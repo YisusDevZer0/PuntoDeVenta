@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="css/material-design-iconic-font.min.css">
 	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
 	<link rel="stylesheet" href="css/main.css">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
 	<script src="js/jquery-3.5.1.slim.min.js"></script>
 <script src="js/jquery-3.5.0.js"></script>
 	<script src="js/material.min.js" ></script>
