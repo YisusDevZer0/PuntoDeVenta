@@ -46,12 +46,15 @@
     </style>
 <div class="loader">
     <div class="absCenter">
-        <div class="loaderFish">
-            <!-- Aquí van los elementos de tu pez o peces -->
+        <div class="fishTank">
+            <div class="loaderFish"></div>
+            <div class="loaderFish"></div>
+            <div class="loaderFish"></div>
         </div>
         <div class="loaderPill-text">Cargando... </div>
     </div>
 </div>
+
 
 <!--Navbar -->
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark default-color">

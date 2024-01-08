@@ -2,27 +2,53 @@
         display: inline-block;
         width: 80px; /* Ajusta el ancho según sea necesario */
         height: 30px; /* Ajusta la altura según sea necesario */
-        /* Añade estilos adicionales para tu pez o peces */
-        background-color: #237db5; /* Cambia el color de fondo si es necesario */
+        position: relative;
+        margin: 0 20px; /* Ajusta el espaciado entre los pescados según sea necesario */
+    }
+    
+    .fishBody {
+        width: 50px; /* Ajusta el ancho del cuerpo del pez según sea necesario */
+        height: 30px; /* Ajusta la altura del cuerpo del pez según sea necesario */
+        background-color: #237db5; /* Cambia el color del cuerpo del pez si es necesario */
         border-radius: 15px;
     }
     
-    .loaderFish::before,
-    .loaderFish::after {
-        content: '';
-        display: inline-block;
-        width: 20px; /* Ajusta el ancho de las partes del pez según sea necesario */
-        height: 20px; /* Ajusta la altura de las partes del pez según sea necesario */
-        background-color: #ffffff; /* Cambia el color de las partes del pez si es necesario */
-        border-radius: 50%;
-        margin: 0 5px; /* Ajusta el espaciado entre las partes del pez según sea necesario */
+    .fishTail {
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent; /* Ajusta el tamaño de la aleta izquierda según sea necesario */
+        border-right: 20px solid transparent; /* Ajusta el tamaño de la aleta derecha según sea necesario */
+        border-bottom: 30px solid #237db5; /* Cambia el color de la aleta si es necesario */
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
     }
     
-    .loaderFish::before {
-        transform: translateY(-10px);
+    .loaderPill-text {
+        font-weight: bold;
+        color: #C80096;
+        text-transform: uppercase;
     }
     
-    .loaderFish::after {
-        transform: translateY(10px);
+    .absCenter {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .loader {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: 50% 50% no-repeat rgb(249,249,249);
+    }
+    
+    .fishTank {
+        text-align: center;
     }
     
