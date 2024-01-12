@@ -32,7 +32,7 @@
 <!--===============================================================================================-->
 <script type="text/javascript" src="Consultas/validation.min.js"></script>
 <script type="text/javascript" src="Consultas/POS3.js"></script>
-<script type="text/javascript" src="Scripts/Soporte.js"></script>
+
 
 </head>
 <body style="background-color: #2FDDEE;">
