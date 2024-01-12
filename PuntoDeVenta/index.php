@@ -64,21 +64,7 @@
     <ul class="navbar-nav mr-auto">
    
     </ul>
-    <ul class="navbar-nav ml-auto nav-flex-icons">
-      <li class="nav-item">
-        <a class="nav-link waves-effect waves-light">
-        <i onclick="Home()"class="fas fa-home fa-2x fa-lgfa-2x fa-lg" ></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link waves-effect waves-light">
-       
-        <i  data-toggle="modal" data-target="#centralModalInfo" class="fas fa-tools fa-2x fa-lgfa-2x fa-lg"></i>
-      
-        </a>
-      </li>
-     
-    </ul>
+    
   </div>
 </nav>
 <!--/.Navbar -->
@@ -125,8 +111,7 @@
                  
                     </form>  <div id="error">
   </div>
-  <?include "Modal.php";
-  include "Modales.php";?>
+ 
 
 					
 					<!--Start of Tawk.to Script-->
@@ -144,7 +129,7 @@
 
   <!-- Copyright -->
 
-  <b>PUNTO DE VENTA</b> | Version 3.0
+  <b>PUNTO DE VENTA</b> | Version 1.0
   </div>
   <!-- Copyright -->
 
@@ -194,6 +179,3 @@ $('#show_password').on('change',function(event){
 
 $('#login-form').attr('autocomplete', 'off');
 </script>
-<script src="../Scripts/Redirecciones.js" type="text/javascript"></script>
-
-	<??>
