@@ -30,7 +30,7 @@ $('document').ready(function() {
 		var data = $("#login-form").serialize();				
 		$.ajax({				
 			type : 'POST',
-			url  : 'Consultas/ValidadorUsuario.php',
+			url  : 'Consultas/ValidadorUsaurio.php',
 			data : data,
             beforeSend: function(){	
 				$("#error").fadeOut();
@@ -46,19 +46,7 @@ $('document').ready(function() {
 			success : function(response){						
 				if(response=="ok"){									
                     $("#login_button").html("Iniciando...")
-					 // Mostrar SweetAlert2 con animaciones
-                     Swal.fire({
-                        title: '¡Bienvenido de nuevo!',
-                        text: saludo + ' ' + mensaje_aleatorio,
-                        icon: 'success',
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    });
-                
+					$('#Ingreso').modal('toggle');
 					setTimeout(' window.location.href = "https://controlfarmacia.com/App/Secure/ControlPOS"; ',2000);
 				} else {									
 					$("#error").fadeIn(1000, function(){						
