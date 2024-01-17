@@ -65,7 +65,7 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="Componentes/css/util.css">
     <link rel="stylesheet" type="text/css" href="Componentes/css/main.css">
-    <script src="Componentes/sweetalert2@9.js"></script>
+    
 <link rel="stylesheet" href="Componentes/bootstrap.min.css">
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
