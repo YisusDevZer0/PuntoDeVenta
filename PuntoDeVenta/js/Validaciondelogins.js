@@ -43,23 +43,26 @@ $('document').ready(function() {
                   
 			},
 				
-			success : function(response){						
-				if(response=="ok"){									
-                    $("#login_button").html("Iniciando...")
+			success: function(response) {						
+				if (response == "ok") {									
+					$("#login_button").html("Iniciando...");
 					$('#Ingreso').modal('toggle');
-					setTimeout(' window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS"; ',2000);
+					setTimeout(function() {
+						window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
+					}, 2000);
 				} else {									
-					$("#error").fadeIn(1000, function(){						
-                        $("#error").html();
-                        setTimeout(function(){ 
-                            $('#Fallo').modal('toggle');
-                        }, 2000); 
-						
-                        $("#login_button").html('<span ></span> &nbsp;   Ingresar   ');
+					Swal.fire({
+						icon: 'error',
+						title: 'Error de inicio de sesión',
+						text: 'Credenciales incorrectas o usuario inactivo',
+						showConfirmButton: false,
+						timer: 2000
 					});
-						 
+			
+					$("#login_button").html('<span ></span> &nbsp;   Ingresar   ');
 				}
 			}
+			
 		});
 		return false;
 	}   
