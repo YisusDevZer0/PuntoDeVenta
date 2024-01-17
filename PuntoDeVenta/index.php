@@ -88,7 +88,7 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 				<form class="login100-form validate-form" method="post" id="login-form" autocomplete="off">
         <style>
         .login100-form-title {
-            font-size: 16px !important; /* Ajusta el tamaño de fuente según tus preferencias */
+            font-size: 18px !important; /* Ajusta el tamaño de fuente según tus preferencias */
         }
     </style>
 					<span class="login100-form-title p-b-49">
