@@ -50,6 +50,9 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 	<title>PUNTO DE VENTA</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Agrega esto en el encabezado de tu HTML antes de incluir tus scripts -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="Componentes/fonts/iconic/css/material-design-iconic-font.min.css">
 <!--===============================================================================================-->
@@ -77,9 +80,6 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 <!--===============================================================================================-->
 <script type="text/javascript" src="js/validation.min.js"></script>
 <script type="text/javascript" src="js/Validaciondelogins.js"></script>
- <!-- Enlaces a las bibliotecas de SweetAlert2 y animate.css -->
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
 
 </head>
 <body style="background-color: #2FDDEE;">
