@@ -141,7 +141,7 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
     
   <!-- Copyright -->
 
-  <b>PUNTO DE VENTA</b> | Version 3.0
+ 
   </div>
   <!-- Copyright -->
 
