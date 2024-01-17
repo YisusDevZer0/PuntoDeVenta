@@ -44,11 +44,6 @@
 }
 
     </style>
-<div class="fish-container">
-        <div class="fish"></div>
-        <div class="fish"></div>
-        <div class="fish"></div>
-    </div>
 
 
 
