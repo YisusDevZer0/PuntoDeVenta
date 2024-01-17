@@ -143,7 +143,8 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
                  
                     </form>  <div id="error">
   </div>
-  <?include "Modal.php";
+  <?php
+  include "Modal.php";
   include "Modales.php";?>
 
 					
