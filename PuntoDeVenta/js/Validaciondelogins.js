@@ -47,7 +47,7 @@ $('document').ready(function() {
 				if(response=="ok"){									
                     $("#login_button").html("Iniciando...")
 					$('#Ingreso').modal('toggle');
-					setTimeout(' window.location.href = "https://controlfarmacia.com/App/Secure/ControlPOS"; ',2000);
+					setTimeout(' window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS"; ',2000);
 				} else {									
 					$("#error").fadeIn(1000, function(){						
                         $("#error").html();
