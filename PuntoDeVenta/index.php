@@ -1,5 +1,34 @@
-<?include("db_connect.php");
-include("Cookies/Mensaje.php");
+<?php
+// Configuración de saludos según la hora del día
+$saludos = array(
+    "Buenos días",
+    "Buenas tardes",
+    "Buenas noches"
+);
+
+// Obtener la hora actual del servidor
+$hora_actual = date("H");
+
+// Determinar el saludo según la hora del día
+if ($hora_actual >= 5 && $hora_actual < 12) {
+    $saludo = $saludos[0]; // Mañana
+} elseif ($hora_actual >= 12 && $hora_actual < 18) {
+    $saludo = $saludos[1]; // Tarde
+} else {
+    $saludo = $saludos[2]; // Noche
+}
+
+// Configuración de mensajes de éxito y ventas con iconos
+$mensajes_exito_ventas = array(
+    "¡Bienvenido de nuevo! 🚀 Prepárate para alcanzar nuevas alturas de éxito.",
+    "Te damos la bienvenida. El éxito y las ventas te esperan en cada paso que tomes. 💼",
+    "Hoy es otro día para lograr grandes ventas. ¡Vamos por ello! 💪",
+    "¡Hola campeón! Este es tu momento para brillar y cerrar esas ventas. 🌟",
+    "Bienvenido de vuelta. Estamos emocionados por tus éxitos venideros y ventas increíbles. 🎉",
+);
+
+// Obtener un mensaje aleatorio
+$mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -100,7 +129,8 @@ include("Cookies/Mensaje.php");
 				<form class="login100-form validate-form" method="post" id="login-form" autocomplete="off">
 
 					<span class="login100-form-title p-b-49">
-						<?echo $mensaje?>
+          <?php echo $saludo; ?>
+    <?php echo $mensaje_aleatorio; ?>
 					</span>
 
 					<div class="wrap-input100 " >
