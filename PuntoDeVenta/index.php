@@ -1,4 +1,6 @@
-
+<?include("db_connect.php");
+include("Cookies/Mensaje.php");
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,7 +34,7 @@
 <!--===============================================================================================-->
 <script type="text/javascript" src="Consultas/validation.min.js"></script>
 <script type="text/javascript" src="Consultas/POS3.js"></script>
-
+<script type="text/javascript" src="Scripts/Soporte.js"></script>
 
 </head>
 <body style="background-color: #2FDDEE;">
@@ -44,15 +46,22 @@
 }
 
     </style>
-<div class="fish-container">
-        <div class="fish"></div>
-        <div class="fish"></div>
-        <div class="fish"></div>
+<div class="loader">
+<div class="absCenter ">
+    <div class="loaderPill">
+        <div class="loaderPill-anim">
+            <div class="loaderPill-anim-bounce">
+                <div class="loaderPill-anim-flop">
+                    <div class="loaderPill-pill"></div>
+                </div>
+            </div>
+        </div>
+        <div class="loaderPill-floor">
+            <div class="loaderPill-floor-shadow"></div>
+        </div>
+        <div class="loaderPill-text">Cargando... </div>
     </div>
-
-
-
-
+</div></div>
 <!--Navbar -->
 <nav class="mb-1 navbar navbar-expand-lg navbar-dark default-color">
   <a class="navbar-brand" href="#">PUNTO DE VENTA  <i  class="fas fa-receipt fa-2x fa-lgfa-2x fa-lg"></i></a>
@@ -64,7 +73,21 @@
     <ul class="navbar-nav mr-auto">
    
     </ul>
-    
+    <ul class="navbar-nav ml-auto nav-flex-icons">
+      <li class="nav-item">
+        <a class="nav-link waves-effect waves-light">
+        <i onclick="Home()"class="fas fa-home fa-2x fa-lgfa-2x fa-lg" ></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link waves-effect waves-light">
+       
+        <i  data-toggle="modal" data-target="#centralModalInfo" class="fas fa-tools fa-2x fa-lgfa-2x fa-lg"></i>
+      
+        </a>
+      </li>
+     
+    </ul>
   </div>
 </nav>
 <!--/.Navbar -->
@@ -111,7 +134,8 @@
                  
                     </form>  <div id="error">
   </div>
- 
+  <?include "Modal.php";
+  include "Modales.php";?>
 
 					
 					<!--Start of Tawk.to Script-->
@@ -129,7 +153,7 @@
 
   <!-- Copyright -->
 
-  <b>PUNTO DE VENTA</b> | Version 1.0
+  <b>PUNTO DE VENTA</b> | Version 3.0
   </div>
   <!-- Copyright -->
 
@@ -179,3 +203,6 @@ $('#show_password').on('change',function(event){
 
 $('#login-form').attr('autocomplete', 'off');
 </script>
+<script src="../Scripts/Redirecciones.js" type="text/javascript"></script>
+
+	<??>
