@@ -75,7 +75,7 @@ $mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
 <script src="Componentes/fonts.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" type="text/css" href="Componentes/Preloader.css">
 <!--===============================================================================================-->
-<script type="text/javascript" src="Consultas/validation.min.js"></script>
+<script type="text/javascript" src="js/validation.min.js"></script>
 <script type="text/javascript" src="js/Validaciondelogins.js"></script>
  <!-- Enlaces a las bibliotecas de SweetAlert2 y animate.css -->
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
