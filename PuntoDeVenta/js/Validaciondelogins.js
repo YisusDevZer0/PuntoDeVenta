@@ -2,9 +2,7 @@ $('document').ready(function() {
 
 	/* handling form validation */
 	$("#login-form").validate({
-		
 		rules: {
-		
 			password: {
 				required: true,
 			},
@@ -17,11 +15,10 @@ $('document').ready(function() {
 			},
 		},
 		messages: {
-			password:{
+			password: {
 			  required: "<i class='fas fa-times'></i> Se requiere tu contraseña " 
-			 },
-			 
-			user_email: "<i class='fas fa-times'></i> ingresa tu correo por favor ",
+			},
+			user_email: "<i class='fas fa-times'></i> Ingresa tu correo por favor ",
 		},
 		submitHandler: submitForm	
 	});	   
@@ -29,21 +26,16 @@ $('document').ready(function() {
 	function submitForm() {		
 		var data = $("#login-form").serialize();				
 		$.ajax({				
-			type : 'POST',
-			url  : 'Consultas/ValidadorUsaurio.php',
-			data : data,
-            beforeSend: function(){	
+			type: 'POST',
+			url: 'Consultas/ValidadorUsaurio.php',
+			data: data,
+			beforeSend: function() {	
 				$("#error").fadeOut();
-				
-				$("#login_button").html();
+				$("#login_button").html("Validando...");
 				$('#Validacion').modal('toggle');
-				setTimeout(function(){ 
-					$('#Validacion').modal('hide') 
-				}, 3000); 
-                  
 			},
-				
 			success: function(response) {						
+				$('#Validacion').modal('hide');
 				if (response == "ok") {									
 					$("#login_button").html("Iniciando...");
 					$('#Ingreso').modal('toggle');
@@ -56,13 +48,13 @@ $('document').ready(function() {
 						title: 'Error de inicio de sesión',
 						text: 'Credenciales incorrectas o usuario inactivo',
 						showConfirmButton: false,
-						timer: 2000
+						timer: 2000,
+						onClose: function() {
+							$("#login_button").html('<span></span> &nbsp; Ingresar');
+						}
 					});
-			
-					$("#login_button").html('<span ></span> &nbsp;   Ingresar   ');
 				}
 			}
-			
 		});
 		return false;
 	}   
