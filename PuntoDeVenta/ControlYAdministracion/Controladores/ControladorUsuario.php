@@ -31,23 +31,3 @@ INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal;
 Usuarios_PV.Id_PvUser='".$_SESSION['ControlMaestro']."'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
-$hora = date('G'); if (($hora >= 0) AND ($hora < 6)) 
-  { 
-    
-    $mensaje = "Hola, que tengas una excelente madrugada."; 
-  } 
-  else if (($hora >= 6) AND ($hora < 12)) 
-  { 
-    $mensaje = "Buenos días"; 
-  } 
-  else if (($hora >= 12) AND ($hora < 18)) 
-  { 
-    $mensaje = "Buenas tardes"; 
-  } 
-  else
-  { 
-  $mensaje = "Buenas noches"; 
-  } 
-
-   ?>
-
