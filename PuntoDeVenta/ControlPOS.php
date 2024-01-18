@@ -2,7 +2,7 @@
 
 session_start();
 include ("Consultas/POS.php");
-if($_SESSION["SuperAdmin"])	//Condicion admin
+if($_SESSION["ControlMaestro"])	//Condicion admin
 {
 	
 
