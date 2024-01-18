@@ -32,8 +32,15 @@ $('document').ready(function() {
 			beforeSend: function() {	
 				$("#error").fadeOut();
 				$("#login_button").html("Validando...");
-				$('#Validacion').modal('toggle');
-			},
+				// Aquí es donde se muestra el mensaje de bienvenida con SweetAlert2
+				Swal.fire({
+				  title: '¡Bienvenido!',
+				  text: 'Gracias por visitar nuestro sitio. Esperamos que disfrutes tu experiencia.',
+				  icon: 'success',
+				  confirmButtonText: '¡Entendido!',
+				  // Puedes agregar más configuraciones según la documentación de SweetAlert2
+				});
+			  },
 			success: function(response) {						
 				$('#Validacion').modal('hide');
 				if (response == "ok") {									
