@@ -6,7 +6,7 @@ if($_SESSION["SuperAdmin"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/ControlYadministracion");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYadministracion");	
 
 }
 if($_SESSION["VentasPos"])	//Condicion personal
