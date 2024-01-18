@@ -210,6 +210,3 @@ $('#show_password').on('change',function(event){
 
 $('#login-form').attr('autocomplete', 'off');
 </script>
-<script src="../Scripts/Redirecciones.js" type="text/javascript"></script>
-
-	<??>
