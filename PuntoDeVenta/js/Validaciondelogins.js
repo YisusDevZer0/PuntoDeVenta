@@ -27,7 +27,7 @@ $('document').ready(function() {
 		var data = $("#login-form").serialize();				
 		$.ajax({				
 			type: 'POST',
-			url: 'https://doctorpez.mx/PuntoDeVenta/Consultas/ValidadorUsaurio.php',
+			url: 'Consultas/ValidadorUsaurio.php',
 			data: data,
 			beforeSend: function() {	
 				$("#error").fadeOut();
