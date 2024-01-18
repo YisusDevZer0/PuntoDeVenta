@@ -31,10 +31,7 @@ switch(true) {
         echo "ok";
         $_SESSION['VentasPos'] = $row['Id_PvUser'];
         break;
-    case $row['Password'] == $Password && $row['TipoUsuario'] == "ADM Punto de venta" && $row['Estatus'] == "Activo":
-        echo "ok";
-        $_SESSION['SuperAdmin'] = $row['Id_PvUser'];
-        break;
+    
     // Agrega los demás casos según la lógica que necesites
     default:
         // Manejar otros casos o mostrar un mensaje de error
