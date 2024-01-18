@@ -25,7 +25,7 @@ $row = mysqli_fetch_assoc($resultset);
 switch(true) {
     case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
         echo "ok";
-        $_SESSION['AdminPOS'] = $row['Id_PvUser'];
+        $_SESSION['ControlMaestro'] = $row['Id_PvUser'];
         break;
     case $row['Password'] == $Password && $row['TipoUsuario'] == "Ventas" && $row['Estatus'] == "Activo":
         echo "ok";

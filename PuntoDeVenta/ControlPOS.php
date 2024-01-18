@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-include ("Consultas/POS.php");
+include ("Consultas/ValidadorUsuario.php");
 if($_SESSION["ControlMaestro"])	//Condicion admin
 {
 	
