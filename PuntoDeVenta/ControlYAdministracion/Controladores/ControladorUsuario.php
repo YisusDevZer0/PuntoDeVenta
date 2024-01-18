@@ -4,10 +4,10 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
 
-if(!isset($_SESSION['SuperAdmin'])){
+if(!isset($_SESSION['ControlMaestro'])){
 	header("Location: Expiro.php");
 }
-include_once("db_connection.php");
+include_once("db_connect.php");
 $sql = "SELECT
 Usuarios_PV.Id_PvUser,
 Usuarios_PV.Nombre_Apellidos,
