@@ -70,12 +70,12 @@ $(document).ready(function () {
             { "data": 2 },  // Cambiado de "Licencia" a 2
             { "data": 3 },  // Cambiado de "Creadoel" a 3
             { "data": 4 },  // Cambiado de "Creado" a 4
-            // { 
-            //     "data": null,
-            //     "render": function (data, type, row) {
-            //         return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
-            //     }
-            // }
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
+                }
+            }
         ]
     });
     console.log("DataTables inicializado con éxito!");
