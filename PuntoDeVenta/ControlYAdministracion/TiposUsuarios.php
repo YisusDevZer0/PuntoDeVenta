@@ -63,12 +63,11 @@ $(document).ready(function () {
         "processing": true,
         "serverSide": true,
         "ajax": "Controladores/datatable_server.php",
-        "columns": [
-            { "data": "ID_User" },
-            { "data": "TipoUsuario" },
-            { "data": "Licencia" },
-            { "data": "Creadoel" },
-            { "data": "Creado" },
+        { "data": 0 },  // Cambiado de "ID_User" a 0
+            { "data": 1 },  // Cambiado de "TipoUsuario" a 1
+            { "data": 2 },  // Cambiado de "Licencia" a 2
+            { "data": 3 },  // Cambiado de "Creadoel" a 3
+            { "data": 4 },  // Cambiado de "Creado" a 4
             { 
                 "data": null,
                 "render": function (data, type, row) {
