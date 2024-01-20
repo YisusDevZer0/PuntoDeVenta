@@ -8,23 +8,25 @@
       </div>
       <div class="modal-body">
         <!-- Formulario con el estilo proporcionado -->
-        <div class="col-sm-12 col-xl-6">
-          <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Formulario de Usuario</h6>
-            <form>
-              <div class="input-group mb-3">
-                <span class="input-group-text">Tipo de Usuario</span>
-                <input type="text" class="form-control" placeholder="Ingrese el tipo de usuario">
-              </div>
-              <div class="input-group mb-3">
-                <span class="input-group-text">Licencia</span>
-                <input type="text" class="form-control" placeholder="Ingrese la licencia" style="display:none;">
-              </div>
-              <!-- Agrega los otros campos del formulario de manera similar -->
-              <!-- ... -->
+        <div class="row">
+          <div class="col-12">
+            <div class="bg-light rounded p-4">
+              <h6 class="mb-4">Formulario de Usuario</h6>
+              <form>
+                <div class="mb-3">
+                  <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+                  <input type="text" class="form-control" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                </div>
+                <div class="mb-3">
+                  <label for="licencia" class="form-label">Licencia</label>
+                  <input type="text" class="form-control" id="licencia" placeholder="Ingrese la licencia" style="display:none;">
+                </div>
+                <!-- Agrega los otros campos del formulario de manera similar -->
+                <!-- ... -->
 
-              <button type="submit" class="btn btn-primary">Guardar</button>
-            </form>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
