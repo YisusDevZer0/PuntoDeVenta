@@ -20,6 +20,8 @@ $columns = array(
 // Utiliza la función de SSP para obtener los datos
 $result = SSP::simple($_GET, $dbDetails, $table, $primaryKey, $columns);
 
-// Convierte el resultado a un formato que DataTables pueda entender
+// Después de obtener los datos usando SSP
+var_dump($result);
 echo json_encode($result);
+
 ?>
