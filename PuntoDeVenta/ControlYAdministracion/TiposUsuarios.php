@@ -59,6 +59,7 @@ include_once "Controladores/ControladorUsuario.php"
 <script>
 $(document).ready(function () {
     // Inicializa DataTables
+    console.log("Inicializando DataTables...");
     var table = $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
@@ -77,7 +78,7 @@ $(document).ready(function () {
             }
         ]
     });
-
+    console.log("DataTables inicializado con éxito!");
     // Maneja clics en los botones "Editar"
     $('#userTable tbody').on('click', '.edit-btn', function () {
         var data = table.row($(this).parents('tr')).data();
