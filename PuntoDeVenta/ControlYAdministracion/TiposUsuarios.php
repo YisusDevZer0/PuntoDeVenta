@@ -51,11 +51,14 @@ include_once "Controladores/ControladorUsuario.php"
                             <th>Editar</th>
                         </tr>
                     </thead>
+                    <!-- Agrega una etiqueta tbody -->
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+
 <script>
 $(document).ready(function () {
     // Inicializa DataTables
