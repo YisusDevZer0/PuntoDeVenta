@@ -4,6 +4,9 @@ $(document).ready(function () {
 
         var formData = new FormData(this);
 
+        // Imprime el valor del token y otros datos en la consola
+        console.log(formData);
+
         $.ajax({
             type: 'POST',
             url: 'Controladores/NuevoTipoDeusuario.php',
