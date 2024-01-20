@@ -3,10 +3,7 @@
 include "Config.php";
 
 // Obtener token CSRF
-function obtener_token_csrf() {
-    return bin2hex(random_bytes(32));
-}
-
+include "obtenertoken.php";
 // Verificar si la solicitud es POST y contiene un token CSRF válido
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === obtener_token_csrf()) {
     // Obtener datos del formulario
