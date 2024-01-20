@@ -16,7 +16,7 @@
                   <!-- Agrega un campo oculto para el token CSRF -->
     <input id="csrf_token" name="csrf_token" value="<?php echo obtener_token_csrf(); ?>">
                 <div class="mb-3">
-                  <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
+                  <label for="tipouser" class="form-label">Tipo de Usuario</label>
                   <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
                 </div>
                 
