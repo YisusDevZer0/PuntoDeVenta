@@ -17,11 +17,10 @@
                   <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
                   <input type="text" class="form-control" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
                 </div>
-                <div class="mb-3">
-                  <label for="licencia" class="form-label">Licencia</label>
-                  <input type="text" class="form-control" id="licencia" placeholder="Ingrese la licencia" style="display:none;">
-                </div>
-                <!-- Agrega los otros campos del formulario de manera similar -->
+                
+                <input type="text" class="form-control" id="licencia" value="<?php echo $row['Licencia']?>">
+                <input type="text" class="form-control" id="agrego"<?php echo $row['Nombre_Apellidos']?> >
+                               <!-- Agrega los otros campos del formulario de manera similar -->
                 <!-- ... -->
 
                 <button type="submit" class="btn btn-primary">Guardar</button>
