@@ -96,11 +96,14 @@ $(document).ready(function () {
                         // Muestra los datos del usuario en un SweetAlert
                         Swal.fire({
                             title: 'Editar Usuario',
-                            html: 'Nombre: ' + data.nombre + '<br>Correo: ' + data.correo,
-                            showCancelButton: true,
-                            confirmButtonText: 'Guardar cambios',
-                            cancelButtonText: 'Cancelar'
-                            // Puedes personalizar más opciones de SweetAlert según tus necesidades
+                            html:
+        '<form id="editForm">' +
+        '<label for="tipoUsuario">Tipo de Usuario:</label>' +
+        '<input type="text" id="tipoUsuario" name="tipoUsuario" value="' + data.TipoUsuario + '" required>' +
+        '<br>' +
+        '<label for="licencia">Licencia:</label>' +
+        '<input type="text" id="licencia" name="licencia" value="' + data.Licencia + '" required>' +
+        '</form>',
                         });
                     },
                     error: function () {
