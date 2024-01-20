@@ -82,27 +82,37 @@ $(document).ready(function () {
     ]
     });
 
-   // Agrega un evento clic para el botón "Editar"
-   $('#userTable').on('click', '.edit-btn', function () {
+  // Agrega un evento clic para el botón "Editar"
+  $('#userTable').on('click', '.edit-btn', function () {
                 var userId = $(this).data('id');
-                
-                // Realiza una consulta SQL para obtener los datos del usuario con el ID correspondiente
-                // Aquí debes implementar tu lógica para obtener los datos del usuario desde tu base de datos
-                // y luego mostrarlos en un modal o SweetAlert.
 
-                // Ejemplo de SweetAlert:
-                Swal.fire({
-                    title: 'Editar Usuario',
-                    html: 'Aquí puedes mostrar los datos del usuario con ID ' + userId,
-                    showCancelButton: true,
-                    confirmButtonText: 'Guardar cambios',
-                    cancelButtonText: 'Cancelar'
-                    // Puedes personalizar más opciones de SweetAlert según tus necesidades
+                // Realiza una petición AJAX para obtener los datos del usuario
+                $.ajax({
+                    url: 'Controladores/ObtieneDatosTipoUsuario.php',
+                    type: 'GET',
+                    data: { user_id: userId },
+                    dataType: 'json',
+                    success: function (data) {
+                        // Muestra los datos del usuario en un SweetAlert
+                        Swal.fire({
+                            title: 'Editar Usuario',
+                            html: 'Nombre: ' + data.nombre + '<br>Correo: ' + data.correo,
+                            showCancelButton: true,
+                            confirmButtonText: 'Guardar cambios',
+                            cancelButtonText: 'Cancelar'
+                            // Puedes personalizar más opciones de SweetAlert según tus necesidades
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al obtener los datos del usuario.'
+                        });
+                    }
                 });
             });
-
-  
-});
+        });
 </script>
 
 
