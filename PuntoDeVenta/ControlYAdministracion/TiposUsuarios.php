@@ -51,28 +51,24 @@ include_once "Controladores/ControladorUsuario.php"
                             <th>Editar</th>
                         </tr>
                     </thead>
-                    <!-- Agrega una etiqueta tbody -->
-                    <tbody></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
-
 <script>
 $(document).ready(function () {
     // Inicializa DataTables
-    console.log("Inicializando DataTables...");
     var table = $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
         "ajax": "Controladores/datatable_server.php",
         "columns": [
-            { "data": 0 },  // Cambiado de "ID_User" a 0
-            { "data": 1 },  // Cambiado de "TipoUsuario" a 1
-            { "data": 2 },  // Cambiado de "Licencia" a 2
-            { "data": 3 },  // Cambiado de "Creadoel" a 3
-            { "data": 4 },  // Cambiado de "Creado" a 4
+            { "data": "ID_User" },
+            { "data": "TipoUsuario" },
+            { "data": "Licencia" },
+            { "data": "Creadoel" },
+            { "data": "Creado" },
             { 
                 "data": null,
                 "render": function (data, type, row) {
@@ -81,7 +77,7 @@ $(document).ready(function () {
             }
         ]
     });
-    console.log("DataTables inicializado con éxito!");
+
     // Maneja clics en los botones "Editar"
     $('#userTable tbody').on('click', '.edit-btn', function () {
         var data = table.row($(this).parents('tr')).data();
