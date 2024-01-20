@@ -64,18 +64,18 @@ $(document).ready(function () {
         "serverSide": true,
         "ajax": "Controladores/datatable_server.php",
         "columns": [
-            { "data": "ID_User" },
-            { "data": "TipoUsuario" },
-            { "data": "Licencia" },
-            { "data": "Creadoel" },
-            { "data": "Creado" },
-            { 
-                "data": "",
-                "render": function (data, type, row) {
-                    return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
-                }
+        { "data": 0 }, // Cambia a 0 en lugar de 'data'
+        { "data": 1 }, // Cambia a 1 en lugar de 'data'
+        { "data": 2 }, // Cambia a 2 en lugar de 'data'
+        { "data": 3 }, // Cambia a 3 en lugar de 'data'
+        { "data": 4 }, // Cambia a 4 en lugar de 'data'
+        { 
+            "data": null,
+            "render": function (data, type, row) {
+                return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
             }
-        ]
+        }
+    ]
     });
 
     // Maneja clics en los botones "Editar"
