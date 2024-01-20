@@ -1,15 +1,11 @@
 <?php
+// datatable_server.php
 include 'ssp.class.php';
+include 'config.php';
 
-$dbDetails = array(
-    'host' => 'localhost',
-    'user' => 'u858848268_devpezer0',
-    'pass' => 'F9+nIIOuCh8yI6wu4!08',
-    'db'   => 'u858848268_doctorpez'
-);
+$dbDetails = $config['db'];
 
 $table = 'Tipos_Usuarios';
-
 $primaryKey = 'ID_User';
 
 $columns = array(
@@ -20,7 +16,9 @@ $columns = array(
     array('db' => 'Creado', 'dt' => 4)
 );
 
-echo json_encode(
-    SSP::simple($_GET, $dbDetails, $table, $primaryKey, $columns)
-);
+// Utiliza la función de SSP para obtener los datos
+$result = SSP::simple($_GET, $dbDetails, $table, $primaryKey, $columns);
+
+// Convierte el resultado a un formato que DataTables pueda entender
+echo json_encode($result);
 ?>
