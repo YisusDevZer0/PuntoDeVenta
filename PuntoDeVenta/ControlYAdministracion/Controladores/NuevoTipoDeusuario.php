@@ -2,8 +2,10 @@
 // config.php
 include "Config.php";
 
-
-
+// Obtener token CSRF
+function obtener_token_csrf() {
+    return bin2hex(random_bytes(32));
+}
 
 // Verificar si la solicitud es POST y contiene un token CSRF válido
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === obtener_token_csrf()) {
@@ -13,7 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
     $agrego = $_POST['agrego'];
 
     // Validar los datos (puedes agregar más validaciones según tus necesidades)
-
     if (empty($tipoUsuario) || empty($licencia) || empty($agrego)) {
         $respuesta = array('success' => false, 'message' => 'Todos los campos son obligatorios.');
     } else {
