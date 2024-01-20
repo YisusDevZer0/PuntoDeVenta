@@ -62,6 +62,9 @@ $(document).ready(function () {
     var table = $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
+        "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" // Configura el idioma a español
+                },
         "ajax": "Controladores/datatable_server.php",
         "columns": [
         { "data": 0 }, // Cambia a 0 en lugar de 'data'
@@ -78,53 +81,9 @@ $(document).ready(function () {
     ]
     });
 
-    // Maneja clics en los botones "Editar"
-    $('#userTable tbody').on('click', '.edit-btn', function () {
-        var data = table.row($(this).parents('tr')).data();
-        abrirVentanaEdicion(data);
-    });
+  
 
-    function abrirVentanaEdicion(data) {
-        // Aquí deberías usar SweetAlert2 para mostrar la ventana de edición
-        Swal.fire({
-            title: 'Editar Usuario',
-            html: '<input id="tipoUsuario" class="swal2-input" value="' + data.TipoUsuario + '">' +
-                  '<input id="licencia" class="swal2-input" value="' + data.Licencia + '">',
-            showCancelButton: true,
-            confirmButtonText: 'Guardar Cambios',
-            cancelButtonText: 'Cancelar',
-            preConfirm: () => {
-                var tipoUsuario = document.getElementById('tipoUsuario').value;
-                var licencia = document.getElementById('licencia').value;
-
-                // Lógica para enviar una solicitud AJAX y actualizar los datos en el servidor
-                $.ajax({
-                    type: "POST",
-                    url: "actualizar_usuario.php", // Reemplaza con la URL correcta
-                    data: {
-                        id: data.ID_User,
-                        tipoUsuario: tipoUsuario,
-                        licencia: licencia
-                    },
-                    success: function (response) {
-                        // Maneja la respuesta del servidor (puede ser un mensaje de éxito, error, etc.)
-                        Swal.fire('Éxito', 'Usuario actualizado correctamente', 'success');
-                        // Actualiza la tabla para reflejar los cambios
-                        table.ajax.reload();
-                    },
-                    error: function () {
-                        // Maneja los errores de la solicitud AJAX
-                        Swal.fire('Error', 'Hubo un error al actualizar el usuario', 'error');
-                    }
-                });
-
-                // Retorna una promesa para que SweetAlert2 espere a la resolución de la solicitud AJAX
-                return new Promise(function (resolve) {
-                    resolve();
-                });
-            }
-        });
-    }
+  
 });
 </script>
 
