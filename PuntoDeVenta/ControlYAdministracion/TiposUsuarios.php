@@ -72,16 +72,34 @@ $(document).ready(function () {
         { "data": 2 }, // Cambia a 2 en lugar de 'data'
         { "data": 3 }, // Cambia a 3 en lugar de 'data'
         { "data": 4 }, // Cambia a 4 en lugar de 'data'
-        { 
-            "data": null,
-            "render": function (data, type, row) {
-                return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
-            }
-        }
+        {
+                        "data": null,
+                        "render": function (data, type, row) {
+                            // Usa un atributo data para almacenar el ID
+                            return '<button class="btn btn-primary btn-sm edit-btn" data-id="' + row[0] + '">Editar</button>';
+                        }
+                    }
     ]
     });
 
-  
+   // Agrega un evento clic para el botón "Editar"
+   $('#userTable').on('click', '.edit-btn', function () {
+                var userId = $(this).data('id');
+                
+                // Realiza una consulta SQL para obtener los datos del usuario con el ID correspondiente
+                // Aquí debes implementar tu lógica para obtener los datos del usuario desde tu base de datos
+                // y luego mostrarlos en un modal o SweetAlert.
+
+                // Ejemplo de SweetAlert:
+                Swal.fire({
+                    title: 'Editar Usuario',
+                    html: 'Aquí puedes mostrar los datos del usuario con ID ' + userId,
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar cambios',
+                    cancelButtonText: 'Cancelar'
+                    // Puedes personalizar más opciones de SweetAlert según tus necesidades
+                });
+            });
 
   
 });
