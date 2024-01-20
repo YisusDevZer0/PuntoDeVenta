@@ -62,7 +62,7 @@ $(document).ready(function () {
     var table = $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
-        "ajax": "Controladores/datatable_server.php",
+        "ajax": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/datatable_server.php",
         "columns": [
             { "data": "ID_User" },
             { "data": "TipoUsuario" },
