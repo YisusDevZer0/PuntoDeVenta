@@ -17,11 +17,11 @@
     <input id="csrf_token" name="csrf_token" value="<?php echo obtener_token_csrf(); ?>">
                 <div class="mb-3">
                   <label for="tipoUsuario" class="form-label">Tipo de Usuario</label>
-                  <input type="text" class="form-control" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
                 </div>
                 
-                <input type="text" class="form-control" id="licencia" value="<?php echo $row['Licencia']?>">
-                <input type="text" class="form-control" id="agrego"<?php echo $row['Nombre_Apellidos']?> >
+                <input type="text" class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
+                <input type="text" class="form-control" name="agrego"id="agrego"<?php echo $row['Nombre_Apellidos']?> >
                                <!-- Agrega los otros campos del formulario de manera similar -->
                 <!-- ... -->
 

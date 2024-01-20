@@ -1,7 +1,7 @@
 <?php
 // config.php
-include "config.php";
-include "obtenertoken";
+include "Config.php";
+
 
 
 
