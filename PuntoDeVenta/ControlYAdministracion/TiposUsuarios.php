@@ -40,10 +40,11 @@ include_once "Controladores/ControladorUsuario.php"
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Tipos de Usuarios</h6>
             <div class="table-responsive">
+                <div class="text-center">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar Usuario
 </button>
-
+</div>
 
                 <table class="table" id="userTable">
                     <thead>
