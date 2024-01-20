@@ -70,7 +70,7 @@ $(document).ready(function () {
             { "data": "Creadoel" },
             { "data": "Creado" },
             { 
-                "data": null,
+                "data": "",
                 "render": function (data, type, row) {
                     return '<button class="btn btn-primary btn-sm edit-btn">Editar</button>';
                 }
