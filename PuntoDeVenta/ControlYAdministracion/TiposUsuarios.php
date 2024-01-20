@@ -63,7 +63,8 @@ $(document).ready(function () {
         "processing": true,
         "serverSide": true,
         "ajax": "Controladores/datatable_server.php",
-        { "data": 0 },  // Cambiado de "ID_User" a 0
+        "columns": [
+            { "data": 0 },  // Cambiado de "ID_User" a 0
             { "data": 1 },  // Cambiado de "TipoUsuario" a 1
             { "data": 2 },  // Cambiado de "Licencia" a 2
             { "data": 3 },  // Cambiado de "Creadoel" a 3
