@@ -13,8 +13,8 @@ $columns = array(
     array('db' => 'TipoUsuario', 'dt' => 1),
     array('db' => 'Licencia', 'dt' => 2),
     array('db' => 'Creadoel', 'dt' => 3),
-    array('db' => 'Creado', 'dt' => 4)
-    
+    array('db' => 'Creado', 'dt' => 4),
+    array('db' => '', 'dt' => 5)
 );
 
 // Utiliza la función de SSP para obtener los datos
