@@ -147,7 +147,9 @@ $(document).ready(function () {
 
             </div>   </div>
             <!-- Footer Start -->
-            <?php include "Footer.php";?>
+            <?php 
+            include "Modales/NuevoTipoUsuario.php";
+            include "Footer.php";?>
 </body>
 
 </html>
