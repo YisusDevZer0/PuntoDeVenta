@@ -82,40 +82,60 @@ $(document).ready(function () {
     ]
     });
 
-  // Agrega un evento clic para el botón "Editar"
-  $('#userTable').on('click', '.edit-btn', function () {
-                var userId = $(this).data('id');
+    $('#userTable').on('click', '.edit-btn', function () {
+        var userId = $(this).data('id');
 
-                // Realiza una petición AJAX para obtener los datos del usuario
-                $.ajax({
-                    url: 'Controladores/ObtieneDatosTipoUsuario.php',
-                    type: 'GET',
-                    data: { user_id: userId },
-                    dataType: 'json',
-                    success: function (data) {
-                        // Muestra los datos del usuario en un SweetAlert
-                        Swal.fire({
-                            title: 'Editar Usuario',
-                            html:
-        '<form id="editForm">' +
-        '<label for="tipoUsuario">Tipo de Usuario:</label>' +
-        '<input type="text" id="tipoUsuario" name="tipoUsuario" value="' + data.TipoUsuario + '" required>' +
-        '<br>' +
-        '<label for="licencia">Licencia:</label>' +
-        '<input type="text" id="licencia" name="licencia" value="' + data.Licencia + '" required>' +
-        '</form>',
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un problema al obtener los datos del usuario.'
-                        });
+        // Realiza una solicitud AJAX para obtener los datos del usuario
+        $.ajax({
+            url: 'Controladores/ObtieneDatosTipoUsuario.php',
+            type: 'GET',
+            data: { user_id: userId },
+            dataType: 'json',
+            success: function (data) {
+                // Muestra los datos del usuario en un SweetAlert con un formulario
+                Swal.fire({
+                    title: 'Editar Usuario',
+                    html:
+                        '<form id="editForm">' +
+                        '<div class="mb-3">' +
+                        '<label for="tipoUsuario" class="form-label">Tipo de Usuario:</label>' +
+                        '<input type="text" class="form-control" id="tipoUsuario" name="tipoUsuario" value="' + data.TipoUsuario + '" required>' +
+                        '</div>' +
+                        '<div class="mb-3">' +
+                        '<label for="licencia" class="form-label">Licencia:</label>' +
+                        '<input type="text" class="form-control" id="licencia" name="licencia" value="' + data.Licencia + '" required>' +
+                        '</div>' +
+                        '</form>',
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar cambios',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: () => {
+                        // Obtén los valores del formulario al confirmar
+                        return {
+                            tipoUsuario: document.getElementById('tipoUsuario').value,
+                            licencia: document.getElementById('licencia').value
+                        };
+                    }
+                }).then((result) => {
+                    // `result.value` contendrá los datos del formulario si se hizo clic en "Guardar cambios"
+                    if (result.value) {
+                        // Realiza una solicitud AJAX o realiza cualquier otra acción necesaria para guardar los cambios
+                        console.log(result.value);
+                        // Aquí puedes realizar una solicitud AJAX para guardar los cambios en la base de datos
+                        // ...
                     }
                 });
-            });
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al obtener los datos del usuario.'
+                });
+            }
         });
+    });
+});
 </script>
 
 
