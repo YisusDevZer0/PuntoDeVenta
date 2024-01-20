@@ -62,7 +62,7 @@ $(document).ready(function () {
     var table = $('#userTable').DataTable({
         "processing": true,
         "serverSide": true,
-        "ajax": "datatable_server.php",
+        "ajax": "Controladores/datatable_server.php",
         "columns": [
             { "data": "ID_User" },
             { "data": "TipoUsuario" },
