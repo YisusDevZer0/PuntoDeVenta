@@ -41,29 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Personal activo</h6>
             <div id="tablaPersonalactivo"></div>
-            <div class="table-responsive">
-                <div class="text-center">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar Usuario
-</button>
-</div>
-
-                <table class="table" id="userTable">
-                    <thead>
-                        <tr>
-                            <th>ID User</th>
-                            <th>Tipo de Usuario</th>
-                            <th>Licencia</th>
-                            <th>Creado el</th>
-                            <th>Creado</th>
-                            <th>Editar</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
+            
 <script src="js/Personalactivo.js"></script>
 <script src="js/Agregarnuevopersonal.js"></script>
 
