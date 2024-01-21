@@ -8,5 +8,4 @@ function CargaPersonalactivo(){
   }
   
   
-  
-  CargaProductos();
+  CargaPersonalactivo();
