@@ -1,22 +1,10 @@
 $(document).ready(function () {
-    // Función para obtener el token CSRF
-    function obtenerTokenCSRF() {
-        var token = ''; // Tu lógica para obtener el token CSRF aquí
-        return token;
-    }
-
     // Evento submit del formulario
     $('#NewTypeUser').submit(function (e) {
         e.preventDefault();
 
-        // Obtener el token CSRF
-        var csrfToken = obtenerTokenCSRF();
-
         // Crear objeto FormData con los datos del formulario
         var formData = new FormData(this);
-
-        // Agregar el token CSRF al formulario
-        formData.append('csrf_token', csrfToken);
 
         // Realizar la solicitud Ajax
         $.ajax({

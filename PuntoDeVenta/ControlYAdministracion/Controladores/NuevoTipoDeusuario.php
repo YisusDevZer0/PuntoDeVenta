@@ -1,11 +1,9 @@
 <?php
-// config.php
+// Incluir la configuración y la conexión a la base de datos
 include "Config.php";
 
-// Obtener token CSRF
-include "obtenertoken.php";
-// Verificar si la solicitud es POST y contiene un token CSRF válido
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === obtener_token_csrf()) {
+// Verificar si la solicitud es POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Obtener datos del formulario
     $tipoUsuario = $_POST['tipoUsuario'];
     $licencia = $_POST['licencia'];
@@ -28,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
         $stmt->close();
     }
 } else {
-    $respuesta = array('success' => false, 'message' => 'Token CSRF no válido.');
+    // No es una solicitud POST válida
+    $respuesta = array('success' => false, 'message' => 'Solicitud no válida.');
 }
 
 // Devolver respuesta en formato JSON
