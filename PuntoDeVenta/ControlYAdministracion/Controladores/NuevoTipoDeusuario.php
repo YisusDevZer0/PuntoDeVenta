@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $respuesta = array('success' => false, 'message' => 'Todos los campos son obligatorios.');
     } else {
         // Preparar y ejecutar la consulta preparada
-        $stmt = $conexion->prepare('INSERT INTO tu_tabla (TipoUsuario, Licencia, Agrego) VALUES (?, ?, ?)');
+        $stmt = $conexion->prepare('INSERT INTO Tipos_Usuarios (TipoUsuario, Licencia, Agrego) VALUES (?, ?, ?)');
         $stmt->bind_param('sss', $tipoUsuario, $licencia, $agrego);
 
         if ($stmt->execute()) {
