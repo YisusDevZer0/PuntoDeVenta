@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     // No es una solicitud POST válida
-    $respuesta = array('success' => false, 'message' => 'Solicitud no válida.');
+    $respuesta = array('success' => false, 'message' => 'Solicitud no valida.');
 }
 
 // Devolver respuesta en formato JSON
