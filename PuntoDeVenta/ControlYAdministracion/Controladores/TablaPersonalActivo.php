@@ -179,27 +179,17 @@ tabla = $('#Productos').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "Consultas/ArrayPersonalActivo.php",
  "aoColumns": [
-    { mData: 'IdbD' },
-       { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'Clave_interna' },
-       { mData: 'Clave_Levic' },
-       { mData: 'Cod_Enfermeria' },
-       { mData: 'Precio_C' },
-       { mData: 'Precio_Venta' },
-       { mData: 'Nom_Serv' },
-       { mData: 'Tipo' },
-       { mData: 'Categoria' },
-       { mData: 'Marca' },
-       { mData: 'Presentacion' },
-       { mData: 'Proveedor1' },
-       { mData: 'Proveedor2' },
-       { mData: 'AgregadoPor' },
-    //    { mData: 'Stock' },
-    //    { mData: 'Vendido' },
-    //    { mData: 'Saldo' },
+    { mData: 'Idpersonal' },
+       { mData: 'NombreApellidos' },
+       { mData: 'Foto' },
+       { mData: 'Tipousuario' },
+       { mData: 'Sucursal' },
+       { mData: 'CreadoEl' },
+       { mData: 'Estatus' },
+       { mData: 'CreadoPor' },
+       
        { mData: 'Acciones' },
-       { mData: 'AccionesEnfermeria' },
+    
   
       ],
      
@@ -258,18 +248,7 @@ tabla = $('#Productos').DataTable({
     <th>PC</th>
     <th>PV </th>
     <th>Servicio </th>
-    <th>Tipo</th>
-    <th>Categoria</th>
-    <th>Marca </th>
-    <th>Presentacion </th>
-    <th>Proveedor</th>
-    <th>Proveedor</th>
-    <th>Agrego</th>
-    <!-- <th>Stock </th>
-    <th>Vendido </th>
-    <th>Saldo </th>  -->
-        <th>Acciones Farmacia</th>
-        <th>Acciones Enfermeria</th>
+    <
 	
 
 
