@@ -6,7 +6,7 @@ if($_SESSION["ControlMaestro"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYadministracion/");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
 
 }
 
