@@ -9,7 +9,7 @@ $(document).ready(function () {
         // Realizar la solicitud Ajax
         $.ajax({
             type: 'POST',
-            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/GuardarNuevoUsuario.php',
+            url: 'Controladores/GuardarNuevoUsuario.php',
             data: formData,
             processData: false,
             contentType: false,
