@@ -190,11 +190,7 @@
             var mensajeDiv = document.getElementById('mensaje');
             mensajeDiv.innerHTML = '<?php echo $mensaje_localizado; ?>';
             
-            // Agrega un evento al botón de ingresar para mostrar el mensaje
-            document.getElementById('btn_ingresar').addEventListener('click', function() {
-                M.toast({html: 'Ingresando...', classes: 'rounded'});
-                // Aquí puedes agregar la lógica para enviar el formulario o realizar otras acciones
-            });
+            
         });
     </script>
     <!-- Agrega los scripts de Materialize -->
