@@ -39,6 +39,8 @@
     <div class="card">
         <div class="card-content">
             <span class="card-title">Inicio de sesión</span>
+            <!-- Agregar un div para mostrar el mensaje -->
+            <div id="mensaje" class="center-align"></div>
             <div class="input-field">
                 <input id="user_email" type="email" class="validate">
                 <label for="user_email">Correo electrónico</label>
@@ -49,13 +51,12 @@
             </div>
         </div>
         <div class="card-action">
-            <a href="#" class="btn waves-effect waves-light">Ingresar</a>
+            <a href="#" id="btn_ingresar" class="btn waves-effect waves-light">Ingresar</a>
         </div>
     </div>
     
-    <!-- Agrega los scripts de Materialize -->
+    <!-- Agrega los scripts de Materialize y el script PHP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
     <?php
     // Configuración de saludos según la hora del día
     $saludos = array(
@@ -111,10 +112,19 @@
     ?>
 
     <script>
-        // Muestra el mensaje de saludo dinámico
-        M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
-        // Muestra el mensaje de éxito dinámico
-        M.toast({html: '<?php echo $mensaje_localizado; ?>', classes: 'rounded'});
+        document.addEventListener('DOMContentLoaded', function() {
+            // Muestra el mensaje de saludo dinámico
+            M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
+            // Muestra el mensaje de éxito dinámico en el formulario
+            var mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.innerHTML = '<?php echo $mensaje_localizado; ?>';
+            
+            // Agrega un evento al botón de ingresar para mostrar el mensaje
+            document.getElementById('btn_ingresar').addEventListener('click', function() {
+                M.toast({html: 'Ingresando...', classes: 'rounded'});
+                // Aquí puedes agregar la lógica para enviar el formulario o realizar otras acciones
+            });
+        });
     </script>
 </body>
 </html>
