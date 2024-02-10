@@ -51,8 +51,9 @@
             </div>
         </div>
         <div class="card-action">
-            <a href="#" id="btn_ingresar" class="btn waves-effect waves-light">Ingresar</a>
-        </div>
+    <a href="#" id="btn_ingresar" class="btn waves-effect waves-light red">Ingresar</a>
+</div>
+
     </div>
     
     <!-- Agrega los scripts de Materialize y el script PHP -->
