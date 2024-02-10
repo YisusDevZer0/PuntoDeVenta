@@ -47,7 +47,7 @@
 <body>
     <!-- Loader para mostrar mientras se carga la animación de los peces -->
     <div id="loader-container">
-        <div id="loader" style="width: 100px; height: 100px; border: 10px solid #f3f3f3; border-top: 10px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite;"></div>
+        <div id="loader" style="width: 500px; height: 500px; border: 10px solid #f3f3f3; border-top: 10px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite;"></div>
         <p style="margin-top: 20px;">Cargando animación...</p>
     </div>
 
