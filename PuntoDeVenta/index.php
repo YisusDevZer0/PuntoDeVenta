@@ -103,11 +103,11 @@
             }
 
             // Oculta el loader después de un tiempo ficticio (simula la carga de los peces)
-            setTimeout(function() {
-                noCanvas(); // Elimina el canvas una vez que se han cargado los peces
-                document.getElementById("loader-container").style.display = "none"; // Oculta el loader
-                document.getElementById("login-container").style.display = "block"; // Muestra el contenedor de inicio de sesión
-            }, 2000); // Ajusta el tiempo según la duración de carga deseada
+            // setTimeout(function() {
+            //     noCanvas(); // Elimina el canvas una vez que se han cargado los peces
+            //     document.getElementById("loader-container").style.display = "none"; // Oculta el loader
+            //     document.getElementById("login-container").style.display = "block"; // Muestra el contenedor de inicio de sesión
+            // }, 2000); // Ajusta el tiempo según la duración de carga deseada
         }
 
         // Dibuja solo los peces
