@@ -81,15 +81,47 @@
     $mensajes_exito_ventas_es = array(
         "¡Bienvenido de nuevo! 🚀 Prepárate para alcanzar nuevas alturas de éxito.",
         "Te damos la bienvenida. El éxito y las ventas te esperan en cada paso que tomes. 💼",
-        // Otros mensajes en español...
+        "Hoy es otro día para lograr grandes ventas. ¡Vamos por ello! 💪",
+        "¡Hola campeón! Este es tu momento para brillar y cerrar esas ventas. 🌟",
+        "Bienvenido de vuelta. Estamos emocionados por tus éxitos venideros y ventas increíbles. 🎉",
+        "¡Cada nuevo día es una oportunidad para superarte a ti mismo! 🌈",
+        "La única forma de hacer un gran trabajo es amar lo que haces. 💙",
+        "¡Nunca subestimes el poder de la persistencia y la dedicación! 🚀",
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💪",
+        "No hay atajos para el éxito, pero cada pequeño paso cuenta. 🏃‍♂️",
+        "La clave del éxito está en actuar con determinación y confianza. 🗝️",
+        "¡Tú eres capaz de lograr cosas asombrosas! Cree en ti mismo. 🌟",
+        "Cada desafío es una oportunidad para crecer. ¡Acepta el desafío! 🌱",
+        "La perseverancia no es una carrera larga; es muchas carreras cortas, una tras otra. 🏁",
+        "No te preocupes por los errores, son oportunidades para aprender y mejorar. 🛠️",
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💼",
+        "Nunca es tarde para ser quien podrías haber sido. 🌅",
+        "La diferencia entre un sueño y un objetivo es un plan y un plazo. 🎯",
+        "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito. 😊",
     );
-
+    
     $mensajes_exito_ventas_en = array(
         "Welcome back! 🚀 Get ready to reach new heights of success.",
         "Welcome aboard. Success and sales await you with every step you take. 💼",
-        // Otros mensajes en inglés...
+        "Today is another day to achieve great sales. Let's go for it! 💪",
+        "Hello champion! This is your time to shine and close those sales. 🌟",
+        "Welcome back. We are excited for your upcoming successes and incredible sales. 🎉",
+        "Every new day is an opportunity to surpass yourself! 🌈",
+        "The only way to do great work is to love what you do. 💙",
+        "Never underestimate the power of persistence and dedication! 🚀",
+        "Success is the sum of small efforts repeated day in and day out. 💪",
+        "There are no shortcuts to success, but every small step counts. 🏃‍♂️",
+        "The key to success is to act with determination and confidence. 🗝️",
+        "You are capable of achieving amazing things! Believe in yourself. 🌟",
+        "Every challenge is an opportunity to grow. Accept the challenge! 🌱",
+        "Perseverance is not a long race; it is many short races, one after another. 🏁",
+        "Don't worry about mistakes, they are opportunities to learn and improve. 🛠️",
+        "Success is the sum of small efforts repeated day in and day out. 💼",
+        "It's never too late to be who you could have been. 🌅",
+        "The difference between a dream and a goal is a plan and a deadline. 🎯",
+        "Success is not the key to happiness. Happiness is the key to success. 😊",
     );
-
+    
     // Función para obtener el mensaje en el idioma seleccionado
     function obtener_mensaje_localizado($idioma) {
         global $mensajes_exito_ventas_es, $mensajes_exito_ventas_en;
