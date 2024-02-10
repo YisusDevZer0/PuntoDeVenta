@@ -9,7 +9,7 @@ $(document).ready(function () {
         // Realizar la solicitud Ajax
         $.ajax({
             type: 'POST',
-            url: 'Controladores/NuevoTipoDeusuario.php',
+            url: 'Controladores/NuevoTipoDeusuarios.php',
             data: formData,
             processData: false,
             contentType: false,
