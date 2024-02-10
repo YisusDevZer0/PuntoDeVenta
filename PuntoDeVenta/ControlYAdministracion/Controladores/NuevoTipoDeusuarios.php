@@ -9,25 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $licencia = $_POST['licencia'];
     $agrego = $_POST['agrego'];
 
-    // Validar los datos (puedes agregar más validaciones según tus necesidades)
-    if (empty($tipoUsuario) || empty($licencia) || empty($agrego)) {
-        $respuesta = array('success' => false, 'message' => 'Todos los campos son obligatorios.');
+    // Insertar datos en la base de datos
+    $query = "INSERT INTO Tipos_Usuarios (TipoUsuario, Licencia, Agrego) VALUES (?, ?, ?)";
+    $stmt = $conexion->prepare($query);
+    $stmt->bind_param('sss', $tipoUsuario, $licencia, $agrego);
+
+    if ($stmt->execute()) {
+        $respuesta = array('success' => true);
     } else {
-        // Preparar y ejecutar la consulta preparada
-        $stmt = $conexion->prepare('INSERT INTO Tipos_Usuarios (TipoUsuario, Licencia, Agrego) VALUES (?, ?, ?)');
-        $stmt->bind_param('sss', $tipoUsuario, $licencia, $agrego);
-
-        if ($stmt->execute()) {
-            $respuesta = array('success' => true);
-        } else {
-            $respuesta = array('success' => false, 'message' => 'Error al insertar en la base de datos: ' . $stmt->error);
-        }
-
-        $stmt->close();
+        $respuesta = array('success' => false, 'message' => 'Error al insertar en la base de datos: ' . $stmt->error);
     }
+
+    // Cerrar la consulta
+    $stmt->close();
 } else {
     // No es una solicitud POST válida
-    $respuesta = array('success' => false, 'message' => 'Solicitud no valida.');
+    $respuesta = array('success' => false, 'message' => 'Solicitud no válida.');
 }
 
 // Devolver respuesta en formato JSON
