@@ -1,3 +1,49 @@
+<?php
+// Configuración de saludos según la hora del día
+$saludos = array(
+    "Buenos días",
+    "Buenas tardes",
+    "Buenas noches"
+);
+
+// Obtener la hora actual del servidor
+$hora_actual = date("H");
+
+// Determinar el saludo según la hora del día
+if ($hora_actual >= 5 && $hora_actual < 12) {
+    $saludo = $saludos[0]; // Mañana
+} elseif ($hora_actual >= 12 && $hora_actual < 18) {
+    $saludo = $saludos[1]; // Tarde
+} else {
+    $saludo = $saludos[2]; // Noche
+}
+
+// Configuración de mensajes de éxito y ventas con iconos
+$mensajes_exito_ventas = array(
+  "¡Bienvenido de nuevo! 🚀 Prepárate para alcanzar nuevas alturas de éxito.",
+  "Te damos la bienvenida. El éxito y las ventas te esperan en cada paso que tomes. 💼",
+  "Hoy es otro día para lograr grandes ventas. ¡Vamos por ello! 💪",
+  "¡Hola campeón! Este es tu momento para brillar y cerrar esas ventas. 🌟",
+  "Bienvenido de vuelta. Estamos emocionados por tus éxitos venideros y ventas increíbles. 🎉",
+  "¡Cada nuevo día es una oportunidad para superarte a ti mismo! 🌈",
+  "La única forma de hacer un gran trabajo es amar lo que haces. 💙",
+  "¡Nunca subestimes el poder de la persistencia y la dedicación! 🚀",
+  "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💪",
+  "No hay atajos para el éxito, pero cada pequeño paso cuenta. 🏃‍♂️",
+  "La clave del éxito está en actuar con determinación y confianza. 🗝️",
+  "¡Tú eres capaz de lograr cosas asombrosas! Cree en ti mismo. 🌟",
+  "Cada desafío es una oportunidad para crecer. ¡Acepta el desafío! 🌱",
+  "La perseverancia no es una carrera larga; es muchas carreras cortas, una tras otra. 🏁",
+  "No te preocupes por los errores, son oportunidades para aprender y mejorar. 🛠️",
+  "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💼",
+  "Nunca es tarde para ser quien podrías haber sido. 🌅",
+  "La diferencia entre un sueño y un objetivo es un plan y un plazo. 🎯",
+  "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito. 😊",
+);
+
+// Obtener un mensaje aleatorio
+$mensaje_aleatorio = $mensajes_exito_ventas[array_rand($mensajes_exito_ventas)];
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
