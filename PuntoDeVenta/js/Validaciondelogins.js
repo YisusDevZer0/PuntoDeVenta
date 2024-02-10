@@ -34,12 +34,11 @@ $('document').ready(function() {
             url: 'Consultas/ValidadorUsuario.php',
             data: data,
             beforeSend: function() {    
-                $("#error").fadeOut();
-                $("#login_button").html("Validando...");
+               
             },
             success: function(response) {                        
                 // Oculta el modal de validación
-                $('#Validacion').modal('hide');
+              
                 if (response == "ok") {                                    
                     // Muestra un Sweet Alert de bienvenida
                     Swal.fire({
@@ -65,7 +64,7 @@ $('document').ready(function() {
                         timer: 2000,
                         onClose: function() {
                             // Restaura el texto del botón a "Ingresar"
-                            $("#login_button").html('<span></span> &nbsp; Ingresar');
+                            
                         }
                     });
                 }
