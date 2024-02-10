@@ -143,20 +143,23 @@
     $mensaje_localizado = obtener_mensaje_localizado($idioma_seleccionado);
     ?>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Muestra el mensaje de saludo dinámico
-            M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Muestra el mensaje de saludo dinámico centrado en la pantalla
+        M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded', displayLength: 2000, completeCallback: function() {
             // Muestra el mensaje de éxito dinámico en el formulario
             var mensajeDiv = document.getElementById('mensaje');
             mensajeDiv.innerHTML = '<?php echo $mensaje_localizado; ?>';
-            
-            // Agrega un evento al botón de ingresar para mostrar el mensaje
-            document.getElementById('btn_ingresar').addEventListener('click', function() {
-                M.toast({html: 'Ingresando...', classes: 'rounded'});
-                // Aquí puedes agregar la lógica para enviar el formulario o realizar otras acciones
-            });
+            M.toast({html: mensajeDiv, classes: 'rounded center-align'});
+        }});
+        
+        // Agrega un evento al botón de ingresar para mostrar el mensaje
+        document.getElementById('btn_ingresar').addEventListener('click', function() {
+            M.toast({html: 'Ingresando...', classes: 'rounded'});
+            // Aquí puedes agregar la lógica para enviar el formulario o realizar otras acciones
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
