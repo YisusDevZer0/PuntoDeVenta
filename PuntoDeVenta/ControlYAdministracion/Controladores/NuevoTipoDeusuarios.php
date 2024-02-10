@@ -1,5 +1,5 @@
 <?php
-    include_once 'db_connection.php';
+    include_once 'db_connect.php';
 
     $tipoUsuario = $_POST['tipoUsuario'];
     $licencia = $_POST['licencia'];
