@@ -204,10 +204,10 @@
             }, 3000); // 3000 milisegundos = 3 segundos
 
             // Agrega un evento al botón de ingresar para mostrar el mensaje
-            document.getElementById('btn_ingresar').addEventListener('click', function() {
-                M.toast({html: 'Ingresando...', classes: 'rounded'});
-                // Aquí puedes agregar la lógica para enviar el formulario o realizar otras acciones
-            });
+            // document.getElementById('btn_ingresar').addEventListener('click', function() {
+            //     M.toast({html: 'Ingresando...', classes: 'rounded'});
+                
+            // });
         });
     </script>
 </body>
