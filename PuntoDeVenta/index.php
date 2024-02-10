@@ -84,11 +84,11 @@
                 ?>
             </div>
             <div class="input-field">
-                <input id="user_email" type="email" class="validate" name="user_email" id="user_email">
+                <input id="user_email" type="email" class="validate" name="user_email" >
                 <label for="user_email">Correo electrónico</label>
             </div>
             <div class="input-field">
-                <input id="password" type="password" class="validate" name="password" id="password">
+                <input id="password" type="password" class="validate" name="password">
                 <label for="password">Contraseña</label>
             </div>
         </div>
