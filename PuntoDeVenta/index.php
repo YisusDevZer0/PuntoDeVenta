@@ -55,5 +55,66 @@
     
     <!-- Agrega los scripts de Materialize -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <?php
+    // Configuración de saludos según la hora del día
+    $saludos = array(
+        "Buenos días",
+        "Buenas tardes",
+        "Buenas noches"
+    );
+
+    // Obtener la hora actual del servidor
+    $hora_actual = date("H");
+
+    // Determinar el saludo según la hora del día
+    if ($hora_actual >= 5 && $hora_actual < 12) {
+        $saludo = $saludos[0]; // Mañana
+    } elseif ($hora_actual >= 12 && $hora_actual < 18) {
+        $saludo = $saludos[1]; // Tarde
+    } else {
+        $saludo = $saludos[2]; // Noche
+    }
+
+    // Configuración de mensajes de éxito y ventas en español e inglés
+    $mensajes_exito_ventas_es = array(
+        "¡Bienvenido de nuevo! 🚀 Prepárate para alcanzar nuevas alturas de éxito.",
+        "Te damos la bienvenida. El éxito y las ventas te esperan en cada paso que tomes. 💼",
+        // Otros mensajes en español...
+    );
+
+    $mensajes_exito_ventas_en = array(
+        "Welcome back! 🚀 Get ready to reach new heights of success.",
+        "Welcome aboard. Success and sales await you with every step you take. 💼",
+        // Otros mensajes en inglés...
+    );
+
+    // Función para obtener el mensaje en el idioma seleccionado
+    function obtener_mensaje_localizado($idioma) {
+        global $mensajes_exito_ventas_es, $mensajes_exito_ventas_en;
+        switch ($idioma) {
+            case 'es':
+                return $mensajes_exito_ventas_es[array_rand($mensajes_exito_ventas_es)];
+                break;
+            case 'en':
+                return $mensajes_exito_ventas_en[array_rand($mensajes_exito_ventas_en)];
+                break;
+            // Otros casos para más idiomas...
+            default:
+                return "Idioma no compatible";
+        }
+    }
+
+    // Obtener el mensaje en el idioma seleccionado (por ejemplo, español 'es' o inglés 'en')
+    $idioma_seleccionado = "es"; // Puedes obtener este valor dinámicamente según la configuración del usuario
+    $mensaje_localizado = obtener_mensaje_localizado($idioma_seleccionado);
+    ?>
+
+    <script>
+        // Muestra el mensaje de saludo dinámico
+        M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
+        // Muestra el mensaje de éxito dinámico
+        M.toast({html: '<?php echo $mensaje_localizado; ?>', classes: 'rounded'});
+    </script>
 </body>
 </html>
