@@ -33,26 +33,10 @@
         .btn:hover {
             background-color: #960056;
         }
-        #loader-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        #login-container {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <!-- Loader para mostrar mientras se carga la animación de los peces -->
-    <div id="loader-container">
-        <div id="loader" style="width: 500px; height: 500px; border: 10px solid #f3f3f3; border-top: 10px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite;"></div>
-        <p style="margin-top: 20px;">Cargando animación...</p>
-    </div>
-
-    <!-- Tarjeta de inicio de sesión -->
-    <div id="login-container" class="card">
+    <div class="card">
         <div class="card-content">
             <span class="card-title">Inicio de sesión</span>
             <!-- Agregar un div para mostrar el mensaje -->
@@ -67,85 +51,13 @@
             </div>
         </div>
         <div class="card-action">
-            <a href="#" id="btn_ingresar" class="btn waves-effect waves-light red">Ingresar</a>
-        </div>
+    <a href="#" id="btn_ingresar" class="btn waves-effect waves-light red">Ingresar</a>
+</div>
+
     </div>
     
     <!-- Agrega los scripts de Materialize y el script PHP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Precarga la animación de los peces
-            preload();
-        });
-
-        // Define las variables globales
-        let img, peces;
-
-        // Precarga solo la imagen de los peces
-        function preload() {
-            img = loadImage("https://i.ibb.co/phvXBP8/fish-unscreen-1.gif", function() {
-                // Una vez cargada la imagen, inicializa la animación
-                setup();
-            });
-        }
-
-        // Inicializa solo la animación de los peces
-        function setup() {
-            let canvas = createCanvas(100, 100); // Crea un canvas pequeño para cargar los peces
-            canvas.parent('loader-container'); // Adjunta el canvas al contenedor del preloader
-            peces = [];
-            img.actualFrame = 0;
-
-            for (let i = 0; i < 5; i++) { // Carga solo 5 peces para el preloader
-                peces.push(new Pez());
-            }
-
-            // Oculta el loader después de un tiempo ficticio (simula la carga de los peces)
-            // setTimeout(function() {
-            //     noCanvas(); // Elimina el canvas una vez que se han cargado los peces
-            //     document.getElementById("loader-container").style.display = "none"; // Oculta el loader
-            //     document.getElementById("login-container").style.display = "block"; // Muestra el contenedor de inicio de sesión
-            // }, 2000); // Ajusta el tiempo según la duración de carga deseada
-        }
-
-        // Dibuja solo los peces
-        function draw() {
-            for (const p of peces) {
-                p.dibujar();
-            }
-        }
-
-        class Pez {
-            constructor() {
-                let angulo_inicio = random(2 * PI);
-                this.posicion = createVector(angulo_inicio, random(50, 400));
-                this.aceleracion = createVector(-sin(angulo_inicio), cos(angulo_inicio)).mult((random() < 0.5 ? -1 : 1) * random(100, 400));
-                this.escala = random(0.2, 0.6);
-            }
-
-            dibujar() {
-                push();
-                this.posicion.add(this.aceleracion.copy().mult(0.01)); // Modifica la posición del pez
-                translate(this.posicion.x, this.posicion.y);
-                rotate(this.aceleracion.heading() - PI / 2);
-                scale(this.escala, this.escala);
-                translate(-img.width / 2, -img.height);
-                img.setFrame(int(img.actualFrame));
-                img.actualFrame += 0.2;
-                img.actualFrame %= img.numFrames();
-                image(img, 0, 0);
-                pop();
-            }
-        }
-    </script>
-</body>
-</html>
-
-    <!-- Agrega los scripts de Materialize y el script PHP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    
     <?php
     // Configuración de saludos según la hora del día
     $saludos = array(
@@ -170,15 +82,47 @@
     $mensajes_exito_ventas_es = array(
         "¡Bienvenido de nuevo! 🚀 Prepárate para alcanzar nuevas alturas de éxito.",
         "Te damos la bienvenida. El éxito y las ventas te esperan en cada paso que tomes. 💼",
-        // Otros mensajes en español...
+        "Hoy es otro día para lograr grandes ventas. ¡Vamos por ello! 💪",
+        "¡Hola campeón! Este es tu momento para brillar y cerrar esas ventas. 🌟",
+        "Bienvenido de vuelta. Estamos emocionados por tus éxitos venideros y ventas increíbles. 🎉",
+        "¡Cada nuevo día es una oportunidad para superarte a ti mismo! 🌈",
+        "La única forma de hacer un gran trabajo es amar lo que haces. 💙",
+        "¡Nunca subestimes el poder de la persistencia y la dedicación! 🚀",
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💪",
+        "No hay atajos para el éxito, pero cada pequeño paso cuenta. 🏃‍♂️",
+        "La clave del éxito está en actuar con determinación y confianza. 🗝️",
+        "¡Tú eres capaz de lograr cosas asombrosas! Cree en ti mismo. 🌟",
+        "Cada desafío es una oportunidad para crecer. ¡Acepta el desafío! 🌱",
+        "La perseverancia no es una carrera larga; es muchas carreras cortas, una tras otra. 🏁",
+        "No te preocupes por los errores, son oportunidades para aprender y mejorar. 🛠️",
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día. 💼",
+        "Nunca es tarde para ser quien podrías haber sido. 🌅",
+        "La diferencia entre un sueño y un objetivo es un plan y un plazo. 🎯",
+        "El éxito no es la clave de la felicidad. La felicidad es la clave del éxito. 😊",
     );
     
     $mensajes_exito_ventas_en = array(
         "Welcome back! 🚀 Get ready to reach new heights of success.",
         "Welcome aboard. Success and sales await you with every step you take. 💼",
-        // Otros mensajes en inglés...
+        "Today is another day to achieve great sales. Let's go for it! 💪",
+        "Hello champion! This is your time to shine and close those sales. 🌟",
+        "Welcome back. We are excited for your upcoming successes and incredible sales. 🎉",
+        "Every new day is an opportunity to surpass yourself! 🌈",
+        "The only way to do great work is to love what you do. 💙",
+        "Never underestimate the power of persistence and dedication! 🚀",
+        "Success is the sum of small efforts repeated day in and day out. 💪",
+        "There are no shortcuts to success, but every small step counts. 🏃‍♂️",
+        "The key to success is to act with determination and confidence. 🗝️",
+        "You are capable of achieving amazing things! Believe in yourself. 🌟",
+        "Every challenge is an opportunity to grow. Accept the challenge! 🌱",
+        "Perseverance is not a long race; it is many short races, one after another. 🏁",
+        "Don't worry about mistakes, they are opportunities to learn and improve. 🛠️",
+        "Success is the sum of small efforts repeated day in and day out. 💼",
+        "It's never too late to be who you could have been. 🌅",
+        "The difference between a dream and a goal is a plan and a deadline. 🎯",
+        "Success is not the key to happiness. Happiness is the key to success. 😊",
     );
-
+    
     // Función para obtener el mensaje en el idioma seleccionado
     function obtener_mensaje_localizado($idioma) {
         global $mensajes_exito_ventas_es, $mensajes_exito_ventas_en;
@@ -203,7 +147,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Muestra el mensaje de saludo dinámico
-            M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
+            // M.toast({html: '<?php echo $saludo; ?>', classes: 'rounded'});
             // Muestra el mensaje de éxito dinámico en el formulario
             var mensajeDiv = document.getElementById('mensaje');
             mensajeDiv.innerHTML = '<?php echo $mensaje_localizado; ?>';
