@@ -40,7 +40,7 @@
             height: 100vh;
         }
         .loader-container img {
-            width: 100px; /* Ajusta el ancho según tu GIF */
+            width: 150px; /* Ajusta el ancho del loader */
             height: auto; /* Esto mantiene la proporción de aspecto */
         }
     </style>
