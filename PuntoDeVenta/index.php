@@ -33,75 +33,26 @@
         .btn:hover {
             background-color: #960056;
         }
+        #loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #login-container {
+            display: none;
+        }
     </style>
 </head>
 <body>
-<div id="loader-container" class="center-align" style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    <div id="loader" style="width: 100px; height: 100px; border: 10px solid #f3f3f3; border-top: 10px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite;"></div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-<script>
-    // Define las variables globales
-    let img, peces;
+    <!-- Loader para mostrar mientras se carga la animación de los peces -->
+    <div id="loader-container">
+        <div id="loader" style="width: 100px; height: 100px; border: 10px solid #f3f3f3; border-top: 10px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite;"></div>
+        <p style="margin-top: 20px;">Cargando animación...</p>
+    </div>
 
-    // Precarga solo la imagen de los peces
-    function preload() {
-        img = {
-            pez: loadImage("https://i.ibb.co/phvXBP8/fish-unscreen-1.gif")
-        }
-    }
-
-    // Inicializa solo la animación de los peces
-    function setup() {
-        let canvas = createCanvas(100, 100); // Crea un canvas pequeño para cargar los peces
-        canvas.parent('loader-container'); // Adjunta el canvas al contenedor del preloader
-        peces = [];
-        img.pez.actualFrame = 0;
-
-        for (let i = 0; i < 5; i++) { // Carga solo 5 peces para el preloader
-            peces.push(new Pez());
-        }
-
-        // Oculta el loader después de un tiempo ficticio (simula la carga de los peces)
-        setTimeout(function() {
-            noCanvas(); // Elimina el canvas una vez que se han cargado los peces
-            document.getElementById("loader-container").style.display = "none"; // Oculta el loader
-            document.getElementById("login-container").style.display = "block"; // Muestra el contenedor de inicio de sesión
-        }, 2000); // Ajusta el tiempo según la duración de carga deseada
-    }
-
-    // Dibuja solo los peces
-    function draw() {
-        for (const p of peces) {
-            p.dibujar();
-        }
-    }
-
-    class Pez {
-        constructor() {
-            let angulo_inicio = random(2 * PI);
-            this.posicion = createVector(angulo_inicio, random(50, 400));
-            this.aceleracion = createVector(-sin(angulo_inicio), cos(angulo_inicio)).mult((random() < 0.5 ? -1 : 1) * random(100, 400));
-            this.escala = random(0.2, 0.6);
-        }
-
-        dibujar() {
-            push();
-            this.posicion.add(this.aceleracion.copy().mult(0.01)); // Modifica la posición del pez
-            translate(this.posicion.x, this.posicion.y);
-            rotate(this.aceleracion.heading() - PI / 2);
-            scale(this.escala, this.escala);
-            translate(-img.pez.width / 2, -img.pez.height);
-            img.pez.setFrame(int(img.pez.actualFrame));
-            img.pez.actualFrame += 0.2;
-            img.pez.actualFrame %= img.pez.numFrames();
-            image(img.pez, 0, 0);
-            pop();
-        }
-    }
-</script>
-
-    <div class="card">
+    <!-- Tarjeta de inicio de sesión -->
+    <div id="login-container" class="card">
         <div class="card-content">
             <span class="card-title">Inicio de sesión</span>
             <!-- Agregar un div para mostrar el mensaje -->
@@ -120,6 +71,80 @@
         </div>
     </div>
     
+    <!-- Agrega los scripts de Materialize y el script PHP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Precarga la animación de los peces
+            preload();
+        });
+
+        // Define las variables globales
+        let img, peces;
+
+        // Precarga solo la imagen de los peces
+        function preload() {
+            img = {
+                pez: loadImage("https://i.ibb.co/phvXBP8/fish-unscreen-1.gif", function() {
+                    // Una vez cargada la imagen, inicializa la animación
+                    setup();
+                })
+            }
+        }
+
+        // Inicializa solo la animación de los peces
+        function setup() {
+            let canvas = createCanvas(100, 100); // Crea un canvas pequeño para cargar los peces
+            canvas.parent('loader-container'); // Adjunta el canvas al contenedor del preloader
+            peces = [];
+            img.pez.actualFrame = 0;
+
+            for (let i = 0; i < 5; i++) { // Carga solo 5 peces para el preloader
+                peces.push(new Pez());
+            }
+
+            // Oculta el loader después de un tiempo ficticio (simula la carga de los peces)
+            setTimeout(function() {
+                noCanvas(); // Elimina el canvas una vez que se han cargado los peces
+                document.getElementById("loader-container").style.display = "none"; // Oculta el loader
+                document.getElementById("login-container").style.display = "block"; // Muestra el contenedor de inicio de sesión
+            }, 2000); // Ajusta el tiempo según la duración de carga deseada
+        }
+
+        // Dibuja solo los peces
+        function draw() {
+            for (const p of peces) {
+                p.dibujar();
+            }
+        }
+
+        class Pez {
+            constructor() {
+                let angulo_inicio = random(2 * PI);
+                this.posicion = createVector(angulo_inicio, random(50, 400));
+                this.aceleracion = createVector(-sin(angulo_inicio), cos(angulo_inicio)).mult((random() < 0.5 ? -1 : 1) * random(100, 400));
+                this.escala = random(0.2, 0.6);
+            }
+
+            dibujar() {
+                push();
+                this.posicion.add(this.aceleracion.copy().mult(0.01)); // Modifica la posición del pez
+                translate(this.posicion.x, this.posicion.y);
+                rotate(this.aceleracion.heading() - PI / 2);
+                scale(this.escala, this.escala);
+                translate(-img.pez.width / 2, -img.pez.height);
+                img.pez.setFrame(int(img.pez.actualFrame));
+                img.pez.actualFrame += 0.2;
+                img.pez.actualFrame %= img.pez.numFrames();
+                image(img.pez, 0, 0);
+                pop();
+            }
+        }
+    </script>
+</body>
+</html>
+
     <!-- Agrega los scripts de Materialize y el script PHP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     
