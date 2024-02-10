@@ -1,36 +1,31 @@
 <?php
-// Incluir la configuración y la conexión a la base de datos
-include "Config.php";
+    include_once 'db_connection.php';
 
-// Verificar si la solicitud es POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener datos del formulario
     $tipoUsuario = $_POST['tipoUsuario'];
     $licencia = $_POST['licencia'];
     $agrego = $_POST['agrego'];
+  
+//include database configuration file
+    
+    $sql = "SELECT TipoUsuario,Licencia,Creado FROM Tipos_Usuarios WHERE TipoUsuario='$TipoUsuario' AND Licencia='$Licencia'";
+    $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
+    $row = mysqli_fetch_assoc($resultset);	
+        //include database configuration file
+        if($row['TipoUsuario']==$TipoUsuario  AND $row['Licencia']==$Licencia){				
+            echo json_encode(array("statusCode"=>250));
+          
+        } 
+        else{
+            $sql = "INSERT INTO `Tipos_Usuarios`( `TipoUsuario`,`Licencia`,`Creado`) 
+            VALUES ('$TipoUsuario','$Licencia','$Creado')";
+        
+            if (mysqli_query($conn, $sql)) {
+                echo json_encode(array("statusCode"=>200));
+            } 
+            else {
+                echo json_encode(array("statusCode"=>201));
+            }
+            mysqli_close($conn);
+        }
 
-    // Insertar datos en la base de datos
-    $query = "INSERT INTO Tipos_Usuarios (TipoUsuario, Licencia, Agrego) VALUES (?, ?, ?)";
-    $stmt = $conexion->prepare($query);
-    $stmt->bind_param('sss', $tipoUsuario, $licencia, $agrego);
-
-    if ($stmt->execute()) {
-        $respuesta = array('success' => true);
-    } else {
-        $respuesta = array('success' => false, 'message' => 'Error al insertar en la base de datos: ' . $stmt->error);
-    }
-
-    // Cerrar la consulta
-    $stmt->close();
-} else {
-    // No es una solicitud POST válida
-    $respuesta = array('success' => false, 'message' => 'Solicitud no válida.');
-}
-
-// Devolver respuesta en formato JSON
-header('Content-Type: application/json');
-echo json_encode($respuesta);
-
-// Cerrar la conexión a la base de datos
-$conexion->close();
 ?>
