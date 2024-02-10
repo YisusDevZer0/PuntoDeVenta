@@ -1,9 +1,9 @@
 <?php
     include_once 'db_connect.php';
 
-    $tipoUsuario = $_POST['tipoUsuario'];
-    $licencia = $_POST['licencia'];
-    $agrego = $_POST['agrego'];
+    $TipoUsuario = $_POST['tipoUsuario'];
+    $Licencia = $_POST['licencia'];
+    $Creado = $_POST['agrego'];
   
 //include database configuration file
     
