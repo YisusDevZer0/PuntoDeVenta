@@ -25,4 +25,5 @@
     
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="js/validation.min.js"></script>
 </head>
