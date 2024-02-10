@@ -28,7 +28,7 @@
             "stateSave": true,
             "bAutoWidth": false,
             "order": [[ 0, "desc" ]],
-            "sAjaxSource": "Consultas/ArrayPersonalActivo.php",
+            "sAjaxSource": "Controladores/ArrayPersonalActivo.php",
             "aoColumns": [
                 { mData: 'Idpersonal' },
                 { mData: 'NombreApellidos' },
