@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.17/dist/sweetalert2.min.js"></script>
+
+<script type="text/javascript" src="js/validation.min.js"></script>
+<script type="text/javascript" src="js/Validaciondelogins.js"></script>
     <style>
         body {
             background-color: #f0f0f0;
@@ -79,16 +84,16 @@
                 ?>
             </div>
             <div class="input-field">
-                <input id="user_email" type="email" class="validate">
+                <input id="user_email" type="email" class="validate" name="user_email" id="user_email">
                 <label for="user_email">Correo electrónico</label>
             </div>
             <div class="input-field">
-                <input id="password" type="password" class="validate">
+                <input id="password" type="password" class="validate" name="password" id="password">
                 <label for="password">Contraseña</label>
             </div>
         </div>
         <div class="card-action">
-            <a href="#" id="btn_ingresar" class="btn waves-effect waves-light red">Ingresar</a>
+            <a href="#" id="btn_ingresar" name="login_button" id="login_button" class="btn waves-effect waves-light red">Ingresar</a>
         </div>
     </div>
     <?php
