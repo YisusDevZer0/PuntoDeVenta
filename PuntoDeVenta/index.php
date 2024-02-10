@@ -24,6 +24,8 @@
             border-radius: 10px;
             padding: 50px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
         }
 
         .login100-form-title {
@@ -31,6 +33,8 @@
             color: #333;
             text-align: center;
             margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
         }
 
         .wrap-input100 {
@@ -46,7 +50,7 @@
         }
 
         .input100 {
-            width: 100%;
+            width: calc(100% - 30px);
             padding: 15px;
             border: none;
             border-bottom: 2px solid #ccc;
@@ -97,6 +101,39 @@
         .login100-form-btn:hover {
             background-color: #960056;
         }
+
+        .bg-login100 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #C80096;
+            z-index: 0;
+            transition: transform 0.8s ease-in-out;
+            transform: translateX(-100%);
+        }
+
+        .container-login100:hover .bg-login100 {
+            transform: translateX(0);
+        }
+
+        .bg-login100::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            z-index: 1;
+            transition: opacity 0.8s ease-in-out;
+            opacity: 0;
+        }
+
+        .container-login100:hover .bg-login100::before {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -128,6 +165,8 @@
                     Ingresar
                 </button>
             </div>
+
+            <div class="bg-login100"></div>
         </form>
         <div id="error"></div>
     </div>
