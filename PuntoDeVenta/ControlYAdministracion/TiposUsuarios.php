@@ -64,7 +64,7 @@ include_once "Controladores/obtenertoken.php";
     </div>
 </div>
 <script src="js/TablaUsuarios.js"></script>
-<script src="js/AgregarTipoDeusuario.js"></script>
+<script src="js/AgregarTipoDeusuarios.js"></script>
 
             </div>   </div>
             <!-- Footer Start -->
