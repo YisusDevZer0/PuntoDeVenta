@@ -85,12 +85,10 @@
 
         // Precarga solo la imagen de los peces
         function preload() {
-            img = {
-                pez: loadImage("https://i.ibb.co/phvXBP8/fish-unscreen-1.gif", function() {
-                    // Una vez cargada la imagen, inicializa la animación
-                    setup();
-                })
-            }
+            img = loadImage("https://i.ibb.co/phvXBP8/fish-unscreen-1.gif", function() {
+                // Una vez cargada la imagen, inicializa la animación
+                setup();
+            });
         }
 
         // Inicializa solo la animación de los peces
@@ -98,7 +96,7 @@
             let canvas = createCanvas(100, 100); // Crea un canvas pequeño para cargar los peces
             canvas.parent('loader-container'); // Adjunta el canvas al contenedor del preloader
             peces = [];
-            img.pez.actualFrame = 0;
+            img.actualFrame = 0;
 
             for (let i = 0; i < 5; i++) { // Carga solo 5 peces para el preloader
                 peces.push(new Pez());
@@ -133,11 +131,11 @@
                 translate(this.posicion.x, this.posicion.y);
                 rotate(this.aceleracion.heading() - PI / 2);
                 scale(this.escala, this.escala);
-                translate(-img.pez.width / 2, -img.pez.height);
-                img.pez.setFrame(int(img.pez.actualFrame));
-                img.pez.actualFrame += 0.2;
-                img.pez.actualFrame %= img.pez.numFrames();
-                image(img.pez, 0, 0);
+                translate(-img.width / 2, -img.height);
+                img.setFrame(int(img.actualFrame));
+                img.actualFrame += 0.2;
+                img.actualFrame %= img.numFrames();
+                image(img, 0, 0);
                 pop();
             }
         }
