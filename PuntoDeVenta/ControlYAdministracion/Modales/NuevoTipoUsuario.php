@@ -20,8 +20,8 @@
                   <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
                 </div>
                 
-                <input type="text" class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
-                <input type="text" class="form-control" name="agrego"id="agrego" value="<?php echo $row['Nombre_Apellidos']?>" >
+                <input type="text" hidden class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
+                <input type="text" hidden class="form-control" name="agrego"id="agrego" value="<?php echo $row['Nombre_Apellidos']?>" >
                                <!-- Agrega los otros campos del formulario de manera similar -->
                 <!-- ... -->
 
