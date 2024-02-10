@@ -54,7 +54,7 @@
     <div class="loader-container">
         <img src="https://i.gifer.com/origin/41/414f5a7b4fee1ccf9cf5771270d8dfd4.gif" alt="Loader">
     </div>
-
+    <form  method="post" id="login-form" autocomplete="off">
     <div class="card" style="display:none;">
         <div class="card-content">
             <span class="card-title">Inicio de sesión</span>
@@ -96,6 +96,7 @@
             <a href="#" id="btn_ingresar" name="login_button" id="login_button" class="btn waves-effect waves-light red">Ingresar</a>
         </div>
     </div>
+    </form>
     <?php
     // Configuración de saludos según la hora del día
     $saludos = array(
