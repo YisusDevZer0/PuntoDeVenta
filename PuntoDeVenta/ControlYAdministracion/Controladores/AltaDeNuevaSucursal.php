@@ -20,7 +20,7 @@
         } 
         else{
             $sql = "INSERT INTO `Sucursales`( `Nombre_Sucursal`,`Direccion`,`Licencia`,`Telefono`,`Pin_Equipo`,`Creado`) 
-            VALUES ('$Nombre_Sucursal','$Direccion','$Licencia','$Telefono','$Pin_Equipo','$Creado's)";
+            VALUES ('$Nombre_Sucursal','$Direccion','$Licencia','$Telefono','$Pin_Equipo','$Creado')";
         
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode"=>200));
