@@ -23,7 +23,7 @@ $(document).ready(function($){
   function submitForm() {
       $.ajax({
           type: 'POST',
-          url: "Controladores/AgregaSucursal.php",
+          url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AgregaSucursal.php",
           data: $('#NewTypeUser').serialize(),
           cache: false,
           beforeSend: function(){
