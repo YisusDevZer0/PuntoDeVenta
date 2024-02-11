@@ -6,7 +6,7 @@ include "ControladorUsuario.php";
 
 $sql = "SELECT ID_Sucursal, Nombre_Sucursal, Direccion, CP, RFC, Licencia, Identificador, 
 Telefono, Pin_Equipo, Sucursal_Activa, Agrego, AgregadoEl, NombreImpresora 
-FROM Sucursales 
+FROM Sucursales";
 
  
 $result = mysqli_query($conn, $sql);
