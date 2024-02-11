@@ -2,12 +2,12 @@
 header('Content-Type: application/json');
 include("db_connect.php");
 include "ControladorUsuario.php";
-$nombreLicencia = $row['Nombre_Licencia'];
+
 
 $sql = "SELECT ID_Sucursal, Nombre_Sucursal, Direccion, CP, RFC, Licencia, Identificador, 
 Telefono, Pin_Equipo, Sucursal_Activa, Agrego, AgregadoEl, NombreImpresora 
 FROM Sucursales 
-WHERE Licencia = '" . $nombreLicencia . "'";
+
  
 $result = mysqli_query($conn, $sql);
  
