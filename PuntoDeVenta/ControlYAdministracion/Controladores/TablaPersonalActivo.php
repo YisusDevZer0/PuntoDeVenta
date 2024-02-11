@@ -1,4 +1,4 @@
-<div class="table-responsive">
+
     <div id="loading-overlay">
         <div class="loader"></div>
         <div id="loading-text"></div>
