@@ -63,13 +63,13 @@ include_once "Controladores/ControladorUsuario.php";
         </div>
     </div>
 </div>
-<script src="js/TablaUsuarios.js"></script>
-<script src="js/AgregarTipoDeusuario.js"></script>
+<script src="js/TablaUsuariosInactivos.js"></script>
+
 
             </div>   </div>
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoTipoUsuario.php";
+           
             include "Footer.php";?>
 </body>
 
