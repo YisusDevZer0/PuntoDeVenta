@@ -1,7 +1,7 @@
 function CargaPersonalinactivo(){
 
 
-    $.post("Controladores/TablaPersonalInactivo.php","",function(data){
+    $.post("Controladores/TablaPersonalNonactivo.php","",function(data){
       $("#tablaPersonalinactivo").html(data);
     })
   
