@@ -27,7 +27,7 @@ switch(true) {
         echo "ok";
         $_SESSION['ControlMaestro'] = $row['Id_PvUser'];
         break;
-    case $row['Password'] == $Password && $row['TipoUsuario'] == "Ventas" && $row['Estatus'] == "Activo":
+    case $row['Password'] == $Password && $row['TipoUsuario'] == "Farmaceutico" && $row['Estatus'] == "Activo":
         echo "ok";
         $_SESSION['VentasPos'] = $row['Id_PvUser'];
         break;

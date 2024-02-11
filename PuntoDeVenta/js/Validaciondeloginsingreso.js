@@ -42,9 +42,7 @@ $('document').ready(function() {
                 $('#Validacion').modal('hide');
                 if (response == "ok") {                                    
                     // Cambia el texto del botón a "Iniciando..."
-                    $("#login_button").html("Iniciando...");
-                    // Muestra el modal de ingreso
-                    $('#Ingreso').modal('toggle');
+                
                     // Redirecciona al usuario después de 2 segundos
                     setTimeout(function() {
                         window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
