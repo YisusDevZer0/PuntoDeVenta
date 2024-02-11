@@ -33,7 +33,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Sucursales de <?php echo $row['Nombre_Licencia']?></h6>
+            <h6 class="mb-4">Sucursales de <?php echo $row['Licencia']?></h6>
             <div id="SucursalesDisponibles"></div>
             </div></div></div></div>
 <script src="js/SucursalesActivas.js"></script>
