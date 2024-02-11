@@ -15,11 +15,11 @@ $c = 0;
 $data = [];
 
 while ($fila = $result->fetch_assoc()) {
-    $data[$c]["Idsucursal"] = $fila["Id_PvUser"];
-    $data[$c]["NombreSucursal"] = $fila["Nombre_Apellidos"];
-    $data[$c]["Direccion"] = $fila["file_name"];
-    $data[$c]["Telefono"] = $fila["TipoUsuario"];
-    $data[$c]["Pin"] = $fila["Nombre_Sucursal"];
+    $data[$c]["Idsucursal"] = $fila["ID_Sucursal"];
+    $data[$c]["NombreSucursal"] = $fila["Nombre_Sucursal"];
+    $data[$c]["Direccion"] = $fila["Direccion"];
+    $data[$c]["Telefono"] = $fila["Telefono"];
+    $data[$c]["Pin"] = $fila["Pin_Equipo"];
     $data[$c]["CreadoEl"] = $fila["AgregadoEl"];
     $data[$c]["Estatus"] = $fila["Estatus"];
     $data[$c]["CreadoPor"] = $fila["AgregadoPor"];
