@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4">Personal activo</h6>
             <div id="tablaPersonalinactivo"></div>
             </div></div></div></div>
-<script src="js/PersonalInactivo.js"></script>
+<script src="js/PersonalDebaja.js"></script>
 
 
             </div>   </div>
