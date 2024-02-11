@@ -35,11 +35,10 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Personal activo</h6>
             <div id="tablaPersonalactivo"></div>
-            
+            </div></div></div></div>
 <script src="js/Personalactivo.js"></script>
 <script src="js/Agregarnuevopersonal.js"></script>
 
-            </div>   </div>
             <!-- Footer Start -->
             <?php 
             include "Modales/Altadenuevopersonal.php";
