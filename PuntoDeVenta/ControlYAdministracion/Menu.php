@@ -16,7 +16,7 @@
                 <div class="navbar-nav w-100">
                     <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
                    
-                    <li class="nav-header" style="font-size: medium; font-weight: bold; color:black;">Control de personal <i class="fas fa-cash-register" aria-hidden="true"></i></li>
+                   
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
                         <div class="dropdown-menu bg-transparent border-0">
@@ -26,7 +26,7 @@
                         </div>
                     </div>
 
-                    <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Personal</a>
+                    <a href="Sucursales" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Sucursales</a>
                     <a href="widget.html" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Widgets</a>
                     <a href="form.html" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Forms</a>
                     <a href="table.html" class="nav-item nav-link"><i class="fa fa-table me-2"></i>Tables</a>
