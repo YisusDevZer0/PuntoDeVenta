@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar nueva sucursal
 </button> <br>
-            <div id=""></div>
+            <div id="FCajas"></div>
             </div></div></div></div>
             
             <script src="js/AsignaFondo.js"></script>
