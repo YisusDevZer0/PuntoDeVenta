@@ -40,7 +40,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div id="SucursalesDisponibles"></div>
             </div></div></div></div>
 <script src="js/SucursalesActivas.js"></script>
-<script src="js/AltaDeSucursales.js"></script>
+<script src="js/AgregaNuevaSucursalABD.js"></script>
 
             <!-- Footer Start -->
             <?php 
