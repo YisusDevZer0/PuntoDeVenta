@@ -17,9 +17,9 @@ $('document').ready(function($){
      
   
     $("#NewTypeUser").validate({
-		rules: {
-		
-			NombreTipoProd: {
+    rules: {
+    
+      NombreTipoProd: {
                 required: true,
                 minlength: 2,
                 maxlength: 40,
@@ -28,15 +28,15 @@ $('document').ready(function($){
             },
            
            
-VigenciaProdT: {
-  required: true,        
-},
-			
-			
-		},
-		messages: {
+      VigenciaProdT: {
+        required: true,        
+      },
+      
+      
+    },
+    messages: {
             
-			NombreTipoProd:{
+      NombreTipoProd:{
               required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Ingresa el nombre ",
               maxlength: "No puede tener mas de 40 caracteres",
               minlength: "Un nombre no puede tener solo 1 caracter"
@@ -45,32 +45,33 @@ VigenciaProdT: {
              
              
               
-               VigenciaProdT:{
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i>Dato requerido ",
-                
-               },               
+       VigenciaProdT:{
+        required: "<i class='fas fa-exclamation-triangle' style='color:red'></i>Dato requerido ",
+        
+       },               
               
-		},
-        submitHandler: submitForm	
-	});	   
+    },
+        submitHandler: submitForm 
+  });     
     // hide messages 
    
    
-    function submitForm() {	
+    function submitForm(event) { 
+      event.preventDefault();
      
         
   
-        $.ajax({				
+        $.ajax({        
             type : 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AltaDeNuevaSucursal.php",
             data: $('#NewTypeUser').serialize(),
             cache: false,
-            beforeSend: function(){	
-			
+            beforeSend: function(){  
+      
               $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
-				
+                
                     
-			},
+      },
       success: function(dataResult){
         var dataResult = JSON.parse(dataResult);
 
@@ -84,7 +85,7 @@ VigenciaProdT: {
             
             $('.modal').on('hidden.bs.modal', function (e) {
               modal_lv--
-            });	
+            }); 
             $("#submit_registro").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
             $('#ErrorDupli').modal('toggle'); 
             setTimeout(function(){ 
@@ -98,7 +99,7 @@ VigenciaProdT: {
        
         else if(dataResult.statusCode==200){
             
-             $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")	
+             $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")  
            
              $("#NewTypeUser")[0].reset();
              $("#AltaTiposProductos").removeClass("in");
@@ -128,8 +129,8 @@ VigenciaProdT: {
       }, 3000); // abrir
          
        
-         }		
-               
+         }    
+                
     
                 
   
@@ -139,4 +140,3 @@ VigenciaProdT: {
       return false;
     }   
   });
-
