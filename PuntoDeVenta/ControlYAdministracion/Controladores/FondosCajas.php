@@ -53,14 +53,13 @@ $(document).ready( function () {
 <?php
 
 include("db_connect.php");
-include "ControladorUsuario.php";
+
 
 
 $user_id=null;
 $sql1="SELECT Fondos_Cajas.ID_Fon_Caja,Fondos_Cajas.Fk_Sucursal,Fondos_Cajas.Fondo_Caja,Fondos_Cajas.ID_H_O_D, Fondos_Cajas.CodigoEstatus,Fondos_Cajas.Estatus, 
 SucursalesCorre.ID_SucursalC,SucursalesCorre.Nombre_Sucursal FROM 
-Fondos_Cajas,SucursalesCorre where Fondos_Cajas.Fk_Sucursal = SucursalesCorre.ID_SucursalC AND 
-Fondos_Cajas.ID_H_O_D ='".$row['ID_H_O_D']."'";
+Fondos_Cajas,SucursalesCorre where Fondos_Cajas.Fk_Sucursal = SucursalesCorre.ID_SucursalC";
 $query = $conn->query($sql1);
 ?>
 
@@ -112,7 +111,7 @@ $query = $conn->query($sql1);
   	
     $(".btn-edit2").click(function(){
   		id = $(this).data("id");
-  		$.post("https://controlfarmacia.com/AdminPOS/Modales/EditaFondoCaja.php","id="+id,function(data){
+  		$.post("Modales/EditaFondoCaja.php","id="+id,function(data){
               $("#form-edit").html(data);
               $("#Titulo").html("Editar fondo de caja");
               $("#Di").removeClass("modal-dialog  modal-notify modal-info");
@@ -124,7 +123,7 @@ $query = $conn->query($sql1);
     });
     $(".btn-detalles").click(function(){
   		id = $(this).data("id");
-  		$.post("https://controlfarmacia.com/AdminPOS/Modales/DetallesFondoCaja.php","id="+id,function(data){
+  		$.post("Modales/DetallesFondoCaja.php","id="+id,function(data){
               $("#form-edit").html(data);
               $("#Titulo").html("Detalles fondo de caja");
               $("#Di").removeClass("modal-dialog  modal-notify modal-info");
@@ -136,7 +135,7 @@ $query = $conn->query($sql1);
     });
     $(".btn-HistorialFondos").click(function(){
   		id = $(this).data("id");
-  		$.post("https://controlfarmacia.com/AdminPOS/Modales/HistorialFondoCaja.php","id="+id,function(data){
+  		$.post("Modales/HistorialFondoCaja.php","id="+id,function(data){
               $("#form-edit").html(data);
               $("#Titulo").html("Movimientos de fondo de caja");
               $("#Di").removeClass("modal-dialog  modal-notify modal-info");
