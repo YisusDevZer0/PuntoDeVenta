@@ -6,15 +6,15 @@
     <table id="Productos" class="table table-hover">
         <thead>
             <tr>
-                <th>ID_BD</th>
-                <th>Cod Barra</th>
+                <th>ID Empleado</th>
                 <th>Nombre</th>
-                <th>Cod Interno</th>
-                <th>Cod Levic</th>
-                <th>Cod Enfermeria</th>
-                <th>PC</th>
-                <th>PV</th>
-                <th>Servicio</th>
+                <th>Fotografia</th>
+                <th>Tipo de usuario</th>
+                <th>Sucursal</th>
+                <th>Fecha|Hora de creacion</th>
+                <th>Estado</th>
+                <th>Creado por</th>
+                <th>Acciones</th>
                 <!-- Agrega más columnas si es necesario -->
             </tr>
         </thead>
