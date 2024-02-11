@@ -30,15 +30,16 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["CreadoPor"] = $fila["AgregadoPor"];
     
    
-    $data[$c]["Acciones"] = ["<button class='btn btn-primary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-th-list fa-1x'></i></button><div class='dropdown-menu'>
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd=".base64_encode($fila["Id_PvUser"])." class='btn-edit  dropdown-item' >Asignar en sucursales <i class='fas fa-clinic-medical'></i></a>
-       <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid=".base64_encode($fila["Id_PvUser"])." class='btn-VerDistribucion  dropdown-item' >Consultar distribución <i class='fas fa-table'></i> </a>
-       <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EdicionDatosProducto?editprod=".base64_encode($fila["Id_PvUser"])." class='btn-editProd dropdown-item' >Editar datos <i class='fas fa-pencil-alt'></i></a>
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd=".base64_encode($fila["Id_PvUser"])." class='btn-History dropdown-item' >Ver movimientos <i class='fas fa-history'></i></a>
-    
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/MaximoYMinimo?Disid=".base64_encode($fila["Id_PvUser"])." class='btn-Delete dropdown-item' >Actualiza minimo y maximo <i class='fas fa-list-ol'></i></a>
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd=".base64_encode($fila["Id_PvUser"])." class='btn-Delete dropdown-item' >Cambio de proveedores <i class='fas fa-truck-loading'></i></a></div> "];
-    
+    $data[$c]["Acciones"] = '<button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-th-list fa-1x"></i></button>
+<div class="dropdown-menu">
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-edit dropdown-item">Asignar en sucursales <i class="fas fa-clinic-medical"></i></a>
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid='.base64_encode($fila["Id_PvUser"]).'" class="btn-VerDistribucion dropdown-item">Consultar distribución <i class="fas fa-table"></i></a>
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EdicionDatosProducto?editprod='.base64_encode($fila["Id_PvUser"]).'" class="btn-editProd dropdown-item">Editar datos <i class="fas fa-pencil-alt"></i></a>
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-History dropdown-item">Ver movimientos <i class="fas fa-history"></i></a>
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/MaximoYMinimo?Disid='.base64_encode($fila["Id_PvUser"]).'" class="btn-Delete dropdown-item">Actualiza minimo y maximo <i class="fas fa-list-ol"></i></a>
+    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-Delete dropdown-item">Cambio de proveedores <i class="fas fa-truck-loading"></i></a>
+</div>';
+
 
     
     
