@@ -52,7 +52,7 @@
     <div class="message">
         <h1>¡La sesión ha expirado!</h1>
         <p>Para continuar, por favor, inicia sesión nuevamente.</p>
-        <a href="inicio_sesion.html" class="btn">Iniciar Sesión</a>
+        <a href="https://doctorpez.mx/PuntoDeVenta/" class="btn">Iniciar Sesión</a>
     </div>
 </body>
 </html>
