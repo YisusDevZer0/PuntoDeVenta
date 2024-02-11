@@ -15,6 +15,7 @@
 <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
 <!-- Customized Bootstrap Stylesheet -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-sw3J7Ust05PgoCkxvVU7r1CfrRdXe3uV6pXtqv8WjFOG6mgpPA3UoBo7V9HV2fPE" crossorigin="anonymous"></script>
 
 
