@@ -38,10 +38,11 @@ $(document).ready(function($){
               else if(dataResult.statusCode == 200){
                   $("#submit_registro").html("Enviado <i class='fas fa-check'></i>");
                   $("#NewTypeUser")[0].reset();
-                  $("#AltaTiposProductos").removeClass("in");
+                  $("#myModal").removeClass("in");
                   $(".modal-backdrop").remove();
-                  $("#AltaTiposProductos").hide();
-                  $('#Exito').modal('toggle');
+                  $("#myModal").hide();
+                  $('#modalExito').modal('toggle');
+                  PuntoDeVenta/ControlYAdministracion/js/SucursalesActivas.js
               }
               else if(dataResult.statusCode == 201){
                   $("#submit_Age").html("Algo no salió bien.. <i class='fas fa-exclamation-triangle'></i>");
