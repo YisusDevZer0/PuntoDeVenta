@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AltaDeNuevaSucursal.php",
+            url: "Controladores/AltaDeNuevaSucursal.php",
             data: $('#NewTypeUser').serialize(),
             cache: false,
             beforeSend: function(){	
