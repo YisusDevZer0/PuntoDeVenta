@@ -40,12 +40,6 @@ while($fila=$result->fetch_assoc()){
     <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd=".base64_encode($fila["Id_PvUser"])." class='btn-Delete dropdown-item' >Cambio de proveedores <i class='fas fa-truck-loading'></i></a></div> "];
     
 
-    $data[$c]["AccionesEnfermeria"] = ["<button class='btn btn-info btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-th-list fa-1x'></i></button><div class='dropdown-menu'>
-   
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStockEnfermeria?idProd=".base64_encode($fila["Id_PvUser"])." class='btn-edit  dropdown-item' >Asignar a enfermeria <i class='fas fa-user-nurse'></i></a>
-    <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CrearCodEnfermeria?editprod=".base64_encode($fila["Id_PvUser"])." class='btn-edit  dropdown-item' >Editar datos  <i class='fas fa-edit'></i></a>
-    } <a href=https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignaProcedimiento?editprod=".base64_encode($fila["Id_PvUser"])." class='btn-edit  dropdown-item' >Asignar procedimiento  <i class='fas fa-edit'></i></a>
-     "];
     
     
     $c++; 
