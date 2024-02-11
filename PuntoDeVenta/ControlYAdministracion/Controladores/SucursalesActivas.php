@@ -6,11 +6,11 @@
     <table id="Productos" class="table table-hover">
         <thead>
             <tr>
-                <th>ID Empleado</th>
-                <th>Nombre</th>
-                <th>Fotografia</th>
-                <th>Tipo de usuario</th>
-                <th>Sucursal</th>
+                <th>ID Sucursal</th>
+                <th>Nombre Sucursal</th>
+                <th>Direccion</th>
+                <th>Telefono</th>
+                <th>Pin de equipo</th>
                 <th>Fecha|Hora de creacion</th>
                 <th>Estado</th>
                 <th>Creado por</th>
