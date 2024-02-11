@@ -6,8 +6,7 @@
     <title>Sesión Vencida</title>
     <style>
         body {
-            background-image: url('https://wallpaperaccess.com/full/1941924.jpg');
-            background-size: cover;
+            background-color: #292929;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
             text-align: center;
@@ -34,7 +33,7 @@
             margin-bottom: 30px;
         }
         .btn {
-            background-color: #4CAF50;
+            background-color: #d32f2f;
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -45,7 +44,7 @@
             transition: background-color 0.3s ease;
         }
         .btn:hover {
-            background-color: #45a049;
+            background-color: #b71c1c;
         }
     </style>
 </head>
