@@ -8,9 +8,9 @@
     $Creado = $_POST['agrego'];
     $Licencia = $_POST['licencia'];
   
-//include database configuration file
+
     
-    $sql = "SELECT Nombre_Sucursal,Direccion,Creado FROM Sucursales WHERE Nombre_Sucursal='$Nombre_Sucursal' AND Direccion='$Direccion'";
+    $sql = "SELECT Nombre_Sucursal,Direccion FROM Sucursales WHERE Nombre_Sucursal='$Nombre_Sucursal' AND Direccion='$Direccion'";
     $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
     $row = mysqli_fetch_assoc($resultset);	
         //include database configuration file
