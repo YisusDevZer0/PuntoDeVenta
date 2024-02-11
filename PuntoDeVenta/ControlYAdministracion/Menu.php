@@ -19,8 +19,8 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
-                            <a href="PersonalActivo" class="dropdown-item">Personal activo </a>
-                            <a href="PersonalInactivo" class="dropdown-item">Personal inactivo</a>
+                            <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Personal activo </a>
+                            <a href="PersonalInactivo" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
                         </div>
                     </div>
 
