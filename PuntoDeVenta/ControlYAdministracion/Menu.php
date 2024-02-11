@@ -15,6 +15,8 @@
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="index.html" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
+                   
+                    <li class="nav-header" style="font-size: medium; font-weight: bold; color: white;">Control de personal <i class="fas fa-cash-register" aria-hidden="true"></i></li>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
                         <div class="dropdown-menu bg-transparent border-0">
