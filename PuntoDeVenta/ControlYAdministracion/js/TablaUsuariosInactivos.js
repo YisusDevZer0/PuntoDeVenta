@@ -1,4 +1,4 @@
-function CargaPersonalactivo(){
+function CargaPersonalinactivo(){
 
 
     $.post("Controladores/TablaPersonalInactivo.php","",function(data){
@@ -8,4 +8,4 @@ function CargaPersonalactivo(){
   }
   
   
-  CargaPersonalactivo();
+  CargaPersonalinactivo();
