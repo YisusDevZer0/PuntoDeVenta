@@ -41,7 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/Altadenuevopersonal.php";
+            include "Modales/NuevaSucursal.php";
             include "Footer.php";?>
 </body>
 
