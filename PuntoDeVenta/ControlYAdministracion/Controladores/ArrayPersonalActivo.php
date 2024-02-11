@@ -1,9 +1,7 @@
-
 <?php
 header('Content-Type: application/json');
 include("db_connect.php");
 include "ControladorUsuario.php";
-
 
 $sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
 Usuarios_PV.Fk_Usuario, Usuarios_PV.Fecha_Nacimiento, Usuarios_PV.Correo_Electronico, 
@@ -17,9 +15,10 @@ WHERE Usuarios_PV.Estatus = 'Activo'";
  
 $result = mysqli_query($conn, $sql);
  
-$c=0;
- 
-while($fila=$result->fetch_assoc()){
+$c = 0;
+$data = [];
+
+while ($fila = $result->fetch_assoc()) {
     $data[$c]["Idpersonal"] = $fila["Id_PvUser"];
     $data[$c]["NombreApellidos"] = $fila["Nombre_Apellidos"];
     $data[$c]["Foto"] = $fila["file_name"];
@@ -29,28 +28,33 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["Estatus"] = $fila["Estatus"];
     $data[$c]["CreadoPor"] = $fila["AgregadoPor"];
     
-   
-    $data[$c]["Acciones"] = '<button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-th-list fa-1x"></i></button>
-<div class="dropdown-menu">
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-edit dropdown-item">Asignar en sucursales <i class="fas fa-clinic-medical"></i></a>
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid='.base64_encode($fila["Id_PvUser"]).'" class="btn-VerDistribucion dropdown-item">Consultar distribución <i class="fas fa-table"></i></a>
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EdicionDatosProducto?editprod='.base64_encode($fila["Id_PvUser"]).'" class="btn-editProd dropdown-item">Editar datos <i class="fas fa-pencil-alt"></i></a>
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-History dropdown-item">Ver movimientos <i class="fas fa-history"></i></a>
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/MaximoYMinimo?Disid='.base64_encode($fila["Id_PvUser"]).'" class="btn-Delete dropdown-item">Actualiza minimo y maximo <i class="fas fa-list-ol"></i></a>
-    <a href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd='.base64_encode($fila["Id_PvUser"]).'" class="btn-Delete dropdown-item">Cambio de proveedores <i class="fas fa-truck-loading"></i></a>
-</div>';
-
-
+    $acciones = '
+        <div class="dropdown">
+            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-th-list fa-1x"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd='.base64_encode($fila["Id_PvUser"]).'">Asignar en sucursales <i class="fas fa-clinic-medical"></i></a></li>
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid='.base64_encode($fila["Id_PvUser"]).'">Consultar distribución <i class="fas fa-table"></i></a></li>
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EdicionDatosProducto?editprod='.base64_encode($fila["Id_PvUser"]).'">Editar datos <i class="fas fa-pencil-alt"></i></a></li>
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd='.base64_encode($fila["Id_PvUser"]).'">Ver movimientos <i class="fas fa-history"></i></a></li>
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/MaximoYMinimo?Disid='.base64_encode($fila["Id_PvUser"]).'">Actualizar mínimo y máximo <i class="fas fa-list-ol"></i></a></li>
+                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd='.base64_encode($fila["Id_PvUser"]).'">Cambio de proveedores <i class="fas fa-truck-loading"></i></a></li>
+            </ul>
+        </div>
+    ';
     
+    $data[$c]["Acciones"] = $acciones;
     
     $c++; 
- 
 }
- 
-$results = ["sEcho" => 1,
-            "iTotalRecords" => count($data),
-            "iTotalDisplayRecords" => count($data),
-            "aaData" => $data ];
+
+$results = [
+    "sEcho" => 1,
+    "iTotalRecords" => count($data),
+    "iTotalDisplayRecords" => count($data),
+    "aaData" => $data
+];
  
 echo json_encode($results);
 ?>
