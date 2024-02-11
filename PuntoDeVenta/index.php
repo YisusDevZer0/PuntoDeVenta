@@ -169,10 +169,10 @@
         switch ($idioma) {
             case 'es':
                 return $mensajes_exito_ventas_es[array_rand($mensajes_exito_ventas_es)];
-                break;
+                
             case 'en':
                 return $mensajes_exito_ventas_en[array_rand($mensajes_exito_ventas_en)];
-                break;
+            
             // Otros casos para más idiomas...
             default:
                 return "Idioma no compatible";
