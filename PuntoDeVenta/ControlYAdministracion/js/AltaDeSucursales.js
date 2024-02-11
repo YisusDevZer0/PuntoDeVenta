@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "Controladores/AltaNuevaSucursal.php",
+            url: "Controladores/AgregaSucursal.php",
             data: $('#NewTypeUser').serialize(),
             cache: false,
             beforeSend: function(){	
