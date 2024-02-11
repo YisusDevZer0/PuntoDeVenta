@@ -63,7 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
         </div>
     </div>
 </div>
-<script src="js/TablaUsuariosInactivos.js"></script>
+<script src="js/PersonalInactivo.js"></script>
 
 
             </div>   </div>
