@@ -6,9 +6,11 @@ if(isset($_POST['NombreSucursal'], $_POST['Direccion'], $_POST['Telefono'], $_PO
     $Direccion = $_POST['Direccion'];
     $Telefono = $_POST['Telefono'];
     $Pin_Equipo = $_POST['PinEquipo'];
+    $Licencia = $_POST['licencia'];
+    $Agrego = $_POST['agrego'];
 
-    $sql = "INSERT INTO `Sucursales` (`Nombre_Sucursal`, `Direccion`, `Telefono`, `Pin_Equipo`) 
-            VALUES ('$Nombre_Sucursal', '$Direccion', '$Telefono', '$Pin_Equipo')";
+    $sql = "INSERT INTO `Sucursales` (`Nombre_Sucursal`, `Direccion`,`Licencia`, `Telefono`, `Pin_Equipo`,`Agrego`) 
+            VALUES ('$Nombre_Sucursal', '$Direccion', '$Licencia','$Telefono', '$Pin_Equipo','$Agrego')";
 
     if (mysqli_query($conn, $sql)) {
         echo json_encode(array("statusCode"=>200, "message"=>"Sucursal insertada correctamente"));
