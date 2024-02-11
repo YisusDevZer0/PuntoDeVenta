@@ -26,7 +26,7 @@
                         </div>
                     </div>
 
-                    <a href="Sucursales" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Sucursales</a>
+                    <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
                         <div class="dropdown-menu bg-transparent border-0">
