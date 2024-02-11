@@ -34,7 +34,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nueva sucursal
+  Agregar nuevo fondo 
 </button> <br>
             <div id="FCajas"></div>
             </div></div></div></div>
