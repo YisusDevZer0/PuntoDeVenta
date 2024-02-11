@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4">Sucursales de <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar nueva sucursal
-</button> <br><br><br>
+</button> <br>
             <div id="SucursalesDisponibles"></div>
             </div></div></div></div>
 <script src="js/SucursalesActivas.js"></script>

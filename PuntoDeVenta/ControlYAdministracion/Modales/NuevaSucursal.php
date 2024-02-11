@@ -17,19 +17,19 @@
     
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Nombre de sucursal</label>
-                  <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="NombreSucursal" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
                 </div>
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Direccion</label>
-                  <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="Direccion" id="direccion" placeholder="Ingrese la direccion">
                 </div>
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Telefono</label>
-                  <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="Telefono" id="telefono" placeholder="Ingrese el numero de telefono">
                 </div>
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Pin de equipo</label>
-                  <input type="text" class="form-control" name="tipoUsuario" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="PinEquipo" id="pinequipo" placeholder="Ingrese el pin del equipo">
                 </div>
                 
                 <input type="text" hidden class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
