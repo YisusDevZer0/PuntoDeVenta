@@ -212,5 +212,28 @@
             // });
         });
     </script>
+
+    <!-- Modal de Validación -->
+<div id="Validacion" class="modal">
+    <div class="modal-content">
+        <h4>Validando...</h4>
+        <p>Por favor, espera un momento mientras validamos tus credenciales.</p>
+    </div>
+    <div class="modal-footer">
+        <!-- Puedes agregar un loader aquí si lo deseas -->
+    </div>
+</div>
+
+<!-- Modal de Error -->
+<div id="Error" class="modal">
+    <div class="modal-content">
+        <h4>Error de inicio de sesión</h4>
+        <p>Credenciales incorrectas o usuario inactivo.</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
+    </div>
+</div>
+
 </body>
 </html>
