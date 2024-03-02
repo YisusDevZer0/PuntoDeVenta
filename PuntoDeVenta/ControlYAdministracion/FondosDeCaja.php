@@ -41,7 +41,22 @@ include_once "Controladores/ControladorUsuario.php";
             
             <script src="js/AsignaFondo.js"></script>
 <script src="js/ControlFondosCajas.js"></script>
+<script>
 
+$(document).ready(function() {
+    // Realiza una solicitud AJAX para obtener los datos de la base de datos
+    $.getJSON('Controladores/SelectSucursales.php', function(data) {
+        // Recorre los datos y agrega opciones al select
+        $.each(data, function(key, value) {
+            $('#opciones').append('<option value="' + value.id + '">' + value.nombre + '</option>');
+        });
+    })
+    .fail(function(jqxhr, textStatus, error) {
+        console.error("Error al obtener los datos de la base de datos:", textStatus, error);
+    });
+});
+
+</script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoFondoDeCaja.php";
