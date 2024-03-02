@@ -93,8 +93,8 @@
             </div>
         </div>
         <div class="card-action">
-            <button  id="btn_ingresar" name="login_button" id="login_button" class="btn waves-effect waves-light red">Ingresar</button>
-            
+            <!-- Corregir el id del botón -->
+            <button id="login_button" class="btn waves-effect waves-light red">Ingresar</button>
         </div>
     </div>
     </form>
