@@ -43,7 +43,7 @@ $('document').ready(function() {
             success: function(response) {                        
                 // Cierra el modal de validación
                 $('#Validacion').modal('close');
-                if (response == "ok") {                                    
+                if (response.trim().includes("ok")) {                                    
                     // Redirecciona al usuario después de 2 segundos
                     setTimeout(function() {
                         window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
