@@ -48,7 +48,7 @@ $(document).ready(function() {
     $.getJSON('Controladores/SelectSucursales.php', function(data) {
         // Recorre los datos y agrega opciones al select
         $.each(data, function(key, value) {
-            $('#opciones').append('<option value="' + value.id + '">' + value.nombre + '</option>');
+            $('#opciones').append('<option value="' + value.ID_Sucursal + '">' + value.Nombre_Sucursal + '</option>');
         });
     })
     .fail(function(jqxhr, textStatus, error) {
