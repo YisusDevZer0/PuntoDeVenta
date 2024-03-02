@@ -43,7 +43,6 @@ $(document).ready(function($) {
                         $(".modal-backdrop").remove();
                         $("#myModal").hide();
                         $('#modalExito').modal('toggle');
-                        PuntoDeVenta/ControlYAdministracion/js/SucursalesActivas.js
                     }
                     else if(dataResult.statusCode == 201){
                         $("#submit_Age").html("Algo no salió bien.. <i class='fas fa-exclamation-triangle'></i>");
