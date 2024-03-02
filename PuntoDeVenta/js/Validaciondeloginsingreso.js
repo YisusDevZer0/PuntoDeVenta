@@ -1,4 +1,7 @@
 $('document').ready(function() { 
+    // Inicializar los modales
+    $('.modal').modal();
+
     // Validación del formulario utilizando el plugin jQuery Validation
     $("#login-form").validate({
         // Reglas de validación para los campos del formulario
@@ -34,32 +37,20 @@ $('document').ready(function() {
             url: 'Consultas/ValidadorUsuario.php',
             data: data,
             beforeSend: function() {    
-                $("#error").fadeOut();
-                $("#login_button").html("Validando...");
+                // Muestra el modal de validación
+                $('#Validacion').modal('open');
             },
             success: function(response) {                        
-                // Oculta el modal de validación
-                $('#Validacion').modal('hide');
+                // Cierra el modal de validación
+                $('#Validacion').modal('close');
                 if (response == "ok") {                                    
-                    // Cambia el texto del botón a "Iniciando..."
-                
                     // Redirecciona al usuario después de 2 segundos
                     setTimeout(function() {
                         window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
                     }, 2000);
                 } else {                                    
-                    // Muestra un Sweet Alert con un mensaje de error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de inicio de sesión',
-                        text: 'Credenciales incorrectas o usuario inactivo',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        onClose: function() {
-                            // Restaura el texto del botón a "Ingresar"
-                            $("#login_button").html('<span></span> &nbsp; Ingresar');
-                        }
-                    });
+                    // Muestra el modal de error
+                    $('#Error').modal('open');
                 }
             }
         });
