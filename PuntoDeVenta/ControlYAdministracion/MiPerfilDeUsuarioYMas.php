@@ -29,6 +29,7 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="row justify-content-center"> <!-- Centra el contenido horizontalmente -->
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light rounded h-100 p-4">
+                <div class="text-center">
                 <h6 class="mb-4">Datos de la Cuenta</h6>
                 <div class="account-info">
                     <img class="img-fluid rounded-circle mx-auto mb-4"  src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" style="width: 100px; height: 100px;">
@@ -62,7 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
                 
                     </ul>
                     <button type="submit" class="btn btn-primary">Actualizar</button>
-              </form>
+              </form></div>
                 </div>
             </div>
         </div>
