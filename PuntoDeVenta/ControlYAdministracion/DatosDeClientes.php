@@ -33,28 +33,13 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nuevo fondo 
-</button> <br>
-            <div id="FCajas"></div>
+            
+            <div id="Clientes"></div>
             </div></div></div></div>
             
-            <script src="js/AsignaFondo.js"></script>
-<script src="js/ControlFondosCajas.js"></script>
-<script>
-    $(document).ready(function() {
-    $.getJSON('Controladores/SelectSucursales.php', function(data) {
-        console.log(data); // Verifica que los datos se estén recibiendo correctamente en la consola del navegador
-        $.each(data, function(key, value) {
-            $('#opciones').append('<option value="' + value.ID_Sucursal + '">' + value.Nombre_Sucursal + '</option>');
-        });
-    })
-    .fail(function(jqxhr, textStatus, error) {
-        console.error("Error al obtener los datos de la base de datos:", textStatus, error);
-    });
-});
+          
+<script src="js/ControlDeClientes.js"></script>
 
-</script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoFondoDeCaja.php";
