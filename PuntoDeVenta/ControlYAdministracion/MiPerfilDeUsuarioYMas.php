@@ -33,6 +33,7 @@ include_once "Controladores/ControladorUsuario.php";
                 <div class="account-info">
                     <img class="img-fluid rounded-circle mx-auto mb-4" src="tu_imagen_de_perfil.jpg" style="width: 100px; height: 100px;">
                     <div class="row mb-3">
+                    <form id="NewTypeUser">
                     <h5 class="mb-1">Tu Nombre</h5>
                     <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1">@</span>
@@ -60,7 +61,8 @@ include_once "Controladores/ControladorUsuario.php";
                             </div>
                 
                     </ul>
-                    <button class="btn btn-primary">Editar</button>
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+              </form>
                 </div>
             </div>
         </div>
