@@ -37,11 +37,15 @@ include_once "Controladores/ControladorUsuario.php";
                     <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1">@</span>
                                 <input type="text" class="form-control" placeholder="Username" aria-label="Username"
-                                    aria-describedby="basic-addon1">
+                                    aria-describedby="basic-addon1" value="<?php echo $row['Nombre_Apellidos']?>">
                             </div>
                                 </div>
-                    
-                
+                                <h5 class="mb-1">Tu Sucursal actual</h5>
+                                <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">@</span>
+                                <input type="text" class="form-control" placeholder="Sucursal" aria-label="Username"
+                                    aria-describedby="basic-addon1" value="<?php echo $row['Nombre_Apellidos']?>">
+                            </div>
                     <p>Tu Profesión</p>
                     <p class="mb-0">Información adicional sobre tu cuenta, como detalles de contacto, membresía, etc.</p>
                     <ul>
