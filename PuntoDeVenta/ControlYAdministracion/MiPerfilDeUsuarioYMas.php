@@ -25,25 +25,28 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Navbar Start -->
         <?php include "navbar.php";?>
             <!-- Navbar End -->
-
-
-            <div class="col-sm-12 col-xl-6">
-    <div class="bg-light rounded h-100 p-4">
-        <h6 class="mb-4">Datos de la Cuenta</h6>
-        <div class="account-info">
-            <img class="img-fluid rounded-circle mx-auto mb-4" src="tu_imagen_de_perfil.jpg" style="width: 100px; height: 100px;">
-            <h5 class="mb-1">Tu Nombre</h5>
-            <p>Tu Profesión</p>
-            <p class="mb-0">Información adicional sobre tu cuenta, como detalles de contacto, membresía, etc.</p>
-            <ul>
-                <li>Dato 1: Valor 1</li>
-                <li>Dato 2: Valor 2</li>
-                <!-- Agrega más datos según sea necesario -->
-            </ul>
-            <button class="btn btn-primary">Editar</button>
+            <div class="container"> <!-- Agrega un contenedor para centrar el contenido -->
+    <div class="row justify-content-center"> <!-- Centra el contenido horizontalmente -->
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Datos de la Cuenta</h6>
+                <div class="account-info">
+                    <img class="img-fluid rounded-circle mx-auto mb-4" src="tu_imagen_de_perfil.jpg" style="width: 100px; height: 100px;">
+                    <h5 class="mb-1">Tu Nombre</h5>
+                    <p>Tu Profesión</p>
+                    <p class="mb-0">Información adicional sobre tu cuenta, como detalles de contacto, membresía, etc.</p>
+                    <ul>
+                        <li>Dato 1: Valor 1</li>
+                        <li>Dato 2: Valor 2</li>
+                        <!-- Agrega más datos según sea necesario -->
+                    </ul>
+                    <button class="btn btn-primary">Editar</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 
             <?php 
          
