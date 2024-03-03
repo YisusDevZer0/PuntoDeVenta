@@ -78,7 +78,7 @@
                             <span class="d-none d-lg-inline-flex"><?php echo $row['Nombre_Apellidos']?></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="MiPerfilDeUsuario" class="dropdown-item">Mi perfil</a>
+                            <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">Mi perfil</a>
                             <a href="Ajustes" class="dropdown-item">Ajustes</a>
                             <a href="Cierre" class="dropdown-item">Cerrar sesion</a>
                         </div>
