@@ -79,9 +79,38 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">Mi perfil</a>
-                            <a href="Ajustes" class="dropdown-item">Ajustes</a>
+                            <!-- <a href="Ajustes" class="dropdown-item">Ajustes</a> -->
                             <a href="Cierre" class="dropdown-item">Cerrar sesion</a>
                         </div>
                     </div>
                 </div>
             </nav>
+            <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Selecciona el enlace de cierre de sesión
+        const logoutLink = document.querySelector('.dropdown-item[href="Cierre"]');
+        
+        // Agrega un evento de clic al enlace
+        logoutLink.addEventListener('click', function(event) {
+            // Previene el comportamiento predeterminado del enlace
+            event.preventDefault();
+            
+            // Muestra el SweetAlert2 para confirmar el cierre de sesión
+            Swal.fire({
+                title: '¿Cerrar sesión?',
+                text: '¿Estás seguro de que deseas cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                // Si el usuario confirma, redirige a la página de cierre de sesión
+                if (result.isConfirmed) {
+                    window.location.href = "cerrar_sesion.php"; // Reemplaza con la URL de tu página de cierre de sesión
+                }
+            });
+        });
+    });
+</script>
