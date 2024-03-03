@@ -34,9 +34,11 @@ include_once "Controladores/ControladorUsuario.php";
                     <img class="img-fluid rounded-circle mx-auto mb-4" src="tu_imagen_de_perfil.jpg" style="width: 100px; height: 100px;">
                     <div class="row mb-3">
                     <h5 class="mb-1">Tu Nombre</h5>
-                                    <div class="col-sm-10">
-                                        <input type="password" class="form-control" id="inputPassword3">
-                                    </div>
+                    <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">@</span>
+                                <input type="text" class="form-control" placeholder="Username" aria-label="Username"
+                                    aria-describedby="basic-addon1">
+                            </div>
                                 </div>
                     
                 
