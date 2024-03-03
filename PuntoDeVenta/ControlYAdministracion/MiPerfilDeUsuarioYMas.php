@@ -45,8 +45,8 @@ include_once "Controladores/ControladorUsuario.php";
                                 <h5 class="mb-1">Tu Sucursal actual</h5>
                                 <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1">@</span>
-                                <input type="text" class="form-control" placeholder="Sucursal" aria-label="Username"
-                                    aria-describedby="basic-addon1" value="<?php echo $row['Nombre_Apellidos']?>">
+                                <input type="text" class="form-control" readonly placeholder="Sucursal" aria-label="Username"
+                                    aria-describedby="basic-addon1" value="<?php echo $row['Nombre_Sucursal']?>">
                             </div>
                             <h5 class="mb-1">Correo Electronico</h5>
                                 <div class="input-group mb-3">
