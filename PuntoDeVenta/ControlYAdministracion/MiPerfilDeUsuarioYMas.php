@@ -46,12 +46,19 @@ include_once "Controladores/ControladorUsuario.php";
                                 <input type="text" class="form-control" placeholder="Sucursal" aria-label="Username"
                                     aria-describedby="basic-addon1" value="<?php echo $row['Nombre_Apellidos']?>">
                             </div>
-                    <p>Tu Profesión</p>
-                    <p class="mb-0">Información adicional sobre tu cuenta, como detalles de contacto, membresía, etc.</p>
-                    <ul>
-                        <li>Dato 1: Valor 1</li>
-                        <li>Dato 2: Valor 2</li>
-                        <!-- Agrega más datos según sea necesario -->
+                            <h5 class="mb-1">Correo Electronico</h5>
+                                <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">@</span>
+                                <input type="text" class="form-control" placeholder="Sucursal" aria-label="Username"
+                                    aria-describedby="basic-addon1" value="<?php echo $row['Correo_Electronico']?>">
+                            </div>
+                            <h5 class="mb-1">Contraseña</h5>
+                                <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">@</span>
+                                <input type="text" class="form-control" placeholder="Sucursal" aria-label="Username"
+                                    aria-describedby="basic-addon1" value="<?php echo $row['Password']?>">
+                            </div>
+                
                     </ul>
                     <button class="btn btn-primary">Editar</button>
                 </div>
