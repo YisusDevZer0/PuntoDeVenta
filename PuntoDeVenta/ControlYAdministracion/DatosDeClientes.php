@@ -13,6 +13,10 @@ include_once "Controladores/ControladorUsuario.php";
 
     <?php
    include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <body>
     
         <!-- Spinner End -->
