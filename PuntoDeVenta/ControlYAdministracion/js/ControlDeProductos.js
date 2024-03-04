@@ -9,7 +9,7 @@ function CargaListadoDeProductos(){
   
   
   
-  argaListadoDeProductos();
+  CargaListadoDeProductos();
 
   
   
