@@ -71,6 +71,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historial general </a>
+                            <a href="Servicios" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Servicios </a>
                             <a href="ElCedis" class="dropdown-item"><i class="fa-solid fa-house-medical"></i>CEDIS </a>
                             <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
                            
