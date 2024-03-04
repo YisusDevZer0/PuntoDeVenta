@@ -34,7 +34,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
             
-            <div id="Clientes"></div>
+            <div id="DataDeClientes"></div>
             </div></div></div></div>
             
           

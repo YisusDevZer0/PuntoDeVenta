@@ -2,7 +2,7 @@
 <?php
 header('Content-Type: application/json');
 include("db_connection.php");
-include_once "Controladores/ControladorUsuario.php";
+include_once "ControladorUsuario.php";
 
 
 
