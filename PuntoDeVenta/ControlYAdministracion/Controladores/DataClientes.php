@@ -59,7 +59,7 @@
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
-    color:#0172b6;
+    color:#000000;
   }
 
   /* Estilos para el botón de Excel */
@@ -98,7 +98,7 @@
   /* Estilo para el ícono de carga */
   .loader {
     border: 6px solid #f3f3f3; /* Color del círculo externo */
-    border-top: 6px solid #C80096; /* Color del círculo interno */
+    border-top: 6px solid #26b814; /* Color del círculo interno */
     border-radius: 50%;
     width: 60px;
     height: 60px;
