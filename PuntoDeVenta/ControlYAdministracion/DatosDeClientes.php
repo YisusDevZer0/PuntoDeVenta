@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title style="color:#0172b6;">Clientes registrados para  <?php echo $row['Licencia']?></title>
+    <title >Clientes registrados para  <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Clientes registrados para  <?php echo $row['Licencia']?></h6>
             
             <div id="DataDeClientes"></div>
             </div></div></div></div>
