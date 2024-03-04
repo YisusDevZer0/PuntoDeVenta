@@ -7,19 +7,19 @@
 
   .dataTables_paginate .paginate_button {
     padding: 5px 10px !important;
-    border: 1px solid #007bff !important;
+    border: 1px solid #ef7980 !important;
     margin: 2px !important;
     cursor: pointer !important;
     font-size: 16px !important;
-    color: #007bff !important;
+    color: #ef7980 !important;
     background-color: #fff !important;
   }
 
   /* Cambiar el color del paginado seleccionado */
   .dataTables_paginate .paginate_button.current {
-    background-color: #007bff !important;
+    background-color: #ef7980 !important;
     color: #fff !important;
-    border-color: #007bff !important;
+    border-color: #ef7980 !important;
   }
 
   /* Cambiar el color del hover */
@@ -50,7 +50,7 @@
 
   #Clientes th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
-    background-color: #0057b8 !important; /* Nuevo color de fondo para los encabezados */
+    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
