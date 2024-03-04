@@ -10,19 +10,19 @@ if($_SESSION["ControlMaestro"])	//Condicion admin
 
 }
 
-if($_SESSION["Vendedor"])	//Condicion admin
+if($_SESSION["VentasPos"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/Ventas/");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/");	
 
 }
 
-if($_SESSION["Administrador"])	//Condicion admin
+if($_SESSION["AdministradorGeneral"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/Administracion/");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/POSAdministracion/");	
 
 }
 
