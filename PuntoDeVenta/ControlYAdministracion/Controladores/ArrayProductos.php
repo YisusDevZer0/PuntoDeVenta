@@ -5,11 +5,11 @@ include("db_connection.php");
 include_once "ControladorUsuario.php";
 
 
-$sql = "SELECT Productos_POS.ID_Prod_POS,Productos_POS.Nombre_Prod,Productos_POS.Cod_Barra,Productos_POS.Cod_Enfermeria,Productos_POS.Proveedor1,Productos_POS.Proveedor2,
-Productos_POS.ID_H_O_D,Productos_POS.Clave_adicional,Productos_POS.Clave_Levic,Productos_POS.FkMarca,Productos_POS.FkCategoria,Productos_POS.FkPresentacion,Productos_POS.Tipo,
-Productos_POS.Precio_Venta,Productos_POS.Precio_C,Productos_POS.Stock,Productos_POS.Saldo,Productos_POS.AgregadoPor,Productos_POS.Vendido,Productos_POS.Tipo_Servicio,
+$sql = "SELECT Productos_POS.ID_Prod_POS,Productos_POS.Nombre_Prod,Productos_POS.Cod_Barra,Productos_POS.Proveedor1,
+Productos_POS.Licencia,Productos_POS.Clave_adicional,Productos_POS.Clave_Levic,Productos_POS.FkMarca,Productos_POS.FkCategoria,Productos_POS.FkPresentacion,Productos_POS.Tipo,
+Productos_POS.Precio_Venta,Productos_POS.Precio_C,Productos_POS.AgregadoPor,Productos_POS.Tipo_Servicio,
 Servicios_POS.Servicio_ID,Servicios_POS.Nom_Serv,Productos_POS.AgregadoEl FROM Productos_POS,Servicios_POS where 
-Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio  AND Productos_POS.ID_H_O_D ='".$row['ID_H_O_D']."'";
+Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio AND Productos_POS.Licencia ='".$row['Licencia']."'";
  
 $result = mysqli_query($conn, $sql);
  
@@ -21,7 +21,7 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
     $data[$c]["Clave_interna"] = $fila["Clave_adicional"];
     $data[$c]["Clave_Levic"] = $fila["Clave_Levic"];
-    $data[$c]["Cod_Enfermeria"] = $fila["Cod_Enfermeria"];
+  
     $data[$c]["Precio_C"] = $fila["Precio_C"];
     $data[$c]["Precio_Venta"] = $fila["Precio_Venta"];
     $data[$c]["Nom_Serv"] = $fila["Nom_Serv"];
@@ -30,11 +30,9 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["Categoria"] = $fila["FkCategoria"];
     $data[$c]["Presentacion"] = $fila["FkPresentacion"];
     $data[$c]["Proveedor1"] = $fila["Proveedor1"];
-    $data[$c]["Proveedor2"] = $fila["Proveedor2"];
+  
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
-    $data[$c]["Stock"] = $fila["Stock"];
-    $data[$c]["Vendido"] = $fila["Vendido"];
-    $data[$c]["Saldo"] = $fila["Saldo"];
+    
    
     $data[$c]["Acciones"] = ["<button class='btn btn-primary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i class='fas fa-th-list fa-1x'></i></button><div class='dropdown-menu'>
     <a href=https://controlfarmacia.com/AdminPOS/AsignacionSucursalesStock?idProd=".base64_encode($fila["ID_Prod_POS"])." class='btn-edit  dropdown-item' >Asignar en sucursales <i class='fas fa-clinic-medical'></i></a>
