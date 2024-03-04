@@ -47,7 +47,7 @@
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Tickets</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
                             <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
@@ -57,7 +57,7 @@
 
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Ventas</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice-dollar"></i>Ventas</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                             <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
