@@ -59,6 +59,7 @@
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
+    color:#0172b6;
   }
 
   /* Estilos para el botón de Excel */
