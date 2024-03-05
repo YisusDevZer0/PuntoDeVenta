@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
 
-if(!isset($_SESSION['ControlMaestro'])){
+if(!isset($_SESSION['VentasPos'])){
 	header("Location: Expiro.php");
 }
 include_once("db_connect.php");
