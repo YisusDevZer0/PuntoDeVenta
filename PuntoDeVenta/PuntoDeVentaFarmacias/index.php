@@ -44,8 +44,8 @@ include_once "Controladores/ControladorUsuario.php"
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Consulta rapida de productos</p>
-                                <button type="button" class="btn btn-primary" id="openModalBtn">Abrir Modal</button>
+                                <p class="mb-2">Productos</p>
+                                <button type="button" class="btn btn-primary" id="openModalBtn">Consultar</button>
                             </div>
                         </div>
                     </div>
