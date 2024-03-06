@@ -6,7 +6,7 @@ include_once "Controladores/ControladorUsuario.php"
 
 <head>
     <meta charset="utf-8">
-    <title>Pantalla de inicio administrativa <?php echo $row['Licencia']?> </title>
+    <title>Pantalla de inicio punto de venta <?php echo $row['Licencia']?> </title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -44,8 +44,8 @@ include_once "Controladores/ControladorUsuario.php"
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
-                                <p class="mb-2">Today Sale</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <p class="mb-2">Consulta rapida de productos</p>
+                                <button type="button" class="btn btn-primary" id="openModalBtn">Abrir Modal</button>
                             </div>
                         </div>
                     </div>
