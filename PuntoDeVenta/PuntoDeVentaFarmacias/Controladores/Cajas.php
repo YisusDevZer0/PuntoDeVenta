@@ -210,14 +210,15 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeCajas.php",
  "aoColumns": [
-  { mData: 'Folio' },  
-  { mData: 'Nombre_Paciente' },
-  { mData: 'Fecha_Nacimiento' },
-       { mData: 'Edad' },
-       { mData: 'Sexo' },
-       { mData: 'Telefono' },
+  { mData: 'IdCaja' },  
+  { mData: 'Empleado' },
+  { mData: 'Cantidad_Fondo' },
+       { mData: 'Fecha_Apertura' },
+       { mData: 'Estatus' },
+       { mData: 'Turno' },
+       { mData: 'Asignacion' },
        
-      
+       { mData: 'ValorTotalCaja' },
   
       ],
      

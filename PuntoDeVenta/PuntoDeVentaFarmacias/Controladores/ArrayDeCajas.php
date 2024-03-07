@@ -21,14 +21,14 @@ $c=0;
  
 while($fila=$result->fetch_assoc()){
  
- $data[$c]["Folio"] = $fila["ID_Data_Paciente"];
- $data[$c]["Nombre_Paciente"] = $fila["Nombre_Paciente"];
-$data[$c]["Edad"] = $fila["Edad"];
- $data[$c]["Sexo"] = $fila["Sexo"];
- $data[$c]["Telefono"] = $fila["Telefono"];
- $data[$c]["Fecha_Nacimiento"] = $fila["Fecha_Nacimiento"];
-   
-
+ $data[$c]["IdCaja"] = $fila["ID_Caja"];
+ $data[$c]["Empleado"] = $fila["Empleado"];
+$data[$c]["Cantidad_Fondo"] = $fila["Cantidad_Fondo"];
+ $data[$c]["Fecha_Apertura"] = $fila["Fecha_Apertura"];
+ $data[$c]["Estatus"] = $fila["Estatus"];
+ $data[$c]["Turno"] = $fila["Turno"];
+ $data[$c]["Asignacion"] = $fila["Asignacion"];
+ $data[$c]["ValorTotalCaja"] = $fila["Valor_Total_Caja"];
     
     
     $c++; 
