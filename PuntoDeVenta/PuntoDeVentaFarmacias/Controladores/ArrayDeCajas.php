@@ -6,8 +6,28 @@ include_once "Controladores/ControladorUsuario.php";
 
 
 
-$sql = "SELECT ID_Data_Paciente,Nombre_Paciente,Edad,Sexo,Telefono,Fecha_Nacimiento
-FROM Data_Pacientes  ORDER BY ID_Data_Paciente DESC";
+$sql = "SELECT 
+Cajas_POS.ID_Caja,
+Cajas_POS.Cantidad_Fondo,
+Cajas_POS.Empleado,
+Cajas_POS.Sucursal,
+Cajas_POS.Estatus,
+Cajas_POS.CodigoEstatus,
+Cajas_POS.Turno,
+Cajas_POS.Asignacion,
+Cajas_POS.Fecha_Apertura,
+Cajas_POS.Valor_Total_Caja,
+Cajas_POS.ID_H_O_D,
+Sucursales.ID_SucursalC,
+Sucursales.Nombre_Sucursal 
+FROM 
+Cajas_POS, SucursalesCorre 
+WHERE 
+Cajas_POS.Sucursal = Sucursales.ID_SucursalC 
+AND Cajas_POS.Fecha_Apertura = '$fechaActual'  -- Usa la variable de fecha
+AND Cajas_POS.Sucursal='".$row['Fk_Sucursal']."'
+AND Cajas_POS.Empleado='".$row['Nombre_Apellidos']."'
+AND Cajas_POS.ID_H_O_D='".$row['Licencia']."'";
  
 $result = mysqli_query($conn, $sql);
  

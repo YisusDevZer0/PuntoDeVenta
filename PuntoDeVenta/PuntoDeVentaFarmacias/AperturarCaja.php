@@ -50,6 +50,42 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
+            <script>
+  	
+      $(".btn-edit").click(function(){
+            id = $(this).data("id");
+            $.post("hhttps://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php","id="+id,function(data){
+                $("#form-edit").html(data);
+                $("#Titulo").html("Apertura de caja");
+                $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
+            });
+            $('#editModal').modal('show');
+      });
+    </script>
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div id="Di"class="modal-dialog  modal-notify modal-success">
+        <div class="modal-content">
+        <div class="modal-header">
+           <p class="heading lead" id="Titulo"></p>
+  
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true" class="white-text">&times;</span>
+           </button>
+         </div>
+          <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
+                                          <span id="Aviso" class="text-semibold"><?php echo $row['Nombre_Apellidos']?>
+                              Verifique los campos antes de realizar alguna accion</span>
+                                          <button type="button" class="close" data-dismiss="alert">×</button>
+                              </div>
+              <div class="modal-body">
+            <div class="text-center">
+          <div id="form-edit"></div>
+          
+          </div>
+  
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </body>
 
 </html>
