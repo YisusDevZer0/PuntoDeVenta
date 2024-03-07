@@ -11,7 +11,7 @@ $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado,
 Cajas.Sucursal, Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, 
 Cajas.Fecha_Apertura, Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal,
  Sucursales.Nombre_Sucursal FROM Cajas, Sucursales 
- WHERE Cajas.Sucursal = Sucursales.ID_Sucursal";
+ WHERE Cajas.Sucursal = Sucursales.ID_Sucursal AND Cajas.Sucursal='".$row['Fk_Sucursal']."'";
  
 $result = mysqli_query($conn, $sql);
  
