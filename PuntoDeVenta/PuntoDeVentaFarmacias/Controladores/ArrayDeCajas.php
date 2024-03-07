@@ -4,12 +4,14 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "Controladores/ControladorUsuario.php";
 
+$fechaActual = date('Y-m-d');  // Obtiene la fecha actual en el formato 'YYYY-MM-DD'
 
 
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
  Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
   Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
   FROM Cajas, Sucursales WHERE Cajas.Sucursal = Sucursales.ID_Sucursal
+AND Cajas.Fecha_Apertura = '$fechaActual'  -- Usa la variable de fecha
 AND Cajas.Sucursal='".$row['Fk_Sucursal']."'
 AND Cajas.Empleado='".$row['Nombre_Apellidos']."'
 AND Cajas.Licencia='".$row['Licencia']."'";
