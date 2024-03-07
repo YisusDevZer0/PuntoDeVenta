@@ -12,8 +12,7 @@ Cajas.Sucursal, Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacio
 Cajas.Fecha_Apertura, Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal,
  Sucursales.Nombre_Sucursal FROM Cajas, Sucursales 
  WHERE Cajas.Sucursal = Sucursales.ID_Sucursal AND Cajas.Sucursal='".$row['Fk_Sucursal']."'
-AND Cajas.Empleado='".$row['Nombre_Apellidos']."'
-AND Cajas.Licencia='".$row['Licencia']."'";
+AND Cajas.Empleado='".$row['Nombre_Apellidos']."'";
  
 $result = mysqli_query($conn, $sql);
  
