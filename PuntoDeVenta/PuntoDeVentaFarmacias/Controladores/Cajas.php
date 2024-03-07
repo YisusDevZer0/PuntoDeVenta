@@ -7,19 +7,19 @@
 
   .dataTables_paginate .paginate_button {
     padding: 5px 10px !important;
-    border: 1px solid #007bff !important;
+    border: 1px solid #ef7980 !important;
     margin: 2px !important;
     cursor: pointer !important;
     font-size: 16px !important;
-    color: #007bff !important;
+    color: #ef7980 !important;
     background-color: #fff !important;
   }
 
   /* Cambiar el color del paginado seleccionado */
   .dataTables_paginate .paginate_button.current {
-    background-color: #007bff !important;
+    background-color: #ef7980 !important;
     color: #fff !important;
-    border-color: #007bff !important;
+    border-color: #ef7980 !important;
   }
 
   /* Cambiar el color del hover */
@@ -32,7 +32,7 @@
 
 <style>
   /* Estilos personalizados para la tabla */
-  #CajasAperturadas th {
+  #Clientes th {
     font-size: 12px; /* Tamaño de letra para los encabezados */
     padding: 4px; /* Ajustar el espaciado entre los encabezados */
     white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
@@ -41,24 +41,25 @@
 
 <style>
   /* Estilos para la tabla */
-  #CajasAperturadas {
+  #Clientes {
     font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
     border-collapse: collapse; /* Colapsar los bordes de las celdas */
     width: 100%;
     text-align: center; /* Centrar el contenido de las celdas */
   }
 
-  #CajasAperturadas th {
+  #Clientes th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
-    background-color: #0057b8 !important; /* Nuevo color de fondo para los encabezados */
+    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
 
-  #CajasAperturadas td {
+  #Clientes td {
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
+    color:#000000;
   }
 
   /* Estilos para el botón de Excel */
@@ -97,7 +98,7 @@
   /* Estilo para el ícono de carga */
   .loader {
     border: 6px solid #f3f3f3; /* Color del círculo externo */
-    border-top: 6px solid #C80096; /* Color del círculo interno */
+    border-top: 6px solid #26b814; /* Color del círculo interno */
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -200,14 +201,14 @@
   }
 
 
-tabla = $('#CajasAperturadas').DataTable({
+tabla = $('#Clientes').DataTable({
 
  "bProcessing": true,
  "ordering": true,
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayCajasAperturadass.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeCajas.php",
  "aoColumns": [
   { mData: 'Folio' },  
   { mData: 'Nombre_Paciente' },
@@ -250,7 +251,7 @@ tabla = $('#CajasAperturadas').DataTable({
     extend: 'excelHtml5',
     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
-    title: 'Base de CajasAperturadas',
+    title: 'Base de Clientes',
     className: 'btn btn-success',
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
@@ -264,9 +265,9 @@ tabla = $('#CajasAperturadas').DataTable({
 </script>
 <div class="text-center">
   <div class="table-responsive">
-  <table  id="CajasAperturadas" class="table table-hover">
+  <table  id="Clientes" class="table table-hover">
 <thead>
-<th>ID_CajasAperturada</th>
+<th>ID_Cliente</th>
 <th>Nombre_Paciente</th>
 <th>Fecha_Nacimiento</th>
     <th>Edad</th>
