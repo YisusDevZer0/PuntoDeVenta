@@ -13,7 +13,7 @@ Usuarios_PV.Id_PvUser,
 Usuarios_PV.Nombre_Apellidos,
 Usuarios_PV.file_name,
 Usuarios_PV.Fk_Usuario,
-Usuarios_PV.Fk_Sucursal
+Usuarios_PV.Fk_Sucursal,
 Usuarios_PV.Fecha_Nacimiento,
 Usuarios_PV.Correo_Electronico,
 Usuarios_PV.Telefono,
