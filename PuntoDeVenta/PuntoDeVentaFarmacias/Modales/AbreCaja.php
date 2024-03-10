@@ -33,7 +33,15 @@ while ($r=$query->fetch_object()){
   <input type="number" class="form-control "  id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
     </div>
     </div>
-
+    <div class="col">
+    <label for="exampleFormControlInput1">Empleado<span class="text-danger">*</span></label>
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+  
+    <span class="input-group-text" id="Tarjeta"><i class="fas fa-file-signature"></i></span>
+  </div>
+  <input type="text" class="form-control " readonly  name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>" aria-describedby="basic-addon1" >            
+</div></div></div>
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
 <?php endif;?>
