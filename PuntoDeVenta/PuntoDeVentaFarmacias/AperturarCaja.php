@@ -36,12 +36,13 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Administracion de cajas de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
+            <div class="text-center">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Aperturar nueva caja 
-</button> <br>
+</button> <br><br>
 <div id="Cajas"></div>
             </div></div></div></div>
-            
+            </div>
             <script src="js/Cajas.js"></script>
 
             <!-- Footer Start -->
