@@ -44,8 +44,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             <h6 class="mb-4">Administracion de cajas de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
             <button data-id="<?php echo $ValorFondoCaja["ID_Fon_Caja"];?>" class="btn-editcaja btn btn-success">
-  Aperturar nueva caja el valor es<?php echo $ValorFondoCaja["ID_Fon_Caja"];?>
-</button> <br>
+  Aperturar nueva caja </button> <br>
 <div id="Cajas"></div>
             </div></div></div></div>
             </div>
