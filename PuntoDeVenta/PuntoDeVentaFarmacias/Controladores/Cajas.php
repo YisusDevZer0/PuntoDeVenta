@@ -268,13 +268,14 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes" class="table table-hover">
 <thead>
-<th>ID_Cliente</th>
-<th>Nombre_Paciente</th>
-<th>Fecha_Nacimiento</th>
-    <th>Edad</th>
-    <th>Sexo</th>
-    <th>Telefono</th> 
-
+<th>Id de caja</th>
+<th>Nombre Cajero</th>
+<th>Fondo de caja</th>
+    <th>Fecha de apertura</th>
+    <th>Estado</th>
+    <th>Turno</th> 
+    <th>Activo / Inactivo</th> 
+    <th>Valor total de caja</th> 
 </thead>
 
 </div>
