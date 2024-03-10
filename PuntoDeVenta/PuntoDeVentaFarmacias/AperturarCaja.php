@@ -49,7 +49,14 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             </div></div></div></div>
             </div>
             <script src="js/Cajas.js"></script>
-            <script>
+         
+            <!-- Footer Start -->
+            <?php 
+          
+            include "Modales/Modales_Errores.php";
+            include "Modales/Modales_Referencias.php";
+            include "Footer.php";?>
+               <script>
   	
     $(".btn-edit").click(function(){
           id = $(this).data("id");
@@ -61,13 +68,6 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
           $('#editModal').modal('show');
     });
   </script>
-            <!-- Footer Start -->
-            <?php 
-          
-            include "Modales/Modales_Errores.php";
-            include "Modales/Modales_Referencias.php";
-            include "Footer.php";?>
-            
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
     <div id="Di"class="modal-dialog  modal-notify modal-success">
         <div class="modal-content">
