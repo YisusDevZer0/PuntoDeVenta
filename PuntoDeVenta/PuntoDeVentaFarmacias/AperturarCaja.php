@@ -37,7 +37,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Administracion de cajas de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#OpenCaja">
   Aperturar nueva caja 
 </button> <br>
 <div id="Cajas"></div>
@@ -47,7 +47,7 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            
+            include "Modales/AbreCaja.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
