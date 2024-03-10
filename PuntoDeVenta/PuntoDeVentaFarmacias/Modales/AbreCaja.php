@@ -94,6 +94,7 @@ while ($r=$query->fetch_object()){
 <div class="" id="Ok" role="alert">
   
 </div>
+<button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
 <?php endif;?>
