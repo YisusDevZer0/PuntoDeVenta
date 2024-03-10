@@ -42,6 +42,29 @@ while ($r=$query->fetch_object()){
   </div>
   <input type="text" class="form-control " readonly  name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>" aria-describedby="basic-addon1" >            
 </div></div></div>
+
+<div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Sucursal </label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
+  </div>
+  <input type="text" class="form-control " readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >       
+  <input type="text" class="form-control " readonly name="Sucursal" id="sucursal" hidden value="<?php echo $Especialistas->Fk_Sucursal; ?>" aria-describedby="basic-addon1" >       
+    </div>
+    </div>
+    
+   
+    <div class="col">
+    <label for="exampleFormControlInput1">Fecha<span class="text-danger">*</span></label>
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+  
+    <span class="input-group-text" id="Tarjeta"><i class="fas fa-file-signature"></i></span>
+  </div>
+  <input type="text" class="form-control " readonly name="Fecha" id="fecha" value="<?php echo $fcha; ?>" aria-describedby="basic-addon1" >   
+  <input type="text" class="form-control " hidden readonly name="Asignacion" id="asignacion" value="1" aria-describedby="basic-addon1" >            
+</div></div></div>
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
 <?php endif;?>
