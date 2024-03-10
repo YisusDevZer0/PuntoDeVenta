@@ -39,7 +39,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="text-center">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Aperturar nueva caja 
-</button> <br><br>
+</button> <br>
 <div id="Cajas"></div>
             </div></div></div></div>
             </div>
