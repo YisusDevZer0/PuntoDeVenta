@@ -56,18 +56,18 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
-               <script>
-  	
+            <script>
     $(".btn-edit").click(function(){
-          id = $(this).data("id");
-          $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php","id="+id,function(data){
-              $("#form-edit").html(data);
-              $("#Titulo").html("Apertura de caja");
-              $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
-          });
-          $('#editModal').modal('show');
+        id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php", "id=" + id, function(data){
+            $("#form-edit").html(data);
+            $("#Titulo").html("Apertura de caja");
+            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
+        });
+        $('#editModal').modal('show');
     });
-  </script>
+</script>
+
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
     <div id="Di"class="modal-dialog  modal-notify modal-success">
         <div class="modal-content">
