@@ -94,6 +94,11 @@ while ($r=$query->fetch_object()){
 <div class="" id="Ok" role="alert">
   
 </div>
+<input type="text" hidden name="Empresa" value="<?php echo $row['ID_H_O_D']?>">
+ 
+ <input type="text" hidden name="Estatus" value="Abierta">
+ <input type="text" hidden name="CodEstatus" value="background-color: #2BBB1D !important;">
+ <input type="text"  hidden name="Sistema" value="POS <?php echo $row['Nombre_rol']?>">
 <button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
