@@ -60,7 +60,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
   	
     $(".btn-edit").click(function(){
           id = $(this).data("id");
-          $.post("hhttps://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php","id="+id,function(data){
+          $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php","id="+id,function(data){
               $("#form-edit").html(data);
               $("#Titulo").html("Apertura de caja");
               $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
