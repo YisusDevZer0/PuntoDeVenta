@@ -1,5 +1,5 @@
 <?php
-include_once("db_connection.php");
+include_once("db_connect.php");
 $sql ="SELECT Fondos_Cajas.ID_Fon_Caja,Fondos_Cajas.Fk_Sucursal,Fondos_Cajas.Fondo_Caja, 
 Fondos_Cajas.Estatus, 
 Sucursales.ID_Sucursal,Sucursales.Nombre_Sucursal FROM 
