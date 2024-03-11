@@ -41,7 +41,6 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
                            
                         </div>
                     </div>
@@ -51,7 +50,6 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Ventas</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
                            
                         </div>
                     </div>
@@ -76,15 +74,7 @@
                            
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" class="dropdown-item">Sign In</a>
-                            <a href="signup.html" class="dropdown-item">Sign Up</a>
-                            <a href="404.html" class="dropdown-item">404 Error</a>
-                            <a href="blank.html" class="dropdown-item">Blank Page</a>
-                        </div>
-                    </div>
+                    
                 </div>
             </nav>
         </div>
