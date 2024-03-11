@@ -81,7 +81,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Cantidad total en caja<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
  
-  <input type="number" class="form-control input-negro " step="any" name="TotalCaja" id="resultado" readonly   aria-describedby="basic-addon1" >     
+  <input type="number" class="form-control input-negro " step="any" name="TotalCaja" id="resultado"  aria-describedby="basic-addon1" >     
   </div>
 </div><label for="resultado" class="error"></div>
 <div class="" id="Ok" role="alert">
