@@ -69,30 +69,30 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 </script>
 
 
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div id="Di"class="modal-dialog  modal-notify modal-success">
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div id="Di" class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
-        <div class="modal-header">
-           <p class="heading lead" id="Titulo"></p>
-  
-           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true" class="white-text">&times;</span>
-           </button>
-         </div>
-          <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
-                                          <span id="Aviso" class="text-semibold"><?php echo $row['Nombre_Apellidos']?>
-                              Verifique los campos antes de realizar alguna accion</span>
-                                          <button type="button" class="close" data-dismiss="alert">×</button>
-                              </div>
-              <div class="modal-body">
-            <div class="text-center">
-          <div id="form-edit"></div>
-          
-          </div>
-  
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="Titulo">Título del Modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong><?php echo $row['Nombre_Apellidos']; ?></strong> Verifique los campos antes de realizar alguna acción.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="form-edit">
+                    <!-- Contenido del formulario -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 
 </html>
