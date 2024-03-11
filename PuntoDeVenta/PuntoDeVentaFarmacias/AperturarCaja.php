@@ -79,9 +79,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             <div class="modal-body">
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong><?php echo $row['Nombre_Apellidos']; ?></strong> Verifique los campos antes de realizar alguna acción.
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                  
                 </div>
                 <div id="form-edit">
                     <!-- Contenido del formulario -->
