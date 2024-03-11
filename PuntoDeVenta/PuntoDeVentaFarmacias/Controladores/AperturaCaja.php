@@ -9,6 +9,7 @@ $Empleado = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Emple
 $Sucursal = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Sucursal']))));
 $Estatus = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Estatus']))));
 $CodigoEstatus = $conn->real_escape_string(htmlentities(strip_tags(trim($Colordestado))));
+
 $Fecha_Apertura = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Fecha']))));
 $Turno = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Turno']))));
 $Asignacion = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Asignacion']))));
