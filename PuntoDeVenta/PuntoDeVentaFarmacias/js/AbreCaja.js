@@ -84,7 +84,7 @@ $('document').ready(function($) {
 
         $.ajax({
             type: 'POST',
-            url: "Consultas/AperturaCaja.php",
+            url: "Controladores/AperturaCaja.php",
             data: $('#OpenCaja').serialize(),
             cache: false,
             beforeSend: function() {
