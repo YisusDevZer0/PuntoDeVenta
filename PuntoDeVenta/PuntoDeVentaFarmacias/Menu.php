@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><<i class="fa-solid fa-ticket"></i>Tickets</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-ticket"></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
                            
