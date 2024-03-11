@@ -104,6 +104,7 @@ while ($r=$query->fetch_object()){
    
       <input type="text" class="form-control "   readonly name="VendedorTicket"  readonly value="<?php echo $row['Nombre_Apellidos']?>">
       <input type="text" class="form-control "   readonly name="TurnoTicket" id="turnoticket"  >
+      <input type="text" readonly name="EstadoColor" value="#157347">
       <input type="number" class="form-control "   name="FondoBase" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
       <input type="number" class="form-control "  step="any" name="TotalCajaDeApertura" id="resultadoticket" readonly   aria-describedby="basic-addon1" >    
      

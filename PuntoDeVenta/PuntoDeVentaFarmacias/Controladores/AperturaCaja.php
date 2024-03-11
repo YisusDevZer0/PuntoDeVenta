@@ -2,14 +2,13 @@
 include_once 'db_connection.php';
 date_default_timezone_set('America/Mexico_City');
 
-$Colordestado="#157347";
+
 $Fk_Fondo = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['FkFondo']))));
 $Cantidad_Fondo = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Cantidad']))));
 $Empleado = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Empleado']))));
 $Sucursal = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Sucursal']))));
 $Estatus = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Estatus']))));
-$CodigoEstatus = $conn->real_escape_string(htmlentities(strip_tags(trim($Colordestado))));
-
+$CodigoEstatus = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['EstadoColor']))));
 $Fecha_Apertura = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Fecha']))));
 $Turno = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Turno']))));
 $Asignacion = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Asignacion']))));
@@ -20,15 +19,15 @@ $Sistema = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Sistem
 $Licencia = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Licencia']))));
 
 // Verificar si ya existe un registro con los mismos valores
-$sql = "SELECT Empleado,Sucursal,Estatus,Fecha_Apertura,ID_H_O_D,Cantidad_Fondo,Turno,Asignacion FROM Cajas_POS
+$sql = "SELECT Empleado,Sucursal,Estatus,Fecha_Apertura,Licencia,Cantidad_Fondo,Turno,Asignacion FROM Cajas_POS
         WHERE Empleado='$Empleado' AND Sucursal='$Sucursal' AND Estatus='$Estatus' AND Fecha_Apertura='$Fecha_Apertura' AND Cantidad_Fondo='$Cantidad_Fondo'AND Turno='$Turno' 
-        AND Asignacion='$Asignacion' AND ID_H_O_D='$ID_H_O_D'";
+        AND Asignacion='$Asignacion' AND Licencia='$Licencia'";
 $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
 // Verificar si ya existe un registro con los mismos valores
 if ($row && $row['Empleado'] == $Empleado && $row['Sucursal'] == $Sucursal && $row['Estatus'] == $Estatus && $row['Fecha_Apertura'] == $Fecha_Apertura
-    && $row['Cantidad_Fondo'] == $Cantidad_Fondo && $row['ID_H_O_D'] == $ID_H_O_D && $row['Turno'] == $Turno && $row['Asignacion'] == $Asignacion) {
+    && $row['Cantidad_Fondo'] == $Cantidad_Fondo && $row['Licencia'] == $Licencia && $row['Turno'] == $Turno && $row['Asignacion'] == $Asignacion) {
     echo json_encode(array("statusCode" => 250));
 } else {
     // Insertar nuevo registro
