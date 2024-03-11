@@ -21,7 +21,12 @@ while ($r=$query->fetch_object()){
 ?>
 
 <?php if($Especialistas!=null):?>
+<style>
+  .input-negro {
+    color: black;
+}
 
+</style>
 <form action="javascript:void(0)" method="post" id="OpenCaja" >
 <div class="row">
     <div class="col">
@@ -29,7 +34,7 @@ while ($r=$query->fetch_object()){
     <div class="input-group mb-3">
  
   <input type="text" class="form-control " hidden name="FkFondo" id="fkfondo" readonly value="<?php echo $Especialistas->ID_Fon_Caja; ?>">
-  <input type="number" class="form-control "  id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
+  <input type="number" class="form-control input-negro "  id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
     </div>
     </div>
     <div class="col">
@@ -43,8 +48,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Sucursal </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-  </div>
+ 
   <input type="text" class="form-control " readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >       
   <input type="text" class="form-control " readonly name="Sucursal" id="sucursal" hidden value="<?php echo $Especialistas->Fk_Sucursal; ?>" aria-describedby="basic-addon1" >       
     </div>
@@ -54,10 +58,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Fecha<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  
-    <span class="input-group-text" id="Tarjeta"><i class="fas fa-file-signature"></i></span>
-  </div>
+ 
   <input type="text" class="form-control " readonly name="Fecha" id="fecha" value="<?php echo $fcha; ?>" aria-describedby="basic-addon1" >   
   <input type="text" class="form-control " hidden readonly name="Asignacion" id="asignacion" value="1" aria-describedby="basic-addon1" >            
 </div></div></div>
@@ -66,8 +67,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Turno </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-  </div>
+ 
   <select name="Turno" id="turno"  onchange="TurnoElegido();"class="form-control">
   <option value="">Escoge un turno</option>
  
@@ -80,11 +80,8 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Cantidad total en caja<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  
-    <span class="input-group-text" id="Tarjeta"><i class="fas fa-coins"></i></span>
-  </div>
-  <input type="number" class="form-control " onfocus="habilitar();" step="any" name="TotalCaja" id="resultado" readonly   aria-describedby="basic-addon1" >     
+ 
+  <input type="number" class="form-control " step="any" name="TotalCaja" id="resultado" readonly   aria-describedby="basic-addon1" >     
   </div>
 </div><label for="resultado" class="error"></div>
 <div class="" id="Ok" role="alert">
