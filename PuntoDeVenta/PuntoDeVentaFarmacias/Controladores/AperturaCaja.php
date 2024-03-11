@@ -1,5 +1,5 @@
 <?php
-include_once 'db_connection.php';
+include_once 'db_connect.php';
 date_default_timezone_set('America/Mexico_City');
 
 
