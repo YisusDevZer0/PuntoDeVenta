@@ -41,7 +41,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Empleado<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
  
-  <input type="text" class="form-control " readonly  name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>" aria-describedby="basic-addon1" >            
+  <input type="text" class="form-control input-negro" readonly  name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>" aria-describedby="basic-addon1" >            
 </div></div></div>
 
 <div class="row">
@@ -49,7 +49,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Sucursal </label>
     <div class="input-group mb-3">
  
-  <input type="text" class="form-control " readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >       
+  <input type="text" class="form-control input-negro" readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >       
   <input type="text" class="form-control " readonly name="Sucursal" id="sucursal" hidden value="<?php echo $Especialistas->Fk_Sucursal; ?>" aria-describedby="basic-addon1" >       
     </div>
     </div>
@@ -59,7 +59,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Fecha<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
  
-  <input type="text" class="form-control " readonly name="Fecha" id="fecha" value="<?php echo $fcha; ?>" aria-describedby="basic-addon1" >   
+  <input type="text" class="form-control input-negro" readonly name="Fecha" id="fecha" value="<?php echo $fcha; ?>" aria-describedby="basic-addon1" >   
   <input type="text" class="form-control " hidden readonly name="Asignacion" id="asignacion" value="1" aria-describedby="basic-addon1" >            
 </div></div></div>
 
@@ -81,7 +81,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Cantidad total en caja<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
  
-  <input type="number" class="form-control " step="any" name="TotalCaja" id="resultado" readonly   aria-describedby="basic-addon1" >     
+  <input type="number" class="form-control input-negro " step="any" name="TotalCaja" id="resultado" readonly   aria-describedby="basic-addon1" >     
   </div>
 </div><label for="resultado" class="error"></div>
 <div class="" id="Ok" role="alert">
