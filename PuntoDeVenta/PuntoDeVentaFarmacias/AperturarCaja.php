@@ -73,10 +73,8 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     <div id="Di" class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="Titulo">Título del Modal</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="Titulo" style="color:white;">Apertura de caja</h5>
+                
             </div>
             <div class="modal-body">
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
