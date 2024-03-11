@@ -93,6 +93,27 @@ while ($r=$query->fetch_object()){
  <input type="text" hidden name="CodEstatus" value="background-color: #2BBB1D !important;">
  <input type="text"  hidden name="Sistema" value="POS <?php echo $row['Nombre_rol']?>">
 <button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
+
+</form>
+
+<form method="post" 
+      target="print_popup" 
+      action="http://localhost:8080/ticket/TicketAperturaCaja.php"
+      onsubmit="window.open('about:blank','print_popup','width=600,height=600');"  id="GeneraTicketAperturaCaja">
+
+   
+      <input type="text" class="form-control "   readonly name="VendedorTicket"  readonly value="<?php echo $row['Nombre_Apellidos']?>">
+      <input type="text" class="form-control "   readonly name="TurnoTicket" id="turnoticket"  >
+      <input type="number" class="form-control "   name="FondoBase" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
+      <input type="number" class="form-control "  step="any" name="TotalCajaDeApertura" id="resultadoticket" readonly   aria-describedby="basic-addon1" >    
+     
+      <input type="datetime" name="Horadeimpresion" value="<?php echo date('h:i:s A');?>">
+      <input type="text" class="form-control" name="SucursalApertura" readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >     
+      <button type="submit"  id="EnviaTicket"  class="btn btn-info">Realizar abono <i class="fas fa-money-check-alt"></i></button>
+</form>
+
+<script src="js/AbreCaja.js"></script>
+
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
 <?php endif;?>
