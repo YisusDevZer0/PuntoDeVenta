@@ -67,10 +67,10 @@
 
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Traspasos</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-right-left"></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Control de productos</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
+                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
+                         >
                            
                         </div>
                     </div>
