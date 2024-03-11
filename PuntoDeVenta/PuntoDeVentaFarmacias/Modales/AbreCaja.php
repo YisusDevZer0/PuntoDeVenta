@@ -27,8 +27,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Cantidad asignada en fondo de caja </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-  </div>
+ 
   <input type="text" class="form-control " hidden name="FkFondo" id="fkfondo" readonly value="<?php echo $Especialistas->ID_Fon_Caja; ?>">
   <input type="number" class="form-control "  id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
     </div>
@@ -36,10 +35,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Empleado<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  
-    <span class="input-group-text" id="Tarjeta"><i class="fas fa-file-signature"></i></span>
-  </div>
+ 
   <input type="text" class="form-control " readonly  name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>" aria-describedby="basic-addon1" >            
 </div></div></div>
 
