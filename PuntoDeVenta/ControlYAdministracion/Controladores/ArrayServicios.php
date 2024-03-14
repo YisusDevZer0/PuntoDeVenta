@@ -37,6 +37,9 @@ while ($fila = $result->fetch_assoc()) {
         "FechaAgregado" => $fila["Agregadoel"],
         "Sistema" => $fila["Sistema"],
         "Licencia" => $fila["Licencia"],
+        // Agregar el botón Desglosar ticket
+        "DesglosarTicket" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #C80096 !important;" ><i class="fas fa-receipt"></i> Desglosar ticket</a></td>'
+
     ];
 }
 
