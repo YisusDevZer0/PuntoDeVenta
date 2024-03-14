@@ -265,7 +265,7 @@ tabla = $('#Clientes').DataTable({
 </script>
 <div class="text-center">
   <div class="table-responsive">
-  <table  id="Clientes" class="table table-hover">
+  <table  id="Clientes"  class="order-column">
 <thead>
 <th>ID_Cliente</th>
 <th>Nombre_Paciente</th>
