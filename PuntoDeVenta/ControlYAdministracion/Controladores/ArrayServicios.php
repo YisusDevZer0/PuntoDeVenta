@@ -39,7 +39,7 @@ while ($fila = $result->fetch_assoc()) {
         "Licencia" => $fila["Licencia"],
         // Agregar el botón Desglosar ticket
         "Editar" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
-        "Eliminar" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>'
+        "Eliminar" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
     ];
 }
 
