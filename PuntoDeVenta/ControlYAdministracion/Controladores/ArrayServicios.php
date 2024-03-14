@@ -5,7 +5,7 @@ include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT * FROM Servicios_POS WHERE Licencia = ?";
-$licencia = ""; // Aquí debes definir el valor de la licencia que estás buscando
+$licencia = "'".$row['Licencia']."'"; // Aquí debes definir el valor de la licencia que estás buscando
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
