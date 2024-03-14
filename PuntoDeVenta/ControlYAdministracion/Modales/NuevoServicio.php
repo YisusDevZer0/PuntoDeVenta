@@ -17,13 +17,15 @@
     
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Nombre del servicio</label>
-                  <input type="text" class="form-control" name="NombreSucursal" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
+                  <input type="text" class="form-control" name="NombreServicio" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
                 </div>
                 
                
                 
                 <input type="text" hidden class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
+                <input type="text" hidden class="form-control" name="estado" id ="estado" value="Vigente">
                 <input type="text" hidden class="form-control" name="agrego"id="agrego" value="<?php echo $row['Nombre_Apellidos']?>" >
+                <input type="text" hidden class="form-control" name="Sistema"id="sistema" value="<?php echo $row['Tipo_Usuario']?>" >
                                <!-- Agrega los otros campos del formulario de manera similar -->
                 <!-- ... -->
 
