@@ -277,6 +277,7 @@ tabla = $('#Clientes').DataTable({
     <th>Hora creacion</th> 
     <th>Licencia</th> 
     <th>Editar</th> 
+    <th>Eliminar</th> 
 </thead>
 
 </div>
