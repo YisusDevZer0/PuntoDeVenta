@@ -32,7 +32,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 
             <!-- Table Start -->
-          
+          <div class="text-center">
             <div class="container-fluid pt-8 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
@@ -41,7 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
   Agregar nuevo fondo 
 </button> <br>
             <div id="DataDeServicios"></div>
-            </div></div></div></div>
+            </div></div></div></div></div>
             
           
 <script src="js/ControlDeServicios.js"></script>
