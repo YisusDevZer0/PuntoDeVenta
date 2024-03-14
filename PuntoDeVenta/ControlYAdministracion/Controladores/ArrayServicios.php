@@ -30,13 +30,13 @@ while ($fila = $result->fetch_assoc()) {
     // Aquí puedes seguir con la lógica que ya tienes para construir los datos de salida
     
     $data[] = [
-        "ServicioID" => $fila["ID_Prod_POS"],
-        "Nombre_Servicio" => $fila["Cod_Barra"],
-        "Estado" => $fila["Nombre_Prod"],
-        "AgregadoPor" => $fila["Clave_adicional"],
-        "FechaAgregado" => $fila["Clave_Levic"],
-        "Sistema" => $fila["Precio_C"],
-        "Licencia" => $fila["Precio_Venta"],
+        "ServicioID" => $fila["Servicio_ID"],
+        "Nombre_Servicio" => $fila["Nom_Serv"],
+        "Estado" => $fila["Estado"],
+        "AgregadoPor" => $fila["Agregado_Por"],
+        "FechaAgregado" => $fila["Agregadoel"],
+        "Sistema" => $fila["Sistema"],
+        "Licencia" => $fila["Licencia"],
     ];
 }
 
