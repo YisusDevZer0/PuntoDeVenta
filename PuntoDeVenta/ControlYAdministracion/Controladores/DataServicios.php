@@ -208,15 +208,15 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayClientes.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayServicios.php",
  "aoColumns": [
-  { mData: 'Folio' },  
-  { mData: 'Nombre_Paciente' },
-  { mData: 'Fecha_Nacimiento' },
-       { mData: 'Edad' },
-       { mData: 'Sexo' },
-       { mData: 'Telefono' },
-       
+  { mData: 'ServicioID' },  
+  { mData: 'Nombre_Servicio' },
+  { mData: 'Estado' },
+       { mData: 'AgregadoPor' },
+       { mData: 'FechaAgregado' },
+       { mData: 'Sistema' },
+       { mData: 'Licencia' },
       
   
       ],
