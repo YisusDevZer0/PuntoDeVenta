@@ -218,6 +218,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Sistema' },
        { mData: 'Licencia' },
        { mData: 'Editar' },
+       { mData: 'Eliminar' },
       
   
       ],
