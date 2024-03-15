@@ -1,6 +1,6 @@
 <?php
-include "../Controlador/db_connect.php.php";
-include "../Controlador/ControladorUsuario.php";
+include "../Controladores/db_connect.php.php";
+include "../Controladores/ControladorUsuario.php";
 
 $user_id=null;
 $sql1= "SELECT * FROM Servicios_POS WHERE Licencia='".$row['Licencia']."' AND Servicio_ID = ".$_POST["id"];
