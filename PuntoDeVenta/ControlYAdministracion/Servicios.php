@@ -55,7 +55,7 @@ include_once "Controladores/ControladorUsuario.php";
            <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-    $(document).on("click", ".dropdown-menu .btn-Movimientos", function() {
+    $(document).on("click", ".btn-edita", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaServicio.php", { id: id }, function(data) {
