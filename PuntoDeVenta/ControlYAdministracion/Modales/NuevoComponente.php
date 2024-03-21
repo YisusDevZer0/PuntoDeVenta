@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Agregar Nuevo servicio</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Agregar Nuevo componente activo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -16,7 +16,7 @@
                   <!-- Agrega un campo oculto para el token CSRF -->
     
                 <div class="mb-3">
-                  <label for="tipouser" class="form-label">Nombre del servicio</label>
+                  <label for="tipouser" class="form-label">Nombre del componente</label>
                   <input type="text" class="form-control" name="NombreServicio" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
                 </div>
                 
