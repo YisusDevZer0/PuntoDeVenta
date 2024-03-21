@@ -44,11 +44,11 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div></div>
             
           
-<script src="js/ControlDeServicios.js"></script>
+<script src="js/ControlDeComponentes.js"></script>
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoServicio.php";
+            include "Modales/NuevoComponente.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
