@@ -212,7 +212,6 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
   { mData: 'ServicioID' },  
   { mData: 'Nombre_Servicio' },
-  { mData: 'Estado' },
        { mData: 'AgregadoPor' },
        { mData: 'FechaAgregado' },
        { mData: 'Sistema' },
@@ -270,8 +269,7 @@ tabla = $('#Clientes').DataTable({
   <table  id="Clientes"  class="order-column">
 <thead>
 <th>ID Servicio</th>
-<th>Nombre Servicio</th>
-<th>Estatus</th>
+<th>Nombre Componente</th>
     <th>Creado por</th>
     <th>Desde sistema</th>
     <th>Hora creacion</th> 
