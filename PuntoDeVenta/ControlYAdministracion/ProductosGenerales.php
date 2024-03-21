@@ -32,15 +32,17 @@ include_once "Controladores/ControladorUsuario.php";
 
 
             <!-- Table Start -->
-          
+          <div class="text-center">
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6>
-            
+            <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6> <br>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+  Agregar nueva sucursal
+</button> <br>
             <div id="DataDeProductos"></div>
             </div></div></div></div>
-            
+            </div>
           
 <script src="js/ControlDeProductos.js"></script>
 
