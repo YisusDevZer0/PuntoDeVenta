@@ -214,7 +214,7 @@ tabla = $('#Clientes').DataTable({
   { mData: 'Nombre_Servicio' },
        { mData: 'AgregadoPor' },
        { mData: 'FechaAgregado' },
-       { mData: 'Sistema' },
+ 
        { mData: 'Licencia' },
        { mData: 'Editar' },
        { mData: 'Eliminar' },
@@ -271,7 +271,6 @@ tabla = $('#Clientes').DataTable({
 <th>ID Servicio</th>
 <th>Nombre Componente</th>
     <th>Creado por</th>
-    <th>Desde sistema</th>
     <th>Hora creacion</th> 
     <th>Licencia</th> 
     <th>Editar</th> 
