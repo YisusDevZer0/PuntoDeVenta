@@ -1,6 +1,6 @@
 <!-- Central Modal Medium Info -->
-<div class="modal fade" id="AltaProductos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-   aria-hidden="true" style="overflow-y: scroll;">
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <aria-hidden="true" style="overflow-y: scroll;">
    <div class="modal-dialog modal-xl modal-notify modal-success" role="document">
      <!--Content-->
      <div class="modal-content">
