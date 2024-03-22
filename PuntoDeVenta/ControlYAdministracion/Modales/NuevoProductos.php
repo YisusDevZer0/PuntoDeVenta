@@ -13,7 +13,7 @@
           <div class="col-12">
             <div class="bg-light rounded p-4">
               
-            <form enctype="multipart/form-data" id="AgregaProductos">
+               <form enctype="multipart/form-data" id="AgregaProductos">
          <div class="row">
     <div class="col">
     <label for="exampleFormControlInput1">Codigo de barras<span class="text-danger">*</span> </label>
@@ -50,12 +50,7 @@
   </div>
   <!-- <select id = "componente" class = "form-control" name = "ComponenteActivo">
                                                <option value="">Seleccione una presentacion:</option>
-        <?php
-          $query = $conn -> query ("SELECT * FROM ComponentesActivos");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Com"].'">'.$valores["Nom_Com"].'</option>';
-          }
-        ?>  </select> -->
+        </select> -->
     </div><label for="presentacion" class="error">
     </div>
 </div>
