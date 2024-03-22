@@ -13,26 +13,52 @@
           <div class="col-12">
             <div class="bg-light rounded p-4">
               
-              <form id="NewTypeUser">
-                  <!-- Agrega un campo oculto para el token CSRF -->
+            <form enctype="multipart/form-data" id="AgregaProductos">
+         <div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Codigo de barras<span class="text-danger">*</span> </label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control " id="codbarrap" name="CodBarraP" placeholder="Escanee o ingrese código" >
+    </div>
+    </div>
     
-                <div class="mb-3">
-                  <label for="tipouser" class="form-label">Cantidad del fondo de caja</label>
-                  <input type="text" class="form-control" name="NombreSucursal" id="tipoUsuario" placeholder="Ingrese el tipo de usuario">
-                </div>
-                <div class="mb-3">
-                  <label for="tipouser" class="form-label">Sucursal</label>
-                  <select id="opciones" class="form-select form-select-sm mb-3" aria-label=".form-select-sm example">
-    <option selected>Selecciona una opción</option>
-</select>
-
-                </div>
-               
-                
-                <input type="text" hidden class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
-                <input type="text" hidden class="form-control" name="agrego"id="agrego" value="<?php echo $row['Nombre_Apellidos']?>" >
-                               <!-- Agrega los otros campos del formulario de manera similar -->
-                <!-- ... -->
+    <div class="col">
+      
+    <label for="exampleFormControlInput1">Clave adicional <span class="text-info">Opcional</span></label>
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+  
+    <span class="input-group-text" ><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control " name="Clav" id="clav"  placeholder="Ingrese código" aria-describedby="basic-addon1" maxlength="60">            
+</div><label for="clav" class="error"></div>
+<div class="col">
+    <label for="exampleFormControlInput1">Nombre / Descripcion <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-pencil-alt"></i></span>
+  </div>
+  <textarea class="form-control" id="nombreprod" name="NombreProd" rows="3"></textarea>
+          
+    </div><label for="nombreprod" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Componente activo<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+  <!-- <select id = "componente" class = "form-control" name = "ComponenteActivo">
+                                               <option value="">Seleccione una presentacion:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM ComponentesActivos");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Com"].'">'.$valores["Nom_Com"].'</option>';
+          }
+        ?>  </select> -->
+    </div><label for="presentacion" class="error">
+    </div>
+</div>
 
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </form>
