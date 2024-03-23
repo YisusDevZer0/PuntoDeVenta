@@ -60,8 +60,8 @@ include_once "Controladores/ControladorUsuario.php";
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaServicio.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Historial de caja");
-            $("#CajasDi").removeClass("modal-dialog modal-xl modal-notify modal-info");
-            $("#CajasDi").addClass("modal-dialog modal-xl modal-notify modal-primary");
+            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
+            $("#CajasDi").addClass("modal-dialog  modal-notify modal-primary");
         });
         $('#ModalDetallesCaja').modal('show');
     });
@@ -72,9 +72,9 @@ include_once "Controladores/ControladorUsuario.php";
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaServicio.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Historial de ventas");
-            $("#CajasDi").removeClass("modal-dialog modal-xl modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog modal-xl modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog modal-xl modal-notify modal-success");
+            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
+            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
+            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
         });
         $('#ModalDetallesCaja').modal('show');
     });
@@ -85,9 +85,9 @@ include_once "Controladores/ControladorUsuario.php";
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CortesDeCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Corte de caja");
-            $("#CajasDi").removeClass("modal-dialog modal-xl modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog modal-xl modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog modal-xl modal-notify modal-success");
+            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
+            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
+            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
         });
         $('#ModalDetallesCaja').modal('show');
     });
