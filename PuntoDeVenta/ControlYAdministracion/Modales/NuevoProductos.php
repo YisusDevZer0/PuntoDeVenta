@@ -129,7 +129,12 @@
  
    <select id = "tip" class = "form-control" name = "Tip">
                                                <option value="">Selecciona un tipo:</option>
-       </select> 
+        <?php
+          $query = $conn -> query ("SELECT * FROM TipProd_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+          }
+        ?>  </select> 
     </div><label for="tip" class="error">
     </div>
     <div class="col">
