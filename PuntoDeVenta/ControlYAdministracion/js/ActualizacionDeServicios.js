@@ -97,9 +97,9 @@ $('document').ready(function ($) {
                     $('#updateSuccessModal').modal('toggle');
                     setTimeout(function () {
                         $('#updateSuccessModal').modal('hide')
-                    }, 3000); // abrir
+                    }, 5000); // abrir
                   
-                    CargaServicios();
+                    location.reload(); // Recargar la página completa
 
                     //  Solucionar muestra de modal de exito
 
