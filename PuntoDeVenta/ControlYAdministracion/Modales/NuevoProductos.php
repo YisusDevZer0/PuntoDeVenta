@@ -120,6 +120,60 @@
 
 <!-- SEGUNDA SECCION FIN -->
 
+
+<!-- Tercera SECCION -->
+<div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Tipo <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+   <select id = "tip" class = "form-control" name = "Tip">
+                                               <option value="">Selecciona un tipo:</option>
+        <?php
+          $query = $conn -> query ("SELECT 	Tip_Prod_ID,Nom_Tipo_Prod,Estado,Licencia FROM TipProd_POS WHERE  Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+          }
+        ?>  </select> -->
+    </div><label for="tip" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Categoria<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+  <!-- <select id = "categoria" class = "form-control" name = "Categoria">
+                                               <option value="">Seleccione una categoria:</option>
+        <?php
+          $query = $conn -> query ("SELECT 	Cat_ID,Nom_Cat,Licencia FROM Categorias_POS WHERE  Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+          }
+        ?>  </select> -->
+    </div><label for="categoria" class="error">
+    </div>
+   
+    <div class="col">
+    <label for="exampleFormControlInput1">Marca <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+  <!-- <select id = "marca" class = "form-control" name = "Marca">
+                                               <option value="">Seleccione una marca:</option>
+        <?php
+          $query = $conn -> query ("SELECT Marca_ID,Nom_Marca,Licencia FROM Marcas_POS WHERE Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Marca"].'">'.$valores["Nom_Marca"].'</option>';
+          }
+        ?>  </select> -->
+    </div><label for="marca" class="error">
+    </div>
+    
+
+   </div>
+
+<!-- TERCERA SECCION FIN -->
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </form>
             </div>
