@@ -47,9 +47,15 @@
     <div class="input-group mb-3">
   <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
   </div>
-  <!-- <select id = "componente" class = "form-control" name = "ComponenteActivo">
+   <select id = "componente" class = "form-control" name = "ComponenteActivo">
                                                <option value="">Seleccione una presentacion:</option>
-        </select> -->
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Componentes");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Com"].'">'.$valores["Nom_Com"].'</option>';
+          }
+        ?> 
+                                              </select>
     </div><label for="presentacion" class="error">
     </div>
 </div>
