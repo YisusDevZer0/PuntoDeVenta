@@ -1,14 +1,14 @@
 <?php
     include_once 'db_connect.php';
 
-    $NomServ = mysqli_real_escape_string($conn, $_POST['NomServ']);
+    $NomServ = mysqli_real_escape_string($conn, $_POST['NombreServicio']);
     $Estado = mysqli_real_escape_string($conn, $_POST['estado']);
     $AgregadoPor = mysqli_real_escape_string($conn, $_POST['agregoPor']);
-    $Sistema = mysqli_real_escape_string($conn, $_POST['sistema']);
+    $Sistema = mysqli_real_escape_string($conn, $_POST['Sistema']);
     $Licencia = mysqli_real_escape_string($conn, $_POST['licencia']);
   
     // Consulta para verificar si ya existe un registro con los mismos valores
-    $sql = "SELECT Nom_Serv, Licencia, Agregadoel FROM Servicios_POS WHERE Nom_Serv='$NomServ' AND Licencia='$Licencia'";
+    $sql = "SELECT Nom_Serv, Licencia FROM Servicios_POS WHERE Nom_Serv='$NomServ' AND Licencia='$Licencia'";
     $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
     $row = mysqli_fetch_assoc($resultset);
     
