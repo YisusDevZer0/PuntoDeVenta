@@ -17,7 +17,7 @@ while ($r=$query->fetch_object()){
 
 <?php if($Especialistas!=null):?>
 
-<form action="javascript:void(0)" method="post" id="EliminaServicios" >
+<form action="javascript:void(0)" method="post" id="NewTypeUser" >
 <i class="fas fa-question-circle fa-5x text-warning"></i>
         <p>¿Está seguro de que desea eliminar el servicio <?php echo $Especialistas->Nom_Serv; ?> ?</p>
 <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Servicio_ID; ?>">
