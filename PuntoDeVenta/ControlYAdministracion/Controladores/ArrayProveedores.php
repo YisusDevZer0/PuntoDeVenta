@@ -30,16 +30,16 @@ while ($fila = $result->fetch_assoc()) {
     // Aquí puedes seguir con la lógica que ya tienes para construir los datos de salida
     
     $data[] = [
-        "ServicioID" => $fila["Servicio_ID"],
-        "Nombre_Servicio" => $fila["Nom_Serv"],
-        "Estado" => $fila["Estado"],
+        "ServicioID" => $fila["ID_Proveedor"],
+        "Nombre_Servicio" => $fila["Nombre_Proveedor"],
+        "Estado" => $fila["Numero_Contacto"],
         "AgregadoPor" => $fila["Agregado_Por"],
         "FechaAgregado" => $fila["Agregadoel"],
         "Sistema" => $fila["Sistema"],
         "Licencia" => $fila["Licencia"],
         // Agregar el botón Desglosar ticket
-        "Editar" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
-        "Eliminar" => '<td><a data-id="' . $fila["Servicio_ID"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
+        "Editar" => '<td><a data-id="' . $fila["ID_Proveedor"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
+        "Eliminar" => '<td><a data-id="' . $fila["ID_Proveedor"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
     ];
 }
 
