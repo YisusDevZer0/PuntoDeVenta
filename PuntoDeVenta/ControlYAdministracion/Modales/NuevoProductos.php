@@ -25,12 +25,9 @@
     
     <div class="col">
       
-    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Clave adicional <span class="text-info">Opcional</span></label>
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Clave interna <span class="text-info">Opcional</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  
-    <span class="input-group-text" ><i class="fas fa-barcode"></i></span>
-  </div>
+ 
   <input type="text" class="form-control " name="Clav" id="clav"  placeholder="Ingrese código" aria-describedby="basic-addon1" maxlength="60">            
 </div><label for="clav" class="error"></div>
 <div class="col">
@@ -45,8 +42,7 @@
     <div class="col">
     <label for="exampleFormControlInput1" style="color: black;">Componente activo<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
-  </div>
+  
    <select id = "componente" class = "form-control" name = "ComponenteActivo">
                                                <option value="">Seleccione una presentacion:</option>
                                                <?php
