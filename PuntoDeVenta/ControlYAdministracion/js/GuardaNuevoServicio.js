@@ -101,26 +101,26 @@ VigenciaProdT: {
              $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")	
            
              $("#NewTypeUser")[0].reset();
-             $("#AltaTiposProductos").removeClass("in");
+             $("#myModal").removeClass("in");
              $(".modal-backdrop").remove();
-             $("#AltaTiposProductos").hide();
+             $("#myModal").hide();
            
 
-             $('#Exito').modal('toggle'); 
+             $('#successModal').modal('toggle'); 
              setTimeout(function(){ 
-                 $('#Exito').modal('hide') 
+                 $('#successModal').modal('hide') 
              }, 2000); // abrir
        
   
              
              
-            //  Solucionar muestra de modal de exito
+            //  Solucionar muestra de modal de successModal
                
                    
         }
         else if(dataResult.statusCode==201){
           $("#submit_Age").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
-          $('#ErrorData').modal('toggle'); 
+          $('#errorModal').modal('toggle'); 
         
       setTimeout(function(){ 
           $("#submit_Age").html("Guardar <i class='fas fa-save'></i>");

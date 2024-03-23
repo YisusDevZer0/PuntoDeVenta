@@ -49,7 +49,6 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoServicio.php";
-            include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
            <script>
