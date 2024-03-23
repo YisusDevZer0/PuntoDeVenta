@@ -159,7 +159,7 @@
    <select id = "marca" class = "form-control" name = "Marca">
                                                <option value="">Seleccione una marca:</option>
         <?php
-          $query = $conn -> query ("SELECT Marca_ID,Nom_Marca,Licencia FROM Marcas_POS WHERE Licencia='".$row['Licencia']."'");
+          $query = $conn -> query ("SELECT Marca_ID,Nom_Marca,Licencia FROM Marcas_POS ");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["Nom_Marca"].'">'.$valores["Nom_Marca"].'</option>';
           }
