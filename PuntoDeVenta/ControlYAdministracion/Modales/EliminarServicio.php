@@ -17,14 +17,14 @@ while ($r=$query->fetch_object()){
 
 <?php if($Especialistas!=null):?>
 
-<form action="javascript:void(0)" method="post" id="ActualizaServicios" >
+<form action="javascript:void(0)" method="post" id="EliminaServicios" >
 <i class="fas fa-question-circle fa-5x text-warning"></i>
         <p>¿Está seguro de que desea eliminar el servicio <?php echo $Especialistas->Nom_Serv; ?> ?</p>
 <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Servicio_ID; ?>">
 <button type="submit"  id="submit"  class="btn btn-danger">Confirmar<i class="fas fa-check"></i></button>
                           
 </form>
-<script src="js/ActualizacionDeServicios.js"></script>
+<script src="js/EliminaServicios.js"></script>
 
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>
