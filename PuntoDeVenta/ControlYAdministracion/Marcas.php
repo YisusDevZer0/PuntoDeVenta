@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
             
           
 <script src="js/ControlDeMarcas.js"></script>
-<script src="js/GuardaMarcas.js"></script>
+<script src="js/GuardaNuevasMarcas.js"></script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevaMarca.php";
