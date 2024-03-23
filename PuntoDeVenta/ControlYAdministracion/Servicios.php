@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
             
           
 <script src="js/ControlDeServicios.js"></script>
-<script src="js/GuardaNuevoServicio.js"></script>
+<script src="js/GuardaNuevoServicios.js"></script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoServicio.php";
