@@ -16,7 +16,7 @@
                <form enctype="multipart/form-data" id="AgregaProductos">
          <div class="row">
     <div class="col">
-    <label for="exampleFormControlInput1">Codigo de barras<span class="text-danger">*</span> </label>
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Codigo de barras<span class="text-danger">*</span> </label>
     <div class="input-group mb-3">
   <input type="text" class="form-control " id="codbarrap" name="CodBarraP" placeholder="Escanee o ingrese código" >
     </div>
@@ -24,7 +24,7 @@
     
     <div class="col">
       
-    <label for="exampleFormControlInput1">Clave adicional <span class="text-info">Opcional</span></label>
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Clave adicional <span class="text-info">Opcional</span></label>
      <div class="input-group mb-3">
   <div class="input-group-prepend">
   
@@ -33,7 +33,7 @@
   <input type="text" class="form-control " name="Clav" id="clav"  placeholder="Ingrese código" aria-describedby="basic-addon1" maxlength="60">            
 </div><label for="clav" class="error"></div>
 <div class="col">
-    <label for="exampleFormControlInput1">Nombre / Descripcion <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Nombre / Descripcion <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
   <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-pencil-alt"></i></span>
   </div>
@@ -42,7 +42,7 @@
     </div><label for="nombreprod" class="error">
     </div>
     <div class="col">
-    <label for="exampleFormControlInput1">Componente activo<span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1" style="color: black;">Componente activo<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
   <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
   </div>
