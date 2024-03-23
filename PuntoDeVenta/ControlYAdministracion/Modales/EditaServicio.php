@@ -21,8 +21,7 @@ while ($r=$query->fetch_object()){
 <div class="form-group">
     <label for="exampleFormControlInput1">Folio</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-  </div>
+  
   <input type="text" class="form-control " disabled readonly value="<?php echo $Especialistas->Servicio_ID; ?>">
     </div>
     </div>
@@ -31,10 +30,7 @@ while ($r=$query->fetch_object()){
     <div class="form-group">
     <label for="exampleFormControlInput1">Nombre de categoría<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
   
-    <span class="input-group-text" id="Tarjeta"><i class="fas fa-file-signature"></i></span>
-  </div>
   <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nom_Serv; ?>" aria-describedby="basic-addon1" maxlength="60">            
 </div></div></div>
 
@@ -43,8 +39,7 @@ while ($r=$query->fetch_object()){
     <div class="col">
     <label for="exampleFormControlInput1">Vigencia categoría</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+
   <select name="ActVigenciaServ" class="form-control" id="actualizavigenciaserv" onchange="ActualizaTipoVigenciaServicio();">
                  
                     
