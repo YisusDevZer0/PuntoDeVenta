@@ -84,7 +84,14 @@
   <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
 </div><label for="pv" class="error"></div>
 
-
+<div class="col">
+    <label for="exampleFormControlInput1">Precio compra <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+  </div>
+  <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
+    </div><label for="pc" class="error">
+    </div>
     <div class="col">
     <label for="exampleFormControlInput1">Tipo de servicio <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
@@ -109,14 +116,7 @@
   </select>
     </div>
     </div>
-    <div class="col">
-    <label for="exampleFormControlInput1">Maximo existencia<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-plus"></i></span>
-  </div>
-  <input type="text" class="form-control " name="MaxE" id="maxe"  placeholder="Ingrese maximo de existencia" aria-describedby="basic-addon1" >           
-    </div><label for="maxe" class="error">
-    </div>  </div>
+      </div>
 
 <!-- SEGUNDA SECCION FIN -->
 
