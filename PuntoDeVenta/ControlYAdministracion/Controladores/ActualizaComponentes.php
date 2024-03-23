@@ -5,16 +5,15 @@ include "db_connect.php"; // Asumiendo que este archivo contiene la conexión a 
 $ID = isset($_POST['Id_Serv']) ? intval($_POST['Id_Serv']) : 0;
 $Nom_Com = isset($_POST['ActNomServ']) ? trim($_POST['ActNomServ']) : '';
 $ActualizadoPor = isset($_POST['ActUsuarioCServ']) ? trim($_POST['ActUsuarioCServ']) : '';
-$Licencia = isset($_POST['LicenciaServ']) ? trim($_POST['LicenciaServ']) : '';
 
 // Verificar si todos los datos requeridos están presentes
-if ($ID && $Nom_Com && $ActualizadoPor && $Licencia) {
+if ($ID && $Nom_Com && $ActualizadoPor) {
     // Consulta preparada
-    $sql = "UPDATE `Componentes` SET `Nom_Com`=?, `ActualizadoPor`=?, `Licencia`=? WHERE `ID`=?";
+    $sql = "UPDATE `Componentes` SET `Nom_Com`=?, `ActualizadoPor`=? WHERE `ID`=?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
         // Enlazar parámetros
-        $stmt->bind_param("sssi", $Nom_Com, $ActualizadoPor, $Licencia, $ID);
+        $stmt->bind_param("ssi", $Nom_Com, $ActualizadoPor, $ID);
         // Ejecutar consulta
         if ($stmt->execute()) {
             echo json_encode(array("statusCode" => 200));
