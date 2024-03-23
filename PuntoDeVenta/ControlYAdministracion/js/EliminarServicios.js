@@ -111,7 +111,7 @@ VigenciaProdT: {
                  $('#deleteSuccessModal').modal('hide') 
              }, 6000); // abrir
        
-             CargaServicios();
+             location.reload(); // Recargar la página completa después de 5 segundos
 
              
              
