@@ -3,7 +3,7 @@ include "../Controladores/db_connect.php.php";
 include "../Controladores/ControladorUsuario.php";
 
 $user_id=null;
-$sql1= "SELECT * FROM Componentes WHERE Licencia='".$row['Licencia']."' AND Marca_ID = ".$_POST["id"];
+$sql1= "SELECT * FROM Componentes WHERE Licencia='".$row['Licencia']."' AND ID = ".$_POST["id"];
 $query = $conn->query($sql1);
 $Especialistas = null;
 if($query->num_rows>0){
