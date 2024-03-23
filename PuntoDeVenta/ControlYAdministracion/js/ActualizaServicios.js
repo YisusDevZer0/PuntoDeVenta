@@ -101,6 +101,7 @@ $('document').ready(function ($) {
                         $('#updateSuccessModal').modal('hide')
                     }, 3000); // abrir
                   
+                    CargaServicios();
 
                     //  Solucionar muestra de modal de exito
 
