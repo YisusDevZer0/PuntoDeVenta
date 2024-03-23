@@ -51,7 +51,8 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/NuevoTipoProducto.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
-           <script>
+          
+          <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
     $(document).on("click", ".btn-edita", function() {
@@ -59,57 +60,38 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaTipoProductos.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Historial de caja");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-primary");
+            $("#TitulosCajas").html("Editar servicios");
+            
         });
-        $('#ModalDetallesCaja').modal('show');
+        $('#ModalEdDele').modal('show');
     });
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".dropdown-menu .btn-Ventas", function() {
+    $(document).on("click", ".btn-elimina", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaTipoProductos.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Historial de ventas");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
+            $("#TitulosCajas").html("Eliminar servicio");
+           
         });
-        $('#ModalDetallesCaja').modal('show');
+        $('#ModalEdDele').modal('show');
     });
 
-    // Delegación de eventos para el botón "btn-Cortes" dentro de .dropdown-menu
-    $(document).on("click", ".dropdown-menu .btn-Cortes", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CortesDeCaja.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Corte de caja");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
-        });
-        $('#ModalDetallesCaja').modal('show');
-    });
+   
 });
 
 </script>
 
-  <div class="modal fade" id="ModalDetallesCaja" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalDetallesCajaLabel" aria-hidden="true">
+  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
   <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
       <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="TitulosCajas"></p>
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
 
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
+         
        </div>
-        <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
-						                <span id="Aviso" class="text-semibold"><?php echo $row['Nombre_Apellidos']?>
-                            Verifique los campos antes de realizar alguna accion</span>
-						                <button type="button" class="close" data-dismiss="alert">×</button>
-                            </div>
+        
 	        <div class="modal-body">
           <div class="text-center">
         <div id="FormCajas"></div>
@@ -118,7 +100,12 @@ include_once "Controladores/ControladorUsuario.php";
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+  </div><!-- /.modal --></div>
+          
+          
+          
+          
+          
 </body>
 
 </html>
