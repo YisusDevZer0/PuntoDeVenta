@@ -1,5 +1,5 @@
 <?php
-include "db_connection.php";
+include "db_connect.php";
 
         $Servicio_ID=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['Id_Serv']))));
        $Nom_Serv=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActNomServ']))));
