@@ -98,18 +98,12 @@ include_once "Controladores/ControladorUsuario.php";
   <div class="modal fade" id="ModalDetallesCaja" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalDetallesCajaLabel" aria-hidden="true">
   <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
       <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="TitulosCajas"></p>
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
 
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
+         
        </div>
-        <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
-						                <span id="Aviso" class="text-semibold"><?php echo $row['Nombre_Apellidos']?>
-                            Verifique los campos antes de realizar alguna accion</span>
-						                <button type="button" class="close" data-dismiss="alert">×</button>
-                            </div>
+        
 	        <div class="modal-body">
           <div class="text-center">
         <div id="FormCajas"></div>
