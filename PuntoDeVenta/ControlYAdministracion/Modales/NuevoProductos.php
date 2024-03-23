@@ -33,8 +33,6 @@
 <div class="col">
     <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Nombre / Descripcion <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-pencil-alt"></i></span>
-  </div>
   <textarea class="form-control" id="nombreprod" name="NombreProd" rows="3"></textarea>
           
     </div><label for="nombreprod" class="error">
