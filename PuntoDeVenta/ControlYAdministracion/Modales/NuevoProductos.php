@@ -166,7 +166,21 @@
         ?>  </select>
     </div><label for="marca" class="error">
     </div>
-    
+    <div class="col">
+    <label for="exampleFormControlInput1">Presentacion<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+  <select id = "presentacion" class = "form-control" name = "Presentacion">
+                                               <option value="">Seleccione una presentacion:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Presentacion_Prod_POS ");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Presentacion"].'">'.$valores["Nom_Presentacion"].'</option>';
+          }
+        ?>  </select> 
+    </div><label for="presentacion" class="error">
+    </div>
 
    </div>
 
