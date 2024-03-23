@@ -3,7 +3,7 @@ include "db_connect.php";
 
         $Servicio_ID=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['Id_Serv']))));
        $Nom_Serv=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActNomServ']))));
-        $Estado=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActVigEstServ']))));
+        $Estado=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActVigenciaServ']))));
       
         $ActualizadoPor=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActUsuarioCServ']))));
         $Sistema=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ActSistemaCServ']))));
