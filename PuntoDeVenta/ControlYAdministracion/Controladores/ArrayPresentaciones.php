@@ -7,7 +7,7 @@ include_once "ControladorUsuario.php";
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
 // Consulta segura utilizando una sentencia preparada
-$sql = "SELECT * FROM Marcas_POS WHERE Licencia = ?";
+$sql = "SELECT * FROM Presentaciones WHERE Licencia = ?";
  
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -30,14 +30,14 @@ while ($fila = $result->fetch_assoc()) {
     // Aquí puedes seguir con la lógica que ya tienes para construir los datos de salida
     
     $data[] = [
-        "ServicioID" => $fila["Marca_ID"],
-        "Nombre_Servicio" => $fila["Nom_Marca"],
+        "ServicioID" => $fila["Presentacion_ID"],
+        "Nombre_Servicio" => $fila["Nom_Presentacion"],
         "AgregadoPor" => $fila["Agregado_Por"],
         "FechaAgregado" => $fila["Agregadoel"],
         "Licencia" => $fila["Licencia"],
         // Agregar el botón Desglosar ticket
-        "Editar" => '<td><a data-id="' . $fila["ID"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
-        "Eliminar" => '<td><a data-id="' . $fila["ID"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
+        "Editar" => '<td><a data-id="' . $fila["Presentacion_ID"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
+        "Eliminar" => '<td><a data-id="' . $fila["Presentacion_ID"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
     ];
 }
 
