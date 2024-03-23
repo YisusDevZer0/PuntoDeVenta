@@ -130,7 +130,7 @@
    <select id = "tip" class = "form-control" name = "Tip">
                                                <option value="">Selecciona un tipo:</option>
         <?php
-          $query = $conn -> query ("SELECT 	Tip_Prod_ID,Nom_Tipo_Prod,Licencia FROM TipProd_POS ");
+          $query = $conn -> query ("SELECT * FROM TipProd_POS ");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
           }
