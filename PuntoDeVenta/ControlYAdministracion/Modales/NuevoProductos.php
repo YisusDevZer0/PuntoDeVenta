@@ -111,7 +111,7 @@
   </div>
   <input type="text" class="form-control " name="MaxE" id="maxe"  placeholder="Ingrese maximo de existencia" aria-describedby="basic-addon1" >           
     </div><label for="maxe" class="error">
-    </div>
+    </div>  </div>
 
 <!-- SEGUNDA SECCION FIN -->
 
