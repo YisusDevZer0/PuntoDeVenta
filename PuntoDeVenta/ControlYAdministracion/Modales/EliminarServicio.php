@@ -24,7 +24,7 @@ while ($r=$query->fetch_object()){
 <button type="submit"  id="submit"  class="btn btn-danger">Confirmar<i class="fas fa-check"></i></button>
                           
 </form>
-<script src="js/EliminaServicios.js"></script>
+<script src="js/EliminarServicios.js"></script>
 
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>
