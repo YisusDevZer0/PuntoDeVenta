@@ -7,7 +7,7 @@ include_once "ControladorUsuario.php";
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
 // Consulta segura utilizando una sentencia preparada
-$sql = "SELECT * FROM Servicios_POS WHERE Licencia = ?";
+$sql = "SELECT * FROM Proveedores WHERE Licencia = ?";
  
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
