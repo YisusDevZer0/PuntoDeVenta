@@ -109,9 +109,10 @@ VigenciaProdT: {
              $('#deleteSuccessModal').modal('toggle'); 
              setTimeout(function(){ 
                  $('#deleteSuccessModal').modal('hide') 
+                 location.reload(); // Recargar la página completa después de 5 segundos
              }, 6000); // abrir
        
-             location.reload(); // Recargar la página completa después de 5 segundos
+         
 
              
              
