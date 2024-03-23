@@ -28,7 +28,7 @@ while ($r=$query->fetch_object()){
     
    
     <div class="form-group">
-    <label for="exampleFormControlInput1">Nombre de categoría<span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Nombre del servicio<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
   <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nom_Serv; ?>" aria-describedby="basic-addon1" maxlength="60">            
@@ -37,7 +37,7 @@ while ($r=$query->fetch_object()){
     
 <div class="row">
     <div class="col">
-    <label for="exampleFormControlInput1">Vigencia categoría</label>
+    <label for="exampleFormControlInput1">Estado del servicio</label>
     <div class="input-group mb-3">
 
   <select name="ActVigenciaServ" class="form-control" id="actualizavigenciaserv" onchange="ActualizaTipoVigenciaServicio();">
@@ -52,9 +52,9 @@ while ($r=$query->fetch_object()){
                
   </div></div>
     </div>
-    <input type="text"  class="form-control " hidden readonly name="ActVigEstServ" id="vigenciaservactserv">
+   
     <input type="text" class="form-control " hidden  readonly id="actusuariocserv" name="ActUsuarioCServ" readonly value="<?php echo $row['Nombre_Apellidos']?>">
-<input type="text" class="form-control "  hidden  readonly id="actsistemacserv" name="ActSistemaCServ" readonly value="POS <?php echo $row['Nombre_rol']?>">
+<input type="text" class="form-control "  hidden  readonly id="actsistemacserv" name="ActSistemaCServ" readonly value="Administrador">
 <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Servicio_ID; ?>">
 <button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
                           
