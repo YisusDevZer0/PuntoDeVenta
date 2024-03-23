@@ -59,9 +59,8 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaServicio.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Historial de caja");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-primary");
+            $("#TitulosCajas").html("Editar servicios");
+            
         });
         $('#ModalDetallesCaja').modal('show');
     });
@@ -71,26 +70,13 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaServicio.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Historial de ventas");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
+            $("#TitulosCajas").html("Eliminar servicio");
+           
         });
         $('#ModalDetallesCaja').modal('show');
     });
 
-    // Delegación de eventos para el botón "btn-Cortes" dentro de .dropdown-menu
-    $(document).on("click", ".dropdown-menu .btn-Cortes", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CortesDeCaja.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Corte de caja");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-info");
-            $("#CajasDi").removeClass("modal-dialog  modal-notify modal-primary");
-            $("#CajasDi").addClass("modal-dialog  modal-notify modal-success");
-        });
-        $('#ModalDetallesCaja').modal('show');
-    });
+   
 });
 
 </script>
