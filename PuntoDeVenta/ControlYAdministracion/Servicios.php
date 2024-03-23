@@ -83,6 +83,7 @@ include_once "Controladores/ControladorUsuario.php";
 
   <div class="modal fade" id="ModalDetallesCaja" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalDetallesCajaLabel" aria-hidden="true">
   <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
       <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;" >
          <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
@@ -98,7 +99,7 @@ include_once "Controladores/ControladorUsuario.php";
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+  </div><!-- /.modal --></div>
 </body>
 
 </html>
