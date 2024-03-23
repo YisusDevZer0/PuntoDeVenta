@@ -73,7 +73,7 @@
                             <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historial general </a>
                             <a href="ControlCedis" class="dropdown-item"><i class="fa-solid fa-house-medical"></i>CEDIS </a>
                             <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
-                            <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Proveedores </a> 
+                            <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-truck-field"></i>Proveedores </a> 
                             <a href="Servicios" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Servicios </a>
                             <a href="Marcas" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Marcas </a>
                             <a href="Presentaciones" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Presentaciones </a>
