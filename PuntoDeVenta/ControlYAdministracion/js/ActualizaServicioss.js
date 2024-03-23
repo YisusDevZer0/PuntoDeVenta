@@ -89,8 +89,6 @@ $('document').ready(function ($) {
 
 
                     $("#submit").html("Enviado <i class='fas fa-check'></i>")
-
-                    ServiciosCarga();
                     $("#ModalEdDele").removeClass("in");
                     $(".modal-backdrop").remove();
                     $("#ModalEdDele").hide();
