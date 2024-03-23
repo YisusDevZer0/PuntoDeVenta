@@ -67,7 +67,7 @@ include_once "Controladores/ControladorUsuario.php";
     });
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".dropdown-menu .btn-Ventas", function() {
+    $(document).on("click", ".btn-elimina", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaServicio.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
