@@ -7,7 +7,7 @@
     $Licencia = mysqli_real_escape_string($conn, $_POST['licencia']);
   
     // Consulta para verificar si ya existe un registro con los mismos valores
-    $sql = "SELECT Nom_Tipo_Prod, Licencia FROM Tabla_Ejemplo WHERE Nom_Tipo_Prod='$Nom_Tipo_Prod' AND Licencia='$Licencia'";
+    $sql = "SELECT Nom_Tipo_Prod, Licencia FROM TipProd_POS WHERE Nom_Tipo_Prod='$Nom_Tipo_Prod' AND Licencia='$Licencia'";
     $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
     $row = mysqli_fetch_assoc($resultset);
     
@@ -15,7 +15,7 @@
         echo json_encode(array("statusCode"=>250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql = "INSERT INTO `Tabla_Ejemplo`(`Nom_Tipo_Prod`, `Agregado_Por`, `Sistema`, `Licencia`) 
+        $sql = "INSERT INTO `TipProd_POS`(`Nom_Tipo_Prod`, `Agregado_Por`, `Sistema`, `Licencia`) 
                 VALUES ('$Nom_Tipo_Prod', '$Agregado_Por', '$Sistema', '$Licencia')";
         
         if (mysqli_query($conn, $sql)) {
