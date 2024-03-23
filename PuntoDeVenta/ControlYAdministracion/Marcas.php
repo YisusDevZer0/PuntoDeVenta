@@ -36,20 +36,20 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-8 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Servicios registrados para <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Marcas registradas para <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nuevo componente
+  Agregar nueva marca
 </button> <br>
             <div id="DataDeServicios"></div>
             </div></div></div></div></div>
             
           
 <script src="js/ControlDeMarcas.js"></script>
-
+<script src="js/GuardaMarcas.js"></script>
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoComponente.php";
-            include "Modales/Modales_Errores.php";
+            include "Modales/NuevaMarca.php";
+       
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
            <script>
