@@ -129,7 +129,7 @@
  
    <select id = "tip" class = "form-control" name = "Tip">
                                                <option value="">Selecciona un tipo:</option>
-        <?php
+                                               <?php
           $query = $conn -> query ("SELECT * FROM TipProd_POS");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
@@ -143,7 +143,12 @@
 
    <select id = "categoria" class = "form-control" name = "Categoria">
                                                <option value="">Seleccione una categoria:</option>
-       </select>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Categorias_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+          }
+        ?>  </select>
     </div><label for="categoria" class="error">
     </div>
    
@@ -153,7 +158,12 @@
 
    <select id = "marca" class = "form-control" name = "Marca">
                                                <option value="">Seleccione una marca:</option>
-        </select>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Marcas_POS ");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Marca"].'">'.$valores["Nom_Marca"].'</option>';
+          }
+        ?>  </select>
     </div><label for="marca" class="error">
     </div>
     
