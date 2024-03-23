@@ -80,29 +80,34 @@
       
     <label for="exampleFormControlInput1">Precio venta <span class="text-danger">*</span></label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
   
-    <span class="input-group-text" ><i class="fas fa-tag"></i></span>
-  </div>
   <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
 </div><label for="pv" class="error"></div>
 
 
     <div class="col">
-    <label for="exampleFormControlInput1">Precio compra <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Tipo de servicio <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
-  </div>
-  <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
+   <select id = "tiposervicio" class = "form-control" name = "TipoServicio">
+                                               <option value="">Seleccione una servicio:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Servicios_POS WHERE  Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Servicio_ID"].'">'.$valores["Nom_Serv"].'</option>';
+          }
+        ?>  </select>        
     </div><label for="pc" class="error">
     </div>
     <div class="col">
-    <label for="exampleFormControlInput1">Minimo existencia <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">¿Requiere receta? <span class="text-danger">*</span> </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-minus"></i></span>
-  </div>
-  <input type="text" class="form-control " name="MinE" id="mine" placeholder="Ingrese minimo de existencia" aria-describedby="basic-addon1" onchange="validarPrecios()" >           
-    </div><label for="mine" class="error">
+  
+  <select name="Receta" id="receta" class="form-control">
+  <option value="">Elige una opcion</option>
+  <option value="Si">Si</option>
+  <option value="No">No</option>
+  </select>
+    </div>
     </div>
     <div class="col">
     <label for="exampleFormControlInput1">Maximo existencia<span class="text-danger">*</span></label>
