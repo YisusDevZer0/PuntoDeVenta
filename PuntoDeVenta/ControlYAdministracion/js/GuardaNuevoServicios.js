@@ -109,9 +109,10 @@ VigenciaProdT: {
              $('#successModal').modal('toggle'); 
              setTimeout(function(){ 
                  $('#successModal').modal('hide') 
-             }, 2000); // abrir
+             }, 6000); // abrir
        
-  
+             CargaServicios();
+
              
              
             //  Solucionar muestra de modal de successModal
