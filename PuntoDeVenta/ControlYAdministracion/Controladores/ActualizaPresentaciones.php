@@ -6,16 +6,15 @@ $Presentacion_ID = isset($_POST['Id_Serv']) ? intval($_POST['Id_Serv']) : 0;
 $Nom_Presentacion = isset($_POST['ActNomServ']) ? trim($_POST['ActNomServ']) : '';
 $ActualizadoPor = isset($_POST['ActUsuarioCServ']) ? trim($_POST['ActUsuarioCServ']) : '';
 $Sistema = isset($_POST['ActSistemaCServ']) ? trim($_POST['ActSistemaCServ']) : '';
-$Licencia = isset($_POST['LicenciaServ']) ? trim($_POST['LicenciaServ']) : '';
 
 // Verificar si todos los datos requeridos están presentes
-if ($Presentacion_ID && $Nom_Presentacion && $ActualizadoPor && $Sistema && $Licencia) {
+if ($Presentacion_ID && $Nom_Presentacion && $ActualizadoPor && $Sistema) {
     // Consulta preparada
-    $sql = "UPDATE `Presentaciones` SET `Nom_Presentacion`=?, `ActualizadoPor`=?, `Sistema`=?, `Licencia`=? WHERE `Presentacion_ID`=?";
+    $sql = "UPDATE `Presentaciones` SET `Nom_Presentacion`=?, `ActualizadoPor`=?, `Sistema`=? WHERE `Presentacion_ID`=?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
         // Enlazar parámetros
-        $stmt->bind_param("ssssi", $Nom_Presentacion, $ActualizadoPor, $Sistema, $Licencia, $Presentacion_ID);
+        $stmt->bind_param("sssi", $Nom_Presentacion, $ActualizadoPor, $Sistema, $Presentacion_ID);
         // Ejecutar consulta
         if ($stmt->execute()) {
             echo json_encode(array("statusCode" => 200));
