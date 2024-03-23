@@ -62,7 +62,7 @@ include_once "Controladores/ControladorUsuario.php";
             $("#TitulosCajas").html("Editar servicios");
             
         });
-        $('#ModalDetallesCaja').modal('show');
+        $('#ModalEdDele').modal('show');
     });
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
@@ -73,7 +73,7 @@ include_once "Controladores/ControladorUsuario.php";
             $("#TitulosCajas").html("Eliminar servicio");
            
         });
-        $('#ModalDetallesCaja').modal('show');
+        $('#ModalEdDele').modal('show');
     });
 
    
@@ -81,7 +81,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 </script>
 
-  <div class="modal fade" id="ModalDetallesCaja" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalDetallesCajaLabel" aria-hidden="true">
+  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
   <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
     <div class="text-center">
       <div class="modal-content">

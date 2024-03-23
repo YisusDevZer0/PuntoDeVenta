@@ -91,9 +91,9 @@ $('document').ready(function ($) {
                     $("#submit").html("Enviado <i class='fas fa-check'></i>")
 
                     ServiciosCarga();
-                    $("#ServiceModal").removeClass("in");
+                    $("#ModalEdDele").removeClass("in");
                     $(".modal-backdrop").remove();
-                    $("#ServiceModal").hide();
+                    $("#ModalEdDele").hide();
 
 
                     $('#ExitoActualizaCategoria').modal('toggle');
