@@ -96,10 +96,9 @@ $('document').ready(function ($) {
 
                     $('#updateSuccessModal').modal('toggle');
                     setTimeout(function () {
-                        $('#updateSuccessModal').modal('hide')
-                    }, 5000); // abrir
-                  
-                    location.reload(); // Recargar la página completa
+                        $('#updateSuccessModal').modal('hide');
+                        location.reload(); // Recargar la página completa después de 5 segundos
+                    }, 5000); // Mostrar el modal durante 5 segundos antes de recargar la página
 
                     //  Solucionar muestra de modal de exito
 
