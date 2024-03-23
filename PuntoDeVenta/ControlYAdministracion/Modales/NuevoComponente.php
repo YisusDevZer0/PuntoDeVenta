@@ -16,8 +16,8 @@
                   <!-- Agrega un campo oculto para el token CSRF -->
     
                 <div class="mb-3">
-                  <label for="tipouser" class="form-label">Nombre del componente</label>
-                  <input type="text" class="form-control" name="NombreServicio" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
+                  <label for="tipouser" class="form-label">Nombre del componente activo</label>
+                  <input type="text" class="form-control" name="NomPresentacion" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
                 </div>
                 
                
