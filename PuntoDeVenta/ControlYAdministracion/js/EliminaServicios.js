@@ -16,7 +16,7 @@ $('document').ready(function($){
       }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
      
   
-    $("#NewTypeUser").validate({
+    $("#EliminaServiciosForm").validate({
 		rules: {
 		
 			NombreTipoProd: {
@@ -63,7 +63,7 @@ VigenciaProdT: {
         $.ajax({				
             type : 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EliminaServicios.php",
-            data: $('#NewTypeUser').serialize(),
+            data: $('#EliminaServiciosForm').serialize(),
             cache: false,
             beforeSend: function(){	
 			
