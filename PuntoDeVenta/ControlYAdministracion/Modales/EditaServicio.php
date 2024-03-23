@@ -40,7 +40,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Estado del servicio</label>
     <div class="input-group mb-3">
 
-  <select name="ActVigenciaServ" class="form-control" id="actualizavigenciaserv" onchange="ActualizaTipoVigenciaServicio();">
+  <select name="ActVigenciaServ" class="form-control" id="actualizavigenciaserv">
                  
                     
                    <option  value="<?php echo $Especialistas->Estado; ?>"><?php echo $Especialistas->Estado; ?></option>		
@@ -59,7 +59,7 @@ while ($r=$query->fetch_object()){
 <button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
                           
 </form>
-<script src="js/ActualizaServicio.js"></script>
+<script src="js/ActualizaServicios.js"></script>
 
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>

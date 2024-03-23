@@ -96,9 +96,9 @@ $('document').ready(function ($) {
                     $("#ModalEdDele").hide();
 
 
-                    $('#ExitoActualizaCategoria').modal('toggle');
+                    $('#updateSuccessModal').modal('toggle');
                     setTimeout(function () {
-                        $('#ExitoActualizaCategoria').modal('hide')
+                        $('#updateSuccessModal').modal('hide')
                     }, 3000); // abrir
                   
 

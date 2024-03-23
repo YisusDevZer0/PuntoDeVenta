@@ -27,3 +27,20 @@
     </div>
   </div>
 </div>
+
+
+
+<!-- Modal de actualización correcta -->
+<div class="modal fade" id="updateSuccessModal" tabindex="-1" aria-labelledby="updateSuccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="updateSuccessModalLabel">Actualización Correcta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <i class="fas fa-check-circle fa-5x text-success animate__animated animate__heartBeat"></i>
+      </div>
+    </div>
+  </div>
+</div>
