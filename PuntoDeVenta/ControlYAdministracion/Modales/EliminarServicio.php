@@ -21,7 +21,7 @@ while ($r=$query->fetch_object()){
 <i class="fas fa-question-circle fa-5x text-warning"></i>
         <p>¿Está seguro de que desea eliminar el servicio <?php echo $Especialistas->Nom_Serv; ?> ?</p>
 <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Servicio_ID; ?>">
-<button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
+<button type="submit"  id="submit"  class="btn btn-danger">Confirmar<i class="fas fa-check"></i></button>
                           
 </form>
 <script src="js/ActualizacionDeServicios.js"></script>
