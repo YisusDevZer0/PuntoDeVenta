@@ -54,6 +54,67 @@
     </div>
 </div>
 
+<!-- SEGUNDA SECCION -->
+<script>
+    function validarPrecios() {
+      var precioVenta = document.getElementById('pv').value;
+      var precioCompra = document.getElementById('pc').value;
+
+      if (precioVenta <= precioCompra) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El precio de venta debe ser mayor al precio de compra.',
+          showCancelButton: false,
+          confirmButtonText: 'Aceptar',
+        });
+
+        document.getElementById('EnviarDatos').disabled = true;
+      } else {
+        document.getElementById('EnviarDatos').disabled = false;
+      }
+    }
+  </script> 
+    <div class="row">
+    <div class="col">
+      
+    <label for="exampleFormControlInput1">Precio venta <span class="text-danger">*</span></label>
+     <div class="input-group mb-3">
+  <div class="input-group-prepend">
+  
+    <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+  </div>
+  <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
+</div><label for="pv" class="error"></div>
+
+
+    <div class="col">
+    <label for="exampleFormControlInput1">Precio compra <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+  </div>
+  <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
+    </div><label for="pc" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Minimo existencia <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-minus"></i></span>
+  </div>
+  <input type="text" class="form-control " name="MinE" id="mine" placeholder="Ingrese minimo de existencia" aria-describedby="basic-addon1" onchange="validarPrecios()" >           
+    </div><label for="mine" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Maximo existencia<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-plus"></i></span>
+  </div>
+  <input type="text" class="form-control " name="MaxE" id="maxe"  placeholder="Ingrese maximo de existencia" aria-describedby="basic-addon1" >           
+    </div><label for="maxe" class="error">
+    </div>
+
+<!-- SEGUNDA SECCION FIN -->
+
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </form>
             </div>
