@@ -4,7 +4,7 @@ include("db_connection.php");
 include_once "ControladorUsuario.php";
 
 // Obtener el valor de ID_H_O_D y Fk_Sucursal de la fila, asegurándote de que estén correctamente formateados
-$id_h_o_d = isset($row['ID_H_O_D']) ? $row['ID_H_O_D'] : '';
+$id_h_o_d = isset($row['Licencia']) ? $row['Licencia'] : '';
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Consulta segura utilizando una sentencia preparada
