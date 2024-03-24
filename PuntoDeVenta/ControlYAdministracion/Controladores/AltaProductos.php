@@ -15,13 +15,12 @@ $FkMarca = mysqli_real_escape_string($conn, $_POST['Marca']);
 $FkPresentacion = mysqli_real_escape_string($conn, $_POST['Presentacion']);
 $Proveedor1 = mysqli_real_escape_string($conn, $_POST['Proveedor']);
 $RecetaMedica = mysqli_real_escape_string($conn, $_POST['Receta']);
-$Estatus = ''; // Este valor no está presente en el formulario, puedes asignarle un valor si lo deseas
 $AgregadoPor = mysqli_real_escape_string($conn, $_POST['AgregadoPor']);
 $AgregadoEl = ''; // Este valor no está presente en el formulario, puedes asignarle un valor si lo deseas
 $Licencia = mysqli_real_escape_string($conn, $_POST['Licencia']);
 
 // Consulta para verificar si ya existe un registro con los mismos valores
-$sql = "SELECT Cod_Barra, Licencia FROM Productos_POS WHERE Cod_Barra='$Cod_Barra' AND Licencia='$Licencia'";
+$sql = "SELECT Cod_Barra, Clave_adicional, Clave_Levic, Nombre_Prod, Precio_Venta, Precio_C, Tipo_Servicio, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, Proveedor1, RecetaMedica, AgregadoPor, AgregadoEl, Licencia FROM Productos_POS WHERE Cod_Barra='$Cod_Barra' AND Licencia='$Licencia'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
