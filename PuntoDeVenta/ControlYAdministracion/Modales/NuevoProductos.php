@@ -197,12 +197,12 @@
     <label for="exampleFormControlInput1">Proveedor 1 <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
  
-   <select id = "tip" class = "form-control" name = "Tip">
+   <select id = "proveedor" class = "form-control" name = "Proveedor">
                                                <option value="">Selecciona un tipo:</option>
                                                <?php
-          $query = $conn -> query ("SELECT * FROM TipProd_POS");
+          $query = $conn -> query ("SELECT * FROM Proveedores");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
           }
         ?>  </select> 
     </div><label for="tip" class="error">
@@ -211,12 +211,12 @@
     <label for="exampleFormControlInput1">Proveedor 2<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
 
-   <select id = "categoria" class = "form-control" name = "Categoria">
+   <select id = "proveedor2" class = "form-control" name = "Prov2">
                                                <option value="">Seleccione una categoria:</option>
         <?php
-          $query = $conn -> query ("SELECT * FROM Categorias_POS");
+          $query = $conn -> query ("SELECT * FROM Proveedores");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
           }
         ?>  </select>
     </div><label for="categoria" class="error">
@@ -225,6 +225,11 @@
     
    </div>
 
+    <input type="text" class="form-control " name="EmpresaProductos" id="empresa" hidden value="<?php echo $row['Licencia']?>"aria-describedby="basic-addon1" >       
+      
+    <input type="text" class="form-control"  name="AgregaProductosBy" id="agrega" hidden readonly value=" <?php echo $row['Nombre_Apellidos']?>">
+    <input type="text" class="form-control"  name="SistemaProductos" id="sistema" hidden readonly value="Administrador">
+    
 <!-- CUARTA SECCION FIN -->
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </form>

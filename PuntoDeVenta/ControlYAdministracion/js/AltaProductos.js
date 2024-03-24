@@ -104,7 +104,7 @@ $('document').ready(function ($) {
 
     $.ajax({
       type: 'POST',
-      url: "Consultas/AltaProductos.php",
+      url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AltaProductos.php",
       data: $('#AgregaProductos').serialize(),
       cache: false,
       beforeSend: function () {
@@ -152,8 +152,7 @@ $('document').ready(function ($) {
           setTimeout(function () {
             $('#AltaCorrecta').modal('hide')
           }, 4000); // abrir
-          StockPorSucursales();
-                  CargaProductos();
+          
 
 
           //  Solucionar muestra de modal de AltaCorrecta
