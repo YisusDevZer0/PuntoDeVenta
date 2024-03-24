@@ -35,3 +35,9 @@ $sql = "SELECT Cod_Barra,Nombre_Prod FROM Productos_POS
 $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
 
 $row = mysqli_fetch_assoc($resultset);
+
+//include database configuration file
+if ($row && $row['Cod_Barra'] == $Cod_Barra and $row['Nombre_Prod'] == $Nombre_Prod)
+{
+    echo json_encode(array("statusCode" => 250));
+}
