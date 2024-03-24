@@ -3,7 +3,6 @@ include_once 'db_connect.php';
 
 
 $Cod_Barra = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['CodBarraP']))));
-$Clave_adicional = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clav']))));
 $Nombre_Prod = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['NombreProd']))));
 $Precio_Venta = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['PV']))));
 $Precio_C = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['PC']))));
@@ -36,9 +35,9 @@ if ($row && $row['Cod_Barra'] == $Cod_Barra and $row['Nombre_Prod'] == $Nombre_P
     $row['FkPresentacion'] == $FkPresentacion  and $row['Proveedor1'] == $Proveedor1 and $row['Proveedor2'] == $Proveedor2) {
     echo json_encode(array("statusCode" => 250));
 } else {
-    $sql = "INSERT INTO `Productos_POS`( `Cod_Barra`,`Clave_adicional`,`Nombre_Prod`,`Precio_Venta`,`Precio_C`,
+    $sql = "INSERT INTO `Productos_POS`( `Cod_Barra`,`Nombre_Prod`,`Precio_Venta`,`Precio_C`,
     `Tipo_Servicio`,`Componente_Activo`,`Tipo`,`FkCategoria`,`FkMarca`,`FkPresentacion`, `Proveedor1`,`Proveedor2`,`RecetaMedica`,`Sistema`,`AgregadoPor`,`Licencia`) 
-            VALUES ('$Cod_Barra','$Clave_adicional','$Nombre_Prod','$Precio_Venta','$Precio_C','$Tipo_Servicio','$Componente_Activo','$Tipo','$FkCategoria','$FkMarca','$FkPresentacion', '$Proveedor1','$Proveedor2','$RecetaMedica','$Sistema','$AgregadoPor','$Licencia')";
+            VALUES ('$Cod_Barra','$Nombre_Prod','$Precio_Venta','$Precio_C','$Tipo_Servicio','$Componente_Activo','$Tipo','$FkCategoria','$FkMarca','$FkPresentacion', '$Proveedor1','$Proveedor2','$RecetaMedica','$Sistema','$AgregadoPor','$Licencia')";
 
     if (mysqli_query($conn, $sql)) {
         echo json_encode(array("statusCode" => 200));
