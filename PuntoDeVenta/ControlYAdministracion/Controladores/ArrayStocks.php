@@ -24,7 +24,7 @@ WHERE Stock_POS.Fk_Sucursal = ?";
 $stmt = $conn->prepare($sql);
 
 // Vincular parámetros
-$stmt->bind_param("ii", $id_h_o_d, $fk_sucursal);
+$stmt->bind_param("i", $fk_sucursal);
 
 // Ejecutar la declaración
 $stmt->execute();
