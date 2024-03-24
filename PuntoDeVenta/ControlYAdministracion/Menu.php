@@ -88,20 +88,30 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Control de productos</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
+                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
+                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
+                           
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Inventarios</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
+                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
+                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
                            
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Reportes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" class="dropdown-item">Sign In</a>
-                            <a href="signup.html" class="dropdown-item">Sign Up</a>
-                            <a href="404.html" class="dropdown-item">404 Error</a>
-                            <a href="blank.html" class="dropdown-item">Blank Page</a>
+                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
+                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
+                            
+                           
                         </div>
                     </div>
-                </div>
+                   
             </nav>
         </div>
