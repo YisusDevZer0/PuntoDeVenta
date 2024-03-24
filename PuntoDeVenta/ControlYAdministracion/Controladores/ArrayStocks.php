@@ -3,10 +3,6 @@ header('Content-Type: application/json');
 include("db_connection.php");
 include_once "ControladorUsuario.php";
 
-// Obtener el valor de ID_H_O_D y Fk_Sucursal de la fila, asegurándote de que estén correctamente formateados
-
-$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
-
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Stock_POS.Folio_Prod_Stock,Stock_POS.Clave_adicional,Stock_POS.ID_Prod_POS,Stock_POS.AgregadoEl,Stock_POS.Clave_adicional,Stock_POS.Clave_Levic,
 Stock_POS.Cod_Barra,Stock_POS.Nombre_Prod,Stock_POS.Tipo_Servicio,Stock_POS.Tipo,Stock_POS.Fk_sucursal,
@@ -17,14 +13,10 @@ Productos_POS.Precio_Venta,Productos_POS.Precio_C
 FROM Stock_POS
 INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
 INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio= Servicios_POS.Servicio_ID
-INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS =Stock_POS.ID_Prod_POS
-WHERE Stock_POS.Fk_Sucursal = ?";
+INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS =Stock_POS.ID_Prod_POS";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
-
-// Vincular parámetros
-$stmt->bind_param("i", $fk_sucursal);
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -53,9 +45,9 @@ while ($fila = $result->fetch_assoc()) {
         "Existencias_R" => $fila["Existencias_R"],
         "Min_Existencia" => $fila["Min_Existencia"],
         "Max_Existencia" => $fila["Max_Existencia"],
-        "Coincidencias" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-        "Ingreso" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-        "Auditoria" => "<a href='https://saludapos.com/AdminPOS/HistorialProductoAudita?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-primary btn-sm'><i class='fas fa-history'></i></a>"
+        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+       
     ];
 }
 
