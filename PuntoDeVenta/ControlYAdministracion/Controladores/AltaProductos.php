@@ -36,6 +36,14 @@ if ($row && $row['Cod_Barra'] == $Cod_Barra and $row['Nombre_Prod'] == $Nombre_P
 {
     echo json_encode(array("statusCode" => 250));
 }else {
-   
+    $sql = $sql = "INSERT INTO `Productos_POS`(`Cod_Barra`, `Clave_adicional`, `Clave_Levic`, `Nombre_Prod`, `Precio_Venta`, `Precio_C`, `Tipo_Servicio`, `Componente_Activo`, `Tipo`, `FkCategoria`, `FkMarca`, `FkPresentacion`, `Proveedor1`, `Proveedor2`, `RecetaMedica`, `AgregadoPor`, `AgregadoEl`, `Licencia`) 
+    VALUES ('$Cod_Barra','$Clave_adicional','$Clave_Levic','$Nombre_Prod','$Precio_Venta','$Precio_C','$Tipo_Servicio','$Componente_Activo','$Tipo','$FkCategoria','$FkMarca','$FkPresentacion','$Proveedor1','$Proveedor2','$RecetaMedica','$AgregadoPor', NOW(), '$Licencia')";
+
+
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(array("statusCode" => 200));
+    } else {
+        echo json_encode(array("statusCode" => 201));
+    }
     mysqli_close($conn);
 }
