@@ -22,7 +22,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Folio</label>
     <div class="input-group mb-3">
   
-  <input type="text" class="form-control " disabled readonly value="<?php echo $Especialistas->Presentacion_ID; ?>">
+  <input type="text" class="form-control " disabled readonly value="<?php echo $Especialistas->ID_Proveedor; ?>">
     </div>
     </div>
     
@@ -31,7 +31,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Nombre del proveedor<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
-  <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nom_Presentacion; ?>" aria-describedby="basic-addon1" maxlength="60">            
+  <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Proveedor; ?>" aria-describedby="basic-addon1" maxlength="60">            
 </div></div>
 <div class="form-group">
     <label for="exampleFormControlInput1">Telefono<span class="text-danger">*</span></label>
