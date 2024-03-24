@@ -48,7 +48,7 @@ include_once "Controladores/ControladorUsuario.php";
 <script src="js/GuardaProveedor.js"></script>
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevaProveedor.php";
+            include "Modales/NuevoProveedor.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
           <script>
