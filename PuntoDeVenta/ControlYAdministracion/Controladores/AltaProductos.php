@@ -1,26 +1,23 @@
 <?php
 include_once 'db_connect.php';
 
-$Cod_Barra = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Cod_Barra']))));
-$Clave_adicional = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clave_adicional']))));
+$Cod_Barra = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Cod_BarraP']))));
+$Clave_adicional = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clav']))));
 $Clave_Levic = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clave_Levic']))));
-$Nombre_Prod = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Nombre_Prod']))));
-$Precio_Venta = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Precio_Venta']))));
-$Precio_C = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Precio_C']))));
-$Tipo_Servicio = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Tipo_Servicio']))));
-$Componente_Activo = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Componente_Activo']))));
-$Tipo = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Tipo']))));
-$FkCategoria = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['FkCategoria']))));
-$FkMarca = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['FkMarca']))));
-$FkPresentacion = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['FkPresentacion']))));
-$Proveedor1 = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Proveedor1']))));
-$Proveedor2 = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Proveedor2']))));
-$RecetaMedica = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['RecetaMedica']))));
-$AgregadoPor = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['AgregadoPor']))));
+$Nombre_Prod = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['NombreProd']))));
+$Precio_Venta = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['PV']))));
+$Precio_C = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['PC']))));
+$Tipo_Servicio = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['TipoServicio']))));
+$Componente_Activo = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['ComponenteActivo']))));
+$Tipo = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Tip']))));
+$FkCategoria = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Categoria']))));
+$FkMarca = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Marca']))));
+$FkPresentacion = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Presentacion']))));
+$Proveedor1 = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Proveedor']))));
+$Proveedor2 = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Prov2']))));
+$RecetaMedica = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Receta']))));
+$AgregadoPor = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['AgregaProductosBy']))));
 $Licencia = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Licencia']))));
-
-$Estatus = $conn->real_escape_string(htmlentities(strip_tags(Trim($TipVigencia))));
-$CodigoEstatus = $conn->real_escape_string(htmlentities(strip_tags(Trim($CodVig))));
 $Sistema = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['SistemaProductos']))));
 
 
