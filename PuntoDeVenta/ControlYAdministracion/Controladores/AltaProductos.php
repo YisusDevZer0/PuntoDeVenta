@@ -35,4 +35,7 @@ $row = mysqli_fetch_assoc($resultset);
 if ($row && $row['Cod_Barra'] == $Cod_Barra and $row['Nombre_Prod'] == $Nombre_Prod)
 {
     echo json_encode(array("statusCode" => 250));
+}else {
+   
+    mysqli_close($conn);
 }
