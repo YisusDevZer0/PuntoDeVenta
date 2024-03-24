@@ -14,14 +14,14 @@
     $Marca = mysqli_real_escape_string($conn, $_POST['Marca']);
     $Presentacion = mysqli_real_escape_string($conn, $_POST['Presentacion']);
     $Proveedor = mysqli_real_escape_string($conn, $_POST['Proveedor']);
-    $Prov2 = mysqli_real_escape_string($conn, $_POST['Prov2']);
+    $Proveedor2 = mysqli_real_escape_string($conn, $_POST['Prov2']);
     $EmpresaProductos = mysqli_real_escape_string($conn, $_POST['EmpresaProductos']);
     $AgregaProductosBy = mysqli_real_escape_string($conn, $_POST['AgregaProductosBy']);
     $SistemaProductos = mysqli_real_escape_string($conn, $_POST['SistemaProductos']);
 
     // Consulta de inserción para agregar un nuevo registro
     $sql = "INSERT INTO `Productos_POS`(`Cod_Barra`, `Clave_adicional`, `Nombre_Prod`, `Componente_Activo`, `Precio_Venta`, `Precio_C`, `Tipo_Servicio`, `RecetaMedica`, `Tipo`, `FkCategoria`, `FkMarca`, `FkPresentacion`, `Proveedor1`, `Proveedor2`, `EmpresaProductos`, `AgregadoPor`, `AgregadoEl`, `Licencia`) 
-            VALUES ('$CodBarraP', '$Clav', '$NombreProd', '$ComponenteActivo', '$PV', '$PC', '$TipoServicio', '$Receta', '$Tip', '$Categoria', '$Marca', '$Presentacion', '$Proveedor', '$Prov2', '$EmpresaProductos', '$AgregaProductosBy', '$SistemaProductos', '$Licencia')";
+            VALUES ('$CodBarraP', '$Clav', '$NombreProd', '$ComponenteActivo', '$PV', '$PC', '$TipoServicio', '$Receta', '$Tip', '$Categoria', '$Marca', '$Presentacion', '$Proveedor', '$Proveedor2', '$EmpresaProductos', '$AgregaProductosBy', '$SistemaProductos', '$Licencia')";
 
     if (mysqli_query($conn, $sql)) {
         echo json_encode(array("statusCode"=>200)); // Inserción exitosa
