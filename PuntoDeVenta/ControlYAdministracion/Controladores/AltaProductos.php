@@ -31,6 +31,7 @@ $Sistema = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Sistem
 
 //include database configuration file
 $sql = "SELECT Cod_Barra,Nombre_Prod FROM Productos_POS 
-    WHERE Cod_Barra='$Cod_Barra'AND Nombre_Prod='$Nombre_Prod'  ";
+    WHERE Cod_Barra='$Cod_Barra'AND Nombre_Prod='$Nombre_Prod' ";
 $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
+
 $row = mysqli_fetch_assoc($resultset);
