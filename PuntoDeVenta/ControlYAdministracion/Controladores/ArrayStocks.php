@@ -4,7 +4,7 @@ include("db_connection.php");
 include_once "ControladorUsuario.php";
 
 // Obtener el valor de ID_H_O_D y Fk_Sucursal de la fila, asegurándote de que estén correctamente formateados
-$id_h_o_d = isset($row['Licencia']) ? $row['Licencia'] : '';
+
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Consulta segura utilizando una sentencia preparada
@@ -18,7 +18,7 @@ FROM Stock_POS
 INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
 INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio= Servicios_POS.Servicio_ID
 INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS =Stock_POS.ID_Prod_POS
-WHERE Stock_POS.ID_H_O_D =? AND Stock_POS.Fk_Sucursal = ?";
+WHERE Stock_POS.Fk_Sucursal = ?";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
