@@ -210,13 +210,39 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayStocks.php",
  "aoColumns": [
-  { mData: 'ServicioID' },  
-  { mData: 'Nombre_Servicio' },
-  { mData: 'Estado' },
-       { mData: 'AgregadoPor' },
-       { mData: 'FechaAgregado' },
-       { mData: 'Sistema' },
-       { mData: 'Licencia' },
+    { mData: 'Cod_Barra' },
+       { mData: 'Clave_adicional' },
+       { mData: 'Clave_Levic' },
+       { mData: 'Nombre_Prod' },
+       { mData: 'Precio_Venta' },
+       { mData: 'Nom_Serv' },
+       { mData: 'Tipo' },
+       { mData: 'Proveedor1' },
+       { mData: 'Proveedor2' },
+       { mData: 'Sucursal' },
+       { mData: 'UltimoMovimiento' },
+       { mData: 'Existencias_R' },
+       { mData: 'Min_Existencia' },
+       { mData: 'Max_Existencia' },
+       {mData: "Existencias_R",
+        "searchable": true,
+        "orderable":true,
+        "render": function (data, type, row) {
+            if ( row.Existencias_R < row.Min_Existencia) {
+
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+        }
+        else if ( row.Existencias_R > row.Max_Existencia) {
+return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
+        }
+            else {
+ 
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+ 
+}
+        }
+ 
+    },
        { mData: 'Editar' },
        { mData: 'Eliminar' },
       
@@ -269,13 +295,22 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>ID Servicio</th>
-<th>Nombre Servicio</th>
-<th>Estatus</th>
-    <th>Creado por</th>
-    <th>Desde sistema</th>
-    <th>Hora creacion</th> 
-    <th>Licencia</th> 
+<th style="background-color:#0057b8 !important;">Clave</th>
+<th style="background-color:#0057b8 !important;">Cod interno</th>
+<th style="background-color:#0057b8 !important;">Cod levic</th>
+<th style="background-color:#0057b8 !important;">Nombre</th>
+<th style="background-color:#0057b8 !important;">PV</th>
+<th style="background-color:#0057b8 !important;">Servicio</th>
+<th style="background-color:#0057b8 !important;">Tipo</th>
+<th style="background-color:#0057b8 !important;">Proveedor 1</th>
+<th style="background-color:#0057b8 !important;">Proveedor 2</th>
+<th style="background-color:#0057b8 !important;">Sucursal</th>
+<th style="background-color:#0057b8 !important;">Ultimo movimiento registrado</th>
+<th style="background-color:#0057b8 !important;">Stock</th>
+<th style="background-color:#0057b8 !important;">Min</th>
+<th style="background-color:#0057b8 !important;">Max</th>
+<th style="background-color:#0057b8 !important;">Estatus</th>
+
     <th>Editar</th> 
     <th>Eliminar</th> 
 </thead>
