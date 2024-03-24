@@ -30,9 +30,7 @@ $Sistema = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Sistem
 
 
 //include database configuration file
-$sql = "SELECT Cod_Barra,Nombre_Prod,Precio_Venta,Precio_C,Max_Existencia,Min_Existencia,Tipo,Tipo_Servicio,FkCategoria,FkMarca,FkPresentacion,ID_H_O_D, Proveedor2,Proveedor1, Estatus,Sistema,AgregadoPor,Lote_Med,Fecha_Caducidad,Stock FROM Productos_POS 
-    WHERE Cod_Barra='$Cod_Barra'AND Nombre_Prod='$Nombre_Prod'  AND Precio_Venta='$Precio_Venta' AND Precio_C='$Precio_C'
-    AND Max_Existencia='$Max_Existencia' AND Min_Existencia='$Min_Existencia' AND Tipo='$Tipo' AND Tipo_Servicio='$Tipo_Servicio' AND FkCategoria='$FkCategoria' AND FkMarca='$FkMarca' AND FkPresentacion='$FkPresentacion' AND
-    Proveedor1='$Proveedor1' AND  Proveedor2='$Proveedor2' AND ID_H_O_D='$ID_H_O_D'  AND Lote_Med='$Lote_Med' AND Fecha_Caducidad='$Fecha_Caducidad' ";
+$sql = "SELECT Cod_Barra,Nombre_Prod FROM Productos_POS 
+    WHERE Cod_Barra='$Cod_Barra'AND Nombre_Prod='$Nombre_Prod'  ";
 $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
