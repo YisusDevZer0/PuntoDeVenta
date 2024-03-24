@@ -38,7 +38,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">lista de productos de cedis de <?php echo $row['Licencia']?></h6>
             
-            <div id="DataDeProductos"></div>
+            <div id="DataDeServicios"></div>
             </div></div></div></div>
             
           
