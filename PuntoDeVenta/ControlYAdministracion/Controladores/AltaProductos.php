@@ -20,23 +20,34 @@ $Estatus = ''; // Puede asignarse un valor si es necesario
 $AgregadoPor = mysqli_real_escape_string($conn, $_POST['AgregaProductosBy']);
 $Licencia = mysqli_real_escape_string($conn, $_POST['EmpresaProductos']);
 
-// Consulta para verificar si ya existe un registro con los mismos valores
-$sql = "SELECT Cod_Barra, Licencia FROM Productos_POS WHERE Cod_Barra='$Cod_Barra' AND Licencia='$Licencia'";
-$resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
-$row = mysqli_fetch_assoc($resultset);
+// Consulta para verificar la existencia de un registro duplicado
+$sql_check_duplicate = "SELECT Cod_Barra, Licencia FROM Productos_POS WHERE Cod_Barra=? AND Licencia=?";
+$stmt_check_duplicate = mysqli_prepare($conn, $sql_check_duplicate);
+mysqli_stmt_bind_param($stmt_check_duplicate, "ss", $Cod_Barra, $Licencia);
+mysqli_stmt_execute($stmt_check_duplicate);
+$result_check_duplicate = mysqli_stmt_get_result($stmt_check_duplicate);
 
-if(mysqli_num_rows($resultset) > 0) {
-    echo json_encode(array("statusCode"=>250)); // El registro ya existe
+if (mysqli_num_rows($result_check_duplicate) > 0) {
+    // El registro ya existe
+    echo json_encode(array("statusCode" => 250));
 } else {
     // Consulta de inserción para agregar un nuevo registro
-    $sql = "INSERT INTO `Productos_POS`(`Cod_Barra`, `Clave_adicional`, `Clave_Levic`, `Nombre_Prod`, `Precio_Venta`, `Precio_C`, `Tipo_Servicio`, `Componente_Activo`, `Tipo`, `FkCategoria`, `FkMarca`, `FkPresentacion`, `Proveedor1`, `Proveedor2`, `RecetaMedica`, `Estatus`, `AgregadoPor`, `Licencia`) 
-            VALUES ('$Cod_Barra', '$Clave_adicional', '$Clave_Levic', '$Nombre_Prod', '$Precio_Venta', '$Precio_C', '$Tipo_Servicio', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$Estatus', '$AgregadoPor', '$Licencia')";
+    $sql_insert = "INSERT INTO `Productos_POS`(`Cod_Barra`, `Clave_adicional`, `Clave_Levic`, `Nombre_Prod`, `Precio_Venta`, `Precio_C`, `Tipo_Servicio`, `Componente_Activo`, `Tipo`, `FkCategoria`, `FkMarca`, `FkPresentacion`, `Proveedor1`, `Proveedor2`, `RecetaMedica`, `AgregadoPor`, `Licencia`) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt_insert = mysqli_prepare($conn, $sql_insert);
+    mysqli_stmt_bind_param($stmt_insert, "ssssddddsssssssss", $Cod_Barra, $Clave_adicional, $Clave_Levic, $Nombre_Prod, $Precio_Venta, $Precio_C, $Tipo_Servicio, $Componente_Activo, $Tipo, $FkCategoria, $FkMarca, $FkPresentacion, $Proveedor1, $Proveedor2, $RecetaMedica, $AgregadoPor, $Licencia);
     
-    if (mysqli_query($conn, $sql)) {
-        echo json_encode(array("statusCode"=>200)); // Inserción exitosa
+    if (mysqli_stmt_execute($stmt_insert)) {
+        // Inserción exitosa
+        echo json_encode(array("statusCode" => 200));
     } else {
-        echo json_encode(array("statusCode"=>201)); // Error en la inserción
+        // Error en la inserción
+        echo json_encode(array("statusCode" => 201, "error" => mysqli_error($conn)));
     }
-    mysqli_close($conn);
 }
+
+// Cerrar la conexión
+mysqli_stmt_close($stmt_check_duplicate);
+mysqli_stmt_close($stmt_insert);
+mysqli_close($conn);
 ?>
