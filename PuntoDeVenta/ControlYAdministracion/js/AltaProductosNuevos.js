@@ -143,14 +143,15 @@ $('document').ready(function ($) {
           $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")
 
           $("#AgregaProductos")[0].reset();
-          $("#AltaProductos").removeClass("in");
+          $("myModal").removeClass("in");
           $(".modal-backdrop").remove();
-          $("#AltaProductos").hide();
+          $("myModal").hide();
         
 
-          $('#AltaCorrecta').modal('toggle');
+          $('#AltaCorrecta').modal('togglesuccessModal');
           setTimeout(function () {
             $('#AltaCorrecta').modal('hide')
+            location.reload(); // Recargar la página completa después de 5 segundos
           }, 4000); // abrir
           
 
