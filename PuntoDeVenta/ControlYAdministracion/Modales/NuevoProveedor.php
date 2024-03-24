@@ -17,7 +17,7 @@
     
                 <div class="mb-3">
                   <label for="tipouser" class="form-label">Nombre de la marca</label>
-                  <input type="text" class="form-control" name="NomMarca" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
+                  <input type="text" class="form-control" name="NomPresentacion" id="nombreservicio" placeholder="Ingrese el nombre del servicio">
                 </div>
                 
                 <div class="mb-3">
