@@ -46,6 +46,7 @@ include_once "Controladores/ControladorUsuario.php";
           
 <script src="js/ControlDeProductos.js"></script>
 
+<script src="js/AltaProductos.js"></script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoProductos.php";
