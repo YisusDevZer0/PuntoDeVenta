@@ -1,5 +1,5 @@
 <?php
-include_once 'db_connection.php';
+include_once 'db_connect.php';
 
 $TipVigencia = 'Vigente';
 $CodVig = 'background-color:#2BBB1D!important;';
