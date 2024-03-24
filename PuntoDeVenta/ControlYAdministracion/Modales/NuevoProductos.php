@@ -185,6 +185,47 @@
    </div>
 
 <!-- TERCERA SECCION FIN -->
+
+
+<!-- CUARTA SECCION -->
+
+
+
+<!-- Tercera SECCION -->
+<div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Proveedor 1 <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+ 
+   <select id = "tip" class = "form-control" name = "Tip">
+                                               <option value="">Selecciona un tipo:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM TipProd_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+          }
+        ?>  </select> 
+    </div><label for="tip" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Proveedor 2<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+
+   <select id = "categoria" class = "form-control" name = "Categoria">
+                                               <option value="">Seleccione una categoria:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Categorias_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+          }
+        ?>  </select>
+    </div><label for="categoria" class="error">
+    </div>
+   
+    
+   </div>
+
+<!-- CUARTA SECCION FIN -->
                 <button type="submit" class="btn btn-primary">Guardar</button>
               </form>
             </div>
