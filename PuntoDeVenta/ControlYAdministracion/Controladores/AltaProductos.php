@@ -1,7 +1,7 @@
 <?php
 include_once 'db_connect.php';
 
-$Cod_Barra = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Cod_BarraP']))));
+$Cod_Barra = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['CodBarraP']))));
 $Clave_adicional = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clav']))));
 $Clave_Levic = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['Clave_Levic']))));
 $Nombre_Prod = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['NombreProd']))));
