@@ -5,7 +5,7 @@ $Nombre_Proveedor = mysqli_real_escape_string($conn, $_POST['NomPresentacion']);
 $Clave_Proveedor = mysqli_real_escape_string($conn, $_POST['Clave']);
 $Numero_Contacto = mysqli_real_escape_string($conn, $_POST['Telefono']);
 $Correo_Electronico = mysqli_real_escape_string($conn, $_POST['Correo']); // Ajusta según tus necesidades
-$AgregadoPor = mysqli_real_escape_string($conn, $_POST['agregoPor']);
+$AgregadoPor = mysqli_real_escape_string($conn, $_POST['agrego']);
 $Sistema = mysqli_real_escape_string($conn, $_POST['sistema']);
 $Licencia = mysqli_real_escape_string($conn, $_POST['licencia']);
 
