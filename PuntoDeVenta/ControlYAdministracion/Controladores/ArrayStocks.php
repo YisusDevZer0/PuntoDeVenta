@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include("db_connection.php");
-include_once "Consultas.php";
+include_once "ControladorUsuario.php";
 
 // Obtener el valor de ID_H_O_D y Fk_Sucursal de la fila, asegurándote de que estén correctamente formateados
 $id_h_o_d = isset($row['ID_H_O_D']) ? $row['ID_H_O_D'] : '';
