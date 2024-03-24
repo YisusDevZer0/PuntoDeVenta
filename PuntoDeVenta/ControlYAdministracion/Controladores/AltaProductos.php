@@ -20,7 +20,7 @@
     $SistemaProductos = mysqli_real_escape_string($conn, $_POST['SistemaProductos']);
   
     // Consulta para verificar si ya existe un registro con los mismos valores
-    $sql = "SELECT Cod_Barra, Clave_adicional, Nombre_Prod FROM Productos_POS WHERE Cod_Barra='$CodBarraP' AND Nombre_Prod='$NombreProd'";
+    $sql = "SELECT Cod_Barra, Nombre_Prod FROM Productos_POS WHERE Cod_Barra='$CodBarraP' AND Nombre_Prod='$NombreProd'";
     $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
     $row = mysqli_fetch_assoc($resultset);
     
