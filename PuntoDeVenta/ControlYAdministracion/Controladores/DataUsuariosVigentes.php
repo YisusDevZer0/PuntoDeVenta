@@ -218,7 +218,8 @@ tabla = $('#Clientes').DataTable({
                 { mData: 'CreadoEl' },
                 { mData: 'Estatus' },
                 { mData: 'CreadoPor' },
-                { mData: 'Acciones' }
+                { mData: 'Editar' },
+                { mData: 'Eliminar' }
       
   
       ],
