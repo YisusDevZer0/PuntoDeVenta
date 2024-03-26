@@ -101,9 +101,9 @@ VigenciaProdT: {
              $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")	
            
              $("#NewTypeUser")[0].reset();
-             $("##myModal").removeClass("in");
+             $("#myModal").removeClass("in");
              $(".modal-backdrop").remove();
-             $("##myModal").hide();
+             $("#myModal").hide();
            
 
              $('#successModal').modal('toggle'); 
