@@ -208,16 +208,17 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayTiposProductos.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayUsuariosVigentes.php",
  "aoColumns": [
-  { mData: 'ServicioID' },  
-  { mData: 'Nombre_Servicio' },
-       { mData: 'AgregadoPor' },
-       { mData: 'FechaAgregado' },
- 
-       { mData: 'Licencia' },
-       { mData: 'Editar' },
-       { mData: 'Eliminar' },
+  { mData: 'Idpersonal' },
+                { mData: 'NombreApellidos' },
+                { mData: 'Foto' },
+                { mData: 'Tipousuario' },
+                { mData: 'Sucursal' },
+                { mData: 'CreadoEl' },
+                { mData: 'Estatus' },
+                { mData: 'CreadoPor' },
+                { mData: 'Acciones' }
       
   
       ],
@@ -268,17 +269,36 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>ID Servicio</th>
-<th>Nombre Componente</th>
-    <th>Creado por</th>
-    <th>Hora creacion</th> 
-    <th>Licencia</th> 
-    <th>Editar</th> 
-    <th>Eliminar</th> 
+<th>ID Empleado</th>
+                <th>Nombre</th>
+                <th>Fotografia</th>
+                <th>Tipo de usuario</th>
+                <th>Sucursal</th>
+                <th>Fecha|Hora de creacion</th>
+                <th>Estado</th>
+                <th>Creado por</th>
+                <th>Acciones</th>
 </thead>
 
 </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
