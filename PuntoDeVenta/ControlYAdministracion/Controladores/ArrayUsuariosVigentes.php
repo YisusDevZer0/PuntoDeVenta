@@ -45,6 +45,7 @@ while ($fila = $result->fetch_assoc()) {
         "Sucursal" => $fila["Nombre_Sucursal"],
         "CreadoEl" => $fila["AgregadoEl"], // Cambiado de "CreadoPorEl" a "CreadoEl"
         "Estatus" => $fila["Estatus"],
+        "CreadoPor" => $fila["AgregadoPor"],
         // Agregar el botón Desglosar ticket
         "Editar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
         "Eliminar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
