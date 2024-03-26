@@ -7,12 +7,16 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Fondos de cajas disponibles para  <?php echo $row['Licencia']?></title>
+    <title>Ventas del dia de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
     <?php
    include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <body>
     
         <!-- Spinner End -->
@@ -32,29 +36,14 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nuevo fondo 
-</button> <br>
-            <div id="FCajas"></div>
+            <h6 class="mb-4" style="color:#0172b6;">Registro de ventas del dia <?php echo $row['Licencia']?></h6>
+            
+            <div id="DataDeServicios"></div>
             </div></div></div></div>
             
-            <script src="js/AsignaFondo.js"></script>
-<script src="js/ControlFondosCajas.js"></script>
-<script>
-    $(document).ready(function() {
-    $.getJSON('Controladores/SelectSucursales.php', function(data) {
-        console.log(data); // Verifica que los datos se estén recibiendo correctamente en la consola del navegador
-        $.each(data, function(key, value) {
-            $('#opciones').append('<option value="' + value.ID_Sucursal + '">' + value.Nombre_Sucursal + '</option>');
-        });
-    })
-    .fail(function(jqxhr, textStatus, error) {
-        console.error("Error al obtener los datos de la base de datos:", textStatus, error);
-    });
-});
+          
+<script src="js/HistorialDeCaja.js"></script>
 
-</script>
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoFondoDeCaja.php";
