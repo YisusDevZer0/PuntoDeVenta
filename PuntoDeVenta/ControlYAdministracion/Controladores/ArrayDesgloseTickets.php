@@ -41,7 +41,7 @@ Sucursales.Nombre_Sucursal
 FROM
 Ventas_POS
 JOIN
-SucursalesCorre ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
+Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
 
 GROUP BY
 Ventas_POS.Folio_Ticket,
