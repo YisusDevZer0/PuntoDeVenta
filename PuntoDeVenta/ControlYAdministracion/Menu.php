@@ -88,8 +88,8 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
+                            <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
+                            <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
                            
                         </div>
                     </div>
@@ -97,17 +97,17 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Inventarios</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
+                            <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
+                            <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
+                            <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
                            
                         </div>
                     </div>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Reportes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
+                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
+                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
                             
                            
                         </div>
