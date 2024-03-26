@@ -43,7 +43,7 @@ while ($fila = $result->fetch_assoc()) {
         "Foto" => $fila["file_name"],
         "Tipousuario" => $fila["TipoUsuario"],
         "Sucursal" => $fila["Nombre_Sucursal"],
-        "CreadoPorEl" => $fila["AgregadoEl"],
+        "CreadoPorEl" => $fila["AgregadoPor"],
         "Estatus" => $fila["Estatus"],
         // Agregar el botón Desglosar ticket
         "Editar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
