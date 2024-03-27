@@ -23,12 +23,12 @@ $('document').ready(function ($) {
           required:true,
         },
         Clav: {
-          maxlength: 15,
+          maxlength: 400,
         },
         NombreProd: {
           required: true,
-          minlength: 6,
-          maxlength: 130,
+          minlength: 1,
+          maxlength: 400,
         },
         PV: {
           required: true,
