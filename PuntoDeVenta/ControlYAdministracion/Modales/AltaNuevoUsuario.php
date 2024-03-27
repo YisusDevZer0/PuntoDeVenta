@@ -84,7 +84,7 @@
         <?php
           $query = $conn -> query ("SELECT * FROM Sucursales");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal "].'</option>';
+            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
           }
         ?>  </select>
     </div><label for="categoria" class="error">
