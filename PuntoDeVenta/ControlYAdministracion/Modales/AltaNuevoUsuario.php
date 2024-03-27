@@ -79,7 +79,7 @@
     <label for="exampleFormControlInput1">Sucursal<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
 
-   <select id = "categoria" class = "form-control" name = "Categoria">
+   <select id = "categoria" class = "form-control" name = "Sucursal">
                                                <option value="">Seleccione una sucursal:</option>
         <?php
           $query = $conn -> query ("SELECT * FROM Sucursales");
