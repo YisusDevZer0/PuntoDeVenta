@@ -50,7 +50,7 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoTipoUsuario.php";
+            include "Modales/AltaNuevoUsuario.php";
            
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
