@@ -38,44 +38,22 @@
     <div class="row">
     <div class="col">
       
-    <label for="exampleFormControlInput1">Precio venta <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Correo <span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
   <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
 </div><label for="pv" class="error"></div>
 
 <div class="col">
-    <label for="exampleFormControlInput1">Precio compra <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Contraseña <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
   <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
   </div>
   <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
     </div><label for="pc" class="error">
     </div>
-    <div class="col">
-    <label for="exampleFormControlInput1">Tipo de servicio <span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-   <select id = "tiposervicio" class = "form-control" name = "TipoServicio">
-                                               <option value="">Seleccione una servicio:</option>
-                                               <?php
-          $query = $conn -> query ("SELECT * FROM Servicios_POS WHERE  Licencia='".$row['Licencia']."'");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Servicio_ID"].'">'.$valores["Nom_Serv"].'</option>';
-          }
-        ?>  </select>        
-    </div><label for="pc" class="error">
-    </div>
-    <div class="col">
-    <label for="exampleFormControlInput1">¿Requiere receta? <span class="text-danger">*</span> </label>
-    <div class="input-group mb-3">
-  
-  <select name="Receta" id="receta" class="form-control">
-  <option value="">Elige una opcion</option>
-  <option value="Si">Si</option>
-  <option value="No">No</option>
-  </select>
-    </div>
-    </div>
+    
+   
       </div>
 
 <!-- SEGUNDA SECCION FIN -->
@@ -84,63 +62,36 @@
 <!-- Tercera SECCION -->
 <div class="row">
     <div class="col">
-    <label for="exampleFormControlInput1">Tipo <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Tipo de usuario <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
  
    <select id = "tip" class = "form-control" name = "Tip">
-                                               <option value="">Selecciona un tipo:</option>
+                                               <option value="">Selecciona un tipo de usuario:</option>
                                                <?php
-          $query = $conn -> query ("SELECT * FROM TipProd_POS");
+          $query = $conn -> query ("SELECT * FROM `Tipos_Usuarios`");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+            echo '<option value="'.$valores["ID_User"].'">'.$valores["TipoUsuario"].'</option>';
           }
         ?>  </select> 
     </div><label for="tip" class="error">
     </div>
     <div class="col">
-    <label for="exampleFormControlInput1">Categoria<span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Sucursal<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
 
    <select id = "categoria" class = "form-control" name = "Categoria">
-                                               <option value="">Seleccione una categoria:</option>
+                                               <option value="">Seleccione una sucursal:</option>
         <?php
           $query = $conn -> query ("SELECT * FROM Categorias_POS");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal "].'</option>';
           }
         ?>  </select>
     </div><label for="categoria" class="error">
     </div>
    
-    <div class="col">
-    <label for="exampleFormControlInput1">Marca <span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-
-   <select id = "marca" class = "form-control" name = "Marca">
-                                               <option value="">Seleccione una marca:</option>
-        <?php
-          $query = $conn -> query ("SELECT * FROM Marcas_POS ");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Marca"].'">'.$valores["Nom_Marca"].'</option>';
-          }
-        ?>  </select>
-    </div><label for="marca" class="error">
-    </div>
-    <div class="col">
-    <label for="exampleFormControlInput1">Presentacion<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
-  </div>
-  <select id = "presentacion" class = "form-control" name = "Presentacion">
-                                               <option value="">Seleccione una presentacion:</option>
-        <?php
-          $query = $conn -> query ("SELECT * FROM Presentaciones ");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nom_Presentacion"].'">'.$valores["Nom_Presentacion"].'</option>';
-          }
-        ?>  </select> 
-    </div><label for="presentacion" class="error">
-    </div>
+  
+  
 
    </div>
 
@@ -154,31 +105,16 @@
 <!-- Tercera SECCION -->
 <div class="row">
     <div class="col">
-    <label for="exampleFormControlInput1">Proveedor 1 <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Fecha de nacimiento <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
  
-   <select id = "proveedor" class = "form-control" name = "Proveedor">
-                                               <option value="">Selecciona un tipo:</option>
-                                               <?php
-          $query = $conn -> query ("SELECT * FROM Proveedores");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
-          }
-        ?>  </select> 
+ <input type="date" class="form-control" name="fechanac" id="fechanac">
     </div><label for="tip" class="error">
     </div>
     <div class="col">
-    <label for="exampleFormControlInput1">Proveedor 2<span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Telefono<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-
-   <select id = "proveedor2" class = "form-control" name = "Prov2">
-                                               <option value="">Seleccione una categoria:</option>
-        <?php
-          $query = $conn -> query ("SELECT * FROM Proveedores");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
-          }
-        ?>  </select>
+<input type="number" name="Tel" id="tel" class="form-control">
     </div><label for="categoria" class="error">
     </div>
    
