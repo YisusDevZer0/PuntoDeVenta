@@ -19,7 +19,7 @@
     <div class="col">
     <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Codigo de Empleado<span class="text-danger">*</span> </label>
     <div class="input-group mb-3">
-  <input type="text" class="form-control " id="codbarrap" name="CodBarraP" placeholder="Escanee o ingrese código" >
+  <input type="text" class="form-control "  placeholder="Escanee o ingrese código" >
     </div>
     </div>
     
@@ -122,6 +122,7 @@
    </div>
 
     <input type="text" class="form-control " name="Licencia" id="empresa" hidden value="<?php echo $row['Licencia']?>"aria-describedby="basic-addon1" >       
+    <input type="text" class="form-control " name="Estatus" id="estatus" hidden value="Activo"aria-describedby="basic-addon1" >       
       
     <input type="text" class="form-control"  name="AgregaProductosBy" id="agrega" hidden readonly value=" <?php echo $row['Nombre_Apellidos']?>">
     <input type="text" class="form-control"  name="SistemaProductos" id="sistema" hidden readonly value="Administrador">
