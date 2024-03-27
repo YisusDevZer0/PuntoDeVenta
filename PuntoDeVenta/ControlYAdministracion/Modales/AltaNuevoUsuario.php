@@ -4,7 +4,7 @@
   <div class="modal-dialog modal-lg modal-notify modal-success">
     <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;">
-        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Personal</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="text-center">
@@ -25,7 +25,7 @@
     
     <div class="col">
       
-    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Nombre y apellidos <span class="text-info">Opcional</span></label>
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Nombre y apellidos </label>
      <div class="input-group mb-3">
  
   <input type="text" class="form-control " name="Clav" id="clav"  placeholder="Ingrese código" aria-describedby="basic-addon1" maxlength="60">            
@@ -82,7 +82,7 @@
    <select id = "categoria" class = "form-control" name = "Categoria">
                                                <option value="">Seleccione una sucursal:</option>
         <?php
-          $query = $conn -> query ("SELECT * FROM Categorias_POS");
+          $query = $conn -> query ("SELECT * FROM `Sucursales`");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal "].'</option>';
           }
