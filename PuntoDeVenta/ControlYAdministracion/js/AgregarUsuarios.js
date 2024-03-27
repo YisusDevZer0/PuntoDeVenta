@@ -147,12 +147,11 @@ $('document').ready(function ($) {
             $(".modal-backdrop").remove();
             $("myModal").hide();
           
-  
-            $('#AltaCorrecta').modal('togglesuccessModal');
-            setTimeout(function () {
-              $('#AltaCorrecta').modal('hide')
-              location.reload(); // Recargar la página completa después de 5 segundos
-            }, 4000); // abrir
+            $('#successModal').modal('toggle'); 
+            setTimeout(function(){ 
+                $('#successModal').modal('hide') 
+                location.reload(); // Recargar la página completa después de 5 segundos
+            }, 3000); // abrir
             
   
   
