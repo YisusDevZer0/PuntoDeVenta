@@ -46,7 +46,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div>
           
 <script src="js/ControlDeUsuarios.js"></script>
-<script src="js/AgregarUsuarios.js"></script>
+<script src="js/AgregarUsuarioss.js"></script>
 
             <!-- Footer Start -->
             <?php 
