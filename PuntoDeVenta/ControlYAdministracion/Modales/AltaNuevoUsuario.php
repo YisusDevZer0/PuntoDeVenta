@@ -41,7 +41,7 @@
     <label for="exampleFormControlInput1">Correo <span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
-  <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
+  <input type="text" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
 </div><label for="pv" class="error"></div>
 
 <div class="col">
@@ -49,7 +49,7 @@
     <div class="input-group mb-3">
   <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
   </div>
-  <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
+  <input type="text" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
     </div><label for="pc" class="error">
     </div>
     
