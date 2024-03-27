@@ -82,7 +82,7 @@
    <select id = "categoria" class = "form-control" name = "Categoria">
                                                <option value="">Seleccione una sucursal:</option>
         <?php
-          $query = $conn -> query ("SELECT * FROM `Sucursales`");
+          $query = $conn -> query ("SELECT * FROM Sucursales");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal "].'</option>';
           }
