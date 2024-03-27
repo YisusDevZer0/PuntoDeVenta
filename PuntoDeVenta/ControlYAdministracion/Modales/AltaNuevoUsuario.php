@@ -19,7 +19,7 @@
     <div class="col">
     <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Codigo de Empleado<span class="text-danger">*</span> </label>
     <div class="input-group mb-3">
-  <input type="text" class="form-control "  placeholder="Escanee o ingrese código" >
+  <input type="text" class="form-control "  readonly placeholder="Escanee o ingrese código" >
     </div>
     </div>
     
