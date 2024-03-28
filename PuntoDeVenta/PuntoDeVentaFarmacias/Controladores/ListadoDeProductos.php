@@ -32,7 +32,7 @@
 
 <style>
   /* Estilos personalizados para la tabla */
-  #Productos th {
+  #StocksDESucursales th {
     font-size: 12px; /* Tamaño de letra para los encabezados */
     padding: 4px; /* Ajustar el espaciado entre los encabezados */
     white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
@@ -41,21 +41,21 @@
 
 <style>
   /* Estilos para la tabla */
-  #Productos {
+  #StocksDESucursales {
     font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
     border-collapse: collapse; /* Colapsar los bordes de las celdas */
     width: 100%;
     text-align: center; /* Centrar el contenido de las celdas */
   }
 
-  #Productos th {
+  #StocksDESucursales th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
     background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
 
-  #Productos td {
+  #StocksDESucursales td {
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
@@ -171,7 +171,7 @@
   }
 
 
-tabla = $('#Productos').DataTable({
+tabla = $('#StocksDESucursales').DataTable({
 
  "bProcessing": true,
  "ordering": true,
@@ -248,7 +248,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     extend: 'excelHtml5',
     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
-    title: 'Base de productos',
+    title: 'Base de StocksDESucursales',
     className: 'btn btn-success',
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
@@ -262,7 +262,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 </script>
 <div class="text-center">
 	<div class="table-responsive">
-	<table  id="Productos" class="table table-hover">
+	<table  id="StocksDESucursales" class="table table-hover">
 <thead>
 <th>ID_BD</th>
 <th>Cod Barra</th>
