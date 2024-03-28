@@ -18,7 +18,7 @@ INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
 INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio = Servicios_POS.Servicio_ID
 INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_POS
 INNER JOIN Usuarios ON Stock_POS.Licencia = Usuarios.Licencia
-WHERE Usuarios.Licencia = ?"; // Filtro de licencia
+WHERE AND Stock_POS.ID_H_O_D= = ?"; // Filtro de licencia
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
