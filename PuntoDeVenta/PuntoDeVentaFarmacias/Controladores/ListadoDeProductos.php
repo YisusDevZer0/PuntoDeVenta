@@ -178,29 +178,43 @@ tabla = $('#Productos').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayProductos.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
  "aoColumns": [
-    { mData: 'IdbD' },
-       { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'Clave_interna' },
+  { mData: 'Cod_Barra' },
+       { mData: 'Clave_adicional' },
        { mData: 'Clave_Levic' },
-   
-       { mData: 'Precio_C' },
+       { mData: 'Nombre_Prod' },
        { mData: 'Precio_Venta' },
        { mData: 'Nom_Serv' },
        { mData: 'Tipo' },
-       { mData: 'Categoria' },
-       { mData: 'Marca' },
-       { mData: 'Presentacion' },
        { mData: 'Proveedor1' },
-     
-       { mData: 'AgregadoPor' },
-    //    { mData: 'Stock' },
-    //    { mData: 'Vendido' },
-    //    { mData: 'Saldo' },
-       { mData: 'Acciones' },
-       { mData: 'AccionesEnfermeria' },
+       { mData: 'Proveedor2' },
+       { mData: 'Sucursal' },
+       { mData: 'UltimoMovimiento' },
+       { mData: 'Existencias_R' },
+       { mData: 'Min_Existencia' },
+       { mData: 'Max_Existencia' },
+       {mData: "Existencias_R",
+        "searchable": true,
+        "orderable":true,
+        "render": function (data, type, row) {
+            if ( row.Existencias_R < row.Min_Existencia) {
+
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+        }
+        else if ( row.Existencias_R > row.Max_Existencia) {
+return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
+        }
+            else {
+ 
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+ 
+}
+        }
+ 
+    },
+       { mData: 'Editar' },
+       { mData: 'Eliminar' },
   
       ],
      
