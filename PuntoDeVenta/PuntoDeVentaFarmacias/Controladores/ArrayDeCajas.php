@@ -32,6 +32,8 @@ $data = [];
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
+    $activo = ($fila["Asignacion"] == 1) ? '<div style="background-color: green; color: white; padding: 5px; border-radius: 5px;">Activa</div>' : 'Inactiva';
+
     $data[] = [
         "IdCaja" => $fila["ID_Caja"],
         "Empleado" => $fila["Empleado"],
@@ -39,7 +41,7 @@ while ($fila = $result->fetch_assoc()) {
         "Fecha_Apertura" => $fila["Fecha_Apertura"],
         "Estatus" => $fila["Estatus"],
         "Turno" => $fila["Turno"],
-        "Asignacion" => $fila["Asignacion"],
+        "Asignacion" => $activo,
         "ValorTotalCaja" => $fila["Valor_Total_Caja"]
     ];
 }
