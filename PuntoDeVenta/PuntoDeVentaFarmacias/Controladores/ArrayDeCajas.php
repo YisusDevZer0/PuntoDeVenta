@@ -31,9 +31,29 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
-    // Construir el array de datos
-    $activo = ($fila["Asignacion"] == 1) ? '<div style="background-color: green; color: white; padding: 5px; border-radius: 5px;">Activa</div>' : 'Inactiva';
+    // Definir el estilo y el texto según el valor de asignación
+    $estilo = '';
+    $leyenda = '';
+    switch ($fila["Asignacion"]) {
+        case 0:
+            $estilo = 'background-color: #1e90ff; color: white;'; // Azul oscuro
+            $leyenda = 'Bloqueada';
+            break;
+        case 1:
+            $estilo = 'background-color: green; color: white;'; // Verde
+            $leyenda = 'Activa';
+            break;
+        case 2:
+            $estilo = 'background-color: orange; color: white;'; // Naranja
+            $leyenda = 'Inactiva';
+            break;
+        default:
+            $estilo = 'background-color: black; color: white;'; // Estilo de reserva
+            $leyenda = 'Sin definir';
+            break;
+    }
 
+    // Construir el array de datos
     $data[] = [
         "IdCaja" => $fila["ID_Caja"],
         "Empleado" => $fila["Empleado"],
@@ -41,7 +61,7 @@ while ($fila = $result->fetch_assoc()) {
         "Fecha_Apertura" => $fila["Fecha_Apertura"],
         "Estatus" => $fila["Estatus"],
         "Turno" => $fila["Turno"],
-        "Asignacion" => $activo,
+        "Asignacion" => "<div style=\"$estilo; padding: 5px; border-radius: 5px;\">$leyenda</div>",
         "ValorTotalCaja" => $fila["Valor_Total_Caja"]
     ];
 }
