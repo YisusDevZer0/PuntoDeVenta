@@ -4,12 +4,12 @@ include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
-$sql = "SELECT Cajas_POS.ID_Caja, Cajas_POS.Cantidad_Fondo, Cajas_POS.Empleado, Cajas_POS.Sucursal,
-        Cajas_POS.Estatus, Cajas_POS.CodigoEstatus, Cajas_POS.Turno, Cajas_POS.Asignacion, Cajas_POS.Fecha_Apertura,
-        Cajas_POS.Valor_Total_Caja, Cajas_POS.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
-        FROM Cajas_POS
-        INNER JOIN Sucursales ON Cajas_POS.Sucursal = Sucursales.ID_Sucursal
-        WHERE Cajas_POS.Sucursal = ?"; // Se cambió la condición WHERE para utilizar Fk_Sucursal
+$sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+        Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+        Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+        FROM Cajas
+        INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
+        WHERE Cajas.Sucursal = ?"; // Se cambió la condición WHERE para utilizar Fk_Sucursal
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
