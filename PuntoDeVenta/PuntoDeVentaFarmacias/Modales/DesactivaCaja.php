@@ -5,35 +5,17 @@ include "../Controladores/ControladorUsuario.php";
 $user_id = null;
 $sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
 $query = $conn->query($sql1);
-$Especialistas = null;
-if ($query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas = $r;
-        break;
-    }
-}
+$Especialistas = $query->fetch_object();
 ?>
 
-<?php if ($Especialistas != null) : ?>
-
+<?php if ($Especialistas) : ?>
 <form action="javascript:void(0)" method="post" id="EliminaServiciosForm">
-    <?php if ($Especialistas->Estatus == 'Abierto') : ?>
-        <i class="fas fa-lock-open fa-5x text-success"></i>
-    <?php else : ?>
-        <i class="fas fa-lock fa-5x text-danger"></i>
-    <?php endif; ?>
-    <p>
-        <?php if ($Especialistas->Estatus == 'Abierto') : ?>
-            ¿Está seguro de que desea desactivar la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día
-            <?php echo $Especialistas->Fecha_Apertura; ?> ?
-        <?php else : ?>
-            ¿Está seguro de que desea activar la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día
-            <?php echo $Especialistas->Fecha_Apertura; ?> ?
-        <?php endif; ?>
-    </p>
+    <?php $icon = ($Especialistas->Estatus == 'Abierto') ? 'lock-open' : 'lock'; ?>
+    <i class="fas fa-<?php echo $icon; ?> fa-5x text-<?php echo ($Especialistas->Estatus == 'Abierto') ? 'success' : 'danger'; ?>"></i>
+    <p>¿Está seguro de que desea <?php echo ($Especialistas->Estatus == 'Abierto') ? 'desactivar' : 'activar'; ?> la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día <?php echo $Especialistas->Fecha_Apertura; ?>?</p>
     <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->ID_Caja; ?>">
-    <button type="submit" id="submit" class="btn btn-<?php echo $Especialistas->Estatus == 'Abierto' ? 'danger' : 'success'; ?>">
-        <?php echo $Especialistas->Estatus == 'Abierto' ? 'Desactivar' : 'Activar'; ?><i class="fas fa-check"></i>
+    <button type="submit" id="submit" class="btn btn-<?php echo ($Especialistas->Estatus == 'Abierto') ? 'danger' : 'success'; ?>">
+        <?php echo ($Especialistas->Estatus == 'Abierto') ? 'Desactivar' : 'Activar'; ?><i class="fas fa-check"></i>
     </button>
 </form>
 <script src="js/DesactivaLaCaja.js"></script>
