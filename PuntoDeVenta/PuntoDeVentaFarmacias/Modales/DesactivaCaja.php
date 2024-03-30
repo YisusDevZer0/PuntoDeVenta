@@ -3,7 +3,7 @@ include "../Controladores/db_connect.php.php";
 include "../Controladores/ControladorUsuario.php";
 
 $user_id = null;
-$sql1 = "SELECT * FROM Cajas WHERE Licencia='" . $row['Licencia'] . "' AND ID_Caja= " . $_POST["id"];
+$sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
 $query = $conn->query($sql1);
 $Especialistas = null;
 if ($query->num_rows > 0) {
