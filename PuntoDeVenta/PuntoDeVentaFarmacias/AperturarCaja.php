@@ -94,7 +94,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     $(document).on("click", ".btn-desactiva", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesactivaCaja.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar servicios");
             
@@ -105,7 +105,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
     $(document).on("click", ".btn-reactiva", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ReactivaCaja.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Eliminar servicio");
            
