@@ -32,24 +32,42 @@ $data = [];
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
     // Definir el estilo y el texto según el valor de asignación
-    $estilo = '';
-    $leyenda = '';
+    $asignacion_estilo = '';
+    $asignacion_leyenda = '';
     switch ($fila["Asignacion"]) {
         case 0:
-            $estilo = 'background-color: #1e90ff; color: white;'; // Azul oscuro
-            $leyenda = 'Bloqueada';
+            $asignacion_estilo = 'background-color: #1e90ff; color: white;'; // Azul oscuro
+            $asignacion_leyenda = 'Bloqueada';
             break;
         case 1:
-            $estilo = 'background-color: green; color: white;'; // Verde
-            $leyenda = 'Activa';
+            $asignacion_estilo = 'background-color: green; color: white;'; // Verde
+            $asignacion_leyenda = 'Activa';
             break;
         case 2:
-            $estilo = 'background-color: orange; color: white;'; // Naranja
-            $leyenda = 'Inactiva';
+            $asignacion_estilo = 'background-color: orange; color: white;'; // Naranja
+            $asignacion_leyenda = 'Inactiva';
             break;
         default:
-            $estilo = 'background-color: black; color: white;'; // Estilo de reserva
-            $leyenda = 'Sin definir';
+            $asignacion_estilo = 'background-color: black; color: white;'; // Estilo de reserva
+            $asignacion_leyenda = 'Sin definir';
+            break;
+    }
+
+    // Definir el estilo y el texto según el valor de estatus
+    $estatus_estilo = '';
+    $estatus_leyenda = '';
+    switch ($fila["Estatus"]) {
+        case 'Abierta':
+            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
+            $estatus_leyenda = 'Abierta';
+            break;
+        case 'Cerrada':
+            $estatus_estilo = 'background-color: red; color: white;'; // Rojo
+            $estatus_leyenda = 'Cerrada';
+            break;
+        default:
+            $estatus_estilo = ''; // No se aplica estilo
+            $estatus_leyenda = $fila["Estatus"];
             break;
     }
 
@@ -59,9 +77,9 @@ while ($fila = $result->fetch_assoc()) {
         "Empleado" => $fila["Empleado"],
         "Cantidad_Fondo" => $fila["Cantidad_Fondo"],
         "Fecha_Apertura" => $fila["Fecha_Apertura"],
-        "Estatus" => $fila["Estatus"],
+        "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "Turno" => $fila["Turno"],
-        "Asignacion" => "<div style=\"$estilo; padding: 5px; border-radius: 5px;\">$leyenda</div>",
+        "Asignacion" => "<div style=\"$asignacion_estilo; padding: 5px; border-radius: 5px;\">$asignacion_leyenda</div>",
         "ValorTotalCaja" => $fila["Valor_Total_Caja"]
     ];
 }
