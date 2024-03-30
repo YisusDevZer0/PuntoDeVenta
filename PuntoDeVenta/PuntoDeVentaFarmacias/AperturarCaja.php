@@ -91,7 +91,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-    $(document).on("click", ".btn-edita", function() {
+    $(document).on("click", ".btn-desactiva", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesactivaCaja.php", { id: id }, function(data) {
@@ -103,7 +103,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     });
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".btn-elimina", function() {
+    $(document).on("click", ".btn-reactiva", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ReactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
