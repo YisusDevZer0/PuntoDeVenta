@@ -80,7 +80,9 @@ while ($fila = $result->fetch_assoc()) {
         "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "Turno" => $fila["Turno"],
         "Asignacion" => "<div style=\"$asignacion_estilo; padding: 5px; border-radius: 5px;\">$asignacion_leyenda</div>",
-        "ValorTotalCaja" => $fila["Valor_Total_Caja"]
+        "ValorTotalCaja" => $fila["Valor_Total_Caja"],
+        "DesactivarCaja" => '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
+        "ReactivarCaja" => '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>',
     ];
 }
 
