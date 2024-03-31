@@ -24,7 +24,7 @@ $('document').ready(function ($) {
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Verifique el NSS");
 
 
-    $("#EliminaServiciosForm").validate({
+    $("#ReactivaCajaForm").validate({
         rules: {
 
 
@@ -64,7 +64,7 @@ $('document').ready(function ($) {
         $.ajax({
             type: 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ReactivaLasCajas.php",
-            data: $('#EliminaServiciosForm').serialize(),
+            data: $('#ReactivaCajaForm').serialize(),
             cache: false,
             beforeSend: function () {
                 $("#success").fadeOut();
