@@ -96,7 +96,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Editar servicios");
+            $("#TitulosCajas").html("Desactivar caja actual");
             
         });
         $('#ModalEdDele').modal('show');
@@ -107,7 +107,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Eliminar servicio");
+            $("#TitulosCajas").html("Activar Caja Actual");
            
         });
         $('#ModalEdDele').modal('show');
