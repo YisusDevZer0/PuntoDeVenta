@@ -5,6 +5,10 @@ include "db_connect.php"; // Asumiendo que este archivo contiene la conexión a 
 $ID_Caja = isset($_POST['ID_Caja']) ? intval($_POST['ID_Caja']) : 0;
 $Estatus = isset($_POST['Estatus']) ? intval($_POST['Estatus']) : 0;
 
+// Mensajes de depuración
+echo "ID_Caja: " . $ID_Caja . "<br>";
+echo "Estatus: " . $Estatus . "<br>";
+
 // Verificar si todos los datos requeridos están presentes
 if ($ID_Caja && $Estatus) {
     // Consulta preparada
