@@ -325,7 +325,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                   <div class="col-md-5 text-right">
 
                     <button class="btn btn-danger btn-sm" id="btnVaciarListado">
-                      <i class="far fa-trash-alt"></i> Vaciar Listado
+                      <i class="far fa-trash-alt"></i> Cancelar venta
                     </button>
                   </div>
 
@@ -433,8 +433,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         <span class="small">Tipo Pago</span><span class="text-danger">*</span>
       </label>
       <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
+        
         <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
 <option value="0">Seleccione el Tipo de Pago</option>
 <option value="Efectivo" selected="true">Efectivo</option>
@@ -494,8 +493,7 @@ divCliente.style.display = "block"; // Mostrar el div del cliente
   
 <label for="exampleFormControlInput1">Elije al farmacéutico<span class="text-danger">*</span></label>
 <div class="input-group mb-3">
-<div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-</div>
+
 <select name="NombreFarmaceutico" id="nombrefarma" class = "form-control"  onchange="CapturaNombreFarmaceutico();">
                                        <option value="">Seleccione un farmacéutico:</option>
 <?
@@ -515,8 +513,7 @@ divCliente.style.display = "block"; // Mostrar el div del cliente
   
 <label for="exampleFormControlInput1">Elije al médico<span class="text-danger">*</span></label>
 <div class="input-group mb-3">
-<div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-</div>
+
 <select name="NombreMedico" id="nombremedicoo" class = "form-control"  onchange="CapturaNombreMedico();">
                                        <option value="">Seleccione un médico:</option>
 <?
