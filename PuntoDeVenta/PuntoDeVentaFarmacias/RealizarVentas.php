@@ -1,7 +1,8 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-include "Controladores/ConsultaCaja.php";
-
+// include "Controladores/ConsultaCaja.php";
+include "Controladores/SumadeFolioTicketsNuevo.php";
+include("Controladores/db_connect.php");
 $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 4);
 
 
