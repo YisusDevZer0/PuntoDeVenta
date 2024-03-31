@@ -2,8 +2,8 @@
 // Conecta con la base de datos y realiza la consulta para obtener los resultados de autocompletado
 $dbHost = 'localhost'; // Cambia esto por la dirección de tu servidor de base de datos
 $dbUsername = 'u858848268_devpezer0'; // Cambia esto por tu nombre de usuario de la base de datos
-$dbPassword = 'yH.0a-v?T*1R'; // Cambia esto por tu contraseña de la base de datos
-$dbName = 'somosgr1_Sistema_Hospitalario'; // Cambia esto por el nombre de tu base de datos
+$dbPassword = 'F9+nIIOuCh8yI6wu4!08'; // Cambia esto por tu contraseña de la base de datos
+$dbName = 'u858848268_doctorpez'; // Cambia esto por el nombre de tu base de datos
 
 $conn = mysqli_connect($dbHost, $dbUsername, $dbPassword, $dbName);
 
