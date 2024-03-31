@@ -535,8 +535,7 @@ divCliente.style.display = "block"; // Mostrar el div del cliente
   
 <label for="exampleFormControlInput1">Elije al personal de limpieza<span class="text-danger">*</span></label>
 <div class="input-group mb-3">
-<div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-</div>
+
 <select name="NombreIntendente" id="nombreintendente" class = "form-control"  onchange="CapturaNombreLimpieza();">
                                        <option value="">Seleccione personal:</option>
 <?
@@ -564,8 +563,7 @@ divCliente.style.display = "block"; // Mostrar el div del cliente
     <div class="form-group mb-2" id="divCliente">
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Cliente</label>
       <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
+       
         <input type="text" class="form-control " id="clienteInput" name="NombreDelCliente[]">
         <?php
 $fechaActual = date('Y-m-d H:i:s');
@@ -596,7 +594,7 @@ $fechaActual = date('Y-m-d H:i:s');
 </div>
 </div>
 </div>
-    <div class="form-group mb-2">
+    <div style="display: none;" class="form-group mb-2">
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Folio de signo vital</label>
       <div class="input-group mb-3">
         <div class="input-group-prepend"> <span class="input-group-text"  id="Tarjeta2"><i class="fas fa-receipt"></i></span>
