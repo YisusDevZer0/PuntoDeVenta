@@ -237,7 +237,6 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 </style>
 
 <!-- Main content -->
-<div class="content">
 
 
   <div class="container-fluid">
