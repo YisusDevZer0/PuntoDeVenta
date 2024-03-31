@@ -26,11 +26,10 @@ FROM
 Cajas, Sucursales 
 WHERE 
 Cajas.Sucursal = Sucursales.ID_Sucursal 
-AND Cajas.Sucursal=1
+AND Cajas.Sucursal='".$row['Fk_Sucursal']."'
 AND Cajas.Asignacion = 1
 AND Cajas.Estatus='Abierta'
-            AND Cajas_POS.Empleado='".$row['Nombre_Apellidos']."'
-            AND Cajas_POS.Licencia='".$row['Licencia']."'";
+            AND Cajas_POS.Empleado='".$row['Nombre_Apellidos']."'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $ValorCaja = "";
 // Check if the query returned any results
