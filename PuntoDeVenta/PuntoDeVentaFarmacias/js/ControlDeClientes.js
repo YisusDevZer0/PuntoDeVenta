@@ -1,8 +1,8 @@
 function CargaClientes(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataClientes","",function(data){
-      $("#Clientes").html(data);
+    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/DataClientes","",function(data){
+      $("#DataDeClientes").html(data);
     })
   
   }
