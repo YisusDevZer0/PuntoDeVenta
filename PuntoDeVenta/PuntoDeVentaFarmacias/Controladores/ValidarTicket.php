@@ -18,7 +18,7 @@ if ($conn->connect_error) {
 $ticket = $_POST['NumeroDeTickeT'];
 
 // Consulta para verificar si el ticket existe en la base de datos
-$sql = "SELECT COUNT(*) AS count FROM Ventas_POS_Pruebas WHERE Folio_Ticket = '$ticket'";  
+$sql = "SELECT COUNT(*) AS count FROM Ventas_POS WHERE Folio_Ticket = '$ticket'";  
 
 $result = $conn->query($sql);
 
