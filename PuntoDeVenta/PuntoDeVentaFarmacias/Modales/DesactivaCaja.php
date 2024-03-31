@@ -13,7 +13,7 @@ $Especialistas = $query->fetch_object();
     <i id="lockIcon" class="fas fa-unlock fa-5x text-success"></i>
     <p>¿Está seguro de que desea bloquear la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día <?php echo $Especialistas->Fecha_Apertura; ?>?</p>
     <input type="hidden" name="ID_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
-    <input type="hidden" name="Estatus" id="Estatus" value="Inactiva">
+    <input type="hidden" name="Estatus" id="Estatus" value="2">
     <button type="submit" id="submit" class="btn btn-danger">
         Bloquear<i class="fas fa-lock"></i>
     </button>
