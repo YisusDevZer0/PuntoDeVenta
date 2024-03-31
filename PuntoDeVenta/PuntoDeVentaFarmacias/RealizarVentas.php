@@ -1,8 +1,8 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-include "Consultas/ConsultaCaja.php";
-include "Consultas/SumadeFolioTicketsNuevo.php";
-include("Consultas/db_connect.php");
+include "Controladores/ConsultaCaja.php";
+include "Controladores/SumadeFolioTicketsNuevo.php";
+include("Controladores/db_connect.php");
 $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 4);
 
 
@@ -792,7 +792,7 @@ Efectivo Exacto
     $("#clienteInput").autocomplete({
       source: function(request, response) {
         $.ajax({
-          url: "Consultas/clientes.php",
+          url: "Controladores/clientes.php",
           dataType: "json",
           data: {
             term: request.term
@@ -907,7 +907,7 @@ Efectivo Exacto
   formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Consultas/escaner_articulo.php",
+    url: "Controladores/escaner_articulo.php",
     type: 'POST',
     data: formData,
     processData: false,
@@ -952,7 +952,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Consultas/autocompletado.php',
+      url: 'Controladores/autocompletado.php',
       type: 'GET',
       dataType: 'json',
       data: {
