@@ -9,7 +9,7 @@ $Asignacion = isset($_POST['Estatus']) ? intval($_POST['Estatus']) : 0;
 
 
 // Verificar si todos los datos requeridos están presentes
-if ($ID_Caja && $Estatus) {
+if ($ID_Caja && $Asignacion) {
     // Consulta preparada
     $sql = "UPDATE `Cajas` SET `Asignacion`=? WHERE `ID_Caja`=?";
     $stmt = $conn->prepare($sql);
