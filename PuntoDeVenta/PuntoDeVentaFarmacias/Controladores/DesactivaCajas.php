@@ -3,20 +3,19 @@ include "db_connect.php"; // Asumiendo que este archivo contiene la conexión a 
 
 // Validación y limpieza de datos
 $ID_Caja = isset($_POST['ID_Caja']) ? intval($_POST['ID_Caja']) : 0;
-$Estatus = isset($_POST['Estatus']) ? intval($_POST['Estatus']) : 0;
+$Asignacion = isset($_POST['Estatus']) ? intval($_POST['Estatus']) : 0;
 
 // Mensajes de depuración
-echo "ID_Caja: " . $ID_Caja . "<br>";
-echo "Estatus: " . $Estatus . "<br>";
+
 
 // Verificar si todos los datos requeridos están presentes
 if ($ID_Caja && $Estatus) {
     // Consulta preparada
-    $sql = "UPDATE `Cajas` SET `Estatus`=? WHERE `ID_Caja`=?";
+    $sql = "UPDATE `Cajas` SET `Asignacion`=? WHERE `ID_Caja`=?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
         // Enlazar parámetros
-        $stmt->bind_param("ii", $Estatus, $ID_Caja);
+        $stmt->bind_param("ii", $Asignacion, $ID_Caja);
         // Ejecutar consulta
         if ($stmt->execute()) {
             echo json_encode(array("statusCode" => 200));
