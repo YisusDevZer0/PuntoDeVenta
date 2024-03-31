@@ -7,19 +7,19 @@
 
   .dataTables_paginate .paginate_button {
     padding: 5px 10px !important;
-    border: 1px solid #007bff !important;
+    border: 1px solid #ef7980 !important;
     margin: 2px !important;
     cursor: pointer !important;
     font-size: 16px !important;
-    color: #007bff !important;
+    color: #ef7980 !important;
     background-color: #fff !important;
   }
 
   /* Cambiar el color del paginado seleccionado */
   .dataTables_paginate .paginate_button.current {
-    background-color: #007bff !important;
+    background-color: #ef7980 !important;
     color: #fff !important;
-    border-color: #007bff !important;
+    border-color: #ef7980 !important;
   }
 
   /* Cambiar el color del hover */
@@ -50,7 +50,7 @@
 
   #Clientes th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
-    background-color: #0057b8 !important; /* Nuevo color de fondo para los encabezados */
+    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
@@ -59,6 +59,7 @@
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
+    color:#000000;
   }
 
   /* Estilos para el botón de Excel */
@@ -97,7 +98,7 @@
   /* Estilo para el ícono de carga */
   .loader {
     border: 6px solid #f3f3f3; /* Color del círculo externo */
-    border-top: 6px solid #C80096; /* Color del círculo interno */
+    border-top: 6px solid #26b814; /* Color del círculo interno */
     border-radius: 50%;
     width: 60px;
     height: 60px;
