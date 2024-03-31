@@ -274,8 +274,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Caja</label>
                           <div class="input-group mb-3">
-                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-                            </div>
+                          
                             <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Valor_Total_Caja'] ?>">
                            
                           </div>
