@@ -28,9 +28,8 @@
                             <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
                         </div>
                     </div>
-                    <a href="RealizarVentas" class="nav-item "><i class="fa fa-tachometer-alt me-2"></i>Realizar Venta</a>
-                    <a href="index" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-                   
+                    <a href="RealizarVentas" class="nav-item nav-link "><i class="fa-solid fa-cart-shopping"></i>Realizar Venta</a>
+                    
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
                         <div class="dropdown-menu bg-transparent border-0">
