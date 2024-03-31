@@ -284,8 +284,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Turno</label>
                           <div class="input-group mb-3">
-                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
-                            </div>
+                            
                             <input type="text" class="form-control "  style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>">
 
                           </div>
@@ -294,8 +293,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket</label>
                           <div class="input-group mb-3">
-                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-                            </div>
+                        
                             <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
 
                           </div>
