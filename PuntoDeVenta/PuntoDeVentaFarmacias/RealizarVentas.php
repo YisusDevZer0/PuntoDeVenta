@@ -320,8 +320,8 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                   </div>
 
                   <!-- ETIQUETA QUE MUESTRA LA SUMA TOTAL DE LOS PRODUCTOS AGREGADOS AL LISTADO -->
-                  <div class="col-md-7 mb-3 rounded-3" style="background-color:#26b814;color: white;text-align:center;border:1px solid #C80096;">
-                    <h2 class="fw-bold m-0">MXN <span class="fw-bold" id="totalVenta"></span></h2>
+                  <div class="col-md-7 mb-3 rounded-3" style="background-color:#26b814;color: white;text-align:center;border:1px solid #26b814;">
+                    <h2 class="fw-bold m-0" style="color:white;" >MXN <span class="fw-bold" id="totalVenta"></span></h2>
                   </div>
 
                   <!-- BOTONES PARA VACIAR LISTADO Y COMPLETAR LA VENTA -->
