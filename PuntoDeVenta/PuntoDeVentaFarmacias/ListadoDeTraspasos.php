@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Clientes registrados para <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Traspasos de <?php echo $row['Licencia']?> sucursal <?php echo $row['Nombre_Sucursal']?> </h6>
             
             <div id="DataDeClientes"></div>
             </div></div></div></div>
