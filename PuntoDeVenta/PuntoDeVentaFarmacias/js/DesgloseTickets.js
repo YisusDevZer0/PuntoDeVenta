@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("hhttps://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/DesgloseDeTickets","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/DesgloseDeTickets","",function(data){
       $("#DataDeServicios").html(data);
     })
   
