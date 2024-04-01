@@ -30,7 +30,7 @@ Sucursales.Nombre_Sucursal
 FROM 
 Traspasos_generados
 JOIN 
-Sucursales ON Traspasos_generados.Fk_sucursal = Sucursales.ID_SucursalC 
+Sucursales ON Traspasos_generados.Fk_sucursal = Sucursales.ID_Sucursal
 WHERE 
 Traspasos_generados.Estatus ='Generado' 
 AND Traspasos_generados.Fk_SucDestino ='".$row['Fk_Sucursal']."'"; 
