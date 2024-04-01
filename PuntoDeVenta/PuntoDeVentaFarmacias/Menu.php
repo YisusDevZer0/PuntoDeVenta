@@ -55,8 +55,8 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Ventas</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas a credito</a>
+                            <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
+                            <a href="VentasACredito" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas a credito</a>
                         </div>
                     </div>
 
