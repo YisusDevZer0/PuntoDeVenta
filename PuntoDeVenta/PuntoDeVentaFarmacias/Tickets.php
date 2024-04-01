@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/DesgloseTickets.js"></script>
+<script src="js/DesgloseTicketss.js"></script>
 
             <!-- Footer Start -->
             <?php 
