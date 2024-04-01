@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 include("db_connect.php");
-include "ControladorUsuario.php";
+include_once "ControladorUsuario.php";
 
 $sql = "SELECT 
 Traspasos_generados.ID_Traspaso_Generado, 
