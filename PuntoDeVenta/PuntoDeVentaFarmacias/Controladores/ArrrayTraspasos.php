@@ -4,36 +4,42 @@ include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 $sql = "SELECT 
-Traspasos_generados.ID_Traspaso_Generado, 
-Traspasos_generados.Folio_Prod_Stock, 
-Traspasos_generados.Fk_SucDestino, 
-Traspasos_generados.Estatus, 
-Traspasos_generados.Num_Orden, 
-Traspasos_generados.FechaEntrega,
-Traspasos_generados.Cod_Barra, 
-Traspasos_generados.Nombre_Prod, 
-Traspasos_generados.Fk_sucursal, 
-Traspasos_generados.Fk_Sucursal_Destino, 
-Traspasos_generados.ProveedorFijo,
-Traspasos_generados.Precio_Venta, 
-Traspasos_generados.Precio_Compra, 
-Traspasos_generados.Total_traspaso, 
-Traspasos_generados.TotalVenta, 
+Traspasos_generados.ID_Traspaso_Generado,
+Traspasos_generados.Folio_Prod_Stock,
+Traspasos_generados.TraspasoRecibidoPor,
+Traspasos_generados.TraspasoGeneradoPor,
+Traspasos_generados.Num_Orden,
+Traspasos_generados.Num_Factura,
+Traspasos_generados.TotaldePiezas,
+Traspasos_generados.Cod_Barra,
+Traspasos_generados.Nombre_Prod,
+Traspasos_generados.Fk_sucursal,
+Traspasos_generados.Fk_Sucursal_Destino,
+Traspasos_generados.Proveedor1,
+Traspasos_generados.Proveedor2,
+Traspasos_generados.Precio_Venta,
+Traspasos_generados.Precio_Compra,
+Traspasos_generados.Total_traspaso,
+Traspasos_generados.TotalVenta,
 Traspasos_generados.Existencias_R,
-Traspasos_generados.Cantidad_Enviada, 
-Traspasos_generados.Existencias_D_envio, 
-Traspasos_generados.FechaEntrega, 
-Traspasos_generados.Estatus, 
+Traspasos_generados.ProveedorFijo,
+Traspasos_generados.Cantidad_Enviada,
+Traspasos_generados.Existencias_D_envio,
+Traspasos_generados.FechaEntrega,
+Traspasos_generados.Estatus,
 Traspasos_generados.ID_H_O_D,
-Sucursales.ID_Sucursal, 
+Sucursales.ID_Sucursal,
 Sucursales.Nombre_Sucursal 
 FROM 
-Traspasos_generados
-JOIN 
-Sucursales ON Traspasos_generados.Fk_sucursal = Sucursales.ID_Sucursal
+Traspasos_generados,
+Sucursales
 WHERE 
-Traspasos_generados.Estatus ='Generado' 
-AND Traspasos_generados.Fk_SucDestino ='".$row['Fk_Sucursal']."'"; 
+Traspasos_generados.Fk_sucursal = Sucursales.ID_Sucursal 
+AND (
+    (MONTH(Traspasos_generados.FechaEntrega) = MONTH(CURDATE()) AND YEAR(Traspasos_generados.FechaEntrega) = YEAR(CURDATE()))
+    OR
+    (MONTH(Traspasos_generados.FechaEntrega) = MONTH(CURDATE() - INTERVAL 1 MONTH) AND YEAR(Traspasos_generados.FechaEntrega) = YEAR(CURDATE() - INTERVAL 1 MONTH))
+)"; 
 
 $result = mysqli_query($conn, $sql);
 
