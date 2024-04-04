@@ -113,7 +113,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
         $('#ModalEdDele').modal('show');
     });
 
-    $(document).on("click", ".btn-reactiva", function() {
+    $(document).on("click", ".btn-registraGasto", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
