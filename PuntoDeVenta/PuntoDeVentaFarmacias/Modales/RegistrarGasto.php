@@ -10,10 +10,7 @@ $Especialistas = $query->fetch_object();
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="EliminaServiciosForm" class="mb-3">
-    <i id="lockIcon" class="fas fa-unlock fa-5x text-success"></i>
-    <p class="mb-3">¿Está seguro de que desea bloquear la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día <?php echo $Especialistas->Fecha_Apertura; ?>?</p>
-    <input type="hidden" name="ID_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
-
+ 
     <div class="mb-3">
         <label for="tipo_gasto" class="form-label">Tipo de gasto:</label>
         <select name="tipo_gasto" id="tipo_gasto" class="form-control">
