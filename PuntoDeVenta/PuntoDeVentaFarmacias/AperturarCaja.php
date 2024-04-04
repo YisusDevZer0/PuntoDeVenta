@@ -13,7 +13,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 
 <head>
     <meta charset="utf-8">
-    <title>Fondos de cajas disponibles para  <?php echo $row['Licencia']?></title>
+    <title>Administracion de cajas de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
     <div id="loading-overlay">
@@ -113,7 +113,16 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
         $('#ModalEdDele').modal('show');
     });
 
-   
+    $(document).on("click", ".btn-reactiva", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Registrar nuevo gasto");
+           
+        });
+        $('#ModalEdDele').modal('show');
+    });
+
 });
 
 </script>
