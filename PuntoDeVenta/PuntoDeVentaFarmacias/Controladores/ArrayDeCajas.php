@@ -101,7 +101,7 @@ while ($fila = $result->fetch_assoc()) {
         "ValorTotalCaja" => $fila["Valor_Total_Caja"],
         "DesactivarCaja" => $desactivar_caja,
         "ReactivarCaja" => $reactivar_caja,
-        "RegistrarGasto" => '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-registraGasto " style="background-color: #0172b6 !important;"><i class="fa-solid fa-lock-open"></i></a></td>',
+        "RegistrarGasto" => '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-registraGasto " style="background-color: #0172b6 !important;"><i class="fa-solid fa-comment-dollar"></i></a></td>',
     ];
 }
 
