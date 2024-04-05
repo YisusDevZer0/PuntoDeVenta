@@ -3,7 +3,7 @@
 
     $NomGasto = mysqli_real_escape_string($conn, $_POST['Nom_Gasto']);
     $Estado = mysqli_real_escape_string($conn, $_POST['Estado']);
-    $AgregadoPor = mysqli_real_escape_string($conn, $_POST['Agregado_Por']);
+    $AgregadoPor = mysqli_real_escape_string($conn, $_POST['Agrego']);
     $Sistema = mysqli_real_escape_string($conn, $_POST['Sistema']);
     $Licencia = mysqli_real_escape_string($conn, $_POST['Licencia']);
   
