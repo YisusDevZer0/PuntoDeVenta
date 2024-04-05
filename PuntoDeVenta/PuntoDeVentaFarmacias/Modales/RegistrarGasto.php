@@ -35,6 +35,8 @@ $Especialistas = $query->fetch_object();
 
     <!-- Manten el input oculto con el ID_Caja -->
     <input type="hidden" name="ID_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
+    <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>">
+    <input type="hidden" name="Sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
 
     <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
