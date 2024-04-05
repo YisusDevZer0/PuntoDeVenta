@@ -13,12 +13,14 @@ $Especialistas = $query->fetch_object();
  
     <div class="mb-3">
         <label for="tipo_gasto" class="form-label">Tipo de gasto:</label>
-        <select name="tipo_gasto" id="tipo_gasto" class="form-control">
-            <!-- Aquí puedes rellenar con los datos que desees -->
-            <option value="opcion1">Opción 1</option>
-            <option value="opcion2">Opción 2</option>
-            <option value="opcion3">Opción 3</option>
-        </select>
+        <select id = "tipogasto" class = "form-control" name = "TipoGasto">
+                                               <option value="">Seleccione una sucursal:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM TiposDeGastos");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Gasto"].'">'.$valores["Nom_Gasto"].'</option>';
+          }
+        ?>  </select>
     </div>
 
     <div class="mb-3">
