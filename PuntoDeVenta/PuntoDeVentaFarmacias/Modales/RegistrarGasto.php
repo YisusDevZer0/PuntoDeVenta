@@ -14,7 +14,7 @@ $Especialistas = $query->fetch_object();
     <div class="mb-3">
         <label for="tipo_gasto" class="form-label">Tipo de gasto:</label>
         <select id = "tipogasto" class = "form-control" name = "TipoGasto">
-                                               <option value="">Seleccione una sucursal:</option>
+                                               <option value="">Seleccione un gasto:</option>
         <?php
           $query = $conn -> query ("SELECT * FROM TiposDeGastos");
           while ($valores = mysqli_fetch_array($query)) {
@@ -24,12 +24,12 @@ $Especialistas = $query->fetch_object();
     </div>
 
     <div class="mb-3">
-        <label for="cantidad_gasto" class="form-label">Cantidad de gasto:</label>
+        <label for="cantidad_gasto" class="form-label">Cantidad en efectivo:</label>
         <input type="text" name="cantidad_gasto" id="cantidad_gasto" class="form-control">
     </div>
 
     <div class="mb-3">
-        <label for="nombre_recibe" class="form-label">Nombre de quien recibe el dinero:</label>
+        <label for="nombre_recibe" class="form-label">Nombre de quien recibe:</label>
         <input type="text" name="nombre_recibe" id="nombre_recibe" class="form-control">
     </div>
 

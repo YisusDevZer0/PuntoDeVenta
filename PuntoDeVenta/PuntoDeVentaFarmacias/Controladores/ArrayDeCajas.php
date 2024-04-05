@@ -71,25 +71,16 @@ while ($fila = $result->fetch_assoc()) {
             break;
     }
 
-    // Verificar si la caja está cerrada
-    if ($fila["Estatus"] == 'Cerrada') {
-        // Si está cerrada, no mostrar ningún botón
-        $desactivar_caja = '';
-        $reactivar_caja = '';
+    // Verificar si la caja está cerrada o la asignación es diferente de activa
+    if ($fila["Estatus"] == 'Cerrada' || $fila["Asignacion"] != 1) {
+        // Si la caja está cerrada o la asignación no es activa, no mostrar el botón de registrar gasto
+        $registrar_gasto = '';
     } else {
-        // Si no está cerrada, mostrar el botón correspondiente según el estado de asignación
-        if ($fila["Asignacion"] == 1) {
-            // Si está activa, mostrar el botón de desactivar
-            $desactivar_caja = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-danger btn-sm btn-desactiva " style="background-color: #ff3131 !important;"><i class="fa-solid fa-lock"></i></a></td>';
-            $reactivar_caja = '';
-        } else {
-            // Si está inactiva o sin definir, mostrar el botón de activar
-            $desactivar_caja = '';
-            $reactivar_caja = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-reactiva " style="background-color: #0172b6 !important;"><i class="fa-solid fa-lock-open"></i></a></td>';
-        }
+        // Si la caja está abierta y la asignación es activa, mostrar el botón de registrar gasto
+        $registrar_gasto = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-registraGasto " style="background-color: #0172b6 !important;"><i class="fa-solid fa-comment-dollar"></i></a></td>';
     }
 
-    // Construir el array de datos
+    // Construir el array de datos incluyendo la columna de registrar gasto condicionada
     $data[] = [
         "IdCaja" => $fila["ID_Caja"],
         "Empleado" => $fila["Empleado"],
@@ -101,7 +92,7 @@ while ($fila = $result->fetch_assoc()) {
         "ValorTotalCaja" => $fila["Valor_Total_Caja"],
         "DesactivarCaja" => $desactivar_caja,
         "ReactivarCaja" => $reactivar_caja,
-        "RegistrarGasto" => '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-registraGasto " style="background-color: #0172b6 !important;"><i class="fa-solid fa-comment-dollar"></i></a></td>',
+        "RegistrarGasto" => $registrar_gasto,
     ];
 }
 
