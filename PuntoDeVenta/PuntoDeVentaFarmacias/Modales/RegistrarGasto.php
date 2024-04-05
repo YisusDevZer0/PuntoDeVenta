@@ -38,6 +38,8 @@ $Especialistas = $query->fetch_object();
     <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>">
     <input type="hidden" name="Sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
 
+    <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
+
     <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
 
