@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/NuevoTipoDeusuarios.php",
+            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/NuevoTipoDeGastos.php",
             data: $('#NewTypeUser').serialize(),
             cache: false,
             beforeSend: function(){	
@@ -110,7 +110,7 @@ VigenciaProdT: {
              setTimeout(function(){ 
                  $('#successModal').modal('hide') 
                  location.reload(); // Recargar la página completa después de 5 segundos
-             }, 3000); // abrir
+             }, 2000); // abrir
        
   
              
