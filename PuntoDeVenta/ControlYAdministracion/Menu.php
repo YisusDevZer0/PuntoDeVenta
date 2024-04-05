@@ -27,15 +27,16 @@
                     </div>
 
                     <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
-
+                    
                     <div class="nav-item dropdown">
-                    <h5>Administracion de cajas</h5>
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i> Fondos de caja</a>
                             <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Cajas activas </a>
                             <a href="HistorialDeCajas" class="dropdown-item"><i class="fa-solid fa-vault"></i>Historial de cajas </a>
                             <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
+                            <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Registro de gastos</a>
+                            <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Tipos de gastos</a>
                         </div>
                     </div>
                    
