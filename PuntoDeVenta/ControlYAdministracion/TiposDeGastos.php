@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div>
           
 <script src="js/ControlDeTiposDeGastos.js"></script>
-<script src="js/AgregarTipoDeGasto.js"></script>
+<script src="js/AgregarTipoDeGastos.js"></script>
 
             <!-- Footer Start -->
             <?php 
