@@ -34,9 +34,9 @@
                             <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i> Fondos de caja</a>
                             <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Cajas activas </a>
                             <a href="HistorialDeCajas" class="dropdown-item"><i class="fa-solid fa-vault"></i>Historial de cajas </a>
-                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
-                            <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Registro de gastos</a>
-                            <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Tipos de gastos</a>
+                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Cortes de caja</a>
+                            <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-comment-dollar"></i>Registro de gastos</a>
+                            <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-comments-dollar"></i>Tipos de gastos</a>
                         </div>
                     </div>
                    
