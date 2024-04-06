@@ -13,7 +13,7 @@ $Especialistas = $query->fetch_object();
  
     <div class="mb-3">
         <label for="tipo_gasto" class="form-label">Tipo de gasto:</label>
-        <select id = "tipogasto" class = "form-control" name = "TipoGasto">
+        <select id = "tipogasto" class = "form-control" name = "Concepto_Categoria">
                                                <option value="">Seleccione un gasto:</option>
         <?php
           $query = $conn -> query ("SELECT * FROM TiposDeGastos");
@@ -25,18 +25,19 @@ $Especialistas = $query->fetch_object();
 
     <div class="mb-3">
         <label for="cantidad_gasto" class="form-label">Cantidad en efectivo:</label>
-        <input type="text" name="cantidad_gasto" id="cantidad_gasto" class="form-control">
+        <input type="text" name="Importe_Total" id="cantidad_gasto" class="form-control">
     </div>
 
     <div class="mb-3">
         <label for="nombre_recibe" class="form-label">Nombre de quien recibe:</label>
-        <input type="text" name="nombre_recibe" id="nombre_recibe" class="form-control">
+        <input type="text" name="Recibe" id="nombre_recibe" class="form-control">
     </div>
 
     <!-- Manten el input oculto con el ID_Caja -->
-    <input type="hidden" name="ID_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
+    <input type="hidden" name="Fk_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
     <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>">
-    <input type="hidden" name="Sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
+    <input type="hidden" name="Fk_sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
+    <input type="hidden" name="Sistema" id="licencia" value="Administrador">
 
     <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
 
