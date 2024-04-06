@@ -33,7 +33,7 @@ if (!empty($missingFields)) {
         echo json_encode(array("statusCode"=>250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `Agregado_Por`, `Licencia`) 
+        $sql_insert = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `AgregadoPor`, `Licencia`) 
                 VALUES ('$ConceptoCategoria', '$ImporteTotal', '$Empleado', '$FkSucursal', '$FkCaja', '$Recibe', '$Sistema', '$AgregadoPor', '$Licencia')";
 
         if(mysqli_query($conn, $sql_insert)) {
