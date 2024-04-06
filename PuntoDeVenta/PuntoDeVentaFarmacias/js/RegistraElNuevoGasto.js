@@ -16,7 +16,7 @@ $('document').ready(function($){
       }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
      
   
-    $("#NewTypeUser").validate({
+    $("#EliminaServiciosForm").validate({
 		rules: {
 		
 			NombreTipoProd: {
@@ -63,7 +63,7 @@ VigenciaProdT: {
         $.ajax({				
             type : 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/RegistraGastos.php",
-            data: $('#NewTypeUser').serialize(),
+            data: $('#EliminaServiciosForm').serialize(),
             cache: false,
             beforeSend: function(){	
 			
@@ -100,7 +100,7 @@ VigenciaProdT: {
             
              $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")	
            
-             $("#NewTypeUser")[0].reset();
+             $("#EliminaServiciosForm")[0].reset();
              $("#myModal").removeClass("in");
              $(".modal-backdrop").remove();
              $("#myModal").hide();
