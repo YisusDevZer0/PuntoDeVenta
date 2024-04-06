@@ -302,7 +302,15 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                           </div>
                         </div>
 
+                        <div class="col">
 
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket</label>
+<div class="input-group mb-3">
+
+  <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $ValorCaja['Fecha_Apertura'] ?> "readonly>
+
+</div>
+</div>
 
                       </div>
 
