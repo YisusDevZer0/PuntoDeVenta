@@ -45,7 +45,7 @@ Ventas_POS.Nombre_Prod,Ventas_POS.Cantidad_Venta,Ventas_POS.Fk_sucursal,Ventas_P
 Ventas_POS.Total_Venta,Ventas_POS.Lote,Ventas_POS.ID_H_O_D,SucursalesCorre.ID_SucursalC,SucursalesCorre.Nombre_Sucursal FROM 
 Ventas_POS,SucursalesCorre WHERE   
 Ventas_POS.Fk_sucursal= SucursalesCorre.ID_SucursalC  AND Ventas_POS.Fk_sucursal='".$row['Fk_Sucursal']."' 
-AND Ventas_POS.ID_H_O_D ='".$row['ID_H_O_D']."' GROUP BY (Ventas_POS.Folio_Ticket) ORDER BY `Ventas_POS`.`AgregadoEl` DESC ";
+ GROUP BY (Ventas_POS.Folio_Ticket) ORDER BY `Ventas_POS`.`AgregadoEl` DESC ";
 $query = $conn->query($sql1);
 ?>
 
