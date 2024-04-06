@@ -12,7 +12,7 @@ $AgregadoPor = mysqli_real_escape_string($conn, $_POST['Empleado']);
 $Licencia = mysqli_real_escape_string($conn, $_POST['Licencia']);
 
 // Consulta para verificar si ya existe un registro con los mismos valores
-$sql = "SELECT Nom_Gasto, Licencia FROM GastosPOS WHERE Nom_Gasto='$NomGasto' AND Licencia='$Licencia'";
+$sql = "SELECT Concepto_Categoria, Licencia FROM GastosPOS WHERE Concepto_Categoria='$ConceptoCategoria' AND Licencia='$Licencia'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
