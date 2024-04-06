@@ -2,7 +2,18 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-if(isset($_POST['Concepto_Categoria'], $_POST['Importe_Total'], $_POST['Empleado'], $_POST['Fk_sucursal'], $_POST['Fk_Caja'], $_POST['Recibe'], $_POST['Sistema'], $_POST['AgregadoPor'], $_POST['Licencia'])) {
+$requiredFields = array('Concepto_Categoria', 'Importe_Total', 'Empleado', 'Fk_sucursal', 'Fk_Caja', 'Recibe', 'Sistema', 'AgregadoPor', 'Licencia');
+$missingFields = array();
+foreach ($requiredFields as $field) {
+    if (!isset($_POST[$field])) {
+        $missingFields[] = $field;
+    }
+}
+
+if (!empty($missingFields)) {
+    $errorMessage = "Faltan los siguientes campos: " . implode(', ', $missingFields);
+    echo json_encode(array("statusCode"=>500, "error"=>$errorMessage)); // Error de datos faltantes
+} else {
     // Escapar y asignar los valores recibidos
     $ConceptoCategoria = mysqli_real_escape_string($conn, $_POST['Concepto_Categoria']);
     $ImporteTotal = mysqli_real_escape_string($conn, $_POST['Importe_Total']);
@@ -31,8 +42,6 @@ if(isset($_POST['Concepto_Categoria'], $_POST['Importe_Total'], $_POST['Empleado
             echo json_encode(array("statusCode"=>201, "error"=>mysqli_error($conn))); // Error en la inserción
         }
     }
-} else {
-    echo json_encode(array("statusCode"=>500, "error"=>"No se recibieron todos los datos necesarios")); // Error de datos faltantes
 }
 
 // Cerrar la conexión a la base de datos
