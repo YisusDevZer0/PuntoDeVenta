@@ -98,7 +98,7 @@ $query = $conn->query($sql1);
 </div>
 </div>
 <?php else:?>
-	<p class="alert alert-warning">No hay resultados</p>
+	<p class="alert alert-warning">Por el momento no existen tickets para mostrar</p>
 <?php endif;?>
 <script>
     $(".btn-desglose").click(function(){

@@ -404,7 +404,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                 <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
 
-                <!-- <div id="TableStockSucursales"></div> -->
+                <div id="TableStockSucursales"></div>
 
                 <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
 
