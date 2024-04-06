@@ -391,7 +391,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                 <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los tickets y poder reimprimir -->
 
-                <div id="TableVentasDelDia"></div>
+                <!-- <div id="TableVentasDelDia"></div> -->
 
                 <!-- Aqui finaliza el div que llama a la tabla por ajax para la consulta de los tickets y poder reimprimir -->
 
@@ -401,7 +401,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                 <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
 
-                <div id="TableStockSucursales"></div>
+                <!-- <div id="TableStockSucursales"></div> -->
 
                 <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
 
