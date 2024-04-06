@@ -44,7 +44,7 @@ $sql1= "SELECT Ventas_POS.Folio_Ticket,Ventas_POS.Fk_Caja,Ventas_POS.Venta_POS_I
 Ventas_POS.Nombre_Prod,Ventas_POS.Cantidad_Venta,Ventas_POS.Fk_sucursal,Ventas_POS.AgregadoPor,Ventas_POS.AgregadoEl,
 Ventas_POS.Total_Venta,Ventas_POS.Lote,Ventas_POS.ID_H_O_D,Sucursales.ID_Sucursal,Sucursales.Nombre_Sucursal FROM 
 Ventas_POS,Sucursales WHERE   
-Ventas_POS.Fk_sucursal= Sucursales.ID_Sucursal  AND Ventas_POS.Fk_sucursal='".$row['Fk_Sucursal']."' 
+Ventas_POS.Fk_sucursal= Sucursales.ID_Sucursal 
 AND Ventas_POS.ID_H_O_D ='".$row['ID_H_O_D']."' GROUP BY (Ventas_POS.Folio_Ticket) ORDER BY `Ventas_POS`.`AgregadoEl` DESC ";
 $query = $conn->query($sql1);
 ?>
