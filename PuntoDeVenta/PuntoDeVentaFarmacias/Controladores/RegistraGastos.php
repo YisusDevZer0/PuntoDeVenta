@@ -23,6 +23,9 @@ if(mysqli_num_rows($resultset) > 0) {
     $sql = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `Agregado_Por`, `Licencia`) 
             VALUES ('$Concepto_Categoria', '$Importe_Total', '$Empleado', '$FkSucursal', '$FkCaja', '$Recibe', '$Sistema', '$AgregadoPor', '$Licencia')";
 
-    
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(array("statusCode"=>200)); // Inserción exitosa
+    } 
+    mysqli_close($conn);
 }
 ?>
