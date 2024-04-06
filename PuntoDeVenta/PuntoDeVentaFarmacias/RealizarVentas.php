@@ -21,7 +21,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <head>
     <meta charset="utf-8">
-    <title>Listado de productos de <?php echo $row['Licencia']?></title>
+    <title>Realizar Ventas de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
