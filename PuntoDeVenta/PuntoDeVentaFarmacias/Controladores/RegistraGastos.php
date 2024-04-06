@@ -16,5 +16,13 @@ $sql = "SELECT Concepto_Categoria, Licencia FROM GastosPOS WHERE Concepto_Catego
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
+if(mysqli_num_rows($resultset) > 0) {
+    echo json_encode(array("statusCode"=>250)); // El registro ya existe
+} else {
+    // Consulta de inserción para agregar un nuevo registro
+    $sql = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `Agregado_Por`, `Licencia`) 
+            VALUES ('$Concepto_Categoria', '$Importe_Total', '$Empleado', '$FkSucursal', '$FkCaja', '$Recibe', '$Sistema', '$AgregadoPor', '$Licencia')";
 
+    
+}
 ?>
