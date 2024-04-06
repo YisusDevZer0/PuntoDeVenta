@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 // Establecer la configuración de la base de datos
 $servername = "localhost";
 $username = "u858848268_devpezer0";
@@ -36,4 +36,4 @@ echo json_encode($response);
 
 // Cerrar la conexión a la base de datos
 $conn->close();
-?>
+?> -->
