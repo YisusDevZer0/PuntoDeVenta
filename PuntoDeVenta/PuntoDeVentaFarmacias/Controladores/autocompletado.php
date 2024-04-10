@@ -15,7 +15,7 @@ if (!$conn) {
 $term = $_GET['term'];
 
 // Realiza la consulta utilizando el término de búsqueda y DISTINCT
-$query = "SELECT DISTINCT Cod_Barra, Nombre_Prod FROM Stock_POS WHERE Cod_Barra LIKE '%{$term}%' OR Nombre_Prod LIKE '%{$term}%'";
+$query = "SELECT DISTINCT Cod_Barra, Nombre_Prod,Existencias_R FROM Stock_POS WHERE Cod_Barra LIKE '%{$term}%' OR Nombre_Prod LIKE '%{$term}%'";
 $result = mysqli_query($conn, $query);
 
 // Genera un array con los resultados de autocompletado
