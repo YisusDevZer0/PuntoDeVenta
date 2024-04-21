@@ -28,6 +28,15 @@
                             <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
                         </div>
                     </div>
+                        
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Agenda</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-coins"></i>Revaloraciones</a>
+                            <a href="AgendaLaboratorios" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Laboratorios</a>
+                            <a href="AgendaEspecialistas" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Especialistas</a>
+                        </div>
+                    </div>
                     <a href="RealizarVentas" class="nav-item nav-link "><i class="fa-solid fa-cart-shopping"></i>Realizar Venta</a>
                     
                     <div class="nav-item dropdown">
