@@ -222,6 +222,8 @@ tabla = $('#Clientes').DataTable({
        { mData: 'DesactivarCaja' },
        { mData: 'ReactivarCaja' },
        { mData: 'RegistrarGasto' },
+       { mData: 'RealizarCorte' },
+       
       ],
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
@@ -281,6 +283,7 @@ tabla = $('#Clientes').DataTable({
     <th>Desactivar Caja</th>
     <th>Reactivar Caja</th>
     <th>Registrar gasto</th>
+    <th>Realizar corte</th>
 </thead>
 
 </div>

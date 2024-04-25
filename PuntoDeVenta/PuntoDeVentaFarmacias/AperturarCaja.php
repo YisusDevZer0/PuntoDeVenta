@@ -125,7 +125,23 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 
 });
 
+$(document).on("click", ".btn-realizaCorte", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Registrar nuevo gasto");
+           
+        });
+        $('#ModalEdDele').modal('show');
+    });
+
+
+
 </script>
+
+
+
+
 
   <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
   <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >

@@ -94,6 +94,8 @@ while ($fila = $result->fetch_assoc()) {
             $registrar_gasto = '';
         }
     }
+ // Siempre incluir el campo para realizar el corte
+ $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-warning btn-sm btn-realizaCorte " style="background-color: #007bff !important;"><i class="fa-solid fa-scissors"></i></a></td>';
 
     // Construir el array de datos incluyendo las columnas condicionadas
     $data[] = [
@@ -108,6 +110,7 @@ while ($fila = $result->fetch_assoc()) {
         "DesactivarCaja" => $desactivar_caja,
         "ReactivarCaja" => $reactivar_caja,
         "RegistrarGasto" => $registrar_gasto,
+        "RealizarCorte" => $realizar_corte,
     ];
 }
 
