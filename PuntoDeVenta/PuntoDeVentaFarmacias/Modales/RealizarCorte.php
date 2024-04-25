@@ -4,7 +4,7 @@
 if(isset($_POST['id'])) {
     
     // Incluir el archivo de conexión a la base de datos
-  
+    include "../Controladores/ConsultaCaja.php";
 
     // Obtener la fecha actual
     $fcha = date("Y-m-d");
