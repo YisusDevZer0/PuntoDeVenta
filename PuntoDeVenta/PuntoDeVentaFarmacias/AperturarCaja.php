@@ -129,7 +129,7 @@ $(document).on("click", ".btn-realizaCorte", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Registrar nuevo gasto");
+            $("#TitulosCajas").html("Realizar corte de caja");
            
         });
         $('#ModalEdDele').modal('show');
