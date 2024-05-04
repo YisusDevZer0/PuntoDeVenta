@@ -40,7 +40,7 @@ if($_SESSION["Inventarios"])	//Condicion admin
 	header("location:https://doctorpez.mx/PuntoDeVenta/Inventarios/");	
 
 }
-if($_SESSION["RecursosHumanos"])	//Condicion admin
+if($_SESSION["AdministradorRH"])	//Condicion admin
 {
 	
 

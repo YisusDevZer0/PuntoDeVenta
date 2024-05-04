@@ -44,15 +44,15 @@ if(isset($_POST['login_button'])) {
 
                         case $row['Password'] == $Password && $row['TipoUsuario'] == "Responsable Cedis" && $row['Estatus'] == "Activo":
                             echo "ok";
-                            $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                            $_SESSION['ResponsableDelCedis'] = $row['Id_PvUser'];
                             break;
                             case $row['Password'] == $Password && $row['TipoUsuario'] == "Inventarios" && $row['Estatus'] == "Activo":
                                 echo "ok";
-                                $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                                $_SESSION['Inventarios'] = $row['Id_PvUser'];
                                 break;
                                 case $row['Password'] == $Password && $row['TipoUsuario'] == "Enfermero" && $row['Estatus'] == "Activo":
                                     echo "ok";
-                                    $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                                    $_SESSION['Enfermeria'] = $row['Id_PvUser'];
                                     break;
         // Agrega los demás casos según la lógica que necesites
         default:
