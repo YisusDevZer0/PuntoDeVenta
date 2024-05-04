@@ -7,15 +7,22 @@ include_once "ControladorUsuario.php";
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
 // Consulta segura utilizando una sentencia preparada
-$sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
-Usuarios_PV.Fk_Usuario, Usuarios_PV.Fecha_Nacimiento, Usuarios_PV.Correo_Electronico, 
-Usuarios_PV.Telefono, Usuarios_PV.AgregadoPor, Usuarios_PV.AgregadoEl, Usuarios_PV.Estatus,
-Usuarios_PV.Licencia, Tipos_Usuarios.ID_User, Tipos_Usuarios.TipoUsuario,
-Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
-FROM Usuarios_PV 
-INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User 
-INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal
-WHERE Usuarios_PV.Estatus = 'Activo' AND Usuarios_PV.Licencia = ?";
+$sql = "SELECT 
+G.`ID_Gastos`, 
+G.`Concepto_Categoria`, 
+G.`Importe_Total`, 
+G.`Empleado`, 
+S.`nombre_sucursal`, -- Selecciona el nombre de la sucursal
+G.`Fk_Caja`, 
+G.`Recibe`, 
+G.`Sistema`, 
+G.`AgregadoPor`, 
+G.`AgregadoEl`, 
+G.`Licencia`
+FROM 
+GastosPOS G
+JOIN 
+Sucursales S ON G.`Fk_sucursal` = S.`ID_Sucursal` AND G.Licencia = ?";
  
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -38,18 +45,18 @@ while ($fila = $result->fetch_assoc()) {
     // Aquí puedes seguir con la lógica que ya tienes para construir los datos de salida
     
     $data[] = [
-        "Idpersonal" => $fila["Id_PvUser"],
-        "NombreApellidos" => $fila["Nombre_Apellidos"],
-        "Foto" => $fila["file_name"],
-        "Tipousuario" => $fila["TipoUsuario"],
-        "Sucursal" => $fila["Nombre_Sucursal"],
-        "CreadoEl" => $fila["AgregadoEl"], // Cambiado de "CreadoPorEl" a "CreadoEl"
-        "Estatus" => $fila["Estatus"],
+        "Idpersonal" => $fila["ID_Gastos"],
+        "NombreApellidos" => $fila["Concepto_Categoria"],
+        "Foto" => $fila["Importe_Total"],
+        "Tipousuario" => $fila["Empleado"],
+        "Sucursal" => $fila["nombre_sucursal"],
+        "CreadoEl" => $fila["Recibe"], // Cambiado de "CreadoPorEl" a "CreadoEl"
+        "Estatus" => $fila["AgregadoEl"],
         "CreadoPor" => $fila["AgregadoPor"],
         // Agregar el botón Desglosar ticket
-        "Editar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
+        /* "Editar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
         "Eliminar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
-    ];
+    */ ];
 }
 
 // Cerrar la declaración

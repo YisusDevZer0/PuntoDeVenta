@@ -218,8 +218,8 @@ tabla = $('#Clientes').DataTable({
                 { mData: 'CreadoEl' },
                 { mData: 'Estatus' },
                 { mData: 'CreadoPor' },
-                { mData: 'Editar' },
-                { mData: 'Eliminar' }
+                /* { mData: 'Editar' },
+                { mData: 'Eliminar' } */
       
   
       ],
@@ -278,8 +278,8 @@ tabla = $('#Clientes').DataTable({
                 <th>Fecha|Hora de creacion</th>
                 <th>Estado</th>
                 <th>Creado por</th>
-                <th>Editar</th>
-                <th>Eliminar</th>
+                <!-- <th>Editar</th>
+                <th>Eliminar</th> -->
 </thead>
 
 </div>
