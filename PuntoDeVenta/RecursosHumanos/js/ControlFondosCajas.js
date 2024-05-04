@@ -1,7 +1,7 @@
 function CargaFCajas(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/FondosCajas.php","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/RecursosHumanos/Controladores/FondosCajas.php","",function(data){
       $("#FCajas").html(data);
     })
   
