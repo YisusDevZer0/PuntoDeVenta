@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataProveedores","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/CEDIS/Controladores/DataProveedores","",function(data){
       $("#DataDeServicios").html(data);
     })
   
