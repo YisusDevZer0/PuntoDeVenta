@@ -209,7 +209,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayTiposDeGastos.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/RecursosHumanos/Controladores/ArrayTiposDeGastos.php",
  "aoColumns": [
   { mData: 'ServicioID' },  
   { mData: 'Nombre_Servicio' },

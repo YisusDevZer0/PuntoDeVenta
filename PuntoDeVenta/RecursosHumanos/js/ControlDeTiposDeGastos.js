@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataTiposDeGastos.php","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/RecursosHumanos/Controladores/DataTiposDeGastos.php","",function(data){
       $("#DataDeServicios").html(data);
     })
   
