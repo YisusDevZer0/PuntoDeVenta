@@ -37,6 +37,23 @@ if(isset($_POST['login_button'])) {
                     echo "ok";
                     $_SESSION['ResponsableDeSupervision'] = $row['Id_PvUser'];
                     break;
+                    case $row['Password'] == $Password && $row['TipoUsuario'] == "Recursos Humanos" && $row['Estatus'] == "Activo":
+                        echo "ok";
+                        $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                        break;
+
+                        case $row['Password'] == $Password && $row['TipoUsuario'] == "Responsable Cedis" && $row['Estatus'] == "Activo":
+                            echo "ok";
+                            $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                            break;
+                            case $row['Password'] == $Password && $row['TipoUsuario'] == "Inventarios" && $row['Estatus'] == "Activo":
+                                echo "ok";
+                                $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                                break;
+                                case $row['Password'] == $Password && $row['TipoUsuario'] == "Enfermero" && $row['Estatus'] == "Activo":
+                                    echo "ok";
+                                    $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
+                                    break;
         // Agrega los demás casos según la lógica que necesites
         default:
             // Manejar otros casos o mostrar un mensaje de error
