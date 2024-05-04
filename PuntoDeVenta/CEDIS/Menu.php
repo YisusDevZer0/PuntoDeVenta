@@ -16,55 +16,13 @@
                 <div class="navbar-nav w-100">
                     <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Agendas</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-users"></i>Revaloraciones</a>
-                            <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Especialistas </a>
-                           
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
-                            <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Personal activo </a>
-                            <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
-                        </div>
-                    </div>
+                   
+                    
 
                     <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
                     
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i> Fondos de caja</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Cajas activas </a>
-                            <a href="HistorialDeCajas" class="dropdown-item"><i class="fa-solid fa-vault"></i>Historial de cajas </a>
-                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Cortes de caja</a>
-                            <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-comment-dollar"></i>Registro de gastos</a>
-                            <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-comments-dollar"></i>Tipos de gastos</a>
-                        </div>
-                    </div>
                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-people-group"></i>Data de clientes</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-regular fa-credit-card"></i>Creditos </a>
-                           
-                        </div>
-                    </div>
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
-                            <a href="TicketsCredito" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
-                           
-                        </div>
-                    </div>
-
+                    
                     
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice-dollar"></i>Ventas</a>
@@ -113,15 +71,7 @@
                            
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Reportes</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
-                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
-                            
-                           
-                        </div>
-                    </div>
+                    
                    
             </nav>
         </div>

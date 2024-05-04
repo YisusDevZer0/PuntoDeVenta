@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
 
-if(!isset($_SESSION['ControlMaestro'])){
+if(!isset($_SESSION['ResponsableDelCedis'])){
 	header("Location: Expiro.php");
 }
 include_once("db_connect.php");
@@ -28,6 +28,6 @@ FROM
 Usuarios_PV
 INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User
 INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal WHERE
-Usuarios_PV.Id_PvUser='".$_SESSION['ControlMaestro']."'";
+Usuarios_PV.Id_PvUser='".$_SESSION['ResponsableDelCedis']."'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);

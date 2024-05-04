@@ -47,3 +47,19 @@ if($_SESSION["AdministradorRH"])	//Condicion admin
 	header("location:https://doctorpez.mx/PuntoDeVenta/RecursosHumanos/");	
 
 }
+if($_SESSION["ResponsableDelCedis"])	//Condicion admin
+{
+	
+
+	header("location:https://doctorpez.mx/PuntoDeVenta/CEDIS/");	
+
+}
+
+if($_SESSION["Inventarios"])	//Condicion admin
+{
+	
+
+	header("location:https://doctorpez.mx/PuntoDeVenta/Inventarios/");	
+
+}
+
