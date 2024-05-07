@@ -75,23 +75,4 @@ while ($r=$query->fetch_object()){
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif;?>
-<script>
-    // Función para calcular la edad
-    function calcularEdad() {
-        // Obtener la fecha de nacimiento del input
-        var fechaNacimiento = new Date(document.getElementById('actfechanac').value);
-        // Obtener la fecha actual
-        var fechaActual = new Date();
-        
-        // Calcular la diferencia en milisegundos
-        var diferencia = fechaActual - fechaNacimiento;
-        
-        // Calcular la edad en años
-        var edad = Math.floor(diferencia / (1000 * 60 * 60 * 24 * 365.25));
-        
-        // Actualizar el valor del input de edad
-        document.getElementById('actedad').value = edad;
-    }
 
- 
-</script>
