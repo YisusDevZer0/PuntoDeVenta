@@ -20,7 +20,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-person-walking-arrow-loop-left"></i>Revaloraciones</a>
-                            <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Especialistas </a>
+                            <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-hospital-user"></i>Especialistas </a>
                            
                         </div>
                     </div>

@@ -6,8 +6,19 @@ include_once "ControladorUsuario.php";
 
 
 
-$sql = "SELECT ID_Data_Paciente,Nombre_Paciente,Edad,Sexo,Telefono,Fecha_Nacimiento
-FROM Data_Pacientes  ORDER BY ID_Data_Paciente DESC";
+$sql = "SELECT dp.ID_Data_Paciente, 
+dp.Nombre_Paciente, 
+dp.Edad, 
+dp.Sexo, 
+dp.Telefono, 
+dp.Fecha_Nacimiento, 
+dp.Fk_Sucursal, 
+dp.SucursalVisita,
+s.ID_Sucursal, 
+s.Nombre_Sucursal
+FROM Data_Pacientes dp
+INNER JOIN Sucursales s ON dp.Fk_Sucursal = s.ID_Sucursal
+ORDER BY dp.ID_Data_Paciente DESC;";
  
 $result = mysqli_query($conn, $sql);
  
@@ -17,6 +28,8 @@ while($fila=$result->fetch_assoc()){
  
  $data[$c]["Folio"] = $fila["ID_Data_Paciente"];
  $data[$c]["Nombre_Paciente"] = $fila["Nombre_Paciente"];
+ $data[$c]["Sucursalderegistro"] = $fila["Nombre_Sucursal"];
+ $data[$c]["SucursalVisita"] = $fila["SucursalVisita"];
 $data[$c]["Edad"] = $fila["Edad"];
  $data[$c]["Sexo"] = $fila["Sexo"];
  $data[$c]["Telefono"] = $fila["Telefono"];

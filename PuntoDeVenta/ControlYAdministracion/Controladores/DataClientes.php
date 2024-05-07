@@ -212,6 +212,8 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
   { mData: 'Folio' },  
   { mData: 'Nombre_Paciente' },
+  { mData: 'Sucursalderegistro' },
+  { mData: 'SucursalVisita' },
   { mData: 'Fecha_Nacimiento' },
        { mData: 'Edad' },
        { mData: 'Sexo' },
@@ -269,11 +271,13 @@ tabla = $('#Clientes').DataTable({
 <thead>
 <th>ID_Cliente</th>
 <th>Nombre_Paciente</th>
+<th>Sucursal donde se registro</th>
+<th>Ultima sucursal visitada</th>
 <th>Fecha_Nacimiento</th>
     <th>Edad</th>
     <th>Sexo</th>
     <th>Telefono</th> 
-
+    <th>Actualizar datos</th> 
 </thead>
 
 </div>
