@@ -50,26 +50,7 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
-<script>
-    // Función para calcular la edad
-    function calcularEdad() {
-        // Obtener la fecha de nacimiento del input
-        var fechaNacimiento = new Date(document.getElementById('actfechanac').value);
-        // Obtener la fecha actual
-        var fechaActual = new Date();
-        
-        // Calcular la diferencia en milisegundos
-        var diferencia = fechaActual - fechaNacimiento;
-        
-        // Calcular la edad en años
-        var edad = Math.floor(diferencia / (1000 * 60 * 60 * 24 * 365.25));
-        
-        // Actualizar el valor del input de edad
-        document.getElementById('actedad').value = edad;
-    }
 
- 
-</script>
 <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
@@ -82,7 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
             
         });
         $('#ModalEdDele').modal('show');
-        calcularEdad();
+       
     });
 
   

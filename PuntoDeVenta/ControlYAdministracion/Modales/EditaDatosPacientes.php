@@ -53,10 +53,10 @@ while ($r=$query->fetch_object()){
 </div></div>
 
 <div class="form-group">
-    <label for="exampleFormControlInput1">Edad <span class="text-danger">*</span></label>
+    <label for="exampleFormControlInput1">Telefono <span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
-  <input type="text" class="form-control "  id="actedad" name="ActEdad" value="<?php echo $Especialistas->Edad; ?>" aria-describedby="basic-addon1" maxlength="60">            
+  <input type="date" class="form-control "  id="acttelefono" name="ActTelefono" value="<?php echo $Especialistas->Fecha_Nacimiento; ?>" aria-describedby="basic-addon1" maxlength="60">            
 </div></div>
 </div>
 
