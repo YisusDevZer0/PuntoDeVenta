@@ -30,10 +30,9 @@ while($fila = $result->fetch_assoc()){
     $data[$c]["Edad"] = $fila["Edad"];
     $data[$c]["Sexo"] = $fila["Sexo"];
     $data[$c]["Telefono"] = $fila["Telefono"];
-    $data[$c]["Fecha_Nacimiento"] = $fila["Fecha_Nacimiento"];
 
     // Aquí agregamos el enlace de eliminar
-    $data[$c]["Actualizar"] = '<td><a data-id="' . $fila["ID_Data_Paciente"] . '" class="btn btn-info btn-sm btn-actualizadata" style="background-color: #ff3131 !important;"><i class="fa-solid fa-trash"></i></a></td>';
+    $data[$c]["Actualizar"] = '<td><a data-id="' . $fila["ID_Data_Paciente"] . '" class="btn btn-info btn-sm btn-actualizadata" style="background-color: #0172b6 !important;"><i class="fa-solid fa-pen-to-square"></i></a></td>';
 
     $c++;
 }
