@@ -214,7 +214,7 @@ tabla = $('#Clientes').DataTable({
   { mData: 'Nombre_Paciente' },
   { mData: 'Sucursalderegistro' },
   { mData: 'SucursalVisita' },
-  { mData: 'Fecha_Nacimiento' },
+
        { mData: 'Edad' },
        { mData: 'Sexo' },
        { mData: 'Telefono' },
