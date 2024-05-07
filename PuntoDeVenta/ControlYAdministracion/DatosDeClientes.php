@@ -54,28 +54,18 @@ include_once "Controladores/ControladorUsuario.php";
 <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-    $(document).on("click", ".btn-edita", function() {
+    $(document).on("click", ".btn-actualizadata", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProveedor.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaDatosPacientes.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Editar servicios");
+            $("#TitulosCajas").html("Actualizando datos del paciente");
             
         });
         $('#ModalEdDele').modal('show');
     });
 
-    // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".btn-elimina", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminarProveedor.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Eliminar servicio");
-           
-        });
-        $('#ModalEdDele').modal('show');
-    });
-
+  
    
 });
 
