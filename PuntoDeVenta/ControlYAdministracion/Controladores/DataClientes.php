@@ -274,7 +274,7 @@ tabla = $('#Clientes').DataTable({
 <th>Nombre_Paciente</th>
 <th>Sucursal donde se registro</th>
 <th>Ultima sucursal visitada</th>
-<th>Fecha_Nacimiento</th>
+
     <th>Edad</th>
     <th>Sexo</th>
     <th>Telefono</th> 
