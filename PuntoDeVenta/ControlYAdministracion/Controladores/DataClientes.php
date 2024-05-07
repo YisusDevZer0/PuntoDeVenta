@@ -218,6 +218,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Edad' },
        { mData: 'Sexo' },
        { mData: 'Telefono' },
+       { mData: 'Actualizar' },
        
       
   
