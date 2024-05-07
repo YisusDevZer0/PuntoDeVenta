@@ -63,6 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
             
         });
         $('#ModalEdDele').modal('show');
+        calcularEdad();
     });
 
   

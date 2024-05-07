@@ -93,8 +93,5 @@ while ($r=$query->fetch_object()){
         document.getElementById('actedad').value = edad;
     }
 
-    // Llamar a la función calcularEdad cada vez que se abra el modal
-    $('#ModalEdDele').on('show.bs.modal', function (e) {
-        calcularEdad();
-    });
+ 
 </script>
