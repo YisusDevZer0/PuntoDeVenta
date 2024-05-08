@@ -250,14 +250,10 @@ include_once "Controladores/ControladorUsuario.php";
   }
 </style>
 
-<!-- Main content -->
-<div class="content">
-
-
-  <div class="container-fluid">
-
-    <div class="row mb-3">
-
+<div class="container-fluid pt-4 px-4">
+    <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4" style="color:#0172b6;">Realizar inventarios para <?php echo $row['Licencia']?></h6>
   
 
           <div class="card-body p-3">
