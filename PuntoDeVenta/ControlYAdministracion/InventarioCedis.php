@@ -47,6 +47,86 @@ include_once "Controladores/ControladorUsuario.php";
 
     
   </style>
+  <style>
+  /* Personalizar el diseño de la paginación con CSS */
+  .dataTables_wrapper .dataTables_paginate {
+    text-align: center !important; /* Centrar los botones de paginación */
+    margin-top: 10px !important;
+  }
+
+  .dataTables_paginate .paginate_button {
+    padding: 5px 10px !important;
+    border: 1px solid #ef7980 !important;
+    margin: 2px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    color: #ef7980 !important;
+    background-color: #fff !important;
+  }
+
+  /* Cambiar el color del paginado seleccionado */
+  .dataTables_paginate .paginate_button.current {
+    background-color: #ef7980 !important;
+    color: #fff !important;
+    border-color: #ef7980 !important;
+  }
+
+  /* Cambiar el color del hover */
+  .dataTables_paginate .paginate_button:hover {
+    background-color: #C80096 !important;
+    color: #fff !important;
+    border-color: #C80096 !important;
+  }
+</style>
+
+<style>
+  /* Estilos personalizados para la tabla */
+  #tablaAgregarArticulos th {
+    font-size: 12px; /* Tamaño de letra para los encabezados */
+    padding: 4px; /* Ajustar el espaciado entre los encabezados */
+    white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
+  }
+</style>
+
+<style>
+  /* Estilos para la tabla */
+  #tablaAgregarArticulos {
+    font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
+    border-collapse: collapse; /* Colapsar los bordes de las celdas */
+    width: 100%;
+    text-align: center; /* Centrar el contenido de las celdas */
+  }
+
+  #tablaAgregarArticulos th {
+    font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
+    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
+    color: white; /* Cambiar el color del texto a blanco para contrastar */
+    padding: 10px; /* Ajustar el espaciado de los encabezados */
+  }
+
+  #tablaAgregarArticulos td {
+    font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
+    padding: 8px; /* Ajustar el espaciado de las celdas */
+    border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
+    color:#000000;
+  }
+
+  /* Estilos para el botón de Excel */
+  .dt-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .dt-buttons button {
+    font-size: 14px;
+    margin: 0 5px;
+    color: white; /* Cambiar el color del texto a blanco */
+    background-color: #fff; /* Cambiar el color de fondo a blanco */
+  }
+
+ 
+</style>
 
         <?php include_once "Menu.php" ?>
 
@@ -330,19 +410,7 @@ include_once "Controladores/ControladorUsuario.php";
               <div class="table-responsive">
                 <div class="col-md-12">
                   <style>
-                    #tablaAgregarArticulos {
-                      width: 100%;
-                      table-layout: fixed;
-                    }
-
-                    #tablaAgregarArticulos td,
-                    #tablaAgregarArticulos th {
-                      white-space: nowrap;
-                      overflow: hidden;
-                      text-overflow: visible;
-
-
-                    }
+                   
 
                     .smaller-button {
                       padding: 0.25rem 0.5rem;
