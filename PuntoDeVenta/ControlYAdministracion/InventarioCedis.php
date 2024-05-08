@@ -879,15 +879,7 @@ include("Modales/ExitoActualiza.php");
 include("footer.php") ?>
 
 
-  <!-- ./wrapper -->
-  <script src="js/ControlDeTicketsVentas.js"></script>
 
-
-
-  <script src="js/FinalizaLasVentas.js"></script>
-  
-  <script src="js/BuscaDataPacientes.js"></script>
-  <script src="js/BusquedaProductos.js"></script>
   <!-- Bootstrap -->
 
 
