@@ -9,6 +9,23 @@ include_once "Controladores/ControladorUsuario.php";
     <meta charset="utf-8">
     <title>Listado de productos en cedis <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <?php
+   include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
+<body>
+    
+        <!-- Spinner End -->
+
+
+        <?php include_once "Menu.php" ?>
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+        <?php include "navbar.php";?>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
  
