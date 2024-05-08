@@ -1,20 +1,5 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
- include "Controladores/ConsultaCaja.php";
-include "Controladores/SumadeFolioTicketsNuevo.php";
-include("Controladores/db_connect.php");
-$primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
-
-
-// Concatenar las primeras 3 letras con el valor de $totalmonto
-$resultado_concatenado = $primeras_tres_letras . $totalmonto;
-
-// Convertir el resultado a mayúsculas
-$resultado_en_mayusculas = strtoupper($resultado_concatenado);
-
-// Imprimir el resultado en mayúsculas
-
-
 
 ?><!DOCTYPE html>
 <html lang="es">
