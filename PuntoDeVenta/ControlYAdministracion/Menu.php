@@ -80,7 +80,7 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historial general </a>
+                            <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historico general </a>
                             <a href="ControlCedis" class="dropdown-item"><i class="fa-solid fa-house-medical"></i>CEDIS </a>
                             <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
                             <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-truck-field"></i>Proveedores </a> 
@@ -110,6 +110,7 @@
                             <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
                             <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
                             <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
+                            <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
                            
                         </div>
                     </div>
