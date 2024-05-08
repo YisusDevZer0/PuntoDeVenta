@@ -22,7 +22,31 @@ include_once "Controladores/ControladorUsuario.php";
 <body>
     
         <!-- Spinner End -->
+        <style>
+    .error {
+      color: red;
+      margin-left: 5px;
 
+    }
+
+    #Tarjeta2 {
+      background-color: #e83e8c !important;
+      color: white;
+    }
+    .btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+    
+  </style>
 
         <?php include_once "Menu.php" ?>
 
