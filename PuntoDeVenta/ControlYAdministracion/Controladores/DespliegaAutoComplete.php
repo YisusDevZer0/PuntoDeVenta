@@ -6,7 +6,7 @@ $term = $_GET['term'];
 
 // Obtén la sucursal de la variable $row['Fk_Sucursal']
 $sucursalbusqueda = $row['Fk_Sucursal'];
-
+ echo "el valor de la sucursal es "; $sucursalbusqueda;
 // Realiza la consulta utilizando el término de búsqueda, la sucursal y DISTINCT
 $query = "SELECT DISTINCT Cod_Barra, Nombre_Prod FROM Stock_POS WHERE (Cod_Barra LIKE '%{$term}%' OR Nombre_Prod LIKE '%{$term}%') AND Fk_Sucursal = '{$sucursalbusqueda}'";
 $result = mysqli_query($conn, $query);
