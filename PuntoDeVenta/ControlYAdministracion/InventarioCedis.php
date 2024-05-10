@@ -702,7 +702,7 @@ include_once "Controladores/ControladorUsuario.php";
   formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Consultas/escaner_articulo.php",
+    url: "Controladores/BusquedaPorEscaner.php",
     type: 'POST',
     data: formData,
     processData: false,
@@ -747,7 +747,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Consultas/autocompletado.php',
+      url: 'Controladores/DespliegaAutoComplete.php',
       type: 'GET',
       dataType: 'json',
       data: {
