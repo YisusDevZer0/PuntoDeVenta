@@ -105,20 +105,20 @@
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Inventarios</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
-                            <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
-                            <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
+                            <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a>
+                            <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
+                            <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a>
                             <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
                            
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Reportes</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree"></i>Reportes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
-                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
+                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
+                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
                             
                            
                         </div>
