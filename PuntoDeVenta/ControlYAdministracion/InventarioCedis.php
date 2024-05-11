@@ -449,6 +449,9 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
                         }
                       </style>
                       <form action="javascript:void(0)" target="print_popup" method="post" id="VentasAlmomento">
+                      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Enviar Información</button>
+    </div>
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
