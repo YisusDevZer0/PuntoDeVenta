@@ -13,7 +13,7 @@ FROM CEDIS
        WHERE Cod_Barra = ? 
        GROUP BY Cod_Barra";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $codigo);
+$stmt->bind_param("ss", $codigo);
 $stmt->execute();
 $result = $stmt->get_result();
 
