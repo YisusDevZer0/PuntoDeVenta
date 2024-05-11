@@ -858,8 +858,7 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
 
 
         tr += '<td  style="visibility:collapse; display:none;" class="ResponsableInventario"> <input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]"readonly value="<?php echo $row['Nombre_Apellidos'] ?>">   </td>';
-         tr += '<td  style="visibility:collapse; display:none;" class="Empresa"> <input hidden type="text" class="form-control " name="Empresa[]"readonly value="Saluda">  </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Fecha"> <input hidden type="text" class="form-control " name="FechaDeVenta[]"readonly value="<?php echo $fechaActual;?>"  </td>';
+        tr += '<td  style="visibility:collapse; display:none;" class="Fecha"> <input hidden type="text" class="form-control " name="FechaDeInventario[]"readonly value="<?php echo $fechaActual;?>"  </td>';
         tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container"></td>';
       
 
@@ -974,7 +973,7 @@ function eliminarFila(element) {
 
 </script>
 
-
+<script src="js/FinalizaInventario.js"></script>
 
 <!-- Control Sidebar -->
 
@@ -989,6 +988,8 @@ include("Modales/Exito.php");
 include("footer.php") ?>
 
 
+
+  
 
   <!-- Bootstrap -->
 
@@ -1023,9 +1024,7 @@ function fechaCastellano($fecha)
 </script>
 
 
-            <?php 
-            
-            include "Footer.php";?>
+           
 </body>
 
 </html>
