@@ -7,13 +7,13 @@ $codigo = $_POST['codigoEscaneado'];
 
 
 // Consultar la base de datos para obtener el artículo correspondiente al código de barras
-$sql = "SELECT Cod_Barra,  GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes,
+$sql = "SELECT Cod_Barra,  GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote_Med) AS lotes,
 GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias)  AS stockactual ,GROUP_CONCAT(Precio_C) as precioscompra
 FROM CEDIS
-       WHERE Cod_Barra = ? 
-       GROUP BY Cod_Barra";
+       WHERE Cod_Barra = ?
+       GROUP BY Cod_Barra;";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("ss", $codigo);
+$stmt->bind_param("s", $codigo);
 $stmt->execute();
 $result = $stmt->get_result();
 
