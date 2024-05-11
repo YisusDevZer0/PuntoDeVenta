@@ -985,11 +985,8 @@ function eliminarFila(element) {
 
 include("Modales/Error.php");
 include("Modales/Exito.php");
-
-
-
-include("footer.php") ?>
-
+            
+include "Footer.php";?>
 
 
   
