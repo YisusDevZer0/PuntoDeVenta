@@ -1,6 +1,6 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-
+$fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'
 ?><!DOCTYPE html>
 <html lang="es">
 
