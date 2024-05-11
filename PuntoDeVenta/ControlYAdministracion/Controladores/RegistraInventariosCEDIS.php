@@ -12,20 +12,18 @@ $valueTypes = '';
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["IdBasedatos"][$i]) || !empty($_POST["CodBarras"][$i]) || !empty($_POST["NombreDelProducto"][$i])) {
         $ProContador++;
-        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?,?)";
+        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?)";
         $values[] = $_POST["IdBasedatos"][$i];
         $values[] = $_POST["CodBarras"][$i];
         $values[] = $_POST["NombreDelProducto"][$i];
-        // Aquí puedes incluir las otras columnas necesarias con sus valores correspondientes
         $values[] = $_POST["Contabilizado"][$i];
         $values[] = $_POST["StockActual"][$i];
         $values[] = $_POST["Diferencia"][$i];
-        $values[] = $_POST["PrecioVenta"][$i];
-        $values[] = $_POST["PrecioCompra"][$i];
-        $values[] = $_POST["PrecioVenta"][$i];
+        $values[] = $_POST["PrecioVenta"][$i]; // Precio de venta
+        $values[] = $_POST["PrecioCompra"][$i]; // Precio de compra
         $values[] = $_POST["AgregoElVendedor"][$i];
         $values[] = $_POST["FechaDeInventario"][$i];
-        $valueTypes .= 'ssssssssss';
+        $valueTypes .= 'ssssssssss'; // Ajustar tipos según corresponda
     }
 }
 
@@ -36,8 +34,10 @@ if ($ProContador != 0) {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
+        // Enlace de parámetros
         mysqli_stmt_bind_param($stmt, $valueTypes, ...$values);
 
+        // Ejecución de consulta
         $resultadocon = mysqli_stmt_execute($stmt);
 
         if ($resultadocon) {
