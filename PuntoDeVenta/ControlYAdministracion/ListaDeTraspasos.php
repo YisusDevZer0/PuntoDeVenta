@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/ControlDeStocks.js"></script>
+<script src="js/ListadoDeTraspasos.js"></script>
 
             <!-- Footer Start -->
             <?php 
