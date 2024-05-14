@@ -51,7 +51,8 @@ include_once "Controladores/ControladorUsuario.php"
                     </div>
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-bar fa-3x text-primary"></i>
+                           
+                            <i class="fa-solid fa-right-left fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Traspasos</p>
                                 <button type="button" class="btn btn-primary" id="openModalBtn">Consultar</button>
