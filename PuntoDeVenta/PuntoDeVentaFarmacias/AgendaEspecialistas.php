@@ -32,9 +32,9 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Revaloraciones de <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4">Consultas con especialistas de <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agendar nueva revaloracion 
+  Agendar nueva cita
 </button> <br>
             <div id="RevaloracionesMedicas"></div>
             </div></div></div></div>

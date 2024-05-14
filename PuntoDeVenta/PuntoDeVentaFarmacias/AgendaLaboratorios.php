@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Fondos de cajas disponibles para  <?php echo $row['Licencia']?></title>
+    <title>Agenda de laboratorios de  <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -32,9 +32,9 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Revaloraciones de <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4">Tomas de laboratorio de <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agendar nueva revaloracion 
+  Agendar nueva cita
 </button> <br>
             <div id="RevaloracionesMedicas"></div>
             </div></div></div></div>
