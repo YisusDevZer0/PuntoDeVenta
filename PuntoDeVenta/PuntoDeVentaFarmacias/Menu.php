@@ -30,7 +30,7 @@
                     </div>
                         
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Agenda</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-regular fa-calendar"></i>Agenda</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-calendar-days"></i>Revaloraciones</a>
                             <a href="AgendaLaboratorios" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Laboratorios</a>
