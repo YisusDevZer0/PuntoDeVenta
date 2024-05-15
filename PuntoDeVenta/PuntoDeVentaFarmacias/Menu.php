@@ -78,7 +78,7 @@
                             <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
                             <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
                             <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>
-                            <a href="IngresoDeMedicamentos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Ingreso de medicamentos</a>
+                            <a href="IngresosDeMedicamentos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Ingreso de medicamentos</a>
                            
                         </div>
                     </div>
