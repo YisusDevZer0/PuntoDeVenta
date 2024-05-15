@@ -14,13 +14,18 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
+                    <a href="index" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
                    
                    
-                    <a href="RegistroDiarioDeEnergia" class="nav-item nav-link "><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
-                    <a href="BitacoraDeLimpieza" class="nav-item nav-link "><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
-                    <a href="ListaDeTareas" class="nav-item nav-link "><i class="fa-solid fa-lightbulb"></i>Lista de tareas</a>
-                    
+                   
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Farmacia</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="AperturarCaja" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
+                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
+                            <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Lista de tareas</a>
+                        </div>
+                    </div>
 
                     
                     <div class="nav-item dropdown">
