@@ -75,9 +75,10 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock</a>
-                            <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
-                            <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
-                            
+                            <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
+                            <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
+                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>
+                            <a href="IngresoDeMedicamentos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Ingreso de medicamentos</a>
                            
                         </div>
                     </div>
