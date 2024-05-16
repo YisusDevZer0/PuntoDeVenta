@@ -75,6 +75,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                             <a href="VentasACredito" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas a credito</a>
+                            <a href="GeneracionEncargos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Generar encargo</a>
                         </div>
                     </div>
 
