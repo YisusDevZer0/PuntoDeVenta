@@ -24,7 +24,7 @@
                             <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
                             <a href="CheckListFarmacia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
                             <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Lista de tareas</a>
-                            <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Crear recordatorios</a>
+                            <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
                         </div>
                     </div>
 
