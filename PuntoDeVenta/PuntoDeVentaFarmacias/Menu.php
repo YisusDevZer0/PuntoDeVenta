@@ -19,7 +19,7 @@
                    
                    
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Farmacia</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
                             <a href="CheckListFarmacia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
