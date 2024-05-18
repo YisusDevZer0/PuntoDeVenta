@@ -210,14 +210,14 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDesgloseRecordatoriosMensajes.php",
  "aoColumns": [
-    { mData: 'NumberTicket' },  
-  { mData: 'FolioSucursal' },  
-  { mData: 'Fecha' },
-  { mData: 'Hora' },
-       { mData: 'Vendedor' },
-       { mData: 'Desglose' },
-       { mData: 'Reimpresion' },
-       { mData: 'EditarData' },
+    { mData: 'Id' },  
+  { mData: 'TipMensaje' },  
+  { mData: 'MensajeRecordatorio' },
+  { mData: 'NombreSucursal' },
+       { mData: 'Estatus' },
+       { mData: 'Editar' },
+       { mData: 'Eliminar' },
+      
       
   
       ],
