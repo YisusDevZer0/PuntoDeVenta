@@ -216,7 +216,6 @@ tabla = $('#Clientes').DataTable({
   { mData: 'NombreSucursal' },
        { mData: 'Estatus' },
        { mData: 'Editar' },
-       { mData: 'Eliminar' },
       
       
   
