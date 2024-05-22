@@ -41,7 +41,7 @@
             function loadMessages() {
                 $.ajax({
                     url: 'Controladores/Mensajes.php',
-                    method: 'GET',
+                    method: 'POST',
                     success: function(data) {
                         const messageDropdown = $('#messageDropdown');
                         messageDropdown.empty();
