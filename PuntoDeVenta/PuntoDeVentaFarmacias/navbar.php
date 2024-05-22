@@ -39,8 +39,8 @@
     <script>
     $(document).ready(function() {
         function loadMessages() {
-            const licencia = 'your_licencia_value';  // Asigna aquí el valor correcto de la licencia
-            const Fk_Sucursal = 'your_sucursal_value';  // Asigna aquí el valor correcto de la sucursal
+            const licencia = '<?php echo $licencia; ?>';
+            const Fk_Sucursal = '<?php echo $Fk_Sucursal; ?>';
 
             $.ajax({
                 url: 'Controladores/Mensajes.php',
