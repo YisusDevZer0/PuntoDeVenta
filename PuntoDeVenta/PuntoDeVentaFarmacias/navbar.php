@@ -9,6 +9,7 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form> -->
                 <div class="navbar-nav align-items-center ms-auto">
+                <div class="navbar-nav align-items-center ms-auto">
         <div class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <i class="fa fa-envelope me-lg-2"></i>
@@ -38,12 +39,8 @@
     <script>
         $(document).ready(function() {
             function loadMessages() {
-                // Ajusta los valores de licencia y Fk_Sucursal según tu lógica
-                const licencia = 'your_licencia_value';
-                const Fk_Sucursal = 'your_sucursal_value';
-
                 $.ajax({
-                    url: `Controladores/Mensajes.php?licencia=${licencia}&Fk_Sucursal=${Fk_Sucursal}`,
+                    url: 'api/messages.php',
                     method: 'GET',
                     success: function(data) {
                         const messageDropdown = $('#messageDropdown');
