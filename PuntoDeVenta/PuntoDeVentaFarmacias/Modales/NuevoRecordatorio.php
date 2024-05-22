@@ -34,8 +34,7 @@
             });
         });
     </script>
-</head>
-<body>
+
     <div class="container mt-5">
         <div class="mb-3">
             <label for="tipouser" class="form-label">Tipo</label>
