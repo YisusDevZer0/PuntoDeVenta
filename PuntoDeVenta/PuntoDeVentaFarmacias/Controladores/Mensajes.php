@@ -2,9 +2,9 @@
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
-// Obtener el valor de la licencia y la sucursal de algún lugar, como la sesión o una petición
-$licencia = isset($_GET['licencia']) ? $_GET['licencia'] : '';
-$Fk_Sucursal = isset($_GET['Fk_Sucursal']) ? $_GET['Fk_Sucursal'] : '';
+// Obtener el valor de la licencia y la sucursal de la petición POST
+$licencia = isset($_POST['licencia']) ? $_POST['licencia'] : '';
+$Fk_Sucursal = isset($_POST['Fk_Sucursal']) ? $_POST['Fk_Sucursal'] : '';
 
 // Verificar que los valores no estén vacíos
 if (empty($licencia) || empty($Fk_Sucursal)) {

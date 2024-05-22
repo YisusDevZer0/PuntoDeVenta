@@ -37,45 +37,52 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            function loadMessages() {
-                $.ajax({
-                    url: 'Controladores/Mensajes.php',
-                    method: 'POST',
-                    success: function(data) {
-                        const messageDropdown = $('#messageDropdown');
-                        messageDropdown.empty();
+    $(document).ready(function() {
+        function loadMessages() {
+            const licencia = 'your_licencia_value';  // Asigna aquí el valor correcto de la licencia
+            const Fk_Sucursal = 'your_sucursal_value';  // Asigna aquí el valor correcto de la sucursal
 
-                        if (data.length > 0) {
-                            data.forEach(message => {
-                                messageDropdown.append(`
-                                    <a href="#" class="dropdown-item">
-                                        <div class="d-flex align-items-center">
-                                            <img class="rounded-circle" src="${message.avatar || 'default_avatar_path.jpg'}" alt="" style="width: 40px; height: 40px;">
-                                            <div class="ms-2">
-                                                <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
-                                                <small>${message.Registrado}</small>
-                                            </div>
+            $.ajax({
+                url: 'Controladores/Mensajes.php',
+                method: 'POST',
+                data: { 
+                    licencia: licencia,
+                    Fk_Sucursal: Fk_Sucursal
+                },
+                success: function(data) {
+                    const messageDropdown = $('#messageDropdown');
+                    messageDropdown.empty();
+
+                    if (data.length > 0) {
+                        data.forEach(message => {
+                            messageDropdown.append(`
+                                <a href="#" class="dropdown-item">
+                                    <div class="d-flex align-items-center">
+                                        <img class="rounded-circle" src="${message.avatar || 'default_avatar_path.jpg'}" alt="" style="width: 40px; height: 40px;">
+                                        <div class="ms-2">
+                                            <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
+                                            <small>${message.Registrado}</small>
                                         </div>
-                                    </a>
-                                    <hr class="dropdown-divider">
-                                `);
-                            });
-                            messageDropdown.append(`<a href="#" class="dropdown-item text-center">See all messages</a>`);
+                                    </div>
+                                </a>
+                                <hr class="dropdown-divider">
+                            `);
+                        });
+                        messageDropdown.append(`<a href="#" class="dropdown-item text-center">See all messages</a>`);
 
-                            // Show toast notification
-                            const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
-                            toastElement.show();
-                        } else {
-                            messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
-                        }
+                        // Show toast notification
+                        const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
+                        toastElement.show();
+                    } else {
+                        messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
                     }
-                });
-            }
+                }
+            });
+        }
 
-            loadMessages();
-        });
-    </script>
+        loadMessages();
+    });
+</script>
 
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
