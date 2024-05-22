@@ -40,7 +40,7 @@
         $(document).ready(function() {
             function loadMessages() {
                 $.ajax({
-                    url: 'api/messages.php',
+                    url: 'Controladores/Mensajes.php',
                     method: 'GET',
                     success: function(data) {
                         const messageDropdown = $('#messageDropdown');
