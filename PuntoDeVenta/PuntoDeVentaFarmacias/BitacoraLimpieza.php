@@ -45,6 +45,9 @@ include_once "Controladores/ControladorUsuario.php";
             <tr>
                 <th>Actividad</th>
                 <th>Dato</th>
+                <th>Dato</th>
+                <th>Dato</th>
+                <th>Dato</th>
             </tr>
         </thead>
         <tbody>
