@@ -40,69 +40,41 @@ include_once "Controladores/ControladorUsuario.php";
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosMensajes">
   Crear nuevo mensaje o recordatorio
 </button> <br>
-<style>
-        table.dataTable tbody th, table.dataTable tbody td {
-            padding: 8px 10px; /* Adjust the padding as needed */
-        }
-        th.rotate {
-            height: 140px;
-            white-space: nowrap;
-        }
-        th.rotate > div {
-            transform: 
-                translate(10px, 51px)
-                rotate(315deg);
-            width: 30px;
-        }
-    </style>
-</head>
-<body>
-    <table id="example" class="display" style="width:100%">
+<table id="example" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>Field</th>
-                <!-- Dynamic headers will be appended here -->
+                <th>Actividad</th>
+                <th>Dato</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Data will be injected here by JavaScript -->
+            <tr>
+                <th>Actividad 1</th>
+                <td>x</td>
+                <td>x</td>
+                <td>x</td>
+                <td>x</td>
+            </tr>
+            <tr>
+                <th>Actividad 2</th>
+                <td></td>
+                <td>x</td>
+                <td>x</td>
+                <td>x</td>
+            </tr>
+            <tr>
+                <th>Actividad 3</th>
+                <td></td>
+                <td></td>
+                <td>x</td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 
     <script>
         $(document).ready(function() {
-            // Example data: replace this with your actual data
-            const originalData = [
-                { "name": "John", "age": 28, "position": "Developer" },
-                { "name": "Jane", "age": 32, "position": "Designer" },
-                { "name": "Smith", "age": 36, "position": "Manager" }
-            ];
-
-            const fields = Object.keys(originalData[0]);
-            const tableHead = $('#example thead tr');
-            const tableBody = $('#example tbody');
-
-            // Create table headers dynamically
-            originalData.forEach((item, index) => {
-                tableHead.append(`<th class="rotate"><div><span>Row ${index + 1}</span></div></th>`);
-            });
-
-            // Transpose the data and generate the HTML for the table body
-            fields.forEach(field => {
-                let rowHtml = `<tr><th>${field}</th>`;
-                originalData.forEach(item => {
-                    rowHtml += `<td>${item[field]}</td>`;
-                });
-                rowHtml += '</tr>';
-                tableBody.append(rowHtml);
-            });
-
-            // Initialize DataTables
-            $('#example').DataTable({
-                "paging": false,
-                "info": false,
-                "searching": false
-            });
+            $('#example').DataTable();
         });
     </script>
             <!-- Footer Start -->
