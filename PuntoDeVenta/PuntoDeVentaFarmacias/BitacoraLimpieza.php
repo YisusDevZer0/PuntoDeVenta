@@ -40,10 +40,54 @@ include_once "Controladores/ControladorUsuario.php";
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosMensajes">
   Crear nuevo mensaje o recordatorio
 </button> <br>
-<div id="Cajas"></div>
-            </div></div></div></div>
-            </div>
-            <script src="js/Recordatorios_mensajes.js"></script>
+<table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be injected here by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            // Example data: replace this with your actual data
+            const originalData = [
+                { "name": "John", "age": 28, "position": "Developer" },
+                { "name": "Jane", "age": 32, "position": "Designer" },
+                { "name": "Smith", "age": 36, "position": "Manager" }
+            ];
+
+            // Transpose the data
+            const transposedData = [];
+            const fields = Object.keys(originalData[0]);
+
+            fields.forEach(field => {
+                const row = { "Field": field };
+                originalData.forEach((item, index) => {
+                    row[`Value ${index + 1}`] = item[field];
+                });
+                transposedData.push(row);
+            });
+
+            // Generate the HTML for the table
+            const tableBody = $('#example tbody');
+            transposedData.forEach(row => {
+                let rowHtml = '<tr>';
+                for (const key in row) {
+                    rowHtml += `<td>${row[key]}</td>`;
+                }
+                rowHtml += '</tr>';
+                tableBody.append(rowHtml);
+            });
+
+            // Initialize DataTables
+            $('#example').DataTable();
+        });
+    </script>
          
             <!-- Footer Start -->
             <?php 
