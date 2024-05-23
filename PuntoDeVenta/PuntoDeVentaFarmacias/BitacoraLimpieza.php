@@ -78,8 +78,8 @@ include_once "Controladores/ControladorUsuario.php";
     <script>
         $(document).ready(function() {
             $('#example').DataTable({
-                "paging": false, // Desactivar la paginación
-                "searching": false, // Desactivar la búsqueda
+                "paging": true, // Desactivar la paginación
+                "searching": true, // Desactivar la búsqueda
                 "info": false // Desactivar la información del pie de página
             });
         });
