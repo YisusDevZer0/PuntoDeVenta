@@ -49,21 +49,21 @@ include_once "Controladores/ControladorUsuario.php";
         </thead>
         <tbody>
             <tr>
-                <th>Actividad 1</th>
+                <td>Actividad 1</td>
                 <td>x</td>
                 <td>x</td>
                 <td>x</td>
                 <td>x</td>
             </tr>
             <tr>
-                <th>Actividad 2</th>
+                <td>Actividad 2</td>
                 <td></td>
                 <td>x</td>
                 <td>x</td>
                 <td>x</td>
             </tr>
             <tr>
-                <th>Actividad 3</th>
+                <td>Actividad 3</td>
                 <td></td>
                 <td></td>
                 <td>x</td>
@@ -74,7 +74,11 @@ include_once "Controladores/ControladorUsuario.php";
 
     <script>
         $(document).ready(function() {
-            $('#example').DataTable();
+            $('#example').DataTable({
+                "paging": false, // Desactivar la paginación
+                "searching": false, // Desactivar la búsqueda
+                "info": false // Desactivar la información del pie de página
+            });
         });
     </script>
             <!-- Footer Start -->
