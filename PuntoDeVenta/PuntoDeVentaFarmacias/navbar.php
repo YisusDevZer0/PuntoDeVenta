@@ -15,15 +15,16 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 </form> -->
                 <div class="navbar-nav align-items-center ms-auto">
                 <div class="navbar-nav align-items-center ms-auto">
-        <div class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="fa fa-envelope me-lg-2"></i>
-                <span class="d-none d-lg-inline-flex">Mensajes</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
-                <!-- Mensajes se agregarán dinámicamente aquí -->
-            </div>
-        </div>
+                <div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
+        <span class="d-none d-lg-inline-flex">Mensajes</span>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="messageBadge">!</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
+        <!-- Mensajes se agregarán dinámicamente aquí -->
+    </div>
+</div>
     </div>
 
     <!-- Toast Notification -->
@@ -56,9 +57,12 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 },
                 success: function(data) {
                     const messageDropdown = $('#messageDropdown');
+                    const messageBadge = $('#messageBadge');
                     messageDropdown.empty();
 
                     if (data.length > 0) {
+                        messageBadge.removeClass('d-none');
+
                         data.forEach(message => {
                             messageDropdown.append(`
                                 <a href="#" class="dropdown-item">
@@ -79,6 +83,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                         const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
                         toastElement.show();
                     } else {
+                        messageBadge.addClass('d-none');
                         messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
                     }
                 }
