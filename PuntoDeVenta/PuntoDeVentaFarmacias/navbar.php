@@ -19,7 +19,6 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
         <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
         <span class="d-none d-lg-inline-flex">Mensajes</span>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="messageBadge" style="transform: translate(-50%, -50%);">!</span>
     </a>
     <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
         <!-- Mensajes se agregarán dinámicamente aquí -->
@@ -57,11 +56,12 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 },
                 success: function(data) {
                     const messageDropdown = $('#messageDropdown');
-                    const messageBadge = $('#messageBadge');
+                    const messageIcon = $('#messageIcon');
                     messageDropdown.empty();
 
                     if (data.length > 0) {
-                        messageBadge.removeClass('d-none');
+                        // Añadir animación al icono de mensajes
+                        messageIcon.addClass('animate__animated animate__heartBeat');
 
                         data.forEach(message => {
                             messageDropdown.append(`
@@ -83,7 +83,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                         const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
                         toastElement.show();
                     } else {
-                        messageBadge.addClass('d-none');
+                        messageIcon.removeClass('animate__animated animate__heartBeat');
                         messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
                     }
                 }
