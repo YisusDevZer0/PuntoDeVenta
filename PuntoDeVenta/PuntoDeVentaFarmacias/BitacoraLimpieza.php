@@ -40,11 +40,28 @@ include_once "Controladores/ControladorUsuario.php";
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosMensajes">
   Crear nuevo mensaje o recordatorio
 </button> <br>
-<table id="example" class="display" style="width:100%">
+<style>
+        table.dataTable tbody th, table.dataTable tbody td {
+            padding: 8px 10px; /* Adjust the padding as needed */
+        }
+        th.rotate {
+            height: 140px;
+            white-space: nowrap;
+        }
+        th.rotate > div {
+            transform: 
+                translate(10px, 51px)
+                rotate(315deg);
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+    <table id="example" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>Field</th>
-                <th>Value</th>
+                <!-- Dynamic headers will be appended here -->
             </tr>
         </thead>
         <tbody>
@@ -61,34 +78,33 @@ include_once "Controladores/ControladorUsuario.php";
                 { "name": "Smith", "age": 36, "position": "Manager" }
             ];
 
-            // Transpose the data
-            const transposedData = [];
             const fields = Object.keys(originalData[0]);
+            const tableHead = $('#example thead tr');
+            const tableBody = $('#example tbody');
 
-            fields.forEach(field => {
-                const row = { "Field": field };
-                originalData.forEach((item, index) => {
-                    row[`Value ${index + 1}`] = item[field];
-                });
-                transposedData.push(row);
+            // Create table headers dynamically
+            originalData.forEach((item, index) => {
+                tableHead.append(`<th class="rotate"><div><span>Row ${index + 1}</span></div></th>`);
             });
 
-            // Generate the HTML for the table
-            const tableBody = $('#example tbody');
-            transposedData.forEach(row => {
-                let rowHtml = '<tr>';
-                for (const key in row) {
-                    rowHtml += `<td>${row[key]}</td>`;
-                }
+            // Transpose the data and generate the HTML for the table body
+            fields.forEach(field => {
+                let rowHtml = `<tr><th>${field}</th>`;
+                originalData.forEach(item => {
+                    rowHtml += `<td>${item[field]}</td>`;
+                });
                 rowHtml += '</tr>';
                 tableBody.append(rowHtml);
             });
 
             // Initialize DataTables
-            $('#example').DataTable();
+            $('#example').DataTable({
+                "paging": false,
+                "info": false,
+                "searching": false
+            });
         });
     </script>
-         
             <!-- Footer Start -->
             <?php 
           
