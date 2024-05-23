@@ -16,14 +16,17 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 <div class="navbar-nav align-items-center ms-auto">
                 <div class="navbar-nav align-items-center ms-auto">
                 <div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-        <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
-        <span class="d-none d-lg-inline-flex">Mensajes</span>
-    </a>
-    <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
-        <!-- Mensajes se agregarán dinámicamente aquí -->
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
+            <span class="d-none d-lg-inline-flex">Mensajes</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
+            <!-- Mensajes se agregarán dinámicamente aquí -->
+        </div>
     </div>
-</div>
+    
+    <!-- Audio element -->
+    <audio id="notificationSound" src="audio/notification.mp3" preload="auto"></audio>
     </div>
 
     <!-- Toast Notification -->
@@ -42,57 +45,61 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
     </div>
 
     <script>
-    $(document).ready(function() {
-        function loadMessages() {
-            const licencia = "<?php echo $Licencia; ?>";
-            const Fk_Sucursal = "<?php echo $Fk_Sucursal; ?>";
+        $(document).ready(function() {
+            function loadMessages() {
+                const licencia = "<?php echo $Licencia; ?>";
+                const Fk_Sucursal = "<?php echo $Fk_Sucursal; ?>";
 
-            $.ajax({
-                url: 'Controladores/Mensajes.php',
-                method: 'POST',
-                data: { 
-                    licencia: licencia,
-                    Fk_Sucursal: Fk_Sucursal
-                },
-                success: function(data) {
-                    const messageDropdown = $('#messageDropdown');
-                    const messageIcon = $('#messageIcon');
-                    messageDropdown.empty();
+                $.ajax({
+                    url: 'Controladores/Mensajes.php',
+                    method: 'POST',
+                    data: { 
+                        licencia: licencia,
+                        Fk_Sucursal: Fk_Sucursal
+                    },
+                    success: function(data) {
+                        const messageDropdown = $('#messageDropdown');
+                        const messageIcon = $('#messageIcon');
+                        const notificationSound = $('#notificationSound')[0];
+                        messageDropdown.empty();
 
-                    if (data.length > 0) {
-                        // Añadir animación al icono de mensajes
-                        messageIcon.addClass('animate__animated animate__heartBeat');
+                        if (data.length > 0) {
+                            // Añadir animación al icono de mensajes
+                            messageIcon.addClass('animate__animated animate__heartBeat');
 
-                        data.forEach(message => {
-                            messageDropdown.append(`
-                                <a href="#" class="dropdown-item">
-                                    <div class="d-flex align-items-center">
-                                        <img class="rounded-circle" src="${message.avatar || 'default_avatar_path.jpg'}" alt="" style="width: 40px; height: 40px;">
-                                        <div class="ms-2">
-                                            <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
-                                            <small>${message.Registrado}</small>
+                            // Reproducir sonido de notificación
+                            notificationSound.play();
+
+                            data.forEach(message => {
+                                messageDropdown.append(`
+                                    <a href="#" class="dropdown-item">
+                                        <div class="d-flex align-items-center">
+                                            <img class="rounded-circle" src="${message.avatar || 'default_avatar_path.jpg'}" alt="" style="width: 40px; height: 40px;">
+                                            <div class="ms-2">
+                                                <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
+                                                <small>${message.Registrado}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
-                                <hr class="dropdown-divider">
-                            `);
-                        });
-                        messageDropdown.append(`<a href="#" class="dropdown-item text-center">See all messages</a>`);
+                                    </a>
+                                    <hr class="dropdown-divider">
+                                `);
+                            });
+                            messageDropdown.append(`<a href="#" class="dropdown-item text-center">See all messages</a>`);
 
-                        // Show toast notification
-                        const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
-                        toastElement.show();
-                    } else {
-                        messageIcon.removeClass('animate__animated animate__heartBeat');
-                        messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
+                            // Show toast notification
+                            const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
+                            toastElement.show();
+                        } else {
+                            messageIcon.removeClass('animate__animated animate__heartBeat');
+                            messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
 
-        loadMessages();
-    });
-</script>
+            loadMessages();
+        });
+    </script>
 
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
