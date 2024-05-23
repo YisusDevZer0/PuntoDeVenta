@@ -19,7 +19,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
         <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
         <span class="d-none d-lg-inline-flex">Mensajes</span>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="messageBadge">!</span>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="messageBadge" style="transform: translate(-50%, -50%);">!</span>
     </a>
     <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
         <!-- Mensajes se agregarán dinámicamente aquí -->
