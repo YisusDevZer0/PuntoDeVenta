@@ -30,7 +30,7 @@ FROM
     Recordatorios_Pendientes RP
 JOIN 
     Sucursales S ON RP.Sucursal = S.ID_Sucursal 
-AND RP.Licencia = ? AND RP.Sucursal = ?
+AND RP.Licencia = ? AND RP.Sucursal = ? AND RP.TipoMensaje='Mensaje'
 ORDER BY RP.Registrado DESC
 LIMIT 3";
 
