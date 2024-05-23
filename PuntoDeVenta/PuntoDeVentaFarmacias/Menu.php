@@ -22,8 +22,9 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
-                            <a href="CheckListFarmacia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
+                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Bitacora de limpieza</a>
                             <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Lista de tareas</a>
+                            <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Mensajes</a>
                             <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
                         </div>
                     </div>
