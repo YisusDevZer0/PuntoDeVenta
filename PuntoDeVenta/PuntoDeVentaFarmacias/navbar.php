@@ -26,7 +26,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
     </div>
     
     <!-- Audio element -->
-    <audio id="notificationSound" src="audio/notification.mp3" preload="auto"></audio>
+    <audio id="notificationSound" src="Audio/NuevoMensaje.mp3" preload="auto"></audio>
     </div>
 
     <!-- Toast Notification -->
