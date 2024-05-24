@@ -35,8 +35,11 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Registros de energia diario de <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Registros de energía diario de <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
+            <button type="button"  class="btn btn-success" data-toggle="modal" data-target="#RegistroEnergiaVentanaModal" class="btn btn-default">
+ Registrar informacion de energia electrica <i class="fas fa-lightbulb"></i>
+</button>
         <br>
 <div id="Cajas"></div>
             </div></div></div></div>
@@ -45,7 +48,7 @@ include_once "Controladores/ControladorUsuario.php";
          
             <!-- Footer Start -->
             <?php 
-          
+           include "Modales/RegistroEnergiaModal.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
