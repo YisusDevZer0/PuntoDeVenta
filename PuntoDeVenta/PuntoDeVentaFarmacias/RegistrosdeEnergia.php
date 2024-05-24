@@ -48,7 +48,7 @@ include_once "Controladores/ControladorUsuario.php";
          
             <!-- Footer Start -->
             <?php 
-           include "Modales/RegistroEnergiaModal.php";
+           include "Modales/RegistroDeEnergia.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
