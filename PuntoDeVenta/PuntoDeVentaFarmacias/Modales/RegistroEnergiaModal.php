@@ -64,9 +64,9 @@
     
     
      
-    <input type="text" class="form-control" name="Registro" id="registro" hidden value="<?echo $row['Nombre_Apellidos']?>"  readonly >
+    <input type="text" class="form-control" name="Registro" id="registro" hidden value="<?php echo $row['Nombre_Apellidos']?>"  readonly >
   
-    <input type="text" class="form-control" name="Sucursal" id="sucursal"  hidden value="<?echo $row['Nombre_Sucursal']?>"   readonly >
+    <input type="text" class="form-control" name="Sucursal" id="sucursal"  hidden value="<?php echo $row['Nombre_Sucursal']?>"   readonly >
     <input type="text" class="form-control" name="Empresa" id="Empresa" hidden value="Doctor Consulta"   readonly >
     <div class="text-center">
 <button type="submit"  name="submit_AgeExt" id="submit_AgeExt"  class="btn btn-success">Confirmar datos <i class="fas fa-user-check"></i></button>
