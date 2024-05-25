@@ -838,7 +838,6 @@ $(document).on('change', '.cantidad-vendida-input', function() {
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
 tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" style="font-size: 0.75rem !important;" type="date" name="FechaCaducidad[]" value="' + articulo.fechacaducidad + '" /></td>';
-tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="number" name="Diferencia[]" /></td>';
 
         tr += '<td  style="visibility:collapse; display:none;class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="' + articulo.precio + '"  /></td>';
         tr += '<td  style="visibility:collapse; display:none;class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" type="number"  name="PrecioCompra[]" value="' + articulo.preciocompra + '"  /></td>';
