@@ -74,12 +74,7 @@ while ($fila = $result->fetch_assoc()) {
         "Telefono" => $fila["Telefono"],
         "Fecha_Apertura" => $fila["Fecha_Apertura"],
         "Fecha_Termino" => $fila["Fecha_Termino"],
-        "Fk_Sucursal" => $fila["Fk_Sucursal"],
         "Nombre_Sucursal" => $fila["Nombre_Sucursal"],
-        "Agrega" => $fila["Agrega"],
-        "AgregadoEl" => $fila["AgregadoEl"],
-        "Sistema" => $fila["Sistema"],
-        "Licencia" => $fila["Licencia"],
         "Saldo" => $fila["Saldo"]
     ];
 }
