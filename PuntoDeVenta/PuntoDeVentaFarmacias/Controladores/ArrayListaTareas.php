@@ -70,7 +70,7 @@ while ($fila = $result->fetch_assoc()) {
         "MensajeRecordatorio" => $fila["Descripcion"],
         "NombreSucursal" => $fila["Nombre_Sucursal"],
         "Estatus" => $fila["Estado"],
-        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Tarea"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        "Editar" => '<td><a data-id="' . $fila["ID_Tarea"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
     ];
 }
 

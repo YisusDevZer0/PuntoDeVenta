@@ -35,7 +35,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="AperturarCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Apertura de caja</a>
                             <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
-                            <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
+                            <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-print"></i>Reimpresion de corte</a>
                         </div>
                     </div>
                         
