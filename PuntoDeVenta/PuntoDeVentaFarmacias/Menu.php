@@ -53,7 +53,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-people-group"></i>Lista de clientes</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-regular fa-credit-card"></i>Creditos </a>
+                            <a href="Creditos" class="dropdown-item"><i class="fa-regular fa-credit-card"></i>Creditos </a>
                            
                         </div>
                     </div>
