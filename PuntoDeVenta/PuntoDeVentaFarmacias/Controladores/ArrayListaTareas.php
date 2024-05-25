@@ -26,8 +26,8 @@ TareasPorHacer t
 JOIN 
 Sucursales s ON t.Sucursal = s.ID_Sucursal
 WHERE 
-t.Licencia = ? 
-AND t.Sucursal = ?" ;// Ajuste de la condición WHERE
+t.Licencia = 'Doctor Pez' 
+AND t.Sucursal = 1;" ;// Ajuste de la condición WHERE
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
