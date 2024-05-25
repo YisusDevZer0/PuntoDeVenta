@@ -354,11 +354,15 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
                         <div class="col">
 
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal</label>
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Proveedor</label>
                           <div class="input-group mb-3">
                             <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="CEDIS">
+                            <select class="form-control" style="font-size: 0.75rem !important;">
+                            <option value="">Proveedor</option>
+                  <option value="Levic">Levic</option>
+              <option value="Nadro">Nadro</option>
+                
                            
                           </div>
                         </div>
@@ -373,6 +377,16 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
                            
                           </div>
                         </div>
+                        <div class="col">
+
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Factura</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control " style="font-size: 0.75rem !important;" >
+ 
+</div>
+</div>
                         <div class="col">
 
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Tipo de ajuste</label>
