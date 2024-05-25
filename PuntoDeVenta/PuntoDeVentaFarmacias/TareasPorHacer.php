@@ -41,7 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
 <div id="Cajas"></div>
             </div></div></div></div>
             </div>
-            <script src="js/RegistrosDeEnergia.js"></script>
+            <script src="js/RegistrosDeTareasPorHacer.js"></script>
          
             <!-- Footer Start -->
             <?php 
