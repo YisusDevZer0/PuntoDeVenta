@@ -7,7 +7,7 @@ $codigo = $_POST['codigoEscaneado'];
 
 
 // Consultar la base de datos para obtener el artículo correspondiente al código de barras
-$sql = "SELECT Cod_Barra,  GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote_Med) AS lotes,
+$sql = "SELECT Cod_Barra, Fecha_Caducidad, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote_Med) AS lotes,
 GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias)  AS stockactual ,GROUP_CONCAT(Precio_C) as precioscompra
 FROM CEDIS
        WHERE Cod_Barra = ?
@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
     $descripciones = explode(',', $row['descripciones']);
     $precios = explode(',', $row['precios']);
     $precioscompra = explode(',', $row['precioscompra']);
-    $stockactual = explode(',', $row['stockactual']);
+    $fechacaducidad = explode(',', $row['Fecha_Caducidad']);
     $lotes = explode(',', $row['lotes']);
     $claves = explode(',', $row['claves']);
     $tipos = explode(',', $row['tipos']);
@@ -35,7 +35,7 @@ if ($result->num_rows > 0) {
         "codigo" => $row["Cod_Barra"],
         "descripcion" => $descripciones[0],
         "cantidad" => [1],
-        "existencia" => $stockactual[0],
+        "existencia" => $fechacaducidad[0],
         "precio" => $precios[0],
         "preciocompra" => $precioscompra[0],
         "lote" => $lotes[0],
