@@ -1,7 +1,7 @@
 function CargaFCajas(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CreditosActivos.php","",function(data){
+    $.Post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/CreditosActivos.php","",function(data){
       $("#FCajas").html(data);
     })
   
