@@ -18,7 +18,7 @@ t.Sucursal,
 t.Licencia, 
 s.Nombre_Sucursal, 
 CASE 
-    WHEN t.Estado = 0 THEN '<span style='color: red;'>Sin realizar</span>'
+    WHEN t.Estado = 0 THEN 'Sin realizar'
     ELSE 'Completado'
 END AS Estado
 FROM 
