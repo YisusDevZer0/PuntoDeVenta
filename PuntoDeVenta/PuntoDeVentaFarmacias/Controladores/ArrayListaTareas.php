@@ -20,13 +20,14 @@ s.Nombre_Sucursal,
 CASE 
     WHEN t.Estado = 0 THEN '<span style='color: red;'>Sin realizar</span>'
     ELSE 'Completado'
-END AS Estado,
-t.Licencia
+END AS Estado
 FROM 
 TareasPorHacer t
 JOIN 
-Sucursales s ON t.Sucursal = s.ID_Sucursal;
-AND t.Licencia = ? AND t.Sucursal = ?"; // Ajuste de la condición WHERE
+Sucursales s ON t.Sucursal = s.ID_Sucursal
+WHERE 
+t.Licencia = ? 
+AND t.Sucursal = ?" ;// Ajuste de la condición WHERE
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
