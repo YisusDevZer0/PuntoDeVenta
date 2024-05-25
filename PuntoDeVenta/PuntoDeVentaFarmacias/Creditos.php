@@ -40,7 +40,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
             <script src="js/AsignaFondo.js"></script>
-<script src="js/ControlCreditos.js"></script>
+<script src="js/ControlCreditoss.js"></script>
 <script>
     $(document).ready(function() {
     $.getJSON('Controladores/SelectSucursales.php', function(data) {
