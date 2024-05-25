@@ -178,7 +178,7 @@ tabla = $('#Productos').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayRevaloraciones.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayRevaloraciones.php",
  "aoColumns": [
     { mData: 'IdbD' },
        { mData: 'Cod_Barra' },
