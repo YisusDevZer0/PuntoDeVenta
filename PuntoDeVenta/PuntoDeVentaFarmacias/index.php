@@ -60,12 +60,21 @@ include_once "Controladores/ControladorUsuario.php"
                         </div>
                     </div>
                    
-                    
+                    <div class="container-fluid pt-4 px-8">
+    <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4" style="color:#0172b6;">Mensajes o recordatorios de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
+            <div class="text-center">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosMensajes">
+  Crear nuevo mensaje o recordatorio
+</button> <br>
+<div id="Cajas"></div>
+            </div></div></div></div>
                 </div>
             </div>
             <!-- Sale & Revenue End -->
 
-
+            <script src="js/Recordatorios_mensajes.js"></script>
        
 
 
