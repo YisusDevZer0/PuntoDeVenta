@@ -67,8 +67,6 @@ include_once "Controladores/ControladorUsuario.php"
             <div class="text-center">
             
 <div id="Cajas"></div>
-            </div></div></div></div>
-                </div>
             </div>
             <!-- Sale & Revenue End -->
 
