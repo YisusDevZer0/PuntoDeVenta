@@ -126,14 +126,21 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 });
 
 $(document).on("click", ".btn-realizaCorte", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Realizar corte de caja");
-           
-        });
-        $('#ModalEdDele').modal('show');
+    var id = $(this).data("id");
+    var fk_sucursal = $(this).data("sucursal");
+    var id_h_o_d = $(this).data("hod");
+
+    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", 
+    { 
+        id: id, 
+        fk_sucursal: fk_sucursal, 
+        id_h_o_d: id_h_o_d 
+    }, function(data) {
+        $("#FormCajas").html(data);
+        $("#TitulosCajas").html("Realizar corte de caja");
     });
+    $('#ModalEdDele').modal('show');
+});
 
 
 
