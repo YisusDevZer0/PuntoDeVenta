@@ -71,6 +71,97 @@ if ($query->num_rows > 0) {
         break;
     }
 }
+// Consulta 4: Total de dentales créditos
+$sql4 = "SELECT Identificador_tipo, Fk_Caja, SUM(Importe) as totaldentalescreditos 
+         FROM Ventas_POS 
+         WHERE Identificador_tipo='Cr&eacute;ditos' 
+         AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql4);
+$Especialistas4 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas4 = $r;
+        break;
+    }
+}
+
+// Consulta 6: Total de venta por crédito en enfermería
+$sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCredito 
+         FROM Ventas_POS 
+         WHERE FormaDePago = 'Crédito Enfermería' 
+         AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
+         AND ID_H_O_D = '".$row['ID_H_O_D']."' 
+         AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql6);
+$Especialistas6 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas6 = $r;
+        break;
+    }
+}
+
+// Consulta 7: Total de venta por crédito en limpieza
+$sql7 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoLimpieza 
+         FROM Ventas_POS 
+         WHERE FormaDePago = 'Crédito Limpieza' 
+         AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
+         AND ID_H_O_D = '".$row['ID_H_O_D']."' 
+         AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql7);
+$Especialistas7 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas7 = $r;
+        break;
+    }
+}
+
+// Consulta 11: Total de venta por crédito farmacéutico
+$sql11 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoFarmaceutico 
+          FROM Ventas_POS 
+          WHERE FormaDePago = 'Crédito Farmacéutico' 
+          AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
+          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
+          AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql11);
+$Especialistas11 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas11 = $r;
+        break;
+    }
+}
+
+// Consulta 12: Total de venta por crédito médico
+$sql12 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoMedicos 
+          FROM Ventas_POS 
+          WHERE FormaDePago = 'Crédito Médico' 
+          AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
+          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
+          AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql12);
+$Especialistas12 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas12 = $r;
+        break;
+    }
+}
+
+// Consulta 13: Cortes de cajas POS
+$sql13 = "SELECT * FROM Cortes_Cajas_POS 
+          WHERE Sucursal = '".$row['Fk_Sucursal']."' 
+          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
+          AND Fk_Caja = ".$_POST["id"];
+$query = $conn->query($sql13);
+$Especialistas13 = null;
+if($query->num_rows > 0) {
+    while ($r = $query->fetch_object()) {
+        $Especialistas13 = $r;
+        break;
+    }
+}
 ?>
 
 <?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
@@ -106,6 +197,81 @@ if ($query->num_rows > 0) {
             </div>
         </div>
     </div>
+
+
+    <div class="table-responsive">
+	<table  id="TotalesGeneralesCortes" class="table table-hover">
+<thead>
+
+
+<th>Nombre Servicio</th>
+
+    <th>Total</th>
+    
+    
+    
+
+
+</thead>
+<?php while ($Usuarios=$query->fetch_array()):?>
+<tr>
+
+
+
+  
+    <td> <input type="text" class="form-control "  name="NombreServicio[]"readonly value="<?php echo $Usuarios["Nom_Serv"]; ?>"></td>
+    <td><input type="text" class="form-control "  name="TotalServicio[]"readonly value="<?php echo $Usuarios["totaldeservicios"]; ?>"></td>
+   
+    
+		
+</tr> 
+<?php endwhile;?>
+</table>
+</div>
+</div> 
+<?php if($query8->num_rows>0):?>
+  <div class="text-center">
+	<div class="table-responsive">
+	<table  id="TotalesFormaPAgoCortes" class="table table-hover">
+<thead>
+
+
+<th>Forma de pago</th>
+
+    <th>Total</th>
+    <th>Forma de pago</th>
+
+    <th>Total</th>
+    <th>Forma de pago</th>
+
+<th>Total</th>
+    
+    
+
+
+</thead>
+<?php while ($Usuarios2=$query8->fetch_array()):?>
+  <?php while ($Usuarios3=$query88->fetch_array()):?>
+    <?php while ($Usuarios4=$query888->fetch_array()):?>
+<tr>
+ 
+
+
+ 
+   
+    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
+    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
+    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
+    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
+    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="Creditos"></td>
+    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
+		
+</tr>
+<?php endwhile;?><?php endwhile;?><?php endwhile;?>
+</table>
+</div>
+</div>  
+<?php endif; ?>
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
