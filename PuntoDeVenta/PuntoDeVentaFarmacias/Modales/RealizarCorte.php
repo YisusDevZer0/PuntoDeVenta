@@ -56,16 +56,9 @@ while ($r=$query->fetch_object()){
 
   }
 
-  $sql4= "SELECT Identificador_tipo,Fk_Caja,SUM(Importe) as totaldentalescreditos FROM `Ventas_POS` WHERE Identificador_tipo='Cr&eacute;ditos' AND Fk_Caja = ".$_POST["id"];
-  $query = $conn->query($sql4);
-  $Especialistas4 = null;
-  if($query->num_rows>0){
-  while ($r=$query->fetch_object()){
-    $Especialistas4=$r;
-    break;
-  }
   
-    }
+  
+    
     $sql6="SELECT Venta_POS_ID,Fk_Caja,Fk_sucursal,Turno,ID_H_O_D,COUNT( DISTINCT Folio_Ticket) AS Total_tickets,SUM(Importe) AS VentaTotalCredito  FROM Ventas_POS where FormaDePago='Crédito Enfermería'  AND Fk_sucursal ='".$row['Fk_Sucursal']."' 
     AND ID_H_O_D='".$row['ID_H_O_D']."' AND Fk_Caja = ".$_POST["id"];
     $query = $conn->query($sql6);
