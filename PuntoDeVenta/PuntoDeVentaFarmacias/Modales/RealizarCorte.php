@@ -287,6 +287,10 @@ $query888 = $conn->query($sql888);
             </table>
         </div>
     </div>
+    <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
+                          
+</form>
+
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
