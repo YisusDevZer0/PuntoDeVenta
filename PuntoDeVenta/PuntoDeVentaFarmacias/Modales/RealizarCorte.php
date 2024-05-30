@@ -162,44 +162,44 @@ if ($query && $query->num_rows > 0) {
 
 
 $sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
-                SucursalesCorre.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
+                Sucursales.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
                 SUM(Ventas_POS.Importe) as totaldeservicios 
-         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         FROM Ventas_POS, Servicios_POS, Sucursales 
          WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."' 
+         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."' 
          GROUP BY Servicios_POS.Servicio_ID";
 $query = $conn->query($sql5);
 
 // Aquí es donde se genera el código para la forma de pago como efectivo
 $sql8 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
-                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
+                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
                 SUM(Ventas_POS.Importe) as totalesdepagoEfectivo
-         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         FROM Ventas_POS, Servicios_POS, Sucursales 
          WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago='Efectivo'
+         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago='Efectivo'
          AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
 $query8 = $conn->query($sql8);
 
 // Aquí es donde se genera el código para la forma de pago como tarjeta
 $sql88 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
-                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
+                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
                 SUM(Ventas_POS.Importe) as totalesdepagotarjeta
-         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         FROM Ventas_POS, Servicios_POS, Sucursales 
          WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago='Tarjeta'";
+         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago='Tarjeta'";
 $query88 = $conn->query($sql88);
 
 // Aquí es donde se genera el código para la forma de pago global de los Créditos 
 $sql888 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
-                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
+                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
                 SUM(Ventas_POS.Importe) as totalesdepagoCreditos
-         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         FROM Ventas_POS, Servicios_POS, Sucursales 
          WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago!='Efectivo' 
+         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago!='Efectivo' 
          AND Ventas_POS.FormaDePago!='Tarjeta' AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
 $query888 = $conn->query($sql888);
 
