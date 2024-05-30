@@ -78,19 +78,7 @@ if ($query && $query->num_rows > 0) {
     }
 }
 
-// Consulta 4: Total de dentales créditos
-$sql4 = "SELECT Identificador_tipo, Fk_Caja, SUM(Importe) as totaldentalescreditos 
-         FROM Ventas_POS 
-         WHERE Identificador_tipo='Cr&eacute;ditos' 
-         AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql4);
-$Especialistas4 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas4 = $r;
-        break;
-    }
-}
+
 
 // Consulta 6: Total de venta por crédito en enfermería
 $sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCredito 
@@ -206,24 +194,22 @@ if ($query && $query->num_rows > 0) {
     </div>
 
     <div class="table-responsive">
-    <table id="TotalesGeneralesCortes" class="table table-hover">
-        <thead>
-            <tr>
-                <th>Nombre Servicio</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($Especialistas14 = $query->fetch_array()): ?>
-                <tr>
-                    <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Especialistas14['Nom_Serv']; ?>"></td>
-                    <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Especialistas14['totaldeservicios']; ?>"></td>
-                </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            <table id="TotalesGeneralesCortes" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre Servicio</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Especialistas14->Nom_Serv; ?>"></td>
+                        <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Especialistas14->totaldeservicios; ?>"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
