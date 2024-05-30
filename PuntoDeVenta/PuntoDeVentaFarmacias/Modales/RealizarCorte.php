@@ -5,9 +5,15 @@ include "../Controladores/ControladorUsuario.php";
 $fcha = date("Y-m-d");
 $user_id = null;
 
-$fk_caja = $_POST['id'];
-$fk_sucursal = $_POST['fk_sucursal'];
-$id_h_o_d = $_POST['id_h_o_d'];
+$fk_caja = isset($_POST['id']) ? $_POST['id'] : null;
+$fk_sucursal = isset($_POST['fk_sucursal']) ? $_POST['fk_sucursal'] : null;
+$id_h_o_d = isset($_POST['id_h_o_d']) ? $_POST['id_h_o_d'] : null;
+
+// Verificar que las variables POST están definidas
+if (!$fk_caja || !$fk_sucursal || !$id_h_o_d) {
+    echo "Faltan parámetros necesarios.";
+    exit;
+}
 
 // CONSULTA 1
 $sql1 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D 
@@ -16,7 +22,7 @@ $sql1 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          ORDER BY Venta_POS_ID ASC LIMIT 1";
 $query = $conn->query($sql1);
 $Especialistas = null;
-if ($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas = $r;
         break;
@@ -30,7 +36,7 @@ $sql2 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          ORDER BY Venta_POS_ID DESC LIMIT 1";
 $query = $conn->query($sql2);
 $Especialistas2 = null;
-if ($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas2 = $r;
         break;
@@ -46,7 +52,7 @@ $sql3 = "SELECT Venta_POS_ID, Fk_Caja, Turno, Fecha_venta, Fk_sucursal, Agregado
          WHERE Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql3);
 $Especialistas3 = null;
-if ($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas3 = $r;
         break;
@@ -65,20 +71,21 @@ $sql14 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_P
          GROUP BY Servicios_POS.Servicio_ID";
 $query = $conn->query($sql14);
 $Especialistas14 = null;
-if ($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas14 = $r;
         break;
     }
 }
+
 // Consulta 4: Total de dentales créditos
 $sql4 = "SELECT Identificador_tipo, Fk_Caja, SUM(Importe) as totaldentalescreditos 
          FROM Ventas_POS 
          WHERE Identificador_tipo='Cr&eacute;ditos' 
-         AND Fk_Caja = ".$_POST["id"];
+         AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql4);
 $Especialistas4 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas4 = $r;
         break;
@@ -89,12 +96,12 @@ if($query->num_rows > 0) {
 $sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCredito 
          FROM Ventas_POS 
          WHERE FormaDePago = 'Crédito Enfermería' 
-         AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
-         AND ID_H_O_D = '".$row['ID_H_O_D']."' 
-         AND Fk_Caja = ".$_POST["id"];
+         AND Fk_sucursal = '$fk_sucursal' 
+         AND ID_H_O_D = '$id_h_o_d' 
+         AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql6);
 $Especialistas6 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas6 = $r;
         break;
@@ -105,12 +112,12 @@ if($query->num_rows > 0) {
 $sql7 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoLimpieza 
          FROM Ventas_POS 
          WHERE FormaDePago = 'Crédito Limpieza' 
-         AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
-         AND ID_H_O_D = '".$row['ID_H_O_D']."' 
-         AND Fk_Caja = ".$_POST["id"];
+         AND Fk_sucursal = '$fk_sucursal' 
+         AND ID_H_O_D = '$id_h_o_d' 
+         AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql7);
 $Especialistas7 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas7 = $r;
         break;
@@ -121,12 +128,12 @@ if($query->num_rows > 0) {
 $sql11 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoFarmaceutico 
           FROM Ventas_POS 
           WHERE FormaDePago = 'Crédito Farmacéutico' 
-          AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
-          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
-          AND Fk_Caja = ".$_POST["id"];
+          AND Fk_sucursal = '$fk_sucursal' 
+          AND ID_H_O_D = '$id_h_o_d' 
+          AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql11);
 $Especialistas11 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas11 = $r;
         break;
@@ -137,12 +144,12 @@ if($query->num_rows > 0) {
 $sql12 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCreditoMedicos 
           FROM Ventas_POS 
           WHERE FormaDePago = 'Crédito Médico' 
-          AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
-          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
-          AND Fk_Caja = ".$_POST["id"];
+          AND Fk_sucursal = '$fk_sucursal' 
+          AND ID_H_O_D = '$id_h_o_d' 
+          AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql12);
 $Especialistas12 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas12 = $r;
         break;
@@ -151,12 +158,12 @@ if($query->num_rows > 0) {
 
 // Consulta 13: Cortes de cajas POS
 $sql13 = "SELECT * FROM Cortes_Cajas_POS 
-          WHERE Sucursal = '".$row['Fk_Sucursal']."' 
-          AND ID_H_O_D = '".$row['ID_H_O_D']."' 
-          AND Fk_Caja = ".$_POST["id"];
+          WHERE Sucursal = '$fk_sucursal' 
+          AND ID_H_O_D = '$id_h_o_d' 
+          AND Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql13);
 $Especialistas13 = null;
-if($query->num_rows > 0) {
+if ($query && $query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Especialistas13 = $r;
         break;
@@ -198,80 +205,24 @@ if($query->num_rows > 0) {
         </div>
     </div>
 
-
     <div class="table-responsive">
-	<table  id="TotalesGeneralesCortes" class="table table-hover">
-<thead>
-
-
-<th>Nombre Servicio</th>
-
-    <th>Total</th>
-    
-    
-    
-
-
-</thead>
-<?php while ($Usuarios=$query->fetch_array()):?>
-<tr>
-
-
-
-  
-    <td> <input type="text" class="form-control "  name="NombreServicio[]"readonly value="<?php echo $Usuarios["Nom_Serv"]; ?>"></td>
-    <td><input type="text" class="form-control "  name="TotalServicio[]"readonly value="<?php echo $Usuarios["totaldeservicios"]; ?>"></td>
-   
-    
-		
-</tr> 
-<?php endwhile;?>
-</table>
-</div>
-</div> 
-<?php if($query8->num_rows>0):?>
-  <div class="text-center">
-	<div class="table-responsive">
-	<table  id="TotalesFormaPAgoCortes" class="table table-hover">
-<thead>
-
-
-<th>Forma de pago</th>
-
-    <th>Total</th>
-    <th>Forma de pago</th>
-
-    <th>Total</th>
-    <th>Forma de pago</th>
-
-<th>Total</th>
-    
-    
-
-
-</thead>
-<?php while ($Usuarios2=$query8->fetch_array()):?>
-  <?php while ($Usuarios3=$query88->fetch_array()):?>
-    <?php while ($Usuarios4=$query888->fetch_array()):?>
-<tr>
- 
-
-
- 
-   
-    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
-    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
-    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
-    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
-    <td> <input type="text" class="form-control "  name="NombreFormaPago[]"readonly value="Creditos"></td>
-    <td><input type="text" class="form-control "  name="TotalFormasPagos[]"readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
-		
-</tr>
-<?php endwhile;?><?php endwhile;?><?php endwhile;?>
-</table>
-</div>
-</div>  
-<?php endif; ?>
+    <table id="TotalesGeneralesCortes" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre Servicio</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($Usuarios = $query->fetch_array()): ?>
+                <tr>
+                    <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Usuarios['Nom_Serv']; ?>"></td>
+                    <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Usuarios['totaldeservicios']; ?>"></td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+    </div>
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
