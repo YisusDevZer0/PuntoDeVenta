@@ -42,6 +42,25 @@ while ($r=$query->fetch_object()){
 
   }
       
+
+
+
+  $sql14="SELECT Ventas_POS.Identificador_tipo,Ventas_POS.Fk_sucursal,Ventas_POS.ID_H_O_D,Ventas_POS.Fecha_venta,Ventas_POS.AgregadoPor,Ventas_POS.Fk_Caja,
+  Ventas_POS.AgregadoEl,Sucursales.ID_Sucursal,Sucursales.Nombre_Sucursal,
+  Servicios_POS.Servicio_ID,Servicios_POS.Nom_Serv,SUM(Ventas_POS.Importe) as totaldeservicios FROM
+   Ventas_POS,Servicios_POS,Sucursales WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+   AND Ventas_POS.Fk_sucursal=Sucursales.ID_Sucursal AND Ventas_POS.ID_H_O_D ='".$row['ID_H_O_D']."' 
+    GROUP by Servicios_POS.Servicio_ID";
+  $query = $conn->query($sql14);
+  $Especialistas14 = null;
+  if($query->num_rows>0){
+  while ($r=$query->fetch_object()){
+    $Especialistas14=$r;
+    break;
+  }
+  
+    }
+
 ?>
 
 
