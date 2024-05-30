@@ -95,7 +95,7 @@ while ($fila = $result->fetch_assoc()) {
         }
     }
  // Siempre incluir el campo para realizar el corte
- $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $row['Fk_Sucursal'] . '" data-hod="' . $row["ID_H_O_D"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
+ $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $row['Fk_Sucursal'] . '" data-hod="' . $row["Licencia"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
 
 
     // Construir el array de datos incluyendo las columnas condicionadas
