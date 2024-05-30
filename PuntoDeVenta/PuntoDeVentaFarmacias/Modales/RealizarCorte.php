@@ -157,6 +157,52 @@ if ($query && $query->num_rows > 0) {
         break;
     }
 }
+
+
+
+
+$sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
+                SucursalesCorre.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                SUM(Ventas_POS.Importe) as totaldeservicios 
+         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."' 
+         GROUP BY Servicios_POS.Servicio_ID";
+$query = $conn->query($sql5);
+
+// Aquí es donde se genera el código para la forma de pago como efectivo
+$sql8 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
+                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                SUM(Ventas_POS.Importe) as totalesdepagoEfectivo
+         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago='Efectivo'
+         AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
+$query8 = $conn->query($sql8);
+
+// Aquí es donde se genera el código para la forma de pago como tarjeta
+$sql88 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
+                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                SUM(Ventas_POS.Importe) as totalesdepagotarjeta
+         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago='Tarjeta'";
+$query88 = $conn->query($sql88);
+
+// Aquí es donde se genera el código para la forma de pago global de los Créditos 
+$sql888 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
+                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, SucursalesCorre.ID_SucursalC, 
+                SucursalesCorre.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
+                SUM(Ventas_POS.Importe) as totalesdepagoCreditos
+         FROM Ventas_POS, Servicios_POS, SucursalesCorre 
+         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+         AND Ventas_POS.Fk_sucursal = SucursalesCorre.ID_SucursalC AND Ventas_POS.FormaDePago!='Efectivo' 
+         AND Ventas_POS.FormaDePago!='Tarjeta' AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
+$query888 = $conn->query($sql888);
+
 ?>
 
 <?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
@@ -210,6 +256,40 @@ if ($query && $query->num_rows > 0) {
             </table>
         </div>
     </div>
+    <?php if ($query8->num_rows > 0): ?>
+    <div class="text-center">
+        <div class="table-responsive">
+            <table id="TotalesFormaPagoCortes" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Forma de pago</th>
+                        <th>Total</th>
+                        <th>Forma de pago</th>
+                        <th>Total</th>
+                        <th>Forma de pago</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($Usuarios2 = $query8->fetch_array()): ?>
+                        <?php $Usuarios3 = $query88->fetch_array(); ?>
+                        <?php $Usuarios4 = $query888->fetch_array(); ?>
+                        <tr>
+                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
+                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
+                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
+                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
+                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
+                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
+                        </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php else: ?>
+    <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
+<?php endif; ?>
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
