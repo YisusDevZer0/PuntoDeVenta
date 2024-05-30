@@ -214,10 +214,10 @@ if ($query && $query->num_rows > 0) {
             </tr>
         </thead>
         <tbody>
-            <?php while ($Usuarios = $query->fetch_array()): ?>
+            <?php while ($Especialistas14 = $query->fetch_array()): ?>
                 <tr>
-                    <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Usuarios['Nom_Serv']; ?>"></td>
-                    <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Usuarios['totaldeservicios']; ?>"></td>
+                    <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Especialistas14['Nom_Serv']; ?>"></td>
+                    <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Especialistas14['totaldeservicios']; ?>"></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
