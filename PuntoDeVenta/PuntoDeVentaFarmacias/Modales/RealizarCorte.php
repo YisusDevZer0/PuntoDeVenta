@@ -1,7 +1,7 @@
 <?php
 include "../Controladores/db_connect.php.php";
 include "../Controladores/ControladorUsuario.php";
-
+include "../Controladores/ConsultaCaja.php";
 $fcha = date("Y-m-d");
 $user_id=null;
 // CONSULTA 1 TODO OK
