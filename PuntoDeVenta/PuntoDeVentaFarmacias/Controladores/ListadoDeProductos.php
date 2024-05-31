@@ -272,9 +272,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     <th>PV </th>
     <th>Servicio </th>
     <th>Tipo</th>
-    <th>Categoria</th>
-    <th>Marca </th>
-    <th>Presentacion </th>
+    
     <th>Proveedor</th>
   
     <th>Agrego</th>
