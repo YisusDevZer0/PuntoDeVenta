@@ -48,7 +48,7 @@ while ($fila = $result->fetch_assoc()) {
         "Tipo" => $fila["Tipo"],
         "Proveedor1" => $fila["Proveedor1"],
         "Proveedor2" => $fila["Proveedor2"],
-        "Sucursal" => $fila["Nombre_Sucursal"],
+
         "UltimoMovimiento" => $fila["AgregadoEl"],
         "Existencias_R" => $fila["Existencias_R"],
         "Min_Existencia" => $fila["Min_Existencia"],

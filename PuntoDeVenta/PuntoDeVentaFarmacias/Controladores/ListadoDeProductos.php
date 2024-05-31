@@ -190,7 +190,7 @@ tabla = $('#StocksDESucursales').DataTable({
        { mData: 'Tipo' },
        { mData: 'Proveedor1' },
        { mData: 'Proveedor2' },
-       { mData: 'Sucursal' },
+
        { mData: 'UltimoMovimiento' },
        { mData: 'Existencias_R' },
        { mData: 'Min_Existencia' },
