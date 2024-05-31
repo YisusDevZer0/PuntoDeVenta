@@ -46,7 +46,7 @@ function iniciarSesion($usuario, $contrasena) {
 
 // Credenciales de inicio de sesión
 $usuario = "244426";
-$contrasena = "tu_contraseña";
+$contrasena = "Doctorconsulta01";
 
 // Llamar a la función para iniciar sesión con las credenciales proporcionadas
 iniciarSesion($usuario, $contrasena);
