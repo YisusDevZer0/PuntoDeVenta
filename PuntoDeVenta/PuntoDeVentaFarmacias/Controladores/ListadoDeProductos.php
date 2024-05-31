@@ -182,7 +182,7 @@ tabla = $('#StocksDESucursales').DataTable({
  "aoColumns": [
   { mData: 'Cod_Barra' },
        { mData: 'Clave_adicional' },
-       { mData: 'Clave_Levic' },
+
        { mData: 'Nombre_Prod' },
        { mData: 'Precio_Venta' },
        { mData: 'Nom_Serv' },
