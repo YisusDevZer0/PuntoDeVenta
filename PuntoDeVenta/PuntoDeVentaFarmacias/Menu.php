@@ -90,6 +90,7 @@
                             <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
                             <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>
                             <a href="IngresosDeMedicamentos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Ingreso de medicamentos</a>
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Generar cotizacion</a>
                            
                         </div>
                     </div>
