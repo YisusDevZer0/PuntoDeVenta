@@ -181,9 +181,10 @@ tabla = $('#StocksDESucursales').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
  "aoColumns": [
   { mData: 'Cod_Barra' },
+  { mData: 'Nombre_Prod' },
        { mData: 'Clave_adicional' },
 
-       { mData: 'Nombre_Prod' },
+       
        { mData: 'Precio_Venta' },
        { mData: 'Nom_Serv' },
        { mData: 'Tipo' },
@@ -268,8 +269,6 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     <th>Nombre</th>
     <th>Clave interna</th>
     
- 
-    <th>PC</th>
     <th>PV </th>
     <th>Servicio </th>
     <th>Tipo</th>
