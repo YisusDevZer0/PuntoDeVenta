@@ -1,7 +1,7 @@
 <?php
 
-function buscarArticulo($codigoEscaneado) {
-    $url = "https://www.levicventas.mx/frm_ProductoDetalle.aspx?codigo=" . urlencode($codigoEscaneado);
+function obtenerDatosProducto($codigoProducto) {
+    $url = "https://www.levicventas.mx/frm_ProductoDetalle.aspx?codigo=" . urlencode($codigoProducto);
 
     // Inicializar cURL
     $ch = curl_init();
@@ -20,22 +20,27 @@ function buscarArticulo($codigoEscaneado) {
         return false;
     }
 
+    // Cerrar cURL
+    curl_close($ch);
+
+    // Imprimir el HTML completo para inspección
+    echo $response;
+
     // Analizar el HTML de la respuesta y extraer la información necesaria
     $dom = new DOMDocument();
     @$dom->loadHTML($response);
     $xpath = new DOMXPath($dom);
 
     // Aquí debes escribir la lógica para extraer los datos específicos que necesitas del HTML
-    // Por ejemplo, si quieres extraer el nombre del producto:
     $producto = [];
     $nombreNodo = $xpath->query("//span[@id='nombreProducto']"); // Cambia esto por el selector adecuado
     if ($nombreNodo->length > 0) {
-        $producto['nombre'] = $nombreNodo->item(0)->nodeValue;
+        $producto['nombre'] = trim($nombreNodo->item(0)->nodeValue);
     }
 
     $precioNodo = $xpath->query("//span[@id='precioProducto']"); // Cambia esto por el selector adecuado
     if ($precioNodo->length > 0) {
-        $producto['precio'] = $precioNodo->item(0)->nodeValue;
+        $producto['precio'] = trim($precioNodo->item(0)->nodeValue);
     }
 
     // Agrega más selectores y lógica según lo que necesites extraer
@@ -45,8 +50,8 @@ function buscarArticulo($codigoEscaneado) {
 }
 
 // Ejemplo de uso
-$codigoEscaneado = "BEA364";
-$producto = buscarArticulo($codigoEscaneado);
+$codigoProducto = "BEA364";
+$producto = obtenerDatosProducto($codigoProducto);
 
 echo "<pre>";
 print_r($producto);
