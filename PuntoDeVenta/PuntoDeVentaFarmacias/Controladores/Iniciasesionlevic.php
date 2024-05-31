@@ -44,7 +44,11 @@ function iniciarSesion($usuario, $contrasena) {
     curl_close($ch);
 }
 
-// Llamar a la función para iniciar sesión con tus credenciales
-iniciarSesion("244426", "Doctorconsulta01");
+// Credenciales de inicio de sesión
+$usuario = "244426";
+$contrasena = "tu_contraseña";
+
+// Llamar a la función para iniciar sesión con las credenciales proporcionadas
+iniciarSesion($usuario, $contrasena);
 
 ?>
