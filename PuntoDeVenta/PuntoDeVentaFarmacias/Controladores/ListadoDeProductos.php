@@ -280,6 +280,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     <th>Stock</th>
     <th>Maximo</th>
     <th>Minimo</th>
+    <th>Estado</th>
         <th>Acciones Farmacia</th>
         <th>Acciones Enfermeria</th>
 	
