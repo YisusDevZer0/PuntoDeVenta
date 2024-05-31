@@ -1,66 +1,46 @@
 <?php
 
-function iniciarSesion($usuario, $contrasena) {
-    $loginUrl = "https://www.levicventas.mx/frm_Catalogo_Levic.aspx";
-    
-    // Inicializar cURL para obtener la página de inicio de sesión
+function buscarArticulo($codigoEscaneado) {
+    $url = "https://www.levicventas.mx/busqueda?codigo=" . urlencode($codigoEscaneado); // Reemplaza esto con la URL correcta y los parámetros de búsqueda
+
+    // Inicializar cURL
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $loginUrl);
+
+    // Establecer opciones de cURL
+    curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookies.txt');
-    curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookies.txt');
-    $loginPage = curl_exec($ch);
-    
-    if ($loginPage === false) {
-        echo "Error al obtener la página de inicio de sesión: " . curl_error($ch);
-        return false;
-    }
+    curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36");
 
-    // Extraer el token CSRF o cualquier otro campo necesario desde el HTML
-    // Esto puede variar dependiendo del sitio web específico
-    // Ejemplo de cómo extraer un token CSRF con una expresión regular:
-    // preg_match('/name="__RequestVerificationToken" value="([^"]+)"/', $loginPage, $matches);
-    // $csrfToken = $matches[1];
-
-    // Datos de inicio de sesión
-    $postData = array(
-        'txtLogin' => $usuario,
-        'txtPassword' => $contrasena,
-        // '__RequestVerificationToken' => $csrfToken, // Agregar el token si es necesario
-        'btnLogin' => 'Iniciar sesión'
-    );
-
-    // Enviar la solicitud de inicio de sesión
-    curl_setopt($ch, CURLOPT_URL, $loginUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    // Ejecutar la solicitud cURL
     $response = curl_exec($ch);
 
+    // Manejar errores
     if ($response === false) {
         echo "Error de cURL: " . curl_error($ch);
         return false;
     }
 
-    // Verificar si el inicio de sesión fue exitoso
-    if (strpos($response, 'Inicio de sesión exitoso') !== false) {
-        echo "Inicio de sesión exitoso.";
-        return true;
-    } else {
-        echo "No se pudo iniciar sesión.";
-        return false;
+    // Analizar el HTML de la respuesta y extraer la información necesaria
+    $dom = new DOMDocument();
+    @$dom->loadHTML($response);
+    $xpath = new DOMXPath($dom);
+
+    // Aquí debes escribir la lógica para extraer los datos específicos que necesitas del HTML
+    // Ejemplo de cómo extraer todos los enlaces
+    $articulos = [];
+    foreach ($xpath->query("//a") as $node) {
+        $articulos[] = $node->getAttribute("href");
     }
 
-    curl_close($ch);
+    return $articulos;
 }
 
-// Credenciales de inicio de sesión
-$usuario = "244426";
-$contrasena = "Doctorconsulta01";
+// Ejemplo de uso
+$codigoEscaneado = "123456";
+$response = buscarArticulo($codigoEscaneado);
 
-// Llamar a la función para iniciar sesión con las credenciales proporcionadas
-iniciarSesion($usuario, $contrasena);
+echo "<pre>";
+print_r($response);
+echo "</pre>";
 
 ?>
-
-
