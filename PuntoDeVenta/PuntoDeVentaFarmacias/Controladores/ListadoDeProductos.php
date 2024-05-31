@@ -275,6 +275,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     
     <th>Proveedor</th>
   
+    <th>Proveedor</th>
     <th>Agrego</th>
     <!-- <th>Stock </th>
     <th>Vendido </th>
