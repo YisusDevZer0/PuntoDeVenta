@@ -264,11 +264,10 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 	<div class="table-responsive">
 	<table  id="StocksDESucursales" class="table table-hover">
 <thead>
-<th>ID_BD</th>
 <th>Cod Barra</th>
     <th>Nombre</th>
-    <th>Cod Interno</th>
-    <th>Cod Levic</th>
+    <th>Clave interna</th>
+    
  
     <th>PC</th>
     <th>PV </th>

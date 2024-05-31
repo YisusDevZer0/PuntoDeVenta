@@ -41,7 +41,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "Cod_Barra" => $fila["Cod_Barra"],
         "Clave_adicional" => $fila["Clave_adicional"],
-        "Clave_Levic" => $fila["Clave_Levic"],
+        
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Precio_Venta" => $fila["Precio_Venta"],
         "Nom_Serv" => $fila["Nom_Serv"],
