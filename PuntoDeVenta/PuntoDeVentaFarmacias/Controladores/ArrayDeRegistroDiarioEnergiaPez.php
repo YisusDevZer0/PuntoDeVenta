@@ -8,7 +8,7 @@ $fechaActual = date("Y-m-d");
 // Consulta SQL adaptada con las variables proporcionadas
 $sql = "SELECT Registro_Watts, Fecha_registro, Sucursal, Comentario, Registro, Agregadoel, Licencia, file_name 
         FROM Registros_Energia 
-        WHERE Fecha_registro = '$fechaActual'";
+        WHERE Fecha_registro = '$fechaActual' AND Sucursal = '" . $row['Nombre_Sucursal'] . "'";
 
 // Ejecutar la consulta
 $result = mysqli_query($conn, $sql);
@@ -26,7 +26,7 @@ if ($result && $result->num_rows > 0) {
             "Registro" => $fila["Registro"],
             "Agregadoel" => $fila["Agregadoel"],
             "Licencia" => $fila["Licencia"],
-            "Foto" => "<img alt='avatar' class='img-thumbnail' src='https://saludapos.com/FotosMedidores/{$fila['file_name']}'>"
+            "Foto" => "<img alt='avatar' class='img-thumbnail' src='https://doctorpez.mx/PuntoDeVenta/FotosMedidores/{$fila['file_name']}'>"
         ];
     }
 }
