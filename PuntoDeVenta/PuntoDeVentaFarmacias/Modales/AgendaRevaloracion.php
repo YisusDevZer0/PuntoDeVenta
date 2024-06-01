@@ -14,9 +14,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Nombre del paciente</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-user"></i></span>
-  </div>
+  
   <input type="text" class="form-control"   name="NombresExt" id="nombresExt" aria-describedby="basic-addon1">
 </div>
 <div>
@@ -27,9 +25,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Telefono</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-mobile-alt"></i></span>
-  </div>
+
   <input type="text" class="form-control"   name="TelExt" id="telExt" aria-describedby="basic-addon1">
 </div>
 <div>
@@ -54,9 +50,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Medico</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-user-md"></i></span>
-  </div>
+ 
   <select  id = "medico" name = "Medico"  class = "form-control "  >
 								<option value = "">Selecciona un medico</option>
                 <?php
@@ -72,9 +66,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Fecha</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-calendar-day"></i></span>
-  </div>
+  
   
   <input type="date" class="form-control"   name="Fecha" id="fecha" aria-describedby="basic-addon1">
 </div>
@@ -86,9 +78,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Turno</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-calendar-day"></i></span>
-  </div>
+
   
   <select class="form-control" name="Turno" id="turno">
     <option value="Matutino">Matutino</option>
@@ -107,9 +97,7 @@
     <div class="form-group">
     <label for="exampleFormControlInput1">Motivo de consulta</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="far fa-address-card"></i></span>
-  </div>
+ 
   <textarea id="MotConsulta" class="form-control form-control-sm"  name="MotConsulta" rows="2" cols="50">
   </textarea>
 </div>
