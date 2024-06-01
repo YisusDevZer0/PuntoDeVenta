@@ -19,10 +19,10 @@ Ventas_POS.FormaDePago,
 Ventas_POS.Turno,
 Ventas_POS.FolioSignoVital,
 Ventas_POS.Cliente,
-Cajas_POS.ID_Caja,
-Cajas_POS.Sucursal,
-Cajas_POS.MedicoEnturno,
-Cajas_POS.EnfermeroEnturno,
+Cajas.ID_Caja,
+Cajas.Sucursal,
+Cajas.MedicoEnturno,
+Cajas.EnfermeroEnturno,
 Ventas_POS.Cod_Barra,
 Ventas_POS.Clave_adicional,
 Ventas_POS.Nombre_Prod,
@@ -47,7 +47,7 @@ Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
 INNER JOIN 
 Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
 INNER JOIN 
-Cajas_POS ON Cajas_POS.ID_Caja = Ventas_POS.Fk_Caja
+Cajas ON Cajas.ID_Caja = Ventas_POS.Fk_Caja
 INNER JOIN 
 Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
