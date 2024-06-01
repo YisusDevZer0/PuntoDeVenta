@@ -203,23 +203,47 @@
 
 tabla = $('#Clientes').DataTable({
 
- "bProcessing": true,
+  "bProcessing": true,
  "ordering": true,
- "stateSave":true,
- "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayListaTareas.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrrayTraspasos.php",
  "aoColumns": [
-    { mData: 'Id' },  
-  { mData: 'TipMensaje' },  
-  { mData: 'MensajeRecordatorio' },
-  { mData: 'NombreSucursal' },
-       { mData: 'Estatus' },
-       { mData: 'Editar' },
-      
-      
-  
+       { mData: 'IDTraspasoGenerado' },
+       { mData: 'Cod_Barra' },
+       { mData: 'NumOrden' },
+       { mData: 'Nombre_Prod' },
+       { mData: 'ProveedorTraspaso' },
+       { mData: 'Fk_sucursal' },
+       { mData: 'Destino' },
+       { mData: 'Cantidad' },
+      { mData: 'FechaEntrega' },
+        {mData: "Estatus",
+       "searchable": true,
+        "orderable":true,
+        "render": function (data, type, row) {
+            if ( row.Estatus="Generado") {
+
+            return '<button class="btn btn-default btn-sm" style="background-color:#2b73bb !important">Generado</button>';
+        }
+        else if ( row.Estatus="Cancelado") {
+return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Cancelado</button>'
+        }
+            else {
+ 
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Entregado</button>';
+ 
+}
+        }
+ 
+    },
+
+    { mData: 'Traspasocorrecto' },
+    //    { mData: 'Traspasoincorrecto' },
+       
+       
+       
       ],
+     
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
   
@@ -267,12 +291,19 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>N°Folio</th>
-<th>Tipo</th>
-<th>Contenido</th>
-<th>Sucursal</th>
-    <th>Estado</th>
-    <th>Editar</th>
+<th>ID</th>
+<th>Codigo de barras</th>
+<th># de orden </th>
+<th>Nombre</th>
+<th>Tipo Traspaso</th>
+<th>Origen</th>
+<th>Destino</th>
+<th>Cantidad</th>
+
+<th>Fecha estimada de entrega</th>
+<th>Estatus</th>
+<th>Aceptar Traspaso</th>
+<!-- <th>Marcar observacion</th> -->
 </thead>
 
 </div>
