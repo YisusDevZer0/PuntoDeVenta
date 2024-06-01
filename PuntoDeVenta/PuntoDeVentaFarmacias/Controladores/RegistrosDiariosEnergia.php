@@ -210,19 +210,17 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeRegistroDiarioEnergiaPez.php",
  "aoColumns": [
-  { mData: 'IdCaja' },  
-  { mData: 'Empleado' },
-  { mData: 'Cantidad_Fondo' },
-       { mData: 'Fecha_Apertura' },
-       { mData: 'Estatus' },
-       { mData: 'Turno' },
-       { mData: 'Asignacion' },
+  { mData: 'Id_Registro' },  
+  { mData: 'Registro_Watts' },
+  { mData: 'Fecha_registro' },
+       { mData: 'Sucursal' },
+       { mData: 'Comentario' },
+       { mData: 'Registro' },
+       { mData: 'Agregadoel' },
        
-       { mData: 'ValorTotalCaja' },
-       { mData: 'DesactivarCaja' },
-       { mData: 'ReactivarCaja' },
-       { mData: 'RegistrarGasto' },
-       { mData: 'RealizarCorte' },
+       { mData: 'Licencia' },
+       { mData: 'Foto' },
+      
        
       ],
      
@@ -272,18 +270,16 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes" class="table table-hover">
 <thead>
-<th>Id de caja</th>
-<th>Nombre Cajero</th>
-<th>Fondo de caja</th>
-    <th>Fecha de apertura</th>
-    <th>Estado</th>
-    <th>Turno</th> 
-    <th>Activo / Inactivo</th> 
-    <th>Valor total de caja</th> 
-    <th>Desactivar Caja</th>
-    <th>Reactivar Caja</th>
-    <th>Registrar gasto</th>
-    <th>Realizar corte</th>
+<th>Id registro</th>
+<th>Valor en whats</th>
+<th>Fecha</th>
+    <th>Sucursal</th>
+    <th>Comentario</th>
+    <th>Registro</th> 
+    <th>Agregadoel</th> 
+    <th>Licencia</th> 
+    <th>Foto</th>
+    
 </thead>
 
 </div>
