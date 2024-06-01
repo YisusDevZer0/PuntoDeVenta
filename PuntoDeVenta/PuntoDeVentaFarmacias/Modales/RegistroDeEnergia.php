@@ -1,19 +1,11 @@
 
-<div class="modal fade" id="RegistroEnergiaVentanaModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div id="Di"class="modal-dialog  modal-notify modal-success">
-      <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="Titulo">Control de energia</p>
-
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
-       </div>
-        <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
-						                <span id="Aviso" class="text-semibold">Estimado usuario, 
-                            Verifique los campos antes de realizar alguna accion</span>
-						                <button type="button" class="close" data-dismiss="alert">×</button>
-                            </div>
+<div class="modal fade" id="RegistroEnergiaVentanaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-notify modal-success">
+    <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;">
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 	        <div class="modal-body">
           <div class="text-center">
           <form enctype="multipart/form-data" id="RegistroDiarioEnergiaWats">
@@ -73,7 +65,7 @@
 </form>
 
 
-</div></div>
+</div></>
 
 
 
