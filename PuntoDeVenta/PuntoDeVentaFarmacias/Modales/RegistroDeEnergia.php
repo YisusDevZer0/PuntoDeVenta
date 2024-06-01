@@ -1,5 +1,5 @@
 
-<div class="modal fade" id="RegistroEnergiaVentanaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="RegistroEnergiaVentanaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-="true">
   <div class="modal-dialog  modal-notify modal-success">
     <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;">
@@ -14,7 +14,7 @@
      <div class="input-group mb-3">
   
   <input type="number" class="form-control"   name="RegistroEnergia" id="registroenergia" aria-describedby="basic-addon1" required>
-  <input type="text"  hidden name="Fecha" >
+  <input type="text"   name="Fecha" >
 </div>
 <div>
 </div>
@@ -48,7 +48,11 @@
 
    
     
-    
+<input type="text" class="form-control" name="Registro" id="registro"  value="<?php echo $row['Nombre_Apellidos']?>"  readonly >
+  
+  <input type="text" class="form-control" name="Sucursal" id="sucursal"   value="<?php echo $row['Nombre_Sucursal']?>"   readonly >
+  <input type="text" class="form-control" name="Empresa" id="Empresa"  value="<?php echo $row['Licencia']?>"   readonly >
+
      
     
     <div class="text-center">
