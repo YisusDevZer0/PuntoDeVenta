@@ -13,18 +13,10 @@ Traspasos_generados.Num_Factura,
 Traspasos_generados.TotaldePiezas,
 Traspasos_generados.Cod_Barra,
 Traspasos_generados.Nombre_Prod,
-Traspasos_generados.Fk_sucursal,
-Traspasos_generados.Fk_Sucursal_Destino,
-Traspasos_generados.Proveedor1,
-Traspasos_generados.Proveedor2,
+Traspasos_generados.Fk_SucDestino,
 Traspasos_generados.Precio_Venta,
 Traspasos_generados.Precio_Compra,
-Traspasos_generados.Total_traspaso,
-Traspasos_generados.TotalVenta,
-Traspasos_generados.Existencias_R,
-Traspasos_generados.ProveedorFijo,
 Traspasos_generados.Cantidad_Enviada,
-Traspasos_generados.Existencias_D_envio,
 Traspasos_generados.FechaEntrega,
 Traspasos_generados.Estatus,
 Traspasos_generados.ID_H_O_D,
@@ -34,7 +26,7 @@ FROM
 Traspasos_generados,
 Sucursales
 WHERE 
-Traspasos_generados.Fk_sucursal = Sucursales.ID_Sucursal 
+Traspasos_generados.Fk_SucDestino = Sucursales.ID_Sucursal 
 AND (
     (MONTH(Traspasos_generados.FechaEntrega) = MONTH(CURDATE()) AND YEAR(Traspasos_generados.FechaEntrega) = YEAR(CURDATE()))
     OR
