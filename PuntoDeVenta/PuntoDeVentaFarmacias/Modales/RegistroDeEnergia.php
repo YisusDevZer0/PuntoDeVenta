@@ -12,9 +12,7 @@
 <div class="form-group">
     <label for="exampleFormControlInput1">Ingrese el valor de kilowatts </label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-lightbulb"></i></span>
-  </div>
+  
   <input type="number" class="form-control"   name="RegistroEnergia" id="registroenergia" aria-describedby="basic-addon1" required>
   <input type="text"  hidden name="Fecha" >
 </div>
@@ -24,9 +22,7 @@
     <div class="form-group">
     <label for="exampleFormControlInput1">Comentario</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-comment"></i></span>
-  </div>
+  
   <textarea class="form-control" id="Comentario" name="Comentario" rows="3"></textarea>
 </div>
 
@@ -34,9 +30,7 @@
     <div class="form-group">
     <label for="exampleFormControlInput1">Fotografia</label>
      <div class="input-group mb-3">
-  <div class="input-group-prepend">
-  <span class="input-group-text" id="Tarjeta"><i class="fas fa-comment"></i></span>
-  </div>
+ 
   <input type="file" required class="form-control " name="file" id="file" aria-describedby="basic-addon1" >          
 </div>
 <div>
