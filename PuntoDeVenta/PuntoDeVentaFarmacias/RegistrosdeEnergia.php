@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             </div>
             <script src="js/RegistrosDeEnergia.js"></script>
-         
+            <script src="js/GuardaDatosEnergia.js"></script>
             <!-- Footer Start -->
             <?php 
            include "Modales/RegistroDeEnergia.php";
