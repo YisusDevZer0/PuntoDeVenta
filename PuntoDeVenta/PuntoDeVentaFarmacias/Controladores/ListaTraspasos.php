@@ -200,51 +200,28 @@
     document.getElementById('loading-overlay').style.display = 'none';
   }
 
-tabla = $('#Traspasos').DataTable({
+
+tabla = $('#Clientes').DataTable({
 
  "bProcessing": true,
  "ordering": true,
+ "stateSave":true,
+ "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrrayTraspasos.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayListaTareas.php",
  "aoColumns": [
-       { mData: 'IDTraspasoGenerado' },
-       { mData: 'Cod_Barra' },
-       { mData: 'NumOrden' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'ProveedorTraspaso' },
-       { mData: 'Fk_sucursal' },
-       { mData: 'Destino' },
-       { mData: 'Cantidad' },
-      { mData: 'FechaEntrega' },
-        {mData: "Estatus",
-       "searchable": true,
-        "orderable":true,
-        "render": function (data, type, row) {
-            if ( row.Estatus="Generado") {
-
-            return '<button class="btn btn-default btn-sm" style="background-color:#2b73bb !important">Generado</button>';
-        }
-        else if ( row.Estatus="Cancelado") {
-return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Cancelado</button>'
-        }
-            else {
- 
-    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Entregado</button>';
- 
-}
-        }
- 
-    },
-
-    { mData: 'Traspasocorrecto' },
-    //    { mData: 'Traspasoincorrecto' },
-       
-       
-       
+    { mData: 'Id' },  
+  { mData: 'TipMensaje' },  
+  { mData: 'MensajeRecordatorio' },
+  { mData: 'NombreSucursal' },
+       { mData: 'Estatus' },
+       { mData: 'Editar' },
+      
+      
+  
       ],
      
-    
-      "lengthMenu": [[10,20,150,250,500, -1], [10,20,50,250,500, "Todos"]],  
+      "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
   
   "language": {
   "lengthMenu": "Mostrar _MENU_ registros",
@@ -260,147 +237,48 @@ return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!i
     "next": '<i class="fas fa-angle-right"></i>',
     "previous": '<i class="fas fa-angle-left"></i>'
   },
-  // "processing": function () {
-  //   mostrarCargando();
-  // }
+  "processing": function () {
+    mostrarCargando();
+  }
 },
 "initComplete": function() {
   // Al completar la inicialización de la tabla, ocultar el mensaje de carga
   ocultarCargando();
 },
-// // Para personalizar el estilo del botón de Excel
-// "buttons": [
-//   {
-//     extend: 'excelHtml5',
-//     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
-//     titleAttr: 'Exportar a Excel',
-//     title: 'registro de ventas ',
-//     className: 'btn btn-success',
-//     exportOptions: {
-//       columns: ':visible' // Exportar solo las columnas visibles
-//     }
-//   }
-// ],
+// Para personalizar el estilo del botón de Excel
+"buttons": [
+  {
+    extend: 'excelHtml5',
+    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+    titleAttr: 'Exportar a Excel',
+    title: 'Base de Clientes',
+    className: 'btn btn-success',
+    exportOptions: {
+      columns: ':visible' // Exportar solo las columnas visibles
+    }
+  }
+],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
-
-
-
 </script>
 <div class="text-center">
-	<div class="table-responsive">
-	<table  id="Traspasos" class="table table-hover">
+  <div class="table-responsive">
+  <table  id="Clientes"  class="order-column">
 <thead>
-
-<th>ID</th>
-<th>Codigo de barras</th>
-<th># de orden </th>
-<th>Nombre</th>
-<th>Tipo Traspaso</th>
-<th>Origen</th>
-<th>Destino</th>
-<th>Cantidad</th>
-
-<th>Fecha estimada de entrega</th>
-<th>Estatus</th>
-<th>Aceptar Traspaso</th>
-<!-- <th>Marcar observacion</th> -->
+<th>N°Folio</th>
+<th>Tipo</th>
+<th>Contenido</th>
+<th>Sucursal</th>
+    <th>Estado</th>
+    <th>Editar</th>
 </thead>
 
 </div>
 </div>
 
 
-<!-- <script>
-  $(".btn-edit").click(function(){
-    id = $(this).data("id");
-    $.post("https://controlfarmacia.com/AdminPOS/Modales/ReasignaProducto.php","id="+id,function(data){
-        alert($(this).data("id"));
-        $("#form-editProductosG").html(data);
-    $("#TituloProductosG").html("Asignacion de productos en otras sucursales");
-       
-        $("#DiProductosG").removeClass("modal-dialog  modal-xl modal-notify modal-info");
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-primary");
-        $("#DiProductosG").addClass("modal-dialog  modal-xl modal-notify modal-success");
-    });
-    $('#editModalProductosG').modal('show'); 
-});
-$(".btn-VerDistribucion").click(function(){
-    id = $(this).data("id");
-    $.post("https://controlfarmacia.com/AdminPOS/Modales/DistribucionesProductos.php","id="+id,function(data){
-        $("#form-editProductosG").html(data);
-    $("#TituloProductosG").html("Distribucion de productos");
-       
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-danger");
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-primary");
-        $("#DiProductosG").addClass("modal-dialog  modal-xl modal-notify modal-info");
-    });
-    $('#editModalProductosG').modal('show');
-});
-$(".btn-editProd").click(function(){
-    id = $(this).data("id");
-    $.post("https://controlfarmacia.com/AdminPOS/Modales/EditaProductosStockGeneral.php","id="+id,function(data){
-        $("#form-editProductosG").html(data);
-    $("#TituloProductosG").html("Editar datos");
-       
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-danger");
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-primary");
-        $("#DiProductosG").addClass("modal-dialog  modal-xl modal-notify modal-info");
-    });
-    $('#editModalProductosG').modal('show');
-});
-$(".btn-History").click(function(){
-    id = $(this).data("id");
-    $.post("https://controlfarmacia.com/AdminPOS/Modales/HistorialProductos.php","id="+id,function(data){
-        $("#form-editProductosG").html(data);
-    $("#TituloProductosG").html("Actualizaciones y movimientos");
-       
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-danger");
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-primary");
-        $("#DiProductosG").addClass("modal-dialog  modal-xl modal-notify modal-info");
-    });
-    $('#editModalProductosG').modal('show');
-});
 
 
-$(".btn-Delete").click(function(){
-    id = $(this).data("id");
-    $.post("https://controlfarmacia.com/AdminPOS/Modales/DeleteProductos.php","id="+id,function(data){
-        alert($(this).data("id"));
-        $("#form-editProductosG").html(data);
-    $("#TituloProductosG").html("Eliminar producto");
-       
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-danger");
-        $("#DiProductosG").removeClass("modal-dialog modal-lg modal-notify modal-primary");
-        $("#DiProductosG").removeClass("modal-dialog  modal-xl modal-notify modal-info");
-        $("#DiProductosG").addClass("modal-dialog modal-sm modal-notify modal-danger");
-    });
-    $('#editModalProductosG').modal('show');
-});
 
-
-</script>
-
-
-  <div class="modal fade" id="editModalProductosG" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div id="DiProductosG"class="modal-dialog modal-lg modal-notify modal-info">
-      <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="TituloProductosG"></p>
-
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
-       </div>
-       
-	        <div class="modal-body">
-          <div class="text-center">
-        <div id="form-editProductosG"></div>
-        
-        </div>
-
-      </div>
-    </div>
-  </div> -->
