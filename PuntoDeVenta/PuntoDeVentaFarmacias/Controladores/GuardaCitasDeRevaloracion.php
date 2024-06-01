@@ -1,6 +1,6 @@
 <?php
 
-include_once 'db_connection.php';
+include_once 'db_connect.php';
 
 $Nombres_Apellidos = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['NombresExt']))));
 $Telefono = $conn->real_escape_string(htmlentities(strip_tags(Trim($_POST['TelExt']))));
