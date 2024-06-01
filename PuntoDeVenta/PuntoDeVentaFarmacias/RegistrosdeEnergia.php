@@ -38,7 +38,7 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4" style="color:#0172b6;">Registros de energía diario de <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RegistroEnergiaVentanaModal">
-  Agregar nuevo fondo 
+  Registrar control de energia en watss
 </button> 
         <br>
 <div id="Cajas"></div>
