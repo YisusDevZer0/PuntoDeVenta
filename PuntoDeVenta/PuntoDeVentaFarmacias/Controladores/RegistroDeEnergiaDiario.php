@@ -33,8 +33,8 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
         $Sucursal = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Sucursal']))));
         $Comentario = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Comentario']))));
         $Registro = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Registro']))));
-        $Agregadoel = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Agregadoel']))));
-        $Licencia = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Licencia']))));
+
+        $Licencia = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Empresa']))));
 
         // Consulta para comprobar si ya existe un registro con los mismos valores
         $sql = "SELECT Registro_Watts, Fecha_registro, Registro FROM Registros_Energia WHERE Registro_Watts='$Registro_Watts' AND 
@@ -45,8 +45,8 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
         if ($row && $row['Fecha_registro'] == $Fecha_registro && $row['Registro_Watts'] == $Registro_Watts && $row['Registro'] == $Registro) {
             echo json_encode(array("statusCode" => 250));
         } else {
-            $sql = "INSERT INTO `Registros_Energia`(`Registro_Watts`, `Fecha_registro`, `Sucursal`, `Comentario`, `Registro`, `Agregadoel`, `Licencia`, `file_name`) 
-                VALUES ('$Registro_Watts', '$Fecha_registro', '$Sucursal', '$Comentario', '$Registro', '$Agregadoel', '$Licencia', '$uploadedFile')";
+            $sql = "INSERT INTO `Registros_Energia`(`Registro_Watts`, `Fecha_registro`, `Sucursal`, `Comentario`, `Registro`, `Licencia`, `file_name`) 
+                VALUES ('$Registro_Watts', '$Fecha_registro', '$Sucursal', '$Comentario', '$Registro',  '$Licencia', '$uploadedFile')";
 
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode" => 200));
