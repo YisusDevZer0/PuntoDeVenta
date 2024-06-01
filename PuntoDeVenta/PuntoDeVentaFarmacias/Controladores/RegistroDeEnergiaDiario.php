@@ -28,7 +28,7 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
             }
         }
 
-        $Registro_Watts = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['RegistroWatts']))));
+        $Registro_Watts = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['RegistroEnergia']))));
         $Fecha_registro = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Fecha']))));
         $Sucursal = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Sucursal']))));
         $Comentario = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Comentario']))));
