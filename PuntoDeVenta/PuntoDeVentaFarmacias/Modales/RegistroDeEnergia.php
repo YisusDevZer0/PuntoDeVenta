@@ -14,7 +14,11 @@
      <div class="input-group mb-3">
   
   <input type="number" class="form-control"   name="RegistroEnergia" id="registroenergia" aria-describedby="basic-addon1" required>
-  <input type="text"   name="Fecha" >
+  <?php
+        // Obtener la fecha actual en formato 'YYYY-MM-DD'
+        $currentDate = date('Y-m-d');
+    ?>
+  <input type="date"  hidden name="Fecha" value="<?php echo $currentDate?>" >
 </div>
 <div>
 </div>
