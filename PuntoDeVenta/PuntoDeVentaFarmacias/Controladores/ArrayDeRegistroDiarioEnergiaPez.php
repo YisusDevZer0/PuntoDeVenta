@@ -4,8 +4,7 @@ include("db_connect.php");
 include("ControladorUsuario.php");
 // Obtener la fecha actual en formato 'YYYY-MM-DD'
 $fechaActual = date("Y-m-d");
-echo $fechaActual;
-echo $row['Nombre_Sucursal'];
+
 // Consulta SQL adaptada con las variables proporcionadas
 $sql = "SELECT Id_Registro,Registro_Watts, Fecha_registro, Sucursal, Comentario, Registro, Agregadoel, Licencia, file_name 
         FROM Registros_Energia 
