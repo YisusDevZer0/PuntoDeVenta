@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="CitaExt" tabindex="-1" aria-labelledby="exampleModalLabel" aria-="true">
-  <div class="modal-dialog  modal-notify modal-success">
+<div class="modal-dialog modal-lg modal-notify modal-success">
     <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;">
         <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
