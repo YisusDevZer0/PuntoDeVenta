@@ -46,7 +46,7 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
             echo json_encode(array("statusCode" => 250));
         } else {
             $sql = "INSERT INTO `Registros_Energia`(`Registro_Watts`, `Fecha_registro`, `Sucursal`, `Comentario`, `Registro`, `Licencia`, `file_name`) 
-                VALUES ('$Registro_Watts', '$Fecha_registro', '$Sucursal', '$Comentario', '$Registro',  '$Licencia', '$uploadedFile')";
+                VALUES ('$Registro_Watts', '$Fecha_registro', '$Sucursal', '$Comentario', '$Registro',  '$Licencia', '$fileName')";
 
             if (mysqli_query($conn, $sql)) {
                 echo json_encode(array("statusCode" => 200));
