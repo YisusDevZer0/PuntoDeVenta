@@ -1,6 +1,6 @@
 
 <div class="modal fade" id="RegistroEnergiaVentanaModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-notify modal-success">
+  <div class="modal-dialog  modal-notify modal-success">
     <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;">
         <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
