@@ -37,12 +37,13 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Revaloraciones de <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+            <div class="text-center">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#CitaExt">
   Agendar nueva revaloracion 
-</button> <br>
+</button> <br><br>
             <div id="RevaloracionesMedicas"></div>
             </div></div></div></div>
-            
+            </div>
             <script src="js/GuardaRevaloracion.js"></script>
 <script src="js/ControlDeRevaloraciones.js"></script>
 
