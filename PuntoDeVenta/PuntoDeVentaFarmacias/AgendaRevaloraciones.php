@@ -44,7 +44,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div id="RevaloracionesMedicas"></div>
             </div></div></div></div>
             </div>
-            <script src="js/Agendarevaloraciones.js"></script>
+            <script src="js/Agendaderevaloraciones.js"></script>
 <script src="js/ControlDeRevaloraciones.js"></script>
 
             <!-- Footer Start -->
