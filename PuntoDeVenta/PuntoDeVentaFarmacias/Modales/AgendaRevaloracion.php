@@ -60,7 +60,7 @@
   <select  id = "medico" name = "Medico"  class = "form-control "  >
 								<option value = "">Selecciona un medico</option>
                 <?php
-          $query = $conn -> query ("SELECT Nombre_Apellidos,Fk_Sucursal,Estatus FROM  Personal_Medico WHERE Estatus='Vigente' AND Fk_Sucursal='".$row['Fk_Sucursal']."'");
+          $query = $conn -> query ("SELECT Nombre_Apellidos,Fk_Sucursal,Fk_Usuario FROM Usuarios_PV WHERE Fk_Usuario=7  AND Fk_Sucursal='".$row['Fk_Sucursal']."'");
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["Nombre_Apellidos"].'">'.$valores["Nombre_Apellidos"].'</option>';
           }
