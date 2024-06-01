@@ -8,7 +8,7 @@ $fechaActual = date("Y-m-d");
 // Consulta SQL adaptada con las variables proporcionadas
 $sql = "SELECT Registro_Watts, Fecha_registro, Sucursal, Comentario, Registro, Agregadoel, Licencia, file_name 
         FROM Registros_Energia 
-        WHERE Fecha_registro = '$fechaActual' AND Sucursal = '" . $row['Nombre_Sucursal'] . "'";
+       ";
 
 // Ejecutar la consulta
 $result = mysqli_query($conn, $sql);
