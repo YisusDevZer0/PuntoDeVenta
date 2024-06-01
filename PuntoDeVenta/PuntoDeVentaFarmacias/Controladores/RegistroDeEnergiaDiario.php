@@ -21,7 +21,7 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
                 ) && in_array($file_extension, $valid_extensions)
             ) {
                 $sourcePath = $_FILES['file']['tmp_name'];
-                $targetPath = "../../FotosMedidores/$fileName";
+                $targetPath = "https://doctorpez.mx/PuntoDeVenta/FotosMedidores/$fileName";
                 if (move_uploaded_file($sourcePath, $targetPath)) {
                     $uploadedFile = $fileName;
                 }
