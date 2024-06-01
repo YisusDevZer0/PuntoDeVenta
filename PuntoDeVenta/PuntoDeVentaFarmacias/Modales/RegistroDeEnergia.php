@@ -48,10 +48,10 @@
 
    
     
-<input type="text" class="form-control" name="Registro" id="registro"  value="<?php echo $row['Nombre_Apellidos']?>"  readonly >
+<input type="text" class="form-control" name="Registro" id="registro" hidden value="<?php echo $row['Nombre_Apellidos']?>"  readonly >
   
-  <input type="text" class="form-control" name="Sucursal" id="sucursal"   value="<?php echo $row['Nombre_Sucursal']?>"   readonly >
-  <input type="text" class="form-control" name="Empresa" id="Empresa"  value="<?php echo $row['Licencia']?>"   readonly >
+  <input type="text" class="form-control" name="Sucursal" id="sucursal" hidden  value="<?php echo $row['Nombre_Sucursal']?>"   readonly >
+  <input type="text" class="form-control" name="Empresa" id="Empresa"  hidden value="<?php echo $row['Licencia']?>"   readonly >
 
      
     
