@@ -1,4 +1,4 @@
-$('document').ready(function($) {
+$(document).ready(function($) {
     $("#GeneraTicketAperturaCaja").hide();
 
     $("#OpenCaja").validate({
@@ -20,7 +20,11 @@ $('document').ready(function($) {
 
                 if (dataResult.statusCode == 250) {
                     $("#submit_registro").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
-                    $('#ErrorCaja').modal('toggle');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Algo no salió bien',
+                    });
                     setTimeout(function() {
                         $("#submit_registro").prop('disabled', false);
                         $("#submit_registro").html("Guardar <i class='fas fa-save'></i>");
@@ -31,10 +35,14 @@ $('document').ready(function($) {
                     $("#AltaFondo").removeClass("in");
                     $(".modal-backdrop").remove();
                     $("#AltaFondo").hide();
-                    $('#Exito').modal('toggle');
-                    setTimeout(function() {
-                        $('#Exito').modal('hide');
-                    }, 2000);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: 'Operación realizada con éxito',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
 
                     // Enviar los datos del formulario oculto
                     $.ajax({
@@ -49,10 +57,16 @@ $('document').ready(function($) {
                         }
                     });
 
-                    window.location.reload();
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
                 } else if (dataResult.statusCode == 201) {
                     $("#submit_Age").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
-                    $('#ErrorData').modal('toggle');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Algo no salió bien',
+                    });
                     setTimeout(function() {
                         $("#submit_Age").html("Guardar <i class='fas fa-save'></i>");
                     }, 3000);
