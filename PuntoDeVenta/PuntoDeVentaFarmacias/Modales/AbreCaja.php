@@ -110,7 +110,7 @@ while ($r=$query->fetch_object()){
       <button type="submit"  id="EnviaTicket"  class="btn btn-info">Realizar abono <i class="fas fa-money-check-alt"></i></button>
 </form>
 
-<script src="js/AbreCaja.js"></script>
+<script src="js/AbreCajas.js"></script>
 
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
