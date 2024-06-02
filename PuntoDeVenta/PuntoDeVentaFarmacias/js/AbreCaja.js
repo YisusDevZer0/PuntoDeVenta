@@ -113,7 +113,9 @@ $('document').ready(function($) {
                         }
                     });
 
-                    CargaCajas();
+                    // Recargar la página
+window.location.reload();
+
                 } else if (dataResult.statusCode == 201) {
                     $("#submit_Age").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
                     $('#ErrorData').modal('toggle');
