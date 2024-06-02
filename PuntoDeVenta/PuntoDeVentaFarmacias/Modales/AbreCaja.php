@@ -96,10 +96,7 @@ while ($r=$query->fetch_object()){
 
 </form>
 
-<form method="post" 
-      target="print_popup" 
-      action="http://localhost:8080/ticket/TicketAperturaCaja.php"
-      onsubmit="window.open('about:blank','print_popup','width=600,height=600');"  id="GeneraTicketAperturaCaja">
+<form method="post"  id="GeneraTicketAperturaCaja">
 
    
       <input type="text" class="form-control "   readonly name="VendedorTicket"  readonly value="<?php echo $row['Nombre_Apellidos']?>">
