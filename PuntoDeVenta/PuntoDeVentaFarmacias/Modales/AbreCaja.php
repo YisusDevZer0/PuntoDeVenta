@@ -102,6 +102,13 @@ function TurnoElegido() {
     input.value = select.options[select.selectedIndex].value;
 }
 </script>
+<script>
+document.getElementById("resultado").addEventListener("input", function() {
+    var value = this.value;
+    document.getElementById("resultadoticket").value = value;
+});
+</script>
+
 
 <form method="post"  id="GeneraTicketAperturaCaja">
 
