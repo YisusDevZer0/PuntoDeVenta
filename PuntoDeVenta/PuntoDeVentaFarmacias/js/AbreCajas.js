@@ -31,12 +31,13 @@ $(document).ready(function($) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Éxito!',
-                        text: 'Operación realizada con éxito',
+                        text: 'Apertura realizada con exito',
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        $("#submit_registro").html("Guardar <i class='fas fa-save'></i>");
-                        $("#OpenCaja")[0].reset();
+                        $("#editModal").removeClass("in");
+                    $(".modal-backdrop").remove();
+                    $("#editModal").hide();
 
                         // Enviar los datos del formulario oculto
                         $.ajax({
