@@ -95,6 +95,13 @@ while ($r=$query->fetch_object()){
 <button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
 
 </form>
+<script>
+function TurnoElegido() {
+    var select = document.getElementById("turno");
+    var input = document.getElementById("turnoticket");
+    input.value = select.options[select.selectedIndex].value;
+}
+</script>
 
 <form method="post"  id="GeneraTicketAperturaCaja">
 
