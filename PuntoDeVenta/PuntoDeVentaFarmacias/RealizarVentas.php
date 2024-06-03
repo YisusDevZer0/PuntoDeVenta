@@ -983,11 +983,8 @@ $('#codigoEscaneado').autocomplete({
 
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
-
-// Función para agregar un artículo
-// Función para agregar un artículo
-function agregarArticulo(articulo) {
-    if (!articulo || !articulo.id) {
+  function agregarArticulo(articulo) {
+    if (!articulo || (!articulo.id && !articulo.descripcion)) {
         mostrarMensaje('El artículo no es válido');
         return;
     } else if ($('#detIdModal' + articulo.id).length) {
@@ -995,8 +992,20 @@ function agregarArticulo(articulo) {
         return;
     }
 
-    var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-    if (row.length) {
+    var row = null;
+    if (articulo.id) {
+        row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
+    } else {
+        // Buscar el primer artículo que coincida con la descripción si no hay un ID
+        $('#tablaAgregarArticulos tbody tr').each(function() {
+            if ($(this).find('.descripcion-producto-input').val() === articulo.descripcion) {
+                row = $(this);
+                return false; // Salir del bucle each cuando se encuentre el artículo
+            }
+        });
+    }
+
+    if (row && row.length) {
         var cantidadActual = parseInt(row.find('.cantidad input').val());
         var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
         if (nuevaCantidad < 0) {
@@ -1018,11 +1027,7 @@ function agregarArticulo(articulo) {
         var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
 
         tr += '<tr data-id="' + articulo.id + '">';
-        if (articulo.codigo) {
-            tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput_' + articulo.id + '" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
-        } else {
-            tr += '<td class="codigo"></td>'; // Si no hay código, dejar el campo en blanco
-        };
+        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + (articulo.codigo || '') + '" name="CodBarras[]" /></td>';
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
         tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
