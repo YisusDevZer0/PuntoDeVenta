@@ -909,26 +909,27 @@ Efectivo Exacto
   formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Controladores/escaner_articulo.php",
+    url: "Consultas/escaner_articulo.php",
     type: 'POST',
     data: formData,
     processData: false,
     contentType: false,
     dataType: 'json',
     success: function (data) {
-      if (data.length === 0) {
-     
-      } else if (data.codigo) {
+      if ($.isEmptyObject(data)) {
+        msjError('No Encontrado');
+      } else if (data.codigo || data.descripcion) {
         agregarArticulo(data);
       }
 
       limpiarCampo();
     },
     error: function (data) {
-      
+      msjError('Error en la búsqueda');
     }
   });
 }
+
 
 function limpiarCampo() {
   $('#codigoEscaneado').val('');
@@ -954,7 +955,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Controladores/autocompletado.php',
+      url: 'Consultas/autocompletado.php',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -983,20 +984,24 @@ $('#codigoEscaneado').autocomplete({
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
-  // Función para agregar un artículo
-  function agregarArticulo(articulo) {
-    if (!articulo || !articulo.id) {
-      mostrarMensaje('El artículo no es válido');
+ // Función para agregar un artículo
+ function agregarArticulo(articulo) {
+    if (!articulo || (!articulo.id && !articulo.descripcion)) {
+        mostrarMensaje('El artículo no es válido');
+        return;
+    
     } else if ($('#detIdModal' + articulo.id).length) {
-      mostrarMensaje('El artículo ya se encuentra incluido');
-    } else {
-      var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-      if (row.length) {
+        mostrarMensaje('El artículo ya se encuentra incluidoo');
+        return;
+    }
+
+    var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
+    if (row.length) {
         var cantidadActual = parseInt(row.find('.cantidad input').val());
         var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
         if (nuevaCantidad < 0) {
-          mostrarMensaje('La cantidad no puede ser negativa');
-          return;
+            mostrarMensaje('La cantidad no puede ser negativa');
+            return;
         }
         row.find('.cantidad input').val(nuevaCantidad);
         actualizarImporte(row);
@@ -1005,46 +1010,40 @@ $('#codigoEscaneado').autocomplete({
         mostrarTotalVenta();
         mostrarSubTotal();
         mostrarIvaTotal();
-      } else {
-       
+    } else {
         var tr = '';
         var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
-      
 
         var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
         var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
 
         tr += '<tr data-id="' + articulo.id + '">';
-        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
-        tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
+        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + (articulo.codigo || '') + '" name="CodBarras[]" /></td>';
+        tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
-        tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number"  value="' + articulo.precio + '"  /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '"class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
-        tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]"style="font-size: 0.75rem !important;" type="number" readonly /></td>';
+        tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
+        tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>';
         tr += '<td style="visibility:collapse; display:none;"><input id="importe_siniva_' + articulo.id + '" class="form-control importe_siniva" type="number" readonly /></td>';
         tr += '<td style="visibility:collapse; display:none;"><input id="valordelniva_' + articulo.id + '" class="form-control valordelniva" type="number" readonly /></td>';
         tr += '<td style="visibility:collapse; display:none;"><input id="ieps_' + articulo.id + '" class="form-control ieps" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
-        tr += '<td  style="visibility:collapse; display:none;"  class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="TiposDeServicio[]" /></td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Turno"><input type="text" class="form-control " hidden name="TurnoEnTurno[]" style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>"></td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="CajaDeSucursal"><input type="text" class="form-control " hidden id="valcaja" name="CajaDeSucursal[]" readonly value="<?php echo $ValorCaja["ID_Caja"]; ?>"></td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="NumeroTicket"> <input type="text" class="form-control "hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Vendedor"> <input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]"readonly value="<?php echo $row['Nombre_Apellidos'] ?>">   </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Sucursal"> <input hidden type="text" class="form-control " name="SucursalEnVenta[]"readonly value="<?php echo $row['Fk_Sucursal'] ?>">   </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Sistema"> <input hidden type="text" class="form-control " name="Sistema[]"readonly value="POSVENTAS">  </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Liquidado"> <input hidden type="text" class="form-control " name="Liquidado[]"readonly value="N/A">  </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="N/A"> <input hidden type="text" class="form-control " name="Estatus[]"readonly value="Pagado">  </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Empresa"> <input hidden type="text" class="form-control " name="Empresa[]"readonly value="Doctor Consulta">  </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Fecha"> <input hidden type="text" class="form-control " name="FechaDeVenta[]"readonly value="<? echo $fechaActual;?>"  </td>';
-        tr += '<td   style="visibility:collapse; display:none;" class="FormaPago"> <input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"> </td>';
-        
-        tr += '<td  style="visibility:collapse; display:none;" class="Descuentosugerido"> <input hidden type="text" class="form-control descuento-aplicado" id="descuentoaplicado_' + articulo.id + '" name="DescuentoAplicado[]" readonly > </td>';
-        tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div><div class="btn-container">' +
-      '<a class="btn btn-info btn-sm" href="#" onclick="abrirSweetAlert(this); return false;"><i class="fas fa-percentage"></i></a></div></td>';
-      
-
+        tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="TiposDeServicio[]" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Turno"><input type="text" class="form-control " hidden name="TurnoEnTurno[]" style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="CajaDeSucursal"><input type="text" class="form-control " hidden id="valcaja" name="CajaDeSucursal[]" readonly value="<?php echo $ValorCaja["ID_Caja"]; ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="SucursalEnVenta[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Pagado"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Empresa"><input hidden type="text" class="form-control " name="Empresa[]" readonly value="Doctor Consulta"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="FechaDeVenta[]" readonly value="<? echo $fechaActual;?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Descuentosugerido"><input hidden type="text" class="form-control descuento-aplicado" id="descuentoaplicado_' + articulo.id + '" name="DescuentoAplicado[]" readonly></td>';
+        tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div><div class="btn-container"><a class="btn btn-info btn-sm" href="#" onclick="abrirSweetAlert(this); return false;"><i class="fas fa-percentage"></i></a></div></td>';
         tr += '</tr>';
 
         $('#tablaAgregarArticulos tbody').append(tr);
@@ -1055,16 +1054,11 @@ $('#codigoEscaneado').autocomplete({
         mostrarSubTotal();
         mostrarIvaTotal();
         CapturaFormadePago();
-      }
     }
 
     $('#codigoEscaneado').val('');
     $('#codigoEscaneado').focus();
-  }
-
-  
-
-
+}
 
 
 
