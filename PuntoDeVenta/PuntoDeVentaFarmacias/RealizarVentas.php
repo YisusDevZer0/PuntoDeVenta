@@ -984,7 +984,7 @@ $('#codigoEscaneado').autocomplete({
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
-  // Función para agregar un artículo
+// Función para agregar un artículo
 function agregarArticulo(articulo) {
     if (!articulo || !articulo.id) {
         mostrarMensaje('El artículo no es válido');
@@ -1017,7 +1017,11 @@ function agregarArticulo(articulo) {
         var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
 
         tr += '<tr data-id="' + articulo.id + '">';
-        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + (articulo.codigo || '') + '" name="CodBarras[]" /></td>';
+        if (articulo.codigo) {
+            tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput_' + articulo.id + '" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
+        } else {
+            tr += '<td class="codigo"></td>'; // Si no hay código, dejar el campo en blanco
+        };
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
         tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
