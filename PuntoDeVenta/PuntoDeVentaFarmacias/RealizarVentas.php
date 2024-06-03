@@ -909,7 +909,7 @@ Efectivo Exacto
   formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Consultas/escaner_articulo.php",
+    url: "Controladores/escaner_articulo.php",
     type: 'POST',
     data: formData,
     processData: false,
@@ -955,7 +955,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Consultas/autocompletado.php',
+      url: 'Controladores/autocompletado.php',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -984,14 +984,13 @@ $('#codigoEscaneado').autocomplete({
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
- // Función para agregar un artículo
- function agregarArticulo(articulo) {
-    if (!articulo || (!articulo.id && !articulo.descripcion)) {
+  // Función para agregar un artículo
+function agregarArticulo(articulo) {
+    if (!articulo || !articulo.id) {
         mostrarMensaje('El artículo no es válido');
         return;
-    
     } else if ($('#detIdModal' + articulo.id).length) {
-        mostrarMensaje('El artículo ya se encuentra incluidoo');
+        mostrarMensaje('El artículo ya se encuentra incluido');
         return;
     }
 
@@ -1059,6 +1058,11 @@ $('#codigoEscaneado').autocomplete({
     $('#codigoEscaneado').val('');
     $('#codigoEscaneado').focus();
 }
+
+
+  
+
+
 
 
 
