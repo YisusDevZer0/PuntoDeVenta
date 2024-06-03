@@ -18,8 +18,9 @@ $codigo = $_POST['codigoEscaneado'];
 // Consultar la base de datos para obtener el artículo correspondiente al código de barras o nombre de producto
 $sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos
         FROM Stock_POS
-        WHERE Cod_Barra = ? OR Nombre_Prod LIKE ? OR Clave_adicional = ?
+        WHERE (Cod_Barra = ? OR Nombre_Prod LIKE ? OR Clave_adicional = ?) AND (Cod_Barra IS NOT NULL AND Cod_Barra <> '')
         GROUP BY Cod_Barra";
+
 $stmt = $conn->prepare($sql);
 $likeCodigo = '%' . $codigo . '%';
 $stmt->bind_param("sss", $codigo, $likeCodigo, $codigo);
