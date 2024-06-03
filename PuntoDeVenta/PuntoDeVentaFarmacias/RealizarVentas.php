@@ -917,7 +917,7 @@ Efectivo Exacto
     dataType: 'json',
     success: function (data) {
       if (data.length === 0) {
-        msjError('No Encontrado');
+     
       } else if (data.codigo) {
         agregarArticulo(data);
       }
