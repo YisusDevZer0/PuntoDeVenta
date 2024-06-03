@@ -985,6 +985,7 @@ $('#codigoEscaneado').autocomplete({
   var totalIVA = 0;
 
 // Función para agregar un artículo
+// Función para agregar un artículo
 function agregarArticulo(articulo) {
     if (!articulo || !articulo.id) {
         mostrarMensaje('El artículo no es válido');
