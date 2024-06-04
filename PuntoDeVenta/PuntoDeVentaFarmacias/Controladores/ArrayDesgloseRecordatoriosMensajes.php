@@ -45,16 +45,28 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
+    // Definir el estilo y el texto según el valor de Estado
+    $estatus_estilo = '';
+    $estatus_leyenda = '';
+    switch ($fila["Estado"]) {
+        case 'Pendiente':
+            $estatus_estilo = 'background-color: #ff3131; color: white;'; // Rojo
+            $estatus_leyenda = 'Pendiente';
+            break;
+        default:
+            $estatus_estilo = 'background-color: green; color: white;'; // Verde
+            $estatus_leyenda = 'Completado';
+            break;
+    }
+
     // Construir el array de datos
     $data[] = [
         "Id" => $fila["ID_Notificacion"],
         "TipMensaje" => $fila["TipoMensaje"],
         "MensajeRecordatorio" => $fila["Mensaje_Recordatorio"],
-        "NombreSucursal" => $fila["Nombre_Sucursal"],
-        "Estatus" => $fila["Estado"],
+        "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         
-        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-        
+        "Editar" => '<td><a data-id="' . $fila["ID_Notificacion"] . '" class="btn btn-primary btn-sm btn-cambiaestadomensaje " style="background-color: #0172b6 !important;"><i class="fa-solid fa-lock-open"></i></a></td>',
     ];
 }
 

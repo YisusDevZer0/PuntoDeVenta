@@ -213,7 +213,7 @@ tabla = $('#Clientes').DataTable({
     { mData: 'Id' },  
   { mData: 'TipMensaje' },  
   { mData: 'MensajeRecordatorio' },
-  { mData: 'NombreSucursal' },
+  // { mData: 'NombreSucursal' },
        { mData: 'Estatus' },
        { mData: 'Editar' },
       
@@ -270,9 +270,9 @@ tabla = $('#Clientes').DataTable({
 <th>N°Folio</th>
 <th>Tipo</th>
 <th>Contenido</th>
-<th>Sucursal</th>
+<!-- <th>Sucursal</th> -->
     <th>Estado</th>
-    <th>Editar</th>
+    <th>Marcar Como leido</th>
 </thead>
 
 </div>

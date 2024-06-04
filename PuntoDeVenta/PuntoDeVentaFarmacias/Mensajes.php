@@ -52,11 +52,11 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
            <script>
-    $(".btn-editcaja").click(function(){
+    $(".btn-cambiaestadomensaje").click(function(){
         id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php", "id=" + id, function(data){
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ActualizaEstadoMensaje.php", "id=" + id, function(data){
             $("#form-edit").html(data);
-            $("#Titulo").html("Apertura de caja");
+            $("#Titulo").html("¿Marcar como leido?");
             $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
         });
         $('#editModal').modal('show');
