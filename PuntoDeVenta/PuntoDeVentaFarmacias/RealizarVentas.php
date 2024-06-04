@@ -1372,7 +1372,7 @@ include("footer.php") ?>
 
 
 
-  <script src="js/FinalizaLasVentas.js"></script>
+  <script src="js/FinalizaLasVentasSucursales.js"></script>
   
   <script src="js/BuscaDataPacientes.js"></script>
   <script src="js/BusquedaProductos.js"></script>
