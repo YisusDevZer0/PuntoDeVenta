@@ -137,7 +137,7 @@ $(document).ready(function () {
     console.log("Submitting form...");
     $.ajax({
       type: 'POST',
-      url: "Consultas/RegistroDeVentasSucursales.php",
+      url: "Controladores/RegistroDeVentasSucursales.php",
       data: $('#VentasAlmomento').serialize(),
       cache: false,
       beforeSend: function () {
