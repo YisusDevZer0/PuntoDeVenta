@@ -84,7 +84,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                                     <hr class="dropdown-divider">
                                 `);
                             });
-                            messageDropdown.append(`<a href="#" class="dropdown-item text-center">See all messages</a>`);
+                            messageDropdown.append(`<a href="https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mensajes" class="dropdown-item text-center">Ver todos los mensajes</a>`);
 
                             // Show toast notification
                             const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
