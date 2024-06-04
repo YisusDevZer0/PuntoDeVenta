@@ -11,7 +11,7 @@ $Especialistas = $query->fetch_object();
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="EliminaServiciosForm">
         <i id="lockIcon" class="fas fa-unlock fa-5x text-success"></i>
-        <p>¿Está seguro de que desea bloquear la caja con el turno <?php echo $Especialistas->Turno; ?>, aperturada el día <?php echo $Especialistas->Fecha_Apertura; ?>?</p>
+        <p>¿Estas seguro que deseas marcar como leido el siguiente mensaje? <?php echo $Especialistas->Mensaje_Recordatorio; ?></p>
         <input type="hidden" name="ID_Notificacion" id="ID_Notificacion" value="<?php echo $Especialistas->ID_Notificacion; ?>">
         <input type="hidden" name="Estatus" id="Estatus" value="2">
         <button type="submit" id="submit" class="btn btn-danger">
