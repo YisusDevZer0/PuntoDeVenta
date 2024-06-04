@@ -57,7 +57,7 @@ include_once "Controladores/ControladorUsuario.php";
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ActualizaEstadoMensaje.php", "id=" + id, function(data){
             $("#form-edit").html(data);
             $("#Titulo").html("¿Marcar como leido?");
-            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
+            $("#Di").addClass("modal-dialog  modal-warning modal-success");
         });
         $('#editModal').modal('show');
     });
