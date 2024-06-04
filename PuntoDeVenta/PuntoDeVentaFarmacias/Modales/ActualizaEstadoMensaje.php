@@ -20,6 +20,7 @@ if ($id_notificacion) {
 ?>
 
 <?php if (isset($especialistas) && $especialistas) : ?>
+    <div class="text-center">
     <form action="javascript:void(0)" method="post" id="MarcarLeidoForm">
         <i id="lockIcon" class="fa-regular fa-eye fa-5x text-warning"></i>
       
@@ -32,6 +33,7 @@ if ($id_notificacion) {
             Marcar como leído <i class="fas fa-lock"></i>
         </button>
     </form>
+    </div>
     <script src="js/DesactivaLaCaja.js"></script>
     <script>
         document.getElementById("submit").addEventListener("click", function() {
