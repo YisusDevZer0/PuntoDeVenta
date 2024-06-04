@@ -25,7 +25,7 @@ S.Nombre_Sucursal
 FROM 
 Recordatorios_Pendientes RP
 JOIN 
-Sucursales S ON RP.Sucursal = S.ID_Sucursal 
+Sucursales S ON RP.Sucursal = S.ID_Sucursal AND RP.TipoMensaje='Mensaje'
 AND RP.Licencia = ? AND RP.Sucursal = ?"; // Ajuste de la condición WHERE
 
 // Preparar la declaración
