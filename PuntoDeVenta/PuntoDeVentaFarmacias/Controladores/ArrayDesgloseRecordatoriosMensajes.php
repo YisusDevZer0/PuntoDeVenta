@@ -66,7 +66,7 @@ while ($fila = $result->fetch_assoc()) {
         "MensajeRecordatorio" => $fila["Mensaje_Recordatorio"],
         "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         
-        "Editar" => '<td><a data-id="' . $fila["ID_Notificacion"] . '" class="btn btn-primary btn-sm btn-cambiaestadomensaje " style="background-color: #0172b6 !important;"><i class="fa-solid fa-lock-open"></i></a></td>',
+        "Editar" => '<td><a data-id="' . $fila["ID_Notificacion"] . '" class="btn btn-primary btn-sm btn-cambiaestadomensaje " style="background-color: #0172b6 !important;"><i class="fa-solid fa-check"></i></a></td>',
     ];
 }
 
