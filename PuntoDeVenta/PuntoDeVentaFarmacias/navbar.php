@@ -74,7 +74,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                                 messageDropdown.append(`
                                     <a href="#" class="dropdown-item">
                                         <div class="d-flex align-items-center">
-                                            <img class="rounded-circle" src="${message.avatar || 'default_avatar_path.jpg'}" alt="" style="width: 40px; height: 40px;">
+                                            <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>"  alt="" style="width: 40px; height: 40px;">
                                             <div class="ms-2">
                                                 <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
                                                 <small>${message.Registrado}</small>
