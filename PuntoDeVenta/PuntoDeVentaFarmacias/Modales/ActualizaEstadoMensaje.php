@@ -21,8 +21,10 @@ if ($id_notificacion) {
 
 <?php if (isset($especialistas) && $especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="MarcarLeidoForm">
-        <i id="lockIcon" class="fas fa-unlock fa-5x text-success"></i>
-        <p>¿Estás seguro que deseas marcar como leído el siguiente mensaje?</p>
+        <i id="lockIcon" class="fa-regular fa-eye fa-5x text-warning"></i>
+      
+        
+        <p>¿Estás seguro que deseas marcar como leído el siguiente mensaje? <br></p>
         <p><strong><?php echo $especialistas->Mensaje_Recordatorio; ?></strong></p>
         <input type="hidden" name="ID_Notificacion" id="ID_Notificacion" value="<?php echo $especialistas->ID_Notificacion; ?>">
         <input type="hidden" name="Estatus" id="Estatus" value="2">
