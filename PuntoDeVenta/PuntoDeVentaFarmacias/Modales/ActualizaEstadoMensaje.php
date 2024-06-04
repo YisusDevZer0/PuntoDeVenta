@@ -1,21 +1,33 @@
 <?php
-include "../Controladores/db_connect.php.php";
+include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-$user_id = null;
-$sql1 = "SELECT * FROM Recordatorios_Pendientes WHERE ID_Notificacion= " . $_POST["id"];
-$query = $conn->query($sql1);
-$Especialistas = $query->fetch_object();
+// Obtener el ID de la notificación desde el POST
+$id_notificacion = isset($_POST["id"]) ? $_POST["id"] : null;
+
+// Verificar si el ID de la notificación está definido
+if ($id_notificacion) {
+    // Consulta para obtener los detalles del mensaje de la notificación
+    $sql = "SELECT * FROM Recordatorios_Pendientes WHERE ID_Notificacion= ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_notificacion);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $especialistas = $result->fetch_object();
+    $stmt->close();
+}
+
 ?>
 
-<?php if ($Especialistas) : ?>
-    <form action="javascript:void(0)" method="post" id="EliminaServiciosForm">
+<?php if (isset($especialistas) && $especialistas) : ?>
+    <form action="javascript:void(0)" method="post" id="MarcarLeidoForm">
         <i id="lockIcon" class="fas fa-unlock fa-5x text-success"></i>
-        <p>¿Estas seguro que deseas marcar como leido el siguiente mensaje? <?php echo $Especialistas->Mensaje_Recordatorio; ?></p>
-        <input type="hidden" name="ID_Notificacion" id="ID_Notificacion" value="<?php echo $Especialistas->ID_Notificacion; ?>">
+        <p>¿Estás seguro que deseas marcar como leído el siguiente mensaje?</p>
+        <p><strong><?php echo $especialistas->Mensaje_Recordatorio; ?></strong></p>
+        <input type="hidden" name="ID_Notificacion" id="ID_Notificacion" value="<?php echo $especialistas->ID_Notificacion; ?>">
         <input type="hidden" name="Estatus" id="Estatus" value="2">
         <button type="submit" id="submit" class="btn btn-danger">
-            Bloquear<i class="fas fa-lock"></i>
+            Marcar como leído <i class="fas fa-lock"></i>
         </button>
     </form>
     <script src="js/DesactivaLaCaja.js"></script>
@@ -29,5 +41,5 @@ $Especialistas = $query->fetch_object();
         });
     </script>
 <?php else : ?>
-    <p class="alert alert-danger">404 No se encuentra</p>
+    <p class="alert alert-danger">404 No se encuentra el mensaje</p>
 <?php endif; ?>
