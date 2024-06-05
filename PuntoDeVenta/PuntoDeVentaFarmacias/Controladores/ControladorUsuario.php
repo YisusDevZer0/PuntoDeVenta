@@ -38,7 +38,7 @@ $resultset = mysqli_query($conn, $sql) or die("database error: " . mysqli_error(
 $row = mysqli_fetch_assoc($resultset);
 
 if ($row['Nombre_Apellidos'] != 'DevZero') {
-    header("Location: ../Mantenimiento.php");
+    header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
     exit();
 }
 
