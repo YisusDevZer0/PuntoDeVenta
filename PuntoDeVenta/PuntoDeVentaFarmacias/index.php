@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php"
                             <i class="fa-solid fa-capsules fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Productos</p>
-                                <button type="button" class="btn btn-primary" id="openModalBtn">Consultar</button>
+                                <button type="button" class="btn btn-primary" id="#ConsultaProductos">Consultar</button>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,9 @@ include_once "Controladores/ControladorUsuario.php"
        
 
 
-        <?php include "Footer.php";?>
+        <?php 
+        include "Modales/ConsultaProductosRapidos.php";
+        include "Footer.php";?>
 </body>
 
 </html>
