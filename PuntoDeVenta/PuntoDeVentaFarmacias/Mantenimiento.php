@@ -55,7 +55,7 @@
         <p>Gracias por tu paciencia.</p>
     </div>
     <footer>
-        &copy; 2024 Tu Empresa de Pescados. Todos los derechos reservados.
+        &copy; 2024 Doctor Pez Todos los derechos reservados.
     </footer>
 </body>
 </html>
