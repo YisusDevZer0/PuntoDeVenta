@@ -182,70 +182,64 @@
   }
 
 
-tabla = $('#StocksDESucursales').DataTable({
-
- "bProcessing": true,
- "ordering": true,
- "stateSave":true,
- "bAutoWidth": false,
- "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
- "aoColumns": [
-  { mData: 'Cod_Barra' },
-  { mData: 'Nombre_Prod' },
-       { mData: 'Clave_adicional' },
-
-       
-       { mData: 'Precio_Venta' },
-       { mData: 'Nom_Serv' },
-       { mData: 'Tipo' },
-       { mData: 'Proveedor1' },
-       { mData: 'Proveedor2' },
-
-       { mData: 'UltimoMovimiento' },
-       { mData: 'Existencias_R' },
-       { mData: 'Min_Existencia' },
-       { mData: 'Max_Existencia' },
-       {mData: "Existencias_R",
-        "searchable": true,
-        "orderable":true,
-        "render": function (data, type, row) {
-            if ( row.Existencias_R < row.Min_Existencia) {
-
-            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
-        }
-        else if ( row.Existencias_R > row.Max_Existencia) {
-return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
-        }
-            else {
- 
-    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
- 
-}
-        }
- 
-    },
-       { mData: 'Editar' },
-       { mData: 'Eliminar' },
-  
-      ],
-     
-      "lengthMenu": [[10,20,150,250,500, -1], [10,20,50,250,500, "Todos"]],  
-  
-  "language": {
-  "lengthMenu": "Mostrar _MENU_ registros",
-  "sPaginationType": "extStyle",
-  "zeroRecords": "No se encontraron resultados",
-  "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-  "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-  "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-  "sSearch": "Buscar:",
-  "paginate": {
-    "first": '<i class="fas fa-angle-double-left"></i>',
-    "last": '<i class="fas fa-angle-double-right"></i>',
-    "next": '<i class="fas fa-angle-right"></i>',
-    "previous": '<i class="fas fa-angle-left"></i>'
-  },
+  var tabla = $('#StocksDESucursales').DataTable({
+        "bProcessing": true,
+        "ordering": true,
+        "stateSave": true,
+        "bAutoWidth": false,
+        "order": [[0, "desc"]],
+        "ajax": {
+            "url": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
+            "dataType": "json",
+            "type": "GET",
+            "error": function(xhr, status, error) {
+                console.error("Error al obtener los datos:", status, error);
+                alert("Hubo un error al obtener los datos. Por favor, inténtalo de nuevo más tarde.");
+            }
+        },
+        "columns": [
+            { "data": "Cod_Barra" },
+            { "data": "Nombre_Prod" },
+            { "data": "Clave_adicional" },
+            { "data": "Precio_Venta" },
+            { "data": "Nom_Serv" },
+            { "data": "Tipo" },
+            { "data": "Proveedor1" },
+            { "data": "Proveedor2" },
+            { "data": "UltimoMovimiento" },
+            { "data": "Existencias_R" },
+            { "data": "Min_Existencia" },
+            { "data": "Max_Existencia" },
+            {
+                "data": "Existencias_R",
+                "render": function(data, type, row) {
+                    if (row.Existencias_R < row.Min_Existencia) {
+                        return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+                    } else if (row.Existencias_R > row.Max_Existencia) {
+                        return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>';
+                    } else {
+                        return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+                    }
+                }
+            },
+            { "data": "Editar" },
+            { "data": "Eliminar" }
+        ],
+        "lengthMenu": [[10, 20, 150, 250, 500, -1], [10, 20, 50, 250, 500, "Todos"]],
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "sPaginationType": "extStyle",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sSearch": "Buscar:",
+            "paginate": {
+                "first": '<i class="fas fa-angle-double-left"></i>',
+                "last": '<i class="fas fa-angle-double-right"></i>',
+                "next": '<i class="fas fa-angle-right"></i>',
+                "previous": '<i class="fas fa-angle-left"></i>'
+            },
   "processing": function () {
     mostrarCargando();
   }
