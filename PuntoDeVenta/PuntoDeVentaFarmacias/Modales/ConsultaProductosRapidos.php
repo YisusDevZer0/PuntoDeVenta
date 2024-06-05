@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="ConsultaProductosModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="ConsultaProductos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -19,7 +19,7 @@
 <script>
   $(document).ready(function() {
     // Función para cargar los datos en el modal al abrirlo
-    $('#ConsultaProductosModal').on('show.bs.modal', function() {
+    $('#ConsultaProductos').on('show.bs.modal', function() {
       $.ajax({
         url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php', // Cambia esto por la ruta correcta a tu archivo PHP
         type: 'GET',
