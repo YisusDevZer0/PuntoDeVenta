@@ -64,12 +64,12 @@ include_once "Controladores/ControladorUsuario.php"
             <h6 class="mb-4" style="color:#0172b6;">Mensajes o recordatorios de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
             
-<div id="Cajas"></div> <?php 
-        include "Modales/ConsultaProductosRapidos.php";
-        ?>
+<div id="Cajas"></div>
             </div></div></div></div>
             <!-- Sale & Revenue End -->
-           
+            <?php 
+        include "Modales/ConsultaProductosRapidos.php";
+        ?>
             <script src="js/Recordatorios_mensajes.js"></script>
        
             

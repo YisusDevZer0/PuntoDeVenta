@@ -272,6 +272,10 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 "responsive": true
 });
 </script>
+<div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <div class="text-center">
 	<div class="table-responsive">
 	<table  id="StocksDESucursales" class="table table-hover">
