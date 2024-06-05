@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="container">
-        <img src="https://example.com/fish_image.jpg" alt="Peces nadando" class="fish">
+        <img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish">
         <h1>¡Estamos realizando mantenimiento!</h1>
         <p>Nos encontramos mejorando nuestro sistema para ofrecerte una mejor experiencia. Volveremos en breve.</p>
         <p>Gracias por tu paciencia.</p>
