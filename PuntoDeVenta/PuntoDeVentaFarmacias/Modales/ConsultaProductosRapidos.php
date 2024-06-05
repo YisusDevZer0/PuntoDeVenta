@@ -1,7 +1,4 @@
 <!-- Botón para abrir el modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ConsultaProductosModal">
-  Consultar Productos
-</button>
 
 <!-- Modal -->
 <div class="modal fade" id="ConsultaProductosModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -42,7 +42,10 @@ include_once "Controladores/ControladorUsuario.php"
                             <i class="fa-solid fa-capsules fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Productos</p>
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ConsultaProductos">Consultar</button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ConsultaProductosModal">
+  Consultar Productos
+</button>
+
                                 
                             </div>
                         </div>
