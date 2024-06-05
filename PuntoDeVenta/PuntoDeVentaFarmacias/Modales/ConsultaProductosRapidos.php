@@ -1,12 +1,4 @@
 
-<?php
-
-include("Consultas/db_connection.php");
-include "Consultas/ControladorUsuario.php";
-
-
-
-?>
 
 <!-- Central Modal Medium Info -->
 <div class="modal fade" id="ConsultaProductos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
