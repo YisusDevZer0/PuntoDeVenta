@@ -6,8 +6,11 @@ if (session_status() == PHP_SESSION_NONE) {
 
 if(!isset($_SESSION['VentasPos'])){
 	header("Location: Expiro.php");
+	exit();
 }
+
 include_once("db_connect.php");
+
 $sql = "SELECT
 Usuarios_PV.Id_PvUser,
 Usuarios_PV.Nombre_Apellidos,
@@ -28,7 +31,16 @@ Sucursales.Nombre_Sucursal
 FROM
 Usuarios_PV
 INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User
-INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal WHERE
-Usuarios_PV.Id_PvUser='".$_SESSION['VentasPos']."'";
-$resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
+INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal 
+WHERE Usuarios_PV.Id_PvUser = '".$_SESSION['VentasPos']."'";
+
+$resultset = mysqli_query($conn, $sql) or die("database error: " . mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
+
+if ($row['Nombre_Apellidos'] != 'DevZero') {
+    header("Location: ../Mantenimiento.php");
+    exit();
+}
+
+// Aquí puedes continuar con el resto de tu código
+?>
