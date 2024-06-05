@@ -1,5 +1,5 @@
 <?php
-include_once "Controladores/ControladorUsuario.php"
+include_once "Controladores/ControladorUsuario.php";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -11,8 +11,15 @@ include_once "Controladores/ControladorUsuario.php"
     <meta content="" name="keywords">
     <meta content="" name="description">
 
-   <?php
-   include "header.php";?>
+    <!-- Incluir dependencias de Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <?php
+    include "header.php";
+    ?>
+</head>
 
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
@@ -24,18 +31,15 @@ include_once "Controladores/ControladorUsuario.php"
         </div>
         <!-- Spinner End -->
 
-
         <!-- Sidebar Start -->
-       <?php include_once "Menu.php" ?>
+        <?php include_once "Menu.php"; ?>
         <!-- Sidebar End -->
-
 
         <!-- Content Start -->
         <div class="content">
             <!-- Navbar Start -->
-            <?php include "navbar.php";?>
+            <?php include "navbar.php"; ?>
             <!-- Navbar End -->
-
 
             <!-- Sale & Revenue Start -->
             <div class="container-fluid pt-4 px-4">
@@ -46,13 +50,11 @@ include_once "Controladores/ControladorUsuario.php"
                             <div class="ms-3">
                                 <p class="mb-2">Productos</p>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ConsultaProductos">Consultar</button>
-                                
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                           
                             <i class="fa-solid fa-right-left fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Traspasos</p>
@@ -60,24 +62,70 @@ include_once "Controladores/ControladorUsuario.php"
                             </div>
                         </div>
                     </div>
-                   
-                    <div class="container-fluid pt-4 px-8">
-    <div class="col-12">
-        <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Mensajes o recordatorios de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
-            <div class="text-center">
-            
-<div id="Cajas"></div>
-            </div></div></div></div>
-            <!-- Sale & Revenue End -->
+                </div>
 
-            <script src="js/Recordatorios_mensajes.js"></script>
-       
+                <div class="container-fluid pt-4 px-8">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4" style="color:#0172b6;">Mensajes o recordatorios de <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
+                            <div class="text-center">
+                                <div id="Cajas"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sale & Revenue End -->
+            </div>
+        </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="ConsultaProductos" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-notify modal-success" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resultModalLabel">Consulta de producto</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <!-- Aquí se mostrarán los detalles del producto -->
+                            <table class="table table-bordered" id="detailTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código de Barra</th>
+                                        <th>Clave Adicional</th>
+                                        <th>Nombre del Producto</th>
+                                        <th>Precio de Venta</th>
+                                        <th>Servicio</th>
+                                        <th>Tipo</th>
+                                        <th>Proveedor 1</th>
+                                        <th>Proveedor 2</th>
+                                        <th>Último Movimiento</th>
+                                        <th>Existencias</th>
+                                        <th>Min. Existencia</th>
+                                        <th>Max. Existencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="detailRow">
+                                        <!-- Detalles del producto -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <?php 
-        include "Modales/ConsultaProductosRapidos.php";
-        include "Footer.php";?>
+        <script src="js/Recordatorios_mensajes.js"></script>
+
+        <?php
+        include "Footer.php";
+        ?>
+    </div>
 </body>
 
 </html>
