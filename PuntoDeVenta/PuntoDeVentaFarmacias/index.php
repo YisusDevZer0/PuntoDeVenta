@@ -67,9 +67,7 @@ include_once "Controladores/ControladorUsuario.php"
 <div id="Cajas"></div>
             </div></div></div></div>
             <!-- Sale & Revenue End -->
-            <?php 
-        include "Modales/ConsultaProductosRapidos.php";
-        ?>
+           
             <script src="js/Recordatorios_mensajes.js"></script>
        
             </div></div></div></div>
