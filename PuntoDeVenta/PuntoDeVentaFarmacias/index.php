@@ -72,7 +72,7 @@ include_once "Controladores/ControladorUsuario.php"
         ?>
             <script src="js/Recordatorios_mensajes.js"></script>
        
-
+            </div></div></div></div>
 
         <?php 
        
