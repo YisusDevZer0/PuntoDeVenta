@@ -247,12 +247,12 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
     "previous": '<i class="fas fa-angle-left"></i>'
   },
   "processing": function () {
-    
+    mostrarCargando();
   }
 },
 "initComplete": function() {
   // Al completar la inicialización de la tabla, ocultar el mensaje de carga
-
+  ocultarCargando();
 },
 // Para personalizar el estilo del botón de Excel
 "buttons": [
