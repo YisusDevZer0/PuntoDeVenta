@@ -16,23 +16,7 @@ $(document).ready(function() {
         }
     });
     
-    // Función para habilitar/deshabilitar el input de producto
-    function toggleCodigoEscaneado() {
-        const proveedorValue = $('#proveedoresSelect').val();
-        const facturaValue = $('#numerofactura').val().trim();
-        const codigoEscaneadoInput = $('#codigoEscaneado');
-        
-        if (proveedorValue === "" || facturaValue === "") {
-            codigoEscaneadoInput.prop('disabled', true);
-        } else {
-            codigoEscaneadoInput.prop('disabled', false);
-        }
-    }
-
-    // Eventos de cambio para el select y el input de factura
-    $('#proveedoresSelect, #numerofactura').on('change keyup', function() {
-        toggleCodigoEscaneado();
-    });
+    
 
 
 });
