@@ -358,10 +358,9 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
                           <div class="input-group mb-3">
                             <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <select class="form-control" style="font-size: 0.75rem !important;">
-                            <option value="">Proveedor</option>
-                  <option value="Levic">Levic</option>
-              <option value="Nadro">Nadro</option>
+                            <select id="proveedoresSelect" class="form-control" style="font-size: 0.75rem !important;">
+            <option value="">Proveedor</option>
+        </select>
                 
                            
                           </div>
@@ -967,6 +966,7 @@ function eliminarFila(element) {
 
 <script src="js/CompletaSolicitudTraspaso.js"></script>
 
+<script src="js/ConectaProveedores.js"></script>
 <!-- Control Sidebar -->
 
 <!-- Main Footer -->

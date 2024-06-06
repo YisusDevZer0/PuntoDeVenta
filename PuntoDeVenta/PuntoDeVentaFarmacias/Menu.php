@@ -100,8 +100,8 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-right-left"></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="ListadoDeTraspasos" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Listado de traspasos</a>
-                            <a href="SolicitudTraspasos" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Solicitar traspasos</a>
-                           
+                            <a href="SolicitudTraspasos" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Solicitar ingresos</a>
+                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Solicitudes pendientes</a>
                         </div>
                     </div>
 
