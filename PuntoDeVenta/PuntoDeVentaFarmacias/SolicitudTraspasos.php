@@ -434,7 +434,7 @@ function showInstructions() {
 <div class="input-group mb-3">
   <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
   </div>
-  <input type="text" class="form-control " style="font-size: 0.75rem !important;" >
+  <input type="text" class="form-control " id="numerofactura" style="font-size: 0.75rem !important;" >
  
 </div>
 </div>
@@ -446,7 +446,7 @@ function showInstructions() {
 
                       <label class="col-form-label" for="iptCodigoVenta">
                         <i class="fas fa-barcode fs-6"></i>
-                        <span class="small">Productos</span>
+                        <span class="small">Escanear productos</span>
                       </label>
 
                       <div class="input-group">
