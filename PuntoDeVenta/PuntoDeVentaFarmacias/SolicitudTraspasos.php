@@ -268,7 +268,7 @@ function toggleCodigoEscaneado() {
     $('#proveedoresSelect, #numerofactura').on('change keyup', function() {
         toggleCodigoEscaneado();
     });
-        
+    toggleCodigoEscaneado();
 </script>
 <script>
   
