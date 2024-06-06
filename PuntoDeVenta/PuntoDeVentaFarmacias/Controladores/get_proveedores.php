@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 include("db_connect.php");
 
 // Consulta para obtener los proveedores
-$sql = "SELECT DISTINCT Proveedor FROM Proveedores"; // Ajusta el nombre de la tabla y la columna según tu estructura
+$sql = "SELECT DISTINCT Nombre_Proveedor FROM Proveedores"; // Ajusta el nombre de la tabla y la columna según tu estructura
 
 // Ejecutar la consulta
 $result = $conn->query($sql);
