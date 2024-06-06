@@ -208,7 +208,18 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
         // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
         window.addEventListener('load', function() {
             Swal.close();
+            // Mostrar mensaje de instrucciones después de cerrar la alerta de carga
+            Swal.fire({
+                title: 'Instrucciones',
+                html: '<p>Para iniciar el proceso de solicitud, es importante elegir el <b>proveedor</b> y colocar el <b>número de factura</b>. Sin esos datos, no podrás iniciar tu solicitud.</p>',
+                icon: 'info',
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    container: 'animated fadeInDown'
+                }
+            });
         });
+      
 </script>
 
 <style>
