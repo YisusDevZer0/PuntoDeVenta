@@ -34,8 +34,6 @@ $(document).ready(function() {
         toggleCodigoEscaneado();
     });
 
-    // Inicializar el estado del input de producto al cargar la página
-    toggleCodigoEscaneado();
 
 });
 

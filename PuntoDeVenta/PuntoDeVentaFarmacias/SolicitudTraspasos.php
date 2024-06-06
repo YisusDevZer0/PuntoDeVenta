@@ -241,6 +241,7 @@ function showInstructions() {
         // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
         window.addEventListener('load', function() {
             Swal.close();
+            toggleCodigoEscaneado();
              // Verificar si debe mostrarse el mensaje de instrucciones
              const noMostrarInstrucciones = localStorage.getItem('noMostrarInstrucciones');
             const unaSemana = 7 * 24 * 60 * 60 * 1000; // Milisegundos en una semana
