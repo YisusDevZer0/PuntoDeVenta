@@ -262,7 +262,11 @@ function showInstructions() {
         $('#codigoEscaneado').prop('disabled', false);
     }
 }
-        
+        // Eventos de cambio para el select y el input de factura
+$('#proveedoresSelect, #numerofactura').on('change keyup', function() {
+    toggleCodigoEscaneado();
+});
+
 </script>
 <script>
   
@@ -413,9 +417,7 @@ function showInstructions() {
                   <div class="col-md-12 mb-3">
 
                     <div class="form-group mb-2">
-                    <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
- Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
-</button> -->
+                 
                       <div class="row">
                         <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
