@@ -22,8 +22,7 @@
               <th>Proveedor</th>
               <th>Proveedor</th>
               <th>Stock</th>
-              <th>Maximo</th>
-              <th>Minimo</th>
+              
               <th>Estado</th>
               </thead>
           </table>
