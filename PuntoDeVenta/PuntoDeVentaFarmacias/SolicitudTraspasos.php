@@ -251,7 +251,11 @@ function showInstructions() {
             }
             
         });
-        function toggleCodigoEscaneado() {
+        
+        
+</script>
+<script>
+  function toggleCodigoEscaneado() {
     const proveedorValue = $('#proveedoresSelect').val();
     const facturaValue = $('#numerofactura').val(); // Eliminamos trim() de aquí
     
@@ -262,14 +266,6 @@ function showInstructions() {
         $('#codigoEscaneado').prop('disabled', false);
     }
 }
-        // Eventos de cambio para el select y el input de factura
-$('#proveedoresSelect, #numerofactura').on('change keyup', function() {
-    toggleCodigoEscaneado();
-});
-
-</script>
-<script>
-  
 </script>
 <style>
  
