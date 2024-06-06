@@ -21,12 +21,20 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 </div>
 <body>
 <style>
-      .fish {
+        .fish {
             animation: swim 10s linear infinite;
             width: 50%; /* Reducir el tamaño de la imagen al 50% */
             display: block; /* Asegurar que se comporte como un bloque */
             margin: 0 auto; /* Centrar la imagen */
         }
+        .loader-container {
+            text-align: center; /* Centrar el contenido */
+        }
+        .loaderPill-text {
+            margin-top: 10px; /* Añadir espacio entre la imagen y el texto */
+            color: #C80096;
+        }
+    </style>
     </style>
         <!-- Spinner End -->
         <style>
@@ -158,18 +166,24 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
     'Estamos preparando todo...',
   ];
 
-  // Función para obtener un mensaje aleatorio de carga
   function getRandomMessage() {
-    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
-  }
+            var mensajesCarga = [
+                "Consultando ventas...",
+                "Estamos realizando la búsqueda...",
+                "Cargando datos...",
+                "Procesando la información...",
+                "Espere un momento...",
+                // more messages...
+            ];
+            return mensajesCarga[Math.floor(Math.random() * mensajesCarga.length)];
+        }
 
-     // Mostrar SweetAlert2 de carga al iniciar la página
-     Swal.fire({
+        // Mostrar SweetAlert2 de carga al iniciar la página
+        Swal.fire({
             title: 'Cargando',
             html: '<div class="loader-container">' +
-                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish"> ' +
-                    `<br>` +
-                    `<div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>` +
+                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish">' +
+                    '<div class="loaderPill-text">' + getRandomMessage() + '</div>' +
                   '</div>',
             showCancelButton: false,
             showConfirmButton: false,
