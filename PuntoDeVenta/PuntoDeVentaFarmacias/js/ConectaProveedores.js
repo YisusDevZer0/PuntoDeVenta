@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Hacer una solicitud AJAX para obtener los proveedores
     $.ajax({
-        url: 'get_proveedores.php', // Archivo PHP que creamos
+        url: 'Controladores/get_proveedores.php', // Archivo PHP que creamos
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -15,7 +15,7 @@ $(document).ready(function() {
             console.error('Error al obtener los proveedores:', error);
         }
     });
-
+    
     // Función para habilitar/deshabilitar el input de producto
     function toggleCodigoEscaneado() {
         const proveedorValue = $('#proveedoresSelect').val();
@@ -36,4 +36,6 @@ $(document).ready(function() {
 
     // Inicializar el estado del input de producto al cargar la página
     toggleCodigoEscaneado();
+
 });
+
