@@ -217,11 +217,11 @@ tabla = $('#StocksDESucursales').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayConsultaStockRapida.php",
  "aoColumns": [
   { mData: 'Cod_Barra' },
   { mData: 'Nombre_Prod' },
-       { mData: 'Clave_adicional' },
+      
 
        
        { mData: 'Precio_Venta' },
@@ -229,11 +229,7 @@ tabla = $('#StocksDESucursales').DataTable({
        { mData: 'Tipo' },
        { mData: 'Proveedor1' },
        { mData: 'Proveedor2' },
-
-       { mData: 'UltimoMovimiento' },
        { mData: 'Existencias_R' },
-       { mData: 'Min_Existencia' },
-       { mData: 'Max_Existencia' },
        {mData: "Existencias_R",
         "searchable": true,
         "orderable":true,
@@ -253,8 +249,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
         }
  
     },
-       { mData: 'Editar' },
-       { mData: 'Eliminar' },
+      
   
       ],
      
