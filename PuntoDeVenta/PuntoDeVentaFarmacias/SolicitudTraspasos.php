@@ -255,18 +255,29 @@ function showInstructions() {
         
 </script>
 <script>
-  function toggleCodigoEscaneado() {
-    const proveedorValue = $('#proveedoresSelect').val();
-    const facturaValue = $('#numerofactura').val();
-
-    if (proveedorValue === "" || !facturaValue.trim()) {
-        $('#codigoEscaneado').prop('disabled', true);
-    } else {
-        $('#codigoEscaneado').prop('disabled', false);
+    // Función para deshabilitar o habilitar el input según el valor del select
+    function toggleCodigoEscaneado() {
+        var selectElement = document.getElementById('proveedoresSelect'); // Cambia 'Tipodeajuste' por el ID de tu select
+        var inputElement = document.getElementById('codigoEscaneado');
+        if (selectElement.value === "" || inputElement.value.trim() === "") { // Verificar también si el valor del input está vacío
+            inputElement.disabled = true;
+        } else {
+            inputElement.disabled = false;
+        }
     }
-}
 
+    // Evento de cambio del select
+    document.getElementById('proveedoresSelect').addEventListener('change', toggleCodigoEscaneado);
+
+    // Evento de cambio del input
+    document.getElementById('numerofactura').addEventListener('input', toggleCodigoEscaneado);
+
+    // Ejecutar al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCodigoEscaneado(); // Llamar a la función para establecer el estado inicial del input
+    });
 </script>
+
 <style>
  
  .loader-container {
@@ -589,7 +600,7 @@ function showInstructions() {
 
 </script>
 
-
+scrip
 <script>
   $(document).ready(function() {
     // Bloquear el botón al cargar la página
