@@ -177,16 +177,20 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             ];
             return mensajesCarga[Math.floor(Math.random() * mensajesCarga.length)];
         }
+        
 // Function to show the instructions message
 function showInstructions() {
             Swal.fire({
                 title: 'Instrucciones',
                 html: `
                     <ol style="text-align: left;">
-                        <li>Elige el <b>proveedor</b>.</li>
+                    <p>El campo escanear productos esta bloqueado, para desbloquearlo sigue las instrucciones<p/>
+                        <li>Selecciona el <b>proveedor</b> del cual solicitas su ingreso</li>
                         <li>Coloca el <b>número de factura</b>.</li>
                         <li>Revisa que todos los datos sean correctos.</li>
-                        <li>Haz clic en <b>Iniciar Solicitud</b>.</li>
+                        <li>El campo escanear productos se desbloqueara automaticamente</li>
+                        <li>Escanea tu producto, si es un encargo recuerda generar la solicitud de encargo</li>
+                        <li>Recuerda llenar los campos fecha de caducidad,lote y precio maximo de venta</li>
                     </ol>
                     <div style="margin-top: 20px;">
                         <label>
