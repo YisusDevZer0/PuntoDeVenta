@@ -23,7 +23,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 <style>
         .fish {
             animation: swim 10s linear infinite;
-            width: 50%; /* Reducir el tamaño de la imagen al 50% */
+            width: 30%; /* Reducir el tamaño de la imagen al 50% */
             display: block; /* Asegurar que se comporte como un bloque */
             margin: 0 auto; /* Centrar la imagen */
         }
@@ -207,17 +207,19 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
         // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
         window.addEventListener('load', function() {
-           
+            Swal.close();
         });
 </script>
 
 <style>
-  .loader-container {
+ 
+ .loader-container {
     
     justify-content: center;
     align-items: center;
     height: 180px;
   }
+
 
   .absCenter {
     position: absolute;
