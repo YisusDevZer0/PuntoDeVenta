@@ -255,27 +255,40 @@ function showInstructions() {
         
 </script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si el elemento 'proveedoresSelect' existe antes de agregar el event listener
+        var selectElement = document.getElementById('proveedoresSelect');
+        if (selectElement) {
+            selectElement.addEventListener('change', toggleCodigoEscaneado);
+        } else {
+            console.error('El elemento proveedoresSelect no existe.');
+        }
+
+        // Verificar si el elemento 'numerofactura' existe antes de agregar el event listener
+        var facturaElement = document.getElementById('numerofactura');
+        if (facturaElement) {
+            facturaElement.addEventListener('input', toggleCodigoEscaneado);
+        } else {
+            console.error('El elemento numerofactura no existe.');
+        }
+
+        // Llamar a la función para establecer el estado inicial del input
+        toggleCodigoEscaneado();
+    });
+
     // Función para deshabilitar o habilitar el input según el valor del select
     function toggleCodigoEscaneado() {
-        var selectElement = document.getElementById('proveedoresSelect'); // Cambia 'Tipodeajuste' por el ID de tu select
+        var selectElement = document.getElementById('proveedoresSelect');
         var inputElement = document.getElementById('codigoEscaneado');
-        if (selectElement.value === "" || inputElement.value.trim() === "") { // Verificar también si el valor del input está vacío
-            inputElement.disabled = true;
-        } else {
-            inputElement.disabled = false;
+        var facturaElement = document.getElementById('numerofactura');
+        if (selectElement && facturaElement && inputElement) {
+            if (selectElement.value === "" || facturaElement.value.trim() === "") {
+                inputElement.disabled = true;
+            } else {
+                inputElement.disabled = false;
+            }
         }
     }
-
-    // Evento de cambio del select
-    document.getElementById('proveedoresSelect').addEventListener('change', toggleCodigoEscaneado);
-
-    // Evento de cambio del input
-    document.getElementById('numerofactura').addEventListener('input', toggleCodigoEscaneado);
-
-    // Ejecutar al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleCodigoEscaneado(); // Llamar a la función para establecer el estado inicial del input
-    });
 </script>
 
 <style>
