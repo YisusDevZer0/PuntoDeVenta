@@ -166,7 +166,8 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
      Swal.fire({
             title: 'Cargando',
             html: '<div class="loader-container">' +
-                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish"> <br>' +
+                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish"> ' +
+                    `<br>` +
                     `<div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>` +
                   '</div>',
             showCancelButton: false,
