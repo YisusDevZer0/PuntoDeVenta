@@ -251,21 +251,21 @@ function showInstructions() {
             }
             
         });
-        
+     
         
 </script>
 <script>
   function toggleCodigoEscaneado() {
     const proveedorValue = $('#proveedoresSelect').val();
-    const facturaValue = $('#numerofactura').val(); // Eliminamos trim() de aquí
-    
-    // Verificar si el valor de facturaValue no es undefined
-    if (facturaValue !== undefined && facturaValue.trim() === "") {
+    const facturaValue = $('#numerofactura').val();
+
+    if (proveedorValue === "" || !facturaValue.trim()) {
         $('#codigoEscaneado').prop('disabled', true);
     } else {
         $('#codigoEscaneado').prop('disabled', false);
     }
 }
+
 </script>
 <style>
  
@@ -413,7 +413,9 @@ function showInstructions() {
                   <div class="col-md-12 mb-3">
 
                     <div class="form-group mb-2">
-                 
+                    <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+ Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
+</button> -->
                       <div class="row">
                         <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
