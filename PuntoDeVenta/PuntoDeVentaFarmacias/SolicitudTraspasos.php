@@ -654,48 +654,9 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
   });
 
-  function mostrarTotalVenta() {
-    var totalVenta = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-        var importe = parseFloat($(this).find('.importe').val().replace(/[^\d.-]/g, ''));
-        if (!isNaN(importe)) {
-            totalVenta += importe;
-        }
-    });
-
  
-    $('#totalVenta').text(totalVenta.toFixed(2));
-    $('#boleta_total').text(totalVenta.toFixed(2));
-    $("#totaldeventacliente").val(totalVenta.toFixed(2));
-    
-}
 
-
-
-  function mostrarSubTotal() {
-    var subtotal = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.importe_siniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
-    });
-
-    $('#boleta_subtotal').text(subtotal.toFixed(2));
-  }
-
-
-  function mostrarIvaTotal() {
-    var subtotal = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.valordelniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
-    });
-
-    $('#ivatotal').text(subtotal.toFixed(2));
-  }
+  
 
   function buscarArticulo(codigoEscaneado) {
   var formData = new FormData();
@@ -815,11 +776,7 @@ $(document).on('change', '.cantidad-vendida-input', function() {
         row.find('.cantidad input').val(nuevaCantidad);
         actualizarImporte(row);
     
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
+     
         
       } else {
        
