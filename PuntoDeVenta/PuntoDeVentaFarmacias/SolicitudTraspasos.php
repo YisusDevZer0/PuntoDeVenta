@@ -815,11 +815,7 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
         $('#tablaAgregarArticulos tbody').append(tr);
         actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
        
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
+     
        
       }
     }
