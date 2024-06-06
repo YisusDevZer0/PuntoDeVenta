@@ -25,10 +25,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             animation: swim 10s linear infinite;
             width: 50%; /* Reducir el tamaño de la imagen al 50% */
         }
-        @keyframes swim {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+        
     </style>
         <!-- Spinner End -->
         <style>
