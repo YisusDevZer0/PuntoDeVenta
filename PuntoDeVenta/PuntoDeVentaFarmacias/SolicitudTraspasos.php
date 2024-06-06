@@ -177,7 +177,36 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             ];
             return mensajesCarga[Math.floor(Math.random() * mensajesCarga.length)];
         }
-
+// Function to show the instructions message
+function showInstructions() {
+            Swal.fire({
+                title: 'Instrucciones',
+                html: `
+                    <ol style="text-align: left;">
+                        <li>Elige el <b>proveedor</b>.</li>
+                        <li>Coloca el <b>número de factura</b>.</li>
+                        <li>Revisa que todos los datos sean correctos.</li>
+                        <li>Haz clic en <b>Iniciar Solicitud</b>.</li>
+                    </ol>
+                    <div style="margin-top: 20px;">
+                        <label>
+                            <input type="checkbox" id="noMostrar"> No volver a mostrar esta información durante una semana
+                        </label>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    container: 'animated fadeInDown'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (document.getElementById('noMostrar').checked) {
+                        localStorage.setItem('noMostrarInstrucciones', Date.now());
+                    }
+                }
+            });
+        }
         // Mostrar SweetAlert2 de carga al iniciar la página
         Swal.fire({
             title: 'Cargando',
@@ -208,18 +237,15 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
         // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
         window.addEventListener('load', function() {
             Swal.close();
-            // Mostrar mensaje de instrucciones después de cerrar la alerta de carga
-            Swal.fire({
-                title: 'Instrucciones',
-                html: '<p>Para iniciar el proceso de solicitud, es importante elegir el <b>proveedor</b> y colocar el <b>número de factura</b>. Sin esos datos, no podrás iniciar tu solicitud.</p>',
-                icon: 'info',
-                confirmButtonText: 'Entendido',
-                customClass: {
-                    container: 'animated fadeInDown'
-                }
-            });
+             // Verificar si debe mostrarse el mensaje de instrucciones
+             const noMostrarInstrucciones = localStorage.getItem('noMostrarInstrucciones');
+            const unaSemana = 7 * 24 * 60 * 60 * 1000; // Milisegundos en una semana
+
+            if (!noMostrarInstrucciones || (Date.now() - noMostrarInstrucciones) > unaSemana) {
+                showInstructions();
+            }
+            
         });
-      
 </script>
 
 <style>
