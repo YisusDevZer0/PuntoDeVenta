@@ -832,75 +832,8 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
 
 
   
-  function actualizarImporte(row) {
-  var cantidad = parseInt(row.find('.cantidad-vendida-input').val());
-  var precio = parseFloat(row.find('.precio input').val());
-
-  
-
-  if (cantidad < 0) {
-    mostrarMensaje('La cantidad no puede ser negativa');
-    return;
-  }
-
-  if (precio < 0) {
-    mostrarMensaje('El precio no puede ser negativo');
-    return;
-  }
-
-  var importe = cantidad * precio;
-  var iva = importe / 1.16 * 0.16;
-  var importeSinIVA = importe - iva;
-  var ieps = importe * 0.08;
-
-  row.find('input.importe').val(importe.toFixed(2));
-  row.find('input.importe_siniva').val(importeSinIVA.toFixed(2));
-  row.find('input.valordelniva').val(iva.toFixed(2));
-  row.find('input.ieps').val(ieps.toFixed(2));
-
-  // Llamar a la función para recalcular la suma de importes
-  actualizarSuma();
-  mostrarTotalVenta();
-  mostrarSubTotal();
-  mostrarIvaTotal();
-}
-
-
-
-  // Función para calcular el IVA
-  function calcularIVA() {
-    totalIVA = 0;
-
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var iva = parseFloat($(this).find('.valordelniva input').val());
-      totalIVA += iva;
-    });
-
-    $('#totalIVA').text(totalIVA.toFixed(2));
-  }
-
-  // Función para actualizar la suma de importe sin IVA, IEPS y diferencia de IVA
-  function actualizarSuma() {
-    var sumaImporteSinIVA = 0;
-    var totalIEPS = 0;
-
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.importe_siniva input').val());
-      sumaImporteSinIVA += importeSinIVA;
-
-      var ieps = parseFloat($(this).find('.ieps input').val());
-      totalIEPS += ieps;
-    });
-
-    $('#sumaImporteSinIVA').text(sumaImporteSinIVA.toFixed(2));
-    $('#totalIEPS').text(totalIEPS.toFixed(2));
-  }
-
-  // Función para mostrar un mensaje
-  function mostrarMensaje(mensaje) {
-    // Mostrar el mensaje en una ventana emergente de alerta
-    alert(mensaje);
-  }
+ 
+ 
 // Modificar la función eliminarFila() para llamar a las funciones necesarias después de eliminar la fila
 function eliminarFila(element) {
   var fila = $(element).closest('tr'); // Obtener la fila más cercana al elemento
