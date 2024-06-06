@@ -813,7 +813,7 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
         tr += '</tr>';
 
         $('#tablaAgregarArticulos tbody').append(tr);
-        actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
+       
        
      
        
@@ -839,12 +839,7 @@ function eliminarFila(element) {
   var fila = $(element).closest('tr'); // Obtener la fila más cercana al elemento
   fila.remove(); // Eliminar la fila
 
-  // Llamar a las funciones necesarias después de eliminar la fila
-  calcularIVA();
-  actualizarSuma();
-  mostrarTotalVenta();
-  mostrarSubTotal();
-  mostrarIvaTotal();
+ 
 }
 
 
