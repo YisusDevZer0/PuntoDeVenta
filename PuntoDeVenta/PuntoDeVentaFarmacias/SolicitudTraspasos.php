@@ -774,7 +774,7 @@ $(document).on('change', '.cantidad-vendida-input', function() {
           return;
         }
         row.find('.cantidad input').val(nuevaCantidad);
-        actualizarImporte(row);
+        
     
      
         
