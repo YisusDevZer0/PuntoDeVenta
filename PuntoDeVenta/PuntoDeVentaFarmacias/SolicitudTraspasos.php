@@ -23,7 +23,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 <style>
         .fish {
             animation: swim 10s linear infinite;
-            width: 50%; /* Reducir el tamaño de la imagen al 50% */
+            width: 70%; /* Reducir el tamaño de la imagen al 50% */
         }
         
     </style>
