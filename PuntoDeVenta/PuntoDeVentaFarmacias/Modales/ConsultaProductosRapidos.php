@@ -16,20 +16,16 @@
             <thead>
               <th>Cod Barra</th>
               <th>Nombre</th>
-              <th>Clave interna</th>
               <th>PV </th>
               <th>Servicio </th>
               <th>Tipo</th>
               <th>Proveedor</th>
               <th>Proveedor</th>
-              <th>Ultima actualizacion</th>
               <th>Stock</th>
               <th>Maximo</th>
               <th>Minimo</th>
               <th>Estado</th>
-              <th>Acciones Farmacia</th>
-              <th>Acciones Enfermeria</th>
-            </thead>
+              </thead>
           </table>
         </div>
       </div>
