@@ -12,7 +12,7 @@ $proveedores = [];
 if ($result->num_rows > 0) {
     // Obtener resultados
     while ($row = $result->fetch_assoc()) {
-        $proveedores[] = $row['	Nombre_Proveedor'];
+        $proveedores[] = $row['Nombre_Proveedor'];
     }
 }
 
