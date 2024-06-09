@@ -10,5 +10,9 @@ if (mysqli_connect_errno()) {
     printf("algo salio mal, no podemos conectarnos a la base de datos %s\n", mysqli_connect_error());
     exit();
 }
+// Establecer la zona horaria
+$sqlSetTimeZone = "SET time_zone = '-6:00'";
+mysqli_query($conn, $sqlSetTimeZone);
 
+// Resto de tu código aquí...
 ?>
