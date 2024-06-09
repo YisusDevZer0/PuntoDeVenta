@@ -1,6 +1,14 @@
 <?php
 include_once 'db_connect.php';
 
+// Verifica que la conexión a la base de datos se haya realizado correctamente
+if (!$conn) {
+    $response['status'] = 'error';
+    $response['message'] = 'Error de conexión a la base de datos: ' . mysqli_connect_error();
+    echo json_encode($response);
+    exit();
+}
+
 $contador = count($_POST["IdBasedatos"]);
 $ProContador = 0;
 $query = "INSERT INTO Solicitudes_Ingresos (`ID_Prod_POS`, `NumFactura`, `Proveedor`, `Cod_Barra`, `Nombre_Prod`, `Fk_Sucursal`, `Contabilizado`, `Fecha_Caducidad`, `Lote`, `PrecioMaximo`, `Precio_Venta`, `Precio_C`, `AgregadoPor`, `AgregadoEl`, `FechaInventario`) VALUES ";
@@ -50,7 +58,7 @@ if ($ProContador != 0) {
             $response['message'] = 'Registro(s) agregado(s) correctamente.';
         } else {
             $response['status'] = 'error';
-            $response['message'] = 'Error en la consulta de inserción: ' . mysqli_error($conn);
+            $response['message'] = 'Error en la consulta de inserción: ' . mysqli_stmt_error($stmt);
         }
     } else {
         $response['status'] = 'error';
