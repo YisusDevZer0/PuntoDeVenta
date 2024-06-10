@@ -919,7 +919,7 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
         tr += '</tr>';
 
         $('#tablaAgregarArticulos tbody').append(tr);
-       
+        $('#tablaAgregarArticulos tbody tr:first-child').find('.proveedor-input').val(selectedAdjustment);
        
      
        
