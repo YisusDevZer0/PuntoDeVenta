@@ -687,7 +687,7 @@ function showInstructions() {
 <script>
        let selectedAdjustment = "";
 
-document.getElementById('proveedoresSelecty').addEventListener('change', function() {
+document.getElementById('proveedoresSelect').addEventListener('change', function() {
     selectedAdjustment = this.value;
 });
 
