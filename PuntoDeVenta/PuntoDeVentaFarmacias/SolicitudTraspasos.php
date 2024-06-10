@@ -693,6 +693,16 @@ document.getElementById('proveedoresSelect').addEventListener('change', function
 
     </script>
 
+
+<script>
+       let selectedfactura = "";
+
+document.getElementById('numerofactura').addEventListener('change', function() {
+  selectedfactura = this.value;
+});
+
+    </script>
+
 <script>
   table = $('#tablaAgregarArticulos').DataTable({
     searching: false, // Deshabilitar la funcionalidad de búsqueda
@@ -892,6 +902,7 @@ tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existenci
 tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="number" name="Lote[]" /></td>';
 tr += '<td class="Preciototal"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="text" name="PrecioMaximo[]" /></td>';
 tr += '<td style="visibility:collapse; display:none;" class="Proveedor"><input class="form-control proveedor-input" style="font-size: 0.75rem !important;" id="proveedor" type="text" name="Proveedor[]" /></td>';
+tr += '<td  class="factura"><input class="form-control factura-input" style="font-size: 0.75rem !important;" id="facturanumber" type="text" name="FacturaNumber[]" /></td>';
 
         tr += '<td style="visibility:collapse; display:none;" class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="' + articulo.precio + '"  /></td>';
         tr += '<td style="visibility:collapse; display:none;"class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" type="number"  name="PrecioCompra[]" value="' + articulo.preciocompra + '"  /></td>';
@@ -912,7 +923,8 @@ tr += '<td style="visibility:collapse; display:none;" class="Proveedor"><input c
 
         $('#tablaAgregarArticulos tbody').append(tr);
         $('#tablaAgregarArticulos tbody tr:first-child').find('.proveedor-input').val(selectedAdjustment);
-       
+        $('#tablaAgregarArticulos tbody tr:first-child').find('.factura-input').val(selectedfactura);
+        
      
        
       }
