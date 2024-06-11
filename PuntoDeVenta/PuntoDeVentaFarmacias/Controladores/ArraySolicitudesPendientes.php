@@ -3,6 +3,15 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
 
+// Verificar si se está recibiendo correctamente el valor de Fk_Sucursal
+$fk_sucursal = isset($_GET['Fk_Sucursal']) ? $_GET['Fk_Sucursal'] : '';
+if (empty($fk_sucursal)) {
+    echo json_encode([
+        "error" => "No se proporcionó el valor de Fk_Sucursal"
+    ]);
+    exit;
+}
+
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT 
     si.IdProdCedis, 
@@ -33,8 +42,12 @@ WHERE si.Fk_Sucursal = ?";
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Obtener el valor de Fk_Sucursal
-$fk_sucursal = isset($_GET['Fk_Sucursal']) ? $_GET['Fk_Sucursal'] : '';
+if (!$stmt) {
+    echo json_encode([
+        "error" => "Error en la preparación de la consulta: " . $conn->error
+    ]);
+    exit;
+}
 
 // Vincular parámetro
 $stmt->bind_param("s", $fk_sucursal);
@@ -44,6 +57,13 @@ $stmt->execute();
 
 // Obtener resultado
 $result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    echo json_encode([
+        "message" => "No se encontraron registros para Fk_Sucursal = " . $fk_sucursal
+    ]);
+    exit;
+}
 
 // Inicializar array para almacenar los resultados
 $data = [];
