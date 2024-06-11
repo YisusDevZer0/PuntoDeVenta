@@ -9,14 +9,21 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
   $monto2 = 1;
   $totalmonto = $monto1 + $monto2;
   
-  // Obtener la longitud original de $Ticketss['Num_Orden']
-  $longitud_original = strlen($Ticketss['Num_Orden']);
-  
-  // Mostrar $totalmonto con los caracteres '0000000000' (ajustando la longitud)
-  $totalmonto_con_ceros = str_pad($totalmonto, $longitud_original, '0', STR_PAD_LEFT);
-  
+// Obtener la longitud original de $Ticketss['Num_Orden']
+$longitud_original = strlen($Ticketss['Num_Orden']);
 
-   
+// Asegurarse de que $totalmonto es una cadena
+$totalmonto = (string)$totalmonto;
+
+// Mostrar longitudes para depuración
+echo "Longitud original: " . $longitud_original . "<br>";
+echo "Longitud de totalmonto: " . strlen($totalmonto) . "<br>";
+
+// Mostrar $totalmonto con los caracteres '0000000000' (ajustando la longitud)
+$totalmonto_con_ceros = str_pad($totalmonto, $longitud_original, '0', STR_PAD_LEFT);
+
+
+
   
   
 
