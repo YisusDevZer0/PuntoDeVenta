@@ -54,13 +54,13 @@ while ($fila = $result->fetch_assoc()) {
     $estatus_estilo = '';
     $estatus_leyenda = '';
     switch ($fila["Estatus"]) {
-        case 'Abierta':
+        case 'Pendiente':
             $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
-            $estatus_leyenda = 'Abierta';
+            $estatus_leyenda = 'Pendiente';
             break;
-        case 'Cerrada':
+        case 'Ingresado':
             $estatus_estilo = 'background-color: red; color: white;'; // Rojo
-            $estatus_leyenda = 'Cerrada';
+            $estatus_leyenda = 'Ingresado';
             break;
         default:
             $estatus_estilo = ''; // No se aplica estilo
@@ -71,12 +71,11 @@ while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
         "IdProdCedis" => $fila["IdProdCedis"],
-        "ID_Prod_POS" => $fila["ID_Prod_POS"],
+       
         "NumFactura" => $fila["NumFactura"],
         "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
-        "Fk_Sucursal" => $fila["Fk_Sucursal"],
         "Nombre_Sucursal" => $fila["Nombre_Sucursal"],
         "Contabilizado" => $fila["Contabilizado"],
         "Fecha_Caducidad" => $fila["Fecha_Caducidad"],

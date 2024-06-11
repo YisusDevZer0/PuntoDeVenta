@@ -211,12 +211,10 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArraySolicitudesPendientes.php",
  "aoColumns": [
     { mData: 'IdProdCedis' },  
-{ mData: 'ID_Prod_POS' },
 { mData: 'NumFactura' },
 { mData: 'Proveedor' },
 { mData: 'Cod_Barra' },
 { mData: 'Nombre_Prod' },
-{ mData: 'Fk_Sucursal' },
 { mData: 'Nombre_Sucursal' },
 { mData: 'Contabilizado' },
 { mData: 'Fecha_Caducidad' },
