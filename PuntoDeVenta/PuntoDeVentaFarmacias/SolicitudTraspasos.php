@@ -922,8 +922,8 @@ tr += '<td  class="factura"><input class="form-control factura-input" style="fon
         tr += '</tr>';
 
         $('#tablaAgregarArticulos tbody').append(tr);
-        $('#tablaAgregarArticulos tbody tr:first-child').find('.proveedor-input').val(selectedAdjustment);
-        $('#tablaAgregarArticulos tbody tr:first-child').find('.factura-input').val(selectedfactura);
+        $('#tablaAgregarArticulos tbody tr:last-child').find('.proveedor-input').val(selectedAdjustment);
+        $('#tablaAgregarArticulos tbody tr:last-child').find('.factura-input').val(selectedfactura);
         
      
        
