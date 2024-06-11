@@ -9,20 +9,6 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
   $monto2 = 1;
   $totalmonto = $monto1 + $monto2;
   
-// Obtener la longitud original de $Ticketss['Num_Orden']
-$longitud_original = strlen($Ticketss['Num_Orden']);
-
-// Asegurarse de que $totalmonto es una cadena
-$totalmonto = (string)$totalmonto;
-
-// Mostrar longitudes para depuración
-echo "Longitud original: " . $longitud_original . "<br>";
-echo "Longitud de totalmonto: " . strlen($totalmonto) . "<br>";
-
-// Mostrar $totalmonto con los caracteres '0000000000' (ajustando la longitud)
-$totalmonto_con_ceros = str_pad($totalmonto, $longitud_original, '0', STR_PAD_LEFT);
-
-
 
   
   
@@ -514,7 +500,7 @@ function showInstructions() {
 <div class="input-group mb-3">
   <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
   </div>
-  <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo  $totalmonto_con_ceros?>">
+  <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo  $totalmonto?>">
  
 </div>
 </div>            
