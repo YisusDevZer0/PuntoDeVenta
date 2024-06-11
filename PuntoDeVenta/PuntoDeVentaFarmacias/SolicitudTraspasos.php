@@ -1,6 +1,28 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-$fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'
+$fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'$fecha
+  $sql = "SELECT * FROM Solicitudes_Ingresos ORDER BY IdProdCedis  DESC LIMIT 1";
+  $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
+  $Ticketss = mysqli_fetch_assoc($resultset);
+  
+  $monto1 = $Ticketss['NumOrden'];
+  $monto2 = 1;
+  $totalmonto = $monto1 + $monto2;
+  
+  // Obtener la longitud original de $Ticketss['Num_Orden']
+  $longitud_original = strlen($Ticketss['Num_Orden']);
+  
+  // Mostrar $totalmonto con los caracteres '0000000000' (ajustando la longitud)
+  $totalmonto_con_ceros = str_pad($totalmonto, $longitud_original, '0', STR_PAD_LEFT);
+  
+
+   
+  
+  
+
+
+
+
 ?><!DOCTYPE html>
 <html lang="es">
 
@@ -478,7 +500,17 @@ function showInstructions() {
 </div>
 </div>
                       
-                        
+<div class="col">
+
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de solicitud
+</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo  $totalmonto_con_ceros?>">
+ 
+</div>
+</div>            
 
 
                       </div>
