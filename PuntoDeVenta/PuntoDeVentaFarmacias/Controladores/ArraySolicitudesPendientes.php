@@ -54,13 +54,13 @@ while ($fila = $result->fetch_assoc()) {
     $estatus_estilo = '';
     $estatus_leyenda = '';
     switch ($fila["Estatus"]) {
-        case 'Pendiente':
-            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
-            $estatus_leyenda = 'Pendiente';
-            break;
         case 'Ingresado':
-            $estatus_estilo = 'background-color: red; color: white;'; // Rojo
+            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
             $estatus_leyenda = 'Ingresado';
+            break;
+        case 'Pendiente':
+            $estatus_estilo = 'background-color: red; color: white;'; // Rojo
+            $estatus_leyenda = 'Pendiente';
             break;
         default:
             $estatus_estilo = ''; // No se aplica estilo
