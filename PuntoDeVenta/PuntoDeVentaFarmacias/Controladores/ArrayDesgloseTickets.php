@@ -65,14 +65,14 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["Vendedor"] = $fila["AgregadoPor"];
     $data[$c]["Desglose"] = '
 <td>
-<a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #C80096 !important;" ><i class="fas fa-receipt"></i> Desglosar ticket</a>
+<a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white" ><i class="fas fa-receipt"></i></a>
 
 
 </td>';
 
 $data[$c]["Reimpresion"] = '
 <td>
-<a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item " style="background-color: #C80096 !important;"><i class="fas fa-print"></i> Reimpresión ticket</a>
+<a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item " style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a>
 </td>';
 
 
