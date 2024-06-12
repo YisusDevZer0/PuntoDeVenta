@@ -19,7 +19,7 @@ $(document).ready(function () {
             },
         },
         submitHandler: function () {
-            if (validarFormulario()) {
+            
                 $.ajax({
                     type: 'POST',
                     url: "Controladores/RegistraCorte.php",
@@ -56,7 +56,7 @@ $(document).ready(function () {
                         });
                     }
                 });
-            }
+            
         },
     });
 });
