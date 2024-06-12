@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Validar el formulario
-    $("#CortesDeCajaFormulario").validate({
+    $("#FormDeCortes").validate({
         rules: {
             Sucursal: {
                 required: true,
@@ -29,30 +29,35 @@ $(document).ready(function () {
         },
         messages: {
             Sucursal: {
-                required: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Campo requerido',
-                        text: 'El campo Sucursal es necesario',
-                    });
-                },
+                required: 'El campo Sucursal es necesario',
             },
             Turno: {
-                required: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Campo requerido',
-                        text: 'El campo Turno es necesario',
-                    });
-                },
+                required: 'El campo Turno es necesario',
             },
-            // Repite esto para cada campo
+            Cajero: {
+                required: 'El campo Cajero es necesario',
+            },
+            VentaTotal: {
+                required: 'El campo VentaTotal es necesario',
+            },
+            TicketVentasTotal: {
+                required: 'El campo TicketVentasTotal es necesario',
+            },
+            EfectivoTotal: {
+                required: 'El campo EfectivoTotal es necesario',
+            },
+            TarjetaTotal: {
+                required: 'El campo TarjetaTotal es necesario',
+            },
+            CreditosTotales: {
+                required: 'El campo CreditosTotales es necesario',
+            },
         },
-        submitHandler: function () {
+        submitHandler: function (form) {
             $.ajax({
                 type: 'POST',
                 url: "Controladores/RegistraCorte.php",
-                data: $('#CortesDeCajaFormulario').serialize(),
+                data: $(form).serialize(),
                 cache: false,
                 success: function (data) {
                     var response = JSON.parse(data);
@@ -77,12 +82,13 @@ $(document).ready(function () {
                         });
                     }
                 },
-                error: function () {
+                error: function (xhr, status, error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error en la petición',
                         text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
                     });
+                    console.log(xhr.responseText); // Para ver la respuesta del servidor
                 }
             });
         },
