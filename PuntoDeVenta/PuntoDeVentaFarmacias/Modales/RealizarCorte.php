@@ -205,36 +205,36 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
 
 
 <?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
+    
+    <form action="javascript:void(0)" method="post" id="FormDeCortes">
     <div class="text-center">
         <div class="row">
             <div class="col">
                 <label for="exampleFormControlInput1">Sucursal</label>
-                <input type="text" class="form-control" id="cantidadtotalventasss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas14->Nombre_Sucursal; ?>" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="cantidadtotalventasss" name="Sucursal" step="any" readonly value="<?php echo $Especialistas14->Nombre_Sucursal; ?>" aria-describedby="basic-addon1">
+           <input type="text" name="Fk_Caja" value="<?php echo $Especialistas14->Fk_Caja; ?>">
             </div>
             <div class="col">
                 <label for="exampleFormControlInput1">Turno</label>
-                <input type="text" class="form-control" id="cantidadtotalventasss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas3->Turno; ?>" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="cantidadtotalventasss" name="Turno" step="any" readonly value="<?php echo $Especialistas3->Turno; ?>" aria-describedby="basic-addon1">
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <label for="exampleFormControlInput1">Cajero</label>
-                <input type="text" class="form-control" id="cantidadtotalventassss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas3->AgregadoPor; ?>" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="cantidadtotalventassss" name="Cajero" step="any" readonly value="<?php echo $Especialistas3->AgregadoPor; ?>" aria-describedby="basic-addon1">
             </div>
             <div class="col">
                 <label for="exampleFormControlInput1">Total de venta</label>
-                <input type="number" class="form-control" id="cantidadtotalventassss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas3->VentaTotal; ?>" aria-describedby="basic-addon1">
+                <input type="number" class="form-control" id="cantidadtotalventassss" name="VentaTotal" step="any" readonly value="<?php echo $Especialistas3->VentaTotal; ?>" aria-describedby="basic-addon1">
             </div>
         </div>
         <div class="row">
             <div class="col">
                 <label for="exampleFormControlInput1">Total de tickets</label>
-                <input type="text" class="form-control" id="cantidadtotalventassss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas3->Total_tickets; ?>" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="cantidadtotalventassss" name="TicketVentasTotal" step="any" readonly value="<?php echo $Especialistas3->Total_tickets; ?>" aria-describedby="basic-addon1">
             </div>
-            <div class="col">
-                <label for="exampleFormControlInput1">Total de signos vitales</label>
-                <input type="number" class="form-control" id="cantidadtotalventasssss" name="TicketVentasTotl" step="any" readonly value="<?php echo $Especialistas3->Total_Folios; ?>" aria-describedby="basic-addon1">
-            </div>
+           
         </div>
     </div>
 
@@ -268,15 +268,15 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
             <tbody>
                 <tr>
                     <td><input type="text" class="form-control"  readonly value="Efectivo"></td>
-                    <td><input type="text" class="form-control" name="EfectivoTotal[]" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
+                    <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
                 </tr>
                 <tr>
                     <td><input type="text" class="form-control"  readonly value="Tarjeta"></td>
-                    <td><input type="text" class="form-control" name="TarjetaTotal[]" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
+                    <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
                 </tr>
                 <tr>
                     <td><input type="text" class="form-control"  readonly value="Créditos"></td>
-                    <td><input type="text" class="form-control" name="CreditosTotales[]" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
+                    <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
                 </tr>
             </tbody>
         </table>
@@ -286,7 +286,7 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
     <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
                           
 </form>
-
+<script src="js/RealizaCorteDeCaja.js"></script>
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
