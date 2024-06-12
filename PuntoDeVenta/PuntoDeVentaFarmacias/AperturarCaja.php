@@ -49,7 +49,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             </div></div></div></div>
             </div>
             <script src="js/Cajas.js"></script>
-            <script src="js/RealizaCorteDeCaja.js"></script>
+            
             <!-- Footer Start -->
             <?php 
           
