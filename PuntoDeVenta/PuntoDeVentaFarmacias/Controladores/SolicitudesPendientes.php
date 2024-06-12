@@ -280,6 +280,7 @@ tabla = $('#Clientes').DataTable({
 <th>Proveedor</th>
 <th>Codigo de barras</th>
     <th>Nombre</th>
+    <th>Piezas/Cantidad</th>
     <th>Estado</th>
     <th>Fecha solicitud</th>
 </thead>
