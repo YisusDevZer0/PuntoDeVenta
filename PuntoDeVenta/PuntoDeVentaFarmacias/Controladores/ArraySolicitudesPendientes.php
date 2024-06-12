@@ -73,6 +73,7 @@ while ($fila = $result->fetch_assoc()) {
         "IdProdCedis" => $fila["IdProdCedis"],
        
         "NumFactura" => $fila["NumFactura"],
+        "NumOrden" => $fila["NumOrden"],
         "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
@@ -87,7 +88,7 @@ while ($fila = $result->fetch_assoc()) {
         "AgregadoEl" => $fila["AgregadoEl"],
         "FechaInventario" => $fila["FechaInventario"],
         "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
-        "NumOrden" => $fila["NumOrden"]
+        
     ];
 }
 

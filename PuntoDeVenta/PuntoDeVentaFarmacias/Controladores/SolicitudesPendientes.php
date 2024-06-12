@@ -212,6 +212,7 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
     { mData: 'IdProdCedis' },  
 { mData: 'NumFactura' },
+{ mData: 'NumOrden' },
 { mData: 'Proveedor' },
 { mData: 'Cod_Barra' },
 { mData: 'Nombre_Prod' },
@@ -226,7 +227,7 @@ tabla = $('#Clientes').DataTable({
 { mData: 'AgregadoEl' },
 { mData: 'FechaInventario' },
 { mData: 'Estatus' },
-{ mData: 'NumOrden' }
+
 
       ],
      
@@ -278,8 +279,9 @@ tabla = $('#Clientes').DataTable({
 <thead>
 <th>Id de caja</th>
 <th># Factura</th>
+<th># de solicitud</th>
 <th>Codigo de barras</th>
-    <th>Fecha de apertura</th>
+    <th>Nombre</th>
     <th>Estado</th>
     <th>Turno</th> 
     <th>Activo / Inactivo</th> 
