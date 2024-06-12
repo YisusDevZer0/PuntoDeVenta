@@ -267,16 +267,16 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
             </thead>
             <tbody>
                 <tr>
-                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Efectivo"></td>
-                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
+                    <td><input type="text" class="form-control"  readonly value="Efectivo"></td>
+                    <td><input type="text" class="form-control" name="EfectivoTotal[]" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Tarjeta"></td>
-                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
+                    <td><input type="text" class="form-control"  readonly value="Tarjeta"></td>
+                    <td><input type="text" class="form-control" name="TarjetaTotal[]" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
                 </tr>
                 <tr>
-                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
-                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
+                    <td><input type="text" class="form-control"  readonly value="Créditos"></td>
+                    <td><input type="text" class="form-control" name="CreditosTotales[]" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
                 </tr>
             </tbody>
         </table>
