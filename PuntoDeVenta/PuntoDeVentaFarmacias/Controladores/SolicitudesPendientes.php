@@ -277,16 +277,11 @@ tabla = $('#Clientes').DataTable({
 <th>Id de caja</th>
 <th># Factura</th>
 <th># de solicitud</th>
+<th>Proveedor</th>
 <th>Codigo de barras</th>
     <th>Nombre</th>
     <th>Estado</th>
-    <th>Turno</th> 
-    <th>Activo / Inactivo</th> 
-    <th>Valor total de caja</th> 
-    <th>Desactivar Caja</th>
-    <th>Reactivar Caja</th>
-    <th>Registrar gasto</th>
-    <th>Realizar corte</th>
+    <th>Fecha solicitud</th>
 </thead>
 
 </div>
