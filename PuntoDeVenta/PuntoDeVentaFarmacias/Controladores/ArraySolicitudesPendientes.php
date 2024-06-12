@@ -78,13 +78,10 @@ while ($fila = $result->fetch_assoc()) {
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Contabilizado" => $fila["Contabilizado"],
-        "Fecha_Caducidad" => $fila["Fecha_Caducidad"],
-        "Lote" => $fila["Lote"],
-        "PrecioMaximo" => $fila["PrecioMaximo"],
+       "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "AgregadoPor" => $fila["AgregadoPor"],
-        "AgregadoEl" => $fila["AgregadoEl"],
         "FechaInventario" => $fila["FechaInventario"],
-        "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
+        
         
     ];
 }

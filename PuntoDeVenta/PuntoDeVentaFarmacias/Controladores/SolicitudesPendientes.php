@@ -217,13 +217,11 @@ tabla = $('#Clientes').DataTable({
 { mData: 'Cod_Barra' },
 { mData: 'Nombre_Prod' },
 { mData: 'Contabilizado' },
-{ mData: 'Fecha_Caducidad' },
-{ mData: 'Lote' },
-{ mData: 'PrecioMaximo' },
-{ mData: 'AgregadoPor' },
-{ mData: 'AgregadoEl' },
-{ mData: 'FechaInventario' },
 { mData: 'Estatus' },
+{ mData: 'FechaInventario' },
+{ mData: 'AgregadoPor' },
+
+
 
 
       ],
@@ -283,6 +281,7 @@ tabla = $('#Clientes').DataTable({
     <th>Piezas/Cantidad</th>
     <th>Estado</th>
     <th>Fecha solicitud</th>
+    <th>Solicitante</th>
 </thead>
 
 </div>
