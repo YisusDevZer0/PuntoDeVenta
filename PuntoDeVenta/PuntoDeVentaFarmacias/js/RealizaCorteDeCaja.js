@@ -1,62 +1,90 @@
 $(document).ready(function () {
- 
     // Validar el formulario
     $("#FormDeCortes").validate({
         rules: {
-            clienteInput: {
+            Sucursal: {
+                required: true,
+            },
+            Turno: {
+                required: true,
+            },
+            Cajero: {
+                required: true,
+            },
+            VentaTotal: {
+                required: true,
+            },
+            TicketVentasTotal: {
+                required: true,
+            },
+            EfectivoTotal: {
+                required: true,
+            },
+            TarjetaTotal: {
+                required: true,
+            },
+            CreditosTotales: {
                 required: true,
             },
         },
         messages: {
-            clienteInput: {
+            Sucursal: {
                 required: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'Campo requerido',
-                        text: 'El nombre del cliente es necesario',
+                        text: 'El campo Sucursal es necesario',
                     });
                 },
             },
+            Turno: {
+                required: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Campo requerido',
+                        text: 'El campo Turno es necesario',
+                    });
+                },
+            },
+            // Repite esto para cada campo
         },
         submitHandler: function () {
-            
-                $.ajax({
-                    type: 'POST',
-                    url: "Controladores/RegistraCorte.php",
-                    data: $('#FormDeCortes').serialize(),
-                    cache: false,
-                    success: function (data) {
-                        var response = JSON.parse(data);
+            $.ajax({
+                type: 'POST',
+                url: "Controladores/RegistraCorte.php",
+                data: $('#FormDeCortes').serialize(),
+                cache: false,
+                success: function (data) {
+                    var response = JSON.parse(data);
 
-                        if (response.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Venta realizada con éxito',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                didOpen: () => {
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1500);
-                                },
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Algo salió mal',
-                                text: response.message,
-                            });
-                        }
-                    },
-                    error: function () {
+                    if (response.statusCode === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Venta realizada con éxito',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            didOpen: () => {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1500);
+                            },
+                        });
+                    } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error en la petición',
-                            text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                            title: 'Algo salió mal',
+                            text: response.error || 'Error inesperado',
                         });
                     }
-                });
-            
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la petición',
+                        text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                    });
+                }
+            });
         },
     });
 });
