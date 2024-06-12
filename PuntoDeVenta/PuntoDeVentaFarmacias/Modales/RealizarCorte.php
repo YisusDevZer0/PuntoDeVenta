@@ -287,10 +287,10 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
     <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
                           
 </form>
-<script src="js/RealizaCorteDeCaja.js"></script>
+
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
-<?php endif; ?>
+<?php endif; ?><script src="js/RealizaCorteDeCaja.js"></script>
