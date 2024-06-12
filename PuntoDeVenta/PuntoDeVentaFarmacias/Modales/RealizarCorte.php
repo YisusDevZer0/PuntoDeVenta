@@ -248,8 +248,8 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" class="form-control" name="NombreServicio[]" readonly value="<?php echo $Especialistas14->Nom_Serv; ?>"></td>
-                        <td><input type="text" class="form-control" name="TotalServicio[]" readonly value="<?php echo $Especialistas14->totaldeservicios; ?>"></td>
+                        <td><input type="text" class="form-control"  readonly value="<?php echo $Especialistas14->Nom_Serv; ?>"></td>
+                        <td><input type="text" class="form-control" readonly value="<?php echo $Especialistas14->totaldeservicios; ?>"></td>
                     </tr>
                 </tbody>
             </table>
