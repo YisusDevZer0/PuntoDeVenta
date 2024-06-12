@@ -171,39 +171,35 @@ $sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_PO
          GROUP BY Servicios_POS.Servicio_ID";
 $query = $conn->query($sql5);
 
-// Aquí es donde se genera el código para la forma de pago como efectivo
-$sql8 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
-                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
-                SUM(Ventas_POS.Importe) as totalesdepagoEfectivo
-         FROM Ventas_POS, Servicios_POS, Sucursales 
-         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago='Efectivo'
-         AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
-$query8 = $conn->query($sql8);
+$sql = "
+    SELECT 
+        Ventas_POS.FormaDePago,
+        SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
+        SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
+        SUM(CASE WHEN Ventas_POS.FormaDePago != 'Efectivo' AND Ventas_POS.FormaDePago != 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos
+    FROM Ventas_POS
+    JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
+    JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
+    WHERE 
+        Ventas_POS.Fk_Caja = '".$_POST['id']."' 
+        AND Ventas_POS.ID_H_O_D = '".$id_h_o_d."'
+    GROUP BY Ventas_POS.FormaDePago
+";
+$query = $conn->query($sql);
 
-// Aquí es donde se genera el código para la forma de pago como tarjeta
-$sql88 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
-                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
-                SUM(Ventas_POS.Importe) as totalesdepagotarjeta
-         FROM Ventas_POS, Servicios_POS, Sucursales 
-         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago='Tarjeta'";
-$query88 = $conn->query($sql88);
+// Inicializa las variables para los totales
+$totalesdepagoEfectivo = 0;
+$totalesdepagotarjeta = 0;
+$totalesdepagoCreditos = 0;
 
-// Aquí es donde se genera el código para la forma de pago global de los Créditos 
-$sql888 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
-                Sucursales.Nombre_Sucursal, Ventas_POS.FormaDePago, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
-                SUM(Ventas_POS.Importe) as totalesdepagoCreditos
-         FROM Ventas_POS, Servicios_POS, Sucursales 
-         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.FormaDePago!='Efectivo' 
-         AND Ventas_POS.FormaDePago!='Tarjeta' AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."'";
-$query888 = $conn->query($sql888);
-
+// Procesa los resultados de la consulta
+while ($row = $query->fetch_assoc()) {
+    $totalesdepagoEfectivo += $row['totalesdepagoEfectivo'];
+    $totalesdepagotarjeta += $row['totalesdepagotarjeta'];
+    $totalesdepagoCreditos += $row['totalesdepagoCreditos'];
+}
 ?>
+
 
 <?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
     <div class="text-center">
@@ -267,22 +263,23 @@ $query888 = $conn->query($sql888);
                 </tr>
             </thead>
             <tbody>
-                <?php while ($Usuarios2 = $query8->fetch_array()): ?>
-                    <?php $Usuarios3 = $query88->fetch_array(); ?>
-                    <?php $Usuarios4 = $query888->fetch_array(); ?>
-                    <tr>
-                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
-                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
-                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
-                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
-                    </tr>
-                <?php endwhile; ?>
+                <tr>
+                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Efectivo"></td>
+                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Tarjeta"></td>
+                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
+                    <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+               
             </tbody>
         </table>
     </div>
