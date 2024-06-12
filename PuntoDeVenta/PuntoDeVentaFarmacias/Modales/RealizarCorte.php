@@ -257,36 +257,37 @@ $query888 = $conn->query($sql888);
         </div>
     </div>
     <?php if ($query8->num_rows > 0): ?>
-    <div class="text-center">
-        <div class="table-responsive">
-            <table id="TotalesFormaPagoCortes" class="table table-hover">
-                <thead>
+        <div class="text-center">
+    <div class="table-responsive">
+        <table id="TotalesFormaPagoCortes" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Forma de pago</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($Usuarios2 = $query8->fetch_array()): ?>
+                    <?php $Usuarios3 = $query88->fetch_array(); ?>
+                    <?php $Usuarios4 = $query888->fetch_array(); ?>
                     <tr>
-                        <th>Forma de pago</th>
-                        <th>Total</th>
-                        <th>Forma de pago</th>
-                        <th>Total</th>
-                        <th>Forma de pago</th>
-                        <th>Total</th>
+                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
+                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php while ($Usuarios2 = $query8->fetch_array()): ?>
-                        <?php $Usuarios3 = $query88->fetch_array(); ?>
-                        <?php $Usuarios4 = $query888->fetch_array(); ?>
-                        <tr>
-                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios2["FormaDePago"]; ?>"></td>
-                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios2["totalesdepagoEfectivo"]; ?>"></td>
-                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
-                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
-                            <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
-                            <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
+                    <tr>
+                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="<?php echo $Usuarios3["FormaDePago"]; ?>"></td>
+                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios3["totalesdepagotarjeta"]; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
+                        <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $Usuarios4["totalesdepagoCreditos"]; ?>"></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
+</div>
+
     <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
                           
 </form>
