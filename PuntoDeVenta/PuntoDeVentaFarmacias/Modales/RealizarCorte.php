@@ -171,7 +171,7 @@ $sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_PO
          GROUP BY Servicios_POS.Servicio_ID";
 $query = $conn->query($sql5);
 
-$$sql = "
+$sql = "
 SELECT 
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
