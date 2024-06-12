@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // Validar el formulario
-    $("#FormDeCortes").validate({
+    $("#CortesDeCajaFormulario").validate({
         rules: {
             Sucursal: {
                 required: true,
@@ -52,7 +52,7 @@ $(document).ready(function () {
             $.ajax({
                 type: 'POST',
                 url: "Controladores/RegistraCorte.php",
-                data: $('#FormDeCortes').serialize(),
+                data: $('#CortesDeCajaFormulario').serialize(),
                 cache: false,
                 success: function (data) {
                     var response = JSON.parse(data);

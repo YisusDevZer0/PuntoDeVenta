@@ -206,7 +206,7 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
 
 <?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
     
-    <form action="javascript:void(0)" method="post" id="FormDeCortes">
+    <form action="javascript:void(0)" method="post" id="CortesDeCajaFormulario">
     <div class="text-center">
         <div class="row">
             <div class="col">
