@@ -282,7 +282,8 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
         </table>
     </div>
 </div>
-
+<input type="hidden" name="Sistema" value="Ventas">
+    <input type="hidden" name="ID_H_O_D" value="DoctorPez">
     <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
                           
 </form>
