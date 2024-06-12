@@ -277,8 +277,8 @@ tabla = $('#Clientes').DataTable({
   <table  id="Clientes" class="table table-hover">
 <thead>
 <th>Id de caja</th>
-<th>Nombre Cajero</th>
-<th>Fondo de caja</th>
+<th># Factura</th>
+<th>Codigo de barras</th>
     <th>Fecha de apertura</th>
     <th>Estado</th>
     <th>Turno</th> 
