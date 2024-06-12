@@ -171,20 +171,23 @@ $sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_PO
          GROUP BY Servicios_POS.Servicio_ID";
 $query = $conn->query($sql5);
 
-$sql = "
-    SELECT 
-        Ventas_POS.FormaDePago,
-        SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
-        SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
-        SUM(CASE WHEN Ventas_POS.FormaDePago != 'Efectivo' AND Ventas_POS.FormaDePago != 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos
-    FROM Ventas_POS
-    JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
-    JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
-    WHERE 
-        Ventas_POS.Fk_Caja = '".$_POST['id']."' 
-        AND Ventas_POS.ID_H_O_D = '".$id_h_o_d."'
-    GROUP BY Ventas_POS.FormaDePago
+$$sql = "
+SELECT 
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeComb,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalTarjetaDeComb,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeCred,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalCreditoDeComb
+FROM Ventas_POS
+JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
+JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
+WHERE 
+    Ventas_POS.Fk_Caja = '".$_POST['id']."' 
+    AND Ventas_POS.ID_H_O_D = '".$id_h_o_d."'
 ";
+
 $query = $conn->query($sql);
 
 // Inicializa las variables para los totales
@@ -193,10 +196,10 @@ $totalesdepagotarjeta = 0;
 $totalesdepagoCreditos = 0;
 
 // Procesa los resultados de la consulta
-while ($row = $query->fetch_assoc()) {
-    $totalesdepagoEfectivo += $row['totalesdepagoEfectivo'];
-    $totalesdepagotarjeta += $row['totalesdepagotarjeta'];
-    $totalesdepagoCreditos += $row['totalesdepagoCreditos'];
+if ($row = $query->fetch_assoc()) {
+$totalesdepagoEfectivo = $row['totalesdepagoEfectivo'] + $row['totalEfectivoDeComb'] + $row['totalEfectivoDeCred'];
+$totalesdepagotarjeta = $row['totalesdepagotarjeta'] + $row['totalTarjetaDeComb'];
+$totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeComb'];
 }
 ?>
 
@@ -275,11 +278,6 @@ while ($row = $query->fetch_assoc()) {
                     <td><input type="text" class="form-control" name="NombreFormaPago[]" readonly value="Créditos"></td>
                     <td><input type="text" class="form-control" name="TotalFormasPagos[]" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-               
             </tbody>
         </table>
     </div>
