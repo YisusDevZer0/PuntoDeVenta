@@ -252,7 +252,7 @@ while ($row = $query->fetch_assoc()) {
             </table>
         </div>
     </div>
-    <?php if ($query8->num_rows > 0): ?>
+    <?php if ($query->num_rows > 0): ?>
         <div class="text-center">
     <div class="table-responsive">
         <table id="TotalesFormaPagoCortes" class="table table-hover">
