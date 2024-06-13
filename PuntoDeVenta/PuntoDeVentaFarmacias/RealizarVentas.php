@@ -448,8 +448,8 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
 <option value="0">Seleccione el Tipo de Pago</option>
 <option value="Efectivo" selected="true">Efectivo</option>
-<option value="Efectivo y Tarjeta Debito">Efectivo y tarjeta</option>
-<option value="Efectivo Y Tarjeta Credito">Efectivo y credito</option>
+<option value="Efectivo y Tarjeta">Efectivo y tarjeta</option>
+<option value="Efectivo Y Credito">Efectivo y credito</option>
 <option value="Tarjeta">Tarjeta</option>
 <option value="Transferencia">Transferencia</option>
 <!-- <option value="CreditoEnfermeria">Crédito Enfermería</option>
