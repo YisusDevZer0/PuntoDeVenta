@@ -478,7 +478,7 @@ var divTarjeta = document.getElementById("divTarjeta");
 var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
 var divCliente = document.getElementById("divCliente");
 
-if (selectElement.value === "Efectivo y Tarjeta Debito" || selectElement.value === "Efectivo Y Tarjeta Credito") {
+if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito") {
 divTarjeta.style.display = "block";
 } else {
 divTarjeta.style.display = "none";
