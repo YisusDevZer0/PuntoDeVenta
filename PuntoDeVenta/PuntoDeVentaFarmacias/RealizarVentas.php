@@ -624,7 +624,16 @@ $fechaActual = date('Y-m-d H:i:s');
 
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var iptTarjeta = document.getElementById("iptTarjeta");
+            var iptTarjetasCreditosOculto = document.getElementById("iptTarjetasCreditosOculto");
 
+            iptTarjeta.addEventListener("keyup", function() {
+                iptTarjetasCreditosOculto.value = iptTarjeta.value;
+            });
+        });
+    </script>
 
     <!-- INPUT DE EFECTIVO ENTREGADO -->
     <div class="form-group mb-2">
@@ -634,8 +643,10 @@ $fechaActual = date('Y-m-d H:i:s');
     </div>
     <div id="divTarjeta" style="display: none;">
 <div class="form-group mb-2">
-<label for="iptTarjeta" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con tarjeta</label>
-<input type="number" min="0" name="iptTarjeta" id="iptTarjeta" class="form-control form-control-sm" placeholder="Valor de la tarjeta" onkeyup="actualizarSumaTotal()">
+<label for="iptTarjeta" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con tarjeta o credito</label>
+<input type="number" min="0" name="iptTarjeta" id="iptTarjeta" class="form-control form-control-sm" placeholder="Cantidad a pagar" onkeyup="actualizarSumaTotal()">
+<input type="number" name="iptTarjetaCreditosOculto[]" id="iptTarjetasCreditosOculto" class="form-control ">
+
 </div>
 </div>
     <!-- INPUT CHECK DE EFECTIVO EXACTO -->
