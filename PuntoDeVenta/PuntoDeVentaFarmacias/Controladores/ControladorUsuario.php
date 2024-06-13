@@ -37,10 +37,10 @@ WHERE Usuarios_PV.Id_PvUser = '".$_SESSION['VentasPos']."'";
 $resultset = mysqli_query($conn, $sql) or die("database error: " . mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
-if ($row['Nombre_Apellidos'] != 'DevZero') {
-    header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
-    exit();
-}
+// if ($row['Nombre_Apellidos'] != 'DevZero') {
+//     header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
+//     exit();
+// }
 
 // Aquí puedes continuar con el resto de tu código
 ?>
