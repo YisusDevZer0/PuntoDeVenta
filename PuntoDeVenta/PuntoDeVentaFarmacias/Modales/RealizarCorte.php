@@ -211,7 +211,7 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
         <div class="row">
             <div class="col">
                 <label for="exampleFormControlInput1">Sucursal</label>
-                <input type="text" class="form-control" id="cantidadtotalventasss" name="Sucursal" step="any" readonly value="<?php echo $Especialistas14->Nombre_Sucursal; ?>" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" id="cantidadtotalventasss" step="any" readonly value="<?php echo $Especialistas14->Nombre_Sucursal; ?>" aria-describedby="basic-addon1">
            <input type="text" name="Fk_Caja" value="<?php echo $Especialistas14->Fk_Caja; ?>">
            <input type="text" name="Sucursal" value="<?php echo $Especialistas14->Fk_Sucursal; ?>">
             </div>
