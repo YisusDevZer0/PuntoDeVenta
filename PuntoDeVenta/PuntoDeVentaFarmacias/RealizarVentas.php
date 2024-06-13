@@ -645,7 +645,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <div class="form-group mb-2">
 <label for="iptTarjeta" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con tarjeta o credito</label>
 <input type="number" min="0" name="iptTarjeta" id="iptTarjeta" class="form-control form-control-sm" placeholder="Cantidad a pagar" onkeyup="actualizarSumaTotal()">
-<input type="number" name="iptTarjetaCreditosOculto[]" id="iptTarjetasCreditosOculto" class="form-control ">
+<input type="number" name="iptTarjetaCreditosOculto[]" id="iptTarjetasCreditosOculto" hidden class="form-control ">
 
 </div>
 </div>

@@ -3,7 +3,7 @@ include_once 'db_connect.php';
 
 $contador = count($_POST["IdBasedatos"]);
 $ProContador = 0;
-$query = "INSERT INTO Ventas_POS ( `ID_Prod_POS`, `Identificador_tipo`, `Turno`,`Folio_Ticket`, `Clave_adicional`, `Cod_Barra`,`Nombre_Prod`,`Cantidad_Venta`, `Fk_sucursal`,`Total_Venta`,`Importe`,`Total_VentaG`,`DescuentoAplicado`,`FormaDePago`,`CantidadPago`,`Cambio`,`Cliente`,`Fecha_venta` , `Fk_Caja`,`Lote`,`Motivo_Cancelacion`,`Estatus`,`Sistema`,`AgregadoPor`, `ID_H_O_D`,`FolioSignoVital`,TicketAnterior) VALUES ";
+$query = "INSERT INTO Ventas_POS ( `ID_Prod_POS`, `Identificador_tipo`, `Turno`,`Folio_Ticket`, `Clave_adicional`, `Cod_Barra`,`Nombre_Prod`,`Cantidad_Venta`, `Fk_sucursal`,`Total_Venta`,`Importe`,`Total_VentaG`,`DescuentoAplicado`,`FormaDePago`,`CantidadPago`,`Cambio`,`Cliente`,`Fecha_venta` , `Fk_Caja`,`Lote`,`Motivo_Cancelacion`,`Estatus`,`Sistema`,`AgregadoPor`, `ID_H_O_D`,`FolioSignoVital`,`TicketAnterior`,`Pagos_tarjeta`) VALUES ";
 
 $placeholders = [];
 $values = [];
@@ -12,7 +12,7 @@ $valueTypes = '';
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["IdBasedatos"][$i]) || !empty($_POST["TiposDeServicio"][$i]) || !empty($_POST["TurnoEnTurno"])) {
         $ProContador++;
-        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $values[] = $_POST["IdBasedatos"][$i];
         $values[] = $_POST["TiposDeServicio"][$i];
         $values[] = $_POST["TurnoEnTurno"][$i];
@@ -40,7 +40,8 @@ for ($i = 0; $i < $contador; $i++) {
         $values[] = $_POST["Empresa"][$i];
         $values[] = $_POST["SignoVital"][$i];
         $values[] = $_POST["TicketAnterior"][$i];
-        $valueTypes .= 'sssssssssssssssssssssssssss';
+        $values[] = $_POST["iptTarjetaCreditosOculto"][$i];
+        $valueTypes .= 'ssssssssssssssssssssssssssss';
     }
 }
 
