@@ -3,22 +3,23 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
 
+// Obtener el valor de Fk_Sucursal y Nombre_Apellidos
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+$nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
+
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
         Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
         Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Cajas
         INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
-        WHERE Cajas.Sucursal = ?"; // Se cambió la condición WHERE para utilizar Fk_Sucursal
+        WHERE Cajas.Sucursal = ? AND Cajas.Empleado = ?"; // Se añadió la condición para el empleado
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Obtener el valor de Fk_Sucursal
-$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
-
-// Vincular parámetro
-$stmt->bind_param("s", $fk_sucursal);
+// Vincular parámetros
+$stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -94,9 +95,8 @@ while ($fila = $result->fetch_assoc()) {
             $registrar_gasto = '';
         }
     }
- // Siempre incluir el campo para realizar el corte
- $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $row['Fk_Sucursal'] . '" data-hod="' . $row["Licencia"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
-
+    // Siempre incluir el campo para realizar el corte
+    $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $fk_sucursal . '" data-hod="' . $fila["Licencia"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
 
     // Construir el array de datos incluyendo las columnas condicionadas
     $data[] = [
