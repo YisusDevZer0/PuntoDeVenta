@@ -212,8 +212,6 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
        { mData: 'Cod_Barra' },
        { mData: 'Nombre_Prod' },
-
-       { mData: 'PrecioVenta' },
        { mData: 'FolioTicket' },
        { mData: 'Sucursal' },
        { mData: 'Turno' },
@@ -280,7 +278,7 @@ tabla = $('#Clientes').DataTable({
 <th>Cod</th>
 <th>Nombre</th>
 
-<th>Precio Venta</th>
+
 <th>N° Ticket</th>
 <th>Sucursal</th>
 <th>Turno</th>

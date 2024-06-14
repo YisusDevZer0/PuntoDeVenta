@@ -67,7 +67,7 @@ while($fila=$result->fetch_assoc()){
     $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
     $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
   
-    $data[$c]["PrecioVenta"] = $fila["Precio_Venta"];
+
     $data[$c]["FolioTicket"] = $fila["FolioSucursal"] . '' . $fila["Folio_Ticket"];
     $data[$c]["Sucursal"] = $fila["Nombre_Sucursal"];
     $data[$c]["Turno"] = $fila["Turno"];
