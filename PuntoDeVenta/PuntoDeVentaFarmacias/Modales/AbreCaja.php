@@ -92,6 +92,7 @@ while ($r=$query->fetch_object()){
  <input type="text" hidden name="Estatus" value="Abierta">
  <input type="text" hidden name="CodEstatus" value="background-color: #2BBB1D !important;">
  <input type="text"  hidden name="Sistema" value="POS <?php echo $row['Nombre_rol']?>">
+ <input type="text"   name="Licencia" value="<?php echo $row['Licencia']?>">
 <button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
 
 </form>
