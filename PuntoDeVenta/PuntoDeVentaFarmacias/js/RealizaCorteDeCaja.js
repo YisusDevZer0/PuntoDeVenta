@@ -65,7 +65,7 @@ $(document).ready(function () {
                     if (response.statusCode === 200) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Venta realizada con éxito',
+                            title: 'El corte se ha realizado con exito!',
                             showConfirmButton: false,
                             timer: 2000,
                             didOpen: () => {
