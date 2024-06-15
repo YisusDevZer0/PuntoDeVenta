@@ -57,16 +57,46 @@ if ($query3 && $query3->num_rows > 0) {
 }
 
 // CONSULTA 14
-$sql14 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
-                Sucursales.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
-                SUM(Ventas_POS.Importe) AS totaldeservicios 
-         FROM Ventas_POS
-         INNER JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         INNER JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-         WHERE Fk_Caja = '$fk_caja' AND Ventas_POS.ID_H_O_D = '$id_h_o_d' AND Ventas_POS.Fecha_venta = '$fcha' 
-         GROUP BY Servicios_POS.Servicio_ID";
+$sql14 = "SELECT 
+            Ventas_POS.Identificador_tipo, 
+            Ventas_POS.Fk_sucursal, 
+            Ventas_POS.ID_H_O_D, 
+            Ventas_POS.Fecha_venta,
+            Ventas_POS.AgregadoPor, 
+            Ventas_POS.Fk_Caja, 
+            Ventas_POS.AgregadoEl, 
+            Sucursales.ID_Sucursal, 
+            Sucursales.Nombre_Sucursal, 
+            Servicios_POS.Servicio_ID, 
+            Servicios_POS.Nom_Serv, 
+            SUM(Ventas_POS.Importe) AS totaldeservicios 
+         FROM 
+            Ventas_POS
+         INNER JOIN 
+            Servicios_POS 
+            ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
+         INNER JOIN 
+            Sucursales 
+            ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
+         WHERE 
+            Ventas_POS.Fk_Caja = '$fk_caja' 
+            AND Ventas_POS.ID_H_O_D = '$id_h_o_d' 
+            AND Ventas_POS.Fecha_venta = '$fcha' 
+         GROUP BY 
+            Ventas_POS.Identificador_tipo, 
+            Ventas_POS.Fk_sucursal, 
+            Ventas_POS.ID_H_O_D, 
+            Ventas_POS.Fecha_venta, 
+            Ventas_POS.AgregadoPor, 
+            Ventas_POS.Fk_Caja, 
+            Ventas_POS.AgregadoEl, 
+            Sucursales.ID_Sucursal, 
+            Sucursales.Nombre_Sucursal, 
+            Servicios_POS.Servicio_ID, 
+            Servicios_POS.Nom_Serv";
+
 $query14 = $conn->query($sql14);
+
 $Especialistas14 = null;
 if ($query14 && $query14->num_rows > 0) {
     $Especialistas14 = $query14->fetch_object();
