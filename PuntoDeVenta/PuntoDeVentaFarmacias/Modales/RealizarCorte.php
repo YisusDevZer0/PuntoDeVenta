@@ -215,6 +215,8 @@ if ($result_totales && $result_totales->num_rows > 0) {
                    aria-describedby="basic-addon1">
             <input type="text" hidden name="Fk_Caja" value="<?php echo $especialista ? $especialista->Fk_Caja : ''; ?>">
             <input type="text" hidden name="Sucursal" value="<?php echo $especialista ? $especialista->Fk_sucursal : ''; ?>">
+             <input type="text" hidden name="Turno" value="<?php echo $especialista ? $especialista->Turno : ''; ?>">
+              
         </div>
     </div>
 </div>
