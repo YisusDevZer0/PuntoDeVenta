@@ -114,6 +114,9 @@ while ($fila = $result->fetch_assoc()) {
         "RealizarCorte" => $realizar_corte,
     ];
 }
+
+// Cerrar la declaración
+$stmt->close();
 // Agregar el bloque de código para mostrar Sweet Alert si hay dos o más cajas abiertas
 $cajas_abiertas = 0;
 foreach ($data as $caja) {
@@ -132,9 +135,6 @@ if ($cajas_abiertas >= 2) {
         });
     </script>";
 }
-// Cerrar la declaración
-$stmt->close();
-
 // Construir el array de resultados para la respuesta JSON
 $results = [
     "sEcho" => 1,
