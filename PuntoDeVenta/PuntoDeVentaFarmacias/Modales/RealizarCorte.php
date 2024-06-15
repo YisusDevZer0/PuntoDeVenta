@@ -20,13 +20,10 @@ $sql1 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          FROM Ventas_POS 
          WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
          ORDER BY Venta_POS_ID ASC LIMIT 1";
-$query = $conn->query($sql1);
+$query1 = $conn->query($sql1);
 $Especialistas = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas = $r;
-        break;
-    }
+if ($query1 && $query1->num_rows > 0) {
+    $Especialistas = $query1->fetch_object();
 }
 
 // CONSULTA 2
@@ -34,13 +31,10 @@ $sql2 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          FROM Ventas_POS 
          WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
          ORDER BY Venta_POS_ID DESC LIMIT 1";
-$query = $conn->query($sql2);
+$query2 = $conn->query($sql2);
 $Especialistas2 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas2 = $r;
-        break;
-    }
+if ($query2 && $query2->num_rows > 0) {
+    $Especialistas2 = $query2->fetch_object();
 }
 
 // CONSULTA 3
@@ -50,13 +44,10 @@ $sql3 = "SELECT Venta_POS_ID, Fk_Caja, Turno, Fecha_venta, Fk_sucursal, Agregado
                 SUM(Importe) AS VentaTotal  
          FROM Ventas_POS 
          WHERE Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql3);
+$query3 = $conn->query($sql3);
 $Especialistas3 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas3 = $r;
-        break;
-    }
+if ($query3 && $query3->num_rows > 0) {
+    $Especialistas3 = $query3->fetch_object();
 }
 
 // CONSULTA 14
@@ -96,15 +87,12 @@ $sql14 = "SELECT
             Sucursales.Nombre_Sucursal";
 
 $query14 = $conn->query($sql14);
-$Especialistas14 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas14 = $r;
-        break;
+$Especialistas14 = [];
+if ($query14 && $query14->num_rows > 0) {
+    while ($r = $query14->fetch_object()) {
+        $Especialistas14[] = $r;
     }
 }
-
-
 
 // Consulta 6: Total de venta por crédito en enfermería
 $sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCredito 
@@ -113,13 +101,10 @@ $sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTI
          AND Fk_sucursal = '$fk_sucursal' 
          AND ID_H_O_D = '$id_h_o_d' 
          AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql6);
+$query6 = $conn->query($sql6);
 $Especialistas6 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas6 = $r;
-        break;
-    }
+if ($query6 && $query6->num_rows > 0) {
+    $Especialistas6 = $query6->fetch_object();
 }
 
 // Consulta 7: Total de venta por crédito en limpieza
@@ -129,13 +114,10 @@ $sql7 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTI
          AND Fk_sucursal = '$fk_sucursal' 
          AND ID_H_O_D = '$id_h_o_d' 
          AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql7);
+$query7 = $conn->query($sql7);
 $Especialistas7 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas7 = $r;
-        break;
-    }
+if ($query7 && $query7->num_rows > 0) {
+    $Especialistas7 = $query7->fetch_object();
 }
 
 // Consulta 11: Total de venta por crédito farmacéutico
@@ -145,13 +127,10 @@ $sql11 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DIST
           AND Fk_sucursal = '$fk_sucursal' 
           AND ID_H_O_D = '$id_h_o_d' 
           AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql11);
+$query11 = $conn->query($sql11);
 $Especialistas11 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas11 = $r;
-        break;
-    }
+if ($query11 && $query11->num_rows > 0) {
+    $Especialistas11 = $query11->fetch_object();
 }
 
 // Consulta 12: Total de venta por crédito médico
@@ -161,13 +140,10 @@ $sql12 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DIST
           AND Fk_sucursal = '$fk_sucursal' 
           AND ID_H_O_D = '$id_h_o_d' 
           AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql12);
+$query12 = $conn->query($sql12);
 $Especialistas12 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas12 = $r;
-        break;
-    }
+if ($query12 && $query12->num_rows > 0) {
+    $Especialistas12 = $query12->fetch_object();
 }
 
 // Consulta 13: Cortes de cajas POS
@@ -175,58 +151,34 @@ $sql13 = "SELECT * FROM Cortes_Cajas_POS
           WHERE Sucursal = '$fk_sucursal' 
           AND ID_H_O_D = '$id_h_o_d' 
           AND Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql13);
+$query13 = $conn->query($sql13);
 $Especialistas13 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas13 = $r;
-        break;
-    }
+if ($query13 && $query13->num_rows > 0) {
+    $Especialistas13 = $query13->fetch_object();
 }
 
-
-
-
-$sql5 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_POS.ID_H_O_D, Ventas_POS.Fecha_venta,
-                Ventas_POS.AgregadoPor, Ventas_POS.Fk_Caja, Ventas_POS.AgregadoEl, Sucursales.ID_Sucursal, 
-                Sucursales.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, 
-                SUM(Ventas_POS.Importe) as totaldeservicios 
-         FROM Ventas_POS, Servicios_POS, Sucursales 
-         WHERE Fk_Caja = '".$_POST['id']."' AND Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-         AND Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal AND Ventas_POS.ID_H_O_D ='".$id_h_o_d."' 
-         GROUP BY Servicios_POS.Servicio_ID";
-$query = $conn->query($sql5);
-
-$sql = "
+// Consulta de totales por forma de pago
+$sql_totales = "
 SELECT 
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeComb,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalTarjetaDeComb,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeCred,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalCreditoDeComb
-FROM Ventas_POS
-JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
-JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
-WHERE 
-    Ventas_POS.Fk_Caja = '".$_POST['id']."' 
-    AND Ventas_POS.ID_H_O_D = '".$id_h_o_d."'
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Enfermería' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoEnfermeria,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Limpieza' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoLimpieza,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Farmacéutico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoFarmaceutico,
+    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Médico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoMedico,
+    SUM(Ventas_POS.Importe) as TotalCantidad
+FROM Ventas_POS 
+WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
 ";
-
-$query = $conn->query($sql);
-
-// Inicializa las variables para los totales
-$totalesdepagoEfectivo = 0;
-$totalesdepagotarjeta = 0;
-$totalesdepagoCreditos = 0;
-
-// Procesa los resultados de la consulta
-if ($row = $query->fetch_assoc()) {
-$totalesdepagoEfectivo = $row['totalesdepagoEfectivo'] + $row['totalEfectivoDeComb'] + $row['totalEfectivoDeCred'];
-$totalesdepagotarjeta = $row['totalesdepagotarjeta'] + $row['totalTarjetaDeComb'];
-$totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeComb'];
+$result_totales = $conn->query($sql_totales);
+$EspecialistasTotales = null;
+if ($result_totales && $result_totales->num_rows > 0) {
+    $EspecialistasTotales = $result_totales->fetch_object();
 }
+
 ?>
 
 
@@ -318,6 +270,4 @@ $totalesdepagoCreditos = $row['totalesdepagoCreditos'] + $row['totalCreditoDeCom
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
-<?php else: ?>
-    <p class="alert alert-danger">404 No se encuentra</p>
-<?php endif; ?><script src="js/RealizaCorteDeCaja.js"></script>
+<script src="js/RealizaCorteDeCaja.js"></script>
