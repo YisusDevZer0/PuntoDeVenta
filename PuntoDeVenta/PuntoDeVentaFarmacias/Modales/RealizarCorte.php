@@ -182,22 +182,27 @@ if ($result_totales && $result_totales->num_rows > 0) {
 ?>
 
 
-<?php if ($Especialistas3 != null && $Especialistas14 != null): ?>
+<?php if (!empty($Especialistas14)) {
+    $especialista = $Especialistas14[0];
+} else {
+    // Maneja el caso donde $Especialistas14 esté vacío si es necesario
+    $especialista = null;
+} ?>
     
     <form action="javascript:void(0)" method="post" id="CortesDeCajaFormulario">
     <div class="text-center">
-        <div class="row">
-            <div class="col">
-                <label for="exampleFormControlInput1">Sucursal</label>
-                <input type="text" class="form-control" id="cantidadtotalventasss" step="any" readonly value="<?php echo $Especialistas14->Nombre_Sucursal; ?>" aria-describedby="basic-addon1">
-           <input type="text" hidden name="Fk_Caja" value="<?php echo $Especialistas14->Fk_Caja; ?>">
-           <input type="text" hidden name="Sucursal" value="<?php echo $Especialistas14->Fk_sucursal; ?>">
-            </div>
-            <div class="col">
-                <label for="exampleFormControlInput1">Turno</label>
-                <input type="text" class="form-control" id="cantidadtotalventasss" name="Turno" step="any" readonly value="<?php echo $Especialistas3->Turno; ?>" aria-describedby="basic-addon1">
-            </div>
+    <div class="row">
+        <div class="col">
+            <label for="exampleFormControlInput1">Sucursal</label>
+            <input type="text" class="form-control" id="cantidadtotalventasss" step="any" readonly 
+                   value="<?php echo $especialista ? $especialista->Nombre_Sucursal : ''; ?>" 
+                   aria-describedby="basic-addon1">
+            <input type="text" hidden name="Fk_Caja" value="<?php echo $especialista ? $especialista->Fk_Caja : ''; ?>">
+            <input type="text" hidden name="Sucursal" value="<?php echo $especialista ? $especialista->Fk_sucursal : ''; ?>">
         </div>
+    </div>
+</div>
+
         <div class="row">
             <div class="col">
                 <label for="exampleFormControlInput1">Cajero</label>
@@ -217,57 +222,74 @@ if ($result_totales && $result_totales->num_rows > 0) {
         </div>
     </div>
 
-    <div class="table-responsive">
-            <table id="TotalesGeneralesCortes" class="table table-hover">
+   
+    <?php
+// Verificar si $Especialistas14 no está vacío
+if (!empty($Especialistas14)) {
+?>
+<div class="table-responsive">
+    <table id="TotalesGeneralesCortes" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre Servicio</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            // Recorrer cada objeto en el array $Especialistas14
+            foreach ($Especialistas14 as $especialista) {
+                echo '<tr>';
+                echo '<td><input type="text" class="form-control" readonly value="' . $especialista->Nom_Serv . '"></td>';
+                echo '<td><input type="text" class="form-control" readonly value="' . $especialista->totaldeservicios . '"></td>';
+                echo '</tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+</div>
+<?php
+} else {
+    // Manejar el caso donde $Especialistas14 esté vacío si es necesario
+    echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
+}
+?>
+
+<!-- Continuación del código HTML/PHP -->
+<?php if ($query->num_rows > 0): ?>
+    <div class="text-center">
+        <div class="table-responsive">
+            <table id="TotalesFormaPagoCortes" class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Nombre Servicio</th>
+                        <th>Forma de pago</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" class="form-control"  readonly value="<?php echo $Especialistas14->Nom_Serv; ?>"></td>
-                        <td><input type="text" class="form-control" readonly value="<?php echo $Especialistas14->totaldeservicios; ?>"></td>
+                        <td><input type="text" class="form-control" readonly value="Efectivo"></td>
+                        <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" readonly value="Tarjeta"></td>
+                        <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" readonly value="Créditos"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <?php if ($query->num_rows > 0): ?>
-        <div class="text-center">
-    <div class="table-responsive">
-        <table id="TotalesFormaPagoCortes" class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Forma de pago</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" class="form-control"  readonly value="Efectivo"></td>
-                    <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="form-control"  readonly value="Tarjeta"></td>
-                    <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="form-control"  readonly value="Créditos"></td>
-                    <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<input type="hidden" name="Sistema" value="Ventas">
+    <input type="hidden" name="Sistema" value="Ventas">
     <input type="hidden" name="ID_H_O_D" value="DoctorPez">
-    <button type="submit"  id="submit"  class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
-                          
+    <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
 </form>
-
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
+
+
 <script src="js/RealizaCorteDeCaja.js"></script>
