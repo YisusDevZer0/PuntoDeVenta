@@ -76,7 +76,7 @@ $sql14 = "SELECT
             AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
          GROUP BY 
             Servicio_ID, 
-            ";
+            Nom_Serv";
 
 $query14 = $conn->query($sql14);
 $Especialistas14 = [];
