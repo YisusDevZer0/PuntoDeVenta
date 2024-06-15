@@ -309,7 +309,7 @@ if (!empty($Especialistas14)) {
     </div>
     <input type="hidden" name="Sistema" value="Ventas">
     <input type="hidden" name="ID_H_O_D" value="DoctorPez">
-    <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
+  
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
