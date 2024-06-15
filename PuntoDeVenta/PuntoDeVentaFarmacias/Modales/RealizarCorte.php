@@ -157,7 +157,6 @@ if ($query13 && $query13->num_rows > 0) {
     $Especialistas13 = $query13->fetch_object();
 }
 
-// Consulta de totales por forma de pago
 $sql_totales = "
 SELECT 
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
@@ -174,6 +173,31 @@ FROM Ventas_POS
 WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
 ";
 $result_totales = $conn->query($sql_totales);
+
+// Verificar si la consulta se ejecutó correctamente
+if ($result_totales) {
+    // Verificar si hay filas retornadas
+    if ($result_totales->num_rows > 0) {
+        // Obtener los resultados como un array asociativo
+        $row_totales = $result_totales->fetch_assoc();
+
+        // Asignar los valores a variables
+        $totalesdepagoEfectivo = $row_totales['totalesdepagoEfectivo'];
+        $totalesdepagotarjeta = $row_totales['totalesdepagotarjeta'];
+        $totalesdepagoCreditos = $row_totales['totalesdepagoCreditos'];
+        $totalEfectivoDeComb = $row_totales['totalEfectivoDeComb'];
+        $totalTarjetaDeComb = $row_totales['totalTarjetaDeComb'];
+        $totalCreditoEnfermeria = $row_totales['totalCreditoEnfermeria'];
+        $totalCreditoLimpieza = $row_totales['totalCreditoLimpieza'];
+        $totalCreditoFarmaceutico = $row_totales['totalCreditoFarmaceutico'];
+        $totalCreditoMedico = $row_totales['totalCreditoMedico'];
+        $TotalCantidad = $row_totales['TotalCantidad'];
+    } else {
+        echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
+    }
+} else {
+    echo '<p class="alert alert-danger">Error en la consulta: ' . $conn->error . '</p>';
+}
 $EspecialistasTotales = null;
 if ($result_totales && $result_totales->num_rows > 0) {
     $EspecialistasTotales = $result_totales->fetch_object();
@@ -256,7 +280,7 @@ if (!empty($Especialistas14)) {
 ?>
 
 
-<?php if ($query->num_rows > 0): ?>
+<?php if ($result_totales->num_rows > 0): ?>
     <div class="text-center">
         <div class="table-responsive">
             <table id="TotalesFormaPagoCortes" class="table table-hover">
@@ -285,9 +309,11 @@ if (!empty($Especialistas14)) {
     </div>
     <input type="hidden" name="Sistema" value="Ventas">
     <input type="hidden" name="ID_H_O_D" value="DoctorPez">
-    <?php else: ?>
+    <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
+<?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
 <?php endif; ?>
+
     <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
 </form>
 
