@@ -205,7 +205,7 @@ if ($result_totales && $result_totales->num_rows > 0) {
     $especialista = null;
 } ?>
     
-    <form action="javascript:void(0)" method="post" id="CortesDeCajaFormulario">
+    <form action="javascript:void(0)" method="post" id="FormDeCortes">
     <div class="text-center">
     <div class="row">
         <div class="col">
