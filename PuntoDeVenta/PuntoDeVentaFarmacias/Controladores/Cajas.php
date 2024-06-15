@@ -267,6 +267,26 @@ tabla = $('#Clientes').DataTable({
 "dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
+// Contador para cajas abiertas
+var cajasAbiertasCount = 0;
+
+// Recorrer los datos de la tabla
+tabla.rows().every(function () {
+    var data = this.data();
+    if (data.Estatus.includes("Abierta")) {
+        cajasAbiertasCount++;
+    }
+});
+
+// Mostrar alerta si hay más de una caja abierta
+if (cajasAbiertasCount >= 2) {
+    Swal.fire({
+        icon: 'warning',
+        title: '¡Advertencia!',
+        text: 'Existen dos o más cajas abiertas.',
+        confirmButtonText: 'Entendido'
+    });
+}
 </script>
 <div class="text-center">
   <div class="table-responsive">
