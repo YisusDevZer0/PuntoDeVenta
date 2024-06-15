@@ -302,9 +302,7 @@ if (!empty($Especialistas14)) {
     <input type="hidden" name="Sistema" value="Ventas">
     <input type="hidden" name="ID_H_O_D" value="DoctorPez">
   
-<?php else: ?>
-    <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
-<?php endif; ?>
+
 
     <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
 </form>
@@ -312,3 +310,6 @@ if (!empty($Especialistas14)) {
 
 
 <script src="js/RealizaCorteDeCaja.js"></script>
+<?php else: ?>
+    <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
+<?php endif; ?>
