@@ -128,7 +128,17 @@ $results = [
 
 // Imprimir la respuesta JSON
 echo json_encode($results);
-
+// Mostrar Sweet Alert si hay dos o más cajas abiertas
+if ($cajas_abiertas >= 2) {
+    echo "<script>
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Advertencia!',
+            text: 'Existen dos o más cajas abiertas.',
+            confirmButtonText: 'Entendido'
+        });
+    </script>";
+}
 // Cerrar conexión
 $conn->close();
 ?>
