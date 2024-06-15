@@ -117,24 +117,7 @@ while ($fila = $result->fetch_assoc()) {
 
 // Cerrar la declaración
 $stmt->close();
-// Agregar el bloque de código para mostrar Sweet Alert si hay dos o más cajas abiertas
-$cajas_abiertas = 0;
-foreach ($data as $caja) {
-    if ($caja['Estatus'] == "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">Abierta</div>") {
-        $cajas_abiertas++;
-    }
-}
 
-if ($cajas_abiertas >= 2) {
-    echo "<script>
-        Swal.fire({
-            icon: 'warning',
-            title: '¡Advertencia!',
-            text: 'Existen dos o más cajas abiertas.',
-            confirmButtonText: 'Entendido'
-        });
-    </script>";
-}
 // Construir el array de resultados para la respuesta JSON
 $results = [
     "sEcho" => 1,
