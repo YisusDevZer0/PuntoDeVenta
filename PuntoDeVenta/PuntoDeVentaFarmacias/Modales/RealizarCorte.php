@@ -82,8 +82,7 @@ $sql14 = "SELECT
             ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
          WHERE 
             Ventas_POS.Fk_Caja = '$fk_caja' 
-            AND Ventas_POS.ID_H_O_D = '$id_h_o_d' 
-            AND Ventas_POS.Fecha_venta = '$fcha' 
+            AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
          GROUP BY 
             Servicio_ID, 
             Nom_Serv, 
