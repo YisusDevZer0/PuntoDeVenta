@@ -20,13 +20,10 @@ $sql1 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          FROM Ventas_POS 
          WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
          ORDER BY Venta_POS_ID ASC LIMIT 1";
-$query = $conn->query($sql1);
+$query1 = $conn->query($sql1);
 $Especialistas = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas = $r;
-        break;
-    }
+if ($query1 && $query1->num_rows > 0) {
+    $Especialistas = $query1->fetch_object();
 } else {
     echo "Error en la consulta 1: " . $conn->error;
 }
@@ -36,13 +33,10 @@ $sql2 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D
          FROM Ventas_POS 
          WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
          ORDER BY Venta_POS_ID DESC LIMIT 1";
-$query = $conn->query($sql2);
+$query2 = $conn->query($sql2);
 $Especialistas2 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas2 = $r;
-        break;
-    }
+if ($query2 && $query2->num_rows > 0) {
+    $Especialistas2 = $query2->fetch_object();
 } else {
     echo "Error en la consulta 2: " . $conn->error;
 }
@@ -54,13 +48,10 @@ $sql3 = "SELECT Venta_POS_ID, Fk_Caja, Turno, Fecha_venta, Fk_sucursal, Agregado
                 SUM(Importe) AS VentaTotal  
          FROM Ventas_POS 
          WHERE Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' AND Fk_Caja = '$fk_caja' AND Fecha_venta = '$fcha'";
-$query = $conn->query($sql3);
+$query3 = $conn->query($sql3);
 $Especialistas3 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas3 = $r;
-        break;
-    }
+if ($query3 && $query3->num_rows > 0) {
+    $Especialistas3 = $query3->fetch_object();
 } else {
     echo "Error en la consulta 3: " . $conn->error;
 }
@@ -75,13 +66,10 @@ $sql14 = "SELECT Ventas_POS.Identificador_tipo, Ventas_POS.Fk_sucursal, Ventas_P
          INNER JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
          WHERE Fk_Caja = '$fk_caja' AND Ventas_POS.ID_H_O_D = '$id_h_o_d' AND Ventas_POS.Fecha_venta = '$fcha' 
          GROUP BY Servicios_POS.Servicio_ID";
-$query = $conn->query($sql14);
+$query14 = $conn->query($sql14);
 $Especialistas14 = null;
-if ($query && $query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas14 = $r;
-        break;
-    }
+if ($query14 && $query14->num_rows > 0) {
+    $Especialistas14 = $query14->fetch_object();
 } else {
     echo "Error en la consulta 14: " . $conn->error;
 }
@@ -139,7 +127,7 @@ if ($query && $query->num_rows > 0) {
         </table>
     </div>
     </div>
-    <?php if ($query->num_rows > 0): ?>
+    <?php if ($query14->num_rows > 0): ?>
         <div class="text-center">
         <div class="table-responsive">
             <table id="TotalesFormaPagoCortes" class="table table-hover">
@@ -159,6 +147,9 @@ if ($query && $query->num_rows > 0) {
         </div>
     </div>
     </form>
+<?php else: ?>
+    <p class="alert alert-warning">404 No se encuentra</p>
+<?php endif; ?>
 <?php else: ?>
     <p class="alert alert-warning">404 No se encuentra</p>
 <?php endif; ?>
