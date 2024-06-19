@@ -73,7 +73,7 @@ while ($fila = $result->fetch_assoc()) {
         "IdProdCedis" => $fila["IdProdCedis"],
        
         "NumFactura" => $fila["NumFactura"],
-        "NumOrden" => $fila["NumOrden"],
+        // "NumOrden" => $fila["NumOrden"],
         "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
