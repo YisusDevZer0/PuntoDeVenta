@@ -78,7 +78,7 @@ while ($fila = $result->fetch_assoc()) {
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Contabilizado" => $fila["Contabilizado"],
-       "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
+    //    "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["FechaInventario"],
         
