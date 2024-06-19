@@ -100,8 +100,8 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
                             <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
-                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Solicitudes de ingresos </a>
-                            <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ingresos realizados</a>
+                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-list"></i>Solicitudes de ingresos </a>
+                            <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-list-check"></i>Ingresos realizados</a>
                         </div>
                     </div>
 
