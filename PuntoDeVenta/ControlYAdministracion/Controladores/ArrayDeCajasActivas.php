@@ -3,8 +3,6 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
 
-
-
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
        Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
@@ -16,9 +14,6 @@ WHERE Cajas.Estatus = 'Abierta'"; // Se añadió la condición para el empleado
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Vincular parámetros
-$stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
-
 // Ejecutar la declaración
 $stmt->execute();
 
@@ -28,8 +23,13 @@ $result = $stmt->get_result();
 // Inicializar array para almacenar los resultados
 $data = [];
 
+// Contar el número de cajas abiertas
+$cajas_abiertas = 0;
+
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
+    $cajas_abiertas++;
+
     // Definir el estilo y el texto según el valor de asignación
     $asignacion_estilo = '';
     $asignacion_leyenda = '';
@@ -75,7 +75,6 @@ while ($fila = $result->fetch_assoc()) {
         // Si está cerrada, no mostrar ningún botón
         $desactivar_caja = '';
         $reactivar_caja = '';
-        // No mostrar el botón de registrar gasto
         $registrar_gasto = '';
     } else {
         // Si no está cerrada, mostrar los botones de desactivar y reactivar caja según el estado de asignación
@@ -83,18 +82,16 @@ while ($fila = $result->fetch_assoc()) {
             // Si está activa, mostrar el botón de desactivar
             $desactivar_caja = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-danger btn-sm btn-desactiva " style="background-color: #ff3131 !important;"><i class="fa-solid fa-lock"></i></a></td>';
             $reactivar_caja = '';
-            // Mostrar el botón de registrar gasto
             $registrar_gasto = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-registraGasto " style="background-color: #0172b6 !important;"><i class="fa-solid fa-comment-dollar"></i></a></td>';
         } else {
             // Si está inactiva o sin definir, mostrar el botón de reactivar
             $desactivar_caja = '';
             $reactivar_caja = '<td><a data-id="' . $fila["ID_Caja"] . '" class="btn btn-primary btn-sm btn-reactiva " style="background-color: #0172b6 !important;"><i class="fa-solid fa-lock-open"></i></a></td>';
-            // No mostrar el botón de registrar gasto
             $registrar_gasto = '';
         }
     }
     // Siempre incluir el campo para realizar el corte
-    $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $fk_sucursal . '" data-hod="' . $fila["Licencia"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
+    $realizar_corte = '<td><a data-id="' . $fila["ID_Caja"] . '" data-sucursal="' . $fila["Sucursal"] . '" data-hod="' . $fila["Licencia"] . '" class="btn btn-warning btn-sm btn-realizaCorte" style="color:white;"><i class="fa-solid fa-scissors"></i></a></td>';
 
     // Construir el array de datos incluyendo las columnas condicionadas
     $data[] = [
@@ -126,17 +123,19 @@ $results = [
 
 // Imprimir la respuesta JSON
 echo json_encode($results);
-// Mostrar Sweet Alert si hay dos o más cajas abiertas
-if ($cajas_abiertas >= 1) {
-    echo "<script>
+
+// Verificar si hay dos o más cajas abiertas y mostrar Sweet Alert si es necesario
+if ($cajas_abiertas >= 2) {
+    echo '<script>
         Swal.fire({
-            icon: 'warning',
-            title: '¡Advertencia!',
-            text: 'Existen dos o más cajas abiertas.',
-            confirmButtonText: 'Entendido'
+            icon: "warning",
+            title: "¡Advertencia!",
+            text: "Existen dos o más cajas abiertas.",
+            confirmButtonText: "Entendido"
         });
-    </script>";
+    </script>';
 }
+
 // Cerrar conexión
 $conn->close();
 ?>
