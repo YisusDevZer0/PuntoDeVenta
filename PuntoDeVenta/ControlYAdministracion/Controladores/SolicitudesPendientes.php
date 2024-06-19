@@ -210,7 +210,7 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArraySolicitudesPendientes.php",
  "aoColumns": [
-    { mData: 'IdProdCedis' },  
+
 { mData: 'NumFactura' },
 { mData: 'NumOrden' },
 { mData: 'Proveedor' },
