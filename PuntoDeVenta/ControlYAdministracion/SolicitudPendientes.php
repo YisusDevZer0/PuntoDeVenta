@@ -51,27 +51,20 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
         
-<script>
-   $(document).ready(function() {
-    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-  
+        <script>
+$(document).ready(function() {
+    // Delegación de eventos para el botón "btn-AutorizaIngreso"
     $(document).on("click", ".btn-AutorizaIngreso", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AutorizarIngreso.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Autorizar ingreso");
-           
         });
         $('#ModalEdDele').modal('show');
     });
-
 });
-
-
-
-
-
 </script>
+
 
 
 

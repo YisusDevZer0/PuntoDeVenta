@@ -2,11 +2,8 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-// Validar y sanitizar el ID desde GET o POST
-$idProdCedis = filter_input(INPUT_GET, 'IdProdCedis', FILTER_SANITIZE_NUMBER_INT);
-if (!$idProdCedis) {
-    $idProdCedis = filter_input(INPUT_POST, 'IdProdCedis', FILTER_SANITIZE_NUMBER_INT);
-}
+// Asegurarse de que se recibe el ID a través de POST y se valida
+$idProdCedis = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
 if ($idProdCedis) {
     // Preparar la consulta para evitar inyecciones SQL
@@ -39,7 +36,6 @@ if ($idProdCedis) {
             si.IdProdCedis = ?"
     );
 
-    // Verificar si la declaración se preparó correctamente
     if ($stmt === false) {
         die('Error en la preparación de la consulta: ' . $conn->error);
     }
