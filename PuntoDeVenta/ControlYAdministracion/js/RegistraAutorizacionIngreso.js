@@ -19,7 +19,7 @@ $('document').ready(function($) {
         return this.optional(element) || /^[\u00F1A-Za-z _]*[\u00F1A-Za-z][\u00F1A-Za-z _]*$/.test(value);
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
 
-    $("#GuardaMedicamentoAutorizado").validate({
+    $("#GuardaMedicamentoAutorizados").validate({
         rules: {
             NombreTipoProd: {
                 required: true,
@@ -48,7 +48,7 @@ $('document').ready(function($) {
         $.ajax({
             type: 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistraMedicamentosAprobados.php",
-            data: $('#GuardaMedicamentoAutorizado').serialize(),
+            data: $('#GuardaMedicamentoAutorizados').serialize(),
             cache: false,
             beforeSend: function() {
                 $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
@@ -74,7 +74,7 @@ $('document').ready(function($) {
                         }
                     });
                     $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")
-                    $("#GuardaMedicamentoAutorizado")[0].reset();
+                    $("#GuardaMedicamentoAutorizados")[0].reset();
                 } else if (dataResult.statusCode == 201) {
                     Swal.fire({
                         icon: 'error',
