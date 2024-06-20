@@ -71,71 +71,67 @@ if ($idProdCedis) {
             }
         </style>
         <form action="javascript:void(0)" method="post" id="EliminaServiciosForm" class="form-container">
-            
-                <input type="text" id="IdProdCedis" hidden class = "form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-                <input type="text" id="ID_Prod_POS" class = "form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
-                <div class="form-group">
-                <label for="Proveedor">Proveedor:</label>
-                <input type="text" id="Proveedor" class = "form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-                <div class="form-group">
-                <label for="NumFactura">Número de Factura:</label>
-                <input type="text" id="NumFactura" class = "form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-          
-            <div class="form-group">
-                <label for="Cod_Barra">Código de Barra:</label>
-                <input type="text" id="Cod_Barra" class = "form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Nombre_Prod">Nombre del Producto:</label>
-                <input type="text" id="Nombre_Prod" class = "form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-           
-                <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-                       <div class="form-group">
-                <label for="Nombre_Sucursal">Nombre de la Sucursal:</label>
-                <input type="text" id="Nombre_Sucursal" class = "form-control" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label for="Contabilizado">Piezas:</label>
-                <input type="text" id="Contabilizado" class = "form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Fecha_Caducidad">Fecha de Caducidad:</label>
-                <input type="date" id="Fecha_Caducidad" class = "form-control"  name="Fecha_Caducidad" value="<?php echo htmlspecialchars($data['Fecha_Caducidad'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Lote">Lote:</label>
-                <input type="text" id="Lote" name="Lote" class = "form-control"  value="<?php echo htmlspecialchars($data['Lote'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="PrecioMaximo">Precio Máximo:</label>
-                <input type="text" id="PrecioMaximo" class = "form-control"  name="PrecioMaximo" value="<?php echo htmlspecialchars($data['PrecioMaximo'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Precio_Venta">Precio de Venta:</label>
-                <input type="text" id="Precio_Venta" class = "form-control"  name="Precio_Venta" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Precio_C">Precio de Compra:</label>
-                <input type="text" id="Precio_C" class = "form-control"  name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_C'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
-                <label for="Precio_C">Precio sugerido venta</label>
-                <input type="text" id="Precio_C" class = "form-control"  name="PrecioVentaSugerido" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-           
-                <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-                <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-                <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
-    
-           
-                <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
-                <div class="form-group text-center">
-                <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
-            </div>
-        </form>
+    <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+    <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
+    <div class="form-group">
+        <label for="Proveedor">Proveedor:</label>
+        <input type="text" id="Proveedor" class="form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="NumFactura">Número de Factura:</label>
+        <input type="text" id="NumFactura" class="form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Cod_Barra">Código de Barra:</label>
+        <input type="text" id="Cod_Barra" class="form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Nombre_Prod">Nombre del Producto:</label>
+        <input type="text" id="Nombre_Prod" class="form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+    <div class="form-group">
+        <label for="Nombre_Sucursal">Nombre de la Sucursal:</label>
+        <input type="text" id="Nombre_Sucursal" class="form-control" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+    </div>
+    <div class="form-group">
+        <label for="Contabilizado">Piezas:</label>
+        <input type="text" id="Contabilizado" class="form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Fecha_Caducidad">Fecha de Caducidad:</label>
+        <input type="date" id="Fecha_Caducidad" class="form-control" name="Fecha_Caducidad" value="<?php echo htmlspecialchars($data['Fecha_Caducidad'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Lote">Lote:</label>
+        <input type="text" id="Lote" name="Lote" class="form-control" value="<?php echo htmlspecialchars($data['Lote'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="PrecioMaximo">Precio Máximo:</label>
+        <input type="text" id="PrecioMaximo" class="form-control" name="PrecioMaximo" value="<?php echo htmlspecialchars($data['PrecioMaximo'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Precio_Venta">Precio de Venta:</label>
+        <input type="text" id="Precio_Venta" class="form-control" name="Precio_Venta" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="Precio_C">Precio de Compra:</label>
+        <input type="text" id="Precio_C" class="form-control" name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_C'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <div class="form-group">
+        <label for="PrecioVentaAutorizado">Precio Autorizado de Venta:</label>
+        <input type="text" id="PrecioVentaAutorizado" class="form-control" name="PrecioVentaAutorizado" value="<?php echo htmlspecialchars($data['PrecioVentaAutorizado'], ENT_QUOTES, 'UTF-8'); ?>">
+    </div>
+    <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+    <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+    <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
+    <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
+    <input hidden type="text" id="SolicitadoPor" name="SolicitadoPor" value="<?php echo htmlspecialchars($data['SolicitadoPor'], ENT_QUOTES, 'UTF-8'); ?>">
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
+    </div>
+</form>
+
         <?php
     } else {
         echo "No se encontraron registros.";
