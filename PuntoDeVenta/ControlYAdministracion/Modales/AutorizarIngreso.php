@@ -90,17 +90,17 @@ if ($idProdCedis) {
             </div>
             <div class="form-group">
                 <label for="Nombre_Prod">Nombre del Producto:</label>
-                <input type="text" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" id="Nombre_Prod" class = "form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
            
                 <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
                        <div class="form-group">
                 <label for="Nombre_Sucursal">Nombre de la Sucursal:</label>
-                <input type="text" id="Nombre_Sucursal" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input type="text" id="Nombre_Sucursal" class = "form-control" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             </div>
             <div class="form-group">
-                <label for="Contabilizado">Contabilizado:</label>
-                <input type="text" id="Contabilizado" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
+                <label for="Contabilizado">Piezas:</label>
+                <input type="text" id="Contabilizado" class = "form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <div class="form-group">
                 <label for="Fecha_Caducidad">Fecha de Caducidad:</label>
