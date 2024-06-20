@@ -124,7 +124,7 @@ if ($idProdCedis) {
             </div>
             <div class="form-group">
                 <label for="Precio_C">Precio sugerido venta</label>
-                <input type="text" id="Precio_C" class = "form-control"  name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" id="Precio_C" class = "form-control"  name="PrecioVentaSugerido" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
            
                 <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
