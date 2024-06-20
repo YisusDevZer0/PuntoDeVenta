@@ -2,8 +2,11 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-// Validar y sanitizar el ID
+// Validar y sanitizar el ID desde GET o POST
 $idProdCedis = filter_input(INPUT_GET, 'IdProdCedis', FILTER_SANITIZE_NUMBER_INT);
+if (!$idProdCedis) {
+    $idProdCedis = filter_input(INPUT_POST, 'IdProdCedis', FILTER_SANITIZE_NUMBER_INT);
+}
 
 if ($idProdCedis) {
     // Preparar la consulta para evitar inyecciones SQL
@@ -35,38 +38,44 @@ if ($idProdCedis) {
         WHERE 
             si.IdProdCedis = ?"
     );
+
+    // Verificar si la declaración se preparó correctamente
+    if ($stmt === false) {
+        die('Error en la preparación de la consulta: ' . $conn->error);
+    }
+
     $stmt->bind_param("i", $idProdCedis);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
-        // Mostrar el formulario con los datos obtenidos
         ?>
+        <!-- Formulario HTML -->
         <style>
-        .form-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input {
-            padding: 8px;
-            font-size: 1rem;
-        }
-        .form-group select {
-            padding: 8px;
-            font-size: 1rem;
-        }
+            .form-container {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            .form-group {
+                display: flex;
+                flex-direction: column;
+            }
+            .form-group label {
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            .form-group input {
+                padding: 8px;
+                font-size: 1rem;
+            }
+            .form-group select {
+                padding: 8px;
+                font-size: 1rem;
+            }
         </style>
         
         <form action="tu_proceso.php" method="post" class="form-container">
@@ -154,7 +163,7 @@ if ($idProdCedis) {
     } else {
         echo "No se encontraron registros.";
     }
-    
+
     $stmt->close();
 } else {
     echo "ID inválido.";
