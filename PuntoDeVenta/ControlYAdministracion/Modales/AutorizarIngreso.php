@@ -142,4 +142,3 @@ if ($idProdCedis) {
     echo "ID inválido.";
 }
 ?>
-<script src="js/RegistraAutorizacionIngreso.js"></script>
