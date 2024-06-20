@@ -57,9 +57,9 @@ include_once "Controladores/ControladorUsuario.php";
   
     $(document).on("click", ".btn-AutorizaIngreso", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AutorizarIngreso.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Registrar nuevo gasto");
+            $("#TitulosCajas").html("Autorizar ingreso");
            
         });
         $('#ModalEdDele').modal('show');
@@ -78,7 +78,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 
   <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+  <div id="CajasDi"class="modal-dialog modal-lg modal-notify modal-success" >
     <div class="text-center">
       <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;" >
