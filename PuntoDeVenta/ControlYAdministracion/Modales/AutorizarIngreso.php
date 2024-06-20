@@ -64,10 +64,7 @@ if ($idProdCedis) {
                 margin-bottom: 5px;
                 font-weight: bold;
             }
-            .form-group input {
-                padding: 8px;
-                font-size: 1rem;
-            }
+           
             .form-group select {
                 padding: 8px;
                 font-size: 1rem;
