@@ -70,7 +70,7 @@ if ($idProdCedis) {
                 font-size: 1rem;
             }
         </style>
-        <form action="javascript:void(0)" method="post" id="EliminaServiciosForm" class="form-container">
+        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizado" class="form-container">
     <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
     <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
     <div class="form-group">
