@@ -131,7 +131,7 @@ if ($idProdCedis) {
         <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
     </div>
 </form>
-<script src="js/RegistraAutorizacionIngreso.js"></script>
+<script src="js/RegistraAutorizacionIngresos.js"></script>
         <?php
     } else {
         echo "No se encontraron registros.";
