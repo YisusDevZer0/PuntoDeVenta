@@ -77,23 +77,23 @@ if ($idProdCedis) {
         <form action="tu_proceso.php" method="post" class="form-container">
             <div class="form-group">
                 <label for="IdProdCedis">ID Prod Cedis:</label>
-                <input type="text" id="IdProdCedis" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input type="text" id="IdProdCedis" class = "form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             </div>
             <div class="form-group">
                 <label for="ID_Prod_POS">ID Prod POS:</label>
-                <input type="text" id="ID_Prod_POS" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input type="text" id="ID_Prod_POS" class = "form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             </div>
             <div class="form-group">
                 <label for="NumFactura">Número de Factura:</label>
-                <input type="text" id="NumFactura" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" id="NumFactura" class = "form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <div class="form-group">
                 <label for="Proveedor">Proveedor:</label>
-                <input type="text" id="Proveedor" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" id="Proveedor" class = "form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra:</label>
-                <input type="text" id="Cod_Barra" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input type="text" id="Cod_Barra" class = "form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <div class="form-group">
                 <label for="Nombre_Prod">Nombre del Producto:</label>
