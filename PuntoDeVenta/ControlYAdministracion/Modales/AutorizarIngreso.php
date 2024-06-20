@@ -72,10 +72,8 @@ if ($idProdCedis) {
         </style>
         
         <form action="tu_proceso.php" method="post" class="form-container">
-            <div class="form-group">
-                <label for="IdProdCedis">ID Prod Cedis:</label>
+            
                 <input type="text" id="IdProdCedis" class = "form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
             <div class="form-group">
                 <label for="ID_Prod_POS">ID Prod POS:</label>
                 <input type="text" id="ID_Prod_POS" class = "form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
