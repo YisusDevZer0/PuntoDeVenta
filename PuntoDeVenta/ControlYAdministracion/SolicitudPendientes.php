@@ -55,7 +55,7 @@ include_once "Controladores/ControladorUsuario.php";
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
   
-    $(document).on("click", ".btn-registraGastoAutorizaIngreso", function() {
+    $(document).on("click", ".btn-AutorizaIngreso", function() {
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
