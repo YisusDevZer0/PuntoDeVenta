@@ -133,10 +133,9 @@ if ($idProdCedis) {
     
            
                 <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
-                <div class="text-center">
-         
+                <div class="form-group text-center">
                 <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
-            </div></div>
+            </div>
         </form>
         <?php
     } else {
