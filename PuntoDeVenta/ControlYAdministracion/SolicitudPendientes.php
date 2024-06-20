@@ -50,66 +50,14 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
-           <script>
-    $(".btn-editcaja").click(function(){
-        id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCaja.php", "id=" + id, function(data){
-            $("#form-edit").html(data);
-            $("#Titulo").html("Apertura de caja");
-            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
-        });
-        $('#editModal').modal('show');
-    });
-</script>
-
-
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div id="Di" class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="Titulo" style="color:white;">Apertura de caja</h5>
-                
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info alert-dismissible fade show" role="alert">
-                    <strong><?php echo $row['Nombre_Apellidos']; ?></strong> Verifique los campos antes de realizar alguna acción.
-                  
-                </div>
-                <div id="form-edit">
-                    <!-- Contenido del formulario -->
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        
 <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-    $(document).on("click", ".btn-desactiva", function() {
-      console.log("Botón de cancelar clickeado para el ID:", id);
+  
+    $(document).on("click", ".btn-registraGastoAutorizaIngreso", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesactivaCaja.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desactivar caja actual");
-            
-        });
-        $('#ModalEdDele').modal('show');
-    });
-
-    // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".btn-reactiva", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Activar Caja Actual");
-           
-        });
-        $('#ModalEdDele').modal('show');
-    });
-
-    $(document).on("click", ".btn-registraGasto", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
+        $.post("/https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.phpRegistrarGasto.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Registrar nuevo gasto");
            
@@ -119,22 +67,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 });
 
-$(document).on("click", ".btn-realizaCorte", function() {
-    var id = $(this).data("id");
-    var fk_sucursal = $(this).data("sucursal");
-    var id_h_o_d = $(this).data("hod");
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", 
-    { 
-        id: id, 
-        fk_sucursal: fk_sucursal, 
-        id_h_o_d: id_h_o_d 
-    }, function(data) {
-        $("#FormCajas").html(data);
-        $("#TitulosCajas").html("Realizar corte de caja");
-    });
-    $('#ModalEdDele').modal('show');
-});
 
 
 
