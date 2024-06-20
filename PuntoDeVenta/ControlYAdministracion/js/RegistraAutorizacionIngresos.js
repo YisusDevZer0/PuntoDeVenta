@@ -1,31 +1,10 @@
 $('document').ready(function($) {
-    $.validator.addMethod("Sololetras", function(value, element) {
-        return this.optional(element) || /[a-zA-ZÀ-ÿ\u00f1\u00d1]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1]*)*[a-zA-ZÀ-ÿ\u00f1\u00d1]*$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
-
-    $.validator.addMethod("Telefonico", function(value, element) {
-        return this.optional(element) || /^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar numeros!");
-
-    $.validator.addMethod("Correos", function(value, element) {
-        return this.optional(element) || /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Ingresa un correo valido!");
-
-    $.validator.addMethod("NEmpresa", function(value, element) {
-        return this.optional(element) || /^[\u00F1A-Za-z _]*[\u00F1A-Za-z][\u00F1A-Za-z _]*$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
-
-    $.validator.addMethod("Problema", function(value, element) {
-        return this.optional(element) || /^[\u00F1A-Za-z _]*[\u00F1A-Za-z][\u00F1A-Za-z _]*$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
-
     $("#GuardaMedicamentoAutorizados").validate({
         rules: {
             NombreTipoProd: {
                 required: true,
                 minlength: 2,
                 maxlength: 40,
-                Sololetras: "",
             },
             VigenciaProdT: {
                 required: true,
@@ -34,58 +13,66 @@ $('document').ready(function($) {
         messages: {
             NombreTipoProd: {
                 required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Ingresa el nombre ",
-                maxlength: "No puede tener mas de 40 caracteres",
+                maxlength: "No puede tener más de 40 caracteres",
                 minlength: "Un nombre no puede tener solo 1 caracter"
             },
             VigenciaProdT: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i>Dato requerido ",
+                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido ",
             },
         },
-        submitHandler: submitForm
-    });
-
-    function submitForm() {
-        $.ajax({
-            type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistraMedicamentosAprobados.php",
-            data: $('#GuardaMedicamentoAutorizados').serialize(),
-            cache: false,
-            beforeSend: function() {
-                $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
-            },
-            success: function(dataResult) {
-                var dataResult = JSON.parse(dataResult);
-                if (dataResult.statusCode == 250) {
+        submitHandler: function(form) {
+            $.ajax({
+                type: 'POST',
+                url: "ruta/al/archivo/php.php", // Reemplaza con la ruta correcta
+                data: $(form).serialize(),
+                cache: false,
+                beforeSend: function() {
+                    $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
+                },
+                success: function(response) {
+                    var dataResult = JSON.parse(response);
+                    if (dataResult.statusCode == 250) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'El registro ya existe'
+                        });
+                    } else if (dataResult.statusCode == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Registro exitoso!',
+                            text: 'El medicamento ha sido registrado exitosamente'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload();
+                            }
+                        });
+                    } else if (dataResult.statusCode == 201) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Error en la inserción: ' + dataResult.error
+                        });
+                    } else if (dataResult.statusCode == 500) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Error: ' + dataResult.error
+                        });
+                    }
+                    $("#submit_registro").html("Algo no salió bien.. <i class='fas fa-exclamation-triangle'></i>");
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'El registro ya existe'
+                        text: 'Error en la solicitud AJAX: ' + error
                     });
-                    $("#submit_registro").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
-                    $('#ErrorDupli').modal('toggle');
-                } else if (dataResult.statusCode == 200) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Registro exitoso!',
-                        text: 'El medicamento ha sido registrado exitosamente'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload();
-                        }
-                    });
-                    $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")
-                    $("#GuardaMedicamentoAutorizados")[0].reset();
-                } else if (dataResult.statusCode == 201) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Error en la inserción'
-                    });
-                    $("#submit_Age").html("Algo no salio bien.. <i class='fas fa-exclamation-triangle'></i>");
-                    $('#ErrorData').modal('toggle');
+                    $("#submit_registro").html("Algo no salió bien.. <i class='fas fa-exclamation-triangle'></i>");
                 }
-            }
-        });
-        return false;
-    }
+            });
+            return false;
+        }
+    });
 });
