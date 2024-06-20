@@ -57,7 +57,7 @@ include_once "Controladores/ControladorUsuario.php";
   
     $(document).on("click", ".btn-registraGastoAutorizaIngreso", function() {
         var id = $(this).data("id");
-        $.post("/https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.phpRegistrarGasto.php", { id: id }, function(data) {
+        $.post("/https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Registrar nuevo gasto");
            
