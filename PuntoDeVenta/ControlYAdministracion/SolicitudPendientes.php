@@ -43,7 +43,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             </div>
             <script src="js/SolicitudesIngresosPendientes.js"></script>
-            <script src="js/RegistraAutorizacionIngreso.js"></script>
+           
             <!-- Footer Start -->
             <?php 
           
