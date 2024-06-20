@@ -73,19 +73,17 @@ if ($idProdCedis) {
         
         <form action="tu_proceso.php" method="post" class="form-container">
             
-                <input type="text" id="IdProdCedis" class = "form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <div class="form-group">
-                <label for="ID_Prod_POS">ID Prod POS:</label>
-                <input type="text" id="ID_Prod_POS" class = "form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label for="NumFactura">Número de Factura:</label>
-                <input type="text" id="NumFactura" class = "form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <div class="form-group">
+                <input type="text" id="IdProdCedis" hidden class = "form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input type="text" id="ID_Prod_POS" class = "form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
+                <div class="form-group">
                 <label for="Proveedor">Proveedor:</label>
                 <input type="text" id="Proveedor" class = "form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
+                <div class="form-group">
+                <label for="NumFactura">Número de Factura:</label>
+                <input type="text" id="NumFactura" class = "form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
+            </div>
+          
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra:</label>
                 <input type="text" id="Cod_Barra" class = "form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -94,11 +92,9 @@ if ($idProdCedis) {
                 <label for="Nombre_Prod">Nombre del Producto:</label>
                 <input type="text" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
-            <div class="form-group">
-                <label for="Fk_Sucursal">Sucursal:</label>
-                <input type="text" id="Fk_Sucursal" name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
-            <div class="form-group">
+           
+                <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                       <div class="form-group">
                 <label for="Nombre_Sucursal">Nombre de la Sucursal:</label>
                 <input type="text" id="Nombre_Sucursal" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             </div>
