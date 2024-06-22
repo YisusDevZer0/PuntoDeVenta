@@ -28,7 +28,7 @@ include_once "Controladores/ControladorUsuario.php";
 
   <title>Generar traspasos de cedis <?php echo $row['Licencia']?> </title>
 
-<?php include "Header.php"?>
+<?php include "header.php"?>
 
  <style>
         .error {
