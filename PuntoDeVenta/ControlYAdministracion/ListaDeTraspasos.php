@@ -38,27 +38,21 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">lista de productos de cedis de <?php echo $row['Licencia']?></h6>
            
-           <style>
-.btn-xs {
-    padding: 2px 5px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-}
-</style>
-
-<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#FiltroLabs">
-    Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
-</button>
-<button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#ModificarTraspasoModal">
-    Modificar traspaso <i class="fas fa-edit"></i>
-</button>
-<button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#CancelarTraspasoModal">
-    Cancelar Traspaso <i class="fas fa-ban"></i>
-</button>
-<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#FiltroTraspasos">
-    Filtrar por fechas <i class="fas fa-search"></i>
-</button>
+    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#FiltroLabs" class="btn btn-default">
+      Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
+    </button>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ModificarTraspasoModal"
+      class="btn btn-default">
+      Modificar traspaso <i class="fas fa-edit"></i>
+    </button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#CancelarTraspasoModal"
+      class="btn btn-default">
+      Cancelar Traspaso <i class="fas fa-ban"></i>
+    </button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FiltroTraspasos"
+      class="btn btn-default">
+      Filtrar por fechas <i class="fas fa-search"></i>
+    </button>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
