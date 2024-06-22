@@ -59,7 +59,9 @@ table td {
 
 <?php include_once "Menu.php" ?>
 
-
+<!-- Content Start -->
+<div class="content">
+    <!-- Navbar Start -->
 <?php include "navbar.php";?>
 
 <div class="tab-content" id="pills-tabContent">
@@ -83,14 +85,14 @@ table td {
 <div class="row">
 
 
-    <di class="col">
+    <div class="col">
    
     <label for="exampleFormControlInput1">Sucursal destino</label> 
-    
-  
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
   <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
   <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
-
+  </div>
   
     </div>  </div>
         
