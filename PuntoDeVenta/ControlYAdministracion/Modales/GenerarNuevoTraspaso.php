@@ -31,8 +31,7 @@
  <form  method="POST" action="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GeneradorTraspasosCEDIS">
   <div class="form-group">
   <label for="exampleInputEmail1">Elija proveedor</label>
-  <div class="input-group-prepend">
-    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-dolly"></i></span>
+
     <input type="text" class="form-control" name="NombreProveedor" value="CEDIS">
   </div>
 </div>
