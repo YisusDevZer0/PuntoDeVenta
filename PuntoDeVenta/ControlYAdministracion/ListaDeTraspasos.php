@@ -37,7 +37,27 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">lista de productos de cedis de <?php echo $row['Licencia']?></h6>
-            
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FiltroTraspasos"
+      class="btn btn-default">
+      Busqueda por fechas <i class="fas fa-search"></i>
+    </button>
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FiltroLabs" class="btn btn-default">
+      Nueva orden de traspaso <i class="fas fa-exchange-alt"></i>
+    </button>
+
+    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#FiltroParaSucursalesVarias"
+      class="btn btn-default">
+      Traspaso entre sucursales <i class="fas fa-clinic-medical"></i> <i class="fas fa-exchange-alt"></i> <i
+        class="fas fa-clinic-medical"></i>
+    </button>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ModificarTraspasoModal"
+      class="btn btn-default">
+      Modificar traspaso <i class="fas fa-edit"></i>
+    </button>
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#CancelarTraspasoModal"
+      class="btn btn-default">
+      Cancelar Traspaso <i class="fas fa-ban"></i>
+    </button>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
