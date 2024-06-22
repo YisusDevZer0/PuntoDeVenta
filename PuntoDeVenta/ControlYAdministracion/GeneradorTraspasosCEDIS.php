@@ -1,189 +1,401 @@
 <?php
-$SucursalDestino = $_POST['SucursalConOrdenDestino'];
-$SucursalDestinoLetras = $_POST['sucursalLetras'];
-$ProveedorFijo = $_POST['NombreProveedor'];
-$NumeroOrdenTraspaso = $_POST['NumOrden'];
-
-
-if ($ProveedorFijo === "CEDIS") {
-    // Tomar solo las primeras 4 letras de $SucursalDestinoLetras
-    $primerasCuatroLetras = substr($SucursalDestinoLetras, 0, 4);
-
-    // Combinar $primerasCuatroLetras con $NumeroDeFacturaTrapaso
-    $valorCombinado = $primerasCuatroLetras . $NumeroOrdenTraspaso;
-} else {
-    // Utilizar solo el valor original de $NumeroDeFacturaTrapaso
-    $valorCombinado = $NumeroDeFacturaTrapaso;
-}
-
 include_once "Controladores/ControladorUsuario.php";
-
-?>
-<!DOCTYPE html>
+$fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'
+?><!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <title>Realizar Ventas de <?php echo $row['Licencia']?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   
 
-  <title>Generar traspasos de cedis <?php echo $row['Licencia']?> </title>
+    <?php
+   include "header.php";?>
+   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
-<?php include "header.php"?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
+<body>
+    
+        <!-- Spinner End -->
+        <style>
+    .error {
+      color: red;
+      margin-left: 5px;
 
- <style>
-        .error {
-  color: red;
-  margin-left: 5px; 
-  
-  
+    }
+
+    #Tarjeta2 {
+      background-color: #e83e8c !important;
+      color: white;
+    }
+    .btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-table td {
-  word-wrap: break-word;
-  max-width: 400px;
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-    </style>
+    
+  </style>
+  <style>
+  /* Personalizar el diseño de la paginación con CSS */
+  .dataTables_wrapper .dataTables_paginate {
+    text-align: center !important; /* Centrar los botones de paginación */
+    margin-top: 10px !important;
+  }
+
+  .dataTables_paginate .paginate_button {
+    padding: 5px 10px !important;
+    border: 1px solid #ef7980 !important;
+    margin: 2px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    color: #ef7980 !important;
+    background-color: #fff !important;
+  }
+
+  /* Cambiar el color del paginado seleccionado */
+  .dataTables_paginate .paginate_button.current {
+    background-color: #ef7980 !important;
+    color: #fff !important;
+    border-color: #ef7980 !important;
+  }
+
+  /* Cambiar el color del hover */
+  .dataTables_paginate .paginate_button:hover {
+    background-color: #C80096 !important;
+    color: #fff !important;
+    border-color: #C80096 !important;
+  }
+</style>
 
 <style>
-        .error {
-  color: red;
-  margin-left: 5px; 
-  
-}
-#Tarjeta2{
-  background-color: #2bbbad !important;
-  color: white;
-}
-    </style>
-</head>
+  /* Estilos personalizados para la tabla */
+  #tablaAgregarArticulos th {
+    font-size: 12px; /* Tamaño de letra para los encabezados */
+    padding: 4px; /* Ajustar el espaciado entre los encabezados */
+    white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
+  }
+</style>
 
-<?php include_once "Menu.php" ?>
+<style>
+  /* Estilos para la tabla */
+  #tablaAgregarArticulos {
+    font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
+    border-collapse: collapse; /* Colapsar los bordes de las celdas */
+    width: 100%;
+    text-align: center; /* Centrar el contenido de las celdas */
+  }
 
-<!-- Content Start -->
+  #tablaAgregarArticulos th {
+    font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
+    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
+    color: white; /* Cambiar el color del texto a blanco para contrastar */
+    padding: 10px; /* Ajustar el espaciado de los encabezados */
+  }
 
-    <!-- Navbar Start -->
-<?php include "navbar.php";?>
+  #tablaAgregarArticulos td {
+    font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
+    padding: 8px; /* Ajustar el espaciado de las celdas */
+    border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
+    color:#000000;
+  }
 
-<div class="tab-content" id="pills-tabContent">
+  /* Estilos para el botón de Excel */
+  .dt-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
 
+  .dt-buttons button {
+    font-size: 14px;
+    margin: 0 5px;
+    color: white; /* Cambiar el color del texto a blanco */
+    background-color: #fff; /* Cambiar el color de fondo a blanco */
+  }
 
-  <div class="card text-center">
-  <div class="card-header" style="background-color:#2b73bb !important;color: white;">
- Traspasos de cedis de <?php echo $row['ID_H_O_D']?>  
-  </div>
  
-  <div >
- 
-                
-</div>
-</div>
+</style>
+
+        <?php include_once "Menu.php" ?>
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+        <?php include "navbar.php";?>
+            <!-- Navbar End -->
+
+
+            <!-- Table Start -->
+          
+            <script>
+  // Mensajes de carga aleatorios
+  const loadingMessages = [
+    'Cargando...',
+    'Por favor, espera...',
+    'Procesando...',
+    'Cargando datos...',
+    'Cargando contenido...',
+    '¡Casi listo!',
+    'Estamos preparando todo...',
+  ];
+
+  // Función para obtener un mensaje aleatorio de carga
+  function getRandomMessage() {
+    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+  }
+
+  // Mostrar SweetAlert2 de carga al iniciar la página
+  Swal.fire({
+    title: 'Cargando',
+    html: '<div class="loader-container">' +
+            '<div class="absCenter">' +
+              '<div class="loaderPill">' +
+                '<div class="loaderPill-anim">' +
+                  '<div class="loaderPill-anim-bounce">' +
+                    '<div class="loaderPill-anim-flop">' +
+                      '<div class="loaderPill-pill"></div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="loaderPill-floor">' +
+                  '<div class="loaderPill-floor-shadow"></div>' +
+                '</div>' +
+                `<div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>` +
+              '</div>' +
+            '</div>' +
+          '</div>',
+    showCancelButton: false,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    onBeforeOpen: () => {
+      Swal.showLoading();
+    },
+    customClass: {
+      container: 'animated fadeInDown'
+    }
+  });
+
+  // Actualizar mensaje aleatoriamente cada 2 segundos
+  setInterval(() => {
+    const messageElement = document.querySelector('.loaderPill-text');
+    if (messageElement) {
+      messageElement.textContent = getRandomMessage();
+    }
+  }, 2000);
+
+  // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
+  window.addEventListener('load', function() {
+    Swal.close();
+  });
+</script>
+
+<style>
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 180px;
+  }
+
+  .absCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .loaderPill {
+    text-align: center;
+  }
+
+  .loaderPill-anim {
+    height: 160px;
+  }
+
+  .loaderPill-anim-bounce {
+    animation: loaderPillBounce 1800ms linear infinite;
+  }
+
+  .loaderPill-anim-flop {
+    transform-origin: 50% 50%;
+    animation: loaderPillFlop 1800ms linear infinite;
+  }
+
+  .loaderPill-pill {
+    display: inline-block;
+    box-sizing: border-box;
+    width: 80px;
+    height: 30px;
+    border-radius: 15px;
+    border: 1px solid #237db5;
+    background-image: linear-gradient(to right, #C80096 50%, #ffffff 50%);
+  }
+
+  .loaderPill-floor {
+    display: block;
+    text-align: center;
+  }
+
+  .loaderPill-floor-shadow {
+    display: inline-block;
+    width: 70px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: rgba(35, 125, 181, 0.26);
+    transform: translateY(-15px);
+    animation: loaderPillScale 1800ms linear infinite;
+  }
+
+  .loaderPill-text {
+    font-weight: bold;
+    color: #C80096;
+    text-transform: uppercase;
+  }
+
+  @keyframes loaderPillBounce {
+    0% {
+      transform: translateY(123px);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    25% {
+      transform: translateY(40px);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    50% {
+      transform: translateY(120px);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    75% {
+      transform: translateY(20px);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    100% {
+      transform: translateY(120px);
+    }
+  }
+
+  @keyframes loaderPillFlop {
+    0% {
+      transform: rotate(0);
+    }
+    25% {
+      transform: rotate(90deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    75% {
+      transform: rotate(450deg);
+    }
+    100% {
+      transform: rotate(720deg);
+    }
+  }
+
+  @keyframes loaderPillScale {
+    0% {
+      transform: translateY(-15px) scale(1, 1);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    25% {
+      transform: translateY(-15px) scale(0.7, 1);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    50% {
+      transform: translateY(-15px) scale(1, 1);
+      animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    75% {
+      transform: translateY(-15px) scale(0.6, 1);
+      animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    }
+    100% {
+      transform: translateY(-15px) scale(1, 1);
+    }
+  }
+</style>
+
+<!-- Main content -->
+
+
+<div class="container-fluid">
+
+<div class="row mb-3">
 
 
 
-
-  <div class="container">
-<div class="row">
-
-
-    <div class="col">
-   
-    <label for="exampleFormControlInput1">Sucursal destino</label> 
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-  <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
-  <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
-  </div>
-  
-    </div>  </div>
-        
-   
+<div class="card-body p-3">
             
- 
-    <div class="col">
-      
-    <label for="exampleFormControlInput1"># de factura</label> 
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
-  </div>
-  <input type="text" class="form-control" readonly value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>">
+            <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="row">
+                  <!-- INPUT PARA INGRESO DEL CODIGO DE BARRAS O DESCRIPCION DEL PRODUCTO -->
+                  <div class="col-md-12 mb-3">
 
-  
-  
-    </div>  </div>
-      
-    <div class="col">
-      
-    <label for="exampleFormControlInput1">Fecha de entrega</label> 
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
-  </div>
-  <input type="date" class="form-control "   value="<?php echo date("Y-m-d")?>"  > 
-  
-  
-    </div>  </div>
+                    <div class="form-group mb-2">
+                    <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+ Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
+</button> -->
+                      <div class="row">
+                        <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
+                        <div class="col">
 
-<div style="display: none;">  <div class="col">
-      
-  <label for="exampleFormControlInput1">Total de venta </label>
-      <div class="input-group mb-3">
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-money-check-alt"></i></span>
-    </div>
-    <input type="number" class="form-control " id="resultadoventas" name="resultadoventas[]" readonly  >
-   
-      </div>
-  
-      </div>
-      </div>
-      <div style="display: none;"> 
-      <div class="col">
-      
-  <label for="exampleFormControlInput1">Total de compra </label> 
-      <div class="input-group mb-3">
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-money-check-alt"></i></span>
-    </div>
-    <input type="number" class="form-control " id="resultadocompras" name="resultadocompras[]" readonly  >
-   
-      </div>
-      </div>
-      </div>
-      <div class="col">
-      
-  <label for="exampleFormControlInput1">Total de Piezas </label> 
-      <div class="input-group mb-3">
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fa-solid fa-puzzle-piece"></i></span>
-    </div>
-    <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
-   
-      </div>
-  
-      </div>
-      <!-- <div class="col">
-      
-  <label for="exampleFormControlInput1">Total de compra </label> 
-      <div class="input-group mb-3">
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-money-check-alt"></i></span>
-    </div>
-    <input type="number" class="form-control " id="resultadocompras" name="resultadocompras[]" readonly  >
-   
-      </div>
-  
-      </div> -->
-</div>
-</div>
-</div>
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+                            </div>
+                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="CEDIS">
+                           
+                          </div>
+                        </div>
 
-<div class="content">
+                        <div class="col">
+
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+                            </div>
+                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo $fechaActual ?>">
+                           
+                          </div>
+                        </div>
+                        <div class="col">
+
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Tipo de ajuste</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
+                            </div>
+                            <select class="form-control" style="font-size: 0.75rem !important;">
+                            <option value="">Seleccione un tipo de ajuste </option>
+                  <option value="Ajuste positivo">Ajuste de inventario</option>
+              <option value="Inventario inicial">Inventario inicial</option>
+                 <option value="Ajuste por daño">Ajuste por daño</option>
+              <option value="Ajuste por caducidad">Ajuste por caducidad</option>
+</select>
 
 
-  <div class="container-fluid">
+                          </div>
+                        </div>
+                        
 
-    <div class="row mb-3">
 
-  
+                      </div>
 
-          <div class="card-body p-3"></div>
-<label class="col-form-label" for="iptCodigoVenta">
+                      <label class="col-form-label" for="iptCodigoVenta">
                         <i class="fas fa-barcode fs-6"></i>
                         <span class="small">Productos</span>
                       </label>
@@ -208,7 +420,8 @@ table td {
                   </div> -->
 
                   <!-- LISTADO QUE CONTIENE LOS PRODUCTOS QUE SE VAN AGREGANDO PARA LA COMPRA -->
-                
+                  <div class="table-responsive">
+                    <div class="col-md-12">
                       <style>
                         #tablaAgregarArticulos {
                           width: 100%;
@@ -234,26 +447,24 @@ table td {
                           margin-top: -10px !important;
                           margin-bottom: 5px !important;
                         }
-
-                        
                       </style>
-                      
-                      <form action="javascript:void(0)"  method="post" id="Generamelostraspasos">
+                      <form action="javascript:void(0)" target="print_popup" method="post" id="VentasAlmomento">
                       <div class="text-center">
-        <button type="submit" class="btn btn-primary">Guardar datos</button>
+        <button type="submit" class="btn btn-primary">Enviar Información</button>
     </div>
-               
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
                               <th>Codigo</th>
-                              <th >Producto</th>
-                              <th>Precio compra</th>
-                              <th >Precio Venta</th>
-                              <th >Piezas</th>
-                             
-                            
-                              
+                              <th style="width:20%">Producto</th>
+                              <th style="width:6%">Contabilizado</th>
+                              <th style="width:6%">Stock actual</th>
+                              <th style="width:6%">Diferencia</th>
+                              <th>Precio</th>
+                              <th>Importe</th>
+                              <!-- <th>importe_Sin_Iva</th>
+            <th>Iva</th>
+            <th>valorieps</th> -->
                               <th>Eliminar</th>
                             
                             </tr>
@@ -286,9 +497,7 @@ table td {
 </div>
 </div>
 </div>
-
-
-
+<!-- function actualizarSumaTotal  -->
 <script>
 
   
@@ -317,6 +526,52 @@ table td {
 </script>
 
 
+<script>
+  $(document).ready(function() {
+    // Bloquear el botón al cargar la página
+    $('#btnIniciarVenta').prop('disabled', true);
+
+    // Agregar un controlador de eventos al input
+    $('#iptEfectivoRecibido').on('input', function() {
+      var valorInput = $(this).val();
+      var miBoton = $('#btnIniciarVenta');
+
+      if (valorInput.length > 0) {
+        // Desbloquear el botón si el input contiene datos
+        miBoton.prop('disabled', false);
+      } else {
+        // Bloquear el botón si el input está vacío
+        miBoton.prop('disabled', true);
+      }
+    });
+  });
+
+
+  $(document).ready(function() {
+    $("#chkEfectivoExacto").change(function() {
+      if ($(this).is(":checked")) {
+        var boletaTotal = parseFloat($("#boleta_total").text());
+        $("#Vuelto").text("0.00");
+        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+      }
+    });
+
+    $("#iptEfectivoRecibido").change(function() {
+      var boletaTotal = parseFloat($("#boleta_total").text());
+      var efectivoRecibido = parseFloat($(this).val());
+
+      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
+        $("#Vuelto").text("0.00");
+        $("#boleta_total").text(efectivoRecibido.toFixed(2));
+      } else {
+        var vuelto = efectivoRecibido - boletaTotal;
+        $("#Vuelto").text(vuelto.toFixed(2));
+        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+        
+      }
+    });
+  });
+</script>
 
 <script>
   $("#btnVaciarListado").click(function() {
@@ -326,7 +581,8 @@ table td {
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
-
+    mostrarSubTotal();
+    mostrarIvaTotal()
   });
 
 
@@ -342,10 +598,7 @@ table td {
 </script>
 
 
-<script>
 
-  
-</script>
 
 <script>
   table = $('#tablaAgregarArticulos').DataTable({
@@ -371,15 +624,6 @@ table td {
       {
         "data": "precio"
       },
-      {
-        "data": "tipodeajuste"
-      },
-      {
-        "data": "anaquel"
-      },
-      {
-        "data": "repisa"
-      },
       // {
       //     "data": "importesiniva"
       // },
@@ -392,7 +636,13 @@ table td {
       {
         "data": "eliminar"
       },
-     
+      {
+        "data": "descuentos"
+
+      },
+      {
+        "data": "descuentos2"
+      },
     ],
 
     "order": [
@@ -403,7 +653,7 @@ table td {
       "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
     },
     //para usar los botones   
-    responsive: "false",
+    responsive: "true",
 
   });
 
@@ -425,115 +675,56 @@ table td {
 
 
 
-var Fk_sucursal = <?php echo json_encode($row['Fk_Sucursal']); ?>;
-var scanBuffer = "";
-var scanInterval = 5; // Milisegundos
+  function mostrarSubTotal() {
+    var subtotal = 0;
+    $('#tablaAgregarArticulos tbody tr').each(function() {
+      var importeSinIVA = parseFloat($(this).find('.importe_siniva').val().replace(/[^\d.-]/g, ''));
+      if (!isNaN(importeSinIVA)) {
+        subtotal += importeSinIVA;
+      }
+    });
 
-function procesarBuffer() {
-  // Buscar el carácter delimitador
-  var delimiter = "\n";
-  var delimiterIndex = scanBuffer.indexOf(delimiter);
-
-  while (delimiterIndex !== -1) {
-    // Extraer el código hasta el delimitador
-    var codigoEscaneado = scanBuffer.slice(0, delimiterIndex);
-    scanBuffer = scanBuffer.slice(delimiterIndex + 1);
-
-    if (esCodigoBarrasValido(codigoEscaneado)) {
-      buscarArticulo(codigoEscaneado);
-    } else {
-      console.warn('Código de barras inválido:', codigoEscaneado);
-    }
-
-    // Buscar el siguiente delimitador
-    delimiterIndex = scanBuffer.indexOf(delimiter);
+    $('#boleta_subtotal').text(subtotal.toFixed(2));
   }
-}
 
-function agregarEscaneo(escaneo) {
-  scanBuffer += escaneo;
-}
 
-function esCodigoBarrasValido(codigoEscaneado) {
-  // Verificar si el código de barras tiene una longitud válida
-  var longitud = codigoEscaneado.length;
-  return longitud >= 2 && longitud <= 13; // Ajusta el rango según sea necesario
-}
+  function mostrarIvaTotal() {
+    var subtotal = 0;
+    $('#tablaAgregarArticulos tbody tr').each(function() {
+      var importeSinIVA = parseFloat($(this).find('.valordelniva').val().replace(/[^\d.-]/g, ''));
+      if (!isNaN(importeSinIVA)) {
+        subtotal += importeSinIVA;
+      }
+    });
 
-function buscarArticulo(codigoEscaneado) {
-  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
+    $('#ivatotal').text(subtotal.toFixed(2));
+  }
+
+  function buscarArticulo(codigoEscaneado) {
+  var formData = new FormData();
+  formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Consultas/escaner_articulo.php",
+    url: "Controladores/BusquedaPorEscaner.php",
     type: 'POST',
-    data: { codigoEscaneado: codigoEscaneado },
+    data: formData,
+    processData: false,
+    contentType: false,
     dataType: 'json',
     success: function (data) {
-      if (!data || !data.codigo) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'No encontramos coincidencias',
-          text: 'Al parecer el código no está asignado en la sucursal ¿deseas asignarlo?',
-          showCancelButton: true,
-          confirmButtonText: 'Agregar producto a la sucursal'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            agregarCodigoInexistente(codigoEscaneado, Fk_sucursal);
-          }
-        });
-      } else {
+      if (data.length === 0) {
+        // msjError('No Encontrado');
+      } else if (data.codigo) {
         agregarArticulo(data);
-        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
       }
 
       limpiarCampo();
     },
     error: function (data) {
-      console.error('Error en la solicitud AJAX', data);
+      
     }
   });
 }
-
-
-  function agregarCodigoInexistente(codigo, sucursal) {
-    if (codigo.trim() === "" || sucursal.trim() === "") {
-        return; // No hacer nada si el código o la sucursal están vacíos
-    }
-    // Enviar el código y la sucursal al backend para insertarlo en la tabla de la base de datos
-    $.ajax({
-        url: "https://saludapos.com/AdminPOS/Consultas/codigosinexistir.php",
-        type: 'POST',
-        data: { codigo: codigo, sucursal: sucursal },
-        dataType: 'json',
-        success: function (response) {
-            if (response.success) {
-                // Mostrar mensaje de éxito con SweetAlert2, incluyendo el nombre del producto
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Producto agregado',
-                    text: 'Producto "' + response.nombreProducto + '" agregado con éxito'
-                }).then(() => {
-                    // Ejecutar la función buscarArticulo con el código escaneado después de cerrar la alerta
-                    buscarArticulo(codigo);
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al agregar el producto: ' + response.message
-                });
-            }
-        },
-        error: function (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al agregar el producto'
-            });
-        }
-    });
-}
-
 
 function limpiarCampo() {
   $('#codigoEscaneado').val('');
@@ -542,25 +733,24 @@ function limpiarCampo() {
 
 var isScannerInput = false;
 
+// Escucha el evento keyup en el campo de búsqueda
 $('#codigoEscaneado').keyup(function (event) {
-  if (event.which === 13) { // Verificar si la tecla presionada es "Enter"
-    if (!isScannerInput) { // Verificar si el evento no viene del escáner
+  if (event.which === 13) { // Verifica si la tecla presionada es "Enter"
+    if (!isScannerInput) { // Verifica si el evento no viene del escáner
       var codigoEscaneado = $('#codigoEscaneado').val();
-      agregarEscaneo(codigoEscaneado + '\n'); // Agregar el código escaneado al buffer de escaneo con un delimitador
-      event.preventDefault(); // Evitar que el formulario se envíe al presionar "Enter"
+      buscarArticulo(codigoEscaneado);
+      event.preventDefault(); // Evita que el formulario se envíe al presionar "Enter"
     }
-    isScannerInput = false; // Restablecer la bandera del escáner
+    isScannerInput = false; // Restablece la bandera del escáner
   }
 });
 
-// Configurar un intervalo para procesar el buffer de escaneo a intervalos regulares
-setInterval(procesarBuffer, scanInterval);
 // Agrega el autocompletado al campo de búsqueda
 $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Consultas/autocompletado.php',
+      url: 'Controladores/DespliegaAutoComplete.php',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -620,75 +810,79 @@ function calcularDiferencia(fila) {
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
+  // Función para agregar un artículo
   function agregarArticulo(articulo) {
-  if (!articulo || !articulo.id) {
-    mostrarMensaje('El artículo no es válido');
-    return;
-  }
-
-  let row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-  if (row.length) {
-    let cantidadActual = parseInt(row.find('.cantidad input').val());
-    let nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
-    if (nuevaCantidad < 0) {
-      mostrarMensaje('La cantidad no puede ser negativa');
-      return;
-    }
-    row.find('.cantidad input').val(nuevaCantidad);
-    mostrarToast('Cantidad actualizada para el producto: ' + articulo.descripcion);
-    actualizarImporte(row);
-    calcularDiferencia(row);
-    calcularIVA();
-    actualizarSuma();
-    mostrarTotalVenta();
-  } else {
-    let tr = `
-      <tr data-id="${articulo.id}">
-        <td class="codigo"><input class="form-control codigo-barras-input" readonly style="font-size: 0.75rem !important;" type="text" value="${articulo.codigo}" name="CodBarras[]" /></td>
-        <td class="descripcion"><textarea class="form-control descripcion-producto-input" readonly style="font-size: 0.75rem !important;" name="NombreDelProducto[]">${articulo.descripcion}</textarea></td>
-      
-<td  class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" name="PrecioCompra[]" value="${articulo.preciocompra}" /></td>
-        <td class="preciofijo"><input class="form-control preciou-input" readonly style="font-size: 0.75rem !important;" type="number" value="${articulo.precio}" /></td>
+    if (!articulo || !articulo.id) {
+      mostrarMensaje('El artículo no es válido');
+    } else if ($('#detIdModal' + articulo.id).length) {
+      mostrarMensaje('El artículo ya se encuentra incluido');
+    } else {
+      var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
+      if (row.length) {
+        var cantidadActual = parseInt(row.find('.cantidad input').val());
+        var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
+        if (nuevaCantidad < 0) {
+          mostrarMensaje('La cantidad no puede ser negativa');
+          return;
+        }
+        row.find('.cantidad input').val(nuevaCantidad);
+        actualizarImporte(row);
+        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
+        calcularIVA();
+        actualizarSuma();
+        mostrarTotalVenta();
+        mostrarSubTotal();
+        mostrarIvaTotal();
         
-        <td style="display:none;" class="precio"><input hidden id="precio_${articulo.id}" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="${articulo.precio}" onchange="actualizarImporte($(this).parent().parent());" /></td>
-          <td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="${articulo.cantidad}" onchange="calcularDiferencia(this)" /></td>
-        <td style="display:none;"><input id="importe_${articulo.id}" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>
-        <td style="display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="${articulo.id}" name="IdBasedatos[]" /></td>
-        <td style="display:none;" class="ResponsableInventario"><input hidden id="VendedorFarma" type="text" class="form-control" name="AgregoElVendedor[]" readonly value="<?php echo $row['Nombre_Apellidos']; ?>" /></td>
-        <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal']; ?>" /></td>
-        <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POS" /></td>
-        <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Saluda" /></td>
-        <td style="display:none;" class="Fecha"><input hidden type="text" class="form-control" name="FechaAprox[]" readonly value="<?php echo $fechaActual; ?>" /></td>
-        <td><div class="btn-container"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button></div></td>
-       <td style="display:none;"> <input type="text" name="SucursalTraspasa[]" hidden value="21" class="form-control" ></td>
-     <td style="display:none;"><input type="text" class="form-control "  hidden name="GeneradoPor[]" value="<?php echo $row['Nombre_Apellidos']?>"readonly  ></td>
-       <td style="display:none;"> <input type="text" class="form-control " hidden  name="Empresa[]" value="<?php echo $row['ID_H_O_D']?>"readonly  ></td>
-        <td style="display:none;"><input type="text"  hidden name="Proveedor1[]" id="proveedor1" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Proveedor2[]" id="proveedor2" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Estatus[]" value="Generado" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Existencia1[]" value="0" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Existencia2[]" value="0" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Recibio[]" value="" class="form-control" ></td>
-        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDelTraspaso[]" readonly  value="<?php echo $NumeroOrdenTraspaso?>"  > </td>
-        <td style="display:none;"><input type="text" class="form-control " hidden  name="ProveedorDelTraspaso[]" readonly  value="<?php echo $ProveedorFijo?>"  ></td>
-        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDeFacturaTraspaso[]" readonly  value="<?php echo $NumeroDeFacturaTrapaso?>"  > </td>
-     
-     
-        </tr>`;
+      } else {
+       
+        var tr = '';
+        var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
+      
 
-    $('#tablaAgregarArticulos tbody').prepend(tr);
-    let newRow = $('#tablaAgregarArticulos tbody tr:first-child');
-    actualizarImporte(newRow);
-  
-    calcularIVA();
-    actualizarSuma();
-    mostrarTotalVenta();
+        var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
+        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
+
+        tr += '<tr data-id="' + articulo.id + '">';
+        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
+        tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
+        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
+tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" style="font-size: 0.75rem !important;" type="number" name="StockActual[]" value="' + articulo.existencia + '" /></td>';
+tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="number" name="Diferencia[]" /></td>';
+
+        tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="' + articulo.precio + '"  /></td>';
+        tr += '<td class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" type="number"  name="PrecioCompra[]" value="' + articulo.preciocompra + '"  /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '"class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
+        tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]"style="font-size: 0.75rem !important;" type="number" readonly /></td>';
+        tr += '<td style="visibility:collapse; display:none;"><input id="importe_siniva_' + articulo.id + '" class="form-control importe_siniva" type="number" readonly /></td>';
+        tr += '<td style="visibility:collapse; display:none;"><input id="valordelniva_' + articulo.id + '" class="form-control valordelniva" type="number" readonly /></td>';
+        tr += '<td style="visibility:collapse; display:none;"><input id="ieps_' + articulo.id + '" class="form-control ieps" type="number" readonly /></td>';
+        tr += '<td style="visibility:collapse; display:none;"class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
+
+
+        tr += '<td  style="visibility:collapse; display:none;" class="ResponsableInventario"> <input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]"readonly value="<?php echo $row['Nombre_Apellidos'] ?>">   </td>';
+        tr += '<td  style="visibility:collapse; display:none;" class="Fecha"> <input hidden type="text" class="form-control " name="FechaDeInventario[]"readonly value="<?php echo $fechaActual;?>"  </td>';
+        tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container"></td>';
+      
+
+        tr += '</tr>';
+
+        $('#tablaAgregarArticulos tbody').append(tr);
+        actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
+        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
+        calcularIVA();
+        actualizarSuma();
+        mostrarTotalVenta();
+        mostrarSubTotal();
+        mostrarIvaTotal();
+       
+      }
+    }
+
+    $('#codigoEscaneado').val('');
+    $('#codigoEscaneado').focus();
   }
 
-  limpiarCampo();
-  $('#codigoEscaneado').focus();
-}
-
   
 
 
@@ -696,13 +890,7 @@ function calcularDiferencia(fila) {
 
 
 
-  function mostrarToast(mensaje) {
-  var toast = $('<div class="toast"></div>').text(mensaje);
-  $('body').append(toast);
-  toast.fadeIn(400).delay(3000).fadeOut(400, function() {
-    $(this).remove();
-  });
-}
+  
   function actualizarImporte(row) {
   var cantidad = parseInt(row.find('.cantidad-vendida-input').val());
   var precio = parseFloat(row.find('.precio input').val());
@@ -732,8 +920,8 @@ function calcularDiferencia(fila) {
   // Llamar a la función para recalcular la suma de importes
   actualizarSuma();
   mostrarTotalVenta();
-
-
+  mostrarSubTotal();
+  mostrarIvaTotal();
 }
 
 
@@ -781,145 +969,39 @@ function eliminarFila(element) {
   calcularIVA();
   actualizarSuma();
   mostrarTotalVenta();
- 
-
+  mostrarSubTotal();
+  mostrarIvaTotal();
 }
 
 
 </script>
-<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Función para actualizar el total
-            function updateTotal() {
-                var total = 0;
-                var inputs = document.querySelectorAll('.cantidad-vendida-input');
-                console.log('Inputs actuales:', inputs);
 
-                // Recorre todos los inputs y suma sus valores
-                inputs.forEach(function(input) {
-                    var value = parseFloat(input.value);
-                    console.log('Valor del input:', value);
-                    if (!isNaN(value)) {
-                        total += value;
-                    }
-                });
+<script src="js/FinalizaInventario.js"></script>
 
-                // Actualiza el input con id "resultadopiezas" con el total calculado
-                console.log('Total calculado:', total);
-                document.getElementById('resultadopiezas').value = total;
-            }
-
-            // Añade un event listener a cada input para escuchar cambios
-            function addInputListeners() {
-                var inputs = document.querySelectorAll('.cantidad-vendida-input');
-                inputs.forEach(function(input) {
-                    input.addEventListener('input', updateTotal);
-                });
-            }
-
-            // Observer para detectar cambios en el DOM y agregar event listeners a nuevos inputs
-            var observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.nodeType === 1 && node.querySelectorAll) {
-                            var newInputs = node.querySelectorAll('.cantidad-vendida-input');
-                            newInputs.forEach(function(input) {
-                                input.addEventListener('input', updateTotal);
-                            });
-                        }
-                    });
-                    updateTotal(); // Actualizar el total si se agrega un nuevo nodo
-                });
-            });
-
-            // Configura el observer para observar cambios en el body
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-
-            // Añade event listeners a los inputs existentes al cargar la página
-            addInputListeners();
-
-            // Llama a updateTotal al cargar la página por si ya hay valores predefinidos
-            updateTotal();
-        });
-    </script>
-
-
-
-<script>
-            document.addEventListener("DOMContentLoaded", function(){
-                // Invocamos cada 5 segundos ;)
-                const milisegundos = 600 *1000;
-                setInterval(function(){
-                    // No esperamos la respuesta de la petición porque no nos importa
-                    fetch("./Refrescacontenido.php");
-                },milisegundos);
-            });
-        </script>
-<style>
-.toast {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background-color: #333;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 5px;
-  opacity: 0.9;
-  z-index: 1000;
-  display: none;
-}
-</style>
 <!-- Control Sidebar -->
 
 <!-- Main Footer -->
+<?php
+
+include("Modales/Error.php");
+include("Modales/Exito.php");
+            
+include "Footer.php";?>
 
 
-      <!-- Fin Contenido --> 
-<!-- POR CADUCAR -->
   
 
-  <!-- Control Sidebar -->
+  <!-- Bootstrap -->
+
+
+  <!-- PAGE PLUGINS -->
+
  
-  <!-- Main Footer -->
+
 <?php
 
-  include ("Modales/Error.php");
-  include ("Modales/Exito.php");
-  include ("Modales/ExitoActualiza.php");
-  include ("Modales/ActualizaProductosRegistrados.php");
-  include "Footer.php";?>
-
-<!-- ./wrapper -->
-<script src="js/RealizaTraspasosV2.js"></script>
-
-<script src="datatables/Buttons-1.5.6/js/dataTables.buttons.min.js"></script>  
-    <script src="datatables/JSZip-2.5.0/jszip.min.js"></script>    
-    <script src="datatables/pdfmake-0.1.36/pdfmake.min.js"></script>    
-    <script src="datatables/pdfmake-0.1.36/vfs_fonts.js"></script>
-    <script src="datatables/Buttons-1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
-
-
-<!-- Bootstrap -->
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<!-- overlayScrollbars -->
-<script src="plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
-<!-- AdminLTE App -->
-<script src="dist/js/adminlte.js"></script>
-
-<!-- OPTIONAL SCRIPTS -->
-<script src="dist/js/demo.js"></script>
-
-<!-- PAGE PLUGINS -->
-
-</body>
-</html>
-<?php
-
-function fechaCastellano ($fecha) {
+function fechaCastellano($fecha)
+{
   $fecha = substr($fecha, 0, 10);
   $numeroDia = date('d', strtotime($fecha));
   $dia = date('l', strtotime($fecha));
@@ -928,9 +1010,21 @@ function fechaCastellano ($fecha) {
   $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
   $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
   $nombredia = str_replace($dias_EN, $dias_ES, $dia);
-$meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+  $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
   $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
   $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
-  return $nombredia." ".$numeroDia." de ".$nombreMes." de ".$anio;
+  return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
 ?>
+<script>
+
+
+
+
+</script>
+
+
+           
+</body>
+
+</html>
