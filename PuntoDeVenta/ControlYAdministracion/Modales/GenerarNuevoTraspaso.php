@@ -29,48 +29,50 @@
              <div class="modal-body">
      
  <form  method="POST" action="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GeneradorTraspasosCEDIS">
-    <div class="form-group">
+  <div class="form-group">
   <label for="exampleInputEmail1">Elija proveedor</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-dolly"></i></span>
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-dolly"></i></span>
     <input type="text" class="form-control" name="NombreProveedor" value="CEDIS">
-   
-    </div>  </div> 
- 
-    <div class="form-group">
-    <label for="exampleInputEmail1">Elija sucursal</label>
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clinic-medical"></i></span>
-  <select id = "sucursalconorden" name="SucursalConOrdenDestino" class = "form-control" required  >
-  <option value="">Seleccione una Sucursal:</option>
-                                               <?php
-          $query = $conn -> query ("SELECT ID_Sucursal,Nombre_Sucursal FROM Sucursales");
-        
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
-          }
-                        ?>
-        </select>   
-  </div>  </div>  
-   
+  </div>
+</div>
 
+<div class="form-group">
+  <label for="exampleInputEmail1">Elija sucursal</label>
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clinic-medical"></i></span>
+    <select id="sucursalconorden" name="SucursalConOrdenDestino" class="form-control" required>
+      <option value="">Seleccione una Sucursal:</option>
+      <?php
+        $query = $conn -> query ("SELECT ID_Sucursal,Nombre_Sucursal FROM Sucursales");
+        while ($valores = mysqli_fetch_array($query)) {
+          echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
+        }
+      ?>
+    </select>
+  </div>
+</div>
 
-
-    <div class="form-group">
+<div class="form-group">
   <label for="exampleInputEmail1"># de orden de traspaso</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-list-ol"></i></span>
-   <input type="number" value="<?php echo  $totalmonto_con_ceros?>"  class="form-control"  id="NumOrden" name="NumOrden" readonly>
-    </div>  </div>  
-
-   
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-list-ol"></i></span>
+    <input type="number" value="<?php echo  $totalmonto_con_ceros?>" class="form-control" id="NumOrden" name="NumOrden" readonly>
+  </div>
 </div>
 
-  <div class="form-group" >
+<div class="form-group">
   <label for="exampleInputEmail1">Sucursal</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
     <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
-    </div>  </div>
-    <button type="submit"  id="registrotraspaso" value="Guardar" class="btn btn-success">Generar orden de traspaso <i class="fas fa-exchange-alt"></i></button>
+  </div>
 </div>
-    
+
+<button type="submit" id="registrotraspaso" value="Guardar" class="btn btn-success">
+  Generar orden de traspaso <i class="fas fa-exchange-alt"></i>
+</button>
+
                                         </form>
                                         </div>
                                         </div> </div>
