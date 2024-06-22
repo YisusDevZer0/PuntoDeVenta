@@ -890,7 +890,7 @@ function eliminarFila(element) {
   include ("Modales/Exito.php");
   include ("Modales/ExitoActualiza.php");
   include ("Modales/ActualizaProductosRegistrados.php");
-  include ("footer.php")?>
+  include "Footer.php";?>
 
 <!-- ./wrapper -->
 <script src="js/RealizaTraspasosV2.js"></script>
