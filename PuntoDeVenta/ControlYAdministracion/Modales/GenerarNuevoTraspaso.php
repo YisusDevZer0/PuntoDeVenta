@@ -1,23 +1,4 @@
 
-<?php
-  $sql = "SELECT * FROM Traspasos_generados ORDER BY ID_Traspaso_Generado DESC LIMIT 1";
-  $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
-  $Ticketss = mysqli_fetch_assoc($resultset);
-  
-  $monto1 = $Ticketss['Num_Orden'];
-  $monto2 = 1;
-  $totalmonto = $monto1 + $monto2;
-  
-  // Obtener la longitud original de $Ticketss['Num_Orden']
-  $longitud_original = strlen($Ticketss['Num_Orden']);
-  
-  // Mostrar $totalmonto con los caracteres '0000000000' (ajustando la longitud)
-  $totalmonto_con_ceros = str_pad($totalmonto, $longitud_original, '0', STR_PAD_LEFT);
-  
-
-   
-  
-  ?>
       <div class="modal fade bd-example-modal-xl" id="NuevoTraspasoGenerador" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog  modal-notify modal-success">
     <div class="modal-content">
