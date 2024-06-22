@@ -26,14 +26,7 @@
     <label for="exampleInputEmail1">Elija sucursal</label>
   <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clinic-medical"></i></span>
   <select id = "sucursalconorden" name="SucursalConOrdenDestino" class = "form-control" required  >
-  <option value="">Seleccione una Sucursal:</option>
-                                               <?php
-          $query = $conn -> query ("SELECT ID_Sucursal,Nombre_Sucursal FROM Sucursales");
-        
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
-          }
-                        ?>
+ 
         </select>   
   </div>  </div>  
    
@@ -43,7 +36,7 @@
     <div class="form-group">
   <label for="exampleInputEmail1"># de orden de traspaso</label>
     <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-list-ol"></i></span>
-   <input type="number" value="<?php echo  $totalmonto_con_ceros?>"  class="form-control"  id="NumOrden" name="NumOrden" readonly>
+   <input type="number" class="form-control"  id="NumOrden" name="NumOrden" readonly>
     </div>  </div>  
 
    
