@@ -78,57 +78,84 @@ table td {
 
 
 
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <label for="exampleFormControlInput1">Sucursal destino</label> 
-      <div class="input-group mb-3">
-        <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
-        <input type="text" name="" id="" readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
-      </div>
-    </div>
-    
-    <div class="col">
-      <label for="exampleFormControlInput1"># de factura</label> 
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" readonly value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>">
-      </div>
-    </div>
-    
-    <div class="col">
-      <label for="exampleFormControlInput1">Fecha de entrega</label> 
-      <div class="input-group mb-3">
-        <input type="date" class="form-control" value="<?php echo date("Y-m-d")?>">
-      </div>
-    </div>
 
-    <div style="display: none;">
-      <div class="col">
-        <label for="exampleFormControlInput1">Total de venta</label>
-        <div class="input-group mb-3">
-          <input type="number" class="form-control" id="resultadoventas" name="resultadoventas[]" readonly>
-        </div>
-      </div>
-    </div>
+  <div class="container">
+<div class="row">
 
-    <div style="display: none;">
-      <div class="col">
-        <label for="exampleFormControlInput1">Total de compra</label> 
-        <div class="input-group mb-3">
-          <input type="number" class="form-control" id="resultadocompras" name="resultadocompras[]" readonly>
-        </div>
-      </div>
-    </div>
 
     <div class="col">
-      <label for="exampleFormControlInput1">Total de Piezas</label> 
-      <div class="input-group mb-3">
-        <input type="number" class="form-control" id="resultadopiezas" name="resultadepiezas[]" readonly>
-      </div>
-    </div>
+   
+    <label for="exampleFormControlInput1">Sucursal destino</label> 
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
+  <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
   </div>
-</div>
+  
+    </div>  </div>
+        
+   
+            
+ 
+    <div class="col">
+      
+    <label for="exampleFormControlInput1"># de factura</label> 
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
+  </div>
+  <input type="text" class="form-control" readonly value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>">
 
+  
+  
+    </div>  </div>
+      
+    <div class="col">
+      
+    <label for="exampleFormControlInput1">Fecha de entrega</label> 
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
+  </div>
+  <input type="date" class="form-control "   value="<?php echo date("Y-m-d")?>"  > 
+  
+  
+    </div>  </div>
+
+
+<div style="display: none;">  <div class="col">
+      
+  <label for="exampleFormControlInput1">Total de venta </label>
+      <div class="input-group mb-3">
+    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-money-check-alt"></i></span>
+    </div>
+    <input type="number" class="form-control " id="resultadoventas" name="resultadoventas[]" readonly  >
+   
+      </div>
+  
+      </div>
+      </div>
+      <div style="display: none;"> 
+      <div class="col">
+      
+  <label for="exampleFormControlInput1">Total de compra </label> 
+      <div class="input-group mb-3">
+    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-money-check-alt"></i></span>
+    </div>
+    <input type="number" class="form-control " id="resultadocompras" name="resultadocompras[]" readonly  >
+   
+      </div>
+      </div>
+      </div>
+      <div class="col">
+      
+  <label for="exampleFormControlInput1">Total de Piezas </label> 
+      <div class="input-group mb-3">
+    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fa-solid fa-puzzle-piece"></i></span>
+    </div>
+    <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
+   
+      </div>
+  
+      </div>
       <!-- <div class="col">
       
   <label for="exampleFormControlInput1">Total de compra </label> 
