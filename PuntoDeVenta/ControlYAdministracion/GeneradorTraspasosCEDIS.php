@@ -16,7 +16,7 @@ if ($ProveedorFijo === "CEDIS") {
     $valorCombinado = $NumeroDeFacturaTrapaso;
 }
 
-include "Consultas/Consultas.php";
+include_once "Controladores/ControladorUsuario.php";
 
 ?>
 <!DOCTYPE html>
@@ -26,7 +26,7 @@ include "Consultas/Consultas.php";
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>Generar traspasos de cedis <?php echo $row['ID_H_O_D']?> </title>
+  <title>Generar traspasos de cedis <?php echo $row['Licencia']?> </title>
 
 <?php include "Header.php"?>
 
@@ -56,9 +56,13 @@ table td {
 }
     </style>
 </head>
-<?php include_once ("Menu.php")?>
 
+<?php include_once "Menu.php" ?>
 
+<!-- Content Start -->
+<div class="content">
+    <!-- Navbar Start -->
+<?php include "navbar.php";?>
 
 <div class="tab-content" id="pills-tabContent">
 
