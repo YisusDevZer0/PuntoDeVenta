@@ -60,14 +60,15 @@
 
 <div class="form-group">
   <label for="exampleInputEmail1">Sucursal</label>
- 
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
     <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
   </div>
+</div>
 
 <button type="submit" id="registrotraspaso" value="Guardar" class="btn btn-success">
   Generar orden de traspaso <i class="fas fa-exchange-alt"></i>
 </button>
-</div>
 
                                         </form>
                                         </div>
