@@ -3,7 +3,7 @@ include_once "db_connect.php";
 
 // Verificar si hay datos recibidos
 if (!isset($_POST["Idprod"]) || !isset($_POST["CodBarra"]) || !isset($_POST["NombreProducto"])) {
-    echo json_encode(['status' => 'error', 'message' => 'No se recibieron datos adecuados.']);
+    echo json_encode(['status' => 'error', 'message' => 'No se recibieron datos adecuados.', 'received_data' => $_POST]);
     exit;
 }
 
@@ -29,12 +29,16 @@ for ($i = 0; $i < $contador; $i++) {
             $_POST["PrecioDeCompra"][$i], $_POST["NTraspasos"][$i], $_POST["FechaAprox"][$i], $_POST["GeneradoPor"][$i],
             $_POST["Recibio"][$i], $_POST["Estatus"][$i], $_POST["GeneradoPor"][$i], $_POST["Empresa"][$i], $_POST["resultadepiezas"][$i]
         ]);
+    } else {
+        // Si falta algún dato, mostrar el índice del producto
+        echo json_encode(['status' => 'error', 'message' => 'Faltan datos en el producto con índice ' . $i, 'received_data' => $_POST]);
+        exit;
     }
 }
 
 // Verificar si se encontraron productos válidos para agregar
 if ($ProContador == 0) {
-    echo json_encode(['status' => 'error', 'message' => 'No se encontraron productos válidos para agregar.']);
+    echo json_encode(['status' => 'error', 'message' => 'No se encontraron productos válidos para agregar.', 'received_data' => $_POST]);
     exit;
 }
 
@@ -44,7 +48,7 @@ $query .= implode(", ", $queryValue);
 // Preparar la consulta y ejecutarla
 $stmt = $conn->prepare($query);
 if ($stmt === false) {
-    echo json_encode(['status' => 'error', 'message' => 'Error al preparar la consulta: ' . $conn->error]);
+    echo json_encode(['status' => 'error', 'message' => 'Error al preparar la consulta: ' . $conn->error, 'received_data' => $_POST]);
     exit;
 }
 
@@ -56,7 +60,7 @@ $stmt->bind_param($types, ...$values);
 if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Registro(s) agregado correctamente.']);
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+    echo json_encode(['status' => 'error', 'message' => 'Error al ejecutar la consulta: ' . $stmt->error, 'received_data' => $_POST]);
 }
 
 $stmt->close();
