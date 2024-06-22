@@ -19,19 +19,14 @@
   
   ?>
       <div class="modal fade bd-example-modal-xl" id="GeneradorDeOrdenesDeTraspaso" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog  modal-notify modal-success">
+      <div class="modal-dialog modal-xl modal-notify modal-success">
     <div class="modal-content">
-    
-    <div class="text-center">
-    <div class="modal-header">
-         <p class="heading lead">Seleccion de sucursal para traspaso <i class="fas fa-credit-card"></i></p>
-
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
-       </div>
-     
-      <div class="modal-body">
+      <div class="modal-header" style=" background-color: #ef7980 !important;">
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="text-center">
+             <div class="modal-body">
      
  <form  method="POST" action="https://saludapos.com/AdminPOS/GeneradorTraspasosCEDIS">
     <div class="form-group">
