@@ -63,11 +63,11 @@
  
     <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
   </div>
-</div>
 
 <button type="submit" id="registrotraspaso" value="Guardar" class="btn btn-success">
   Generar orden de traspaso <i class="fas fa-exchange-alt"></i>
 </button>
+</div>
 
                                         </form>
                                         </div>
