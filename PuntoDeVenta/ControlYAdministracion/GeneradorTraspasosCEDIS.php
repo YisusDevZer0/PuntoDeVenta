@@ -1023,19 +1023,19 @@ function eliminarFila(element) {
             function updateTotal() {
                 var total = 0;
                 var inputs = document.querySelectorAll('.cantidad-vendida-input');
-                console.log('Inputs actuales:', inputs);
+                // console.log('Inputs actuales:', inputs);
 
                 // Recorre todos los inputs y suma sus valores
                 inputs.forEach(function(input) {
                     var value = parseFloat(input.value);
-                    console.log('Valor del input:', value);
+                    // console.log('Valor del input:', value);
                     if (!isNaN(value)) {
                         total += value;
                     }
                 });
 
                 // Actualiza el input con id "resultadopiezas" con el total calculado
-                console.log('Total calculado:', total);
+                // console.log('Total calculado:', total);
                 document.getElementById('resultadopiezas').value = total;
             }
 
