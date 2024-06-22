@@ -1,6 +1,24 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'
+$SucursalDestino = $_POST['SucursalConOrdenDestino'];
+$SucursalDestinoLetras = $_POST['sucursalLetras'];
+$ProveedorFijo = $_POST['NombreProveedor'];
+$NumeroOrdenTraspaso = $_POST['NumOrden'];
+
+
+if ($ProveedorFijo === "CEDIS") {
+    // Tomar solo las primeras 4 letras de $SucursalDestinoLetras
+    $primerasCuatroLetras = substr($SucursalDestinoLetras, 0, 4);
+
+    // Combinar $primerasCuatroLetras con $NumeroDeFacturaTrapaso
+    $valorCombinado = $primerasCuatroLetras . $NumeroOrdenTraspaso;
+} else {
+    // Utilizar solo el valor original de $NumeroDeFacturaTrapaso
+    $valorCombinado = $NumeroDeFacturaTrapaso;
+}
+
+
 ?><!DOCTYPE html>
 <html lang="es">
 
@@ -354,11 +372,12 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
                         <div class="col">
 
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal</label>
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal Destino</label>
                           <div class="input-group mb-3">
                             <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
                             </div>
-                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="CEDIS">
+                            <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
+                            <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
                            
                           </div>
                         </div>
@@ -375,17 +394,21 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
                         </div>
                         <div class="col">
 
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Tipo de ajuste</label>
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># Factura</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control" readonly value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>">
+ 
+</div>
+</div>
+                        <div class="col">
+
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Total de piezas</label>
                           <div class="input-group mb-3">
                             <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
                             </div>
-                            <select class="form-control" style="font-size: 0.75rem !important;">
-                            <option value="">Seleccione un tipo de ajuste </option>
-                  <option value="Ajuste positivo">Ajuste de inventario</option>
-              <option value="Inventario inicial">Inventario inicial</option>
-                 <option value="Ajuste por daño">Ajuste por daño</option>
-              <option value="Ajuste por caducidad">Ajuste por caducidad</option>
-</select>
+                            <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
 
 
                           </div>
