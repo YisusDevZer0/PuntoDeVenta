@@ -83,14 +83,14 @@ table td {
 <div class="row">
 
 
-    <div class="col">
+    <di class="col">
    
     <label for="exampleFormControlInput1">Sucursal destino</label> 
-    <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+    
+  
   <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
   <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
-  </div>
+
   
     </div>  </div>
         
