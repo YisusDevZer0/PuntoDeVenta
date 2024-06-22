@@ -87,7 +87,7 @@ table td {
    
     <label for="exampleFormControlInput1">Sucursal destino</label> 
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  
   <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalDestino?>">
   <input type="text" name="" id=""  readonly class="form-control" value="<?php echo $SucursalDestinoLetras?>">
   </div>
@@ -101,8 +101,7 @@ table td {
       
     <label for="exampleFormControlInput1"># de factura</label> 
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
-  </div>
+ 
   <input type="text" class="form-control" readonly value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>">
 
   
@@ -113,8 +112,7 @@ table td {
       
     <label for="exampleFormControlInput1">Fecha de entrega</label> 
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
-  </div>
+ 
   <input type="date" class="form-control "   value="<?php echo date("Y-m-d")?>"  > 
   
   
