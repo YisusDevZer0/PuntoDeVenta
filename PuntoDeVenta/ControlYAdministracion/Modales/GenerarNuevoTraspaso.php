@@ -1,158 +1,243 @@
-
-      <div class="modal fade bd-example-modal-xl" id="NuevoTraspasoGenerador" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog  modal-notify modal-success">
+<!-- Central Modal Medium Info -->
+<!-- Modal -->
+<div class="modal fade" id="GeneradorDeOrdenesDeTraspaso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-notify modal-success">
     <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;">
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Agregar Nuevo Producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="text-center">
+             <div class="modal-body">
+        <!-- Formulario con el estilo proporcionado -->
+        <div class="row">
+          <div class="col-12">
+            <div class="bg-light rounded p-4">
+              
+               <form enctype="multipart/form-data" id="AgregaProductos">
+         <div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Codigo de barras<span class="text-danger">*</span> </label>
+    <div class="input-group mb-3">
+  <input type="text" class="form-control " id="codbarrap" name="CodBarraP" placeholder="Escanee o ingrese código" >
+    </div>
+    </div>
     
-    <div class="text-center">
-    <div class="modal-header">
-         <p class="heading lead">Seleccion de sucursal para traspaso <i class="fas fa-credit-card"></i></p>
-
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
-       </div>
-     
-      <div class="modal-body">
-     
- <form  method="POST" action="https://saludapos.com/AdminPOS/GeneradorTraspasosCEDIS">
-    <div class="form-group">
-  <label for="exampleInputEmail1">Elija proveedor</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-dolly"></i></span>
-    <input type="text" class="form-control" name="NombreProveedor" value="CEDIS">
-   
-    </div>  </div> 
+    <div class="col">
+      
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Clave interna <span class="text-info">Opcional</span></label>
+     <div class="input-group mb-3">
  
-    <div class="form-group">
-    <label for="exampleInputEmail1">Elija sucursal</label>
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clinic-medical"></i></span>
-  <select id = "sucursalconorden" name="SucursalConOrdenDestino" class = "form-control" required  >
- 
-        </select>   
-  </div>  </div>  
-   
-
-
-
-    <div class="form-group">
-  <label for="exampleInputEmail1"># de orden de traspaso</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-list-ol"></i></span>
-   <input type="number" class="form-control"  id="NumOrden" name="NumOrden" readonly>
-    </div>  </div>  
-
-   
+  <input type="text" class="form-control " name="Clav" id="clav"  placeholder="Ingrese código" aria-describedby="basic-addon1" maxlength="60">            
+</div><label for="clav" class="error"></div>
+<div class="col">
+    <label for="exampleFormControlInput1" style="color: black;" style="color: black;">Nombre / Descripcion <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <textarea class="form-control" id="nombreprod" name="NombreProd" rows="3"></textarea>
+          
+    </div><label for="nombreprod" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1" style="color: black;">Componente activo<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  
+   <select id = "componente" class = "form-control" name = "ComponenteActivo">
+                                               <option value="">Seleccione una presentacion:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Componentes");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Com"].'">'.$valores["Nom_Com"].'</option>';
+          }
+        ?> 
+                                              </select>
+    </div><label for="presentacion" class="error">
+    </div>
 </div>
 
-  <div class="form-group" >
-  <label for="exampleInputEmail1">Sucursal</label>
-    <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-    <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
-    </div>  </div>
-    <button type="submit"  id="registrotraspaso" value="Guardar" class="btn btn-success">Generar orden de traspaso <i class="fas fa-exchange-alt"></i></button>
-</div>
-    
-                                        </form>
-                                        </div>
-                                        </div> </div>
-     <script>
-$(document).on('change', '#sucursalconorden', function(event) {
-     $('#sucursalLetras').val($("#sucursalconorden option:selected").text());
-});
-
-     </script>
-
+<!-- SEGUNDA SECCION -->
 <script>
-    // Función para manejar cambios en el proveedor seleccionado
-    $('#nombreproveedor').on('change', function() {
-        var selectedProveedor = $(this).val();
+    function validarPrecios() {
+      var precioVenta = document.getElementById('pv').value;
+      var precioCompra = document.getElementById('pc').value;
 
-        if (selectedProveedor === 'CEDIS') {
-            $('#numFacturaContainer').hide(); // Ocultar el input NumFactura
+      if (precioVenta <= precioCompra) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'El precio de venta debe ser mayor al precio de compra.',
+          showCancelButton: false,
+          confirmButtonText: 'Aceptar',
+        });
 
-            // Combinar las primeras 4 letras del input sucursalLetras con totalmonto y establecerlo como valor del input NumOrden
-            var inputSucursal = $('#sucursalLetras').val().slice(0, 4);
-            var totalmonto = '<?php echo $totalmonto; ?>'; // Convertimos $totalmonto a cadena con comillas
-            $('#NumOrden').val(inputSucursal + totalmonto);
-        } else {
-            $('#numFacturaContainer').show(); // Mostrar el input NumFactura
-        }
-    });
-
-    // Llamar al evento change del select al cargar la página para establecer el valor inicial de NumOrden solo si se seleccionó CEDIS
-    $(document).ready(function() {
-        if ($('#nombreproveedor').val() === 'CEDIS') {
-            $('#nombreproveedor').trigger('change');
-        }
-    });
-</script>
-
-
-<script>
-
-function comprobarFactura() {
-	$("#loaderIcon").show();
-	jQuery.ajax({
-	url: "https://saludapos.com/AdminPOS/Consultas/ComprobarFactura.php",
-	data:'NumFactura='+$("#NumFactura").val(),
-	type: "POST",
-	success:function(data){
-		$("#estadousuario").html(data);
-		$("#loaderIcon").hide();
-	},
-	error:function (){}
-	});
-}
-
-</script>
-
-
-<script>
-  
-  function desactivar()
-{
-  $('#registrotraspaso').attr('disabled', true);
-  
-}
-
-function reactivar(){
-  $('#registrotraspaso').attr('disabled', false);
-}
-</script>
-
-<!-- Agrega un script para la validación -->
-<script>
-  // Utiliza jQuery para escuchar el evento de apertura del modal
-  $('#FiltroLabs').on('show.bs.modal', function () {
-    console.log("Script ejecutándose..."); // Verifica si este mensaje aparece en la consola
-
-    // Obtiene el valor actual del campo NumOrden
-    var numOrdenValue = $('#NumOrden').val();
-
-    // Realiza una solicitud AJAX para verificar si el valor ya existe en la base de datos
-    $.ajax({
-      url: 'Consultas/ValidacionNumOrden.php',
-      method: 'POST',
-      data: { NumOrden: numOrdenValue },
-      success: function (response) {
-     // Verifica la respuesta del servidor
-     if (response.trim() === 'existe') {
-          // Si la respuesta indica que el valor ya existe, proporciona retroalimentación al usuario
-          alert('El número de orden ya existe. Por favor, elija otro.');
-          // Puedes deshabilitar el botón de guardar o realizar otras acciones según tus necesidades
-        } else {
-          // Puedes realizar acciones adicionales si el NumOrden no existe
-          console.log('El número de orden no existe.');
-        }
-      },
-      error: function (error) {
-        console.error('Error en la solicitud AJAX:', error);
+        document.getElementById('EnviarDatos').disabled = true;
+      } else {
+        document.getElementById('EnviarDatos').disabled = false;
       }
-    });
-  });
-</script>
+    }
+  </script> 
+    <div class="row">
+    <div class="col">
+      
+    <label for="exampleFormControlInput1">Precio venta <span class="text-danger">*</span></label>
+     <div class="input-group mb-3">
+  
+  <input type="number" class="form-control " id="pv" name="PV" placeholder="Ingrese precio de venta" onchange="validarPrecios()" >
+</div><label for="pv" class="error"></div>
+
+<div class="col">
+    <label for="exampleFormControlInput1">Precio compra <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+  </div>
+  <input type="number" class="form-control " id="pc" name="PC" placeholder="Ingrese precio de compra" >
+    </div><label for="pc" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Tipo de servicio <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+   <select id = "tiposervicio" class = "form-control" name = "TipoServicio">
+                                               <option value="">Seleccione una servicio:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Servicios_POS WHERE  Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Servicio_ID"].'">'.$valores["Nom_Serv"].'</option>';
+          }
+        ?>  </select>        
+    </div><label for="pc" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">¿Requiere receta? <span class="text-danger">*</span> </label>
+    <div class="input-group mb-3">
+  
+  <select name="Receta" id="receta" class="form-control">
+  <option value="">Elige una opcion</option>
+  <option value="Si">Si</option>
+  <option value="No">No</option>
+  </select>
+    </div>
+    </div>
+      </div>
+
+<!-- SEGUNDA SECCION FIN -->
 
 
+<!-- Tercera SECCION -->
+<div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Tipo <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+ 
+   <select id = "tip" class = "form-control" name = "Tip">
+                                               <option value="">Selecciona un tipo:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM TipProd_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Tipo_Prod"].'">'.$valores["Nom_Tipo_Prod"].'</option>';
+          }
+        ?>  </select> 
+    </div><label for="tip" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Categoria<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+
+   <select id = "categoria" class = "form-control" name = "Categoria">
+                                               <option value="">Seleccione una categoria:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Categorias_POS");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Cat"].'">'.$valores["Nom_Cat"].'</option>';
+          }
+        ?>  </select>
+    </div><label for="categoria" class="error">
+    </div>
+   
+    <div class="col">
+    <label for="exampleFormControlInput1">Marca <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+
+   <select id = "marca" class = "form-control" name = "Marca">
+                                               <option value="">Seleccione una marca:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Marcas_POS ");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Marca"].'">'.$valores["Nom_Marca"].'</option>';
+          }
+        ?>  </select>
+    </div><label for="marca" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Presentacion<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">  <span class="input-group-text" ><i class="fas fa-caret-down"></i></span>
+  </div>
+  <select id = "presentacion" class = "form-control" name = "Presentacion">
+                                               <option value="">Seleccione una presentacion:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Presentaciones ");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Presentacion"].'">'.$valores["Nom_Presentacion"].'</option>';
+          }
+        ?>  </select> 
+    </div><label for="presentacion" class="error">
+    </div>
+
+   </div>
+
+<!-- TERCERA SECCION FIN -->
+
+
+<!-- CUARTA SECCION -->
+
+
+
+<!-- Tercera SECCION -->
+<div class="row">
+    <div class="col">
+    <label for="exampleFormControlInput1">Proveedor 1 <span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+ 
+   <select id = "proveedor" class = "form-control" name = "Proveedor">
+                                               <option value="">Selecciona un tipo:</option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Proveedores");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
+          }
+        ?>  </select> 
+    </div><label for="tip" class="error">
+    </div>
+    <div class="col">
+    <label for="exampleFormControlInput1">Proveedor 2<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+
+   <select id = "proveedor2" class = "form-control" name = "Prov2">
+                                               <option value="">Seleccione una categoria:</option>
+        <?php
+          $query = $conn -> query ("SELECT * FROM Proveedores");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nombre_Proveedor"].'">'.$valores["Nombre_Proveedor"].'</option>';
+          }
+        ?>  </select>
+    </div><label for="categoria" class="error">
+    </div>
+   
+    
+   </div>
+
+    <input type="text" class="form-control " name="Licencia" id="empresa" hidden value="<?php echo $row['Licencia']?>"aria-describedby="basic-addon1" >       
+      
+    <input type="text" class="form-control"  name="AgregaProductosBy" id="agrega" hidden readonly value=" <?php echo $row['Nombre_Apellidos']?>">
+    <input type="text" class="form-control"  name="SistemaProductos" id="sistema" hidden readonly value="Administrador">
+    
+<!-- CUARTA SECCION FIN -->
+                <button type="submit" class="btn btn-primary">Guardar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  </div>
-  </div>
-  
+</div></div>
+ 
