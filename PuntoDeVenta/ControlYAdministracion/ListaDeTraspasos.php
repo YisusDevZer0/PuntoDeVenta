@@ -41,15 +41,13 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#FiltroLabs" class="btn btn-default">
       Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
     </button>
-    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ModificarTraspasoModal"
-      class="btn btn-default">
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
       Modificar traspaso <i class="fas fa-edit"></i>
     </button>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#CancelarTraspasoModal"
-      class="btn btn-default">
+    <button type="button" class="btn btn-danger btn-sm " data-toggle="modal" data-target="#CancelarTraspasoModal">
       Cancelar Traspaso <i class="fas fa-ban"></i>
     </button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#FiltroTraspasos"
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
     </button>
