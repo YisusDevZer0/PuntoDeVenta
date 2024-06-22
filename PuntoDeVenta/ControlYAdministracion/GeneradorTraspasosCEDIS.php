@@ -478,16 +478,14 @@ if ($ProveedorFijo === "CEDIS") {
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
-                              <th>Codigo</th>
-                              <th style="width:20%">Producto</th>
-                              <th style="width:6%">Contabilizado</th>
-                              <th style="width:6%">Stock actual</th>
-                              <th style="width:6%">Diferencia</th>
-                              <th>Precio</th>
-                              <th>Importe</th>
-                              <!-- <th>importe_Sin_Iva</th>
-            <th>Iva</th>
-            <th>valorieps</th> -->
+                            <th>Codigo</th>
+                              <th >Producto</th>
+                              <th>Precio compra</th>
+                              <th >Precio Venta</th>
+                              <th >Piezas</th>
+                             
+                            
+                              
                               <th>Eliminar</th>
                             
                             </tr>
@@ -549,52 +547,6 @@ if ($ProveedorFijo === "CEDIS") {
 </script>
 
 
-<script>
-  $(document).ready(function() {
-    // Bloquear el botón al cargar la página
-    $('#btnIniciarVenta').prop('disabled', true);
-
-    // Agregar un controlador de eventos al input
-    $('#iptEfectivoRecibido').on('input', function() {
-      var valorInput = $(this).val();
-      var miBoton = $('#btnIniciarVenta');
-
-      if (valorInput.length > 0) {
-        // Desbloquear el botón si el input contiene datos
-        miBoton.prop('disabled', false);
-      } else {
-        // Bloquear el botón si el input está vacío
-        miBoton.prop('disabled', true);
-      }
-    });
-  });
-
-
-  $(document).ready(function() {
-    $("#chkEfectivoExacto").change(function() {
-      if ($(this).is(":checked")) {
-        var boletaTotal = parseFloat($("#boleta_total").text());
-        $("#Vuelto").text("0.00");
-        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-      }
-    });
-
-    $("#iptEfectivoRecibido").change(function() {
-      var boletaTotal = parseFloat($("#boleta_total").text());
-      var efectivoRecibido = parseFloat($(this).val());
-
-      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-        $("#Vuelto").text("0.00");
-        $("#boleta_total").text(efectivoRecibido.toFixed(2));
-      } else {
-        var vuelto = efectivoRecibido - boletaTotal;
-        $("#Vuelto").text(vuelto.toFixed(2));
-        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        
-      }
-    });
-  });
-</script>
 
 <script>
   $("#btnVaciarListado").click(function() {
@@ -604,8 +556,7 @@ if ($ProveedorFijo === "CEDIS") {
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
-    mostrarSubTotal();
-    mostrarIvaTotal()
+
   });
 
 
@@ -621,7 +572,10 @@ if ($ProveedorFijo === "CEDIS") {
 </script>
 
 
+<script>
 
+  
+</script>
 
 <script>
   table = $('#tablaAgregarArticulos').DataTable({
@@ -647,6 +601,15 @@ if ($ProveedorFijo === "CEDIS") {
       {
         "data": "precio"
       },
+      {
+        "data": "tipodeajuste"
+      },
+      {
+        "data": "anaquel"
+      },
+      {
+        "data": "repisa"
+      },
       // {
       //     "data": "importesiniva"
       // },
@@ -659,13 +622,7 @@ if ($ProveedorFijo === "CEDIS") {
       {
         "data": "eliminar"
       },
-      {
-        "data": "descuentos"
-
-      },
-      {
-        "data": "descuentos2"
-      },
+     
     ],
 
     "order": [
@@ -676,7 +633,7 @@ if ($ProveedorFijo === "CEDIS") {
       "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
     },
     //para usar los botones   
-    responsive: "true",
+    responsive: "false",
 
   });
 
@@ -698,56 +655,115 @@ if ($ProveedorFijo === "CEDIS") {
 
 
 
-  function mostrarSubTotal() {
-    var subtotal = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.importe_siniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
-    });
+var Fk_sucursal = <?php echo json_encode($row['Fk_Sucursal']); ?>;
+var scanBuffer = "";
+var scanInterval = 5; // Milisegundos
 
-    $('#boleta_subtotal').text(subtotal.toFixed(2));
+function procesarBuffer() {
+  // Buscar el carácter delimitador
+  var delimiter = "\n";
+  var delimiterIndex = scanBuffer.indexOf(delimiter);
+
+  while (delimiterIndex !== -1) {
+    // Extraer el código hasta el delimitador
+    var codigoEscaneado = scanBuffer.slice(0, delimiterIndex);
+    scanBuffer = scanBuffer.slice(delimiterIndex + 1);
+
+    if (esCodigoBarrasValido(codigoEscaneado)) {
+      buscarArticulo(codigoEscaneado);
+    } else {
+      console.warn('Código de barras inválido:', codigoEscaneado);
+    }
+
+    // Buscar el siguiente delimitador
+    delimiterIndex = scanBuffer.indexOf(delimiter);
   }
+}
 
+function agregarEscaneo(escaneo) {
+  scanBuffer += escaneo;
+}
 
-  function mostrarIvaTotal() {
-    var subtotal = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.valordelniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
-    });
+function esCodigoBarrasValido(codigoEscaneado) {
+  // Verificar si el código de barras tiene una longitud válida
+  var longitud = codigoEscaneado.length;
+  return longitud >= 2 && longitud <= 13; // Ajusta el rango según sea necesario
+}
 
-    $('#ivatotal').text(subtotal.toFixed(2));
-  }
-
-  function buscarArticulo(codigoEscaneado) {
-  var formData = new FormData();
-  formData.append('codigoEscaneado', codigoEscaneado);
+function buscarArticulo(codigoEscaneado) {
+  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
 
   $.ajax({
-    url: "Controladores/BusquedaPorEscaner.php",
+    url: "Consultas/escaner_articulo.php",
     type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
+    data: { codigoEscaneado: codigoEscaneado },
     dataType: 'json',
     success: function (data) {
-      if (data.length === 0) {
-        // msjError('No Encontrado');
-      } else if (data.codigo) {
+      if (!data || !data.codigo) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'No encontramos coincidencias',
+          text: 'Al parecer el código no está asignado en la sucursal ¿deseas asignarlo?',
+          showCancelButton: true,
+          confirmButtonText: 'Agregar producto a la sucursal'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            agregarCodigoInexistente(codigoEscaneado, Fk_sucursal);
+          }
+        });
+      } else {
         agregarArticulo(data);
+        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
       }
 
       limpiarCampo();
     },
     error: function (data) {
-      
+      console.error('Error en la solicitud AJAX', data);
     }
   });
 }
+
+
+  function agregarCodigoInexistente(codigo, sucursal) {
+    if (codigo.trim() === "" || sucursal.trim() === "") {
+        return; // No hacer nada si el código o la sucursal están vacíos
+    }
+    // Enviar el código y la sucursal al backend para insertarlo en la tabla de la base de datos
+    $.ajax({
+        url: "https://saludapos.com/AdminPOS/Consultas/codigosinexistir.php",
+        type: 'POST',
+        data: { codigo: codigo, sucursal: sucursal },
+        dataType: 'json',
+        success: function (response) {
+            if (response.success) {
+                // Mostrar mensaje de éxito con SweetAlert2, incluyendo el nombre del producto
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto agregado',
+                    text: 'Producto "' + response.nombreProducto + '" agregado con éxito'
+                }).then(() => {
+                    // Ejecutar la función buscarArticulo con el código escaneado después de cerrar la alerta
+                    buscarArticulo(codigo);
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error al agregar el producto: ' + response.message
+                });
+            }
+        },
+        error: function (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al agregar el producto'
+            });
+        }
+    });
+}
+
 
 function limpiarCampo() {
   $('#codigoEscaneado').val('');
@@ -756,24 +772,25 @@ function limpiarCampo() {
 
 var isScannerInput = false;
 
-// Escucha el evento keyup en el campo de búsqueda
 $('#codigoEscaneado').keyup(function (event) {
-  if (event.which === 13) { // Verifica si la tecla presionada es "Enter"
-    if (!isScannerInput) { // Verifica si el evento no viene del escáner
+  if (event.which === 13) { // Verificar si la tecla presionada es "Enter"
+    if (!isScannerInput) { // Verificar si el evento no viene del escáner
       var codigoEscaneado = $('#codigoEscaneado').val();
-      buscarArticulo(codigoEscaneado);
-      event.preventDefault(); // Evita que el formulario se envíe al presionar "Enter"
+      agregarEscaneo(codigoEscaneado + '\n'); // Agregar el código escaneado al buffer de escaneo con un delimitador
+      event.preventDefault(); // Evitar que el formulario se envíe al presionar "Enter"
     }
-    isScannerInput = false; // Restablece la bandera del escáner
+    isScannerInput = false; // Restablecer la bandera del escáner
   }
 });
 
+// Configurar un intervalo para procesar el buffer de escaneo a intervalos regulares
+setInterval(procesarBuffer, scanInterval);
 // Agrega el autocompletado al campo de búsqueda
 $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Controladores/DespliegaAutoComplete.php',
+      url: 'Consultas/autocompletado.php',
       type: 'GET',
       dataType: 'json',
       data: {
@@ -833,79 +850,75 @@ function calcularDiferencia(fila) {
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
-  // Función para agregar un artículo
   function agregarArticulo(articulo) {
-    if (!articulo || !articulo.id) {
-      mostrarMensaje('El artículo no es válido');
-    } else if ($('#detIdModal' + articulo.id).length) {
-      mostrarMensaje('El artículo ya se encuentra incluido');
-    } else {
-      var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-      if (row.length) {
-        var cantidadActual = parseInt(row.find('.cantidad input').val());
-        var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
-        if (nuevaCantidad < 0) {
-          mostrarMensaje('La cantidad no puede ser negativa');
-          return;
-        }
-        row.find('.cantidad input').val(nuevaCantidad);
-        actualizarImporte(row);
-        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
-        
-      } else {
-       
-        var tr = '';
-        var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
-      
-
-        var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
-        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
-
-        tr += '<tr data-id="' + articulo.id + '">';
-        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
-        tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
-        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
-tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" style="font-size: 0.75rem !important;" type="number" name="StockActual[]" value="' + articulo.existencia + '" /></td>';
-tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="number" name="Diferencia[]" /></td>';
-
-        tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="' + articulo.precio + '"  /></td>';
-        tr += '<td class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" type="number"  name="PrecioCompra[]" value="' + articulo.preciocompra + '"  /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '"class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
-        tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]"style="font-size: 0.75rem !important;" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="importe_siniva_' + articulo.id + '" class="form-control importe_siniva" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="valordelniva_' + articulo.id + '" class="form-control valordelniva" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="ieps_' + articulo.id + '" class="form-control ieps" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
-
-
-        tr += '<td  style="visibility:collapse; display:none;" class="ResponsableInventario"> <input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]"readonly value="<?php echo $row['Nombre_Apellidos'] ?>">   </td>';
-        tr += '<td  style="visibility:collapse; display:none;" class="Fecha"> <input hidden type="text" class="form-control " name="FechaDeInventario[]"readonly value="<?php echo $fechaActual;?>"  </td>';
-        tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container"></td>';
-      
-
-        tr += '</tr>';
-
-        $('#tablaAgregarArticulos tbody').append(tr);
-        actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
-        calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
-       
-      }
-    }
-
-    $('#codigoEscaneado').val('');
-    $('#codigoEscaneado').focus();
+  if (!articulo || !articulo.id) {
+    mostrarMensaje('El artículo no es válido');
+    return;
   }
 
+  let row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
+  if (row.length) {
+    let cantidadActual = parseInt(row.find('.cantidad input').val());
+    let nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
+    if (nuevaCantidad < 0) {
+      mostrarMensaje('La cantidad no puede ser negativa');
+      return;
+    }
+    row.find('.cantidad input').val(nuevaCantidad);
+    mostrarToast('Cantidad actualizada para el producto: ' + articulo.descripcion);
+    actualizarImporte(row);
+    calcularDiferencia(row);
+    calcularIVA();
+    actualizarSuma();
+    mostrarTotalVenta();
+  } else {
+    let tr = `
+      <tr data-id="${articulo.id}">
+        <td class="codigo"><input class="form-control codigo-barras-input" readonly style="font-size: 0.75rem !important;" type="text" value="${articulo.codigo}" name="CodBarras[]" /></td>
+        <td class="descripcion"><textarea class="form-control descripcion-producto-input" readonly style="font-size: 0.75rem !important;" name="NombreDelProducto[]">${articulo.descripcion}</textarea></td>
+      
+<td  class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" name="PrecioCompra[]" value="${articulo.preciocompra}" /></td>
+        <td class="preciofijo"><input class="form-control preciou-input" readonly style="font-size: 0.75rem !important;" type="number" value="${articulo.precio}" /></td>
+        
+        <td style="display:none;" class="precio"><input hidden id="precio_${articulo.id}" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="${articulo.precio}" onchange="actualizarImporte($(this).parent().parent());" /></td>
+          <td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="${articulo.cantidad}" onchange="calcularDiferencia(this)" /></td>
+        <td style="display:none;"><input id="importe_${articulo.id}" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>
+        <td style="display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="${articulo.id}" name="IdBasedatos[]" /></td>
+        <td style="display:none;" class="ResponsableInventario"><input hidden id="VendedorFarma" type="text" class="form-control" name="AgregoElVendedor[]" readonly value="<?php echo $row['Nombre_Apellidos']; ?>" /></td>
+        <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal']; ?>" /></td>
+        <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POS" /></td>
+        <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Saluda" /></td>
+        <td style="display:none;" class="Fecha"><input hidden type="text" class="form-control" name="FechaAprox[]" readonly value="<?php echo $fechaActual; ?>" /></td>
+        <td><div class="btn-container"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button></div></td>
+       <td style="display:none;"> <input type="text" name="SucursalTraspasa[]" hidden value="21" class="form-control" ></td>
+     <td style="display:none;"><input type="text" class="form-control "  hidden name="GeneradoPor[]" value="<?php echo $row['Nombre_Apellidos']?>"readonly  ></td>
+       <td style="display:none;"> <input type="text" class="form-control " hidden  name="Empresa[]" value="<?php echo $row['ID_H_O_D']?>"readonly  ></td>
+        <td style="display:none;"><input type="text"  hidden name="Proveedor1[]" id="proveedor1" class="form-control" ></td>
+        <td style="display:none;"><input type="text" hidden name="Proveedor2[]" id="proveedor2" class="form-control" ></td>
+        <td style="display:none;"><input type="text" hidden name="Estatus[]" value="Generado" class="form-control" ></td>
+        <td style="display:none;"><input type="text" hidden name="Existencia1[]" value="0" class="form-control" ></td>
+        <td style="display:none;"><input type="text" hidden name="Existencia2[]" value="0" class="form-control" ></td>
+        <td style="display:none;"><input type="text" hidden name="Recibio[]" value="" class="form-control" ></td>
+        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDelTraspaso[]" readonly  value="<?php echo $NumeroOrdenTraspaso?>"  > </td>
+        <td style="display:none;"><input type="text" class="form-control " hidden  name="ProveedorDelTraspaso[]" readonly  value="<?php echo $ProveedorFijo?>"  ></td>
+        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDeFacturaTraspaso[]" readonly  value="<?php echo $NumeroDeFacturaTrapaso?>"  > </td>
+     
+     
+        </tr>`;
+
+    $('#tablaAgregarArticulos tbody').prepend(tr);
+    let newRow = $('#tablaAgregarArticulos tbody tr:first-child');
+    actualizarImporte(newRow);
+  
+    calcularIVA();
+    actualizarSuma();
+    mostrarTotalVenta();
+  }
+
+  limpiarCampo();
+  $('#codigoEscaneado').focus();
+}
+
   
 
 
@@ -913,7 +926,13 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
 
 
 
-  
+  function mostrarToast(mensaje) {
+  var toast = $('<div class="toast"></div>').text(mensaje);
+  $('body').append(toast);
+  toast.fadeIn(400).delay(3000).fadeOut(400, function() {
+    $(this).remove();
+  });
+}
   function actualizarImporte(row) {
   var cantidad = parseInt(row.find('.cantidad-vendida-input').val());
   var precio = parseFloat(row.find('.precio input').val());
@@ -943,8 +962,8 @@ tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-dife
   // Llamar a la función para recalcular la suma de importes
   actualizarSuma();
   mostrarTotalVenta();
-  mostrarSubTotal();
-  mostrarIvaTotal();
+
+
 }
 
 
@@ -992,12 +1011,97 @@ function eliminarFila(element) {
   calcularIVA();
   actualizarSuma();
   mostrarTotalVenta();
-  mostrarSubTotal();
-  mostrarIvaTotal();
+ 
+
 }
 
 
 </script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Función para actualizar el total
+            function updateTotal() {
+                var total = 0;
+                var inputs = document.querySelectorAll('.cantidad-vendida-input');
+                console.log('Inputs actuales:', inputs);
+
+                // Recorre todos los inputs y suma sus valores
+                inputs.forEach(function(input) {
+                    var value = parseFloat(input.value);
+                    console.log('Valor del input:', value);
+                    if (!isNaN(value)) {
+                        total += value;
+                    }
+                });
+
+                // Actualiza el input con id "resultadopiezas" con el total calculado
+                console.log('Total calculado:', total);
+                document.getElementById('resultadopiezas').value = total;
+            }
+
+            // Añade un event listener a cada input para escuchar cambios
+            function addInputListeners() {
+                var inputs = document.querySelectorAll('.cantidad-vendida-input');
+                inputs.forEach(function(input) {
+                    input.addEventListener('input', updateTotal);
+                });
+            }
+
+            // Observer para detectar cambios en el DOM y agregar event listeners a nuevos inputs
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && node.querySelectorAll) {
+                            var newInputs = node.querySelectorAll('.cantidad-vendida-input');
+                            newInputs.forEach(function(input) {
+                                input.addEventListener('input', updateTotal);
+                            });
+                        }
+                    });
+                    updateTotal(); // Actualizar el total si se agrega un nuevo nodo
+                });
+            });
+
+            // Configura el observer para observar cambios en el body
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            // Añade event listeners a los inputs existentes al cargar la página
+            addInputListeners();
+
+            // Llama a updateTotal al cargar la página por si ya hay valores predefinidos
+            updateTotal();
+        });
+    </script>
+
+
+
+<script>
+            document.addEventListener("DOMContentLoaded", function(){
+                // Invocamos cada 5 segundos ;)
+                const milisegundos = 600 *1000;
+                setInterval(function(){
+                    // No esperamos la respuesta de la petición porque no nos importa
+                    fetch("./Refrescacontenido.php");
+                },milisegundos);
+            });
+        </script>
+<style>
+.toast {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  opacity: 0.9;
+  z-index: 1000;
+  display: none;
+}
+</style>
 
 <script src="js/FinalizaInventario.js"></script>
 
