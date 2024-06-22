@@ -25,7 +25,7 @@ include_once "Controladores/ControladorUsuario.php";
         <?php include_once "Menu.php" ?>
 
         <!-- Content Start -->
-        <div class="content">
+        
             <!-- Navbar Start -->
         <?php include "navbar.php";?>
             <!-- Navbar End -->
