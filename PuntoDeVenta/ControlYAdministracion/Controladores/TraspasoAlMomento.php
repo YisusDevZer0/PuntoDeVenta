@@ -1,5 +1,5 @@
 <?php
-include_once 'db_connection.php';
+include_once 'db_connect.php';
 
 // Contar el número de productos
 $contador = count($_POST["Idprod"]);
