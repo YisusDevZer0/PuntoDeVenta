@@ -1,6 +1,12 @@
 <?php
 include_once "db_connect.php";
 
+// Verificar si hay datos recibidos
+if (!isset($_POST["Idprod"]) || !isset($_POST["CodBarra"]) || !isset($_POST["NombreProducto"])) {
+    echo json_encode(['status' => 'error', 'message' => 'No se recibieron datos adecuados.']);
+    exit;
+}
+
 // Contar el número de productos
 $contador = count($_POST["Idprod"]);
 $ProContador = 0;
@@ -16,6 +22,7 @@ for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["Idprod"][$i]) && !empty($_POST["CodBarra"][$i]) && !empty($_POST["NombreProducto"][$i])) {
         $ProContador++;
         $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Agregar valores al array de valores
         $values = array_merge($values, [
             $_POST["Idprod"][$i], $_POST["Idprod"][$i], $_POST["NumeroDelTraspaso"][$i], $_POST["NumeroDeFacturaTraspaso"][$i],
             $_POST["CodBarra"][$i], $_POST["NombreProducto"][$i], $_POST["SucursalDestino"][$i], $_POST["PrecioVenta"][$i],
@@ -25,21 +32,33 @@ for ($i = 0; $i < $contador; $i++) {
     }
 }
 
-if ($ProContador != 0) {
-    $query .= implode(", ", $queryValue);
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param(str_repeat('s', count($values)), ...$values);
-
-    if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Registro(s) agregado correctamente.']);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Error al agregar los registros.']);
-    }
-
-    $stmt->close();
-} else {
+// Verificar si se encontraron productos válidos para agregar
+if ($ProContador == 0) {
     echo json_encode(['status' => 'error', 'message' => 'No se encontraron productos válidos para agregar.']);
+    exit;
 }
 
+// Construir la consulta final
+$query .= implode(", ", $queryValue);
+
+// Preparar la consulta y ejecutarla
+$stmt = $conn->prepare($query);
+if ($stmt === false) {
+    echo json_encode(['status' => 'error', 'message' => 'Error al preparar la consulta: ' . $conn->error]);
+    exit;
+}
+
+// Bind parameters
+$types = str_repeat('s', count($values)); // Todos los parámetros son strings
+$stmt->bind_param($types, ...$values);
+
+// Ejecutar la consulta
+if ($stmt->execute()) {
+    echo json_encode(['status' => 'success', 'message' => 'Registro(s) agregado correctamente.']);
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+}
+
+$stmt->close();
 $conn->close();
 ?>
