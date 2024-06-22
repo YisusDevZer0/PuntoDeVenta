@@ -408,7 +408,7 @@ if ($ProveedorFijo === "CEDIS") {
                           <div class="input-group mb-3">
                             <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clock"></i></span>
                             </div>
-                            <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
+                            <input type="number" class="form-control " id="resultadopiezas"  readonly  >
 
 
                           </div>
@@ -474,7 +474,7 @@ if ($ProveedorFijo === "CEDIS") {
                       <form action="javascript:void(0)" method="post" id="Generamelostraspasos">
                       <div class="text-center">
         <button type="submit" class="btn btn-primary">Enviar Información</button>
-    </div>
+    </div> <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
@@ -893,8 +893,7 @@ function calcularDiferencia(fila) {
        <td style="display:none;"> <input type="text" name="SucursalTraspasa[]" hidden value="21" class="form-control" ></td>
      <td style="display:none;"><input type="text" class="form-control "  hidden name="GeneradoPor[]" value="<?php echo $row['Nombre_Apellidos']?>"readonly  ></td>
        <td style="display:none;"> <input type="text" class="form-control " hidden  name="Empresa[]" value="<?php echo $row['Licencia']?>"readonly  ></td>
-        <td style="display:none;"><input type="text"  hidden name="Proveedor1[]" id="proveedor1" class="form-control" ></td>
-        <td style="display:none;"><input type="text" hidden name="Proveedor2[]" id="proveedor2" class="form-control" ></td>
+
         <td style="display:none;"><input type="text" hidden name="Estatus[]" value="Generado" class="form-control" ></td>
 
         <td style="display:none;"><input type="text" hidden name="Recibio[]" value="" class="form-control" ></td>
