@@ -471,7 +471,7 @@ if ($ProveedorFijo === "CEDIS") {
                           margin-bottom: 5px !important;
                         }
                       </style>
-                      <form action="javascript:void(0)" target="print_popup" method="post" id="VentasAlmomento">
+                      <form action="javascript:void(0)" method="post" id="Generamelostraspasos">
                       <div class="text-center">
         <button type="submit" class="btn btn-primary">Enviar Información</button>
     </div>
@@ -1103,7 +1103,7 @@ function eliminarFila(element) {
 }
 </style>
 
-<script src="js/FinalizaInventario.js"></script>
+<script src="js/RealizaTraspasos.js"></script>
 
 <!-- Control Sidebar -->
 
