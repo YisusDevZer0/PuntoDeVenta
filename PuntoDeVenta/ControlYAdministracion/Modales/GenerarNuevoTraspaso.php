@@ -38,8 +38,7 @@
 
 <div class="form-group">
   <label for="exampleInputEmail1">Elija sucursal</label>
-  <div class="input-group-prepend">
-    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-clinic-medical"></i></span>
+  
     <select id="sucursalconorden" name="SucursalConOrdenDestino" class="form-control" required>
       <option value="">Seleccione una Sucursal:</option>
       <?php
@@ -54,16 +53,14 @@
 
 <div class="form-group">
   <label for="exampleInputEmail1"># de orden de traspaso</label>
-  <div class="input-group-prepend">
-    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-list-ol"></i></span>
+  
     <input type="number" value="<?php echo  $totalmonto_con_ceros?>" class="form-control" id="NumOrden" name="NumOrden" readonly>
   </div>
 </div>
 
 <div class="form-group">
   <label for="exampleInputEmail1">Sucursal</label>
-  <div class="input-group-prepend">
-    <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+ 
     <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
   </div>
 </div>
