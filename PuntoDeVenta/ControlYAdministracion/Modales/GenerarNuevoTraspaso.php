@@ -47,7 +47,7 @@
   <select id = "sucursalconorden" name="SucursalConOrdenDestino" class = "form-control" required  >
   <option value="">Seleccione una Sucursal:</option>
                                                <?php
-          $query = $conn -> query ("SELECT ID_Sucursal,Nombre_Sucursal FROM Sucursales";
+          $query = $conn -> query ("SELECT ID_Sucursal,Nombre_Sucursal FROM Sucursales");
         
           while ($valores = mysqli_fetch_array($query)) {
             echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
