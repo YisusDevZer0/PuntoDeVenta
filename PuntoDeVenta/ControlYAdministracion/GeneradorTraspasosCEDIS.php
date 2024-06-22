@@ -60,7 +60,7 @@ table td {
 <?php include_once "Menu.php" ?>
 
 <!-- Content Start -->
-<div class="content">
+
     <!-- Navbar Start -->
 <?php include "navbar.php";?>
 
