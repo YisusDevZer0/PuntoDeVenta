@@ -53,8 +53,8 @@
 </div>
 
 <div class="form-group">
-  <label for="exampleInputEmail1">Sucursal</label>
-  <input type="text" name="sucursalLetras" id="sucursalLetras" class="form-control">
+ 
+  <input type="text" hidden name="sucursalLetras" id="sucursalLetras" class="form-control">
 </div>
 
 <button type="submit" id="registrotraspaso" value="Guardar" class="btn btn-success">
