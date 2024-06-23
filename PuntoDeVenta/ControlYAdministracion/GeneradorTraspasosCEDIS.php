@@ -899,7 +899,7 @@ function calcularDiferencia(fila) {
         <td style="display:none;"><input type="text" hidden name="Recibio[]" value="" class="form-control" ></td>
         <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDelTraspaso[]" readonly  value="<?php echo $NumeroOrdenTraspaso?>"  > </td>
         <td style="display:none;"><input type="text" class="form-control " hidden  name="ProveedorDelTraspaso[]" readonly  value="<?php echo $ProveedorFijo?>"  ></td>
-        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDeFacturaTraspaso[]" readonly  value="<?php echo $NumeroDeFacturaTrapaso?>"  > </td>
+        <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDeFacturaTraspaso[]" readonly  value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>"  > </td>
      
      
         </tr>`;
