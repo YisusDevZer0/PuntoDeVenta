@@ -2,9 +2,31 @@
 include_once "db_connect.php";
 
 // Verificar si hay datos recibidos adecuados
-if (!isset($_POST["CodBarras"]) || !isset($_POST["NombreDelProducto"]) || !isset($_POST["PrecioCompra"]) || !isset($_POST["PrecioVenta"]) || !isset($_POST["Contabilizado"]) || !isset($_POST["IdBasedatos"]) || !isset($_POST["AgregoElVendedor"]) || !isset($_POST["Fk_sucursal"]) || !isset($_POST["Sistema"]) || !isset($_POST["ID_H_O_D"]) || !isset($_POST["FechaAprox"]) || !isset($_POST["GeneradoPor"]) ||  !isset($_POST["Estatus"]) || !isset($_POST["Empresa"]) || !isset($_POST["resultadepiezas"]) || !isset($_POST["Fecha_recepcion"])) {
-    echo json_encode(['status' => 'error', 'message' => 'No se recibieron todos los datos necesarios.', 'received_data' => $_POST]);
-    exit;
+$required_fields = [
+    "CodBarras",
+    "NombreDelProducto",
+    "PrecioCompra",
+    "PrecioVenta",
+    "Contabilizado",
+    "IdBasedatos",
+    "AgregoElVendedor",
+    "Fk_sucursal",
+    "Sistema",
+    "ID_H_O_D",
+    "FechaAprox",
+    "GeneradoPor",
+    "Estatus",
+    "Empresa",
+    "resultadepiezas",
+    "Fecha_recepcion",
+    "NumeroDeFacturaTraspaso"
+];
+
+foreach ($required_fields as $field) {
+    if (!isset($_POST[$field])) {
+        echo json_encode(['status' => 'error', 'message' => "No se recibió el campo: $field", 'received_data' => $_POST]);
+        exit;
+    }
 }
 
 // Contar el número de productos
@@ -19,7 +41,7 @@ $values = [];
 
 // Crear la parte de los valores de la consulta
 for ($i = 0; $i < $contador; $i++) {
-    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i])  && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && !empty($_POST["Fecha_recepcion"][$i])) {
+    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i])  && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && !empty($_POST["Fecha_recepcion"][$i]) && !empty($_POST["NumeroDeFacturaTraspaso"][$i])) {
         $ProContador++;
         $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Agregar valores al array de valores
@@ -42,8 +64,14 @@ for ($i = 0; $i < $contador; $i++) {
             $_POST["Fecha_recepcion"][$i]
         ]);
     } else {
-        // Si falta algún dato, mostrar el índice del producto
-        echo json_encode(['status' => 'error', 'message' => 'Faltan datos en el producto con índice ' . $i, 'received_data' => $_POST]);
+        // Si falta algún dato, mostrar el índice del producto y qué dato falta
+        $missing_fields = [];
+        foreach ($required_fields as $field) {
+            if (empty($_POST[$field][$i])) {
+                $missing_fields[] = $field;
+            }
+        }
+        echo json_encode(['status' => 'error', 'message' => 'Faltan datos en el producto con índice ' . $i . ': ' . implode(', ', $missing_fields), 'received_data' => $_POST]);
         exit;
     }
 }
