@@ -211,44 +211,36 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
  "aoColumns": [
     { mData: 'Cod_Barra' },
-       { mData: 'Clave_adicional' },
-       { mData: 'Clave_Levic' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'Precio_Venta' },
-       { mData: 'Nom_Serv' },
-       { mData: 'Tipo' },
-       { mData: 'Proveedor1' },
-       { mData: 'Proveedor2' },
-       { mData: 'Sucursal' },
-       { mData: 'UltimoMovimiento' },
-       { mData: 'Existencias_R' },
-       { mData: 'Min_Existencia' },
-       { mData: 'Max_Existencia' },
-       {mData: "Existencias_R",
+    { mData: 'Clave_adicional' },
+    { mData: 'Clave_Levic' },
+    { mData: 'Nombre_Prod' },
+    { mData: 'Precio_Venta' },
+    { mData: 'Nom_Serv' },
+    { mData: 'Tipo' },
+    { mData: 'Proveedor1' },
+    { mData: 'Proveedor2' },
+    { mData: 'Sucursal' },
+    { mData: 'UltimoMovimiento' },
+    { mData: 'Existencias_R' },
+    { mData: 'Min_Existencia' },
+    { mData: 'Max_Existencia' },
+    { 
+        mData: "Existencias_R",
         "searchable": true,
-        "orderable":true,
+        "orderable": true,
         "render": function (data, type, row) {
-            if ( row.Existencias_R < row.Min_Existencia) {
-
-            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+            if (row.Existencias_R < row.Min_Existencia) {
+                return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+            } else if (row.Existencias_R > row.Max_Existencia) {
+                return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>';
+            } else {
+                return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+            }
         }
-        else if ( row.Existencias_R > row.Max_Existencia) {
-return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
-        }
-            else {
- 
-    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
- 
-}
-        }
- 
     },
-       { mData: 'Editar' },
-       { mData: 'Eliminar' },
-      
-  
-      ],
-     
+    { mData: 'Editar' },
+    { mData: 'Eliminar' }
+],
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
   
   "language": {
@@ -310,6 +302,9 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 <th style="background-color:#0057b8 !important;">Min</th>
 <th style="background-color:#0057b8 !important;">Max</th>
 <th style="background-color:#0057b8 !important;">Estatus</th>
+<th style="background-color:#0057b8 !important;">Editar</th>
+<th style="background-color:#0057b8 !important;">Eliminar</th>
+
 
     <th>Editar</th> 
     <th>Eliminar</th> 

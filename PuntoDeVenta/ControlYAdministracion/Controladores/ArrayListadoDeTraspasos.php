@@ -4,16 +4,32 @@ include("db_connection.php");
 include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
-$sql = "SELECT Stock_POS.Folio_Prod_Stock,Stock_POS.Clave_adicional,Stock_POS.ID_Prod_POS,Stock_POS.AgregadoEl,Stock_POS.Clave_adicional,Stock_POS.Clave_Levic,
-Stock_POS.Cod_Barra,Stock_POS.Nombre_Prod,Stock_POS.Tipo_Servicio,Stock_POS.Tipo,Stock_POS.Fk_sucursal,
-Stock_POS.Max_Existencia,Stock_POS.Min_Existencia, Stock_POS.Existencias_R,Stock_POS.Proveedor1,
-Stock_POS.Proveedor2,Stock_POS.Estatus,Stock_POS.ID_H_O_D, Sucursales.ID_Sucursal,
-Sucursales.Nombre_Sucursal,Servicios_POS.Servicio_ID,Servicios_POS.Nom_Serv, Productos_POS.ID_Prod_POS,
-Productos_POS.Precio_Venta,Productos_POS.Precio_C 
-FROM Stock_POS
-INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
-INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio= Servicios_POS.Servicio_ID
-INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS =Stock_POS.ID_Prod_POS";
+$sql = "SELECT 
+    tg.ID_Traspaso_Generado, 
+    tg.Num_Orden, 
+    tg.Num_Factura, 
+    tg.Cod_Barra, 
+    tg.Nombre_Prod, 
+    tg.Fk_SucDestino, 
+    tg.Precio_Venta, 
+    tg.Precio_Compra, 
+    tg.Cantidad_Enviada, 
+    tg.FechaEntrega, 
+    tg.TraspasoGeneradoPor, 
+    tg.TraspasoRecibidoPor, 
+    tg.Estatus, 
+    tg.AgregadoPor, 
+    tg.AgregadoEl, 
+    tg.ID_H_O_D, 
+    tg.TotaldePiezas, 
+    tg.Fecha_recepcion,
+    s.Nombre_Sucursal AS SucursalDestino
+FROM 
+    Traspasos_generados tg
+INNER JOIN 
+    Sucursales s ON tg.Fk_SucDestino = s.ID_Sucursal
+WHERE 
+    MONTH(tg.AgregadoEl) = MONTH(CURRENT_DATE) AND YEAR(tg.AgregadoEl) = YEAR(CURRENT_DATE)";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -31,23 +47,27 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
+        "ID_Traspaso_Generado" => $fila["ID_Traspaso_Generado"],
+        "Num_Orden" => $fila["Num_Orden"],
+        "Num_Factura" => $fila["Num_Factura"],
         "Cod_Barra" => $fila["Cod_Barra"],
-        "Clave_adicional" => $fila["Clave_adicional"],
-        "Clave_Levic" => $fila["Clave_Levic"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
+        "Fk_SucDestino" => $fila["Fk_SucDestino"],
         "Precio_Venta" => $fila["Precio_Venta"],
-        "Nom_Serv" => $fila["Nom_Serv"],
-        "Tipo" => $fila["Tipo"],
-        "Proveedor1" => $fila["Proveedor1"],
-        "Proveedor2" => $fila["Proveedor2"],
-        "Sucursal" => $fila["Nombre_Sucursal"],
-        "UltimoMovimiento" => $fila["AgregadoEl"],
-        "Existencias_R" => $fila["Existencias_R"],
-        "Min_Existencia" => $fila["Min_Existencia"],
-        "Max_Existencia" => $fila["Max_Existencia"],
-        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-       
+        "Precio_Compra" => $fila["Precio_Compra"],
+        "Cantidad_Enviada" => $fila["Cantidad_Enviada"],
+        "FechaEntrega" => $fila["FechaEntrega"],
+        "TraspasoGeneradoPor" => $fila["TraspasoGeneradoPor"],
+        "TraspasoRecibidoPor" => $fila["TraspasoRecibidoPor"],
+        "Estatus" => $fila["Estatus"],
+        "AgregadoPor" => $fila["AgregadoPor"],
+        "AgregadoEl" => $fila["AgregadoEl"],
+        "ID_H_O_D" => $fila["ID_H_O_D"],
+        "TotaldePiezas" => $fila["TotaldePiezas"],
+        "Fecha_recepcion" => $fila["Fecha_recepcion"],
+        "SucursalDestino" => $fila["SucursalDestino"],
+        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Traspaso_Generado"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-edit'></i></a>",
+        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["ID_Traspaso_Generado"]) . "' type='button' class='btn btn-danger btn-sm'><i class='fas fa-trash'></i></a>",
     ];
 }
 
