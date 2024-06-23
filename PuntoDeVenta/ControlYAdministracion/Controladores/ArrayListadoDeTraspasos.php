@@ -66,9 +66,7 @@ while ($fila = $result->fetch_assoc()) {
         "TotaldePiezas" => $fila["TotaldePiezas"],
         "Fecha_recepcion" => $fila["Fecha_recepcion"],
         "SucursalDestino" => $fila["SucursalDestino"],
-        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Traspaso_Generado"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-edit'></i></a>",
-        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["ID_Traspaso_Generado"]) . "' type='button' class='btn btn-danger btn-sm'><i class='fas fa-trash'></i></a>",
-    ];
+           ];
 }
 
 // Cerrar la declaración

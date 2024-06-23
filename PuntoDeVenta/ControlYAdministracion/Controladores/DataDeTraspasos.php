@@ -210,36 +210,64 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
  "aoColumns": [
-    { mData: 'Cod_Barra' },
-    { mData: 'Clave_adicional' },
-    { mData: 'Clave_Levic' },
-    { mData: 'Nombre_Prod' },
-    { mData: 'Precio_Venta' },
-    { mData: 'Nom_Serv' },
-    { mData: 'Tipo' },
-    { mData: 'Proveedor1' },
-    { mData: 'Proveedor2' },
-    { mData: 'Sucursal' },
-    { mData: 'UltimoMovimiento' },
-    { mData: 'Existencias_R' },
-    { mData: 'Min_Existencia' },
-    { mData: 'Max_Existencia' },
-    { 
-        mData: "Existencias_R",
-        "searchable": true,
-        "orderable": true,
-        "render": function (data, type, row) {
-            if (row.Existencias_R < row.Min_Existencia) {
-                return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
-            } else if (row.Existencias_R > row.Max_Existencia) {
-                return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>';
-            } else {
-                return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
-            }
-        }
-    },
-    { mData: 'Editar' },
-    { mData: 'Eliminar' }
+  {
+    mData: 'ID_Traspaso_Generado',
+},
+{
+    mData: 'Num_Orden',
+},
+{
+    mData: 'Num_Factura',
+},
+{
+    mData: 'Cod_Barra',
+},
+{
+    mData: 'Nombre_Prod',
+},
+{
+    mData: 'Fk_SucDestino',
+},
+{
+    mData: 'Precio_Venta',
+},
+{
+    mData: 'Precio_Compra',
+},
+{
+    mData: 'Cantidad_Enviada',
+},
+{
+    mData: 'FechaEntrega',
+},
+{
+    mData: 'TraspasoGeneradoPor',
+},
+{
+    mData: 'TraspasoRecibidoPor',
+},
+{
+    mData: 'Estatus',
+},
+{
+    mData: 'AgregadoPor',
+},
+{
+    mData: 'AgregadoEl',
+},
+{
+    mData: 'ID_H_O_D',
+},
+{
+    mData: 'TotaldePiezas',
+},
+{
+    mData: 'Fecha_recepcion',
+},
+{
+    mData: 'SucursalDestino',
+}
+
 ],
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
   
@@ -287,23 +315,27 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th style="background-color:#0057b8 !important;">Clave</th>
-<th style="background-color:#0057b8 !important;">Cod interno</th>
-<th style="background-color:#0057b8 !important;">Cod levic</th>
-<th style="background-color:#0057b8 !important;">Nombre</th>
-<th style="background-color:#0057b8 !important;">PV</th>
-<th style="background-color:#0057b8 !important;">Servicio</th>
-<th style="background-color:#0057b8 !important;">Tipo</th>
-<th style="background-color:#0057b8 !important;">Proveedor 1</th>
-<th style="background-color:#0057b8 !important;">Proveedor 2</th>
-<th style="background-color:#0057b8 !important;">Sucursal</th>
-<th style="background-color:#0057b8 !important;">Ultimo movimiento registrado</th>
-<th style="background-color:#0057b8 !important;">Stock</th>
-<th style="background-color:#0057b8 !important;">Min</th>
-<th style="background-color:#0057b8 !important;">Max</th>
+<th style="background-color:#0057b8 !important;">ID_Traspaso_Generado</th>
+<th style="background-color:#0057b8 !important;">Num_Orden</th>
+<th style="background-color:#0057b8 !important;">Num_Factura</th>
+<th style="background-color:#0057b8 !important;">Cod_Barra</th>
+<th style="background-color:#0057b8 !important;">Nombre_Prod</th>
+<th style="background-color:#0057b8 !important;">Fk_SucDestino</th>
+<th style="background-color:#0057b8 !important;">Precio_Venta</th>
+<th style="background-color:#0057b8 !important;">Precio_Compra</th>
+<th style="background-color:#0057b8 !important;">Cantidad_Enviada</th>
+<th style="background-color:#0057b8 !important;">FechaEntrega</th>
+<th style="background-color:#0057b8 !important;">TraspasoGeneradoPor</th>
+<th style="background-color:#0057b8 !important;">TraspasoRecibidoPor</th>
 <th style="background-color:#0057b8 !important;">Estatus</th>
-<th style="background-color:#0057b8 !important;">Editar</th>
-<th style="background-color:#0057b8 !important;">Eliminar</th>
+<th style="background-color:#0057b8 !important;">AgregadoPor</th>
+<th style="background-color:#0057b8 !important;">AgregadoEl</th>
+<th style="background-color:#0057b8 !important;">ID_H_O_D</th>
+<th style="background-color:#0057b8 !important;">TotaldePiezas</th>
+<th style="background-color:#0057b8 !important;">Fecha_recepcion</th>
+<th style="background-color:#0057b8 !important;">SucursalDestino</th>
+
+
 
 
     <th>Editar</th> 
