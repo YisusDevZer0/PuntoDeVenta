@@ -30,8 +30,8 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Botones individuales para cada fila
     $acciones = [
-        "<a href='https://controlfarmacia.com/AdminPOS/EdicionDatosProducto?editprod=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-warning btn-sm' style='margin-right: 5px;'>Editar datos <i class='fas fa-pencil-alt'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/HistorialProducto?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-secondary btn-sm' style='margin-right: 5px;'>Ver movimientos <i class='fas fa-history'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/EdicionDatosProducto?editprod=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-warning btn-sm' style='margin-right: 5px;'> <i class='fas fa-pencil-alt'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/HistorialProducto?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-secondary btn-sm' style='margin-right: 5px;'> <i class='fas fa-history'></i></a>",
     ];
 
     // Construir acciones como HTML
