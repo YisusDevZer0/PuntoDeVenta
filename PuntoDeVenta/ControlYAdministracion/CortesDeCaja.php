@@ -13,6 +13,10 @@ include_once "Controladores/ControladorUsuario.php";
 
     <?php
    include "header.php";?>
+    <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <body>
     
         <!-- Spinner End -->
@@ -33,10 +37,8 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nuevo fondo 
-</button> <br>
-            <div id="Cajas"></div>
+         
+            <div id="CajasCerradas"></div>
             </div></div></div></div>
          
 <script src="js/CajasCerradas.js"></script>
