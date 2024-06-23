@@ -28,25 +28,18 @@ $result = mysqli_query($conn, $sql);
 
 $data = [];
 while ($fila = $result->fetch_assoc()) {
-    // Construir acciones como un array de botones
+    // Botones individuales para cada fila
     $acciones = [
-        "<a href='https://controlfarmacia.com/AdminPOS/AsignacionSucursalesStock?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-edit dropdown-item'>Asignar en sucursales <i class='fas fa-clinic-medical'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/DistribucionSucursales?Disid=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-VerDistribucion dropdown-item'>Consultar distribución <i class='fas fa-table'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/EdicionDatosProducto?editprod=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-editProd dropdown-item'>Editar datos <i class='fas fa-pencil-alt'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/HistorialProducto?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-History dropdown-item'>Ver movimientos <i class='fas fa-history'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/MaximoYMinimo?Disid=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-Delete dropdown-item'>Actualizar mínimo y máximo <i class='fas fa-list-ol'></i></a>",
-        "<a href='https://controlfarmacia.com/AdminPOS/CambiaProveedor?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn-Delete dropdown-item'>Cambio de proveedores <i class='fas fa-truck-loading'></i></a>"
+        "<a href='https://controlfarmacia.com/AdminPOS/AsignacionSucursalesStock?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-primary btn-sm' style='margin-right: 5px;'>Asignar en sucursales <i class='fas fa-clinic-medical'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/DistribucionSucursales?Disid=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-info btn-sm' style='margin-right: 5px;'>Consultar distribución <i class='fas fa-table'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/EdicionDatosProducto?editprod=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-warning btn-sm' style='margin-right: 5px;'>Editar datos <i class='fas fa-pencil-alt'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/HistorialProducto?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-secondary btn-sm' style='margin-right: 5px;'>Ver movimientos <i class='fas fa-history'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/MaximoYMinimo?Disid=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-success btn-sm' style='margin-right: 5px;'>Actualizar mínimo y máximo <i class='fas fa-list-ol'></i></a>",
+        "<a href='https://controlfarmacia.com/AdminPOS/CambiaProveedor?idProd=" . base64_encode($fila["IdProdCedis"]) . "' class='btn btn-danger btn-sm' style='margin-right: 5px;'>Cambio de proveedores <i class='fas fa-truck-loading'></i></a>"
     ];
 
     // Construir acciones como HTML
-    $acciones_html = "<div class='dropdown'>
-                        <button class='btn btn-primary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                            Acciones
-                        </button>
-                        <div class='dropdown-menu'>
-                            " . implode('', $acciones) . "
-                        </div>
-                    </div>";
+    $acciones_html = implode('', $acciones);
 
     // Agregar datos al array $data
     $data[] = [
