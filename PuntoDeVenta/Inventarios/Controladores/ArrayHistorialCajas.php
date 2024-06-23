@@ -1,56 +1,96 @@
-
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include("db_connect.php");
 include_once "ControladorUsuario.php";
 
-$sql = "SELECT Cajas_POS.ID_Caja, Cajas_POS.Cantidad_Fondo, Cajas_POS.Empleado, Cajas_POS.Turno, Cajas_POS.Sucursal, Cajas_POS.Estatus,
-Cajas_POS.CodigoEstatus, Cajas_POS.Fecha_Apertura, Cajas_POS.Valor_Total_Caja, Cajas_POS.ID_H_O_D,
-Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal
-FROM Cajas_POS, Sucursales
-WHERE Cajas_POS.Sucursal = Sucursales.ID_Sucursal
-AND YEAR(Cajas_POS.Fecha_Apertura) = YEAR(NOW())
-ORDER BY Cajas_POS.Fecha_Apertura DESC";
- 
-$result = mysqli_query($conn, $sql);
- 
-$c=0;
- 
-while($fila=$result->fetch_assoc()){
-    $data[$c]["IdCaja"] = $fila["ID_Caja"];
-    $data[$c]["Empleado"] = $fila["Empleado"];
-    $data[$c]["Sucursal"] = $fila["Nombre_Sucursal"];
-    $data[$c]["Turno"] = $fila["Turno"];
-    $data[$c]["Fondodecaja"] = $fila["Cantidad_Fondo"];
-    $data[$c]["Fecha"] = $fila["Fecha_Apertura"];
-   
-    $data[$c]["Estatus"]= '<button class="btn btn-default btn-sm" style="' . $fila["CodigoEstatus"] . '">' . $fila["Estatus"] . '</button>';
-    $data[$c]["Cantidadalcierre"] = $fila["Valor_Total_Caja"];
-   
-   
-    $data[$c]["Acciones"] = '<div class="btn-group">
-    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <i class="fas fa-th-list fa-1x"></i>
-    </button>
-    <div class="dropdown-menu">
- 
-      <a data-id="' . $fila["ID_Caja"] . '" class="btn-Movimientos dropdown-item">Historial caja <i class="fas fa-history"></i></a>
-      <a data-id="' . $fila["ID_Caja"] . '" class="btn-Ventas dropdown-item">Ventas realizadas en caja<i class="fas fa-receipt"></i></a>
-      <a data-id="' . $fila["ID_Caja"] . '" style="' . ($fila['Estatus'] == 'Abierta' ? 'display:block;' : 'display:none;') . '" class="btn-Cortes dropdown-item">Realizar Corte<i class="fas fa-cash-register"></i></a>
-    </div>
-  </div>';
-    
-    
-    $c++; 
- 
+// Consulta segura utilizando una sentencia preparada
+$sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+       Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+       Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+FROM Cajas
+INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal";
+
+// Preparar la declaración
+$stmt = $conn->prepare($sql);
+
+// Ejecutar la declaración
+$stmt->execute();
+
+// Obtener resultado
+$result = $stmt->get_result();
+
+// Inicializar array para almacenar los resultados
+$data = [];
+
+// Procesar resultados
+while ($fila = $result->fetch_assoc()) {
+    // Definir el estilo y el texto según el valor de asignación
+    $asignacion_estilo = '';
+    $asignacion_leyenda = '';
+    switch ($fila["Asignacion"]) {
+        case 0:
+            $asignacion_estilo = 'background-color: #1e90ff; color: white;'; // Azul oscuro
+            $asignacion_leyenda = 'Bloqueada';
+            break;
+        case 1:
+            $asignacion_estilo = 'background-color: green; color: white;'; // Verde
+            $asignacion_leyenda = 'Activa';
+            break;
+        case 2:
+            $asignacion_estilo = 'background-color: orange; color: white;'; // Naranja
+            $asignacion_leyenda = 'Inactiva';
+            break;
+        default:
+            $asignacion_estilo = 'background-color: black; color: white;'; // Estilo de reserva
+            $asignacion_leyenda = 'Sin definir';
+            break;
+    }
+
+    // Definir el estilo y el texto según el valor de estatus
+    $estatus_estilo = '';
+    $estatus_leyenda = '';
+    switch ($fila["Estatus"]) {
+        case 'Abierta':
+            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
+            $estatus_leyenda = 'Abierta';
+            break;
+        case 'Cerrada':
+            $estatus_estilo = 'background-color: red; color: white;'; // Rojo
+            $estatus_leyenda = 'Cerrada';
+            break;
+        default:
+            $estatus_estilo = ''; // No se aplica estilo
+            $estatus_leyenda = $fila["Estatus"];
+            break;
+    }
+
+    // Construir el array de datos incluyendo las columnas condicionadas
+    $data[] = [
+        "IdCaja" => $fila["ID_Caja"],
+        "Empleado" => $fila["Empleado"],
+        "Cantidad_Fondo" => $fila["Cantidad_Fondo"],
+        "Fecha_Apertura" => $fila["Fecha_Apertura"],
+        "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
+        "Turno" => $fila["Turno"],
+        "Asignacion" => "<div style=\"$asignacion_estilo; padding: 5px; border-radius: 5px;\">$asignacion_leyenda</div>",
+        "ValorTotalCaja" => $fila["Valor_Total_Caja"],
+    ];
 }
- 
-$results = ["sEcho" => 1,
-            "iTotalRecords" => count($data),
-            "iTotalDisplayRecords" => count($data),
-            "aaData" => $data ];
- 
+
+// Cerrar la declaración
+$stmt->close();
+
+// Construir el array de resultados para la respuesta JSON
+$results = [
+    "sEcho" => 1,
+    "iTotalRecords" => count($data),
+    "iTotalDisplayRecords" => count($data),
+    "aaData" => $data
+];
+
+// Imprimir la respuesta JSON
 echo json_encode($results);
+
+// Cerrar conexión
+$conn->close();
 ?>
-
-

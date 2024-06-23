@@ -208,18 +208,22 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayHistorialCajas.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeCajasCerradas.php",
  "aoColumns": [
-    { mData: 'IdCaja' },  
+  { mData: 'IdCaja' },  
   { mData: 'Empleado' },
-       { mData: 'Sucursal' },
-       { mData: 'Turno' },
-       { mData: 'Fondodecaja' },
-       { mData: 'Fecha' },
+  { mData: 'Cantidad_Fondo' },
+       { mData: 'Fecha_Apertura' },
        { mData: 'Estatus' },
-       { mData: 'Cantidadalcierre' },
-      
-  
+       { mData: 'Turno' },
+       { mData: 'Asignacion' },
+       
+       { mData: 'ValorTotalCaja' },
+    //    { mData: 'DesactivarCaja' },
+    //    { mData: 'ReactivarCaja' },
+    //    { mData: 'RegistrarGasto' },
+    //    { mData: 'RealizarCorte' },
+       
       ],
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
@@ -247,36 +251,59 @@ tabla = $('#Clientes').DataTable({
   ocultarCargando();
 },
 // Para personalizar el estilo del botón de Excel
-"buttons": [
-  {
-    extend: 'excelHtml5',
-    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
-    titleAttr: 'Exportar a Excel',
-    title: 'Base de Clientes',
-    className: 'btn btn-success',
-    exportOptions: {
-      columns: ':visible' // Exportar solo las columnas visibles
-    }
-  }
-],
+// "buttons": [
+//   {
+//     extend: 'excelHtml5',
+//     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+//     titleAttr: 'Exportar a Excel',
+//     title: 'Base de Clientes',
+//     className: 'btn btn-success',
+//     exportOptions: {
+//       columns: ':visible' // Exportar solo las columnas visibles
+//     }
+//   }
+// ],
 // Personalizar la posición de los elementos del encabezado
 "dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
+// Contador para cajas abiertas
+var cajasAbiertasCount = 0;
+
+// Recorrer los datos de la tabla
+tabla.rows().every(function () {
+    var data = this.data();
+    if (data.Estatus.includes("Abierta")) {
+        cajasAbiertasCount++;
+    }
+});
+
+// Mostrar alerta si hay más de una caja abierta
+if (cajasAbiertasCount >= 2) {
+    Swal.fire({
+        icon: 'warning',
+        title: '¡Advertencia!',
+        text: 'Existen dos o más cajas abiertas.',
+        confirmButtonText: 'Entendido'
+    });
+}
 </script>
 <div class="text-center">
   <div class="table-responsive">
-  <table  id="Clientes"  class="order-column">
+  <table  id="Clientes" class="table table-hover">
 <thead>
-<th>Id Caja</th>
-<th>Empleado</th>
-<th>Sucursal</th>
-<th>Turno</th>
-<th>Cantidad inicial</th>
-<th>Fecha</th>
-<th>Estatus</th>
-    <th >Cantidad actual/final</th>
-
+<th>Id de caja</th>
+<th>Nombre Cajero</th>
+<th>Fondo de caja</th>
+    <th>Fecha de apertura</th>
+    <th>Estado</th>
+    <th>Turno</th> 
+    <th>Activo / Inactivo</th> 
+    <th>Valor total de caja</th> 
+    <!-- <th>Desactivar Caja</th>
+    <th>Reactivar Caja</th>
+    <th>Registrar gasto</th>
+    <th>Realizar corte</th> -->
 </thead>
 
 </div>
