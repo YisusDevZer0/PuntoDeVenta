@@ -195,7 +195,25 @@ tabla = $('#StocksDESucursales').DataTable({
        { mData: 'Existencias_R' },
        { mData: 'Min_Existencia' },
        { mData: 'Max_Existencia' },
-       
+       {mData: "Existencias_R",
+        "searchable": true,
+        "orderable":true,
+        "render": function (data, type, row) {
+            if ( row.Existencias_R < row.Min_Existencia) {
+
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important">Resurtir</button>';
+        }
+        else if ( row.Existencias_R > row.Max_Existencia) {
+return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
+        }
+            else {
+ 
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+ 
+}
+        }
+ 
+    },
        { mData: 'Editar' },
        { mData: 'Eliminar' },
   
@@ -264,7 +282,7 @@ tabla = $('#StocksDESucursales').DataTable({
     <th>Minimo</th>
     <th>Estado</th>
         <th>Acciones Farmacia</th>
-       
+        <th>Acciones Enfermeria</th>
 	
 
 
