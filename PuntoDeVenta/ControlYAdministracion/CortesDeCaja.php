@@ -48,7 +48,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 <div id="CajasCerradas"></div>
             </div></div></div></div>
             </div>
-            <script src="js/CajasCerradas.js"></script>
+            <script src="js/CajasCerradass.js"></script>
             
             <!-- Footer Start -->
             <?php 
