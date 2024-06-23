@@ -200,7 +200,7 @@ tabla = $('#Productos').DataTable({
     //    { mData: 'Vendido' },
     //    { mData: 'Saldo' },
        { mData: 'Acciones' },
-       { mData: 'AccionesEnfermeria' },
+      
   
       ],
      
@@ -270,7 +270,7 @@ tabla = $('#Productos').DataTable({
     <th>Vendido </th>
     <th>Saldo </th>  -->
         <th>Acciones Farmacia</th>
-        <th>Acciones Enfermeria</th>
+       
 	
 
 
