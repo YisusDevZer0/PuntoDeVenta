@@ -280,12 +280,12 @@
       {
         mData: 'AgregadoEl',
       },
-      {
-        mData: 'ID_H_O_D',
-      },
-      {
-        mData: 'TotaldePiezas',
-      },
+      // {
+      //   mData: 'ID_H_O_D',
+      // },
+      // {
+      //   mData: 'TotaldePiezas',
+      // },
       {
         mData: 'Fecha_recepcion',
       },
@@ -346,7 +346,7 @@
         <th style="background-color:#ef7980 !important">Num_Factura</th>
         <th style="background-color:#ef7980 !important">Cod_Barra</th>
         <th style="background-color:#ef7980 !important">Nombre_Prod</th>
-        <th style="background-color:#ef7980 !important">Fk_SucDestino</th>
+
         <th style="background-color:#ef7980 !important">Precio_Venta</th>
         <th style="background-color:#ef7980 !important">Precio_Compra</th>
         <th style="background-color:#ef7980 !important">Cantidad_Enviada</th>
@@ -356,16 +356,15 @@
         <th style="background-color:#ef7980 !important">Estatus</th>
         <th style="background-color:#ef7980 !important">AgregadoPor</th>
         <th style="background-color:#ef7980 !important">AgregadoEl</th>
-        <th style="background-color:#ef7980 !important">ID_H_O_D</th>
-        <th style="background-color:#ef7980 !important">TotaldePiezas</th>
+        <!-- <th style="background-color:#ef7980 !important">ID_H_O_D</th> -->
+        <!-- <th style="background-color:#ef7980 !important">TotaldePiezas</th> -->
         <th style="background-color:#ef7980 !important">Fecha_recepcion</th>
         <th style="background-color:#ef7980 !important">SucursalDestino</th>
 
 
 
 
-        <th>Editar</th>
-        <th>Eliminar</th>
+      
       </thead>
 
   </div>
