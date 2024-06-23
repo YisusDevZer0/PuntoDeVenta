@@ -7,12 +7,9 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Fondos de cajas disponibles para  <?php echo $row['Licencia']?></title>
+    <title>Cajas activas de  <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <div id="loading-overlay">
-  <div class="loader"></div>
-  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-</div>
+   
 
     <?php
    include "header.php";?>
@@ -41,8 +38,7 @@ include_once "Controladores/ControladorUsuario.php";
 </button> <br>
             <div id="FCajas"></div>
             </div></div></div></div>
-            
-            
+         
 <script src="js/CajasCerradas.js"></script>
 <script>
     $(document).ready(function() {
