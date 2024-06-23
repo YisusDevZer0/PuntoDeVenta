@@ -45,7 +45,7 @@ $(document).ready(function () {
                         if (response.status === 'success') {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Venta realizada con éxito',
+                                title: 'Los datos se han guardado con exito!',
                                 showConfirmButton: false,
                                 timer: 2000,
                                 didOpen: () => {
