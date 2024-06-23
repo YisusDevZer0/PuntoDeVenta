@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/HistorialDeCaja.js"></script>
+<script src="js/HistorialDeCajas.js"></script>
 
             <!-- Footer Start -->
             <?php 
