@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataHistorialDeCaja","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataHistorialDeCaja.php","",function(data){
       $("#CajasHistorial").html(data);
     })
   
