@@ -43,7 +43,7 @@ while ($fila = $result->fetch_assoc()) {
 
     // Agregar datos al array $data
     $data[] = [
-        "IdProdCedis" => $fila["IdProdCedis"],
+        "IdbD" => $fila["IdProdCedis"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
