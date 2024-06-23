@@ -18,7 +18,6 @@ $required_fields = [
     "Estatus",
     "Empresa",
     "resultadepiezas",
-    "Fecha_recepcion",
     "NumeroDeFacturaTraspaso"
 ];
 
@@ -41,7 +40,7 @@ $values = [];
 
 // Crear la parte de los valores de la consulta
 for ($i = 0; $i < $contador; $i++) {
-    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i])  && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && !empty($_POST["Fecha_recepcion"][$i]) && !empty($_POST["NumeroDeFacturaTraspaso"][$i])) {
+    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i])  && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && isset($_POST["NumeroDeFacturaTraspaso"][$i])) {
         $ProContador++;
         $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Agregar valores al array de valores
@@ -61,7 +60,7 @@ for ($i = 0; $i < $contador; $i++) {
             $_POST["FechaAprox"][$i], // AgregadoEl
             $_POST["ID_H_O_D"][$i],
             $_POST["resultadepiezas"][$i],
-            $_POST["Fecha_recepcion"][$i]
+            !empty($_POST["Fecha_recepcion"][$i]) ? $_POST["Fecha_recepcion"][$i] : null // Fecha_recepcion puede ser nulo
         ]);
     } else {
         // Si falta algún dato, mostrar el índice del producto y qué dato falta
