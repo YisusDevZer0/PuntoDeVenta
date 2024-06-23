@@ -33,11 +33,14 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4">Fondos de caja de <?php echo $row['Licencia']?></h6>
-         
-            <div id="CajasCerradas"></div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+  Agregar nuevo fondo 
+</button> <br>
+            <div id="FCajas"></div>
             </div></div></div></div>
-         
-<script src="js/CajasCerradas.js"></script>
+            
+            <script src="js/AsignaFondo.js"></script>
+<script src="js/ControlFondosCajas.js"></script>
 <script>
     $(document).ready(function() {
     $.getJSON('Controladores/SelectSucursales.php', function(data) {
