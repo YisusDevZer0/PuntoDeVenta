@@ -1,14 +1,14 @@
 <?php
 include_once "db_connect.php";
 
-// Verificar si hay datos recibidos
-if (!isset($_POST["Idprod"]) || !isset($_POST["CodBarra"]) || !isset($_POST["NombreProducto"]) || !isset($_POST["Fk_SucDestino"]) || !isset($_POST["PrecioVenta"]) || !isset($_POST["PrecioDeCompra"]) || !isset($_POST["NTraspasos"]) || !isset($_POST["FechaAprox"]) || !isset($_POST["GeneradoPor"]) || !isset($_POST["Recibio"]) || !isset($_POST["Estatus"]) || !isset($_POST["Empresa"]) || !isset($_POST["resultadepiezas"])) {
+// Verificar si hay datos recibidos adecuados
+if (!isset($_POST["CodBarras"]) || !isset($_POST["NombreDelProducto"]) || !isset($_POST["PrecioCompra"]) || !isset($_POST["PrecioVenta"]) || !isset($_POST["Contabilizado"]) || !isset($_POST["IdBasedatos"]) || !isset($_POST["AgregoElVendedor"]) || !isset($_POST["Fk_sucursal"]) || !isset($_POST["Sistema"]) || !isset($_POST["ID_H_O_D"]) || !isset($_POST["FechaAprox"]) || !isset($_POST["GeneradoPor"]) || !isset($_POST["Recibio"]) || !isset($_POST["Estatus"]) || !isset($_POST["Empresa"]) || !isset($_POST["resultadepiezas"]) || !isset($_POST["Fecha_recepcion"])) {
     echo json_encode(['status' => 'error', 'message' => 'No se recibieron todos los datos necesarios.', 'received_data' => $_POST]);
     exit;
 }
 
 // Contar el número de productos
-$contador = count($_POST["Idprod"]);
+$contador = count($_POST["CodBarras"]);
 $ProContador = 0;
 
 // Preparar la consulta SQL con marcadores de posición
@@ -19,15 +19,27 @@ $values = [];
 
 // Crear la parte de los valores de la consulta
 for ($i = 0; $i < $contador; $i++) {
-    if (!empty($_POST["Idprod"][$i]) && !empty($_POST["CodBarra"][$i]) && !empty($_POST["NombreProducto"][$i]) && !empty($_POST["Fk_SucDestino"][$i]) && !empty($_POST["PrecioVenta"][$i]) && !empty($_POST["PrecioDeCompra"][$i]) && isset($_POST["NTraspasos"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i]) && !empty($_POST["Recibio"][$i]) && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i])) {
+    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i]) && !empty($_POST["Recibio"][$i]) && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && !empty($_POST["Fecha_recepcion"][$i])) {
         $ProContador++;
         $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Agregar valores al array de valores
         $values = array_merge($values, [
-            $_POST["Idprod"][$i], $_POST["Idprod"][$i], $_POST["NumeroDelTraspaso"][$i], $_POST["NumeroDeFacturaTraspaso"][$i],
-            $_POST["CodBarra"][$i], $_POST["NombreProducto"][$i], $_POST["Fk_SucDestino"][$i], $_POST["PrecioVenta"][$i],
-            $_POST["PrecioDeCompra"][$i], $_POST["NTraspasos"][$i], $_POST["FechaAprox"][$i], $_POST["GeneradoPor"][$i],
-            $_POST["Recibio"][$i], $_POST["Estatus"][$i], $_POST["GeneradoPor"][$i], $_POST["Empresa"][$i], $_POST["resultadepiezas"][$i],
+            $_POST["IdBasedatos"][$i], // Supongo que 'IdBasedatos' se refiere a 'ID_Prod_POS'
+            $_POST["IdBasedatos"][$i], // Supongo que 'IdBasedatos' se refiere a 'Num_Orden'
+            $_POST["NumeroDeFacturaTraspaso"][$i],
+            $_POST["CodBarras"][$i],
+            $_POST["NombreDelProducto"][$i],
+            $_POST["Fk_sucursal"][$i],
+            $_POST["PrecioVenta"][$i],
+            $_POST["PrecioCompra"][$i],
+            $_POST["Contabilizado"][$i],
+            $_POST["FechaAprox"][$i],
+            $_POST["GeneradoPor"][$i],
+            $_POST["Recibio"][$i],
+            $_POST["Estatus"][$i],
+            $_POST["AgregoElVendedor"][$i], // AgregoEl
+            $_POST["ID_H_O_D"][$i],
+            $_POST["resultadepiezas"][$i],
             $_POST["Fecha_recepcion"][$i]
         ]);
     } else {
