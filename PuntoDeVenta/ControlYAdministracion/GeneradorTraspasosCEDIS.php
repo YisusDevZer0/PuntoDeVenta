@@ -474,7 +474,7 @@ if ($ProveedorFijo === "CEDIS") {
                       <form action="javascript:void(0)" method="post" id="Generamelostraspasos">
                       <div class="text-center">
         <button type="submit" class="btn btn-primary">Enviar Información</button>
-    </div> <input type="number" class="form-control " id="resultadopiezas" name="resultadepiezas[]" readonly  >
+    </div> <input type="number" class="form-control " id="resultadopiezass" name="resultadepiezas[]" readonly  >
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
@@ -1035,6 +1035,8 @@ function eliminarFila(element) {
                 // Actualiza el input con id "resultadopiezas" con el total calculado
                 // console.log('Total calculado:', total);
                 document.getElementById('resultadopiezas').value = total;
+                document.getElementById('resultadopiezass').value = total;
+                
             }
 
             // Añade un event listener a cada input para escuchar cambios
