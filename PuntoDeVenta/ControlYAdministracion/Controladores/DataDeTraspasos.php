@@ -289,9 +289,9 @@
       {
         mData: 'Fecha_recepcion',
       },
-      {
-        mData: 'SucursalDestino',
-      }
+      // {
+      //   mData: 'SucursalDestino',
+      // }
 
     ],
     "lengthMenu": [
