@@ -12,7 +12,7 @@ $contador = count($_POST["CodBarras"]);
 $ProContador = 0;
 
 // Preparar la consulta SQL con marcadores de posición
-$query = "INSERT INTO Traspasos_generados (Folio_Prod_Stock, ID_Prod_POS, Num_Orden, Num_Factura, Cod_Barra, Nombre_Prod, Fk_SucDestino, Precio_Venta, Precio_Compra, Cantidad_Enviada, FechaEntrega, TraspasoGeneradoPor, Estatus, AgregadoPor, AgregadoEl, ID_H_O_D, TotaldePiezas, Fecha_recepcion) VALUES ";
+$query = "INSERT INTO Traspasos_generados (Num_Orden, Num_Factura, Cod_Barra, Nombre_Prod, Fk_SucDestino, Precio_Venta, Precio_Compra, Cantidad_Enviada, FechaEntrega, TraspasoGeneradoPor, Estatus, AgregadoPor, AgregadoEl, ID_H_O_D, TotaldePiezas, Fecha_recepcion) VALUES ";
 
 $queryValue = [];
 $values = [];
@@ -21,10 +21,9 @@ $values = [];
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && !empty($_POST["PrecioCompra"][$i]) && isset($_POST["PrecioVenta"][$i]) && !empty($_POST["Contabilizado"][$i]) && !empty($_POST["IdBasedatos"][$i]) && !empty($_POST["AgregoElVendedor"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["FechaAprox"][$i]) && !empty($_POST["GeneradoPor"][$i])  && !empty($_POST["Estatus"][$i]) && !empty($_POST["Empresa"][$i]) && isset($_POST["resultadepiezas"][$i]) && !empty($_POST["Fecha_recepcion"][$i])) {
         $ProContador++;
-        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Agregar valores al array de valores
         $values = array_merge($values, [
-            $_POST["IdBasedatos"][$i], // Supongo que 'IdBasedatos' se refiere a 'ID_Prod_POS'
             $_POST["IdBasedatos"][$i], // Supongo que 'IdBasedatos' se refiere a 'Num_Orden'
             $_POST["NumeroDeFacturaTraspaso"][$i],
             $_POST["CodBarras"][$i],
@@ -36,7 +35,8 @@ for ($i = 0; $i < $contador; $i++) {
             $_POST["FechaAprox"][$i],
             $_POST["GeneradoPor"][$i],
             $_POST["Estatus"][$i],
-            $_POST["AgregoElVendedor"][$i], // AgregoEl
+            $_POST["AgregoElVendedor"][$i], // AgregadoPor
+            $_POST["FechaAprox"][$i], // AgregadoEl
             $_POST["ID_H_O_D"][$i],
             $_POST["resultadepiezas"][$i],
             $_POST["Fecha_recepcion"][$i]
