@@ -39,11 +39,18 @@ while ($fila = $result->fetch_assoc()) {
     ];
 
     // Construir acciones como HTML
-    $acciones_html = "<div class='dropdown-menu'>" . implode('', $acciones) . "</div>";
+    $acciones_html = "<div class='dropdown'>
+                        <button class='btn btn-primary btn-sm dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                            Acciones
+                        </button>
+                        <div class='dropdown-menu'>
+                            " . implode('', $acciones) . "
+                        </div>
+                    </div>";
 
     // Agregar datos al array $data
     $data[] = [
-        "IdbD" => $fila["IdProdCedis"],
+        "IdProdCedis" => $fila["IdProdCedis"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],

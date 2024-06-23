@@ -180,7 +180,7 @@ tabla = $('#Productos').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayProductos.php",
  "aoColumns": [
-    { mData: 'IdbD' },
+    { mData: 'IdProdCedis' },
        { mData: 'Cod_Barra' },
        { mData: 'Nombre_Prod' },
        { mData: 'Clave_interna' },
