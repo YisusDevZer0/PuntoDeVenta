@@ -474,7 +474,7 @@ if ($ProveedorFijo === "CEDIS") {
                       <form action="javascript:void(0)" method="post" id="Generamelostraspasos">
                       <div class="text-center">
         <button type="submit" class="btn btn-primary">Enviar Información</button>
-    </div> <input type="number" class="form-control " id="resultadopiezass" name="resultadepiezas[]" readonly  >
+    </div> 
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
@@ -900,7 +900,7 @@ function calcularDiferencia(fila) {
         <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDelTraspaso[]" readonly  value="<?php echo $NumeroOrdenTraspaso?>"  > </td>
         <td style="display:none;"><input type="text" class="form-control " hidden  name="ProveedorDelTraspaso[]" readonly  value="<?php echo $ProveedorFijo?>"  ></td>
         <td style="display:none;"><input type="text" class="form-control " hidden name="NumeroDeFacturaTraspaso[]" readonly  value="<?php echo ($ProveedorFijo === 'CEDIS') ? $valorCombinado : $NumeroDeFacturaTrapaso; ?>"  > </td>
-     
+     <td style="display:none;"><input type="number" class="form-control " id="resultadopiezass" name="resultadepiezas[]" readonly  ></td>
      
         </tr>`;
 
