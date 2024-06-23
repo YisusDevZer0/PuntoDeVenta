@@ -264,7 +264,7 @@ tabla = $('#StocksDESucursales').DataTable({
     <th>Minimo</th>
     <th>Estado</th>
         <th>Acciones Farmacia</th>
-        <th>Acciones Enfermeria</th>
+       
 	
 
 
