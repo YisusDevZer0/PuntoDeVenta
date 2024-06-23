@@ -250,9 +250,9 @@
       {
         mData: 'Nombre_Prod',
       },
-      {
-        mData: 'Fk_SucDestino',
-      },
+      // {
+      //   mData: 'Fk_SucDestino',
+      // },
       {
         mData: 'Precio_Venta',
       },
@@ -289,9 +289,9 @@
       {
         mData: 'Fecha_recepcion',
       },
-      // {
-      //   mData: 'SucursalDestino',
-      // }
+      {
+        mData: 'SucursalDestino',
+      }
 
     ],
     "lengthMenu": [
