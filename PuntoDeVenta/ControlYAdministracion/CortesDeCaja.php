@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar nuevo fondo 
 </button> <br>
-            <div id="FCajas"></div>
+            <div id="Cajas"></div>
             </div></div></div></div>
          
 <script src="js/CajasCerradas.js"></script>
