@@ -9,7 +9,10 @@ include_once "Controladores/ControladorUsuario.php";
     <meta charset="utf-8">
     <title>Fondos de cajas disponibles para  <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-   
+    <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 
     <?php
    include "header.php";?>

@@ -9,7 +9,7 @@ $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucurs
        Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
 FROM Cajas
 INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
-WHERE Cajas.Estatus = 'Abierta'"; // Se añadió la condición para el empleado
+WHERE Cajas.Estatus = 'Cerrada'"; // Se añadió la condición para el empleado
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
