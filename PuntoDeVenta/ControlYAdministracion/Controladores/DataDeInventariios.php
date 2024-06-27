@@ -235,63 +235,22 @@
       [0, "desc"]
     ],
     "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayReporteInventariosCEDIS.php",
-    "aoColumns": [{
-        mData: 'ID_Traspaso_Generado',
-      },
-      {
-        mData: 'Num_Orden',
-      },
-      {
-        mData: 'Num_Factura',
-      },
-      {
-        mData: 'Cod_Barra',
-      },
-      {
-        mData: 'Nombre_Prod',
-      },
-      // {
-      //   mData: 'Fk_SucDestino',
-      // },
-      {
-        mData: 'Precio_Venta',
-      },
-      {
-        mData: 'Precio_Compra',
-      },
-      {
-        mData: 'Cantidad_Enviada',
-      },
-      {
-        mData: 'FechaEntrega',
-      },
-      {
-        mData: 'TraspasoGeneradoPor',
-      },
-      {
-        mData: 'TraspasoRecibidoPor',
-      },
-      {
-        mData: 'Estatus',
-      },
-      {
-        mData: 'AgregadoPor',
-      },
-      {
-        mData: 'AgregadoEl',
-      },
-      // {
-      //   mData: 'ID_H_O_D',
-      // },
-      // {
-      //   mData: 'TotaldePiezas',
-      // },
-      {
-        mData: 'Fecha_recepcion',
-      },
-      {
-        mData: 'SucursalDestino',
-      }
+    "aoColumns": [  { mData: 'ID_Traspaso_Generado' },
+            { mData: 'Num_Orden' },
+            { mData: 'Num_Factura' },
+            { mData: 'Cod_Barra' },
+            { mData: 'Nombre_Prod' },
+            { mData: 'Precio_Venta' },
+            { mData: 'Precio_Compra' },
+            { mData: 'Cantidad_Enviada' },
+            { mData: 'FechaEntrega' },
+            { mData: 'TraspasoGeneradoPor' },
+            { mData: 'TraspasoRecibidoPor' },
+            { mData: 'Estatus' },
+            { mData: 'AgregadoPor' },
+            { mData: 'AgregadoEl' },
+            { mData: 'Fecha_recepcion' },
+            { mData: 'SucursalDestino' }
 
     ],
     "lengthMenu": [

@@ -5,31 +5,22 @@ include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT 
-    tg.ID_Traspaso_Generado, 
-    tg.Num_Orden, 
-    tg.Num_Factura, 
-    tg.Cod_Barra, 
-    tg.Nombre_Prod, 
-    tg.Fk_SucDestino, 
-    tg.Precio_Venta, 
-    tg.Precio_Compra, 
-    tg.Cantidad_Enviada, 
-    tg.FechaEntrega, 
-    tg.TraspasoGeneradoPor, 
-    tg.TraspasoRecibidoPor, 
-    tg.Estatus, 
-    tg.AgregadoPor, 
-    tg.AgregadoEl, 
-    tg.ID_H_O_D, 
-    tg.TotaldePiezas, 
-    tg.Fecha_recepcion,
-    s.Nombre_Sucursal AS SucursalDestino
+    `IdProdCedis`, 
+    `ID_Prod_POS`, 
+    `Cod_Barra`, 
+    `Nombre_Prod`, 
+    `Contabilizado`, 
+    `StockEnMomento`, 
+    `ExistenciasAjuste`, 
+    `Precio_Venta`, 
+    `Precio_C`, 
+    `AgregadoPor`, 
+    `AgregadoEl`, 
+    `FechaInventario`,
+    (`Contabilizado` * `Precio_Venta`) AS `Total_Precio_Venta`,
+    (`Contabilizado` * `Precio_C`) AS `Total_Precio_Compra`
 FROM 
-    Traspasos_generados tg
-INNER JOIN 
-    Sucursales s ON tg.Fk_SucDestino = s.ID_Sucursal
-WHERE 
-    MONTH(tg.AgregadoEl) = MONTH(CURRENT_DATE) AND YEAR(tg.AgregadoEl) = YEAR(CURRENT_DATE)";
+    `Cedis_Inventarios`";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -47,26 +38,23 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
-        "ID_Traspaso_Generado" => $fila["ID_Traspaso_Generado"],
-        "Num_Orden" => $fila["Num_Orden"],
-        "Num_Factura" => $fila["Num_Factura"],
+        "ID_Traspaso_Generado" => $fila["IdProdCedis"], // Assuming "IdProdCedis" corresponds to "ID_Traspaso_Generado"
+        "Num_Orden" => "", // Placeholder as it's not in the provided query
+        "Num_Factura" => "", // Placeholder as it's not in the provided query
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
-        // "Fk_SucDestino" => $fila["Fk_SucDestino"],
         "Precio_Venta" => $fila["Precio_Venta"],
-        "Precio_Compra" => $fila["Precio_Compra"],
-        "Cantidad_Enviada" => $fila["Cantidad_Enviada"],
-        "FechaEntrega" => $fila["FechaEntrega"],
-        "TraspasoGeneradoPor" => $fila["TraspasoGeneradoPor"],
-        "TraspasoRecibidoPor" => $fila["TraspasoRecibidoPor"],
-        "Estatus" => $fila["Estatus"],
+        "Precio_Compra" => $fila["Precio_C"],
+        "Cantidad_Enviada" => $fila["Contabilizado"], // Assuming "Contabilizado" corresponds to "Cantidad_Enviada"
+        "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
+        "TraspasoGeneradoPor" => "", // Placeholder as it's not in the provided query
+        "TraspasoRecibidoPor" => "", // Placeholder as it's not in the provided query
+        "Estatus" => "", // Placeholder as it's not in the provided query
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
-        /* "ID_H_O_D" => $fila["ID_H_O_D"], */
-        // "TotaldePiezas" => $fila["TotaldePiezas"],
-        "Fecha_recepcion" => $fila["Fecha_recepcion"],
-        "SucursalDestino" => $fila["SucursalDestino"],
-           ];
+        "Fecha_recepcion" => "", // Placeholder as it's not in the provided query
+        "SucursalDestino" => "" // Placeholder as it's not in the provided query
+    ];
 }
 
 // Cerrar la declaración
