@@ -241,6 +241,8 @@
             { mData: 'Precio_Venta' },
             { mData: 'Precio_Compra' },
             { mData: 'Cantidad_Enviada' },
+            { mData: 'Existencia' },
+            { mData: 'Diferencia' },
             { mData: 'FechaEntrega' },
             { mData: 'TraspasoGeneradoPor' },
             { mData: 'TraspasoRecibidoPor' },
@@ -305,6 +307,8 @@
         <th style="background-color:#ef7980 !important">Precio_Venta</th>
         <th style="background-color:#ef7980 !important">Precio_Compra</th>
         <th style="background-color:#ef7980 !important">Contabilizado</th>
+        <th style="background-color:#ef7980 !important">Existencia Previa</th>
+        <th style="background-color:#ef7980 !important">Ajuste realizado</th>
         <th style="background-color:#ef7980 !important">Fecha inventario</th>
        
         <th style="background-color:#ef7980 !important">AgregadoPor</th>
