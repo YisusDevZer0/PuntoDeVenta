@@ -48,13 +48,10 @@ while ($fila = $result->fetch_assoc()) {
         "Existencia" => $fila["StockEnMomento"], // Assuming "Contabilizado" corresponds to "Cantidad_Enviada"
         "Diferencia" => $fila["ExistenciasAjuste"], // Assuming "Contabilizado" corresponds to "Cantidad_Enviada"
         "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
-        "TraspasoGeneradoPor" => "", // Placeholder as it's not in the provided query
-        "TraspasoRecibidoPor" => "", // Placeholder as it's not in the provided query
-        "Estatus" => "", // Placeholder as it's not in the provided query
+       
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
-        "Fecha_recepcion" => "", // Placeholder as it's not in the provided query
-        "SucursalDestino" => "" // Placeholder as it's not in the provided query
+      
     ];
 }
 

@@ -244,13 +244,10 @@
             { mData: 'Existencia' },
             { mData: 'Diferencia' },
             { mData: 'FechaEntrega' },
-            { mData: 'TraspasoGeneradoPor' },
-            { mData: 'TraspasoRecibidoPor' },
-            { mData: 'Estatus' },
+         
             { mData: 'AgregadoPor' },
             { mData: 'AgregadoEl' },
-            { mData: 'Fecha_recepcion' },
-            { mData: 'SucursalDestino' }
+          
 
     ],
     "lengthMenu": [
