@@ -36,17 +36,9 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">lista de productos de cedis de <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Reporte de inventarios de <?php echo $row['Licencia']?></h6>
            
-    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspaso">
-      Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
-    </button>
-    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
-      Modificar traspaso <i class="fas fa-edit"></i>
-    </button>
-    <button type="button" class="btn btn-danger btn-sm " data-toggle="modal" data-target="#CancelarTraspasoModal">
-      Cancelar Traspaso <i class="fas fa-ban"></i>
-    </button>
+   
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
