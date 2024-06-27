@@ -236,8 +236,6 @@
     ],
     "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayReporteInventariosCEDIS.php",
     "aoColumns": [  { mData: 'ID_Traspaso_Generado' },
-            { mData: 'Num_Orden' },
-            { mData: 'Num_Factura' },
             { mData: 'Cod_Barra' },
             { mData: 'Nombre_Prod' },
             { mData: 'Precio_Venta' },

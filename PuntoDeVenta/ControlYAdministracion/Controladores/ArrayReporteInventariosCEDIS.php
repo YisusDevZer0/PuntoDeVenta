@@ -39,8 +39,7 @@ while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
         "ID_Traspaso_Generado" => $fila["IdProdCedis"], // Assuming "IdProdCedis" corresponds to "ID_Traspaso_Generado"
-        "Num_Orden" => "", // Placeholder as it's not in the provided query
-        "Num_Factura" => "", // Placeholder as it's not in the provided query
+      
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Precio_Venta" => $fila["Precio_Venta"],
