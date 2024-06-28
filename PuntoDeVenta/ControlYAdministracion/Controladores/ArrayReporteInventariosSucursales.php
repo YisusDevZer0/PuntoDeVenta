@@ -42,14 +42,14 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
-        "ID_Traspaso_Generado" => $fila["IdProdCedinv"], // Assuming "IdProdCedinv" corresponds to "ID_Traspaso_Generado"
+        "ID_Traspaso_Generado" => $fila["IdProdCedis"], // Assuming "IdProdCedis" corresponds to "ID_Traspaso_Generado"
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Precio_Venta" => $fila["Precio_Venta"],
         "Precio_Compra" => $fila["Precio_C"],
         "Cantidad_Enviada" => $fila["Contabilizado"], // Assuming "Contabilizado" corresponds to "Cantidad_Enviada"
-        "Exinvtencia" => $fila["StockEnMomento"], // Assuming "StockEnMomento" corresponds to "Exinvtencia"
-        "Diferencia" => $fila["ExinvtenciasAjuste"], // Assuming "ExinvtenciasAjuste" corresponds to "Diferencia"
+        "Existencia" => $fila["StockEnMomento"], // Assuming "StockEnMomento" corresponds to "Existencia"
+        "Diferencia" => $fila["ExistenciasAjuste"], // Assuming "ExistenciasAjuste" corresponds to "Diferencia"
         "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
@@ -64,7 +64,7 @@ $stmt->close();
 $results = [
     "sEcho" => 1,
     "iTotalRecords" => count($data),
-    "iTotalDinvplayRecords" => count($data),
+    "iTotalDisplayRecords" => count($data),
     "aaData" => $data
 ];
 
