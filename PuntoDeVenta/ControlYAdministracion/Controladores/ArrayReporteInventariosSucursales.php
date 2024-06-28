@@ -5,26 +5,26 @@ include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT 
-    is.`IdProdCedis`, 
-    is.`ID_Prod_POS`, 
-    is.`Cod_Barra`, 
-    is.`Nombre_Prod`, 
-    is.`Contabilizado`, 
-    is.`StockEnMomento`, 
-    is.`ExistenciasAjuste`, 
-    is.`Precio_Venta`, 
-    is.`Precio_C`, 
-    is.`AgregadoPor`, 
-    is.`AgregadoEl`, 
-    is.`FechaInventario`,
-    is.`Fk_Sucursal`,
+    inv_suc.`IdProdCedis`, 
+    inv_suc.`ID_Prod_POS`, 
+    inv_suc.`Cod_Barra`, 
+    inv_suc.`Nombre_Prod`, 
+    inv_suc.`Contabilizado`, 
+    inv_suc.`StockEnMomento`, 
+    inv_suc.`ExistenciasAjuste`, 
+    inv_suc.`Precio_Venta`, 
+    inv_suc.`Precio_C`, 
+    inv_suc.`AgregadoPor`, 
+    inv_suc.`AgregadoEl`, 
+    inv_suc.`FechaInventario`,
+    inv_suc.`Fk_Sucursal`,
     s.`Nombre_Sucursal`,
-    (is.`Contabilizado` * is.`Precio_Venta`) AS `Total_Precio_Venta`,
-    (is.`Contabilizado` * is.`Precio_C`) AS `Total_Precio_Compra`
+    (inv_suc.`Contabilizado` * inv_suc.`Precio_Venta`) AS `Total_Precio_Venta`,
+    (inv_suc.`Contabilizado` * inv_suc.`Precio_C`) AS `Total_Precio_Compra`
 FROM 
-    `InventariosSucursales` is
+    `InventariosSucursales` inv_suc
 LEFT JOIN 
-    `Sucursales` s ON is.`Fk_Sucursal` = s.`ID_Sucursal`";
+    `Sucursales` s ON inv_suc.`Fk_Sucursal` = s.`ID_Sucursal`";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -42,14 +42,14 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
-        "ID_Traspaso_Generado" => $fila["IdProdCedis"], // Assuming "IdProdCedis" corresponds to "ID_Traspaso_Generado"
+        "ID_Traspaso_Generado" => $fila["IdProdCedinv"], // Assuming "IdProdCedinv" corresponds to "ID_Traspaso_Generado"
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Precio_Venta" => $fila["Precio_Venta"],
         "Precio_Compra" => $fila["Precio_C"],
         "Cantidad_Enviada" => $fila["Contabilizado"], // Assuming "Contabilizado" corresponds to "Cantidad_Enviada"
-        "Existencia" => $fila["StockEnMomento"], // Assuming "StockEnMomento" corresponds to "Existencia"
-        "Diferencia" => $fila["ExistenciasAjuste"], // Assuming "ExistenciasAjuste" corresponds to "Diferencia"
+        "Exinvtencia" => $fila["StockEnMomento"], // Assuming "StockEnMomento" corresponds to "Exinvtencia"
+        "Diferencia" => $fila["ExinvtenciasAjuste"], // Assuming "ExinvtenciasAjuste" corresponds to "Diferencia"
         "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
@@ -64,7 +64,7 @@ $stmt->close();
 $results = [
     "sEcho" => 1,
     "iTotalRecords" => count($data),
-    "iTotalDisplayRecords" => count($data),
+    "iTotalDinvplayRecords" => count($data),
     "aaData" => $data
 ];
 
