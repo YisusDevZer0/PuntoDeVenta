@@ -3,7 +3,7 @@ include_once 'db_connect.php';
 
 $contador = count($_POST["IdBasedatos"]);
 $ProContador = 0;
-$query = "INSERT INTO InventariosSucursales (`ID_Prod_POS`, `Cod_Barra`, `Nombre_Prod`, `Contabilizado`, `StockEnMomento`, `ExistenciasAjuste`, `Precio_Venta`, `Precio_C`,`AgregadoPor`,`FechaInventario`) VALUES ";
+$query = "INSERT INTO InventariosSucursales (`ID_Prod_POS`, `Cod_Barra`, `Nombre_Prod`, `Contabilizado`, `StockEnMomento`, `ExistenciasAjuste`, `Precio_Venta`, `Precio_C`,`AgregadoPor`,`FechaInventario`,`Fk_Sucursal`) VALUES ";
 
 $placeholders = [];
 $values = [];
@@ -12,7 +12,7 @@ $valueTypes = '';
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["IdBasedatos"][$i]) || !empty($_POST["CodBarras"][$i]) || !empty($_POST["NombreDelProducto"][$i])) {
         $ProContador++;
-        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?)";
+        $placeholders[] = "(?, ?, ?,?,?,?,?,?,?,?,?)";
         $values[] = $_POST["IdBasedatos"][$i];
         $values[] = $_POST["CodBarras"][$i];
         $values[] = $_POST["NombreDelProducto"][$i];
@@ -23,7 +23,8 @@ for ($i = 0; $i < $contador; $i++) {
         $values[] = $_POST["PrecioCompra"][$i]; // Precio de compra
         $values[] = $_POST["AgregoElVendedor"][$i];
         $values[] = $_POST["FechaDeInventario"][$i];
-        $valueTypes .= 'ssssssssss'; // Ajustar tipos según corresponda
+        $values[] = $_POST["Sucursal"][$i];
+        $valueTypes .= 'sssssssssss'; // Ajustar tipos según corresponda
     }
 }
 
