@@ -424,6 +424,7 @@ include_once "Controladores/ControladorUsuario.php";
                     }
                   </style>
                   <form action="javascript:void(0)" target="print_popup" method="post" id="VentasAlmomento">
+                  <button type="submit" class="btn btn-primary">Enviar Información</button>
                     <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                       <thead>
                         <tr>
