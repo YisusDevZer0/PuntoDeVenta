@@ -52,10 +52,10 @@ while ($fila = $result->fetch_assoc()) {
         "Existencia" => $fila["StockEnMomento"], // Assuming "StockEnMomento" corresponds to "Existencia"
         "Diferencia" => $fila["ExistenciasAjuste"], // Assuming "ExistenciasAjuste" corresponds to "Diferencia"
         "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
-       "Nombre_Sucursal" => $fila["Nombre_Sucursal"], // Adding the sucursal name to the result
+       
         "AgregadoPor" => $fila["AgregadoPor"],
-        "AgregadoEl" => $fila["AgregadoEl"]
-        
+        "AgregadoEl" => $fila["AgregadoEl"],
+        "Nombre_Sucursal" => $fila["Nombre_Sucursal"] // Adding the sucursal name to the result
     ];
 }
 

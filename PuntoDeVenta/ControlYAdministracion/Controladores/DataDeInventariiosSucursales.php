@@ -244,9 +244,10 @@
             { mData: 'Existencia' },
             { mData: 'Diferencia' },
             { mData: 'FechaEntrega' },
-            { mData: 'Nombre_Sucursal' },
+            
             { mData: 'AgregadoPor' },
             { mData: 'AgregadoEl' },
+            { mData: 'Nombre_Sucursal' },
           
 
     ],
