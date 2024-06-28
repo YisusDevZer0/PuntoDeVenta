@@ -54,7 +54,7 @@ while ($fila = $result->fetch_assoc()) {
         "FechaEntrega" => $fila["FechaInventario"], // Assuming "FechaInventario" corresponds to "FechaEntrega"
        "Nombre_Sucursal" => $fila["Nombre_Sucursal"], // Adding the sucursal name to the result
         "AgregadoPor" => $fila["AgregadoPor"],
-        "AgregadoEl" => $fila["AgregadoEl"],
+        "AgregadoEl" => $fila["AgregadoEl"]
         
     ];
 }
