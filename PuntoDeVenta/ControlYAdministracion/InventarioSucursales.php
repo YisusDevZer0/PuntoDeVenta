@@ -955,6 +955,7 @@ mostrarIvaTotal();
 
 
 </script>
+<script src="js/FinalizaInventarioSucursales.js"></script>
 
 
 <!-- Control Sidebar -->
