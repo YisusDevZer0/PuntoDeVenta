@@ -36,7 +36,7 @@ $(document).ready(function () {
             if (validarFormulario()) {
                 $.ajax({
                     type: 'POST',
-                    url: "Controladores/RegistraInventariosCEDIS.php",
+                    url: "Controladores/RegistraInventariosSucursales.php",
                     data: $('#VentasAlmomento').serialize(),
                     cache: false,
                     success: function (data) {
