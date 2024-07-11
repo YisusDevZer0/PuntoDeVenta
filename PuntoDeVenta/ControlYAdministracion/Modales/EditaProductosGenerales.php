@@ -164,14 +164,7 @@ if ($query->num_rows > 0) {
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="ActualizadoEl">Actualizado El</label>
-                <input type="text" class="form-control" id="ActualizadoEl" name="ActualizadoEl" value="<?php echo $Producto->ActualizadoEl; ?>" maxlength="60">
-            </div>
-        </div>
-    </div>
+  
 
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
