@@ -52,7 +52,7 @@ include_once "Controladores/ControladorUsuario.php";
   	
     $(document).ready(function() {
     // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
-    $(document).on("click", ".btn-Traspaso", function() {
+    $(document).on("click", ".btn-EditarProd", function() {
     
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ProductosGenerales/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
@@ -63,10 +63,10 @@ include_once "Controladores/ControladorUsuario.php";
         });
         $('#editModal').modal('show');
     });
-    $(document).on("click", ".btn-caducado", function() {
+    $(document).on("click", ".btn-ConsultarCambios", function() {
     console.log("Botón de edición clickeado");
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ProductosGenerales/Modales/RegistraEnCaducado.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ProductosGenerales/Modales/ConsultaCambiosDeProductos.php", { id: id }, function(data) {
             $("#form-edit").html(data);
             $("#Titulo").html("Productos Caducados");
             $("#Di").removeClass("modal-dialog modal-lg modal-notify modal-info");
