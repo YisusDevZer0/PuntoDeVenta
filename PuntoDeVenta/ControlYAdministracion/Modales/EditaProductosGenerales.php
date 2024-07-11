@@ -132,13 +132,13 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="AgregadoPor">Agregado Por</label>
-                <input type="text" class="form-control" id="AgregadoPor" name="AgregadoPor" value="<?php echo $Producto->AgregadoPor; ?>" maxlength="60">
+                <input type="text" class="form-control" readonly id="AgregadoPor" name="AgregadoPor" value="<?php echo $Producto->AgregadoPor; ?>" maxlength="60">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="AgregadoEl">Agregado El</label>
-                <input type="text" class="form-control" id="AgregadoEl" name="AgregadoEl" value="<?php echo $Producto->AgregadoEl; ?>" maxlength="60">
+                <input type="text" class="form-control" readonly id="AgregadoEl" name="AgregadoEl" value="<?php echo $Producto->AgregadoEl; ?>" maxlength="60">
             </div>
         </div>
     </div>
@@ -147,7 +147,7 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Licencia">Licencia</label>
-                <input type="text" class="form-control" id="Licencia" name="Licencia" value="<?php echo $Producto->Licencia; ?>" maxlength="60">
+                <input type="text" class="form-control" readonly id="Licencia" name="Licencia" value="<?php echo $Producto->Licencia; ?>" maxlength="60">
             </div>
         </div>
         <div class="col-md-4">
@@ -158,8 +158,8 @@ if ($query->num_rows > 0) {
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="ActualizadoPor">Actualizado Por</label>
-                <input type="text" class="form-control" id="ActualizadoPor" name="ActualizadoPor" value="<?php echo $Producto->ActualizadoPor; ?>" maxlength="60">
+                <label for="ActualizadoPor">Ultima actualizacion por:</label>
+                <input type="text" class="form-control" readonly id="ActualizadoPor" name="ActualizadoPor" value="<?php echo $Producto->ActualizadoPor; ?>" maxlength="60">
             </div>
         </div>
     </div>
