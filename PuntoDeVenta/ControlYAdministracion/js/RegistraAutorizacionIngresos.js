@@ -24,8 +24,7 @@ $('document').ready(function($) {
             $.ajax({
                 type: 'POST',
                 url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistraMedicamentosAprobados.php ", // Reemplaza con la ruta correcta
-                data: $(form).serialize(),
-                cache: false,
+                data: $(form).serialize(),cache: false,
                 beforeSend: function() {
                     $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
                 },
