@@ -23,7 +23,7 @@ $('document').ready(function($) {
         submitHandler: function(form) {
             $.ajax({
                 type: 'POST',
-                url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistraMedicamentosAprobados.php", // Reemplaza con la ruta correcta
+                url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistraMedicamentosAprobados.php ", // Reemplaza con la ruta correcta
                 data: $(form).serialize(),
                 cache: false,
                 beforeSend: function() {
