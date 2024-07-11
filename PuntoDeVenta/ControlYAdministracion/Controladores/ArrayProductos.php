@@ -30,8 +30,13 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Botones individuales para cada fila
     $acciones = [
-        "<button type='button' class='btn btn-warning btn-sm' style='margin-right: 5px;' data-toggle='modal' data-target='#modalEditar" . $fila["IdProdCedis"] . "'><i class='fas fa-pencil-alt'></i></button>",
-        "<button type='button' class='btn btn-secondary btn-sm' style='margin-right: 5px;' data-toggle='modal' data-target='#modalHistorial" . $fila["IdProdCedis"] . "'><i class='fas fa-history'></i></button>"
+    '
+    <td>
+    <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
+     <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
+ 
+    
+    </td>'    
     ];
 
     // Construir acciones como HTML
