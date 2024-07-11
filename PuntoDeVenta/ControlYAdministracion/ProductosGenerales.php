@@ -58,7 +58,7 @@ include_once "Controladores/ControladorUsuario.php";
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar servicios");
-            
+            $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
         });
         $('#ModalEdDele').modal('show');
         });
@@ -80,7 +80,7 @@ include_once "Controladores/ControladorUsuario.php";
 </script>
 
 <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+  <div id="Di"class="modal-dialog  modal-notify modal-success" >
     <div class="text-center">
       <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;" >
