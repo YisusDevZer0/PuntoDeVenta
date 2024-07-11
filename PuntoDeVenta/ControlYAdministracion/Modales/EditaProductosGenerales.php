@@ -1,6 +1,7 @@
 <?php
-include "../Controladores/db_connect.php.php";
+include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
+
 
 $user_id = null;
 $sql1 = "SELECT * FROM Productos_POS WHERE ID_Prod_POS = " . $_POST["id"];
