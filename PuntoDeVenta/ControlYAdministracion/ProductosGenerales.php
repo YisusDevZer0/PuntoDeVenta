@@ -97,7 +97,7 @@ include_once "Controladores/ControladorUsuario.php";
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal --></div>
+  </div><!-- /.modal --></div></div>
             <?php 
             include "Modales/NuevoProductos.php";
             include "Modales/Modales_Errores.php";
