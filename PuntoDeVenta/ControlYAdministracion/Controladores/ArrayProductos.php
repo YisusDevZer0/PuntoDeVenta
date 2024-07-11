@@ -32,8 +32,8 @@ while ($fila = $result->fetch_assoc()) {
     $acciones = [
     '
     <td>
-    <a data-id="' . $fila["ID_Prod_POS"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
-     <a data-id="' . $fila["ID_Prod_POS"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
+    <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
+     <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
  
     
     </td>'    
@@ -44,7 +44,7 @@ while ($fila = $result->fetch_assoc()) {
 
     // Agregar datos al array $data
     $data[] = [
-        "IdProdCedis" => $fila["ID_Prod_POS"],
+        "IdProdCedis" => $fila["IdProdCedis"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
