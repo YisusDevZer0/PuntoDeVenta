@@ -56,13 +56,13 @@ include_once "Controladores/ControladorUsuario.php";
     
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ProductosGenerales/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
-            $("#form-edit").html(data);
-            $("#Titulo").html("Convertir en traspaso");
-            $("#Di").removeClass("modal-dialog modal-lg modal-notify modal-info");
-            $("#Di").addClass("modal-dialog modal-xl modal-notify modal-success");
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Editar servicios");
+            
         });
-        $('#editModal').modal('show');
-    });
+        $('#ModalEdDele').modal('show');
+        });
+       
     $(document).on("click", ".btn-ConsultarCambios", function() {
     console.log("Botón de edición clickeado");
         var id = $(this).data("id");
@@ -78,30 +78,26 @@ include_once "Controladores/ControladorUsuario.php";
 });
 
 </script>
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div id="Di"class="modal-dialog  modal-notify modal-warning">
-      <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="Titulo"></p>
 
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
+<div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
+      <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+
+         
        </div>
-        <div id="Mensaje "class="alert alert-info alert-styled-left text-blue-800 content-group">
-						                <span id="Aviso" class="text-semibold"><?php echo $row['Nombre_Apellidos']?>
-                            Verifique los campos antes de realizar alguna accion</span>
-						                <button type="button" class="close" data-dismiss="alert">×</button>
-                            </div>
+        
 	        <div class="modal-body">
           <div class="text-center">
-        <div id="form-edit"></div>
+        <div id="FormCajas"></div>
         
         </div>
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+  </div><!-- /.modal --></div>
             <?php 
             include "Modales/NuevoProductos.php";
             include "Modales/Modales_Errores.php";
