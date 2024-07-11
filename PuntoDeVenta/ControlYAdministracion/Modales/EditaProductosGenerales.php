@@ -4,7 +4,7 @@ include "../Controladores/ControladorUsuario.php";
 
 
 $user_id = null;
-$sql1 = "SELECT * FROM Productos_POS WHERE ID_Prod_POS = " . $_POST["id"];
+$sql1 = "SELECT * FROM Productos_POS WHERE ID_Prod_POS = ". $_POST["id"];
 $query = $conn->query($sql1);
 $Producto = null;
 if ($query->num_rows > 0) {
