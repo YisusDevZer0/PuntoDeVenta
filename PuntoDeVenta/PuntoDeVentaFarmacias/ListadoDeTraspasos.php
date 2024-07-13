@@ -47,7 +47,7 @@ include_once "Controladores/ControladorUsuario.php";
   	
       $(document).ready(function() {
       // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
-      $(document).on("click", ".btn-EditarProd", function() {
+      $(document).on("click", ".btn-AceptarTraspaso", function() {
       
           var id = $(this).data("id");
           $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AceptaTraspasosPez.php", { id: id }, function(data) {
