@@ -16,7 +16,7 @@ if ($query->num_rows > 0) {
 
 <?php if ($Producto != null): ?>
 
-<form action="javascript:void(0)" method="post" id="ActualizaProducto">
+<form action="javascript:void(0)" method="post" id="ActualizaDatosDeProductos">
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -69,13 +69,31 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Tipo_Servicio">Tipo de Servicio</label>
-                <input type="text" class="form-control" id="Tipo_Servicio" name="Tipo_Servicio" value="<?php echo $Producto->Tipo_Servicio; ?>" maxlength="60">
+                
+                <select id = "tiposervicio" class = "form-control" name="Tipo_Servicio">
+                                               <option value="<?php echo $Producto->Tipo_Servicio; ?>"><?php echo $Producto->Tipo_Servicio; ?></option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Servicios_POS WHERE  Licencia='".$row['Licencia']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Servicio_ID"].'">'.$valores["Nom_Serv"].'</option>';
+          }
+        ?>  </select>        
+          
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Componente_Activo">Componente Activo</label>
-                <input type="text" class="form-control" id="Componente_Activo" name="Componente_Activo" value="<?php echo $Producto->Componente_Activo; ?>" maxlength="60">
+                
+                <select id = "componente" class = "form-control" name="Componente_Activo">
+                                               <option value="<?php echo $Producto->Componente_Activo; ?>"><?php echo $Producto->Componente_Activo; ?></option>
+                                               <?php
+          $query = $conn -> query ("SELECT * FROM Componentes");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["Nom_Com"].'">'.$valores["Nom_Com"].'</option>';
+          }
+        ?> 
+                                              </select>
             </div>
         </div>
     </div>
@@ -164,7 +182,7 @@ if ($query->num_rows > 0) {
         </div>
     </div>
 
-  
+  <br>
 
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>

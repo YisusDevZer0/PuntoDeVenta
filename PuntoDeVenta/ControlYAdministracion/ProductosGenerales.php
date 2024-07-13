@@ -57,7 +57,7 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
           $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Editar servicios");
+            $("#TitulosCajas").html("Editar datos de productos");
             $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
         });
         $('#ModalEdDele').modal('show');
