@@ -227,7 +227,8 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="ActualizadoPor">Ultima actualizacion por:</label>
-                <input type="text" class="form-control" readonly id="ActualizadoPor" name="ActualizadoPor" value="<?php echo $Producto->ActualizadoPor; ?>" maxlength="60">
+                <input type="text" class="form-control" readonly  value="<?php echo $Producto->ActualizadoPor; ?>" maxlength="60">
+                <input type="text" class="form-control" readonly id="ActualizadoPor" name="ActualizadoPor" value="<?php echo $row['Nombre_Apellidos']?>">
             </div>
         </div>
     </div>
@@ -237,7 +238,7 @@ if ($query->num_rows > 0) {
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
-<script src="js/ActualizacionDePresentaciones.js"></script>
+<script src="js/ActualizaDataDeProductos.js"></script>
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
