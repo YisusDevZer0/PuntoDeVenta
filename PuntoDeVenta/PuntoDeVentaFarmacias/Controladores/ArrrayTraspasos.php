@@ -5,7 +5,6 @@ include_once "ControladorUsuario.php";
 
 $sql = "SELECT 
 Traspasos_generados.ID_Traspaso_Generado,
-Traspasos_generados.Folio_Prod_Stock,
 Traspasos_generados.TraspasoRecibidoPor,
 Traspasos_generados.TraspasoGeneradoPor,
 Traspasos_generados.Num_Orden,
