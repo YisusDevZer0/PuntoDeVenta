@@ -212,7 +212,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Cod_Barra' },
        { mData: 'NumOrden' },
        { mData: 'Nombre_Prod' },
-       { mData: 'ProveedorTraspaso' },
+     
        { mData: 'Fk_sucursal' },
        { mData: 'Destino' },
        { mData: 'Cantidad' },
@@ -295,7 +295,6 @@ return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!i
 <th>Codigo de barras</th>
 <th># de orden </th>
 <th>Nombre</th>
-<th>Tipo Traspaso</th>
 <th>Origen</th>
 <th>Destino</th>
 <th>Cantidad</th>
