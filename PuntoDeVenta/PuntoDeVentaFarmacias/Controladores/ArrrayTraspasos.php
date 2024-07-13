@@ -48,7 +48,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         $data[$c]["Cantidad"] = $fila["Cantidad_Enviada"];
         $data[$c]["FechaEntrega"] = fechaCastellano($fila["FechaEntrega"]);
         $data[$c]["Estatus"] = fechaCastellano($fila["Estatus"]);
-        $data[$c]["Traspasocorrecto"] = ["<a data-id='$fila[ID_Traspaso_Generado]' class='btn btn-warning btn-sm btn-ConsultarCambios'><i class='far fa-calendar-times'></i></a>"];
+        $data[$c]["Traspasocorrecto"] = ["<a data-id='$fila[ID_Traspaso_Generado]' class='btn btn-success btn-sm btn-AceptarTraspaso'><i class='fa-solid fa-circle-check'></i></a>"];
 
         $c++;
     }
