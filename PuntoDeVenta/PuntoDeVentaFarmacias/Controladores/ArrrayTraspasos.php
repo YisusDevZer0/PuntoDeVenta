@@ -44,7 +44,7 @@ if ($result && mysqli_num_rows($result) > 0) {
         $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
         $data[$c]["NumOrden"] = $fila["Num_Orden"];
         $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
-        $data[$c]["ProveedorTraspaso"] = $fila["ProveedorFijo"];
+      
         $data[$c]["Fk_sucursal"] = $fila["Nombre_Sucursal"];
         $data[$c]["Destino"] = $fila["Fk_Sucursal_Destino"];
         $data[$c]["Cantidad"] = $fila["Cantidad_Enviada"];
