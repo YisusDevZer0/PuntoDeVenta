@@ -213,8 +213,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'NumOrden' },
        { mData: 'Nombre_Prod' },
      
-       { mData: 'Fk_sucursal' },
-       { mData: 'Destino' },
+     
        { mData: 'Cantidad' },
       { mData: 'FechaEntrega' },
         {mData: "Estatus",
