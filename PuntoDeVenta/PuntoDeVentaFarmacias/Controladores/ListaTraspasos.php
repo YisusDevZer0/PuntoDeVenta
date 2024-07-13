@@ -295,8 +295,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!i
 <th>Codigo de barras</th>
 <th># de orden </th>
 <th>Nombre</th>
-<th>Origen</th>
-<th>Destino</th>
+
 <th>Cantidad</th>
 
 <th>Fecha estimada de entrega</th>

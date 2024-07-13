@@ -45,12 +45,10 @@ if ($result && mysqli_num_rows($result) > 0) {
         $data[$c]["NumOrden"] = $fila["Num_Orden"];
         $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
       
-        $data[$c]["Fk_sucursal"] = $fila["Nombre_Sucursal"];
-        $data[$c]["Destino"] = $fila["Fk_Sucursal_Destino"];
         $data[$c]["Cantidad"] = $fila["Cantidad_Enviada"];
         $data[$c]["FechaEntrega"] = fechaCastellano($fila["FechaEntrega"]);
         $data[$c]["Estatus"] = fechaCastellano($fila["Estatus"]);
-        $data[$c]["Traspasocorrecto"] = ["<a href=https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/TraspasoOKV2?traspasoid=" . base64_encode($fila["ID_Traspaso_Generado"]) . " type='button' class='btn btn-success  btn-sm '><i class='fas fa-check'></i></a> "];
+        $data[$c]["Traspasocorrecto"] = ["<a data-id=' . $fila[ID_Traspaso_Generado] . ' class='btn btn-warning btn-sm btn-ConsultarCambios'><i class='far fa-calendar-times'></i></a>"];
 
         $c++;
     }
