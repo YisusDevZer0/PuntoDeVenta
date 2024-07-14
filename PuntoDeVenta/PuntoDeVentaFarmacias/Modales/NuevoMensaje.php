@@ -3,7 +3,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header" style=" background-color: #ef7980 !important;">
-        <h5 class="modal-title" style="color:white;">Dejar un nuevo mensaje o recordatorio</h5>
+        <h5 class="modal-title" style="color:white;">Dejar un nuevo mensaje</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -12,7 +12,7 @@
           <div class="col-12">
             <div class="bg-light rounded p-4">
               
-              <form id="NewTypeUser">
+              <form id="NuevoMensajeSucursales">
                   <!-- Agrega un campo oculto para el token CSRF -->
     
          
@@ -29,6 +29,7 @@
     </div>
                 
                 <input type="text" hidden class="form-control" name="licencia" id ="licencia" value="<?php echo $row['Licencia']?>">
+                <input type="text" hidden class="form-control" name="Sucursal" id ="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
                 <input type="text" hidden class="form-control" name="estado" id ="estado" value="Vigente">
                 <input type="text" hidden class="form-control" name="agregoPor"id="agrego" value="<?php echo $row['Nombre_Apellidos']?>" >
                 <input type="text" hidden class="form-control" name="Sistema"id="sistema" value="<?php echo $row['Tipo_Usuario']?>" >
