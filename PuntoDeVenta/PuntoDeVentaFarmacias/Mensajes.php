@@ -44,7 +44,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             </div>
             <script src="js/Recordatorios_mensajes.js"></script>
-         
+            <script src="js/GuardaMensajes.js"></script>
             <!-- Footer Start -->
             <?php 
           
