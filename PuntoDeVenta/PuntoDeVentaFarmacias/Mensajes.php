@@ -48,7 +48,7 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Footer Start -->
             <?php 
           
-            include "Modales/NuevoRecordatorio.php";
+            include "Modales/NuevoMensaje.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
            <script>
