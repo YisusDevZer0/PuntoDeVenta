@@ -328,8 +328,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
   }
 </style>
 
-<!-- Main content -->
-<div class="content">
+
 
 
   <div class="container-fluid">
