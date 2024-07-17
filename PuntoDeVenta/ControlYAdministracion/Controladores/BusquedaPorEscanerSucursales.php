@@ -2,6 +2,8 @@
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
+
+
 // Obtener el código de barras y la sucursal buscada enviado por AJAX
 $codigo = $_POST['codigoEscaneado'];
 $sucursalbusqueda = $row['Fk_Sucursal'];
