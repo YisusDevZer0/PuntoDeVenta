@@ -368,7 +368,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (selectedOption === "Inventario inicial") {
             // Aquí hacemos la llamada AJAX para verificar el estado del inventario inicial
             $.ajax({
-                url: 'Consultas/VerificaEstadoInventario.php', // Nuevo archivo PHP que maneja la verificación
+                url: 'Controladores/VerificaEstadoInventario.php', // Nuevo archivo PHP que maneja la verificación
                 method: 'POST',
                 data: {
                     fkSucursal: fkSucursal // Incluye el valor PHP aquí
@@ -393,7 +393,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             if (result.isConfirmed) {
                                 // Aquí hacemos la llamada AJAX para actualizar la base de datos
                                 $.ajax({
-                                    url: 'Consultas/EstableceStock.php', // URL del archivo PHP que maneja la actualización
+                                    url: 'Controladores/EstableceStock.php', // URL del archivo PHP que maneja la actualización
                                     method: 'POST',
                                     data: {
                                         tipoAjuste: selectedOption,
