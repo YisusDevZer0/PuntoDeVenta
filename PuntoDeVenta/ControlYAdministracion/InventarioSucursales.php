@@ -240,7 +240,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             // Añadir la primera opción con valor vacío
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = 'Seleccione Repisa';
+            defaultOption.textContent = 'Seleccione anaquel';
             alphabetSelect.appendChild(defaultOption);
             
             // Llenar con el abecedario
@@ -260,7 +260,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             // Añadir la primera opción con valor vacío
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
-            defaultOption.textContent = 'Seleccione Anaquel';
+            defaultOption.textContent = 'Seleccione Repisa';
             numberSelect.appendChild(defaultOption);
             
             // Llenar con números del 1 al 30
@@ -851,7 +851,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Consultas/autocompletado.php',
+      url: 'Controladores/DespliegaAutoComplete.php',
       type: 'GET',
       dataType: 'json',
       data: {
