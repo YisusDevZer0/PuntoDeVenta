@@ -1100,6 +1100,8 @@ function eliminarFila(element) {
 </style>
 <!-- Control Sidebar -->
 
+<script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
+  <script src="js/RegistraInventariosEnModoConteo.js"></script>
 <!-- Main Footer -->
 <?php
 
@@ -1110,8 +1112,6 @@ include "Footer.php";?>
 
 
 
-  <script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
-  <script src="js/RegistraInventariosEnModoConteo.js"></script>
 
 
   <!-- PAGE PLUGINS -->
