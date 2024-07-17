@@ -30,7 +30,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
     }
 
     #Tarjeta2 {
-      background-color: #e83e8c !important;
+      background-color: #ef7980 !important;
       color: white;
     }
     .btn-container {
