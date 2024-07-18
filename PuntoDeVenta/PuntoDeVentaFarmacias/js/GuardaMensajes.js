@@ -1,6 +1,4 @@
 $(document).ready(function($) {
-    // Esconde el formulario de generación de tickets (si aplica)
-    
     $("#NuevoMensajeSucursales").validate({
         submitHandler: submitForm
     });
@@ -8,7 +6,7 @@ $(document).ready(function($) {
     function submitForm() {
         $.ajax({
             type: 'POST',
-            url: "Controladores/AperturaCaja.php", // Cambia esta URL si es necesario
+            url: "Controladores/RegistraNuevoMensajeSucursal.php", // Cambia esta URL si es necesario
             data: $('#NuevoMensajeSucursales').serialize(),
             cache: false,
             beforeSend: function() {
@@ -38,9 +36,6 @@ $(document).ready(function($) {
                         $("#ModalRecordatoriosMensajes").removeClass("in");
                         $(".modal-backdrop").remove();
                         $("#ModalRecordatoriosMensajes").hide();
-
-                       
-
                         setTimeout(function() {
                             window.location.reload();
                         }, 2000);
