@@ -264,7 +264,7 @@ tabla = $('#Clientes').DataTable({
 //   }
 // ],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
 </script>
@@ -272,7 +272,7 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes" class="table table-hover">
 <thead>
-<th>Id de caja</th>
+<th>Id de solicitud</th>
 <th># Factura</th>
 <th># de solicitud</th>
 <th>Proveedor</th>
