@@ -281,7 +281,7 @@ tabla = $('#Clientes').DataTable({
     <!-- <th>Estado</th> -->
     <th>Fecha solicitud</th>
     <th>Solicitante</th>
-    <th>Autorizar ingreso</th>
+   
 </thead>
 
 </div>
