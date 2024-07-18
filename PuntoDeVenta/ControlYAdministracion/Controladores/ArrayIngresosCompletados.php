@@ -5,36 +5,39 @@ include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT 
-    ia.IDIngreso, 
-    ia.ID_Prod_POS, 
-    ia.NumFactura, 
-    ia.Proveedor, 
-    ia.Cod_Barra, 
-    ia.Nombre_Prod, 
-    ia.Fk_Sucursal, 
+    si.IdProdCedis, 
+    si.ID_Prod_POS, 
+    si.NumFactura, 
+    si.Proveedor, 
+    si.Cod_Barra, 
+    si.Nombre_Prod, 
+    si.Fk_Sucursal, 
     s.Nombre_Sucursal,
-    ia.Contabilizado, 
-    ia.Fecha_Caducidad, 
-    ia.Lote, 
-    ia.PrecioMaximo, 
-    ia.Precio_Venta, 
-    ia.Precio_C, 
-    ia.PrecioVentaAutorizado, 
-    ia.AgregadoPor, 
-    ia.AgregadoEl, 
-    ia.FechaInventario, 
-    ia.Estatus, 
-    ia.NumOrden,
-    ia.SolicitadoPor
+    si.Contabilizado, 
+    si.Fecha_Caducidad, 
+    si.Lote, 
+    si.PrecioMaximo, 
+    si.Precio_Venta, 
+    si.Precio_C, 
+    si.AgregadoPor, 
+    si.AgregadoEl, 
+    si.FechaInventario, 
+    si.Estatus, 
+    si.NumOrden
 FROM 
-    IngresosAutorizados ia
+    Solicitudes_Ingresos si
 JOIN 
-    Sucursales s ON ia.Fk_Sucursal = s.ID_Sucursal
-WHERE 
-    MONTH(ia.AgregadoEl) = MONTH(CURRENT_DATE) AND YEAR(ia.AgregadoEl) = YEAR(CURRENT_DATE)";
+    Sucursales s ON si.Fk_Sucursal = s.ID_Sucursal
+WHERE si.Fk_Sucursal = ?";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
+
+// Obtener el valor de Fk_Sucursal
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+
+// Vincular parámetro
+$stmt->bind_param("s", $fk_sucursal);
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -64,18 +67,22 @@ while ($fila = $result->fetch_assoc()) {
             $estatus_leyenda = $fila["Estatus"];
             break;
     }
-    $realizar_corte = '<td><a data-id="' . $fila["IDIngreso"] . '" class="btn btn-success btn-sm btn-AutorizaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
+
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
-        "IDIngreso" => $fila["IDIngreso"],
+        "IdProdCedis" => $fila["IdProdCedis"],
+       
         "NumFactura" => $fila["NumFactura"],
+        "NumOrden" => $fila["NumOrden"],
         "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Contabilizado" => $fila["Contabilizado"],
+       "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["FechaInventario"],
-       
+        
+        
     ];
 }
 
