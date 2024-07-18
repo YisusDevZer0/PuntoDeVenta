@@ -67,21 +67,21 @@ while ($fila = $result->fetch_assoc()) {
             $estatus_leyenda = $fila["Estatus"];
             break;
     }
-
+    $realizar_corte = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-AutorizaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
         "IdProdCedis" => $fila["IdProdCedis"],
        
         "NumFactura" => $fila["NumFactura"],
-        "NumOrden" => $fila["NumOrden"],
+        // "NumOrden" => $fila["NumOrden"],
         "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Contabilizado" => $fila["Contabilizado"],
-       "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
+    //    "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["FechaInventario"],
-        
+        "RealizarCorte" => $realizar_corte,
         
     ];
 }

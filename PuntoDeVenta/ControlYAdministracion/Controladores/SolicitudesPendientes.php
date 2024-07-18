@@ -209,18 +209,19 @@ tabla = $('#Clientes').DataTable({
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArraySolicitudesPendientes.php",
+ "aoColumns": [
 
-  "aoColumns": [
-    { mData: 'IdProdCedis' },  
 { mData: 'NumFactura' },
-{ mData: 'NumOrden' },
+// { mData: 'NumOrden' },
 { mData: 'Proveedor' },
 { mData: 'Cod_Barra' },
 { mData: 'Nombre_Prod' },
 { mData: 'Contabilizado' },
-{ mData: 'Estatus' },
+// { mData: 'Estatus' },
 { mData: 'FechaInventario' },
 { mData: 'AgregadoPor' },
+
+{ mData: 'RealizarCorte' },
 
 
       ],
@@ -271,16 +272,16 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes" class="table table-hover">
 <thead>
-<th>Id de solicitud</th>
 <th># Factura</th>
-<th># de solicitud</th>
+<!-- <th># de solicitud</th> -->
 <th>Proveedor</th>
 <th>Codigo de barras</th>
     <th>Nombre</th>
-    <th>Piezas/Cantidad</th>
-    <th>Estado</th>
+    <th style="width:3% !important;">Cantidad</th>
+    <!-- <th>Estado</th> -->
     <th>Fecha solicitud</th>
     <th>Solicitante</th>
+    <th>Autorizar ingreso</th>
 </thead>
 
 </div>
