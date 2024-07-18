@@ -221,7 +221,7 @@ tabla = $('#Clientes').DataTable({
 { mData: 'FechaInventario' },
 { mData: 'AgregadoPor' },
 
-{ mData: 'RealizarCorte' },
+// { mData: 'RealizarCorte' },
 
 
       ],

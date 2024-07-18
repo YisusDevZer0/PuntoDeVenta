@@ -75,7 +75,7 @@ while ($fila = $result->fetch_assoc()) {
         "Contabilizado" => $fila["Contabilizado"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["FechaInventario"],
-        "RealizarCorte" => $realizar_corte,
+       
     ];
 }
 
