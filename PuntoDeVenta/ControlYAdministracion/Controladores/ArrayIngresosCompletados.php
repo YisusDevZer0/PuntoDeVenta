@@ -55,7 +55,7 @@ while ($fila = $result->fetch_assoc()) {
     $estatus_leyenda = '';
     switch ($fila["Estatus"]) {
         case 'Autorizado':
-            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
+            $estatus_estilo = 'background-color: #198754; color: white;'; // Verde marino
             $estatus_leyenda = 'Ingresado';
             break;
         case 'Pendiente':
