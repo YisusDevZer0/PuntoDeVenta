@@ -29,7 +29,7 @@ FROM
 JOIN 
     Sucursales s ON si.Fk_Sucursal = s.ID_Sucursal
 WHERE 
-    si.Estatus <> 'Autorizado'; AND 
+    si.Estatus <> 'Autorizado' AND 
 si.Fk_Sucursal = ?";
 
 // Preparar la declaración
