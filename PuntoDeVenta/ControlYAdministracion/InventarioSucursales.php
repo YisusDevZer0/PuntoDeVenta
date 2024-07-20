@@ -6,7 +6,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
 <head>
     <meta charset="utf-8">
-    <title>Realizar Ventas de <?php echo $row['Licencia']?></title>
+    <title>Realizando inventario de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
