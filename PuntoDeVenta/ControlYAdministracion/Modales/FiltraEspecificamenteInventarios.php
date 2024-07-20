@@ -22,7 +22,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Sucursal Actual </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="far fa-hospital"></i></span>
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
   </div>
   <input type="text" class="form-control " disabled readonly  value="<?php echo $row['Nombre_Sucursal']?>">
     </div>
@@ -31,7 +31,7 @@
     <div class="col">
     <label for="exampleFormControlInput1">Sucursal a elegir </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="far fa-hospital"></i></span>
+  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
   </div>
   <select id = "sucursal" class = "form-control" name = "Sucursal" required >
                                                <option value="">Seleccione una Sucursal:</option>
