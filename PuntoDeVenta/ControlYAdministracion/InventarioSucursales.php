@@ -1101,7 +1101,7 @@ function eliminarFila(element) {
 <!-- Control Sidebar -->
 
 <script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
-  <script src="js/RegistraInventariosEnModoConteo.js"></script>
+  <script src="js/FinalizaInventarioSucursales.js"></script>
 <!-- Main Footer -->
 <?php
 
