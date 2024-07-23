@@ -751,7 +751,10 @@ function buscarArticulo(codigoEscaneado) {
   $.ajax({
     url: "Controladores/BusquedaPorEscanerSucursales.php",
     type: 'POST',
-    data: { codigoEscaneado: codigoEscaneado },
+    data: { 
+      codigoEscaneado: codigoEscaneado,
+      Fk_sucursal: Fk_sucursal // Asegúrate de definir esta variable antes de usarla
+    },
     dataType: 'json',
     success: function (data) {
       if (!data || !data.id) {
