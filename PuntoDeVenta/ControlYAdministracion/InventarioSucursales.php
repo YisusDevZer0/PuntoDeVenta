@@ -891,12 +891,9 @@ function calcularDiferencia(fila) {
   var totalIVA = 0;
 
   function agregarArticulo(articulo) {
-
-    console.log('Artículo recibido:', articulo); // Verifica los datos aquí
-
-  if (!articulo || !articulo.id) {
-    mostrarMensaje('El artículo no es válido');
-    return;
+  if (!articulo || articulo.id === null) {
+    // Manejar artículo sin código de barras
+    articulo.id = new Date().getTime(); // Usar timestamp como ID temporal
   }
 
   let row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
