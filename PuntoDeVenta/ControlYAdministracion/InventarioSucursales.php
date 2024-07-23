@@ -749,7 +749,7 @@ function buscarArticulo(codigoEscaneado) {
   if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
 
   $.ajax({
-    url: "Controladores/BusquedaPorEscaner.php",
+    url: "Controladores/BusquedaPorEscanerSucursales.php",
     type: 'POST',
     data: { codigoEscaneado: codigoEscaneado },
     dataType: 'json',
@@ -836,7 +836,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Controladores/DespliegaAutoComplete.php',
+      url: 'Controladores/DespliegaAutoCompleteSucursales.php',
       type: 'GET',
       dataType: 'json',
       data: {
