@@ -950,7 +950,6 @@ function calcularDiferencia(fila) {
   limpiarCampo();
   $('#codigoEscaneado').focus();
 }
-  
 
 
 
