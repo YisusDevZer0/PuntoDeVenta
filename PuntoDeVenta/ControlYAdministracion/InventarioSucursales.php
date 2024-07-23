@@ -961,7 +961,6 @@ function calcularDiferencia(fila) {
 
 
 
-
   function mostrarToast(mensaje) {
   var toast = $('<div class="toast"></div>').text(mensaje);
   $('body').append(toast);
