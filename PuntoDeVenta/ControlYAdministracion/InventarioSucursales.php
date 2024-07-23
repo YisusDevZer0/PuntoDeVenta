@@ -890,10 +890,32 @@ function calcularDiferencia(fila) {
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
 
-  function agregarArticulo(articulo) {
-  if (!articulo || articulo.id === null) {
-    // Manejar artículo sin código de barras
-    articulo.id = new Date().getTime(); // Usar timestamp como ID temporal
+  function buscarArticulo(codigoEscaneado) {
+  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
+
+  $.ajax({
+    url: "Controladores/BusquedaPorEscaner.php",
+    type: 'POST',
+    data: { codigoEscaneado: codigoEscaneado },
+    dataType: 'json',
+    success: function (data) {
+      if (data.descripcion === 'Artículo no encontrado') {
+        // Crear un código de barras temporal si el artículo no se encuentra
+        data.codigo = 'TEMP-' + new Date().getTime(); // Código temporal
+        data.id = new Date().getTime(); // ID temporal
+      }
+      agregarArticulo(data);
+    },
+    error: function (data) {
+      console.error('Error en la solicitud AJAX', data);
+    }
+  });
+}
+
+function agregarArticulo(articulo) {
+  if (!articulo || !articulo.id) {
+    mostrarMensaje('El artículo no es válido');
+    return;
   }
 
   let row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
