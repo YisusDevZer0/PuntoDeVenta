@@ -745,12 +745,6 @@ function agregarEscaneo(escaneo) {
   scanBuffer += escaneo;
 }
 
-function esCodigoBarrasValido(codigoEscaneado) {
-  // Verificar si el código de barras tiene una longitud válida
-  var longitud = codigoEscaneado.length;
-  return longitud >= 2 && longitud <= 13; // Ajusta el rango según sea necesario
-}
-
 function buscarArticulo(codigoEscaneado) {
   if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
 
@@ -935,15 +929,15 @@ function calcularDiferencia(fila) {
   } else {
     let tr = `
       <tr data-id="${articulo.id}">
-        <td class="codigo"><input class="form-control codigo-barras-input" readonly style="font-size: 0.75rem !important;" type="text" value="${articulo.codigo}" name="CodBarras[]" /></td>
+        <td class="codigo"><input class="form-control codigo-barras-input" readonly style="font-size: 0.75rem !important;" type="text" value="${articulo.codigo || ''}" name="CodBarras[]" /></td>
         <td class="descripcion"><textarea class="form-control descripcion-producto-input" readonly style="font-size: 0.75rem !important;" name="NombreDelProducto[]">${articulo.descripcion}</textarea></td>
         <td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="${articulo.cantidad}" onchange="calcularDiferencia(this)" /></td>
         <td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" readonly style="font-size: 0.75rem !important;" type="number" name="StockActual[]" value="${articulo.existencia}" /></td>
         <td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="number" name="Diferencia[]" /></td>
         <td class="preciofijo"><input class="form-control preciou-input" readonly style="font-size: 0.75rem !important;" type="number" value="${articulo.precio}" /></td>
         <td class="tipoajuste"><input class="form-control tipoajuste-input" readonly style="font-size: 0.75rem !important;" name="Tipodeajusteaplicado[]" type="text" /></td>
-          <td class="anaquel"><input class="form-control anaquel-input" readonly style="font-size: 0.75rem !important;" name="AnaquelSeleccionado[]" type="text" /></td>
-          <td class="repisa"><input class="form-control repisa-input" readonly style="font-size: 0.75rem !important;" name="RepisaSeleccionada[]" type="text" /></td>
+        <td class="anaquel"><input class="form-control anaquel-input" readonly style="font-size: 0.75rem !important;" name="AnaquelSeleccionado[]" type="text" /></td>
+        <td class="repisa"><input class="form-control repisa-input" readonly style="font-size: 0.75rem !important;" name="RepisaSeleccionada[]" type="text" /></td>
         <td style="display:none;" class="preciodecompra"><input class="form-control preciocompra-input" style="font-size: 0.75rem !important;" name="PrecioCompra[]" value="${articulo.preciocompra}" /></td>
         <td style="display:none;" class="precio"><input hidden id="precio_${articulo.id}" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVenta[]" value="${articulo.precio}" onchange="actualizarImporte($(this).parent().parent());" /></td>
         <td style="display:none;"><input id="importe_${articulo.id}" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>
@@ -971,7 +965,6 @@ function calcularDiferencia(fila) {
   limpiarCampo();
   $('#codigoEscaneado').focus();
 }
-
   
 
 
