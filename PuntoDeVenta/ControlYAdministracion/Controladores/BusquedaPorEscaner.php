@@ -2,78 +2,71 @@
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
-// Obtener el código de barras y la sucursal buscada enviado por AJAX
+// Obtener el código de barras o nombre enviado por AJAX
 $codigo = $_POST['codigoEscaneado'];
 
-// Inicializa la variable para la búsqueda por nombre
-$searchByName = false;
+// Inicializa el array de datos vacío
+$data = array();
 
-// Verifica si se está buscando por nombre (si el código está vacío)
-if (empty($codigo)) {
-    $searchByName = true;
-}
-
-// Si se busca por nombre, realiza la consulta por nombre
-if ($searchByName) {
-    $sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote_Med) AS lotes,
-            GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias) AS stockactual, GROUP_CONCAT(Precio_C) as precioscompra
-            FROM CEDIS
-            WHERE Nombre_Prod LIKE ?
-            GROUP BY Nombre_Prod;";
-    $stmt = $conn->prepare($sql);
-    $searchTerm = '%' . $codigo . '%';
-    $stmt->bind_param("s", $searchTerm);
-} else {
-    // Si se busca por código de barras, realiza la consulta por código de barras
-    $sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote_Med) AS lotes,
-            GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias) AS stockactual, GROUP_CONCAT(Precio_C) as precioscompra
-            FROM CEDIS
-            WHERE Cod_Barra = ?
-            GROUP BY Cod_Barra;";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $codigo);
-}
-
+// Primero, intenta buscar por código de barras
+$sql = "SELECT Cod_Barra, ID_Prod_POS AS id, Nombre_Prod AS descripcion, Precio_Venta AS precio, Existencias AS stockactual, Precio_C AS precioscompra
+        FROM CEDIS
+        WHERE Cod_Barra = ?
+        LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $codigo);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Si se encontró el artículo, obtener los valores concatenados
+    // Si se encontró el artículo, devuelve los datos
     $row = $result->fetch_assoc();
-    $ids = explode(',', $row['IDs']);
-    $descripciones = explode(',', $row['descripciones']);
-    $precios = explode(',', $row['precios']);
-    $precioscompra = explode(',', $row['precioscompra']);
-    $stockactual = explode(',', $row['stockactual']);
-    $lotes = explode(',', $row['lotes']);
-    $claves = explode(',', $row['claves']);
-    $tipos = explode(',', $row['tipos']);
-    
-    // Tomar el primer valor de cada columna para evitar la repetición
     $data = array(
-        "id" => $ids[0],
+        "id" => $row["id"],
         "codigo" => $row["Cod_Barra"],
-        "descripcion" => $descripciones[0],
-        "cantidad" => [1],
-        "existencia" => $stockactual[0],
-        "precio" => $precios[0],
-        "preciocompra" => $precioscompra[0],
-        "lote" => $lotes[0],
-        "clave" => $claves[0],
-        "tipo" => $tipos[0],
-        "eliminar" => ""
+        "descripcion" => $row["descripcion"],
+        "cantidad" => 1,
+        "existencia" => $row["stockactual"],
+        "precio" => $row["precio"],
+        "preciocompra" => $row["precioscompra"],
+        "lote" => "",
+        "clave" => "",
+        "tipo" => ""
     );
-    
-    header('Content-Type: application/json');
-    echo json_encode($data);
 } else {
-    // Si no se encontró el artículo, devolver un array vacío en formato JSON
-    $data = array();
-    header('Content-Type: application/json');
-    echo json_encode($data);
+    // Si no se encontró por código de barras, busca por nombre
+    $sql = "SELECT Cod_Barra, ID_Prod_POS AS id, Nombre_Prod AS descripcion, Precio_Venta AS precio, Existencias AS stockactual, Precio_C AS precioscompra
+            FROM CEDIS
+            WHERE Nombre_Prod LIKE ?
+            LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $likeName = "%{$codigo}%";
+    $stmt->bind_param("s", $likeName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Si se encontró el artículo por nombre, devuelve los datos
+        $row = $result->fetch_assoc();
+        $data = array(
+            "id" => $row["id"],
+            "codigo" => $row["Cod_Barra"],
+            "descripcion" => $row["descripcion"],
+            "cantidad" => 1,
+            "existencia" => $row["stockactual"],
+            "precio" => $row["precio"],
+            "preciocompra" => $row["precioscompra"],
+            "lote" => "",
+            "clave" => "",
+            "tipo" => ""
+        );
+    }
 }
 
-// Cerrar la conexión a la base de datos
+header('Content-Type: application/json');
+echo json_encode($data);
+
+// Cierra la conexión a la base de datos
 $stmt->close();
 $conn->close();
 ?>
