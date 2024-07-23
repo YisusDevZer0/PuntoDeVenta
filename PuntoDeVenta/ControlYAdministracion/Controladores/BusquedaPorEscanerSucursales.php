@@ -2,29 +2,20 @@
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
-// Obtener el código de barras, el nombre del producto y la sucursal buscada enviados por AJAX
+
+
+// Obtener el código de barras y la sucursal buscada enviado por AJAX
 $codigo = $_POST['codigoEscaneado'];
 $sucursalbusqueda = $row['Fk_Sucursal'];
 
 // Consultar la base de datos para obtener el artículo correspondiente al código de barras
 $sql = "SELECT Cod_Barra, Fk_sucursal, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes,
-GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias_R)  AS stockactual, GROUP_CONCAT(Precio_C) as precioscompra
+ GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos, GROUP_CONCAT(Existencias_R)  AS stockactual ,GROUP_CONCAT(Precio_C) as precioscompra
 FROM Stock_POS
-WHERE (Cod_Barra = ? OR Nombre_Prod LIKE ?) AND Fk_sucursal = ?
-GROUP BY Cod_Barra";
-
+        WHERE Cod_Barra = ? AND Fk_sucursal = ?
+        GROUP BY Cod_Barra";
 $stmt = $conn->prepare($sql);
-
-// Si se proporciona un código de barras, usarlo. Si no, usar un patrón para buscar por nombre.
-if (!empty($codigo)) {
-    $likeNombre = '%'; // No buscar por nombre si se proporciona un código de barras
-    $stmt->bind_param("sss", $codigo, $likeNombre, $sucursalbusqueda);
-} else {
-    // Buscar por nombre si no se proporciona código de barras
-    $likeNombre = '%' . $_POST['nombreProducto'] . '%';
-    $stmt->bind_param("sss", $likeNombre, $likeNombre, $sucursalbusqueda);
-}
-
+$stmt->bind_param("ss", $codigo, $sucursalbusqueda);
 $stmt->execute();
 $result = $stmt->get_result();
 
