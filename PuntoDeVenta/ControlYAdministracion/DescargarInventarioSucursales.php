@@ -1,10 +1,13 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
 include("Controladores/db_connection.php");
 
-// Obtén el valor de id_sucursal de la URL
 if (!isset($_GET['id_sucursal']) || !is_numeric($_GET['id_sucursal'])) {
     die("ID de sucursal no válido. Parámetro recibido: " . htmlspecialchars($_GET['id_sucursal']));
 }
@@ -14,7 +17,6 @@ if ($id_sucursal <= 0) {
     die("ID de sucursal no válido.");
 }
 
-// Consulta SQL con parámetro de sucursal
 $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.ID_Prod_POS, Stock_POS.AgregadoEl,
                Stock_POS.Clave_Levic, Stock_POS.Cod_Barra, Stock_POS.Nombre_Prod, Stock_POS.Tipo_Servicio, Stock_POS.Tipo,
                Stock_POS.Fk_sucursal, Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.Existencias_R,
@@ -27,7 +29,6 @@ $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.
         INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_POS
         WHERE Stock_POS.Fk_sucursal = ?";
 
-// Preparar y ejecutar la declaración
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     die("Error en la preparación de la consulta: " . htmlspecialchars($conn->error));
@@ -38,25 +39,21 @@ if (!$stmt->execute()) {
     die("Error en la ejecución de la consulta: " . htmlspecialchars($stmt->error));
 }
 
-// Obtener resultado
 $result = $stmt->get_result();
 if (!$result) {
     die("Error al obtener los resultados: " . htmlspecialchars($conn->error));
 }
 
-// Abre el archivo CSV para escritura
 $output = fopen('php://output', 'w');
 if (!$output) {
     die("Error al abrir el flujo de salida.");
 }
 
-// Escribe los encabezados CSV
 fputcsv($output, [
     'Cod_Barra', 'Clave_adicional', 'Clave_Levic', 'Nombre_Prod', 'Precio_Venta', 'Nom_Serv', 'Tipo',
     'Proveedor1', 'Proveedor2', 'Sucursal', 'UltimoMovimiento', 'Existencias_R', 'Min_Existencia', 'Max_Existencia'
 ]);
 
-// Escribe los datos de la base de datos en el archivo CSV
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
         $fila["Cod_Barra"],
@@ -76,7 +73,6 @@ while ($fila = $result->fetch_assoc()) {
     ]);
 }
 
-// Cierra el archivo CSV y la conexión
 fclose($output);
 $stmt->close();
 $conn->close();
