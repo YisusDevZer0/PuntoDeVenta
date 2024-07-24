@@ -20,6 +20,7 @@ if ($id_sucursal <= 0) {
 $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.ID_Prod_POS, Stock_POS.AgregadoEl,
                Stock_POS.Clave_Levic, Stock_POS.Cod_Barra, Stock_POS.Nombre_Prod, Stock_POS.Tipo_Servicio, Stock_POS.Tipo,
                Stock_POS.Fk_sucursal, Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.Existencias_R,Stock_POS.Anaquel,Stock_POS.Repisa,
+               Stock_POS.UltimoInventarioPor,Stock_POS.FechaUltimoInventario,
                Stock_POS.Proveedor1, Stock_POS.Proveedor2, Stock_POS.Estatus, Stock_POS.ID_H_O_D, Sucursales.ID_Sucursal,
                Sucursales.Nombre_Sucursal, Servicios_POS.Servicio_ID, Servicios_POS.Nom_Serv, Productos_POS.ID_Prod_POS,
                Productos_POS.Precio_Venta, Productos_POS.Precio_C
@@ -51,7 +52,7 @@ if (!$output) {
 
 fputcsv($output, [
     'Cod_Barra',  'Nombre_Prod','Existencias_R', 'Anaquel','Repisa','Precio_Venta', 'Nom_Serv', 'Tipo',
-    'Proveedor1', 'Proveedor2', 'Sucursal' 
+    'Proveedor1', 'Proveedor2', 'Sucursal','Ultimo inventario por','Fecha ultimo inventario'
 ]);
 
 while ($fila = $result->fetch_assoc()) {
@@ -68,6 +69,8 @@ while ($fila = $result->fetch_assoc()) {
         $fila["Proveedor1"],
         $fila["Proveedor2"],
         $fila["Nombre_Sucursal"],
+        $fila["UltimoInventarioPor"],
+        $fila["FechaUltimoInventario"],
        
       
     ]);
