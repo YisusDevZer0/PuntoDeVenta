@@ -4,21 +4,12 @@ header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
 include("Controladores/db_connection.php");
 
-// Obtén el valor de id_sucursal de la URL
-if (!isset($_GET['sucursal_id'])) {
-    die("ID de sucursal no proporcionado.");
-}
-
-$id_sucursal = $_GET['sucursal_id'];
-
-// Imprime el valor de id_sucursal para depuración
-error_log("ID de sucursal recibido: " . $id_sucursal);
-
-if (!is_numeric($id_sucursal)) {
+// Obtén el valor de sucursal_id de la URL
+if (!isset($_GET['sucursal_id']) || !is_numeric($_GET['sucursal_id'])) {
     die("ID de sucursal no válido.");
 }
 
-$id_sucursal = intval($id_sucursal);
+$id_sucursal = intval($_GET['sucursal_id']);
 if ($id_sucursal <= 0) {
     die("ID de sucursal no válido.");
 }
@@ -86,7 +77,7 @@ while ($fila = $result->fetch_assoc()) {
 }
 
 // Cierra el archivo CSV y la conexión
-
+fclose($output);
 $stmt->close();
 $conn->close();
 ?>

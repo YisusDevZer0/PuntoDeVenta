@@ -160,9 +160,10 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
  Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
 </button>
 
-<a href="DescargarInventarioSucursales.php?id_sucursal=<?php echo $row['Fk_Sucursal']?> " target="_blank" class="btn btn-sm btn-primary">
+<a href="DescargarInventarioSucursales.php?id_sucursal=<?php echo $row['Fk_Sucursal']?>" target="_blank" class="btn btn-sm btn-primary">
   Descargar inventario <i class="fas fa-boxes"></i>
 </a>
+
 
 
                       <div class="row">
