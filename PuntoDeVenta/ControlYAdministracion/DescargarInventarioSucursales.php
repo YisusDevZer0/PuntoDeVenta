@@ -30,18 +30,18 @@ $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.
 // Preparar y ejecutar la declaración
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
-    die("Error en la preparación de la consulta: " . $conn->error);
+    die("Error en la preparación de la consulta: " . htmlspecialchars($conn->error));
 }
 
 $stmt->bind_param("i", $id_sucursal);
 if (!$stmt->execute()) {
-    die("Error en la ejecución de la consulta: " . $stmt->error);
+    die("Error en la ejecución de la consulta: " . htmlspecialchars($stmt->error));
 }
 
 // Obtener resultado
 $result = $stmt->get_result();
 if (!$result) {
-    die("Error al obtener los resultados: " . $conn->error);
+    die("Error al obtener los resultados: " . htmlspecialchars($conn->error));
 }
 
 // Abre el archivo CSV para escritura
