@@ -1,18 +1,10 @@
 <?php
-// Establece el tipo de contenido y el nombre del archivo CSV
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
-// Incluye la conexión a la base de datos
 include("Controladores/db_connection.php");
 
-// Verifica si el id_sucursal se pasa a través de la URL
-$id_sucursal = isset($_GET['id_sucursal']) ? intval($_GET['id_sucursal']) : 0;
-if ($id_sucursal <= 0) {
-    die("ID de sucursal no válido.");
-}
-
-// Consulta SQL con parámetro de sucursal
+// Consulta SQL
 $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.ID_Prod_POS, Stock_POS.AgregadoEl,
                Stock_POS.Clave_Levic, Stock_POS.Cod_Barra, Stock_POS.Nombre_Prod, Stock_POS.Tipo_Servicio, Stock_POS.Tipo,
                Stock_POS.Fk_sucursal, Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.Existencias_R,
@@ -22,31 +14,17 @@ $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.
         FROM Stock_POS
         INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
         INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio = Servicios_POS.Servicio_ID
-        INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_POS
-        WHERE Stock_POS.Fk_sucursal = ?";
+        INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_POS";
 
 // Preparar y ejecutar la declaración
 $stmt = $conn->prepare($sql);
-if (!$stmt) {
-    die("Error en la preparación de la consulta: " . $conn->error);
-}
-
-$stmt->bind_param("i", $id_sucursal);
-if (!$stmt->execute()) {
-    die("Error en la ejecución de la consulta: " . $stmt->error);
-}
+$stmt->execute();
 
 // Obtener resultado
 $result = $stmt->get_result();
-if (!$result) {
-    die("Error al obtener los resultados: " . $conn->error);
-}
 
 // Abre el archivo CSV para escritura
 $output = fopen('php://output', 'w');
-if (!$output) {
-    die("Error al abrir el flujo de salida.");
-}
 
 // Escribe los encabezados CSV
 fputcsv($output, [
