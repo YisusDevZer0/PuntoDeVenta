@@ -86,7 +86,7 @@ while ($fila = $result->fetch_assoc()) {
 }
 
 // Cierra el archivo CSV y la conexión
-fclose($output);
+
 $stmt->close();
 $conn->close();
 ?>
