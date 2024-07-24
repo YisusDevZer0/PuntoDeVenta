@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 header('Content-Type: text/csv');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
-include("Controladores/db_connection.php");
+include("Controladores/db_connect.php");
 
 if (!isset($_GET['id_sucursal']) || !is_numeric($_GET['id_sucursal'])) {
     die("ID de sucursal no válido. Parámetro recibido: " . htmlspecialchars($_GET['id_sucursal']));
