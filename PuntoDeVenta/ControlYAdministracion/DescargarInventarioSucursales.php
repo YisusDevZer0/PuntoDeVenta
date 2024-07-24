@@ -50,15 +50,14 @@ if (!$output) {
 }
 
 fputcsv($output, [
-    'Cod_Barra', 'Clave_adicional', 'Clave_Levic', 'Nombre_Prod', 'Precio_Venta', 'Nom_Serv', 'Tipo',
-    'Proveedor1', 'Proveedor2', 'Sucursal', 'UltimoMovimiento', 'Existencias_R', 'Min_Existencia', 'Max_Existencia'
+    'Cod_Barra',  'Nombre_Prod', 'Precio_Venta', 'Nom_Serv', 'Tipo',
+    'Proveedor1', 'Proveedor2', 'Sucursal', 'Existencias_R'
 ]);
 
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
         $fila["Cod_Barra"],
-        $fila["Clave_adicional"],
-        $fila["Clave_Levic"],
+      
         $fila["Nombre_Prod"],
         $fila["Precio_Venta"],
         $fila["Nom_Serv"],
@@ -66,10 +65,8 @@ while ($fila = $result->fetch_assoc()) {
         $fila["Proveedor1"],
         $fila["Proveedor2"],
         $fila["Nombre_Sucursal"],
-        $fila["AgregadoEl"],
         $fila["Existencias_R"],
-        $fila["Min_Existencia"],
-        $fila["Max_Existencia"]
+      
     ]);
 }
 
