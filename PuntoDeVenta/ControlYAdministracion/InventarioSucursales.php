@@ -165,7 +165,6 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 </a>
 
 
-
                       <div class="row">
                         <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
