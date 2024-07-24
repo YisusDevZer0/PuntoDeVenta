@@ -5,11 +5,11 @@ header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 include("Controladores/db_connection.php");
 
 // Obtén el valor de id_sucursal de la URL
-if (!isset($_GET['id_sucursal'])) {
+if (!isset($_GET['sucursal_id'])) {
     die("ID de sucursal no proporcionado.");
 }
 
-$id_sucursal = $_GET['id_sucursal'];
+$id_sucursal = $_GET['sucursal_id'];
 
 // Imprime el valor de id_sucursal para depuración
 error_log("ID de sucursal recibido: " . $id_sucursal);
