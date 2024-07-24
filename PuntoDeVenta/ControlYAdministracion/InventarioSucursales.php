@@ -323,37 +323,53 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
     });
 
 
-        // Inicializar el estado del input basado en el valor inicial del select
-        document.addEventListener('DOMContentLoaded', function() {
-            var selectElement = document.getElementById('Tipodeajuste');
-            var inputElement = document.getElementById('codigoEscaneado');
-            if (selectElement.value === "") {
-                inputElement.disabled = true;
-                // Mostrar alerta de SweetAlert2
-                Swal.fire({
-                    title: '¡Campo Bloqueado!',
-                    html: '<p>El campo <b>"Código Escaneado"</b> está bloqueado.</p>' +
-                          '<p>Para desbloquearlo, por favor seleccione un tipo de ajuste,el anaquel y la repisa con la que estaras realizando el conteo.</p>' +
-                          '<p><b>Instrucciones:</b></p>' +
-                          '<ul>' +
-                          '<li>Haz clic en el menú desplegable "Tipo de ajuste".</li>' +
-                          '<li>Selecciona una de las opciones disponibles.</li>' +
-                          '<li>Haz clic en el menú desplegable "Anaquel".</li>' +
-                          '<li>Selecciona una de las opciones disponibles.</li>' +
-                          '<li>Haz clic en el menú desplegable "Repisa".</li>' +
-                          '<li>Selecciona una de las opciones disponibles.</li>' +
-                          '<li>El campo se desbloqueará automáticamente.</li>' +
-                          '</ul>',
-                    icon: 'info',
-                    confirmButtonText: 'Entendido',
-                    customClass: {
-                        popup: 'animated tada' // Clase de animación opcional para llamar más la atención
-                    }
-                });
-            } else {
-                inputElement.disabled = false;
+    document.addEventListener('DOMContentLoaded', function() {
+    var selectElement = document.getElementById('Tipodeajuste');
+    var inputElement = document.getElementById('codigoEscaneado');
+
+    // Verifica si el usuario ha optado por no mostrar el mensaje en los últimos 3 días
+    var hideAlertUntil = localStorage.getItem('hideAlertUntil');
+    if (hideAlertUntil && new Date(hideAlertUntil) > new Date()) {
+        return; // No mostrar el mensaje si la fecha de ocultamiento es futura
+    }
+
+    if (selectElement.value === "") {
+        inputElement.disabled = true;
+
+        // Mostrar alerta de SweetAlert2
+        Swal.fire({
+            title: '¡Campo Bloqueado!',
+            html: '<p>El campo <b>"Código Escaneado"</b> está bloqueado.</p>' +
+                  '<p>Para desbloquearlo, por favor seleccione un tipo de ajuste, el anaquel y la repisa con la que estarás realizando el conteo.</p>' +
+                  '<p><b>Instrucciones:</b></p>' +
+                  '<ul>' +
+                  '<li>Haz clic en el menú desplegable "Tipo de ajuste".</li>' +
+                  '<li>Selecciona una de las opciones disponibles.</li>' +
+                  '<li>Haz clic en el menú desplegable "Anaquel".</li>' +
+                  '<li>Selecciona una de las opciones disponibles.</li>' +
+                  '<li>Haz clic en el menú desplegable "Repisa".</li>' +
+                  '<li>Selecciona una de las opciones disponibles.</li>' +
+                  '<li>El campo se desbloqueará automáticamente.</li>' +
+                  '</ul>',
+            icon: 'info',
+            showCancelButton: true,
+            cancelButtonText: 'No mostrar de nuevo',
+            confirmButtonText: 'Entendido',
+            customClass: {
+                popup: 'animated tada' // Clase de animación opcional para llamar más la atención
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                // Establece la fecha en la que se debe volver a mostrar la alerta
+                var futureDate = new Date();
+                futureDate.setDate(futureDate.getDate() + 3); // 3 días en el futuro
+                localStorage.setItem('hideAlertUntil', futureDate.toISOString());
             }
         });
+    } else {
+        inputElement.disabled = false;
+    }
+});
     </script>
 
                      <!-- Importa SweetAlert 2 -->
