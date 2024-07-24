@@ -5,11 +5,11 @@ header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 include("Controladores/db_connection.php");
 
 // Obtén el valor de sucursal_id de la URL
-if (!isset($_GET['id_sucursal']) || !is_numeric($_GET['id_sucursal'])) {
-    die("ID de sucursal no válido.");
+if (!isset($_GET['sucursal_id']) || !is_numeric($_GET['sucursal_id'])) {
+    die("ID de sucursal no válido. Parámetro recibido: " . htmlspecialchars($_GET['sucursal_id']));
 }
 
-$id_sucursal = intval($_GET['id_sucursal']);
+$id_sucursal = intval($_GET['sucursal_id']);
 if ($id_sucursal <= 0) {
     die("ID de sucursal no válido.");
 }
@@ -24,7 +24,7 @@ $sql = "SELECT Stock_POS.Folio_Prod_Stock, Stock_POS.Clave_adicional, Stock_POS.
         FROM Stock_POS
         INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
         INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio = Servicios_POS.Servicio_ID
-        INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_POS
+        INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS = Stock_POS.ID_Prod_ POS
         WHERE Stock_POS.Fk_sucursal = ?";
 
 // Preparar y ejecutar la declaración
