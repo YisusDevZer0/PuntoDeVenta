@@ -4,7 +4,7 @@ header('Content-Type: text/csv');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
 // Incluye la conexión a la base de datos
-include("db_connection.php");
+include("Controladores/db_connection.php");
 
 // Verifica si el id_sucursal se pasa a través de la URL
 $id_sucursal = isset($_GET['id_sucursal']) ? intval($_GET['id_sucursal']) : 0;
