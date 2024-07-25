@@ -1,7 +1,14 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-$sql1="SELECT * FROM `Stock_POS` WHERE  Tipo_Servicio=24  AND Fk_sucursal='".$row['Fk_Sucursal']."' ORDER by rand() limit 50 ";
+$sql1="SELECT * 
+FROM `Stock_POS` 
+WHERE Tipo_Servicio = 24 
+  AND Fk_sucursal = '".$row['Fk_Sucursal']."' 
+  AND Tipo_Servicio NOT IN (3, 6, 7, 8, 10, 11, 12) 
+ORDER BY RAND() 
+LIMIT 50;
+";
 ?>
 <!DOCTYPE html>
 <html lang="es">
