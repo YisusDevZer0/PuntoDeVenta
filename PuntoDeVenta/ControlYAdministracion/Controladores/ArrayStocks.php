@@ -45,8 +45,8 @@ while ($fila = $result->fetch_assoc()) {
         "Existencias_R" => $fila["Existencias_R"],
         "Min_Existencia" => $fila["Min_Existencia"],
         "Max_Existencia" => $fila["Max_Existencia"],
-        "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        "Editar" => "<a href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        "Eliminar" => "<a href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Stocks?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
        
     ];
 }
