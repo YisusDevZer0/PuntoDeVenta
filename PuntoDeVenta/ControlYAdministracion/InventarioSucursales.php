@@ -353,7 +353,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
                   '</ul>',
             icon: 'info',
             showCancelButton: true,
-            cancelButtonText: 'No mostrar de nuevo',
+            cancelButtonText: 'No mostrar de nuevo en 3 dias',
             confirmButtonText: 'Entendido',
             customClass: {
                 popup: 'animated tada' // Clase de animación opcional para llamar más la atención
