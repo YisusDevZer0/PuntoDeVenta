@@ -27,12 +27,18 @@ WHERE
     Productos_POS.ID_Prod_POS = ". $_POST["id"];
 $query = $conn->query($sql1);
 $Producto = null;
+
 if ($query->num_rows > 0) {
     while ($r = $query->fetch_object()) {
         $Producto = $r;
         break;
     }
 }
+
+// Concatenar los valores
+$nombreProd = isset($Producto->Nombre_Prod) ? $Producto->Nombre_Prod : '';
+$tipoServicio = isset($Producto->Nom_Serv) ? $Producto->Nom_Serv : '';
+$codBarra = $nombreProd . ' - ' . $tipoServicio;
 ?>
 
 <?php if ($Producto != null): ?>
@@ -42,24 +48,24 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Nombre_Prod">Nombre del Producto</label>
-                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo $Producto->Nombre_Prod; ?>" maxlength="60">
+                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra</label>
-                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo $Producto->Cod_Barra; ?>" maxlength="60" readonly>
+                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo htmlspecialchars($codBarra, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60" readonly>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Tipo_Servicio">Tipo de Servicio</label>
                 <select id="tiposervicio" class="form-control" name="Tipo_Servicio">
-                    <option value="<?php echo $Producto->Tipo_Servicio; ?>"><?php echo $Producto->Nom_Serv; ?></option>
+                    <option value="<?php echo htmlspecialchars($Producto->Tipo_Servicio, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($Producto->Nom_Serv, ENT_QUOTES, 'UTF-8'); ?></option>
                     <?php
                     $query = $conn->query("SELECT * FROM Servicios_POS WHERE Licencia='".$Producto->Licencia."'");
                     while ($valores = mysqli_fetch_array($query)) {
-                        echo '<option value="'.$valores["Servicio_ID"].'">'.$valores["Nom_Serv"].'</option>';
+                        echo '<option value="'.htmlspecialchars($valores["Servicio_ID"], ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($valores["Nom_Serv"], ENT_QUOTES, 'UTF-8').'</option>';
                     }
                     ?>
                 </select>
@@ -67,34 +73,9 @@ if ($query->num_rows > 0) {
         </div>
     </div>
 
-    <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
+    <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo htmlspecialchars($Producto->ID_Prod_POS, ENT_QUOTES, 'UTF-8'); ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const nombreProdInput = document.getElementById('Nombre_Prod');
-    const tipoServicioSelect = document.getElementById('tiposervicio');
-    const codBarraInput = document.getElementById('Cod_Barra');
-
-    function updateCodBarra() {
-        const nombreProd = nombreProdInput ? nombreProdInput.value : '';
-        const tipoServicio = tipoServicioSelect ? tipoServicioSelect.options[tipoServicioSelect.selectedIndex].text : '';
-        console.log('Nombre del Producto:', nombreProd);
-        console.log('Tipo de Servicio:', tipoServicio);
-        codBarraInput.value = nombreProd + ' - ' + tipoServicio;
-    }
-
-    if (nombreProdInput && tipoServicioSelect && codBarraInput) {
-        updateCodBarra();
-
-        nombreProdInput.addEventListener('input', updateCodBarra);
-        tipoServicioSelect.addEventListener('change', updateCodBarra);
-    } else {
-        console.error('Elementos no encontrados en el DOM');
-    }
-});
-</script>
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
