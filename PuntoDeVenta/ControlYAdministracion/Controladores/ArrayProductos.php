@@ -28,19 +28,23 @@ $result = mysqli_query($conn, $sql);
 
 $data = [];
 while ($fila = $result->fetch_assoc()) {
-    // Botones individuales para cada fila
-    $acciones = [
-    '
-    <td>
-    <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
-     <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
- 
-    
-    </td>'    
-    ];
-
-    // Construir acciones como HTML
-    $acciones_html = implode('', $acciones);
+    // Determinar el HTML del botón en función del valor de Cod_Barra
+    if (empty($fila["Cod_Barra"])) {
+        // Cod_Barra está vacío: mostrar botón para crear código de barras
+        $acciones_html = '
+        <td>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-CrearCodBar"><i class="fas fa-barcode"></i> Crear Código de Barras</a>
+        </td>';
+    } else {
+        // Cod_Barra no está vacío: mostrar botón de editar y consultar cambios
+        $acciones_html = '
+        <td>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
+        </td>';
+    }
 
     // Agregar datos al array $data
     $data[] = [
