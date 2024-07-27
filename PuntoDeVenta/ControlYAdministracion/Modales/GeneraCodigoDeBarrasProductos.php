@@ -50,31 +50,35 @@ if ($query->num_rows > 0) {
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
-<script src="js/ActualizaDataDeProductos.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const nombreProductoElem = document.getElementById('Nombre_Prod');
     const tipoServicioElem = document.getElementById('tiposervicio');
     const codBarraElem = document.getElementById('Cod_Barra');
     
-    const nombreProducto = nombreProductoElem.value;
-    const tipoServicio = tipoServicioElem.selectedOptions[0].text;
+    // Verificar si los elementos existen
+    if (nombreProductoElem && tipoServicioElem && codBarraElem) {
+        const nombreProducto = nombreProductoElem.value;
+        const tipoServicio = tipoServicioElem.selectedOptions[0].text;
 
-    console.log('Nombre del Producto:', nombreProducto);
-    console.log('Tipo de Servicio:', tipoServicio);
+        console.log('Nombre del Producto:', nombreProducto);
+        console.log('Tipo de Servicio:', tipoServicio);
 
-    const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
-    const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
-    
-    const today = new Date();
-    const month = ('0' + (today.getMonth() + 1)).slice(-2);
-    const year = today.getFullYear().toString().slice(-2);
-    
-    const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
-    
-    console.log('Código de Barra:', codigoBarra);
+        const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
+        const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
+        
+        const today = new Date();
+        const month = ('0' + (today.getMonth() + 1)).slice(-2);
+        const year = today.getFullYear().toString().slice(-2);
+        
+        const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
+        
+        console.log('Código de Barra:', codigoBarra);
 
-    codBarraElem.value = codigoBarra;
+        codBarraElem.value = codigoBarra;
+    } else {
+        console.error('No se encontraron los elementos del formulario.');
+    }
 });
 </script>
 
