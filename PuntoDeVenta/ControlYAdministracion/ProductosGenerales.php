@@ -75,6 +75,19 @@ include_once "Controladores/ControladorUsuario.php";
         });
         $('#editModal').modal('show');
     });
+
+    $(document).on("click", ".btn-CrearCodBar", function() {
+    console.log("Botón de edición clickeado");
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
+            $("#form-edit").html(data);
+            $("#Titulo").html("Generar Codigo de barras");
+            $("#Di").removeClass("modal-dialog modal-lg modal-notify modal-info");
+            $("#Di").removeClass("modal-dialog .modal-xl modal-notify modal-success");
+            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-warning");
+        });
+        $('#editModal').modal('show');
+    });
 });
 
 </script>
