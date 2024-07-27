@@ -64,7 +64,7 @@ include_once "Controladores/ControladorUsuario.php";
         });
 
 
-        $(document).on("click", ".btn-EditarProd", function() {
+        $(document).on("click", ".btn-CrearCodBar", function() {
     
     var id = $(this).data("id");
     $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
