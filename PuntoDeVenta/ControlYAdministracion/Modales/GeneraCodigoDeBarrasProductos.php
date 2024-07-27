@@ -76,6 +76,9 @@ document.addEventListener("DOMContentLoaded", function() {
         codBarraElem.value = codigoBarra;
     }
 
+    // Generar código de barras al cargar la página si los campos ya tienen datos
+    generateCodigoBarra();
+
     // Generar código de barras cuando cambien los campos
     nombreProductoElem.addEventListener('input', generateCodigoBarra);
     tipoServicioElem.addEventListener('change', generateCodigoBarra);
