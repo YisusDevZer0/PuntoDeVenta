@@ -184,7 +184,7 @@ tabla = $('#Productos').DataTable({
        { mData: 'Cod_Barra' },
        { mData: 'Nombre_Prod' },
        { mData: 'Clave_interna' },
-       { mData: 'Clave_Levic' },
+   
    
        { mData: 'Precio_C' },
        { mData: 'Precio_Venta' },
