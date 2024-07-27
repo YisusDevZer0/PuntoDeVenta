@@ -53,19 +53,28 @@ if ($query->num_rows > 0) {
 <script src="js/ActualizaDataDeProductos.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const nombreProducto = document.getElementById('Nombre_Prod').value;
-    const tipoServicio = document.getElementById('tiposervicio').selectedOptions[0].text;
+    const nombreProductoElem = document.getElementById('Nombre_Prod');
+    const tipoServicioElem = document.getElementById('tiposervicio');
+    const codBarraElem = document.getElementById('Cod_Barra');
     
+    const nombreProducto = nombreProductoElem.value;
+    const tipoServicio = tipoServicioElem.selectedOptions[0].text;
+
+    console.log('Nombre del Producto:', nombreProducto);
+    console.log('Tipo de Servicio:', tipoServicio);
+
     const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
     const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
     
     const today = new Date();
-    const day = ('0' + today.getDate()).slice(-2);
     const month = ('0' + (today.getMonth() + 1)).slice(-2);
     const year = today.getFullYear().toString().slice(-2);
     
     const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
-    document.getElementById('Cod_Barra').value = codigoBarra;
+    
+    console.log('Código de Barra:', codigoBarra);
+
+    codBarraElem.value = codigoBarra;
 });
 </script>
 
