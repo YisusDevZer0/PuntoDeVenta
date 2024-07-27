@@ -72,39 +72,28 @@ if ($query->num_rows > 0) {
 </form>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const nombreProductoElem = document.getElementById('Nombre_Prod');
-    const tipoServicioElem = document.getElementById('tiposervicio');
-    const codBarraElem = document.getElementById('Cod_Barra');
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtén referencias a los elementos del formulario
+    const nombreProdInput = document.getElementById('Nombre_Prod');
+    const tipoServicioSelect = document.getElementById('tiposervicio');
+    const codBarraInput = document.getElementById('Cod_Barra');
 
-    function generateCodigoBarra() {
-        const nombreProducto = nombreProductoElem.value;
-        const tipoServicio = tipoServicioElem.selectedOptions[0].text;
-
-        if (!nombreProducto || !tipoServicio) {
-            return; // No hacer nada si los campos están vacíos
-        }
-
-        const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
-        const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
-        
-        const today = new Date();
-        const month = ('0' + (today.getMonth() + 1)).slice(-2);
-        const year = today.getFullYear().toString().slice(-2);
-        
-        const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
-
-        codBarraElem.value = codigoBarra;
+    // Función para actualizar el valor del campo Cod_Barra
+    function updateCodBarra() {
+        const nombreProd = nombreProdInput.value;
+        const tipoServicio = tipoServicioSelect.options[tipoServicioSelect.selectedIndex].text;
+        codBarraInput.value = nombreProd + ' - ' + tipoServicio;
     }
 
-    // Generar código de barras al cargar la página si los campos ya tienen datos
-    generateCodigoBarra();
+    // Llama a la función para inicializar el valor al cargar la página
+    updateCodBarra();
 
-    // Generar código de barras cuando cambien los campos
-    nombreProductoElem.addEventListener('input', generateCodigoBarra);
-    tipoServicioElem.addEventListener('change', generateCodigoBarra);
+    // Añade event listeners para actualizar el valor cuando cambien los inputs
+    nombreProdInput.addEventListener('input', updateCodBarra);
+    tipoServicioSelect.addEventListener('change', updateCodBarra);
 });
 </script>
+
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
