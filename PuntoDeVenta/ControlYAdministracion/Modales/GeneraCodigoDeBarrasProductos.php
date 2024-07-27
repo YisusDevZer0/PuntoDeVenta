@@ -4,26 +4,27 @@ include "../Controladores/ControladorUsuario.php";
 
 $user_id = null;
 $sql1 = "SELECT 
-    Productos_POS.ID_Prod_POS, 
+    Productos_POS.ID_Prod_POS as IdProdCedis, 
     Productos_POS.Cod_Barra, 
     Productos_POS.Nombre_Prod, 
-    Productos_POS.Clave_adicional, 
-    Productos_POS.Clave_Levic, 
+    Productos_POS.Clave_adicional as Clave_interna, 
+    Productos_POS.Clave_Levic as Clave_Levic, 
     Productos_POS.Precio_Venta, 
     Productos_POS.Precio_C, 
-    Servicios_POS.Nom_Serv, 
-    Productos_POS.FkMarca, 
+    Servicios_POS.Nom_Serv as Nom_Serv, 
+    Productos_POS.FkMarca as Marca, 
     Productos_POS.Tipo, 
-    Productos_POS.FkCategoria, 
-    Productos_POS.FkPresentacion, 
+    Productos_POS.FkCategoria as Categoria, 
+    Productos_POS.FkPresentacion as Presentacion, 
     Productos_POS.Proveedor1, 
     Productos_POS.AgregadoPor, 
     Productos_POS.AgregadoEl
 FROM 
     Productos_POS
 LEFT JOIN 
-    Servicios_POS ON Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio AND
-Productos_POS.ID_Prod_POS = ". $_POST["id"];
+    Servicios_POS ON Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio
+WHERE 
+    Productos_POS.ID_Prod_POS = ". $_POST["id"];
 $query = $conn->query($sql1);
 $Producto = null;
 if ($query->num_rows > 0) {
