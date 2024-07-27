@@ -33,7 +33,7 @@ while ($fila = $result->fetch_assoc()) {
         // Cod_Barra está vacío: mostrar botón para crear código de barras
         $acciones_html = '
         <td>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
+            
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-CrearCodBar"><i class="fas fa-barcode"></i> Crear Código de Barras</a>
         </td>';
