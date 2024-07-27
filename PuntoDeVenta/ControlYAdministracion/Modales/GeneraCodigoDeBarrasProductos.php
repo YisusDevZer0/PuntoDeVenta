@@ -73,27 +73,28 @@ if ($query->num_rows > 0) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtén referencias a los elementos del formulario
     const nombreProdInput = document.getElementById('Nombre_Prod');
     const tipoServicioSelect = document.getElementById('tiposervicio');
     const codBarraInput = document.getElementById('Cod_Barra');
 
-    // Función para actualizar el valor del campo Cod_Barra
     function updateCodBarra() {
-        const nombreProd = nombreProdInput.value;
-        const tipoServicio = tipoServicioSelect.options[tipoServicioSelect.selectedIndex].text;
+        const nombreProd = nombreProdInput ? nombreProdInput.value : '';
+        const tipoServicio = tipoServicioSelect ? tipoServicioSelect.options[tipoServicioSelect.selectedIndex].text : '';
+        console.log('Nombre del Producto:', nombreProd);
+        console.log('Tipo de Servicio:', tipoServicio);
         codBarraInput.value = nombreProd + ' - ' + tipoServicio;
     }
 
-    // Llama a la función para inicializar el valor al cargar la página
-    updateCodBarra();
+    if (nombreProdInput && tipoServicioSelect && codBarraInput) {
+        updateCodBarra();
 
-    // Añade event listeners para actualizar el valor cuando cambien los inputs
-    nombreProdInput.addEventListener('input', updateCodBarra);
-    tipoServicioSelect.addEventListener('change', updateCodBarra);
+        nombreProdInput.addEventListener('input', updateCodBarra);
+        tipoServicioSelect.addEventListener('change', updateCodBarra);
+    } else {
+        console.error('Elementos no encontrados en el DOM');
+    }
 });
 </script>
-
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
