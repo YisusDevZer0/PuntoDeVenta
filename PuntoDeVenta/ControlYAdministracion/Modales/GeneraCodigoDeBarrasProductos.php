@@ -27,7 +27,7 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra</label>
-                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo $Producto->Cod_Barra; ?>" maxlength="60">
+                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo $Producto->Cod_Barra; ?>" maxlength="60" readonly>
             </div>
         </div>
         <div class="col-md-4">
@@ -47,7 +47,6 @@ if ($query->num_rows > 0) {
     </div>
 
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
-    <button type="button" id="generateCode" class="btn btn-info">Generar Código de Brra</button>
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
@@ -56,11 +55,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const nombreProductoElem = document.getElementById('Nombre_Prod');
     const tipoServicioElem = document.getElementById('tiposervicio');
     const codBarraElem = document.getElementById('Cod_Barra');
-    const generateCodeBtn = document.getElementById('generateCode');
 
     function generateCodigoBarra() {
         const nombreProducto = nombreProductoElem.value;
         const tipoServicio = tipoServicioElem.selectedOptions[0].text;
+
+        if (!nombreProducto || !tipoServicio) {
+            return; // No hacer nada si los campos están vacíos
+        }
 
         const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
         const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
@@ -74,9 +76,9 @@ document.addEventListener("DOMContentLoaded", function() {
         codBarraElem.value = codigoBarra;
     }
 
-    if (generateCodeBtn) {
-        generateCodeBtn.addEventListener('click', generateCodigoBarra);
-    }
+    // Generar código de barras cuando cambien los campos
+    nombreProductoElem.addEventListener('input', generateCodigoBarra);
+    tipoServicioElem.addEventListener('change', generateCodigoBarra);
 });
 </script>
 
