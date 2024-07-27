@@ -33,9 +33,9 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Table Start -->
           <div class="text-center">
-           
-   
-        <div class="bg-light rounded h-100 p-4">
+            <div class="container-fluid pt-4 px-4">
+    <div class="col-12">
+     
             <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6> <br>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar nuevo producto
