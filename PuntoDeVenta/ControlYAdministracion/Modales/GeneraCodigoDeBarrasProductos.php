@@ -23,7 +23,7 @@ FROM
     Productos_POS
 LEFT JOIN 
     Servicios_POS ON Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio AND
-Productos_POS.ID_Prod_POS = ". $_POST["id"];
+IdProdCedis = ". $_POST["id"];
 $query = $conn->query($sql1);
 $Producto = null;
 if ($query->num_rows > 0) {
