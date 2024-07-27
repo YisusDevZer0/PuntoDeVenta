@@ -47,6 +47,7 @@ if ($query->num_rows > 0) {
     </div>
 
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
+    <button type="button" id="generateCode" class="btn btn-info">Generar Código de Barra</button>
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
@@ -55,14 +56,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const nombreProductoElem = document.getElementById('Nombre_Prod');
     const tipoServicioElem = document.getElementById('tiposervicio');
     const codBarraElem = document.getElementById('Cod_Barra');
-    
-    // Verificar si los elementos existen
-    if (nombreProductoElem && tipoServicioElem && codBarraElem) {
+    const generateCodeBtn = document.getElementById('generateCode');
+
+    function generateCodigoBarra() {
         const nombreProducto = nombreProductoElem.value;
         const tipoServicio = tipoServicioElem.selectedOptions[0].text;
-
-        console.log('Nombre del Producto:', nombreProducto);
-        console.log('Tipo de Servicio:', tipoServicio);
 
         const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
         const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
@@ -72,12 +70,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const year = today.getFullYear().toString().slice(-2);
         
         const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
-        
-        console.log('Código de Barra:', codigoBarra);
 
         codBarraElem.value = codigoBarra;
-    } else {
-        console.error('No se encontraron los elementos del formulario.');
+    }
+
+    if (generateCodeBtn) {
+        generateCodeBtn.addEventListener('click', generateCodigoBarra);
     }
 });
 </script>
