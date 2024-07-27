@@ -47,7 +47,7 @@ if ($query->num_rows > 0) {
     </div>
 
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
-    <button type="button" id="generateCode" class="btn btn-info">Generar Código de Barra</button>
+    <button type="button" id="generateCode" class="btn btn-info">Generar Código de Brra</button>
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
