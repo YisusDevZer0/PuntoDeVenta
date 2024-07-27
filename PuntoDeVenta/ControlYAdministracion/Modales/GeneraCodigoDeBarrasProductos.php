@@ -51,6 +51,23 @@ if ($query->num_rows > 0) {
 </form>
 
 <script src="js/ActualizaDataDeProductos.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const nombreProducto = document.getElementById('Nombre_Prod').value;
+    const tipoServicio = document.getElementById('tiposervicio').selectedOptions[0].text;
+    
+    const nombreProductoShort = nombreProducto.slice(0, 4).toUpperCase();
+    const tipoServicioShort = tipoServicio.slice(0, 4).toUpperCase();
+    
+    const today = new Date();
+    const day = ('0' + today.getDate()).slice(-2);
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const year = today.getFullYear().toString().slice(-2);
+    
+    const codigoBarra = tipoServicioShort + nombreProductoShort + month + year;
+    document.getElementById('Cod_Barra').value = codigoBarra;
+});
+</script>
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
