@@ -33,16 +33,15 @@ while ($fila = $result->fetch_assoc()) {
         // Cod_Barra está vacío: mostrar botón para crear código de barras
         $acciones_html = '
         <td>
-            
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-CrearCodBar"><i class="fas fa-barcode"></i> </a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-CrearCodBar" title="Crear Código de Barras"><i class="fas fa-barcode"></i></a>
         </td>';
     } else {
         // Cod_Barra no está vacío: mostrar botón de editar y consultar cambios
         $acciones_html = '
         <td>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd"><i class="fas fa-exchange-alt"></i></a>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios"><i class="far fa-calendar-times"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd" title="Editar Producto"><i class="fas fa-exchange-alt"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
         </td>';
     }
 
@@ -52,7 +51,7 @@ while ($fila = $result->fetch_assoc()) {
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
-        // "Clave_Levic" => $fila["Clave_Levic"],
+        "Clave_Levic" => $fila["Clave_Levic"],
         "Precio_C" => $fila["Precio_C"],
         "Precio_Venta" => $fila["Precio_Venta"],
         "Nom_Serv" => $fila["Nom_Serv"],
