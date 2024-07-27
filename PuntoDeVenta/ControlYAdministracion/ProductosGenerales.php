@@ -62,32 +62,20 @@ include_once "Controladores/ControladorUsuario.php";
         });
         $('#ModalEdDele').modal('show');
         });
-       
-    $(document).on("click", ".btn-ConsultarCambios", function() {
-    console.log("Botón de edición clickeado");
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ConsultaCambiosDeProductos.php", { id: id }, function(data) {
-            $("#form-edit").html(data);
-            $("#Titulo").html("Productos Caducados");
-            $("#Di").removeClass("modal-dialog modal-lg modal-notify modal-info");
-            $("#Di").removeClass("modal-dialog .modal-xl modal-notify modal-success");
-            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-warning");
-        });
-        $('#editModal').modal('show');
-    });
 
-    $(document).on("click", ".btn-CrearCodBar", function() {
-    console.log("Botón de edición clickeado");
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
-            $("#form-edit").html(data);
-            $("#Titulo").html("Generar Codigo de barras");
-            $("#Di").removeClass("modal-dialog modal-lg modal-notify modal-info");
-            $("#Di").removeClass("modal-dialog .modal-xl modal-notify modal-success");
-            $("#Di").addClass("modal-dialog modal-lg modal-notify modal-warning");
-        });
-        $('#editModal').modal('show');
+
+        $(document).on("click", ".btn-EditarProd", function() {
+    
+    var id = $(this).data("id");
+    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
+      $("#FormCajas").html(data);
+        $("#TitulosCajas").html("Generar codigos de barras");
+        $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
     });
+    $('#ModalEdDele').modal('show');
+    });
+       
+   
 });
 
 </script>
