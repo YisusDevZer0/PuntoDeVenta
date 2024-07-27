@@ -254,7 +254,7 @@ tabla = $('#Productos').DataTable({
 <th>Cod Barra</th>
     <th>Nombre</th>
     <th>Cod Interno</th>
-    <th>Cod Levic</th>
+   
  
     <th>PC</th>
     <th>PV </th>
