@@ -55,7 +55,7 @@ if ($query->num_rows > 0) {
             <div class="form-group">
                 <label for="Tipo_Servicio">Tipo de Servicio</label>
                 <select id="tiposervicio" class="form-control" name="Tipo_Servicio">
-                    <option value="<?php echo $Producto->Tipo_Servicio; ?>"><?php echo $Producto->Tipo_Servicio; ?></option>
+                    <option value="<?php echo $Producto->Tipo_Servicio; ?>"><?php echo $Producto->Nombre_Servicio; ?></option>
                     <?php
                     $query = $conn->query("SELECT * FROM Servicios_POS WHERE Licencia='".$Producto->Licencia."'");
                     while ($valores = mysqli_fetch_array($query)) {
