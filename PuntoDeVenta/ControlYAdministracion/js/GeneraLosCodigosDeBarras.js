@@ -1,82 +1,77 @@
 $(document).ready(function () {
-    // Método de validación para solo letras
-    $.validator.addMethod("soloLetras", function (value, element) {
-        return this.optional(element) || /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
+    // Agregar los métodos de validación personalizados
+    function validarFormulario() {
+        var clienteInput = $("#clienteInput");
 
-    // Método de validación para código de barra (puedes ajustar esto según tus necesidades)
-    $.validator.addMethod("codigoBarra", function (value, element) {
-        return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
-    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra inválido!");
+        if (clienteInput.val() === "") {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campo requerido',
+                text: 'El nombre del cliente es necesario',
+            });
+            return false;
+        }
+        return true;
+    }
 
-    // Configuración de la validación del formulario
+    // Validar el formulario
     $("#ActualizaDatosDeProductos").validate({
         rules: {
-            Cod_BarraActualiza: {
+            clienteInput: {
                 required: true,
-                minlength: 5, // Ajusta según sea necesario
-                maxlength: 60,
-                codigoBarra: ""
             },
-            ID_Prod_POSAct: {
-                required: true
-            }
         },
         messages: {
-            Cod_BarraActualiza: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra es requerido",
-                minlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código debe tener al menos 5 caracteres",
-                maxlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código no puede tener más de 60 caracteres"
-            },
-            ID_Prod_POSAct: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> ID del producto es requerido"
-            }
-        },
-        submitHandler: function (form) {
-            $.ajax({
-                type: 'POST',
-                url: 'Controladores/actualiza_producto.php',
-                data: $(form).serialize(),
-                cache: false,
-                beforeSend: function () {
-                    var response = JSON.parse(data);
+            clienteInput: {
+                required: function () {
                     Swal.fire({
-                        title: 'Enviando...',
-                        text: 'Por favor, espera mientras se procesa la actualización.',
-                        icon: 'info',
-                        showConfirmButton: false,
-                        timer: 1500
+                        icon: 'error',
+                        title: 'Campo requerido',
+                        text: 'El nombre del cliente es necesario',
                     });
                 },
-                success: function (dataResult) {
-                    // La respuesta ya es un objeto JSON, no es necesario hacer JSON.parse
-                    if (dataResult.success) {
+            },
+        },
+        submitHandler: function () {
+            if (validarFormulario()) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'Controladores/actualiza_producto.php',
+                    data: $('#ActualizaDatosDeProductos').serialize(),
+                    cache: false,
+                    success: function (data) {
+                        var response = JSON.parse(data);
+
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Datos guardados con exito!',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                didOpen: () => {
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1500);
+                                },
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Algo salió mal',
+                                text: response.message,
+                            });
+                        }
+                    },
+                    error: function () {
                         Swal.fire({
-                            title: 'Actualizado',
-                            text: dataResult.message,
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            location.reload(); // Recargar la página después de mostrar el mensaje de éxito
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Error',
-                            text: dataResult.message,
                             icon: 'error',
-                            confirmButtonText: 'Intentar de nuevo'
+                            title: 'Error en la petición',
+                            text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
                         });
                     }
-                },
-                error: function () {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Error en la solicitud.',
-                        icon: 'error',
-                        confirmButtonText: 'Intentar de nuevo'
-                    });
-                }
-            });
-        }
+                });
+            }
+        },
     });
 });
+
