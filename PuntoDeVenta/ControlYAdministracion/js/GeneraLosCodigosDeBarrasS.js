@@ -38,25 +38,35 @@ $(document).ready(function () {
                     cache: false,
                     success: function (data) {
                         try {
-                            var response = JSON.parse(data);
-
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Datos guardados con éxito!',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    didOpen: () => {
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 1500);
-                                    },
-                                });
+                            // Verifica si la respuesta es un objeto JSON
+                            if (typeof data === 'string') {
+                                var response = JSON.parse(data);
+                                
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Datos guardados con éxito!',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        didOpen: () => {
+                                            setTimeout(() => {
+                                                location.reload();
+                                            }, 1500);
+                                        },
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Algo salió mal',
+                                        text: response.message,
+                                    });
+                                }
                             } else {
+                                console.error('La respuesta del servidor no es una cadena JSON.');
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Algo salió mal',
-                                    text: response.message,
+                                    title: 'Error en la respuesta',
+                                    text: 'La respuesta del servidor no es válida.',
                                 });
                             }
                         } catch (e) {
