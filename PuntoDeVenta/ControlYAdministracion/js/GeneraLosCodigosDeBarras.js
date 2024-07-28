@@ -4,20 +4,7 @@ $(document).ready(function ($) {
     }, "Solo debes ingresar letras");
 
     $("#ActualizaDatosDeProductos").validate({
-        rules: {
-            Cod_BarraActualiza: {
-                required: true,
-                minlength: 5, // Ajusta según sea necesario
-                maxlength: 60
-            },
-        },
-        messages: {
-            Cod_BarraActualiza: {
-                required: "Código de barra es requerido",
-                minlength: "El código debe tener al menos 5 caracteres",
-                maxlength: "El código no puede tener más de 60 caracteres"
-            },
-        },
+      
         submitHandler: function (form) {
             $.ajax({
                 type: 'POST',
