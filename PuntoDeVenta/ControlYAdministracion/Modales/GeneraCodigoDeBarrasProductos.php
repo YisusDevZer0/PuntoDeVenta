@@ -2,6 +2,10 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
+// Obtener valores de la sesión
+$Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+$Id_PvUser = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : '';
+
 $user_id = null;
 $sql1 = "SELECT 
     Productos_POS.ID_Prod_POS as IdProdCedis, 
@@ -45,7 +49,7 @@ $nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombr
 $fechaActual = date('md');
 
 // Concatenar los valores
-$codBarra = $tipoServicio . $nombreProd . $fechaActual;
+$codBarra = $tipoServicio . $nombreProd . $fechaActual . $Fk_Sucursal . $Id_PvUser;
 ?>
 
 <?php if ($Producto != null): ?>
