@@ -22,9 +22,7 @@ $(document).ready(function ($) {
                 minlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código debe tener al menos 5 caracteres",
                 maxlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código no puede tener más de 60 caracteres"
             },
-            Tipo_Servicio: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Tipo de servicio es requerido"
-            }
+           
         },
         submitHandler: function (form) {
             $.ajax({
