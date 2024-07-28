@@ -35,8 +35,8 @@ if ($query->num_rows > 0) {
     }
 }
 
-// Obtener los primeros 3 caracteres del tipo de servicio
-$tipoServicio = isset($Producto->Nom_Serv) ? substr($Producto->Nom_Serv, 0, 3) : '';
+// Obtener las primeras 3 letras del tipo de servicio
+$tipoServicio = isset($Producto->Nom_Serv) ? strtoupper(substr($Producto->Nom_Serv, 0, 3)) : '';
 
 // Obtener la primera letra del nombre del producto
 $nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombre_Prod, 0, 1)) : '';
