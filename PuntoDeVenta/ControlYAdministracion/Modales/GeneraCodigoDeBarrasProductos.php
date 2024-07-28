@@ -87,7 +87,7 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
         </div>
     </div>
 
-    <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo htmlspecialchars($Producto->ID_Prod_POS, ENT_QUOTES, 'UTF-8'); ?>">
+    <input type="" name="ID_Prod_POS" id="id" value="<?php echo htmlspecialchars($Producto->ID_Prod_POS, ENT_QUOTES, 'UTF-8'); ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
