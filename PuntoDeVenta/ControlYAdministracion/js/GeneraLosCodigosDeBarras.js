@@ -57,7 +57,7 @@ $(document).ready(function ($) {
                 error: function () {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Error en la solicitud.',
+                        text: 'Hay un problema en la solicitud.',
                         icon: 'error',
                         confirmButtonText: 'Intentar de nuevo'
                     });
