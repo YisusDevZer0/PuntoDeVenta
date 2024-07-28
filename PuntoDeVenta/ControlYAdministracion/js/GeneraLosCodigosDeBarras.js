@@ -9,16 +9,7 @@ $(document).ready(function () {
 
     $("#ActualizaDatosDeProductos").validate({
        
-        messages: {
-            Cod_BarraActualiza: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra es requerido",
-                minlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código debe tener al menos 5 caracteres",
-                maxlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código no puede tener más de 60 caracteres"
-            },
-            ID_Prod_POSAct: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> ID del producto es requerido"
-            }
-        },
+        
         submitHandler: function (form) {
             $.ajax({
                 type: 'POST',
