@@ -11,7 +11,7 @@ $response = array(
 // Verificar si se recibió una solicitud POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Obtener datos del formulario
-    $idProdPos = isset($_POST['ID_Prod_POS']) ? $conn->real_escape_string($_POST['ID_Prod_POS']) : '';
+    $idProdPos = isset($_POST['ID_Prod_POSAct']) ? $conn->real_escape_string($_POST['ID_Prod_POSAct']) : '';
     $codBarraActualiza = isset($_POST['Cod_BarraActualiza']) ? $conn->real_escape_string($_POST['Cod_BarraActualiza']) : '';
 
     // Verificar si los campos requeridos están presentes
