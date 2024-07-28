@@ -2,10 +2,6 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-// Obtener valores de la sesión
-$Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
-$Id_PvUser = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : '';
-
 $user_id = null;
 $sql1 = "SELECT 
     Productos_POS.ID_Prod_POS as IdProdCedis, 
@@ -38,18 +34,6 @@ if ($query->num_rows > 0) {
         break;
     }
 }
-
-// Obtener las primeras 3 letras del tipo de servicio
-$tipoServicio = isset($Producto->Nom_Serv) ? strtoupper(substr($Producto->Nom_Serv, 0, 3)) : '';
-
-// Obtener la primera letra del nombre del producto
-$nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombre_Prod, 0, 1)) : '';
-
-// Obtener la fecha actual en formato MMDD
-$fechaActual = date('md');
-
-// Concatenar los valores
-$codBarra = $tipoServicio . $nombreProd . $fechaActual . $Fk_Sucursal . $Id_PvUser;
 ?>
 
 <?php if ($Producto != null): ?>
@@ -65,7 +49,7 @@ $codBarra = $tipoServicio . $nombreProd . $fechaActual . $Fk_Sucursal . $Id_PvUs
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra</label>
-                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo htmlspecialchars($codBarra, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60" readonly>
+                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60" readonly>
             </div>
         </div>
         <div class="col-md-4">
