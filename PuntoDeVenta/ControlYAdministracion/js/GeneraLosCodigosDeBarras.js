@@ -1,8 +1,13 @@
-$(document).ready(function ($) {
+$(document).ready(function () {
     // Método de validación para solo letras
     $.validator.addMethod("soloLetras", function (value, element) {
         return this.optional(element) || /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value);
-    }, "Solo debes ingresar letras");
+    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
+
+    // Método de validación para código de barra (puedes ajustar esto según tus necesidades)
+    $.validator.addMethod("codigoBarra", function (value, element) {
+        return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+    }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra inválido!");
 
     // Configuración de la validación del formulario
     $("#ActualizaDatosDeProductos").validate({
@@ -10,14 +15,21 @@ $(document).ready(function ($) {
             Cod_BarraActualiza: {
                 required: true,
                 minlength: 5, // Ajusta según sea necesario
-                maxlength: 60
+                maxlength: 60,
+                codigoBarra: ""
+            },
+            ID_Prod_POSAct: {
+                required: true
             }
         },
         messages: {
             Cod_BarraActualiza: {
-                required: "Código de barra es requerido",
-                minlength: "El código debe tener al menos 5 caracteres",
-                maxlength: "El código no puede tener más de 60 caracteres"
+                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra es requerido",
+                minlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código debe tener al menos 5 caracteres",
+                maxlength: "<i class='fas fa-exclamation-triangle' style='color:red'></i> El código no puede tener más de 60 caracteres"
+            },
+            ID_Prod_POSAct: {
+                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> ID del producto es requerido"
             }
         },
         submitHandler: function (form) {
@@ -36,6 +48,7 @@ $(document).ready(function ($) {
                     });
                 },
                 success: function (dataResult) {
+                    // La respuesta ya es un objeto JSON, no es necesario hacer JSON.parse
                     if (dataResult.success) {
                         Swal.fire({
                             title: 'Actualizado',
@@ -57,7 +70,7 @@ $(document).ready(function ($) {
                 error: function () {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Hay un problema en la solicitud.',
+                        text: 'Error en la solicitud.',
                         icon: 'error',
                         confirmButtonText: 'Intentar de nuevo'
                     });
