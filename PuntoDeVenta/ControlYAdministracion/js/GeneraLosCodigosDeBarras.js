@@ -1,20 +1,17 @@
 $(document).ready(function () {
-    // Método de validación para solo letras
     $.validator.addMethod("soloLetras", function (value, element) {
         return this.optional(element) || /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value);
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
 
-    // Método de validación para código de barra (puedes ajustar esto según tus necesidades)
     $.validator.addMethod("codigoBarra", function (value, element) {
         return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra inválido!");
 
-    // Configuración de la validación del formulario
     $("#ActualizaDatosDeProductos").validate({
         rules: {
             Cod_BarraActualiza: {
                 required: true,
-                minlength: 5, // Ajusta según sea necesario
+                minlength: 5,
                 maxlength: 60,
                 codigoBarra: ""
             },
@@ -37,7 +34,7 @@ $(document).ready(function () {
                 type: 'POST',
                 url: 'Controladores/actualiza_producto.php',
                 data: $(form).serialize(),
-                dataType: 'json', // Especifica que la respuesta debe ser JSON
+                dataType: 'json', // Asegura que la respuesta sea JSON
                 beforeSend: function () {
                     Swal.fire({
                         title: 'Enviando...',
@@ -48,7 +45,7 @@ $(document).ready(function () {
                     });
                 },
                 success: function (dataResult) {
-                    // La respuesta ya es un objeto JSON, no es necesario hacer JSON.parse
+                    // dataResult es ya un objeto JSON, no necesita JSON.parse
                     if (dataResult.success) {
                         Swal.fire({
                             title: 'Actualizado',
