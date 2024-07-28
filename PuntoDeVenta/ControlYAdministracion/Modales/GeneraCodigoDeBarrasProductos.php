@@ -35,10 +35,17 @@ if ($query->num_rows > 0) {
     }
 }
 
+// Obtener los primeros 3 caracteres del tipo de servicio
+$tipoServicio = isset($Producto->Nom_Serv) ? substr($Producto->Nom_Serv, 0, 3) : '';
+
+// Obtener la primera letra del nombre del producto
+$nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombre_Prod, 0, 1)) : '';
+
+// Obtener la fecha actual en formato MMDD
+$fechaActual = date('md');
+
 // Concatenar los valores
-$nombreProd = isset($Producto->Nombre_Prod) ? $Producto->Nombre_Prod : '';
-$tipoServicio = isset($Producto->Nom_Serv) ? $Producto->Nom_Serv : '';
-$codBarra = $nombreProd . ' - ' . $tipoServicio;
+$codBarra = $tipoServicio . $nombreProd . $fechaActual;
 ?>
 
 <?php if ($Producto != null): ?>
