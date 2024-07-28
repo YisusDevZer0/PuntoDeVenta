@@ -39,6 +39,7 @@ $(document).ready(function () {
                 data: $(form).serialize(),
                 cache: false,
                 beforeSend: function () {
+                    var response = JSON.parse(data);
                     Swal.fire({
                         title: 'Enviando...',
                         text: 'Por favor, espera mientras se procesa la actualización.',
