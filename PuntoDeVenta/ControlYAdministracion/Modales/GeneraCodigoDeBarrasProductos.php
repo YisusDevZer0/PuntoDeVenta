@@ -95,4 +95,4 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
 
-<script src="js/GeneraLosCodigosDeBarras.js"></script>
+<script src="js/GeneraLosCodigosDeBarrasS.js"></script>
