@@ -12,9 +12,7 @@ $(document).ready(function ($) {
                 minlength: 5, // Ajusta según sea necesario
                 maxlength: 60
             },
-            Tipo_Servicio: {
-                required: true
-            }
+          
         },
         messages: {
             Cod_BarraActualiza: {
