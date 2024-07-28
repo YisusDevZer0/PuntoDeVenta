@@ -2,23 +2,13 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-$user_id = null;
+// Obtener los datos del producto
 $sql1 = "SELECT 
     Productos_POS.ID_Prod_POS as IdProdCedis, 
-    Productos_POS.Cod_Barra, 
     Productos_POS.Nombre_Prod, 
-    Productos_POS.Clave_adicional as Clave_interna, 
-    Productos_POS.Clave_Levic as Clave_Levic, 
-    Productos_POS.Precio_Venta, 
-    Productos_POS.Precio_C, 
-    Servicios_POS.Nom_Serv as Nom_Serv, 
-    Productos_POS.FkMarca as Marca, 
-    Productos_POS.Tipo, 
-    Productos_POS.FkCategoria as Categoria, 
-    Productos_POS.FkPresentacion as Presentacion, 
-    Productos_POS.Proveedor1, 
-    Productos_POS.AgregadoPor, 
-    Productos_POS.AgregadoEl
+    Productos_POS.Fk_Sucursal, 
+    Productos_POS.AgregadoPor as Id_PvUser,
+    Servicios_POS.Nom_Serv as Nom_Serv
 FROM 
     Productos_POS
 LEFT JOIN 
@@ -35,20 +25,22 @@ if ($query->num_rows > 0) {
     }
 }
 
-// Obtener el ID del producto
-$idProdPos = isset($Producto->IdProdCedis) ? strtoupper($Producto->IdProdCedis) : '';
-
 // Obtener las primeras 3 letras del tipo de servicio
 $tipoServicio = isset($Producto->Nom_Serv) ? strtoupper(substr($Producto->Nom_Serv, 0, 3)) : '';
 
 // Obtener la primera letra del nombre del producto
 $nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombre_Prod, 0, 1)) : '';
 
+// Obtener los valores adicionales
+$idProdPos = isset($Producto->IdProdCedis) ? strtoupper($Producto->IdProdCedis) : '';
+$fkSucursal = isset($Producto->Fk_Sucursal) ? strtoupper($Producto->Fk_Sucursal) : '';
+$idPvUser = isset($Producto->Id_PvUser) ? strtoupper($Producto->Id_PvUser) : '';
+
 // Obtener la fecha actual en formato MMDD
 $fechaActual = date('md');
 
-// Concatenar los valores con ID_Prod_POS al principio
-$codBarra = $idProdPos . $tipoServicio . $nombreProd . $fechaActual;
+// Concatenar los valores
+$codBarra = $tipoServicio . $nombreProd . $idProdPos . $fkSucursal . $idPvUser . $fechaActual;
 ?>
 
 <?php if ($Producto != null): ?>
