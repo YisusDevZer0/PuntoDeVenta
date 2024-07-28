@@ -75,7 +75,7 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
             <div class="form-group">
                 <label for="Tipo_Servicio">Tipo de Servicio</label>
                 <select id="tiposervicio" class="form-control" name="Tipo_Servicio">
-                    <option value="<?php echo htmlspecialchars($Producto->Tipo_Servicio, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($Producto->Nom_Serv, ENT_QUOTES, 'UTF-8'); ?></option>
+                    <option value="<?php echo $Producto->Tipo_Servicio; ?>"><?php echo htmlspecialchars($Producto->Nom_Serv, ENT_QUOTES, 'UTF-8'); ?></option>
                     <?php
                     $query = $conn->query("SELECT * FROM Servicios_POS WHERE Licencia='".$Producto->Licencia."'");
                     while ($valores = mysqli_fetch_array($query)) {
