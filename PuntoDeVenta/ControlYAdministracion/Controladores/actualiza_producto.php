@@ -10,21 +10,29 @@ $response = array(
 
 // Verificar si se recibió una solicitud POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Obtener datos del formulario
-    $idProdPos = isset($_POST['ID_Prod_POSAct']) ? $conn->real_escape_string($_POST['ID_Prod_POSAct']) : '';
-    $codBarraActualiza = isset($_POST['Cod_BarraActualiza']) ? $conn->real_escape_string($_POST['Cod_BarraActualiza']) : '';
+    // Obtener datos del formulario y limpiarlos
+    $idProdPos = isset($_POST['ID_Prod_POSAct']) ? intval($_POST['ID_Prod_POSAct']) : 0;
+    $codBarraActualiza = isset($_POST['Cod_BarraActualiza']) ? trim($_POST['Cod_BarraActualiza']) : '';
 
     // Verificar si los campos requeridos están presentes
-    if (!empty($idProdPos) && !empty($codBarraActualiza)) {
-        // Construir consulta SQL para actualizar el producto
-        $sql = "UPDATE Productos_POS SET Cod_Barra='$codBarraActualiza' WHERE ID_Prod_POS='$idProdPos'";
-        
-        // Ejecutar la consulta
-        if ($conn->query($sql) === TRUE) {
-            $response['success'] = true;
-            $response['message'] = 'Producto actualizado correctamente.';
+    if ($idProdPos && !empty($codBarraActualiza)) {
+        // Consulta preparada
+        $sql = "UPDATE Productos_POS SET Cod_Barra=? WHERE ID_Prod_POS=?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            // Enlazar parámetros
+            $stmt->bind_param("si", $codBarraActualiza, $idProdPos);
+            // Ejecutar consulta
+            if ($stmt->execute()) {
+                $response['success'] = true;
+                $response['message'] = 'Producto actualizado correctamente.';
+            } else {
+                $response['message'] = 'Error al actualizar el producto: ' . $stmt->error;
+            }
+            // Cerrar declaración
+            $stmt->close();
         } else {
-            $response['message'] = 'Error al actualizar el producto: ' . $conn->error;
+            $response['message'] = 'Error en la preparación de la consulta: ' . $conn->error;
         }
     } else {
         $response['message'] = 'Datos incompletos.';
