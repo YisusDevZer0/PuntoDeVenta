@@ -45,11 +45,14 @@ $tipoServicio = isset($Producto->Nom_Serv) ? strtoupper(substr($Producto->Nom_Se
 // Obtener la primera letra del nombre del producto
 $nombreProd = isset($Producto->Nombre_Prod) ? strtoupper(substr($Producto->Nombre_Prod, 0, 1)) : '';
 
+// Obtener el ID_Prod_POS
+$idProdPos = isset($Producto->IdProdCedis) ? strtoupper($Producto->IdProdCedis) : '';
+
 // Obtener la fecha actual en formato MMDD
 $fechaActual = date('md');
 
 // Concatenar los valores
-$codBarra = $tipoServicio . $nombreProd . $fechaActual . $Fk_Sucursal . $Id_PvUser;
+$codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucursal . $Id_PvUser;
 ?>
 
 <?php if ($Producto != null): ?>
