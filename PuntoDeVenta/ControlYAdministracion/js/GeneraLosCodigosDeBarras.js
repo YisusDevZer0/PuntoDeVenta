@@ -12,7 +12,6 @@ $(document).ready(function ($) {
                 minlength: 5, // Ajusta según sea necesario
                 maxlength: 60
             }
-            // Agrega más reglas si es necesario
         },
         messages: {
             Cod_BarraActualiza: {
@@ -20,13 +19,13 @@ $(document).ready(function ($) {
                 minlength: "El código debe tener al menos 5 caracteres",
                 maxlength: "El código no puede tener más de 60 caracteres"
             }
-            // Agrega mensajes para otras reglas si es necesario
         },
         submitHandler: function (form) {
             $.ajax({
                 type: 'POST',
                 url: 'Controladores/actualiza_producto.php',
                 data: $(form).serialize(),
+                dataType: 'json', // Especifica que la respuesta debe ser JSON
                 beforeSend: function () {
                     Swal.fire({
                         title: 'Enviando...',
@@ -36,30 +35,20 @@ $(document).ready(function ($) {
                         timer: 1500
                     });
                 },
-                success: function (response) {
-                    try {
-                        const dataResult = JSON.parse(response);
-                        if (dataResult.success) {
-                            Swal.fire({
-                                title: 'Actualizado',
-                                text: dataResult.message,
-                                icon: 'success',
-                                confirmButtonText: 'Aceptar'
-                            }).then(() => {
-                                location.reload(); // Recargar la página después de mostrar el mensaje de éxito
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: dataResult.message,
-                                icon: 'error',
-                                confirmButtonText: 'Intentar de nuevo'
-                            });
-                        }
-                    } catch (e) {
+                success: function (dataResult) {
+                    if (dataResult.success) {
+                        Swal.fire({
+                            title: 'Actualizado',
+                            text: dataResult.message,
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            location.reload(); // Recargar la página después de mostrar el mensaje de éxito
+                        });
+                    } else {
                         Swal.fire({
                             title: 'Error',
-                            text: 'Respuesta del servidor no válida.',
+                            text: dataResult.message,
                             icon: 'error',
                             confirmButtonText: 'Intentar de nuevo'
                         });
