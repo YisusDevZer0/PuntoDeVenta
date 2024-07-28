@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!empty($idProdPos) && !empty($codBarraActualiza)) {
         // Construir consulta SQL para actualizar el producto
         $sql = "UPDATE Productos_POS SET Cod_Barra='$codBarraActualiza' WHERE ID_Prod_POS='$idProdPos'";
-
+        
         // Ejecutar la consulta
         if ($conn->query($sql) === TRUE) {
             $response['success'] = true;

@@ -11,7 +11,7 @@ $(document).ready(function ($) {
                 required: true,
                 minlength: 5, // Ajusta según sea necesario
                 maxlength: 60
-            },
+            }
             // Agrega más reglas si es necesario
         },
         messages: {
@@ -19,7 +19,7 @@ $(document).ready(function ($) {
                 required: "Código de barra es requerido",
                 minlength: "El código debe tener al menos 5 caracteres",
                 maxlength: "El código no puede tener más de 60 caracteres"
-            },
+            }
             // Agrega mensajes para otras reglas si es necesario
         },
         submitHandler: function (form) {
