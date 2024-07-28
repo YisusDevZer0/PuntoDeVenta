@@ -37,7 +37,7 @@ $(document).ready(function () {
                 type: 'POST',
                 url: 'Controladores/actualiza_producto.php',
                 data: $(form).serialize(),
-                dataType: 'json', // Especifica que la respuesta debe ser JSON
+                cache: false,
                 beforeSend: function () {
                     Swal.fire({
                         title: 'Enviando...',
