@@ -8,17 +8,7 @@ $(document).ready(function () {
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra inválido!");
 
     $("#ActualizaDatosDeProductos").validate({
-        rules: {
-            Cod_BarraActualiza: {
-                required: true,
-                minlength: 5,
-                maxlength: 60,
-                codigoBarra: ""
-            },
-            ID_Prod_POSAct: {
-                required: true
-            }
-        },
+       
         messages: {
             Cod_BarraActualiza: {
                 required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Código de barra es requerido",
