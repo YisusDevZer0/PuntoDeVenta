@@ -68,7 +68,7 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra</label>
-                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo htmlspecialchars($codBarra, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60" readonly>
+                <input type="text" class="form-control" id="Cod_Barra" name="Cod_BarraActualiza" value="<?php echo htmlspecialchars($codBarra, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60" readonly>
             </div>
         </div>
         <div class="col-md-4">
@@ -94,3 +94,5 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
+
+<script src="js/AltaProductosNuevos.js"></script>
