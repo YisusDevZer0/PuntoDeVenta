@@ -1,8 +1,6 @@
 $(document).ready(function () {
-    // Agregar los métodos de validación personalizados
     function validarFormulario() {
         var clienteInput = $("#clienteInput");
-
         if (clienteInput.val() === "") {
             Swal.fire({
                 icon: 'error',
@@ -14,7 +12,6 @@ $(document).ready(function () {
         return true;
     }
 
-    // Validar el formulario
     $("#ActualizaDatosDeProductos").validate({
         rules: {
             clienteInput: {
@@ -40,25 +37,34 @@ $(document).ready(function () {
                     data: $('#ActualizaDatosDeProductos').serialize(),
                     cache: false,
                     success: function (data) {
-                        var response = JSON.parse(data);
+                        try {
+                            var response = JSON.parse(data);
 
-                        if (response.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Datos guardados con exito!',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                didOpen: () => {
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1500);
-                                },
-                            });
-                        } else {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Datos guardados con éxito!',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    didOpen: () => {
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 1500);
+                                    },
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Algo salió mal',
+                                    text: response.message,
+                                });
+                            }
+                        } catch (e) {
+                            console.error('Error parsing JSON:', e);
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Algo salió mal',
-                                text: response.message,
+                                title: 'Error en la respuesta',
+                                text: 'La respuesta del servidor no es válida.',
                             });
                         }
                     },
@@ -74,4 +80,3 @@ $(document).ready(function () {
         },
     });
 });
-
