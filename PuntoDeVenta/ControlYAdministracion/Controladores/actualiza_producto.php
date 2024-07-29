@@ -4,7 +4,7 @@ include "../Controladores/ControladorUsuario.php";
 
 // Inicializar respuesta por defecto
 $response = array(
-    'success' => false,
+    'statusCode' => 201, // Código de estado predeterminado (Error)
     'message' => 'Error en la solicitud.'
 );
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("si", $codBarraActualiza, $idProdPos);
             // Ejecutar consulta
             if ($stmt->execute()) {
-                $response['success'] = true;
+                $response['statusCode'] = 200; // Código de estado OK
                 $response['message'] = 'Producto actualizado correctamente.';
             } else {
                 $response['message'] = 'Error al actualizar el producto: ' . $stmt->error;
