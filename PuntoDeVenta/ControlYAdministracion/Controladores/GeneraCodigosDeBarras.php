@@ -9,7 +9,7 @@ $codBarraActualiza = $conn->real_escape_string(htmlentities(strip_tags(trim($_PO
 
 $sql = "UPDATE `Productos_POS` 
         SET `codBarraActualiza` = '$codBarraActualiza'
-        WHERE `ID_Prod_POS = $idProdPos";
+        WHERE `ID_Prod_POS` = $idProdPos";
 
 if (mysqli_query($conn, $sql)) {
     echo json_encode(array("statusCode" => 200));
