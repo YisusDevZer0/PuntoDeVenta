@@ -63,7 +63,7 @@ $('document').ready(function ($) {
 
         $.ajax({
             type: 'POST',
-            url: "Controladores/actualiza_producto.php",
+            url: "Controladores/GeneraCodigosDeBarras.php",
             data: $('#ActualizaDatosDeProductos').serialize(),
             cache: false,
             beforeSend: function () {
