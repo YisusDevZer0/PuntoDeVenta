@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include "db_connect.php";
 
 $idProdPos = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['ID_Prod_POSAct']))));
