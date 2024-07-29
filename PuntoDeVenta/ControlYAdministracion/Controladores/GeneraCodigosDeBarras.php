@@ -8,7 +8,7 @@ $idProdPos = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['ID_P
 $codBarraActualiza = $conn->real_escape_string(htmlentities(strip_tags(trim($_POST['Cod_BarraActualiza']))));
 
 $sql = "UPDATE `Productos_POS` 
-        SET `codBarraActualiza` = '$codBarraActualiza'
+        SET `Cod_Barra` = '$codBarraActualiza'
         WHERE `ID_Prod_POS` = $idProdPos";
 
 if (mysqli_query($conn, $sql)) {
