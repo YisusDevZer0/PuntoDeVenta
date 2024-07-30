@@ -58,20 +58,7 @@ if ($query->num_rows > 0) {
 }
 </style>
 
-<script>
-document.getElementById('cancelDelete').addEventListener('click', function() {
-    document.getElementById('confirmationMessage').style.display = 'none';
-    // Puedes opcionalmente ocultar el formulario si deseas que no se vea mientras el mensaje está visible
-    // document.getElementById('ActualizaDatosDeProductos').style.display = 'none';
-});
 
-document.getElementById('confirmDelete').addEventListener('click', function() {
-    // Aquí puedes colocar la lógica para eliminar el producto
-    console.log('Producto eliminado');
-    document.getElementById('confirmationMessage').style.display = 'none';
-    // Opcionalmente puedes enviar un formulario o realizar otra acción
-});
-</script>
 <script src="js/DeleteDataDeProductos.js"></script>
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>

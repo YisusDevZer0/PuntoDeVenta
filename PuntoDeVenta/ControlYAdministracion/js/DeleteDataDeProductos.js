@@ -24,10 +24,10 @@ $(document).ready(function() {
                 data: $(form).serialize(),
                 cache: false,
                 beforeSend: function() {
-                    $("#confirmDelete").html("Eliminando... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
+                    $("#eliminar").html("Eliminando... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
                 },
                 success: function(response) {
-                    $("#confirmDelete").html("Eliminar");
+                    $("#eliminar").html("Eliminar");
                     if (response.includes("Producto eliminado correctamente")) {
                         Swal.fire({
                             icon: 'success',
@@ -48,7 +48,7 @@ $(document).ready(function() {
                 },
                 error: function(xhr, status, error) {
                     console.error(xhr);
-                    $("#confirmDelete").html("Eliminar");
+                    $("#eliminar").html("Eliminar");
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
