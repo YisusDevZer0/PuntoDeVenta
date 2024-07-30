@@ -26,7 +26,7 @@ if ($query->num_rows > 0) {
 
 <?php if ($Producto != null): ?>
 
-<form action="javascript:void(0)" method="post" id="ActualizaDatosDeProductos">
+<form action="javascript:void(0)" method="post" id="EliminaDatosDeProductos">
     
 
     <div id="confirmationMessage" class="confirmation-message">
@@ -72,7 +72,7 @@ document.getElementById('confirmDelete').addEventListener('click', function() {
     // Opcionalmente puedes enviar un formulario o realizar otra acción
 });
 </script>
-
+<script src="js/DeleteDataDeProductos.js"></script>
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
