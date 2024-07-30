@@ -42,32 +42,26 @@ if ($query->num_rows > 0) {
         </div>
     </div>
 
+    <div id="confirmationMessage" class="confirmation-message">
+        <h2>¿Estás seguro que deseas eliminar estos datos?</h2>
+        <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
+        <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
+        <button type="button" id="confirmDelete" class="btn btn-danger">Eliminar</button>
+        <button type="button" id="cancelDelete" class="btn btn-secondary">Cancelar</button>
+    </div>
+
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
-<!-- Modal de confirmación -->
-<div id="confirmationMessage" class="confirmation-message">
-    <h2>¿Estás seguro que deseas eliminar estos datos?</h2>
-    <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
-    <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
-    <button id="confirmDelete" class="btn btn-danger">Eliminar</button>
-    <button id="cancelDelete" class="btn btn-secondary">Cancelar</button>
-</div>
-
 <style>
 .confirmation-message {
-    display: block; /* Muestra el modal automáticamente */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     background-color: #f8d7da;
     color: #721c24;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    z-index: 1000;
+    margin-top: 20px; /* Espacio superior para separación del formulario */
 }
 .confirmation-message h2, .confirmation-message p {
     margin: 10px 0;
@@ -80,12 +74,15 @@ if ($query->num_rows > 0) {
 <script>
 document.getElementById('cancelDelete').addEventListener('click', function() {
     document.getElementById('confirmationMessage').style.display = 'none';
+    // Puedes opcionalmente ocultar el formulario si deseas que no se vea mientras el mensaje está visible
+    // document.getElementById('ActualizaDatosDeProductos').style.display = 'none';
 });
 
 document.getElementById('confirmDelete').addEventListener('click', function() {
     // Aquí puedes colocar la lógica para eliminar el producto
     console.log('Producto eliminado');
     document.getElementById('confirmationMessage').style.display = 'none';
+    // Opcionalmente puedes enviar un formulario o realizar otra acción
 });
 </script>
 
