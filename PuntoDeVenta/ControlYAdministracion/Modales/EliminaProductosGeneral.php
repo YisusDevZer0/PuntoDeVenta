@@ -59,8 +59,7 @@ if ($query->num_rows > 0) {
 </style>
 
 
-
+<script src="js/DeleteDataDeProductos.js"></script>
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
-<script src="js/DeleteDataDeProductos.js"></script>
