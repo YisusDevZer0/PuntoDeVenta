@@ -27,30 +27,17 @@ if ($query->num_rows > 0) {
 <?php if ($Producto != null): ?>
 
 <form action="javascript:void(0)" method="post" id="ActualizaDatosDeProductos">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="Nombre_Prod">Nombre del Producto</label>
-                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="ID_Prod_POS">ID del Producto</label>
-                <input type="text" class="form-control" id="ID_Prod_POS" name="ID_Prod_POS" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
-        </div>
-    </div>
+    
 
     <div id="confirmationMessage" class="confirmation-message">
         <h2>¿Estás seguro que deseas eliminar estos datos?</h2>
         <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
         <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
+        <input type="text" hidden class="form-control" id="ID_Prod_POS" name="ID_Prod_POS" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>" readonly>
         <button type="button" id="confirmDelete" class="btn btn-danger">Eliminar</button>
         <button type="button" id="cancelDelete" class="btn btn-secondary">Cancelar</button>
     </div>
 
-    <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
 <style>

@@ -70,7 +70,7 @@ include_once "Controladores/ControladorUsuario.php";
     $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaProductosGeneral.php", { id: id }, function(data) {
       $("#FormCajas").html(data);
         $("#TitulosCajas").html("Editar datos de productos");
-        $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
+        $("#Di").addClass("modal-dialog  modal-notify modal-warning");
     });
     $('#ModalEdDele').modal('show');
     });
