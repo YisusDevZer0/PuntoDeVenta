@@ -42,19 +42,21 @@ if ($query->num_rows > 0) {
         </div>
     </div>
 
-    <button type="button" id="showConfirmation" class="btn btn-danger">Eliminar producto</button>
+    <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
+<!-- Modal de confirmación -->
 <div id="confirmationMessage" class="confirmation-message">
-    <h2>¿Estás seguro que deseas eliminar</h2>
-    <h3><?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>?</h3>
+    <h2>¿Estás seguro que deseas eliminar estos datos?</h2>
+    <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
+    <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
     <button id="confirmDelete" class="btn btn-danger">Eliminar</button>
     <button id="cancelDelete" class="btn btn-secondary">Cancelar</button>
 </div>
 
 <style>
 .confirmation-message {
-    display: none;
+    display: block; /* Muestra el modal automáticamente */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -67,7 +69,7 @@ if ($query->num_rows > 0) {
     text-align: center;
     z-index: 1000;
 }
-.confirmation-message h2, .confirmation-message h3 {
+.confirmation-message h2, .confirmation-message p {
     margin: 10px 0;
 }
 .confirmation-message button {
@@ -76,10 +78,6 @@ if ($query->num_rows > 0) {
 </style>
 
 <script>
-document.getElementById('showConfirmation').addEventListener('click', function() {
-    document.getElementById('confirmationMessage').style.display = 'block';
-});
-
 document.getElementById('cancelDelete').addEventListener('click', function() {
     document.getElementById('confirmationMessage').style.display = 'none';
 });
