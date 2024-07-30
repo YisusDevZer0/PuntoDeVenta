@@ -34,8 +34,8 @@ if ($query->num_rows > 0) {
         <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
         <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
         <input type="text" hidden class="form-control" id="ID_Prod_POS" name="ID_Prod_POS" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>" readonly>
-        <button type="button" id="confirmDelete" class="btn btn-danger">Eliminar</button>
-        <button type="button" id="cancelDelete" class="btn btn-secondary">Cancelar</button>
+        <button type="button" id="" class="btn btn-danger">Eliminar</button>
+        
     </div>
 
 </form>
