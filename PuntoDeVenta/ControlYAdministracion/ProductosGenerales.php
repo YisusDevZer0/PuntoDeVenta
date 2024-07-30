@@ -63,7 +63,17 @@ include_once "Controladores/ControladorUsuario.php";
         $('#ModalEdDele').modal('show');
         });
 
-
+  // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
+  $(document).on("click", ".btn-EliminarData", function() {
+    
+    var id = $(this).data("id");
+    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaProductosGeneral.php", { id: id }, function(data) {
+      $("#FormCajas").html(data);
+        $("#TitulosCajas").html("Editar datos de productos");
+        $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
+    });
+    $('#ModalEdDele').modal('show');
+    });
         $(document).on("click", ".btn-CrearCodBar", function() {
     
     var id = $(this).data("id");
