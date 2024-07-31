@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Listado de productos en cedis <?php echo $row['Licencia']?></title>
+    <title>Reporte de inventarios <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
