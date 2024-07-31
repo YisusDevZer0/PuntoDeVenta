@@ -12,12 +12,12 @@
           <div class="col-12">
             <div class="bg-light rounded p-4">
               
-              <form id="NewTypeUser">
+            <form id="NewTypeUser" target="_blank" method="GET" action="GeneraReporteInventarios" >
                   <!-- Agrega un campo oculto para el token CSRF -->
     
                   <div class="mb-3">
   <label for="tipouser" class="form-label">Seleccione fecha</label>
-  <select class="form-control" name="NombreServicio" id="nombreservicio">
+  <select class="form-control" name="fecha" id="nombreservicio">
     <!-- Opciones se llenarán dinámicamente con JavaScript -->
   </select>
 </div>
@@ -28,7 +28,7 @@
                           <!-- Agrega los otros campos del formulario de manera similar -->
                 <!-- ... -->
 
-                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="submit" class="btn btn-primary">Generar reporte</button>
               </form>
             </div>
           </div>
