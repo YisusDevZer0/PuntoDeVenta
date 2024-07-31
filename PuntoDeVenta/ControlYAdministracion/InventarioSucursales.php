@@ -519,7 +519,10 @@ document.addEventListener("DOMContentLoaded", function() {
                           margin-bottom: 5px !important;
                         }
 
-                        
+                        .no-click {
+  pointer-events: none; /* Desactiva los eventos de puntero */
+  cursor: default; /* Opcional: cambia el cursor a la apariencia predeterminada para que parezca no interactivo */
+}
                       </style>
                       
                       <form action="javascript:void(0)"  method="post" id="VentasAlmomento">
@@ -530,21 +533,21 @@ document.addEventListener("DOMContentLoaded", function() {
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
-                              <th>Codigo</th>
-                              <th style="width:20%">Producto</th>
-                              <th style="width:5%">Contado</th>
-                              <th style="width:5%">Stock</th>
-                              <th style="width:5%">Diferencia</th>
-                              <th style="width:5%">Precio</th>
-                              <th>Tipo de ajuste</th>
-                              <th style="width:3%">Anaquel</th>
-                              <th style="width:3%">Repisa</th>
+                              <th class="no-click">Codigo</th>
+                              <th class="no-click" style="width:20%">Producto</th>
+                              <th class="no-click" style="width:5%">Contado</th>
+                              <th class="no-click" style="width:5%">Stock</th>
+                              <th class="no-click" style="width:5%">Diferencia</th>
+                              <th class="no-click" style="width:5%">Precio</th>
+                              <th class="no-click" >Tipo de ajuste</th>
+                              <th class="no-click" style="width:3%">Anaquel</th>
+                              <th class="no-click" style="width:3%">Repisa</th>
                               <!-- <th>Precio compra</th>
                               <th>Importe</th> -->
                               <!-- <th>importe_Sin_Iva</th>
             <th>Iva</th>
             <th>valorieps</th> -->
-                              <th>Eliminar</th>
+                              <th class="no-click">Eliminar</th>
                             
                             </tr>
                           </thead>
