@@ -39,7 +39,7 @@ $Especialistas = $query->fetch_object();
     <input type="hidden" name="AgregadoPor" id="AgregadoPor" value="<?php echo $row['Nombre_Apellidos']?>">
     <input type="hidden" name="Fk_sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
     <input type="hidden" name="Sistema" id="licencia" value="Administrador">
-    <input type="date" name="FechaConcepto" id="FechaConcepto" value="<?php echo $currentDate; ?>">
+    <input type="date" hidden name="FechaConcepto" id="FechaConcepto" value="<?php echo $currentDate; ?>">
     <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
 
     <button type="submit" class="btn btn-primary">Enviar</button>
