@@ -1,4 +1,4 @@
-$('document').ready(function($){
+$('document').ready(function($) {
   $.validator.addMethod("Sololetras", function(value, element) {
       return this.optional(element) || /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]*$/.test(value);
   }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
@@ -34,11 +34,11 @@ $('document').ready(function($){
       messages: {
           NombreTipoProd: {
               required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Ingresa el nombre ",
-              maxlength: "No puede tener mas de 40 caracteres",
-              minlength: "Un nombre no puede tener solo 1 caracter",
+              maxlength: "No puede tener más de 40 caracteres",
+              minlength: "Un nombre no puede tener solo 1 carácter",
           },
           VigenciaProdT: {
-              required: "<i class='fas fa-exclamation-triangle' style='color:red'></i>Dato requerido ",
+              required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido ",
           },
       },
       submitHandler: submitForm
@@ -60,7 +60,7 @@ $('document').ready(function($){
                   Swal.fire({
                       icon: 'error',
                       title: 'Algo no salió bien...',
-                      text: 'La informacion ya esta previamente registrada',
+                      text: 'La información ya está previamente registrada',
                       confirmButtonText: 'Aceptar'
                   }).then(function() {
                       $("#submit_registro").html("Guardar <i class='fas fa-save'></i>");
@@ -69,12 +69,10 @@ $('document').ready(function($){
                   Swal.fire({
                       icon: 'success',
                       title: 'Enviado',
-                      text: 'El registro de gasto se ha guardado con exito!',
+                      text: 'El registro de gasto se ha guardado con éxito!',
                       confirmButtonText: 'Aceptar'
                   }).then(function() {
-                      
-                          location.reload(); // Recargar la página completa después de 2 segundos
-                      
+                      location.reload(); // Recargar la página completa después de hacer clic en Aceptar
                   });
               } else if (dataResult.statusCode == 201) {
                   Swal.fire({
