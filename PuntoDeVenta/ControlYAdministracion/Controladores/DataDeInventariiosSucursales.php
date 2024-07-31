@@ -312,7 +312,8 @@
         <th style="background-color:#ef7980 !important">AgregadoPor</th>
         <th style="background-color:#ef7980 !important">AgregadoEl</th>
        
-
+        <th style="background-color:#ef7980 !important">Sucursal</th>
+       
 
 
 
