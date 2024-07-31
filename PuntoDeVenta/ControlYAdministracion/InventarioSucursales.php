@@ -960,7 +960,6 @@ function calcularDiferencia(fila) {
         <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POS" /></td>
         <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Saluda" /></td>
         <td style="display:none;" class="Fecha"><input hidden type="text" class="form-control" name="FechaInv[]" readonly value="<?php echo $fechaActual; ?>" /></td>
-        <td><div class="btn-container"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button> </div></td>
         <td><div class="btn-container"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>  <button type="button" class="btn btn-primary btn-sm" onclick="activarInput('${articulo.id}');"><i class="fas fa-edit fa-xs"></i></button></div></td>
         </tr>`;
 
