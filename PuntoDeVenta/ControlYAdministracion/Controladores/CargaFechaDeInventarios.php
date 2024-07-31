@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include("db_connect.php");
 
 // Consulta SQL para obtener las fechas
 $sql = "SELECT DISTINCT FechaInventario FROM InventariosStocks_Conteos;"; // Reemplaza 'InventariosStocks_Conteos' con el nombre de tu tabla
