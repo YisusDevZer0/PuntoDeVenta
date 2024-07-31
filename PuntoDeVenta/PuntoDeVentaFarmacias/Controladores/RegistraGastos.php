@@ -27,7 +27,7 @@ if (!empty($missingFields)) {
     $FechaConcepto = mysqli_real_escape_string($conn, $_POST['FechaConcepto']);
 
     // Consulta para verificar si ya existe un registro con los mismos valores
-    $sql = "SELECT Concepto_Categoria, Licencia, FechaConcepto FROM GastosPOS WHERE Concepto_Categoria='$ConceptoCategoria' AND Licencia='$Licencia' AND FechaConcepto='$FechaConcepto'";
+    $sql = "SELECT Concepto_Categoria, Licencia, FechaConcepto, Recibe FROM GastosPOS WHERE Concepto_Categoria='$ConceptoCategoria' AND Licencia='$Licencia' AND FechaConcepto='$FechaConcepto' AND Recibe='$Recibe'";
     $resultset = mysqli_query($conn, $sql);
 
     if ($resultset && mysqli_num_rows($resultset) > 0) {
