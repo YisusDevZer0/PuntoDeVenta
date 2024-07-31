@@ -60,7 +60,7 @@ $('document').ready(function($){
                   Swal.fire({
                       icon: 'error',
                       title: 'Algo no salió bien...',
-                      text: 'Error duplicado',
+                      text: 'La informacion ya esta previamente registrada',
                       confirmButtonText: 'Aceptar'
                   }).then(function() {
                       $("#submit_registro").html("Guardar <i class='fas fa-save'></i>");
@@ -69,16 +69,12 @@ $('document').ready(function($){
                   Swal.fire({
                       icon: 'success',
                       title: 'Enviado',
-                      text: 'El formulario ha sido enviado correctamente',
+                      text: 'El registro de gasto se ha guardado con exito!',
                       confirmButtonText: 'Aceptar'
                   }).then(function() {
-                      $("#EliminaServiciosForm")[0].reset();
-                      $("#myModal").removeClass("in");
-                      $(".modal-backdrop").remove();
-                      $("#myModal").hide();
-                      setTimeout(function() {
+                      
                           location.reload(); // Recargar la página completa después de 2 segundos
-                      }, 2000);
+                      
                   });
               } else if (dataResult.statusCode == 201) {
                   Swal.fire({
