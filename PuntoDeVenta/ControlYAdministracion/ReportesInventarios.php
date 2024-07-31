@@ -42,9 +42,10 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
-    </button> <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#DescargaReporteInventarios"
+    </button> 
+    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#DescargaReporteInventarios"
       class="btn btn-default">
-      Descargar reporte inventarios <i class="fas fa-search"></i>
+      Descargar reporte inventarios <i class="fa-solid fa-file-excel"></i>
     </button><br><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
@@ -52,11 +53,33 @@ include_once "Controladores/ControladorUsuario.php";
           
 <script src="js/ReporteInventariosSucursales.js"></script>
 
+<script>
+  $(document).ready(function() {
+    $.ajax({
+      url: 'Controladores/CargaFechaDeInventarios.php',
+      type: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        var $select = $('#nombreservicio');
+        $select.empty(); // Limpia las opciones actuales
+
+        $.each(data, function(index, value) {
+          $select.append($('<option></option>').attr('value', value).text(value));
+        });
+      },
+      error: function() {
+        alert('Error al cargar las fechas.');
+      }
+    });
+  });
+</script>
+
             <!-- Footer Start -->
             <?php 
             include "Modales/GenerarNuevoTraspaso.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
+            include "Modales/DescargaDeInventariosSucursales.php";
             include "Footer.php";?>
 </body>
 
