@@ -43,7 +43,7 @@ include_once "Controladores/ControladorUsuario.php";
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
     </button> 
-    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#DescargaReporteInventarios"
+    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#DescargaReporteInventarios"
       class="btn btn-default">
       Descargar reporte inventarios <i class="fa-solid fa-file-excel"></i>
     </button><br><br>
