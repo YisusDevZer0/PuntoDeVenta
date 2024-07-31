@@ -702,7 +702,9 @@ document.getElementById('numberSelect').addEventListener('change', function() {
       {
         "data": "eliminar"
       },
-     
+      {
+        "data": "editar"
+      },
     ],
 
     "order": [
