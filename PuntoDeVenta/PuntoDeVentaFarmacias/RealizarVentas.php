@@ -927,9 +927,17 @@ Efectivo Exacto
     dataType: 'json',
     success: function (data) {
       if ($.isEmptyObject(data)) {
-        
+        // Manejar caso de no resultados
       } else if (data.codigo || data.descripcion) {
         agregarArticulo(data);
+        if (data.esAntibiotico) {
+          Swal.fire({
+            title: 'Advertencia',
+            text: 'Se ha encontrado un artículo de tipo "ANTIBIOTICO".',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+          });
+        }
       }
 
       limpiarCampo();

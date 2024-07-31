@@ -1,11 +1,11 @@
 <?php
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
-// Obtener el código de barras o nombre de producto enviado por AJAX
+
 $codigo = $_POST['codigoEscaneado'];
 
-// Consultar la base de datos para obtener el artículo correspondiente al código de barras o nombre de producto
-$sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo_Servicio) AS tipos
+// Actualizar la consulta para incluir el campo Tipo
+$sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo) AS tipos
         FROM Stock_POS
         WHERE Cod_Barra = ? OR Nombre_Prod LIKE ? OR Clave_adicional = ?
         GROUP BY Cod_Barra";
@@ -16,38 +16,34 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Si se encontró el artículo, obtener los valores concatenados
     $row = $result->fetch_assoc();
-    $ids = explode(',', $row['IDs']);
     $descripciones = explode(',', $row['descripciones']);
-    $precios = explode(',', $row['precios']);
-    $lotes = explode(',', $row['lotes']);
-    $claves = explode(',', $row['claves']);
     $tipos = explode(',', $row['tipos']);
     
-    // Tomar el primer valor de cada columna para evitar la repetición
+    // Verificar si "ANTIBIOTICO" está en los tipos
+    $isAntibiotico = in_array('ANTIBIOTICO', $tipos);
+    
     $data = array(
-        "id" => $ids[0],
+        "id" => explode(',', $row['IDs'])[0],
         "codigo" => $row["Cod_Barra"],
         "descripcion" => $descripciones[0],
         "cantidad" => [1],
-        "precio" => $precios[0],
-        "lote" => $lotes[0],
-        "clave" => $claves[0],
-        "tipo" => $tipos[0],
-        "eliminar" => ""
+        "precio" => explode(',', $row['precios'])[0],
+        "lote" => explode(',', $row['lotes'])[0],
+        "clave" => explode(',', $row['claves'])[0],
+        "tipo" => $tipos[0], // Aquí asigna el primer tipo si es necesario
+        "eliminar" => "",
+        "esAntibiotico" => $isAntibiotico // Añade esta clave para la verificación
     );
     
     header('Content-Type: application/json');
     echo json_encode($data);
 } else {
-    // Si no se encontró el artículo, devolver un array vacío en formato JSON
     $data = array();
     header('Content-Type: application/json');
     echo json_encode($data);
 }
 
-// Cerrar la conexión a la base de datos
 $stmt->close();
 $conn->close();
 ?>
