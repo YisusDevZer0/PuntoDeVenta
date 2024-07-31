@@ -298,7 +298,7 @@
   <div class="table-responsive">
     <table id="Clientes" class="order-column">
       <thead>
-        <th style="background-color:#ef7980 !important">ID_Traspaso_Generado</th>
+        <th style="background-color:#ef7980 !important">ID</th>
         <th style="background-color:#ef7980 !important">Cod_Barra</th>
         <th style="background-color:#ef7980 !important">Nombre_Prod</th>
 
