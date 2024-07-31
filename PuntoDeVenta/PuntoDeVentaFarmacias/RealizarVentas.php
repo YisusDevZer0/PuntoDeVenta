@@ -932,11 +932,24 @@ Efectivo Exacto
         agregarArticulo(data);
         if (data.esAntibiotico) {
           Swal.fire({
-            title: 'Advertencia',
-            text: 'Se ha encontrado un artículo de tipo "ANTIBIOTICO".',
-            icon: 'warning',
-            confirmButtonText: 'Aceptar'
-          });
+    title: '¡Atención!',
+    text: 'El artículo escaneado es de tipo "ANTIBIOTICO". Por favor, recuerde solicitar la receta médica al paciente antes de proceder con la venta.',
+    icon: 'warning',
+    confirmButtonText: 'Entendido',
+    confirmButtonColor: '#3085d6',
+    background: '#fff3cd', // Color de fondo amarillo claro para llamar la atención
+    customClass: {
+        title: 'swal-title',
+        content: 'swal-content'
+    },
+    backdrop: `
+        rgba(0,0,123,0.4)
+        url("https://via.placeholder.com/150") // Puedes añadir una imagen o dejarlo en blanco
+        center center
+        no-repeat
+    `
+});
+
         }
       }
 
