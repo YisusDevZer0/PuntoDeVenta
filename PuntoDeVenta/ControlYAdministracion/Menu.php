@@ -113,7 +113,7 @@
                             <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a>
                             <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
                             <a href="ReportesCedisInventario" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
-                            <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reportes inventarios </a>
+                            <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
                         </div>
                     </div>
                     <div class="nav-item dropdown">
