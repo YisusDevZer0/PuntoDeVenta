@@ -2,7 +2,7 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-$requiredFields = array('Concepto_Categoria', 'Importe_Total', 'Empleado', 'Fk_sucursal', 'Fk_Caja', 'Recibe', 'Sistema', 'AgregadoPor', 'Licencia');
+$requiredFields = array('Concepto_Categoria', 'Importe_Total', 'Empleado', 'Fk_sucursal', 'Fk_Caja', 'Recibe', 'Sistema', 'AgregadoPor', 'Licencia', 'FechaConcepto');
 $missingFields = array();
 foreach ($requiredFields as $field) {
     if (!isset($_POST[$field])) {
@@ -24,19 +24,20 @@ if (!empty($missingFields)) {
     $Sistema = mysqli_real_escape_string($conn, $_POST['Sistema']);
     $AgregadoPor = mysqli_real_escape_string($conn, $_POST['AgregadoPor']);
     $Licencia = mysqli_real_escape_string($conn, $_POST['Licencia']);
+    $FechaConcepto = mysqli_real_escape_string($conn, $_POST['FechaConcepto']);
 
     // Consulta para verificar si ya existe un registro con los mismos valores
-    $sql = "SELECT Concepto_Categoria, Licencia FROM GastosPOS WHERE Concepto_Categoria='$ConceptoCategoria' AND Licencia='$Licencia'";
+    $sql = "SELECT Concepto_Categoria, Licencia FROM GastosPOS WHERE Concepto_Categoria='$ConceptoCategoria' AND Licencia='$Licencia' AND FechaConcepto='$FechaConcepto'";
     $resultset = mysqli_query($conn, $sql);
 
-    if($resultset && mysqli_num_rows($resultset) > 0) {
+    if ($resultset && mysqli_num_rows($resultset) > 0) {
         echo json_encode(array("statusCode"=>250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `AgregadoPor`, `Licencia`) 
-                VALUES ('$ConceptoCategoria', '$ImporteTotal', '$Empleado', '$FkSucursal', '$FkCaja', '$Recibe', '$Sistema', '$AgregadoPor', '$Licencia')";
+        $sql_insert = "INSERT INTO `GastosPOS`(`Concepto_Categoria`, `Importe_Total`, `Empleado`, `Fk_sucursal`, `Fk_Caja`, `Recibe`, `Sistema`, `AgregadoPor`, `Licencia`, `FechaConcepto`) 
+                VALUES ('$ConceptoCategoria', '$ImporteTotal', '$Empleado', '$FkSucursal', '$FkCaja', '$Recibe', '$Sistema', '$AgregadoPor', '$Licencia', '$FechaConcepto')";
 
-        if(mysqli_query($conn, $sql_insert)) {
+        if (mysqli_query($conn, $sql_insert)) {
             echo json_encode(array("statusCode"=>200)); // Inserción exitosa
         } else {
             echo json_encode(array("statusCode"=>201, "error"=>mysqli_error($conn))); // Error en la inserción

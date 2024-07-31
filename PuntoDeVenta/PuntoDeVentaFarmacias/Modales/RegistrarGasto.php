@@ -1,7 +1,7 @@
 <?php
 include "../Controladores/db_connect.php.php";
 include "../Controladores/ControladorUsuario.php";
-
+$currentDate = date('Y-m-d');
 $user_id = null;
 $sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
 $query = $conn->query($sql1);
@@ -39,7 +39,7 @@ $Especialistas = $query->fetch_object();
     <input type="hidden" name="AgregadoPor" id="AgregadoPor" value="<?php echo $row['Nombre_Apellidos']?>">
     <input type="hidden" name="Fk_sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
     <input type="hidden" name="Sistema" id="licencia" value="Administrador">
-
+    <input type="date" name="FechaConcepto" id="FechaConcepto" value="<?php echo $currentDate; ?>">
     <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
 
     <button type="submit" class="btn btn-primary">Enviar</button>
