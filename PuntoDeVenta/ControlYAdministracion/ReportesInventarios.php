@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
-    </button> <br>
+    </button> <br><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
