@@ -39,7 +39,46 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6> <br>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
   Agregar nuevo producto
+</button> 
+<button type="button" class="btn btn-success" id="openAlert">
+  Actualizacion masiva
 </button> <br>
+<script>
+document.getElementById('openAlert').addEventListener('click', function() {
+  Swal.fire({
+    title: '¿Has descargado la plantilla?',
+    text: "Primero debes descargar la plantilla antes de proceder.",
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, ya tengo la plantilla',
+    cancelButtonText: 'No, descargar ahora'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Guarda la elección del usuario en localStorage
+      localStorage.setItem('hasDownloadedTemplate', 'true');
+      
+      // Obtén el ID del usuario (esto es solo un ejemplo, ajusta según tus necesidades)
+      var userId = 1; // Reemplaza esto con el ID real del usuario
+
+      // Envia una solicitud AJAX para actualizar la base de datos
+      fetch('Controladores/ActualizaDataTemplate.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'user_id=' + encodeURIComponent(userId)
+      }).then(response => response.text())
+        .then(result => {
+          // Redirige a la siguiente URL
+          window.location.href = 'blank_';
+        });
+    } else if (result.isDismissed) {
+      // Redirige a la URL para descargar la plantilla
+      window.location.href = 'url_to_download_template';
+    }
+  });
+});
+</script>
             <div id="DataDeProductos"></div>
             </div></div></div></div>
             </div>
