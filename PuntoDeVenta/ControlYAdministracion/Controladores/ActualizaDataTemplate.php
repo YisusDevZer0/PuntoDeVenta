@@ -1,7 +1,10 @@
 <?php
 include "db_connect.php"; // Asumiendo que este archivo contiene la conexión a la base de datos
-// Obtén el ID del usuario del POST
+
+// Obtén los datos del POST
 $userId = $_POST['user_id'];
+$username = $_POST['username'];
+$email = $_POST['email'];
 
 // Actualiza el registro del usuario para indicar que se ha descargado la plantilla
 $sql = "UPDATE templates_downloads SET template_downloaded = 1 WHERE user_id = ?";

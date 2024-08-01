@@ -57,8 +57,10 @@ document.getElementById('openAlert').addEventListener('click', function() {
       // Guarda la elección del usuario en localStorage
       localStorage.setItem('hasDownloadedTemplate', 'true');
       
-      // Obtén el ID del usuario (esto es solo un ejemplo, ajusta según tus necesidades)
-      var userId = 1; // Reemplaza esto con el ID real del usuario
+      // Obtén los datos del usuario (reemplaza con los datos reales de tu aplicación)
+      var userId = <?php echo json_encode($row['Id_PvUser']); ?>;
+      var username = <?php echo json_encode($row['Nombre_Apellidos']); ?>;
+      var email = <?php echo json_encode($row['Correo_Electronico']); ?>;
 
       // Envia una solicitud AJAX para actualizar la base de datos
       fetch('Controladores/ActualizaDataTemplate.php', {
@@ -66,7 +68,11 @@ document.getElementById('openAlert').addEventListener('click', function() {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'user_id=' + encodeURIComponent(userId)
+        body: new URLSearchParams({
+          user_id: userId,
+          username: username,
+          email: email
+        }).toString()
       }).then(response => response.text())
         .then(result => {
           // Redirige a la siguiente URL
@@ -79,6 +85,7 @@ document.getElementById('openAlert').addEventListener('click', function() {
   });
 });
 </script>
+
             <div id="DataDeProductos"></div>
             </div></div></div></div>
             </div>
