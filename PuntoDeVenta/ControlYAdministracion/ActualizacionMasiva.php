@@ -147,7 +147,7 @@ $fcha = date("Y-m-d");
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
      
-            <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6> <br>
+            <h6 class="mb-4" style="color:#0172b6;">Actualizacion masiva de datos de  <?php echo $row['Licencia']?></h6> <br>
       
 
             <script type="text/javascript">
@@ -170,26 +170,12 @@ $(document).ready( function () {
     <div class="card-body">
     <form action="" method="post" name="frmExcelImport" id="frmExcelImport" enctype="multipart/form-data">
     <div>
-        <label for="file">Elija Archivo Excel</label>
+        <label for="file">Cargar archivo</label>
         <input type="file" name="file" id="file" accept=".xls, .xlsx">
        
     </div>
 
-    <label for="Sucursalnueva">Seleccione una Sucursal:</label>
-    <select id="Sucursalnueva" class="form-control" name="Sucursalnueva">
-        <option value="">Seleccione una Sucursal:</option>
-        <?php
-          $query = $conn->query("SELECT ID_SucursalC, Nombre_Sucursal, ID_H_O_D FROM SucursalesCorre WHERE  ID_H_O_D='".$row['ID_H_O_D']."'");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_SucursalC"].'">'.$valores["Nombre_Sucursal"].'</option>';
-          }
-        ?>
-    </select> <br>
-    <select id="TipAjuste" class="form-control" name="TipAjuste">
-        <option value="">Especifique el tipo de ajuste que se realizara</option>
-        <option value="Inventario inicial">Inventario inicial</option>
-        <option value="Ajuste de inventario">Ajuste de inventario</option>
-    </select>
+   
     <input type="text" hidden name="Agrega" value="<?php echo $row['Nombre_Apellidos']?>">
 
     <br>
