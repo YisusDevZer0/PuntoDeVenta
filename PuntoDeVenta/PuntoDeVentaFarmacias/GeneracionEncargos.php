@@ -29,65 +29,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
    include "header.php";?>
    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-   <script>
-        function showAlertWithPassword() {
-            const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
 
-            Swal.fire({
-                title: 'Área en Mantenimiento',
-                text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
-                input: 'password',
-                inputLabel: 'Ingresa la contraseña',
-                inputPlaceholder: 'Contraseña',
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#d9534f',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    autocorrect: 'off'
-                },
-                customClass: {
-                    popup: 'swal2-popup',
-                    title: 'swal2-title',
-                    input: 'swal2-input',
-                    confirmButton: 'swal2-confirm'
-                },
-                didOpen: () => {
-                    Swal.getInput().focus();
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (result.value === correctPassword) {
-                        Swal.fire({
-                            title: '¡Acceso Permitido!',
-                            text: 'Puedes proceder a utilizar la funcionalidad.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#5bc0de'
-                        }).then(() => {
-                            // Aquí puedes agregar lógica para redirigir a otra página si es necesario
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Contraseña Incorrecta',
-                            text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
-                            icon: 'error',
-                            confirmButtonText: 'Intentar de nuevo',
-                            confirmButtonColor: '#d9534f'
-                        }).then(() => {
-                            showAlertWithPassword(); // Mostrar la alerta nuevamente si la contraseña es incorrecta
-                        });
-                    }
-                } else {
-                    // No hacemos nada si el usuario cierra la alerta, solo la mostramos de nuevo
-                    showAlertWithPassword();
-                }
-            });
-        }
-
-        // Mostrar la alerta cuando se carga la página
-        showAlertWithPassword();
-    </script>
    <div id="loading-overlay">
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
@@ -108,7 +50,68 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
             <!-- Table Start -->
           
-        
+            <script>
+  // Mensajes de carga aleatorios
+  const loadingMessages = [
+    'Cargando...',
+    'Por favor, espera...',
+    'Procesando...',
+    'Cargando datos...',
+    'Cargando contenido...',
+    '¡Casi listo!',
+    'Estamos preparando todo...',
+  ];
+
+  // Función para obtener un mensaje aleatorio de carga
+  function getRandomMessage() {
+    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+  }
+
+  // Mostrar SweetAlert2 de carga al iniciar la página
+  Swal.fire({
+    title: 'Cargando',
+    html: '<div class="loader-container">' +
+            '<div class="absCenter">' +
+              '<div class="loaderPill">' +
+                '<div class="loaderPill-anim">' +
+                  '<div class="loaderPill-anim-bounce">' +
+                    '<div class="loaderPill-anim-flop">' +
+                      '<div class="loaderPill-pill"></div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="loaderPill-floor">' +
+                  '<div class="loaderPill-floor-shadow"></div>' +
+                '</div>' +
+                `<div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>` +
+              '</div>' +
+            '</div>' +
+          '</div>',
+    showCancelButton: false,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    onBeforeOpen: () => {
+      Swal.showLoading();
+    },
+    customClass: {
+      container: 'animated fadeInDown'
+    }
+  });
+
+  // Actualizar mensaje aleatoriamente cada 2 segundos
+  setInterval(() => {
+    const messageElement = document.querySelector('.loaderPill-text');
+    if (messageElement) {
+      messageElement.textContent = getRandomMessage();
+    }
+  }, 2000);
+
+  // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
+  window.addEventListener('load', function() {
+    Swal.close();
+  });
+</script>
 
 <style>
   .loader-container {
