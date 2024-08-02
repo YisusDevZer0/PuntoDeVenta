@@ -54,37 +54,16 @@ document.getElementById('openAlert').addEventListener('click', function() {
     cancelButtonText: 'No, descargar ahora'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Guarda la elección del usuario en localStorage
-      localStorage.setItem('hasDownloadedTemplate', 'true');
-      
-      // Obtén los datos del usuario (reemplaza con los datos reales de tu aplicación)
-      var userId = <?php echo json_encode($row['Id_PvUser']); ?>;
-      var username = <?php echo json_encode($row['Nombre_Apellidos']); ?>;
-      var email = <?php echo json_encode($row['Correo_Electronico']); ?>;
-
-      // Envia una solicitud AJAX para actualizar la base de datos
-      fetch('Controladores/ActualizaDataTemplate.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          user_id: userId,
-          username: username,
-          email: email
-        }).toString()
-      }).then(response => response.text())
-        .then(result => {
-          // Redirige a la siguiente URL
-          window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasiva';
-        });
+      // Redirige a la URL para proceder si el usuario ya tiene la plantilla
+      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasiva';
     } else if (result.isDismissed) {
-      // Redirige a la URL para descargar la plantilla
+      // Redirige a la URL para descargar la plantilla si el usuario no la tiene
       window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Plantillaexcel';
     }
   });
 });
 </script>
+
 
             <div id="DataDeProductos"></div>
             </div></div></div></div>
