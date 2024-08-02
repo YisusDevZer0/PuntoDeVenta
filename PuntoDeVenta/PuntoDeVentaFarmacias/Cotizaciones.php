@@ -139,7 +139,65 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
             <!-- Table Start -->
           
-           
+           <script>
+        function showAlertWithPassword() {
+            const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
+
+            Swal.fire({
+                title: 'Área en Mantenimiento',
+                text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
+                input: 'password',
+                inputLabel: 'Ingresa la contraseña',
+                inputPlaceholder: 'Contraseña',
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d9534f',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    input: 'swal2-input',
+                    confirmButton: 'swal2-confirm'
+                },
+                didOpen: () => {
+                    Swal.getInput().focus();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value === correctPassword) {
+                        Swal.fire({
+                            title: '¡Acceso Permitido!',
+                            text: 'Puedes proceder a utilizar la funcionalidad.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#5bc0de'
+                        }).then(() => {
+                            // Aquí puedes agregar lógica para redirigir a otra página si es necesario
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Contraseña Incorrecta',
+                            text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
+                            icon: 'error',
+                            confirmButtonText: 'Intentar de nuevo',
+                            confirmButtonColor: '#d9534f'
+                        }).then(() => {
+                            showAlertWithPassword(); // Mostrar la alerta nuevamente si la contraseña es incorrecta
+                        });
+                    }
+                } else {
+                    // No hacemos nada si el usuario cierra la alerta, solo la mostramos de nuevo
+                    showAlertWithPassword();
+                }
+            });
+        }
+
+        // Mostrar la alerta cuando se carga la página
+        showAlertWithPassword();
+    </script>
 
 <style>
   .loader-container {
