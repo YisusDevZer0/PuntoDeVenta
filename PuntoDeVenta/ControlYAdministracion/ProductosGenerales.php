@@ -76,11 +76,11 @@ document.getElementById('openAlert').addEventListener('click', function() {
       }).then(response => response.text())
         .then(result => {
           // Redirige a la siguiente URL
-          window.location.href = 'blank_';
+          window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasiva';
         });
     } else if (result.isDismissed) {
       // Redirige a la URL para descargar la plantilla
-      window.location.href = 'url_to_download_template';
+      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Plantillaexcel';
     }
   });
 });
