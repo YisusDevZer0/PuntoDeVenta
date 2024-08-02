@@ -17,27 +17,77 @@ include_once "Controladores/ControladorUsuario.php";
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
 </div>
-<script>
+<style>
+        .swal2-popup {
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .swal2-title {
+            color: #d9534f; /* Color de título */
+            font-weight: bold;
+        }
+        .swal2-input {
+            border-radius: 4px;
+            border: 1px solid #d9534f;
+        }
+        .swal2-confirm {
+            background-color: #d9534f;
+            border-color: #d9534f;
+        }
+        .swal2-confirm:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+        }
+        .swal2-error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <script>
         function showAlertWithPassword() {
             const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
 
             Swal.fire({
-                title: 'Alerta',
-                text: 'Esta alerta no puede ser cerrada sin la contraseña.',
+                title: 'Área en Mantenimiento',
+                text: 'Esta área está actualmente en mantenimiento y no se puede usar. Por favor, ingresa la contraseña para continuar.',
                 input: 'password',
                 inputLabel: 'Ingresa la contraseña',
                 inputPlaceholder: 'Contraseña',
                 showCancelButton: false,
                 confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#d9534f',
+                inputAttributes: {
+                    autocapitalize: 'off',
+                    autocorrect: 'off'
+                },
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    input: 'swal2-input',
+                    confirmButton: 'swal2-confirm'
+                },
                 didOpen: () => {
                     Swal.getInput().focus();
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
                     if (result.value === correctPassword) {
-                        Swal.fire('¡Correcto!', 'Puedes cerrar la alerta.', 'success');
+                        Swal.fire({
+                            title: '¡Acceso Permitido!',
+                            text: 'Puedes proceder a utilizar la funcionalidad.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#5bc0de'
+                        });
                     } else {
-                        Swal.fire('Incorrecto', 'La contraseña es incorrecta.', 'error').then(() => {
+                        Swal.fire({
+                            title: 'Contraseña Incorrecta',
+                            text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
+                            icon: 'error',
+                            confirmButtonText: 'Intentar de nuevo',
+                            confirmButtonColor: '#d9534f'
+                        }).then(() => {
                             showAlertWithPassword(); // Mostrar la alerta nuevamente si la contraseña es incorrecta
                         });
                     }
