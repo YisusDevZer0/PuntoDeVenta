@@ -109,7 +109,7 @@ $fcha = date("Y-m-d");
         <div class="text-center">
             <div class="container-fluid pt-4 px-4">
                 <div class="col-12">
-                    <h6 class="mb-4" style="color:#0172b6;">Actualización masiva de datos</h6>
+                <h6 class="mb-4" style="color:#0172b6;">Actualizacion masiva de datos de  <?php echo $row['Licencia']?></h6> <br>
                     <script type="text/javascript">
                         $(document).ready(function () {
                             $('#resultadosinventarios').DataTable({
