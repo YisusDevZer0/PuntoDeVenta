@@ -77,7 +77,7 @@ include_once "Controladores/ControladorUsuario.php";
 
             Swal.fire({
                 title: 'Área en Mantenimiento',
-                text: 'Esta área está actualmente en mantenimiento y no se puede usar. Por favor, ingresa la contraseña para continuar.',
+                text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
                 input: 'password',
                 inputLabel: 'Ingresa la contraseña',
                 inputPlaceholder: 'Contraseña',
