@@ -7,11 +7,24 @@ if (isset($_POST["import"])) {
     $allowedFileType = ['application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
     
     if (isset($_FILES["file"]) && in_array($_FILES["file"]["type"], $allowedFileType)) {
-        $targetPath = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/subidas/' . $_FILES['file']['name'];
-        if (!move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
-            die("Error al mover el archivo subido.");
+        $uploadDir = 'subidas/';
+        
+        if (!is_dir($uploadDir)) {
+            die("El directorio de carga no existe.");
         }
-      
+
+        $targetPath = $uploadDir . $_FILES['file']['name'];
+        
+        // Verificar errores de archivo
+        if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            die("Error al subir el archivo. Código de error: " . $_FILES['file']['error']);
+        }
+        
+        // Intentar mover el archivo
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+            die("Error al mover el archivo subido. Verifica los permisos y la ruta.");
+        }
+
         $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
         $Reader = new SpreadsheetReader($targetPath);
         
@@ -41,11 +54,12 @@ if (isset($_POST["import"])) {
                     $query = "INSERT INTO ActualizacionesMasivasProductosPOS (Id_Actualizado, Cod_Barra, Clave_adicional, Nombre_Prod, Precio_Venta, Precio_C, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, Proveedor1, Proveedor2, RecetaMedica, Licencia, Ivaal16, ActualizadoPor) VALUES ('$Id_Actualizado', '$Cod_Barra', '$Clave_adicional', '$Nombre_Prod', '$Precio_Venta', '$Precio_C', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$Licencia', '$Ivaal16', '$ActualizadoPor')";
                     $resultados = mysqli_query($con, $query);
                 
-                    if (!$resultados) {
-                        echo "Error en la consulta: " . mysqli_error($con);
-                    } else {
+                    if ($resultados) {
                         $type = "success";
                         $message = "Excel importado correctamente";
+                    } else {
+                        $type = "error";
+                        $message = "Hubo un problema al importar registros";
                     }
                 }
             }
@@ -57,6 +71,7 @@ if (isset($_POST["import"])) {
         $message = "El archivo enviado es inválido. Por favor vuelva a intentarlo";
     }
 }
+
 include_once "Controladores/ControladorUsuario.php";
 
 $fcha = date("Y-m-d");
