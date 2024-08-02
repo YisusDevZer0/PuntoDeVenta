@@ -44,6 +44,33 @@ include_once "Controladores/ControladorUsuario.php";
     </style>
 </head>
 <body>
+<style>
+        .swal2-popup {
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .swal2-title {
+            color: #d9534f; /* Color de título */
+            font-weight: bold;
+        }
+        .swal2-input {
+            border-radius: 4px;
+            border: 1px solid #d9534f;
+        }
+        .swal2-confirm {
+            background-color: #d9534f;
+            border-color: #d9534f;
+        }
+        .swal2-confirm:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+        }
+        .swal2-error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
     <script>
         function showAlertWithPassword() {
             const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
@@ -79,6 +106,8 @@ include_once "Controladores/ControladorUsuario.php";
                             icon: 'success',
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#5bc0de'
+                        }).then(() => {
+                            // Aquí puedes agregar lógica para redirigir a otra página si es necesario
                         });
                     } else {
                         Swal.fire({
@@ -92,7 +121,8 @@ include_once "Controladores/ControladorUsuario.php";
                         });
                     }
                 } else {
-                    showAlertWithPassword(); // Mostrar la alerta nuevamente si se intenta cerrar
+                    // No hacemos nada si el usuario cierra la alerta, solo la mostramos de nuevo
+                    showAlertWithPassword();
                 }
             });
         }
