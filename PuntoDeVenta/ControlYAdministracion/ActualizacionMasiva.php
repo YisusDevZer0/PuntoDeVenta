@@ -91,6 +91,46 @@ $fcha = date("Y-m-d");
 <body>
     
         <!-- Spinner End -->
+        <style>
+        .error {
+  color: red;
+  margin-left: 5px; 
+  
+        }
+        #frmExcelImport {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        button.btn-submit {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        select {
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+
+    </style>
 
 
         <?php include_once "Menu.php" ?>
@@ -110,76 +150,71 @@ $fcha = date("Y-m-d");
             <h6 class="mb-4" style="color:#0172b6;">Base de productos de <?php echo $row['Licencia']?></h6> <br>
       
 
-
-            <div id="DataDeProductos"></div>
-            </div></div></div></div>
-            </div>
-          
-<script src="js/ControlDeProductos.js"></script>
-
-<script src="js/AltaProductosNuevos.js"></script>
-            <!-- Footer Start -->
-            <script>
-  	
-    $(document).ready(function() {
-    // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
-    $(document).on("click", ".btn-EditarProd", function() {
-    
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
-          $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Editar datos de productos");
-            $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
-        });
-        $('#ModalEdDele').modal('show');
-        });
-
-  // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
-  $(document).on("click", ".btn-EliminarData", function() {
-    
-    var id = $(this).data("id");
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaProductosGeneral.php", { id: id }, function(data) {
-      $("#FormCajas").html(data);
-        $("#TitulosCajas").html("Eliminar datos");
-        $("#Di").addClass("modal-dialog  modal-notify modal-warning");
+            <script type="text/javascript">
+$(document).ready( function () {
+    $('#resultadosinventarios').DataTable({
+      "order": [[ 0, "desc" ]],
+      "paging": true, // Activar paginación
+      "lengthMenu": [10, 25, 50, 75, 100], // Opciones de longitud de página
+      "stateSave": true,
+      "language": {
+        "url": "Componentes/Spanish.json"
+      }
     });
-    $('#ModalEdDele').modal('show');
-    });
-        $(document).on("click", ".btn-CrearCodBar", function() {
-    
-    var id = $(this).data("id");
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
-      $("#FormCajas").html(data);
-        $("#TitulosCajas").html("Generar codigos de barras");
-        $("#Di").addClass("modal-dialog modal-lg modal-notify modal-warning");
-    });
-    $('#ModalEdDele').modal('show');
-    });
-       
-   
 });
 
 </script>
+<!-- MOBILIARIO VIGENTE -->
+<div class="tab-pane fade show active" id="MobiVigente" role="tabpanel" aria-labelledby="pills-profile-tab">
+  <div class="card text-center">
+    <div class="card-header" style="background-color:#2b73bb !important;color: white;">
+      Actualizacion de inventarios
+    </div>
 
-<div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="Di"class="modal-dialog  modal-notify modal-success" >
-    <div class="text-center">
-      <div class="modal-content">
-      <div class="modal-header" style=" background-color: #ef7980 !important;" >
-         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+    <div class="card-body">
+    <form action="" method="post" name="frmExcelImport" id="frmExcelImport" enctype="multipart/form-data">
+    <div>
+        <label for="file">Elija Archivo Excel</label>
+        <input type="file" name="file" id="file" accept=".xls, .xlsx">
+       
+    </div>
 
+    <label for="Sucursalnueva">Seleccione una Sucursal:</label>
+    <select id="Sucursalnueva" class="form-control" name="Sucursalnueva">
+        <option value="">Seleccione una Sucursal:</option>
+        <?php
+          $query = $conn->query("SELECT ID_SucursalC, Nombre_Sucursal, ID_H_O_D FROM SucursalesCorre WHERE  ID_H_O_D='".$row['ID_H_O_D']."'");
+          while ($valores = mysqli_fetch_array($query)) {
+            echo '<option value="'.$valores["ID_SucursalC"].'">'.$valores["Nombre_Sucursal"].'</option>';
+          }
+        ?>
+    </select> <br>
+    <select id="TipAjuste" class="form-control" name="TipAjuste">
+        <option value="">Especifique el tipo de ajuste que se realizara</option>
+        <option value="Inventario inicial">Inventario inicial</option>
+        <option value="Ajuste de inventario">Ajuste de inventario</option>
+    </select>
+    <input type="text" hidden name="Agrega" value="<?php echo $row['Nombre_Apellidos']?>">
+
+    <br>
+    <button type="submit" id="submit" name="import" class="btn-submit">Importar Registros</button>
+</form>
+    </div>
+    <div id="response" class="<?php if(!empty($type)) { echo $type . " display-block"; } ?>"><?php if(!empty($message)) { echo $message; } ?></div>
+    
          
-       </div>
-        
-	        <div class="modal-body">
-          <div class="text-center">
-        <div id="FormCajas"></div>
-        
-        </div>
 
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal --></div></div>
+   </div>
+   </div>
+   </div>
+   </div>
+   </div>
+          
+
+
+<script src="js/AltaProductosNuevos.js"></script>
+            <!-- Footer Start -->
+         
             <?php 
             include "Modales/NuevoProductos.php";
             include "Modales/Modales_Errores.php";
