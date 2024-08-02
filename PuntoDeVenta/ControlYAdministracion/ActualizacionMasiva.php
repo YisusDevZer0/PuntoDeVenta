@@ -78,7 +78,7 @@ $fcha = date("Y-m-d");
 
 <head>
     <meta charset="utf-8">
-    <title>Listado de productos de <?php echo $row['Licencia']?></title>
+    <title>Actualizacion de datos masivamente <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -165,11 +165,7 @@ $(document).ready( function () {
 
 </script>
 <!-- MOBILIARIO VIGENTE -->
-<div class="tab-pane fade show active" id="MobiVigente" role="tabpanel" aria-labelledby="pills-profile-tab">
-  <div class="card text-center">
-    <div class="card-header" style="background-color:#2b73bb !important;color: white;">
-      Actualizacion de inventarios
-    </div>
+
 
     <div class="card-body">
     <form action="" method="post" name="frmExcelImport" id="frmExcelImport" enctype="multipart/form-data">
