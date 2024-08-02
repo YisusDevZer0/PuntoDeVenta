@@ -6,11 +6,12 @@ require_once('vendor/SpreadsheetReader.php');
 if (isset($_POST["import"])) {
     $allowedFileType = ['application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
     
-    if (in_array($_FILES["file"]["type"], $allowedFileType)) {
+    if (isset($_FILES["file"]) && in_array($_FILES["file"]["type"], $allowedFileType)) {
         $targetPath = 'subidas/' . $_FILES['file']['name'];
-        move_uploaded_file($_FILES['file']['tmp_name'], $targetPath);
+        if (!move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
+            die("Error al mover el archivo subido.");
+        }
       
-       
         $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
         $Reader = new SpreadsheetReader($targetPath);
         
@@ -19,7 +20,7 @@ if (isset($_POST["import"])) {
             $Reader->ChangeSheet($i);
             
             foreach ($Reader as $Row) {
-                $Id_Actualizado= isset($Row[0]) ? mysqli_real_escape_string($con, $Row[0]) : "";
+                $Id_Actualizado = isset($Row[0]) ? mysqli_real_escape_string($con, $Row[0]) : "";
                 $Cod_Barra = isset($Row[1]) ? mysqli_real_escape_string($con, $Row[1]) : "";
                 $Clave_adicional = isset($Row[2]) ? mysqli_real_escape_string($con, $Row[2]) : "";
                 $Nombre_Prod = isset($Row[3]) ? mysqli_real_escape_string($con, $Row[3]) : "";
@@ -37,15 +38,14 @@ if (isset($_POST["import"])) {
                 $Ivaal16 = isset($Row[15]) ? mysqli_real_escape_string($con, $Row[15]) : "";
                 
                 if (!empty($Cod_Barra) || !empty($Nombre_Prod) || !empty($Precio_Venta)) {
-                    $query = "INSERT INTO ActualizacionesMasivasProductosPOS (Id_Actualizado,Cod_Barra, Clave_adicional, Nombre_Prod, Precio_Venta, Precio_C, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, Proveedor1, Proveedor2, RecetaMedica, Licencia, Ivaal16, ActualizadoPor) VALUES ('$Id_Actualizado','$Cod_Barra', '$Clave_adicional', '$Nombre_Prod', '$Precio_Venta', '$Precio_C', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$Licencia', '$Ivaal16', '$ActualizadoPor')";
+                    $query = "INSERT INTO ActualizacionesMasivasProductosPOS (Id_Actualizado, Cod_Barra, Clave_adicional, Nombre_Prod, Precio_Venta, Precio_C, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, Proveedor1, Proveedor2, RecetaMedica, Licencia, Ivaal16, ActualizadoPor) VALUES ('$Id_Actualizado', '$Cod_Barra', '$Clave_adicional', '$Nombre_Prod', '$Precio_Venta', '$Precio_C', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$Licencia', '$Ivaal16', '$ActualizadoPor')";
                     $resultados = mysqli_query($con, $query);
                 
-                    if ($resultados) {
+                    if (!$resultados) {
+                        echo "Error en la consulta: " . mysqli_error($con);
+                    } else {
                         $type = "success";
                         $message = "Excel importado correctamente";
-                    } else {
-                        $type = "error";
-                        $message = "Hubo un problema al importar registros";
                     }
                 }
             }
@@ -109,42 +109,28 @@ $fcha = date("Y-m-d");
         <div class="text-center">
             <div class="container-fluid pt-4 px-4">
                 <div class="col-12">
-                <h6 class="mb-4" style="color:#0172b6;">Actualizacion masiva de datos de  <?php echo $row['Licencia']?></h6> <br>
+                <h6 class="mb-4" style="color:#0172b6;">Actualizacion masiva de datos de  <?php echo isset($row['Licencia']) ? $row['Licencia'] : ''; ?></h6> <br>
                     <script type="text/javascript">
                         $(document).ready(function () {
                             $('#resultadosinventarios').DataTable({
                                 "order": [[0, "desc"]],
-                                "paging": true,
-                                "lengthMenu": [10, 25, 50, 75, 100],
-                                "stateSave": true,
                                 "language": {
-                                    "url": "Componentes/Spanish.json"
+                                    "url": "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
                                 }
                             });
                         });
                     </script>
-                    <div class="card-body">
-                        <form action="" method="post" name="frmExcelImport" id="frmExcelImport" enctype="multipart/form-data">
-                            <div>
-                                <label for="file">Cargar archivo</label>
-                                <input type="file" name="file" id="file" accept=".xls, .xlsx">
-                            </div>
-                            <input type="hidden" name="ActualizadoPor" value="<?php echo $row['Nombre_Apellidos']; ?>">
-                            
-                            <br>
-                            <button type="submit" id="submit" name="import" class="btn-submit">Importar Registros</button>
-                        </form>
-                    </div>
-                    <div id="response" class="<?php if (!empty($type)) { echo $type . " display-block"; } ?>"><?php if (!empty($message)) { echo $message; } ?></div>
+                    <form id="frmExcelImport" method="post" enctype="multipart/form-data">
+                        <label for="file">Seleccionar archivo Excel:</label>
+                        <input type="file" name="file" id="file" required>
+                        <input type="hidden" name="ActualizadoPor" value="<?php echo $row['Nombre_Apellidos']; ?>">
+                        <button class="btn-submit" type="submit" name="import">Importar Excel</button>
+                        <div class="error"><?php if (isset($message)) echo $message; ?></div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <script src="js/AltaProductosNuevos.js"></script>
-    <?php 
-    include "Modales/NuevoProductos.php";
-    include "Modales/Modales_Errores.php";
-    include "Modales/Modales_Referencias.php";
-    include "Footer.php"; ?>
+    <?php include "footer.php"; ?>
 </body>
 </html>
