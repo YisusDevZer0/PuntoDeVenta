@@ -17,6 +17,39 @@ include_once "Controladores/ControladorUsuario.php";
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
 </div>
+<script>
+        function showAlertWithPassword() {
+            const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
+
+            Swal.fire({
+                title: 'Alerta',
+                text: 'Esta alerta no puede ser cerrada sin la contraseña.',
+                input: 'password',
+                inputLabel: 'Ingresa la contraseña',
+                inputPlaceholder: 'Contraseña',
+                showCancelButton: false,
+                confirmButtonText: 'Aceptar',
+                didOpen: () => {
+                    Swal.getInput().focus();
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (result.value === correctPassword) {
+                        Swal.fire('¡Correcto!', 'Puedes cerrar la alerta.', 'success');
+                    } else {
+                        Swal.fire('Incorrecto', 'La contraseña es incorrecta.', 'error').then(() => {
+                            showAlertWithPassword(); // Mostrar la alerta nuevamente si la contraseña es incorrecta
+                        });
+                    }
+                } else {
+                    showAlertWithPassword(); // Mostrar la alerta nuevamente si se intenta cerrar
+                }
+            });
+        }
+
+        // Mostrar la alerta cuando se carga la página
+        showAlertWithPassword();
+    </script>
 <body>
     
         <!-- Spinner End -->
