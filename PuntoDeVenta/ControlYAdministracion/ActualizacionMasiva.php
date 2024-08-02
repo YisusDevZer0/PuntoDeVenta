@@ -7,7 +7,7 @@ if (isset($_POST["import"])) {
     $allowedFileType = ['application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
     
     if (isset($_FILES["file"]) && in_array($_FILES["file"]["type"], $allowedFileType)) {
-        $targetPath = 'subidas/' . $_FILES['file']['name'];
+        $targetPath = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/subidas/' . $_FILES['file']['name'];
         if (!move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
             die("Error al mover el archivo subido.");
         }
