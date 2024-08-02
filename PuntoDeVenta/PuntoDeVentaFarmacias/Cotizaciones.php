@@ -139,68 +139,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
             <!-- Table Start -->
           
-            <script>
-  // Mensajes de carga aleatorios
-  const loadingMessages = [
-    'Cargando...',
-    'Por favor, espera...',
-    'Procesando...',
-    'Cargando datos...',
-    'Cargando contenido...',
-    '¡Casi listo!',
-    'Estamos preparando todo...',
-  ];
-
-  // Función para obtener un mensaje aleatorio de carga
-  function getRandomMessage() {
-    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
-  }
-
-  // Mostrar SweetAlert2 de carga al iniciar la página
-  Swal.fire({
-    title: 'Cargando',
-    html: '<div class="loader-container">' +
-            '<div class="absCenter">' +
-              '<div class="loaderPill">' +
-                '<div class="loaderPill-anim">' +
-                  '<div class="loaderPill-anim-bounce">' +
-                    '<div class="loaderPill-anim-flop">' +
-                      '<div class="loaderPill-pill"></div>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="loaderPill-floor">' +
-                  '<div class="loaderPill-floor-shadow"></div>' +
-                '</div>' +
-                `<div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>` +
-              '</div>' +
-            '</div>' +
-          '</div>',
-    showCancelButton: false,
-    showConfirmButton: false,
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    onBeforeOpen: () => {
-      Swal.showLoading();
-    },
-    customClass: {
-      container: 'animated fadeInDown'
-    }
-  });
-
-  // Actualizar mensaje aleatoriamente cada 2 segundos
-  setInterval(() => {
-    const messageElement = document.querySelector('.loaderPill-text');
-    if (messageElement) {
-      messageElement.textContent = getRandomMessage();
-    }
-  }, 2000);
-
-  // Ocultar SweetAlert2 de carga cuando la página se haya cargado por completo
-  window.addEventListener('load', function() {
-    Swal.close();
-  });
-</script>
+           
 
 <style>
   .loader-container {
