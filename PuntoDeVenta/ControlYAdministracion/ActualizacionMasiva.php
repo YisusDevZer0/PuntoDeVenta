@@ -11,7 +11,7 @@ if (isset($_POST["import"])) {
         move_uploaded_file($_FILES['file']['tmp_name'], $targetPath);
       
        
-        $ActualizadoPor = $row['Nombre_Apellidos']; // Hidden input for user
+        $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
         $Reader = new SpreadsheetReader($targetPath);
         
         $sheetCount = count($Reader->sheets());
@@ -130,9 +130,7 @@ $fcha = date("Y-m-d");
                                 <input type="file" name="file" id="file" accept=".xls, .xlsx">
                             </div>
                             <input type="hidden" name="ActualizadoPor" value="<?php echo $row['Nombre_Apellidos']; ?>">
-                            <input type="text" hidden name="Sucursalnueva" value="<?php echo $row['Sucursal']; ?>">
-                            <input type="text" hidden name="TipAjuste" value="TipoAjusteValue"> <!-- Adjust this as needed -->
-                            <input type="text" hidden name="Agrega" value="<?php echo $row['Nombre_Apellidos']; ?>">
+                            
                             <br>
                             <button type="submit" id="submit" name="import" class="btn-submit">Importar Registros</button>
                         </form>
