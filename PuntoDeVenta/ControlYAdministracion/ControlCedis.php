@@ -196,7 +196,7 @@ include_once "Controladores/ControladorUsuario.php";
   
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+    </div><!-- /.modal --> </div><!-- /.modal --> </div><!-- /.modal -->
             <!-- Footer Start -->
             <?php 
             include "Modales/NuevoFondoDeCaja.php";
