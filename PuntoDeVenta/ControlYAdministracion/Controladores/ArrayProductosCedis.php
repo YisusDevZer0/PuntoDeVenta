@@ -70,19 +70,16 @@ while ($fila = $result->fetch_assoc()) {
         "Fecha_Caducidad" => $fila["Fecha_Caducidad"],
         "Existencias" => $fila["Existencias"],
         "Tipo_Servicio" => $fila["Tipo_Servicio"],
-        "Componente_Activo" => $fila["Componente_Activo"],
+      
         "Tipo" => $fila["Tipo"],
         "Categoria" => $fila["Categoria"],
         "Marca" => $fila["Marca"],
         "Presentacion" => $fila["Presentacion"],
         "Proveedor1" => $fila["Proveedor1"],
         "Proveedor2" => $fila["Proveedor2"],
-
-        "Estatus" => $fila["Estatus"],
-        "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["AgregadoEl"], // Cambiado el nombre para adaptarse
         "ActualizadoEl" => $fila["ActualizadoEl"], // Añadido en caso de ser necesario
-        "Contable" => $fila["Contable"],
+       
         "Acciones" => $acciones_html,
     ];
 }

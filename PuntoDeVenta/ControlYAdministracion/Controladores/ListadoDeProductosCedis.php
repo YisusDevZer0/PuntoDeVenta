@@ -190,18 +190,18 @@ tabla = $('#Productos').DataTable({
 { mData: 'Fecha_Caducidad' }, // Añadido en caso de ser necesario
 { mData: 'Existencias' }, // Añadido en caso de ser necesario
 { mData: 'Tipo_Servicio' },
-{ mData: 'Componente_Activo' }, // Añadido en caso de ser necesario
+
 { mData: 'Tipo' },
 { mData: 'Categoria' },
 { mData: 'Marca' },
 { mData: 'Presentacion' },
 { mData: 'Proveedor1' },
 { mData: 'Proveedor2' }, // Añadido en caso de ser necesario
-{ mData: 'Estatus' }, // Añadido en caso de ser necesario
+
 { mData: 'AgregadoPor' },
 { mData: 'FechaInventario' }, // Cambiado el nombre para adaptarse
 { mData: 'ActualizadoEl' }, // Añadido en caso de ser necesario
-{ mData: 'Contable' }, // Añadido en caso de ser necesario
+
 { mData: 'Acciones' },
 
       ],
@@ -255,23 +255,20 @@ tabla = $('#Productos').DataTable({
 <th>ID_BD</th>
 <th>Cod Barra</th>
     <th>Nombre</th>
-    <th>Cod Interno</th>
-   
- 
-    <th>PC</th>
-    <th>PV </th>
-    <th>Servicio </th>
+    <th>Precio Compra</th>
+   <th>Precio venta</th>
+    <th>Lote </th>
+    <th>Fecha caducidad</th>
+    <th>Existencias</th>
     <th>Tipo</th>
-    <th>Categoria</th>
-    <th>Marca </th>
-    <th>Presentacion </th>
+    <th>Categoria </th>
+    <th>Marca</th>
+    <th>Presentacion</th>
     <th>Proveedor</th>
-  
-    <th>Agrego</th>
-    <!-- <th>Stock </th>
-    <th>Vendido </th>
-    <th>Saldo </th>  -->
-        <th>Acciones Farmacia</th>
+    <th>Proveedor</th>
+    <th>Creado el</th>
+    <th>Ultima Actualizacion</th>
+        <th>Acciones</th>
        
 	
 
