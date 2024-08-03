@@ -1,71 +1,104 @@
 <?php
-include_once "Controladores/ControladorUsuario.php";
-
+include('header.php');
+include('navbar.php');
+include('ControladorUsuario.php');
+include('Menu.php');
 ?>
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="utf-8">
-    <title>Registro de Encargos de Medicamentos</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <?php include "header.php"; ?>
-</head>
+<div class="container-fluid">
+  <div class="row mb-3">
+    <div class="card-body p-3">
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+          <div class="row">
+            <!-- FORMULARIO DE ENCARGO -->
+            <div class="col-md-12 mb-3">
+              <h3>Nuevo Encargo</h3>
+              <form id="formEncargo" method="post" action="Controladores/GuardarEncargo.php">
+                <div class="row">
+                  <!-- Selección del Proveedor -->
+                  <div class="col-md-4 mb-3">
+                    <label for="proveedoresSelect">Proveedor</label>
+                    <select id="proveedoresSelect" name="proveedor" class="form-control" required>
+                      <?php
+                      // Cargar proveedores desde la base de datos
+                      $proveedores = obtenerProveedores();
+                      foreach ($proveedores as $proveedor) {
+                        echo "<option value='{$proveedor['id']}'>{$proveedor['nombre']}</option>";
+                      }
+                      ?>
+                    </select>
+                  </div>
 
-<body>
-    <?php include "Menu.php"; ?>
-    <div class="content">
-        <?php include "navbar.php"; ?>
-        <div class="container-fluid pt-4 px-8">
-            <div class="col-12">
-                <div class="bg-light rounded h-100 p-4">
-                    <h6 class="mb-4" style="color:#0172b6;">Registro de Encargos de Medicamentos</h6>
-                    <form id="formEncargo" action="guardar_encargo.php" method="post">
-                        <div class="mb-3">
-                            <label for="nombre_paciente" class="form-label">Nombre del Paciente</label>
-                            <input type="text" class="form-control" id="nombre_paciente" name="nombre_paciente" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
-                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" required>
-                        </div>
-                        <div id="medicamentos_container">
-                            <div class="medicamento">
-                                <div class="mb-3">
-                                    <label for="medicamento" class="form-label">Medicamento</label>
-                                    <select class="form-control" name="medicamentos[0][id]" required>
-                                        <?php
-                                        include_once "Controladores/db_connect.php";
-                                        $query = "SELECT ID_Prod_POS, Nombre_Prod FROM Productos_POS";
-                                        if ($result = $mysqli->query($query)) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo "<option value=\"{$row['ID_Prod_POS']}\">{$row['Nombre_Prod']}</option>";
-                                            }
-                                            $result->free();
-                                        }
-                                        $mysqli->close();
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="cantidad" class="form-label">Cantidad</label>
-                                    <input type="number" class="form-control" name="medicamentos[0][cantidad]" required>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary" id="add_medicamento">Añadir Medicamento</button>
-                        <div class="mb-3 mt-3">
-                            <label for="abono_parcial" class="form-label">Abono Parcial</label>
-                            <input type="text" class="form-control" id="abono_parcial" name="abono_parcial">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Registrar Encargo</button>
-                    </form>
+                  <!-- Fecha del Encargo -->
+                  <div class="col-md-4 mb-3">
+                    <label for="fechaEncargo">Fecha</label>
+                    <input type="date" id="fechaEncargo" name="fecha" class="form-control" required>
+                  </div>
+
+                  <!-- Número de Factura -->
+                  <div class="col-md-4 mb-3">
+                    <label for="numeroFactura">Número de Factura</label>
+                    <input type="text" id="numeroFactura" name="numeroFactura" class="form-control" required>
+                  </div>
+
+                  <!-- Número de Solicitud -->
+                  <div class="col-md-4 mb-3">
+                    <label for="numeroSolicitud">Número de Solicitud</label>
+                    <input type="text" id="numeroSolicitud" name="numeroSolicitud" class="form-control" readonly value="<?php echo generarNumeroSolicitud(); ?>">
+                  </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <script src="js/encargo.js"></script>
-    <?php include "Footer.php"; ?>
-</body>
 
-</html>
+                <!-- Campo para Escanear Productos -->
+                <div class="form-group mb-3">
+                  <label for="codigoEscaneado">Escanear Código de Barras</label>
+                  <input type="text" class="form-control" id="codigoEscaneado" placeholder="Escanee o ingrese el código aquí">
+                </div>
+
+                <!-- Estado del Encargo -->
+                <div class="form-group mb-3">
+                  <label for="estadoEncargo">Estado del Encargo</label>
+                  <select id="estadoEncargo" name="estado" class="form-control" required>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="en_proceso">En Proceso</option>
+                    <option value="completado">Completado</option>
+                  </select>
+                </div>
+
+                <!-- Botón para Enviar -->
+                <button type="submit" class="btn btn-primary">Enviar Encargo</button>
+              </form>
+            </div>
+
+            <!-- Tabla de Productos Encargados -->
+            <div class="col-md-12 mt-4">
+              <h3>Productos en el Encargo</h3>
+              <div class="table-responsive">
+                <table class="table table-striped" id="tablaEncargo">
+                  <thead>
+                    <tr>
+                      <th>Codigo</th>
+                      <th>Producto</th>
+                      <th>Cantidad</th>
+                      <th>Fecha de Caducidad</th>
+                      <th>Lote</th>
+                      <th>Precio</th>
+                      <th>Eliminar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Las filas se agregarán dinámicamente aquí -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<?php
+include('Footer.php');
+?>
