@@ -40,22 +40,15 @@ $result = mysqli_query($conn, $sql);
 $data = [];
 while ($fila = $result->fetch_assoc()) {
     // Determinar el HTML del botón en función del valor de Cod_Barra
-    if (empty($fila["Cod_Barra"])) {
-        // Cod_Barra está vacío: mostrar botón para crear código de barras
-        $acciones_html = '
-        <td>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-CrearCodBar" title="Crear Código de Barras"><i class="fas fa-barcode"></i></a>
-        </td>';
-    } else {
+    
         // Cod_Barra no está vacío: mostrar botón de editar y consultar cambios
         $acciones_html = '
         <td>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd" title="Editar Producto"><i class="fas fa-exchange-alt"></i></a>
+          
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminarData" title="Eliminar datos"><i class="fa-solid fa-circle-minus"></i></a>
         </td>';
-    }
+    
 
     // Agregar datos al array $data
     $data[] = [
