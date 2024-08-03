@@ -100,14 +100,12 @@ $conn->close();
                         </div>
                     <?php endif; ?>
 
-                    <div id="DataDeClientes"></div>
-                </div>
+                   
             </div>
         </div>
     </div>
     
-    <!-- Modals -->
-    <script src="js/ControlDeListaDeTraspasos.js"></script>
+ 
     <script>
         $(document).ready(function() {
             $(document).on("click", ".btn-AceptarTraspaso", function() {
