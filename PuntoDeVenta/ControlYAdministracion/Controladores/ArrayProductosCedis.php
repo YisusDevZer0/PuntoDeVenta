@@ -77,7 +77,7 @@ while ($fila = $result->fetch_assoc()) {
         "Presentacion" => $fila["Presentacion"],
         "Proveedor1" => $fila["Proveedor1"],
         "Proveedor2" => $fila["Proveedor2"],
-        "RecetaMedica" => $fila["RecetaMedica"],
+
         "Estatus" => $fila["Estatus"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["AgregadoEl"], // Cambiado el nombre para adaptarse
