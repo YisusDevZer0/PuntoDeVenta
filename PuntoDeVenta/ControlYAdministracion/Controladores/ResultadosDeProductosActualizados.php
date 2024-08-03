@@ -194,7 +194,7 @@ tabla = $('#Productos').DataTable({
        { mData: 'Marca' },
        { mData: 'Presentacion' },
        { mData: 'Proveedor1' },
-     
+       { mData: 'Proveedor2' },
        { mData: 'AgregadoPor' },
     //    { mData: 'Stock' },
     //    { mData: 'Vendido' },

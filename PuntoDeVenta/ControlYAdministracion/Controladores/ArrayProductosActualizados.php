@@ -58,7 +58,7 @@ while ($fila = $result->fetch_assoc()) {
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
-        "Clave_Levic" => $fila["Clave_Levic"],
+       
         "Precio_C" => $fila["Precio_C"],
         "Precio_Venta" => $fila["Precio_Venta"],
         "Nom_Serv" => $fila["Nom_Serv"],
@@ -67,8 +67,9 @@ while ($fila = $result->fetch_assoc()) {
         "Categoria" => $fila["Categoria"],
         "Presentacion" => $fila["Presentacion"],
         "Proveedor1" => $fila["Proveedor1"],
-        "AgregadoPor" => $fila["AgregadoPor"],
-        "FechaInventario" => $fila["AgregadoEl"], // Cambiado el nombre para adaptarse
+        "Proveedor2" => $fila["Proveedor2"],
+        "AgregadoPor" => $fila["ActualizadoPor"],
+        "FechaInventario" => $fila["ActualizadoEl"], // Cambiado el nombre para adaptarse
         
     ];
 }
