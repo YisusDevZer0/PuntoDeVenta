@@ -269,7 +269,7 @@ tabla = $('#Productos').DataTable({
     <!-- <th>Stock </th>
     <th>Vendido </th>
     <th>Saldo </th>  -->
-        <th>Acciones Farmacia</th>
+    
        
 	
 
