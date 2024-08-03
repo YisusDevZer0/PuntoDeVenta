@@ -267,7 +267,7 @@ tabla = $('#Productos').DataTable({
     <th>Proveedor</th>
     <th>Creado el</th>
     <th>Ultima Actualizacion</th>
-        <th>Acciones</th>
+        <th>Acciones a realizar</th>
        
 	
 
