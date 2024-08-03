@@ -199,7 +199,7 @@ tabla = $('#Productos').DataTable({
     //    { mData: 'Stock' },
     //    { mData: 'Vendido' },
     //    { mData: 'Saldo' },
-       { mData: 'Acciones' },
+     
       
   
       ],
