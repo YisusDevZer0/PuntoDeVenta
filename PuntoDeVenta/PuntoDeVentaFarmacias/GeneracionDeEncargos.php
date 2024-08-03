@@ -107,7 +107,7 @@ function obtenerProveedores() {
     // Conectar a la base de datos
     require_once "db_connect.php";
 
-    $sql = "SELECT id, nombre FROM proveedores";
+    $sql = "SELECT `ID_Proveedor`, `Nombre_Proveedor` FROM Proveedores";
     $resultado = $conn->query($sql);
 
     $proveedores = [];
