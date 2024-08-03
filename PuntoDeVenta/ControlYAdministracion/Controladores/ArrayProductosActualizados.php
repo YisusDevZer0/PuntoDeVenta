@@ -54,7 +54,7 @@ while ($fila = $result->fetch_assoc()) {
 
     // Agregar datos al array $data
     $data[] = [
-        "IdProdCedis" => $fila["IdProdCedis"],
+        "IdProdCedis" => $fila["ID_Prod_POS"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
@@ -69,7 +69,7 @@ while ($fila = $result->fetch_assoc()) {
         "Proveedor1" => $fila["Proveedor1"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["AgregadoEl"], // Cambiado el nombre para adaptarse
-        "Acciones" => $acciones_html,
+        
     ];
 }
 
