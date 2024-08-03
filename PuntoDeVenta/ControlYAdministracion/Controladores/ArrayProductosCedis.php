@@ -4,25 +4,36 @@ include("db_connection.php");
 include_once "ControladorUsuario.php";
 
 $sql = "SELECT 
-    Productos_POS.ID_Prod_POS as IdProdCedis, 
-    Productos_POS.Cod_Barra, 
-    Productos_POS.Nombre_Prod, 
-    Productos_POS.Clave_adicional as Clave_interna, 
-    Productos_POS.Clave_Levic as Clave_Levic, 
-    Productos_POS.Precio_Venta, 
-    Productos_POS.Precio_C, 
-    Servicios_POS.Nom_Serv as Nom_Serv, 
-    Productos_POS.FkMarca as Marca, 
-    Productos_POS.Tipo, 
-    Productos_POS.FkCategoria as Categoria, 
-    Productos_POS.FkPresentacion as Presentacion, 
-    Productos_POS.Proveedor1, 
-    Productos_POS.AgregadoPor, 
-    Productos_POS.AgregadoEl
-FROM 
-    Productos_POS
-LEFT JOIN 
-    Servicios_POS ON Servicios_POS.Servicio_ID = Productos_POS.Tipo_Servicio";
+            CEDIS.IdProdCedis, 
+            CEDIS.ID_Prod_POS, 
+            CEDIS.Cod_Barra, 
+            CEDIS.Clave_adicional AS Clave_interna, 
+            CEDIS.Clave_Levic AS Clave_Levic, 
+            CEDIS.Nombre_Prod, 
+            CEDIS.Precio_Venta, 
+            CEDIS.Precio_C, 
+            CEDIS.Lote_Med, 
+            CEDIS.Fecha_Caducidad, 
+            CEDIS.Existencias, 
+            Servicios_POS.Nom_Serv AS Tipo_Servicio, 
+            CEDIS.Componente_Activo, 
+            CEDIS.Tipo, 
+            CEDIS.FkCategoria AS Categoria, 
+            CEDIS.FkMarca AS Marca, 
+            CEDIS.FkPresentacion AS Presentacion, 
+            CEDIS.Proveedor1, 
+            CEDIS.Proveedor2, 
+            CEDIS.RecetaMedica, 
+            CEDIS.Estatus, 
+            CEDIS.AgregadoPor, 
+            CEDIS.AgregadoEl, 
+            CEDIS.ActualizadoEl, 
+            CEDIS.ActualizadoPor, 
+            CEDIS.Contable
+        FROM 
+            CEDIS
+        LEFT JOIN 
+            Servicios_POS ON Servicios_POS.Servicio_ID = CEDIS.Tipo_Servicio";
 
 $result = mysqli_query($conn, $sql);
 
@@ -42,27 +53,36 @@ while ($fila = $result->fetch_assoc()) {
         <td>
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditarProd" title="Editar Producto"><i class="fas fa-exchange-alt"></i></a>
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
-             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminarData" title="Eliminar datos"><i class="fa-solid fa-circle-minus"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminarData" title="Eliminar datos"><i class="fa-solid fa-circle-minus"></i></a>
         </td>';
     }
 
     // Agregar datos al array $data
     $data[] = [
         "IdProdCedis" => $fila["IdProdCedis"],
+        "ID_Prod_POS" => $fila["ID_Prod_POS"],
         "Cod_Barra" => $fila["Cod_Barra"],
-        "Nombre_Prod" => $fila["Nombre_Prod"],
         "Clave_interna" => $fila["Clave_interna"],
         "Clave_Levic" => $fila["Clave_Levic"],
         "Precio_C" => $fila["Precio_C"],
         "Precio_Venta" => $fila["Precio_Venta"],
-        "Nom_Serv" => $fila["Nom_Serv"],
-        "Marca" => $fila["Marca"],
+        "Lote_Med" => $fila["Lote_Med"],
+        "Fecha_Caducidad" => $fila["Fecha_Caducidad"],
+        "Existencias" => $fila["Existencias"],
+        "Tipo_Servicio" => $fila["Tipo_Servicio"],
+        "Componente_Activo" => $fila["Componente_Activo"],
         "Tipo" => $fila["Tipo"],
         "Categoria" => $fila["Categoria"],
+        "Marca" => $fila["Marca"],
         "Presentacion" => $fila["Presentacion"],
         "Proveedor1" => $fila["Proveedor1"],
+        "Proveedor2" => $fila["Proveedor2"],
+        "RecetaMedica" => $fila["RecetaMedica"],
+        "Estatus" => $fila["Estatus"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "FechaInventario" => $fila["AgregadoEl"], // Cambiado el nombre para adaptarse
+        "ActualizadoEl" => $fila["ActualizadoEl"], // Añadido en caso de ser necesario
+        "Contable" => $fila["Contable"],
         "Acciones" => $acciones_html,
     ];
 }
@@ -77,4 +97,3 @@ $results = [
 echo json_encode($results);
 
 $conn->close();
-?>

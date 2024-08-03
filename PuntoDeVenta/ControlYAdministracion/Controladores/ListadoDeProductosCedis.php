@@ -180,28 +180,32 @@ tabla = $('#Productos').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayProductosCedis.php",
  "aoColumns": [
-    { mData: 'IdProdCedis' },
-       { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'Clave_interna' },
-   
-   
-       { mData: 'Precio_C' },
-       { mData: 'Precio_Venta' },
-       { mData: 'Nom_Serv' },
-       { mData: 'Tipo' },
-       { mData: 'Categoria' },
-       { mData: 'Marca' },
-       { mData: 'Presentacion' },
-       { mData: 'Proveedor1' },
-     
-       { mData: 'AgregadoPor' },
-    //    { mData: 'Stock' },
-    //    { mData: 'Vendido' },
-    //    { mData: 'Saldo' },
-       { mData: 'Acciones' },
-      
-  
+  { mData: 'IdProdCedis' },
+{ mData: 'Cod_Barra' },
+{ mData: 'Nombre_Prod' },
+{ mData: 'Clave_interna' },
+{ mData: 'Clave_Levic' }, // Añadido en caso de ser necesario
+{ mData: 'Precio_C' },
+{ mData: 'Precio_Venta' },
+{ mData: 'Lote_Med' }, // Añadido en caso de ser necesario
+{ mData: 'Fecha_Caducidad' }, // Añadido en caso de ser necesario
+{ mData: 'Existencias' }, // Añadido en caso de ser necesario
+{ mData: 'Tipo_Servicio' },
+{ mData: 'Componente_Activo' }, // Añadido en caso de ser necesario
+{ mData: 'Tipo' },
+{ mData: 'Categoria' },
+{ mData: 'Marca' },
+{ mData: 'Presentacion' },
+{ mData: 'Proveedor1' },
+{ mData: 'Proveedor2' }, // Añadido en caso de ser necesario
+{ mData: 'RecetaMedica' }, // Añadido en caso de ser necesario
+{ mData: 'Estatus' }, // Añadido en caso de ser necesario
+{ mData: 'AgregadoPor' },
+{ mData: 'FechaInventario' }, // Cambiado el nombre para adaptarse
+{ mData: 'ActualizadoEl' }, // Añadido en caso de ser necesario
+{ mData: 'Contable' }, // Añadido en caso de ser necesario
+{ mData: 'Acciones' },
+
       ],
      
       "lengthMenu": [[10,20,150,250,500, -1], [10,20,50,250,500, "Todos"]],  
