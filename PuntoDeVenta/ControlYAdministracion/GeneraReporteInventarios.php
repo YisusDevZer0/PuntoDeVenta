@@ -17,26 +17,28 @@ $fecha = $_GET['fecha'];
 
 // Adaptar la consulta para la tabla InventariosStocks_Conteos
 $sql = "SELECT 
-           
+            inv_stocks.`Folio_Prod_Stock`, 
             inv_stocks.`ID_Prod_POS`, 
             inv_stocks.`Cod_Barra`, 
             inv_stocks.`Nombre_Prod`, 
-            inv_stocks.`Contabilizado`, 
-            inv_stocks.`StockEnMomento`, 
-            inv_stocks.`ExistenciasAjuste`, 
+            inv_stocks.`Fk_sucursal` AS `Fk_Sucursal`, 
             inv_stocks.`Precio_Venta`, 
             inv_stocks.`Precio_C`, 
+            inv_stocks.`Contabilizado`, 
+            inv_stocks.`StockEnMomento`, 
+            inv_stocks.`Diferencia`, 
+            inv_stocks.`Sistema`, 
             inv_stocks.`AgregadoPor`, 
             inv_stocks.`AgregadoEl`, 
+            inv_stocks.`ID_H_O_D`, 
             inv_stocks.`FechaInventario`,
-            inv_stocks.`Fk_Sucursal`,
-            s.`Nombre_Sucursal`,
+            inv_stocks.`Tipo_Ajuste`,
+            inv_stocks.`Anaquel`,
+            inv_stocks.`Repisa`,
             (inv_stocks.`Contabilizado` * inv_stocks.`Precio_Venta`) AS `Total_Precio_Venta`,
             (inv_stocks.`Contabilizado` * inv_stocks.`Precio_C`) AS `Total_Precio_Compra`
         FROM 
             `InventariosStocks_Conteos` inv_stocks
-        LEFT JOIN 
-            `Sucursales` s ON inv_stocks.`Fk_Sucursal` = s.`ID_Sucursal`
         WHERE 
             inv_stocks.`FechaInventario` = ?";
 
@@ -60,29 +62,35 @@ if (!$output) {
     die("Error al abrir el flujo de salida.");
 }
 
+// Escribir encabezados CSV
 fputcsv($output, [
-    
-     'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Contabilizado', 'StockEnMomento', 
-    'ExistenciasAjuste', 'Precio_Venta', 'Precio_C', 'AgregadoPor', 'AgregadoEl', 'FechaInventario',
-    'Fk_Sucursal', 'Nombre_Sucursal', 'Total_Precio_Venta', 'Total_Precio_Compra'
+    'Folio_Prod_Stock', 'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Fk_Sucursal', 
+    'Precio_Venta', 'Precio_C', 'Contabilizado', 'StockEnMomento', 'Diferencia', 
+    'Sistema', 'AgregadoPor', 'AgregadoEl', 'ID_H_O_D', 'FechaInventario', 
+    'Tipo_Ajuste', 'Anaquel', 'Repisa', 'Total_Precio_Venta', 'Total_Precio_Compra'
 ]);
 
+// Escribir los datos en el archivo CSV
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
-        
+        $fila["Folio_Prod_Stock"],
         $fila["ID_Prod_POS"],
         $fila["Cod_Barra"],
         $fila["Nombre_Prod"],
-        $fila["Contabilizado"],
-        $fila["StockEnMomento"],
-        $fila["ExistenciasAjuste"],
+        $fila["Fk_Sucursal"],
         $fila["Precio_Venta"],
         $fila["Precio_C"],
+        $fila["Contabilizado"],
+        $fila["StockEnMomento"],
+        $fila["Diferencia"],
+        $fila["Sistema"],
         $fila["AgregadoPor"],
         $fila["AgregadoEl"],
+        $fila["ID_H_O_D"],
         $fila["FechaInventario"],
-        $fila["Fk_Sucursal"],
-        $fila["Nombre_Sucursal"],
+        $fila["Tipo_Ajuste"],
+        $fila["Anaquel"],
+        $fila["Repisa"],
         $fila["Total_Precio_Venta"],
         $fila["Total_Precio_Compra"]
     ]);
