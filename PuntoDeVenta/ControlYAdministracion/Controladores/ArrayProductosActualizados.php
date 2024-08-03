@@ -61,7 +61,7 @@ while ($fila = $result->fetch_assoc()) {
        
         "Precio_C" => $fila["Precio_C"],
         "Precio_Venta" => $fila["Precio_Venta"],
-        "Nom_Serv" => $fila["Nom_Serv"],
+      
         "Marca" => $fila["Marca"],
         "Tipo" => $fila["Tipo"],
         "Categoria" => $fila["Categoria"],

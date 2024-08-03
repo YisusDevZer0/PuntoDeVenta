@@ -188,7 +188,7 @@ tabla = $('#Productos').DataTable({
    
        { mData: 'Precio_C' },
        { mData: 'Precio_Venta' },
-       { mData: 'Nom_Serv' },
+       
        { mData: 'Tipo' },
        { mData: 'Categoria' },
        { mData: 'Marca' },
@@ -258,7 +258,7 @@ tabla = $('#Productos').DataTable({
  
     <th>PC</th>
     <th>PV </th>
-    <th>Servicio </th>
+ 
     <th>Tipo</th>
     <th>Categoria</th>
     <th>Marca </th>
