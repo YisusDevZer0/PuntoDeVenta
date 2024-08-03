@@ -183,8 +183,7 @@ tabla = $('#Productos').DataTable({
   { mData: 'IdProdCedis' },
 { mData: 'Cod_Barra' },
 { mData: 'Nombre_Prod' },
-{ mData: 'Clave_interna' },
-{ mData: 'Clave_Levic' }, // Añadido en caso de ser necesario
+
 { mData: 'Precio_C' },
 { mData: 'Precio_Venta' },
 { mData: 'Lote_Med' }, // Añadido en caso de ser necesario
@@ -198,7 +197,6 @@ tabla = $('#Productos').DataTable({
 { mData: 'Presentacion' },
 { mData: 'Proveedor1' },
 { mData: 'Proveedor2' }, // Añadido en caso de ser necesario
-{ mData: 'RecetaMedica' }, // Añadido en caso de ser necesario
 { mData: 'Estatus' }, // Añadido en caso de ser necesario
 { mData: 'AgregadoPor' },
 { mData: 'FechaInventario' }, // Cambiado el nombre para adaptarse
