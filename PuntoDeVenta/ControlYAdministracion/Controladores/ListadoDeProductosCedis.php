@@ -258,6 +258,7 @@ tabla = $('#Productos').DataTable({
     <th>Lote </th>
     <th>Fecha caducidad</th>
     <th>Existencias</th>
+    <th>Servicio</th>
     <th>Tipo</th>
     <th>Categoria </th>
     <th>Marca</th>
