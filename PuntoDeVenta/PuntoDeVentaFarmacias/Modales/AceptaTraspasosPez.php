@@ -41,17 +41,9 @@ if ($query->num_rows > 0) {
 <?php if ($Traspaso != null): ?>
 
 <form action="javascript:void(0)" method="post" id="ActualizaDatosDeTraspasos">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="ID_Traspaso_Generado">ID Traspaso Generado</label>
-                <input type="text" class="form-control" disabled readonly value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
-            </div>
-        </div>
-       
-       
-    </div>
-
+   
+                <input type="text" class="form-control" hidden readonly value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
+         
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
@@ -88,61 +80,14 @@ if ($query->num_rows > 0) {
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="Fk_SucDestino">Sucursal Destino</label>
-                <select id="Fk_SucDestino" class="form-control" name="Fk_SucDestino">
-                    <option value="<?php echo $Traspaso->Fk_SucDestino; ?>"><?php echo $Traspaso->Nombre_Sucursal; ?></option>
-                    <?php
-                    $query = $conn->query("SELECT * FROM Sucursales");
-                    while ($valores = mysqli_fetch_array($query)) {
-                        echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Precio_Venta">Precio de Venta</label>
-                <input type="text" class="form-control" id="Precio_Venta" name="Precio_Venta" value="<?php echo $Traspaso->Precio_Venta; ?>" maxlength="60">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Precio_Compra">Precio de Compra</label>
-                <input type="text" class="form-control" id="Precio_Compra" name="Precio_Compra" value="<?php echo $Traspaso->Precio_Compra; ?>" maxlength="60">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
                 <label for="Cantidad_Enviada">Cantidad Enviada</label>
                 <input type="text" class="form-control" id="Cantidad_Enviada" name="Cantidad_Enviada" value="<?php echo $Traspaso->Cantidad_Enviada; ?>" maxlength="60">
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="FechaEntrega">Fecha de Entrega</label>
-                <input type="text" class="form-control" id="FechaEntrega" name="FechaEntrega" value="<?php echo $Traspaso->FechaEntrega; ?>" maxlength="60">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="Estatus">Estatus</label>
-                <input type="text" class="form-control" id="Estatus" name="Estatus" value="<?php echo $Traspaso->Estatus; ?>" maxlength="60">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="ID_H_O_D">ID H O D</label>
-                <input type="text" class="form-control" id="ID_H_O_D" name="ID_H_O_D" value="<?php echo $Traspaso->ID_H_O_D; ?>" maxlength="60">
-            </div>
-        </div>
-    </div>
+   
+    
 
     <input type="hidden" name="ID_Traspaso_Generado" id="id" value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
     <button type="submit" id="submit" class="btn btn-info">Aceptar Traspaso <i class="fas fa-check"></i></button>
