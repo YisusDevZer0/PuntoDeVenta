@@ -1,3 +1,7 @@
+<?php
+include_once "Controladores/ControladorUsuario.php";
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 
