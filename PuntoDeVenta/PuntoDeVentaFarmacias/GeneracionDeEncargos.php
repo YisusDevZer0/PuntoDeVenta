@@ -1,62 +1,63 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
- include "Controladores/ConsultaCaja.php";
-include "Controladores/SumadeFolioTicketsNuevo.php";
-include("Controladores/db_connect.php");
-$primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
-
-
-// Concatenar las primeras 3 letras con el valor de $totalmonto
-$resultado_concatenado = $primeras_tres_letras . $totalmonto;
-
-// Convertir el resultado a mayúsculas
-$resultado_en_mayusculas = strtoupper($resultado_concatenado);
-
-// Imprimir el resultado en mayúsculas
-
-
-
-
-
+include_once "Controladores/ConsultaCaja.php";
+include_once "Controladores/SumadeFolioTicketsNuevo.php";
+include_once "Controladores/db_connect.php";
 include_once "db_config.php"; // Incluye la configuración de tu base de datos
 
-
 // Manejo del formulario de encargo
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['codigo_producto']) && isset($_POST['cantidad'])) {
-    $codigo_producto = $_POST['codigo_producto'];
-    $cantidad = $_POST['cantidad'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['productos']) && isset($_POST['nombre_cliente']) && isset($_POST['abono'])) {
+    $productos = $_POST['productos']; // Array de productos
+    $nombre_cliente = $_POST['nombre_cliente'];
+    $abono = $_POST['abono'];
+    
+    // Conexión a la base de datos
+   
+    // Variables para el total y faltante
+    $total = 0;
 
-    // Consulta para buscar el producto
-    $sql = "SELECT Cod_Barra, Nombre_Prod, Precio_Venta, Precio_C, Tipo_Servicio, Proveedor1, Proveedor2, Licencia FROM Productos_POS WHERE Cod_Barra = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $codigo_producto);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    foreach ($productos as $producto) {
+        $codigo_producto = $producto['codigo'];
+        $cantidad = $producto['cantidad'];
 
-    if ($result->num_rows > 0) {
-        // Producto encontrado
-        $producto = $result->fetch_assoc();
-        // Aquí podrías agregar el encargo a la base de datos
-        $sql_encargo = "INSERT INTO Encargos (Cod_Barra, Cantidad, Fecha) VALUES (?, ?, NOW())";
-        $stmt_encargo = $conn->prepare($sql_encargo);
-        $stmt_encargo->bind_param("si", $codigo_producto, $cantidad);
-        $stmt_encargo->execute();
-        $stmt_encargo->close();
-        $mensaje = "Encargo realizado exitosamente para el producto: " . $producto['Nombre_Prod'];
-    } else {
-        // Producto no encontrado
-        $mensaje = "Producto no encontrado en la base de datos.";
+        // Consulta para buscar el producto
+        $sql = "SELECT Cod_Barra, Nombre_Prod, Precio_Venta FROM Productos_POS WHERE Cod_Barra = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $codigo_producto);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            // Producto encontrado
+            $producto_data = $result->fetch_assoc();
+            $precio = $producto_data['Precio_Venta'];
+            $total += $precio * $cantidad;
+
+            // Agrega el encargo a la base de datos
+            $sql_encargo = "INSERT INTO Encargos (Cod_Barra, Cantidad, Fecha, Nombre_Cliente, Abono, Total) VALUES (?, ?, NOW(), ?, ?, ?)";
+            $stmt_encargo = $conn->prepare($sql_encargo);
+            $stmt_encargo->bind_param("sissi", $codigo_producto, $cantidad, $nombre_cliente, $abono, $total);
+            $stmt_encargo->execute();
+            $stmt_encargo->close();
+        } else {
+            // Producto no encontrado
+            $mensaje = "Producto con código $codigo_producto no encontrado en la base de datos.";
+        }
+        $stmt->close();
     }
-    $stmt->close();
-}
 
-// Cierra la conexión
-$conn->close();
+    // Calcula el faltante por pagar
+    $faltante = $total - $abono;
+
+    $mensaje = "Encargo realizado exitosamente. Total: $total, Abono: $abono, Faltante por pagar: $faltante";
+    
+    // Cierra la conexión
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8">
     <title>Encargos de <?php echo $row['Licencia']?></title>
@@ -84,13 +85,24 @@ $conn->close();
                     <!-- Formulario para ingresar un encargo -->
                     <form id="formEncargo" method="POST" action="">
                         <div class="form-group">
-                            <label for="codigo_producto">Código de Producto:</label>
-                            <input type="text" class="form-control" id="codigo_producto" name="codigo_producto" required>
+                            <label for="nombre_cliente">Nombre del Cliente:</label>
+                            <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required>
                         </div>
                         <div class="form-group">
-                            <label for="cantidad">Cantidad:</label>
-                            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                            <label for="abono">Abono:</label>
+                            <input type="number" class="form-control" id="abono" name="abono" required>
                         </div>
+                        <div id="productos-container">
+                            <div class="form-group">
+                                <label for="codigo_producto_1">Código de Producto:</label>
+                                <input type="text" class="form-control" name="productos[0][codigo]" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cantidad_1">Cantidad:</label>
+                                <input type="number" class="form-control" name="productos[0][cantidad]" required>
+                            </div>
+                        </div>
+                        <button type="button" id="add-product" class="btn btn-secondary">Agregar Producto</button>
                         <button type="submit" class="btn btn-primary">Realizar Encargo</button>
                     </form>
 
@@ -99,13 +111,31 @@ $conn->close();
                             <?php echo $mensaje; ?>
                         </div>
                     <?php endif; ?>
-
-                   
+                </div>
             </div>
         </div>
     </div>
-    
- 
+
+    <script>
+        $(document).ready(function() {
+            var productCount = 1;
+            $("#add-product").click(function() {
+                productCount++;
+                $("#productos-container").append(`
+                    <div class="form-group">
+                        <label for="codigo_producto_${productCount}">Código de Producto:</label>
+                        <input type="text" class="form-control" name="productos[${productCount - 1}][codigo]" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad_${productCount}">Cantidad:</label>
+                        <input type="number" class="form-control" name="productos[${productCount - 1}][cantidad]" required>
+                    </div>
+                `);
+            });
+        });
+    </script>
+
+    <!-- Modales y Scripts -->
     <script>
         $(document).ready(function() {
             $(document).on("click", ".btn-AceptarTraspaso", function() {
@@ -124,7 +154,7 @@ $conn->close();
         <div id="Di" class="modal-dialog modal-notify modal-success">
             <div class="text-center">
                 <div class="modal-content">
-                    <div class="modal-header" style=" background-color: #ef7980 !important;" >
+                    <div class="modal-header" style="background-color: #ef7980 !important;">
                         <p class="heading lead" id="TitulosCajas" style="color:white;"></p>
                     </div>
                     <div class="modal-body">
@@ -136,6 +166,7 @@ $conn->close();
             </div>
         </div>
     </div>
+
     <!-- Footer Start -->
     <?php 
     include "Modales/NuevoFondoDeCaja.php";
