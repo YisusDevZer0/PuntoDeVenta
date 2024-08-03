@@ -33,7 +33,7 @@ $sql = "SELECT
             (inv_suc.`Contabilizado` * inv_suc.`Precio_Venta`) AS `Total_Precio_Venta`,
             (inv_suc.`Contabilizado` * inv_suc.`Precio_C`) AS `Total_Precio_Compra`
         FROM 
-            `InventariosSucursales` inv_suc
+            ` InventariosStocks_Conteos` inv_suc
         LEFT JOIN 
             `Sucursales` s ON inv_suc.`Fk_Sucursal` = s.`ID_Sucursal`
         WHERE 
