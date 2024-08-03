@@ -197,8 +197,6 @@ tabla = $('#Productos').DataTable({
 { mData: 'Presentacion' },
 { mData: 'Proveedor1' },
 { mData: 'Proveedor2' }, // Añadido en caso de ser necesario
-
-{ mData: 'AgregadoPor' },
 { mData: 'FechaInventario' }, // Cambiado el nombre para adaptarse
 { mData: 'ActualizadoEl' }, // Añadido en caso de ser necesario
 
