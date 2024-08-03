@@ -36,7 +36,7 @@ if ($query->num_rows > 0) {
         <h2>¿Estás seguro que deseas eliminar estos datos?</h2>
         <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
         <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
-        <input type="text" hidden class="form-control" id="ID_Prod_POS" name="ID_Prod_POS" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>" readonly>
+        <input type="text" hidden class="form-control" id="ID_Prod_POS" name="ID_Prod_Cedis" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>" readonly>
         <button type="submit" id="submit" class="btn btn-danger">Eliminar</button>
     </div>
 </form>

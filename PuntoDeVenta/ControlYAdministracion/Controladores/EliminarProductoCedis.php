@@ -1,0 +1,25 @@
+<?php
+include "db_connect.php";
+
+// Obtener el ID del producto desde la solicitud POST
+$idProdCedis = isset($_POST['ID_Prod_Cedis']) ? $_POST['ID_Prod_Cedis'] : '';
+
+if (!empty($idProdCedis)) {
+    // Preparar la consulta para eliminar el producto
+    $sql = "DELETE FROM CEDIS WHERE IdProdCedis = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $idProdCedis);
+
+    if ($stmt->execute()) {
+        // Opcionalmente eliminar registros relacionados en otras tablas si es necesario
+        $stmt->close();
+        echo "Producto eliminado correctamente";
+    } else {
+        echo "Error al eliminar el producto: " . $conn->error;
+    }
+} else {
+    echo "ID del producto no proporcionado";
+}
+
+$conn->close();
+?>
