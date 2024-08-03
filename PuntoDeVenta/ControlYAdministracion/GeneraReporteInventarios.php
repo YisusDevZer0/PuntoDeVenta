@@ -65,8 +65,8 @@ if (!$output) {
 // Escribir encabezados CSV
 fputcsv($output, [
     'Folio_Prod_Stock', 'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Fk_Sucursal', 
-    'Precio_Venta', 'Precio_C', 'Contabilizado', 'StockEnMomento', 'Diferencia', 
-    'Sistema', 'AgregadoPor', 'AgregadoEl', 'ID_H_O_D', 'FechaInventario', 
+    'Precio_Venta', 'Precio_C', 'Contabilizado', 'Existencia previa', 'Diferencia', 
+    'Sistema', 'AgregadoPor', 'AgregadoEl',  'FechaInventario', 
     'Tipo_Ajuste', 'Anaquel', 'Repisa', 'Total_Precio_Venta', 'Total_Precio_Compra'
 ]);
 
@@ -86,7 +86,7 @@ while ($fila = $result->fetch_assoc()) {
         $fila["Sistema"],
         $fila["AgregadoPor"],
         $fila["AgregadoEl"],
-        $fila["ID_H_O_D"],
+       
         $fila["FechaInventario"],
         $fila["Tipo_Ajuste"],
         $fila["Anaquel"],
