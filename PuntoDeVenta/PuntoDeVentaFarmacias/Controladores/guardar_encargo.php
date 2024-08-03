@@ -1,4 +1,5 @@
 <?php
+require_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

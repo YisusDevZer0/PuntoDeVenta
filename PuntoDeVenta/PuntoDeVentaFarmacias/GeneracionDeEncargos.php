@@ -35,7 +35,7 @@ include_once "Controladores/ControladorUsuario.php";
                                     <label for="medicamento" class="form-label">Medicamento</label>
                                     <select class="form-control" name="medicamentos[0][id]" required>
                                         <?php
-                                        include_once "Controladores/ControladorUsuario.php";
+                                        include_once "Controladores/db_connect.php";
                                         $query = "SELECT ID_Prod_POS, Nombre_Prod FROM Productos_POS";
                                         if ($result = $mysqli->query($query)) {
                                             while ($row = $result->fetch_assoc()) {
