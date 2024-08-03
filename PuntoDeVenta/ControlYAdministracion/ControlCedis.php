@@ -71,7 +71,7 @@ include_once "Controladores/ControladorUsuario.php";
     </style>
 </head>
 <body>
-    <script>
+    <!-- <script>
         function showAlertWithPassword() {
             const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
 
@@ -129,7 +129,7 @@ include_once "Controladores/ControladorUsuario.php";
 
         // Mostrar la alerta cuando se carga la página
         showAlertWithPassword();
-    </script>
+    </script> -->
 <body>
     
         <!-- Spinner End -->
