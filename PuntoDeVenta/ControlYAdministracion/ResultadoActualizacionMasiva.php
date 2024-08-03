@@ -39,24 +39,19 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4" style="color:#0172b6;">Resultados de actualizacion <?php echo $row['Licencia']?></h6>
            
    
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
-      class="btn btn-default">
-      Filtrar por fechas <i class="fas fa-search"></i>
-    </button> 
-    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#DescargaReporteInventarios"
-      class="btn btn-default">
-      Descargar reporte inventarios <i class="fa-solid fa-file-excel"></i>
-    </button><br><br>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FiltroPorFechas">
+  Agregar nuevo producto
+</button> 
+   <br><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
           
 <script src="js/ResultadosDeLaActualizacionMasiva.js"></script>
-
 <script>
   $(document).ready(function() {
     $.ajax({
-      url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CargaFechaDeInventarios.php',
+      url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CargaFechaDeCargaMasiva.php',
       type: 'GET',
       dataType: 'json',
       success: function(data) {
@@ -74,12 +69,10 @@ include_once "Controladores/ControladorUsuario.php";
   });
 </script>
 
+
             <!-- Footer Start -->
             <?php 
-            include "Modales/GenerarNuevoTraspaso.php";
-            include "Modales/Modales_Errores.php";
-            include "Modales/Modales_Referencias.php";
-            include "Modales/DescargaDeInventariosSucursales.php";
+            include "Modales/BusquedaDeSubidaMasiva.php";
             include "Footer.php";?>
 </body>
 

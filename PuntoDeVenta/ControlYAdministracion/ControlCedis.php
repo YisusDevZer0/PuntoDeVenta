@@ -155,7 +155,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/ControlDeProductos.js"></script>
+<script src="js/ControlDeProductosCedis.js"></script>
 
             <!-- Footer Start -->
             <?php 
