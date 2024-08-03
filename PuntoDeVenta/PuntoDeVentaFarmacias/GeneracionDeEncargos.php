@@ -102,3 +102,63 @@ include('Menu.php');
 <?php
 include('Footer.php');
 ?>
+<?php
+function obtenerProveedores() {
+    // Conectar a la base de datos
+    require_once "db_connect.php";
+
+    $sql = "SELECT id, nombre FROM proveedores";
+    $resultado = $conn->query($sql);
+
+    $proveedores = [];
+    if ($resultado->num_rows > 0) {
+        while ($row = $resultado->fetch_assoc()) {
+            $proveedores[] = $row;
+        }
+    }
+
+    $conn->close();
+    return $proveedores;
+}
+
+function generarNumeroSolicitud() {
+    // Generar un número de solicitud único
+    return uniqid('sol_');
+}
+
+function guardarEncargo($proveedor, $fecha, $numeroFactura, $numeroSolicitud, $estado, $productos) {
+    // Conectar a la base de datos
+    $conn = new mysqli('localhost', 'usuario', 'contraseña', 'basededatos');
+
+    // Verificar conexión
+    if ($conn->connect_error) {
+        die("Conexión fallida: " . $conn->connect_error);
+    }
+
+    // Insertar encargo
+    $sql = "INSERT INTO encargos (proveedor, fecha, numeroFactura, numeroSolicitud, estado) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('sssss', $proveedor, $fecha, $numeroFactura, $numeroSolicitud, $estado);
+    $resultado = $stmt->execute();
+
+    if ($resultado) {
+        $encargoId = $conn->insert_id;
+
+        // Insertar productos
+        $sqlProducto = "INSERT INTO productos_encargo (encargo_id, codigo, nombre, cantidad, fechaCaducidad, lote, precio) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmtProducto = $conn->prepare($sqlProducto);
+
+        foreach ($productos as $producto) {
+            $stmtProducto->bind_param('issssss', $encargoId, $producto['codigo'], $producto['nombre'], $producto['cantidad'], $producto['fechaCaducidad'], $producto['lote'], $producto['precio']);
+            $stmtProducto->execute();
+        }
+
+        $stmtProducto->close();
+    }
+
+    $stmt->close();
+    $conn->close();
+
+    return $resultado;
+}
+?>
