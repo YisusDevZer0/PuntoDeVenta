@@ -15,29 +15,30 @@ if (!isset($_GET['fecha']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fecha'
 
 $fecha = $_GET['fecha'];
 
+// Adaptar la consulta para la tabla InventariosStocks_Conteos
 $sql = "SELECT 
-            inv_suc.`IdProdCedis`, 
-            inv_suc.`ID_Prod_POS`, 
-            inv_suc.`Cod_Barra`, 
-            inv_suc.`Nombre_Prod`, 
-            inv_suc.`Contabilizado`, 
-            inv_suc.`StockEnMomento`, 
-            inv_suc.`ExistenciasAjuste`, 
-            inv_suc.`Precio_Venta`, 
-            inv_suc.`Precio_C`, 
-            inv_suc.`AgregadoPor`, 
-            inv_suc.`AgregadoEl`, 
-            inv_suc.`FechaInventario`,
-            inv_suc.`Fk_Sucursal`,
+            inv_stocks.`IdProdCedis`, 
+            inv_stocks.`ID_Prod_POS`, 
+            inv_stocks.`Cod_Barra`, 
+            inv_stocks.`Nombre_Prod`, 
+            inv_stocks.`Contabilizado`, 
+            inv_stocks.`StockEnMomento`, 
+            inv_stocks.`ExistenciasAjuste`, 
+            inv_stocks.`Precio_Venta`, 
+            inv_stocks.`Precio_C`, 
+            inv_stocks.`AgregadoPor`, 
+            inv_stocks.`AgregadoEl`, 
+            inv_stocks.`FechaInventario`,
+            inv_stocks.`Fk_Sucursal`,
             s.`Nombre_Sucursal`,
-            (inv_suc.`Contabilizado` * inv_suc.`Precio_Venta`) AS `Total_Precio_Venta`,
-            (inv_suc.`Contabilizado` * inv_suc.`Precio_C`) AS `Total_Precio_Compra`
+            (inv_stocks.`Contabilizado` * inv_stocks.`Precio_Venta`) AS `Total_Precio_Venta`,
+            (inv_stocks.`Contabilizado` * inv_stocks.`Precio_C`) AS `Total_Precio_Compra`
         FROM 
-            ` InventariosStocks_Conteos` inv_suc
+            `InventariosStocks_Conteos` inv_stocks
         LEFT JOIN 
-            `Sucursales` s ON inv_suc.`Fk_Sucursal` = s.`ID_Sucursal`
+            `Sucursales` s ON inv_stocks.`Fk_Sucursal` = s.`ID_Sucursal`
         WHERE 
-            inv_suc.`FechaInventario` = ?";
+            inv_stocks.`FechaInventario` = ?";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
