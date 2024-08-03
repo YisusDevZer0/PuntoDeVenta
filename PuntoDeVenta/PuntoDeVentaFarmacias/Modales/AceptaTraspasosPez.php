@@ -48,18 +48,8 @@ if ($query->num_rows > 0) {
                 <input type="text" class="form-control" disabled readonly value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="TraspasoRecibidoPor">Traspaso Recibido Por</label>
-                <input type="text" class="form-control" id="TraspasoRecibidoPor" name="TraspasoRecibidoPor" value="<?php echo $Traspaso->TraspasoRecibidoPor; ?>" maxlength="60">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="TraspasoGeneradoPor">Traspaso Generado Por</label>
-                <input type="text" class="form-control" id="TraspasoGeneradoPor" name="TraspasoGeneradoPor" value="<?php echo $Traspaso->TraspasoGeneradoPor; ?>" maxlength="60">
-            </div>
-        </div>
+       
+       
     </div>
 
     <div class="row">
@@ -155,7 +145,7 @@ if ($query->num_rows > 0) {
     </div>
 
     <input type="hidden" name="ID_Traspaso_Generado" id="id" value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
-    <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
+    <button type="submit" id="submit" class="btn btn-info">Aceptar Traspaso <i class="fas fa-check"></i></button>
 </form>
 <script src="js/ActualizaDataDeTraspasos.js"></script>
 
