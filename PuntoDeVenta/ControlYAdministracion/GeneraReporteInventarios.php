@@ -17,7 +17,7 @@ $fecha = $_GET['fecha'];
 
 // Adaptar la consulta para la tabla InventariosStocks_Conteos
 $sql = "SELECT 
-            inv_stocks.`IdProdCedis`, 
+           
             inv_stocks.`ID_Prod_POS`, 
             inv_stocks.`Cod_Barra`, 
             inv_stocks.`Nombre_Prod`, 
@@ -61,14 +61,15 @@ if (!$output) {
 }
 
 fputcsv($output, [
-    'IdProdCedis', 'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Contabilizado', 'StockEnMomento', 
+    
+     'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Contabilizado', 'StockEnMomento', 
     'ExistenciasAjuste', 'Precio_Venta', 'Precio_C', 'AgregadoPor', 'AgregadoEl', 'FechaInventario',
     'Fk_Sucursal', 'Nombre_Sucursal', 'Total_Precio_Venta', 'Total_Precio_Compra'
 ]);
 
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
-        $fila["IdProdCedis"],
+        
         $fila["ID_Prod_POS"],
         $fila["Cod_Barra"],
         $fila["Nombre_Prod"],
