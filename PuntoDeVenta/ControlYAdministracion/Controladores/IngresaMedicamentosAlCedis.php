@@ -10,7 +10,7 @@ $Id_PvUser = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : '';
 $id_prod_cedis = isset($_POST["ID_Prod_Cedis"]) ? intval($_POST["ID_Prod_Cedis"]) : 0;
 $num_factura = isset($_POST["numeroFactura"]) ? $_POST["numeroFactura"] : '';
 $cantidad_piezas = isset($_POST["cantidadPiezas"]) ? intval($_POST["cantidadPiezas"]) : 0;
-$lote = isset($_POST["Lote"]) ? intval($_POST["Lote"]) : 0;
+$lote = isset($_POST["Lote"]) ? $_POST["Lote"] : '';
 $fecha_caducidad = isset($_POST["FechaCaducidad"]) ? $_POST["FechaCaducidad"] : '';
 $codbarr = isset($_POST["CodBarra"]) ? $_POST["CodBarra"] : '';
 
@@ -22,7 +22,12 @@ $sql = "INSERT INTO IngresosCedis (ID_Prod_POS, NumFactura, Cod_Barra, Nombre_Pr
         VALUES (?, ?, ?, (SELECT Nombre_Prod FROM CEDIS WHERE IdProdCedis = ?), ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("isssiss", $id_prod_cedis, $num_factura, $codbarr, $id_prod_cedis, $cantidad_piezas, $fecha_caducidad, $lote, $Id_PvUser);
+
+if ($stmt === false) {
+    die("Error en la preparación de la consulta: " . $conn->error);
+}
+
+$stmt->bind_param("sssssss", $id_prod_cedis, $num_factura, $codbarr, $id_prod_cedis, $cantidad_piezas, $fecha_caducidad, $lote, $Id_PvUser);
 
 if ($stmt->execute()) {
     echo "Producto insertado correctamente";
