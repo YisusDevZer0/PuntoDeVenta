@@ -36,7 +36,7 @@ $(document).ready(function() {
         submitHandler: function(form) {
             $.ajax({
                 type: 'POST',
-                url: "Controladores/IngresaMedicamentosAlCedis.php", // Cambia esto a la ruta correcta
+                url: "Controladores/IngresaMedicamentosAlCedisFacturable", // Cambia esto a la ruta correcta
                 data: $(form).serialize(),
                 cache: false,
                 beforeSend: function() {
