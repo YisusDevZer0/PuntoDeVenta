@@ -7,7 +7,7 @@ include "ControladorUsuario.php";
 // Obtener los datos del formulario
 $id_prod_pos = isset($_POST["ID_Prod_POS"]) ? intval($_POST["ID_Prod_POS"]) : 0;
 $num_factura = isset($_POST["NumFactura"]) ? $_POST["NumFactura"] : '';
-$codbarr = isset($_POST["Cod_Barra"]) ? $_POST["Cod_Barra"] : '';
+$codbarr = isset($_POST["Cod_Barra"]) ? $_POST["CodBarra"] : '';
 $nombre_prod = isset($_POST["Nombre_Prod"]) ? $_POST["Nombre_Prod"] : '';
 $cantidad_piezas = isset($_POST["Piezas"]) ? intval($_POST["Piezas"]) : 0;
 $lote = isset($_POST["Lote"]) ? $_POST["Lote"] : '';
