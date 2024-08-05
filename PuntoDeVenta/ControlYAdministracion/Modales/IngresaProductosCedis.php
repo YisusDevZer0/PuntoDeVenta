@@ -57,7 +57,7 @@ if ($query->num_rows > 0) {
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Fecha caducidad:</label>
-            <input type="datetime" class="form-control" id="caducidad" name="FechaCaducidad" >
+            <input type="date" class="form-control" id="caducidad" name="FechaCaducidad" >
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
