@@ -172,7 +172,17 @@ include_once "Controladores/ControladorUsuario.php";
       });
       $('#ModalEdDele').modal('show');
       });
-        
+         // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
+    $(document).on("click", ".btn-RealizarIngresos", function() {
+      
+      var id = $(this).data("id");
+      $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/IngresaProductosCedis.php", { id: id }, function(data) {
+        $("#FormCajas").html(data);
+          $("#TitulosCajas").html("Eliminar datos");
+          $("#Di").addClass("modal-dialog  modal-notify modal-warning");
+      });
+      $('#ModalEdDele').modal('show');
+      });
      
   });
   
