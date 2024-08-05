@@ -12,7 +12,8 @@ $id = isset($_POST["id"]) ? intval($_POST["id"]) : 0;
 // Consulta para obtener datos del producto de la tabla CEDIS
 $sql1 = "SELECT 
     CEDIS.IdProdCedis as IdProdCedis, 
-    CEDIS.Nombre_Prod
+    CEDIS.Nombre_Prod,
+    CEDIS.Cod_Barra
 FROM 
     CEDIS
 WHERE 
@@ -31,7 +32,7 @@ if ($query->num_rows > 0) {
 
 <?php if ($Producto != null): ?>
 
-<form action="procesar_datos_producto.php" method="post" id="FormularioProducto">
+<form action="" method="post" id="FormularioProducto">
     <div class="product-info">
         <h2>Datos del Producto</h2>
         <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
@@ -48,7 +49,15 @@ if ($query->num_rows > 0) {
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Cantidad de Piezas:</label>
-            <input type="number" class="form-control" id="cantidadPiezas" name="cantidadPiezas" min="1" required>
+            <input type="number" class="form-control" id="cantidadPiezas" name="cantidadPiezas"  required>
+        </div>
+        <div class="form-group">
+            <label for="cantidadPiezas">Lote:</label>
+            <input type="number" class="form-control" id="lote" name="Lote" >
+        </div>
+        <div class="form-group">
+            <label for="cantidadPiezas">Fecha caducidad:</label>
+            <input type="datetime" class="form-control" id="caducidad" name="FechaCaducidad" >
         </div>
         <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
@@ -79,6 +88,7 @@ if ($query->num_rows > 0) {
 }
 </style>
 
+<script src="js/IngresaMedicamentosCedis.js"></script>
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
 <?php endif; ?>
