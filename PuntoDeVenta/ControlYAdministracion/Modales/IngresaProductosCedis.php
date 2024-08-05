@@ -41,7 +41,7 @@ if ($query->num_rows > 0) {
 
         <div class="form-group">
             <label for="numeroFactura">Codigo de barras:</label>
-            <input type="text" class="form-control" id="codbarrA"  value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" name="CodBarra" >
+            <input type="text" class="form-control" id="codbarrA"  value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" name="Cod_Barra" >
             <input type="text" hidden class="form-control" id="nombreprod"  value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" name="Nombre_Prod" >
         </div>
         <div class="form-group">
