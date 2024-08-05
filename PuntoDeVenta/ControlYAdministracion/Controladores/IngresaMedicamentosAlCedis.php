@@ -1,6 +1,6 @@
 <?php
-include "../Controladores/db_connect.php";
-include "../Controladores/ControladorUsuario.php";
+include "db_connect.php";
+include "ControladorUsuario.php";
 
 // Obtener valores de la sesión
 $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
