@@ -37,19 +37,20 @@ if ($query->num_rows > 0) {
         <h2>Datos del Producto</h2>
         <p>Nombre del producto: <?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?></p>
         <p>ID del producto: <?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?></p>
-        <input type="hidden" id="ID_Prod_Cedis" name="ID_Prod_Cedis" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" id="ID_Prod_Cedis" name="ID_Prod_POS" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>">
 
         <div class="form-group">
             <label for="numeroFactura">Codigo de barras:</label>
-            <input type="text" class="form-control" id="codbarrA"  value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" name="CodBarra" required>
+            <input type="text" class="form-control" id="codbarrA"  value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" name="CodBarra" >
+            <input type="text" hidden class="form-control" id="nombreprod"  value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" name="Nombre_Prod" >
         </div>
         <div class="form-group">
             <label for="numeroFactura">Número de Factura o Nota:</label>
-            <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" required>
+            <input type="text" class="form-control" id="numeroFactura" name="NumFactura" required>
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Cantidad de Piezas:</label>
-            <input type="number" class="form-control" id="cantidadPiezas" name="cantidadPiezas"  required>
+            <input type="number" class="form-control" id="cantidadPiezas" name="Piezas"  required>
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Lote:</label>
