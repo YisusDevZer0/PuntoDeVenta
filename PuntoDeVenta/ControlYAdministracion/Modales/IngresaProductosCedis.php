@@ -55,6 +55,7 @@ if ($query->num_rows > 0) {
         <div class="form-group">
             <label for="cantidadPiezas">Lote:</label>
             <input type="text" class="form-control" id="lote" name="Lote" >
+            <input type="text" class="form-control" value="<?php echo $row['Nombre_Apellidos']?>" name="AgregadoPor" >
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Fecha caducidad:</label>
