@@ -39,6 +39,10 @@ if ($query->num_rows > 0) {
         <input type="hidden" id="ID_Prod_Cedis" name="ID_Prod_Cedis" value="<?php echo htmlspecialchars($Producto->IdProdCedis, ENT_QUOTES, 'UTF-8'); ?>">
 
         <div class="form-group">
+            <label for="numeroFactura">Codigo de barras:</label>
+            <input type="text" class="form-control" id="codbarrA"  value="<?php echo htmlspecialchars($Producto->Cod_Barra, ENT_QUOTES, 'UTF-8'); ?>" name="CodBarra" required>
+        </div>
+        <div class="form-group">
             <label for="numeroFactura">Número de Factura o Nota:</label>
             <input type="text" class="form-control" id="numeroFactura" name="numeroFactura" required>
         </div>
