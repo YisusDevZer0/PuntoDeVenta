@@ -54,7 +54,7 @@ if ($query->num_rows > 0) {
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Lote:</label>
-            <input type="number" class="form-control" id="lote" name="Lote" >
+            <input type="text" class="form-control" id="lote" name="Lote" >
         </div>
         <div class="form-group">
             <label for="cantidadPiezas">Fecha caducidad:</label>
