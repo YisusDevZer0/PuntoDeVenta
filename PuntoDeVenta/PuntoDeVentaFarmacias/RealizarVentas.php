@@ -769,10 +769,7 @@ $(document).ready(function() {
         var efectivoRecibido = parseFloat($(this).val());
 
         // Validar si boletaTotal y efectivoRecibido son números
-        if (isNaN(boletaTotal)) {
-            $("#Vuelto").text("Error");
-            return;
-        }
+       
         if (isNaN(efectivoRecibido)) {
             // Si el valor ingresado no es válido, muestra 0.00 como valor
             $(this).val("0.00");
