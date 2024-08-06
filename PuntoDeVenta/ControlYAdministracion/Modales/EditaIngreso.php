@@ -129,7 +129,7 @@ if ($idProdCedis) {
     <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
     <input hidden type="text" id="SolicitadoPor" name="SolicitadoPor" value="<?php echo htmlspecialchars($data['SolicitadoPor'], ENT_QUOTES, 'UTF-8'); ?>">
     <div class="form-group text-center">
-        <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
+        <button type="submit" class="btn btn-success">Aplicar cambios</button>
     </div>
 </form>
 <script src="js/EditaAutorizacionIngresos.js"></script>
