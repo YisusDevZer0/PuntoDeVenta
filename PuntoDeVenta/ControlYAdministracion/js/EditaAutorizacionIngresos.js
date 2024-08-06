@@ -5,7 +5,7 @@ $(document).ready(function($) {
     
     // Otros métodos de validación omitidos por brevedad
 
-    $("#ActualizaDatosDeProductos").validate({
+    $("#ActualizaMedicamentoAutorizados").validate({
         rules: {
             Cod_Barra: {
                 required: true

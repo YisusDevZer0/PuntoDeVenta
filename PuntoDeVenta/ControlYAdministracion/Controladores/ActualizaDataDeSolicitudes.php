@@ -57,7 +57,7 @@ if (!empty($missingFields)) {
                            AgregadoEl='$AgregadoEl', 
                            FechaInventario='$FechaInventario', 
                          
-                           SolicitadoPor='$SolicitadoPor'
+                         
                        WHERE ID_Prod_POS='$ID_Prod_POS' AND NumFactura='$NumFactura'";
 
         if(mysqli_query($conn, $sql_update)) {
