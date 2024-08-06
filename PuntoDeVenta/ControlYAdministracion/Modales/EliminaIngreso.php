@@ -167,13 +167,16 @@ if ($idProdCedis) {
                 <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
         </div>
-        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" >
-            <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
+        <form action="javascript:void(0)" method="post" id="EliminaMedicamentosAutorizados" >
+            <input type="text" id="IdProdCedis"  class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+            
             <div class="form-group text-center">
         <button type="submit" class="btn btn-danger">Eliminar</button>
     </div>
         </form>
+
+        
+<script src="js/EliminaSolicitudIngreso.js"></script>
         <?php
     } else {
         echo "No se encontraron registros.";
