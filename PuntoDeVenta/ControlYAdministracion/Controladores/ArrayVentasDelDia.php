@@ -35,10 +35,7 @@ $sql = "SELECT DISTINCT
     Servicios_POS.Servicio_ID,
     Servicios_POS.Nom_Serv,
     Ventas_POS.DescuentoAplicado,
-    Stock_POS.ID_Prod_POS,
-    Stock_POS.Precio_Venta,
-    Stock_POS.Precio_C
-FROM 
+ FROM 
     Ventas_POS
 INNER JOIN 
     Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
