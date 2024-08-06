@@ -168,7 +168,7 @@ if ($idProdCedis) {
             </div>
         </div>
         <form action="javascript:void(0)" method="post" id="EliminaMedicamentosAutorizados" >
-            <input type="text" id="IdProdCedis"  class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+            <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             
             <div class="form-group text-center">
         <button type="submit" class="btn btn-danger">Eliminar</button>
