@@ -2,7 +2,7 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-$requiredFields = array('ID_Prod_POS', 'NumFactura', 'Proveedor', 'Cod_Barra', 'Nombre_Prod', 'Fk_Sucursal', 'Contabilizado', 'Fecha_Caducidad', 'Lote', 'PrecioMaximo', 'Precio_Venta', 'Precio_C',  'AgregadoPor', 'AgregadoEl', 'FechaInventario',  'SolicitadoPor');
+$requiredFields = array('ID_Prod_POS', 'NumFactura', 'Proveedor', 'Cod_Barra', 'Nombre_Prod', 'Fk_Sucursal', 'Contabilizado', 'Fecha_Caducidad', 'Lote', 'Precio_Venta', 'Precio_C',  'AgregadoPor', 'AgregadoEl', 'FechaInventario',  'SolicitadoPor');
 $missingFields = array();
 foreach ($requiredFields as $field) {
     if (!isset($_POST[$field])) {
@@ -24,7 +24,7 @@ if (!empty($missingFields)) {
     $Contabilizado = mysqli_real_escape_string($conn, $_POST['Contabilizado']);
     $Fecha_Caducidad = mysqli_real_escape_string($conn, $_POST['Fecha_Caducidad']);
     $Lote = mysqli_real_escape_string($conn, $_POST['Lote']);
-    $PrecioMaximo = mysqli_real_escape_string($conn, $_POST['PrecioMaximo']);
+
     $Precio_Venta = mysqli_real_escape_string($conn, $_POST['Precio_Venta']);
     $Precio_C = mysqli_real_escape_string($conn, $_POST['Precio_C']);
   

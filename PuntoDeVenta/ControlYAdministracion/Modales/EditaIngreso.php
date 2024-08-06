@@ -106,10 +106,7 @@ if ($idProdCedis) {
         <label for="Lote">Lote:</label>
         <input type="text" id="Lote" name="Lote" class="form-control" value="<?php echo htmlspecialchars($data['Lote'], ENT_QUOTES, 'UTF-8'); ?>">
     </div>
-    <div class="form-group">
-        <label for="PrecioMaximo">Precio Máximo:</label>
-        <input type="text" id="PrecioMaximo" class="form-control" name="PrecioMaximo" value="<?php echo htmlspecialchars($data['PrecioMaximo'], ENT_QUOTES, 'UTF-8'); ?>">
-    </div>
+   
     <div class="form-group">
         <label for="Precio_Venta">Precio de Venta:</label>
         <input type="text" id="Precio_Venta" class="form-control" name="Precio_Venta" value="<?php echo htmlspecialchars($data['Precio_Venta'], ENT_QUOTES, 'UTF-8'); ?>">
