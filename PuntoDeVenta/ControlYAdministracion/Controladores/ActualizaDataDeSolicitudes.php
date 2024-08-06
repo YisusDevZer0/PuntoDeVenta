@@ -41,11 +41,12 @@ if (!empty($missingFields)) {
                        Precio_C='$Precio_C'
                    WHERE IdProdCedis='$IdProdCedis'";
 
-    if (mysqli_query($conn, $sql_update)) {
-        echo json_encode(array("statusCode"=>200)); // Actualización exitosa
-    } else {
-        echo json_encode(array("statusCode"=>201, "error"=>mysqli_error($conn))); // Error en la actualización
-    }
+if (mysqli_query($conn, $sql_update)) {
+    echo json_encode(array("statusCode" => 200, "message" => "Registro actualizado correctamente")); // Actualización exitosa
+} else {
+    echo json_encode(array("statusCode" => 201, "error" => mysqli_error($conn))); // Error en la actualización
+}
+
 }
 
 // Cerrar la conexión a la base de datos
