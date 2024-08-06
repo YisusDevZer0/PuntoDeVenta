@@ -753,7 +753,7 @@ $(document).ready(function() {
         if ($(this).is(":checked")) {
             var boletaTotal = parseFloat($("#boleta_total").text());
             $("#Vuelto").text("0.00");
-            $("#iptEfectivoRecibido").text(boletaTotal.toFixed(2));
+            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
         }
     });
 
@@ -764,6 +764,7 @@ $(document).ready(function() {
         if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
             $("#Vuelto").text("0.00");
             $("#boleta_total").text(efectivoRecibido.toFixed(2));
+            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
         } else {
             var vuelto = efectivoRecibido - boletaTotal;
             $("#Vuelto").text(vuelto.toFixed(2));
