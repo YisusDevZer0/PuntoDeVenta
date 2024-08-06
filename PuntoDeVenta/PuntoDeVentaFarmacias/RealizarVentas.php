@@ -753,7 +753,7 @@ $(document).ready(function() {
         if ($(this).is(":checked")) {
             var boletaTotal = parseFloat($("#boleta_total").text());
             $("#Vuelto").text("0.00");
-            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+            $("#iptEfectivoRecibido").text(boletaTotal.toFixed(2));
         }
     });
 
