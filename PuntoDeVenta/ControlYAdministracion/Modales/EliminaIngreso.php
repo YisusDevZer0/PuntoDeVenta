@@ -80,65 +80,100 @@ if ($idProdCedis) {
             .btn-confirm:hover {
                 background-color: #e60000;
             }
+            .confirmation-message {
+                padding: 20px;
+                border: 2px solid #ff4d4d;
+                border-radius: 8px;
+                background-color: #ffe6e6;
+                color: #ff4d4d;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .confirmation-message h3 {
+                margin-bottom: 10px;
+            }
+            .confirmation-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+            }
+            .confirmation-buttons button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                font-size: 1rem;
+                cursor: pointer;
+            }
+            .btn-confirm-yes {
+                background-color: #ff4d4d;
+                color: white;
+            }
+            .btn-confirm-yes:hover {
+                background-color: #e60000;
+            }
+            .btn-confirm-no {
+                background-color: #4dff4d;
+                color: white;
+            }
+            .btn-confirm-no:hover {
+                background-color: #00e600;
+            }
         </style>
-        <div id="confirmation-message">
-            <p>¿Estás seguro de querer eliminar esta solicitud?</p>
-            
+        <div id="confirmation-message" class="confirmation-message">
+            <h3>¡Atención!</h3>
+            <p>Estás a punto de eliminar esta solicitud. Esta acción es irreversible.</p>
+            <div class="confirmation-buttons">
+                <button type="button" id="confirm-delete" class="btn-confirm btn-confirm-yes">Eliminar</button>
+                <button type="button" id="cancel-delete" class="btn-confirm btn-confirm-no">Cancelar</button>
+            </div>
         </div>
-        <!-- <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" class="form-container"> -->
+        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" class="form-container">
             <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
             <div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="Proveedor">Proveedor:</label>
-                <input type="text" id="Proveedor" class="form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="NumFactura">Número de Factura:</label>
-                <input type="text" id="NumFactura" class="form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="Cod_Barra">Código de Barra:</label>
-                <input type="text" id="Cod_Barra" class="form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="Nombre_Prod">Nombre del Producto:</label>
-                <input type="text" id="Nombre_Prod" class="form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <div class="form-group">
-                <label for="Contabilizado">Piezas:</label>
-                <input type="text" id="Contabilizado" class="form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-        </div>
-        </div>
-
-           
-           
-            <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
-            <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
-
-            <div class="form-group text-center">
-                <button type="button" id="show-form" class="btn btn-success">Eliminar solicitud</button>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Proveedor">Proveedor:</label>
+                            <input type="text" id="Proveedor" class="form-control" name="Proveedor" value="<?php echo htmlspecialchars($data['Proveedor'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="NumFactura">Número de Factura:</label>
+                            <input type="text" id="NumFactura" class="form-control" name="NumFactura" value="<?php echo htmlspecialchars($data['NumFactura'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Cod_Barra">Código de Barra:</label>
+                            <input type="text" id="Cod_Barra" class="form-control" name="Cod_Barra" value="<?php echo htmlspecialchars($data['Cod_Barra'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="Nombre_Prod">Nombre del Producto:</label>
+                            <input type="text" id="Nombre_Prod" class="form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                        <div class="form-group">
+                            <label for="Contabilizado">Piezas:</label>
+                            <input type="text" id="Contabilizado" class="form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+                </div>
+                <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
+                <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
+                <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
         </form>
-        
         <?php
     } else {
         echo "No se encontraron registros.";
