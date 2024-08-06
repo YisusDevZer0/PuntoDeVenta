@@ -4,50 +4,51 @@ include("db_connect.php");
 include "ControladorUsuario.php";
 
 $sql = "SELECT DISTINCT
-    Ventas_POS.Venta_POS_ID,
-    Ventas_POS.Folio_Ticket,
-    Ventas_POS.FolioSucursal,
-    Ventas_POS.Fk_Caja,
-    Ventas_POS.Identificador_tipo,
-    Ventas_POS.Fecha_venta,
-    Ventas_POS.Total_Venta,
-    Ventas_POS.Importe,
-    Ventas_POS.Total_VentaG,
-    Ventas_POS.FormaDePago,
-    Ventas_POS.Turno,
-    Ventas_POS.FolioSignoVital,
-    Ventas_POS.Cliente,
-    Cajas.ID_Caja,
-    Cajas.Sucursal,
-    Cajas.MedicoEnturno,
-    Cajas.EnfermeroEnturno,
-    Ventas_POS.Cod_Barra,
-    Ventas_POS.Clave_adicional,
-    Ventas_POS.Nombre_Prod,
-    Ventas_POS.Cantidad_Venta,
-    Ventas_POS.Fk_sucursal,
-    Ventas_POS.AgregadoPor,
-    Ventas_POS.AgregadoEl,
-    Ventas_POS.Lote,
-    Ventas_POS.ID_H_O_D,
-    Sucursales.ID_Sucursal,
-    Sucursales.Nombre_Sucursal,
-    Servicios_POS.Servicio_ID,
-    Servicios_POS.Nom_Serv,
-    Ventas_POS.DescuentoAplicado,
- FROM 
-    Ventas_POS
+Ventas_POS.Venta_POS_ID,
+Ventas_POS.Folio_Ticket,
+Ventas_POS.FolioSucursal,
+Ventas_POS.Fk_Caja,
+Ventas_POS.Identificador_tipo,
+Ventas_POS.Fecha_venta, 
+Ventas_POS.Total_Venta,
+Ventas_POS.Importe,
+Ventas_POS.Total_VentaG,
+Ventas_POS.FormaDePago,
+Ventas_POS.Turno,
+Ventas_POS.FolioSignoVital,
+Ventas_POS.Cliente,
+Cajas.ID_Caja,  -- Cambio aquí
+Cajas.Sucursal,  -- Cambio aquí
+Cajas.MedicoEnturno,  -- Cambio aquí
+Cajas.EnfermeroEnturno,  -- Cambio aquí
+Ventas_POS.Cod_Barra,
+Ventas_POS.Clave_adicional,
+Ventas_POS.Nombre_Prod,
+Ventas_POS.Cantidad_Venta,
+Ventas_POS.Fk_sucursal,
+Ventas_POS.AgregadoPor,
+Ventas_POS.AgregadoEl,
+Ventas_POS.Lote,
+Ventas_POS.ID_H_O_D,
+Sucursales.ID_Sucursal, 
+Sucursales.Nombre_Sucursal,
+Servicios_POS.Servicio_ID,
+Servicios_POS.Nom_Serv,
+Ventas_POS.DescuentoAplicado, -- Agregamos la columna DescuentoAplicado
+Stock_POS.ID_Prod_POS,
+Stock_POS.Precio_Venta,
+Stock_POS.Precio_C
+FROM 
+Ventas_POS
 INNER JOIN 
-    Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
+Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
 INNER JOIN 
-    Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
+Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
 INNER JOIN 
-    Cajas ON Cajas.ID_Caja = Ventas_POS.Fk_Caja
+Cajas ON Cajas.ID_Caja = Ventas_POS.Fk_Caja  -- Cambio aquí
 INNER JOIN 
-    Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
-    where
-YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) -- Año actual
-AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE()); -- Mes actual";
+Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
+";
 
 $result = mysqli_query($conn, $sql);
 
