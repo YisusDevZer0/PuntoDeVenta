@@ -728,69 +728,50 @@ Efectivo Exacto
 
 
 <script>
- $(document).ready(function() {
+  $(document).ready(function() {
     // Bloquear el botón al cargar la página
     $('#btnIniciarVenta').prop('disabled', true);
 
     // Agregar un controlador de eventos al input
     $('#iptEfectivoRecibido').on('input', function() {
-        var valorInput = $(this).val().trim(); // Elimina espacios en blanco al inicio y al final
-        var miBoton = $('#btnIniciarVenta');
+      var valorInput = $(this).val();
+      var miBoton = $('#btnIniciarVenta');
 
-        if (valorInput.length > 0) {
-            // Desbloquear el botón si el input contiene datos
-            miBoton.prop('disabled', false);
-        } else {
-            // Bloquear el botón si el input está vacío
-            miBoton.prop('disabled', true);
-        }
+      if (valorInput.length > 0) {
+        // Desbloquear el botón si el input contiene datos
+        miBoton.prop('disabled', false);
+      } else {
+        // Bloquear el botón si el input está vacío
+        miBoton.prop('disabled', true);
+      }
     });
-});
+  });
 
 
-$(document).ready(function() {
+  $(document).ready(function() {
     $("#chkEfectivoExacto").change(function() {
-        if ($(this).is(":checked")) {
-            var boletaTotal = parseFloat($("#boleta_total").text());
-            // Validar si boletaTotal es un número
-            if (!isNaN(boletaTotal)) {
-                $("#Vuelto").text("0.00");
-                $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-            } else {
-                // Manejo de error en caso de que boletaTotal no sea un número válido
-                $("#Vuelto").text("Error");
-                $("#iptEfectivoRecibido").val("0.00");
-            }
-        }
+      if ($(this).is(":checked")) {
+        var boletaTotal = parseFloat($("#boleta_total").text());
+        $("#Vuelto").text("0.00");
+        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+      }
     });
 
     $("#iptEfectivoRecibido").change(function() {
-        var boletaTotal = parseFloat($("#boleta_total").text());
-        var efectivoRecibido = parseFloat($(this).val());
+      var boletaTotal = parseFloat($("#boleta_total").text());
+      var efectivoRecibido = parseFloat($(this).val());
 
-        // Validar si boletaTotal y efectivoRecibido son números
-       
-        if (isNaN(efectivoRecibido)) {
-            // Si el valor ingresado no es válido, muestra 0.00 como valor
-            $(this).val("0.00");
-            efectivoRecibido = 0;
-        }
-
-        if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-            $("#Vuelto").text("0.00");
-            $("#boleta_total").text(efectivoRecibido.toFixed(2));
-            $("#iptEfectivoRecibido").val(efectivoRecibido.toFixed(2));
-        } else {
-            var vuelto = efectivoRecibido - boletaTotal;
-            $("#Vuelto").text(vuelto.toFixed(2));
-            $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        }
-
-        // Formatear el campo iptEfectivoRecibido con dos decimales
-        $(this).val(efectivoRecibido.toFixed(2));
+      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
+        $("#Vuelto").text("0.00");
+        $("#boleta_total").text(efectivoRecibido.toFixed(2));
+      } else {
+        var vuelto = efectivoRecibido - boletaTotal;
+        $("#Vuelto").text(vuelto.toFixed(2));
+        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+        
+      }
     });
-});
-
+  });
 </script>
 
 <script>
