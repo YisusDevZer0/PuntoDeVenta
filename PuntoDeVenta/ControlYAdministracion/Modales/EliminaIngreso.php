@@ -86,7 +86,7 @@ if ($idProdCedis) {
             <button id="confirm-delete" class="btn-confirm">Eliminar</button>
             <button id="cancel-delete" class="btn-confirm">Cancelar</button>
         </div>
-        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" class="form-container">
+        <!-- <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" class="form-container"> -->
             <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
             <div class="form-group">
@@ -106,10 +106,7 @@ if ($idProdCedis) {
                 <input type="text" id="Nombre_Prod" class="form-control" name="Nombre_Prod" value="<?php echo htmlspecialchars($data['Nombre_Prod'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
             <input type="text" id="Fk_Sucursal" hidden name="Fk_Sucursal" value="<?php echo htmlspecialchars($data['Fk_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            <div class="form-group">
-                <label for="Nombre_Sucursal">Nombre de la Sucursal:</label>
-                <input type="text" id="Nombre_Sucursal" class="form-control" name="Nombre_Sucursal" value="<?php echo htmlspecialchars($data['Nombre_Sucursal'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-            </div>
+           
             <div class="form-group">
                 <label for="Contabilizado">Piezas:</label>
                 <input type="text" id="Contabilizado" class="form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
@@ -134,37 +131,18 @@ if ($idProdCedis) {
                 <label for="Precio_C">Precio de Compra:</label>
                 <input type="text" id="Precio_C" class="form-control" name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_C'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
-            <div class="form-group">
-                <label for="PrecioVentaAutorizado">Precio Autorizado de Venta:</label>
-                <input type="text" id="PrecioVentaAutorizado" class="form-control" name="PrecioVentaAutorizado" value="<?php echo htmlspecialchars($data['PrecioVentaAutorizado'], ENT_QUOTES, 'UTF-8'); ?>">
-            </div>
-            <input hidden type="text" id="AgregadoPor" name="Estatus" value="Autorizado" readonly>
+           
+           
             <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
             <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
-            <input hidden type="text" id="SolicitadoPor" name="SolicitadoPor" value="<?php echo htmlspecialchars($data['SolicitadoPor'], ENT_QUOTES, 'UTF-8'); ?>">
+
             <div class="form-group text-center">
                 <button type="button" id="show-form" class="btn btn-success">Eliminar solicitud</button>
             </div>
         </form>
-        <script>
-            document.getElementById('show-form').addEventListener('click', function() {
-                document.querySelector('.form-container').style.display = 'none';
-                document.getElementById('confirmation-message').style.display = 'block';
-            });
-
-            document.getElementById('confirm-delete').addEventListener('click', function() {
-                // Aquí puedes agregar la lógica para eliminar la solicitud
-                // Por ejemplo, enviar una solicitud AJAX para eliminar
-                alert('Solicitud eliminada.'); // Solo un mensaje de ejemplo
-            });
-
-            document.getElementById('cancel-delete').addEventListener('click', function() {
-                document.querySelector('.form-container').style.display = 'block';
-                document.getElementById('confirmation-message').style.display = 'none';
-            });
-        </script>
+        
         <?php
     } else {
         echo "No se encontraron registros.";
