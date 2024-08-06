@@ -116,11 +116,7 @@ if ($idProdCedis) {
         <input type="text" id="Precio_C" class="form-control" name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_C'], ENT_QUOTES, 'UTF-8'); ?>">
     </div>
 
-    <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-    <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
-    <input hidden type="date" id="FechaInventario" name="FechaInventario" value="<?php echo htmlspecialchars($data['FechaInventario'], ENT_QUOTES, 'UTF-8'); ?>">
-   
-    <input hidden type="text" id="SolicitadoPor" name="SolicitadoPor" value="<?php echo htmlspecialchars($data['SolicitadoPor'], ENT_QUOTES, 'UTF-8'); ?>">
+    
     <div class="form-group text-center">
         <button type="submit" class="btn btn-success">Aplicar cambios</button>
     </div>
