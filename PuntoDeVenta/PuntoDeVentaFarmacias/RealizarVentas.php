@@ -764,7 +764,7 @@ $(document).ready(function() {
         if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
             $("#Vuelto").text("0.00");
             $("#boleta_total").text(efectivoRecibido.toFixed(2));
-            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+            $("#iptEfectivoRecibido").text("0.00");
         } else {
             var vuelto = efectivoRecibido - boletaTotal;
             $("#Vuelto").text(vuelto.toFixed(2));
