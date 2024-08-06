@@ -752,8 +752,15 @@ $(document).ready(function() {
     $("#chkEfectivoExacto").change(function() {
         if ($(this).is(":checked")) {
             var boletaTotal = parseFloat($("#boleta_total").text());
-            $("#Vuelto").text("0.00");
-            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+            // Validar si boletaTotal es un número
+            if (!isNaN(boletaTotal)) {
+                $("#Vuelto").text("0.00");
+                $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+            } else {
+                // Manejo de error en caso de que boletaTotal no sea un número válido
+                $("#Vuelto").text("Error");
+                $("#iptEfectivoRecibido").val("0.00");
+            }
         }
     });
 
@@ -761,10 +768,21 @@ $(document).ready(function() {
         var boletaTotal = parseFloat($("#boleta_total").text());
         var efectivoRecibido = parseFloat($(this).val());
 
+        // Validar si boletaTotal y efectivoRecibido son números
+        if (isNaN(boletaTotal)) {
+            $("#Vuelto").text("Error");
+            return;
+        }
+        if (isNaN(efectivoRecibido)) {
+            // Si el valor ingresado no es válido, muestra 0.00 como valor
+            $(this).val("0.00");
+            efectivoRecibido = 0;
+        }
+
         if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
             $("#Vuelto").text("0.00");
             $("#boleta_total").text(efectivoRecibido.toFixed(2));
-            $("#iptEfectivoRecibido").text("0.00");
+            $("#iptEfectivoRecibido").val(efectivoRecibido.toFixed(2));
         } else {
             var vuelto = efectivoRecibido - boletaTotal;
             $("#Vuelto").text(vuelto.toFixed(2));
