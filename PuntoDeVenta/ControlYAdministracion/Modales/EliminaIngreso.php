@@ -125,7 +125,7 @@ if ($idProdCedis) {
                 <input type="text" id="Contabilizado" class="form-control" name="Contabilizado" value="<?php echo htmlspecialchars($data['Contabilizado'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
         </div>
-        <div 
+        </div>
 
            
            
