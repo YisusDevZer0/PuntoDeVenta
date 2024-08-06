@@ -49,7 +49,7 @@ INNER JOIN
 INNER JOIN 
     Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
-    DATE(Ventas_POS.AgregadoEl) = CURDATE();
+    DATE(Ventas_POS.AgregadoEl) = CURRENT_DATE();
 
 ";
 
