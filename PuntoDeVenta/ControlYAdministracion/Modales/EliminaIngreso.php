@@ -122,10 +122,7 @@ if ($idProdCedis) {
         <div id="confirmation-message" class="confirmation-message">
             <h3>¡Atención!</h3>
             <p>Estás a punto de eliminar esta solicitud. Esta acción es irreversible.</p>
-            <div class="confirmation-buttons">
-                <button type="button" id="confirm-delete" class="btn-confirm btn-confirm-yes">Eliminar</button>
-                <button type="button" id="cancel-delete" class="btn-confirm btn-confirm-no">Cancelar</button>
-            </div>
+           
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
@@ -170,10 +167,12 @@ if ($idProdCedis) {
                 <input hidden type="text" id="NumOrden" name="NumOrden" value="<?php echo htmlspecialchars($data['NumOrden'], ENT_QUOTES, 'UTF-8'); ?>">
             </div>
         </div>
-        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" class="form-container">
+        <form action="javascript:void(0)" method="post" id="GuardaMedicamentoAutorizados" >
             <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
-            
+            <div class="form-group text-center">
+        <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
+    </div>
         </form>
         <?php
     } else {
