@@ -118,10 +118,7 @@ if ($idProdCedis) {
         <label for="Precio_C">Precio de Compra:</label>
         <input type="text" id="Precio_C" class="form-control" name="Precio_C" value="<?php echo htmlspecialchars($data['Precio_C'], ENT_QUOTES, 'UTF-8'); ?>">
     </div>
-    <div class="form-group">
-        <label for="PrecioVentaAutorizado">Precio Autorizado de Venta:</label>
-        <input type="text" id="PrecioVentaAutorizado" class="form-control" name="PrecioVentaAutorizado" value="<?php echo htmlspecialchars($data['PrecioVentaAutorizado'], ENT_QUOTES, 'UTF-8'); ?>">
-    </div>
+   
     <input hidden type="text" id="AgregadoPor" name="Estatus" value="Autorizado" readonly>
     <input hidden type="text" id="AgregadoPor" name="AgregadoPor" value="<?php echo htmlspecialchars($data['AgregadoPor'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
     <input hidden type="text" id="AgregadoEl" name="AgregadoEl" value="<?php echo htmlspecialchars($data['AgregadoEl'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
