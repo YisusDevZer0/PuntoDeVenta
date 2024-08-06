@@ -48,9 +48,7 @@ INNER JOIN
 Cajas ON Cajas.ID_Caja = Ventas_POS.Fk_Caja  -- Cambio aquí
 INNER JOIN 
 Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
-WHERE 
-YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) -- Año actual
-AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE());";
+";
 
 $result = mysqli_query($conn, $sql);
 
