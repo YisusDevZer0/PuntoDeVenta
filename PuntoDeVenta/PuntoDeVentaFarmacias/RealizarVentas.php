@@ -748,30 +748,33 @@ Efectivo Exacto
 });
 
 
-  $(document).ready(function() {
+$(document).ready(function() {
     $("#chkEfectivoExacto").change(function() {
-      if ($(this).is(":checked")) {
-        var boletaTotal = parseFloat($("#boleta_total").text());
-        $("#Vuelto").text("0.00");
-        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-      }
+        if ($(this).is(":checked")) {
+            var boletaTotal = parseFloat($("#boleta_total").text());
+            $("#Vuelto").text("0.00");
+            $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+        }
     });
 
     $("#iptEfectivoRecibido").change(function() {
-      var boletaTotal = parseFloat($("#boleta_total").text());
-      var efectivoRecibido = parseFloat($(this).val());
+        var boletaTotal = parseFloat($("#boleta_total").text());
+        var efectivoRecibido = parseFloat($(this).val());
 
-      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-        $("#Vuelto").text("0.00");
-        $("#boleta_total").text(efectivoRecibido.toFixed(2));
-      } else {
-        var vuelto = efectivoRecibido - boletaTotal;
-        $("#Vuelto").text(vuelto.toFixed(2));
-        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        
-      }
+        if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
+            $("#Vuelto").text("0.00");
+            $("#boleta_total").text(efectivoRecibido.toFixed(2));
+        } else {
+            var vuelto = efectivoRecibido - boletaTotal;
+            $("#Vuelto").text(vuelto.toFixed(2));
+            $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+        }
+
+        // Formatear el campo iptEfectivoRecibido con dos decimales
+        $(this).val(efectivoRecibido.toFixed(2));
     });
-  });
+});
+
 </script>
 
 <script>
