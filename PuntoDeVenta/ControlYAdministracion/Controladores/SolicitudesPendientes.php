@@ -222,6 +222,8 @@ tabla = $('#Clientes').DataTable({
 { mData: 'AgregadoPor' },
 
 { mData: 'RealizarCorte' },
+{ mData: 'EditarIngreso' },
+{ mData: 'EliminarIngreso' },
 
 
       ],
@@ -281,7 +283,9 @@ tabla = $('#Clientes').DataTable({
     <!-- <th>Estado</th> -->
     <th>Fecha solicitud</th>
     <th>Solicitante</th>
-    <th>Autorizar ingreso</th>
+    <th>Autorizar</th>
+    <th>Editar</th>
+    <th>Eliminar</th>
 </thead>
 
 </div>
