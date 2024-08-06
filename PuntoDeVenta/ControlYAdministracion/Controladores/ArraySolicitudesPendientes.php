@@ -70,8 +70,8 @@ while ($fila = $result->fetch_assoc()) {
             break;
     }
     $realizar_corte = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-AutorizaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
-    $EditarDatosDeIngreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EditaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
-    $EliminarIngreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-EliminaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
+    $EditarDatosDeIngreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-EditaIngreso" style="color:white;"><i class="fa-solid fa-file-pen"></i></a></td>';
+    $EliminarIngreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminaIngreso" style="color:white;"><i class="fa-solid fa-trash"></i></a></td>';
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
         "IdProdCedis" => $fila["IdProdCedis"],
