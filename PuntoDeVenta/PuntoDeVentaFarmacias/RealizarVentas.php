@@ -728,24 +728,24 @@ Efectivo Exacto
 
 
 <script>
-  $(document).ready(function() {
+ $(document).ready(function() {
     // Bloquear el botón al cargar la página
     $('#btnIniciarVenta').prop('disabled', true);
 
     // Agregar un controlador de eventos al input
     $('#iptEfectivoRecibido').on('input', function() {
-      var valorInput = $(this).val();
-      var miBoton = $('#btnIniciarVenta');
+        var valorInput = $(this).val().trim(); // Elimina espacios en blanco al inicio y al final
+        var miBoton = $('#btnIniciarVenta');
 
-      if (valorInput.length > 0) {
-        // Desbloquear el botón si el input contiene datos
-        miBoton.prop('disabled', false);
-      } else {
-        // Bloquear el botón si el input está vacío
-        miBoton.prop('disabled', true);
-      }
+        if (valorInput.length > 0) {
+            // Desbloquear el botón si el input contiene datos
+            miBoton.prop('disabled', false);
+        } else {
+            // Bloquear el botón si el input está vacío
+            miBoton.prop('disabled', true);
+        }
     });
-  });
+});
 
 
   $(document).ready(function() {
