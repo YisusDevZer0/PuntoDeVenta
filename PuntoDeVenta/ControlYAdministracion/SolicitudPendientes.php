@@ -63,6 +63,34 @@ $(document).ready(function() {
         $('#ModalEdDele').modal('show');
     });
 });
+
+
+$(document).ready(function() {
+    // Delegación de eventos para el botón "btn-AutorizaIngreso"
+    $(document).on("click", ".btn-EditaIngreso", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaIngreso.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Autorizar ingreso");
+        });
+        $('#ModalEdDele').modal('show');
+    });
+});
+
+$(document).ready(function() {
+    // Delegación de eventos para el botón "btn-AutorizaIngreso"
+    $(document).on("click", ".btn-EliminaIngreso", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaIngreso.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Autorizar ingreso");
+        });
+        $('#ModalEdDele').modal('show');
+    });
+});
+
+
+
 </script>
 
 
