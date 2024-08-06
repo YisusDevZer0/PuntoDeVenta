@@ -2,7 +2,7 @@
 include "db_connect.php";
 
 // Obtener el ID del producto desde la solicitud POST
-$idProdCedis = isset($_POST['ID_Prod_Cedis']) ? $_POST['ID_Prod_Cedis'] : '';
+$idProdCedis = isset($_POST['IdProdCedis']) ? $_POST['IdProdCedis'] : '';
 
 if (!empty($idProdCedis)) {
     // Preparar la consulta para eliminar el producto
