@@ -171,7 +171,7 @@ if ($idProdCedis) {
             <input type="text" id="IdProdCedis" hidden class="form-control" name="IdProdCedis" value="<?php echo htmlspecialchars($data['IdProdCedis'], ENT_QUOTES, 'UTF-8'); ?>" readonly>
             <input type="text" id="ID_Prod_POS" class="form-control" name="ID_Prod_POS" value="<?php echo htmlspecialchars($data['ID_Prod_POS'], ENT_QUOTES, 'UTF-8'); ?>" hidden readonly>
             <div class="form-group text-center">
-        <button type="submit" class="btn btn-success">Aprobar ingreso de medicamento</button>
+        <button type="submit" class="btn btn-danger">Eliminar</button>
     </div>
         </form>
         <?php
