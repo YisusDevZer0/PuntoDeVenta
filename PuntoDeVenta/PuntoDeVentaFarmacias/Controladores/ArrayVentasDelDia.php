@@ -36,20 +36,24 @@ Sucursales.ID_Sucursal,
 Sucursales.Nombre_Sucursal,
 Servicios_POS.Servicio_ID,
 Servicios_POS.Nom_Serv,
-Ventas_POS.DescuentoAplicado, -- Agregamos la columna DescuentoAplicado
+Ventas_POS.DescuentoAplicado,
 Stock_POS.ID_Prod_POS,
 Stock_POS.Precio_Venta,
 Stock_POS.Precio_C
 FROM 
 Ventas_POS
-INNER JOIN 
+LEFT JOIN 
 Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-INNER JOIN 
+LEFT JOIN 
 Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
-INNER JOIN 
+LEFT JOIN 
 Cajas ON Cajas.ID_Caja = Ventas_POS.Fk_Caja
-INNER JOIN 
+LEFT JOIN 
 Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
+WHERE 
+YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) 
+AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE());
+
 ";
 
 
