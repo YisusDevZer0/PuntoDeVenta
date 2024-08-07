@@ -106,7 +106,7 @@ include_once "Controladores/ControladorUsuario.php"
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal --></div></div></div>
+  </div><!-- /.modal --></div></div></div></div></div></div>
             <?php 
         include "Modales/ConsultaProductosRapidos.php";
         ?>
