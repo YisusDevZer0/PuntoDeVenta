@@ -87,6 +87,26 @@ include_once "Controladores/ControladorUsuario.php"
 });
 
     </script>
+
+<div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
+      <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+
+         
+       </div>
+        
+	        <div class="modal-body">
+          <div class="text-center">
+        <div id="FormCajas"></div>
+        
+        </div>
+
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal --></div>
             <?php 
         include "Modales/ConsultaProductosRapidos.php";
         ?>
