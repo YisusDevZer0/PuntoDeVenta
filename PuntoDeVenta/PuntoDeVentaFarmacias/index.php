@@ -70,6 +70,23 @@ include_once "Controladores/ControladorUsuario.php"
 <div id="Cajas"></div>
             </div></div></div></div>
             <!-- Sale & Revenue End -->
+
+            <script>
+   $(document).ready(function() {
+    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+    $(document).on("click", ".btn-cambiaestadomensaje", function() {
+      console.log("Botón de cancelar clickeado para el ID:", id);
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desactivar caja actual");
+            
+        });
+        $('#ModalEdDele').modal('show');
+    });
+});
+
+    </script>
             <?php 
         include "Modales/ConsultaProductosRapidos.php";
         ?>
