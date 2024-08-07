@@ -25,7 +25,7 @@ if ($id) {
         <p>¿Estás seguro que deseas marcar como leído el siguiente mensaje?</p>
         <p><strong><?php echo $especialistas->Mensaje_Recordatorio; ?></strong></p>
         <input type="hidden" name="ID_Notificacion" id="ID_Notificacion" value="<?php echo $especialistas->ID_Notificacion; ?>">
-        <input type="hidden" name="Estatus" id="Estatus" value="2">
+        <input type="hidden" name="Estado" id="Estatus" value="2">
         <button type="submit" id="submit" class="btn btn-danger">
             Marcar como leído <i class="fas fa-lock"></i>
         </button>
