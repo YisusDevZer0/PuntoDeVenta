@@ -31,16 +31,8 @@ if ($id_notificacion) {
             Marcar como leído <i class="fas fa-lock"></i>
         </button>
     </form>
-    <script src="js/DesactivaLaCaja.js"></script>
-    <script>
-        document.getElementById("submit").addEventListener("click", function() {
-            var lockIcon = document.getElementById("lockIcon");
-            lockIcon.classList.remove("fa-unlock");
-            lockIcon.classList.add("fa-lock");
-            lockIcon.classList.remove("text-success");
-            lockIcon.classList.add("text-danger");
-        });
-    </script>
+    <script src="js/ActualizaElEstadoDelMensaje.js"></script>
+  
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra el mensaje</p>
 <?php endif; ?>
