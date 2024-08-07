@@ -30,7 +30,7 @@ if ($id) {
             Marcar como leído <i class="fas fa-lock"></i>
         </button>
     </form>
-    <script src="js/DesactivaLaCaja.js"></script>
+    <script src="js/ActualizaElEstadoDelMensaje.js"></script>
     
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra el mensaje</p>
