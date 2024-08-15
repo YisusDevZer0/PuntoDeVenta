@@ -79,28 +79,31 @@ echo "MX$ " . $formattedTotal; ?></h6>
 
 
             <!-- Sales Chart Start -->
-            <div class="container-fluid pt-4 px-4">
+         <!-- Sales Chart Start -->
+<div class="container-fluid pt-4 px-4">
     <div class="row g-4">
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light text-center rounded p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
-                    <h6 class="mb-0">Productos Más Vendidos del Mes</h6>
-                    <a href="">Mostrar Todos</a>
+                    <h6 class="mb-0">Productos Más Vendidos</h6>
+                    <a href="">Show All</a>
                 </div>
-                <canvas id="worldwide-sales"></canvas>
+                <canvas id="vendidos"></canvas>
             </div>
         </div>
         <div class="col-sm-12 col-xl-6">
             <div class="bg-light text-center rounded p-4">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h6 class="mb-0">Productos No Vendidos</h6>
-                    <a href="">Mostrar Todos</a>
+                    <a href="">Show All</a>
                 </div>
-                <canvas id="salse-revenue"></canvas>
+                <canvas id="no-vendidos"></canvas>
             </div>
         </div>
     </div>
 </div>
+<!-- Sales Chart End -->
+
             <!-- Sales Chart End -->
 
 
@@ -298,8 +301,14 @@ echo "MX$ " . $formattedTotal; ?></h6>
                 </div>
             </div>
             <!-- Widgets End -->
+ 
+
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Variables para mantener las instancias de los gráficos
+    let chartVendidos = null;
+    let chartNoVendidos = null;
+
     document.addEventListener('DOMContentLoaded', function() {
         fetch('Controladores/GraficosVendidosNoVendidos.php')  // Ruta actualizada
             .then(response => response.json())
@@ -309,11 +318,11 @@ echo "MX$ " . $formattedTotal; ?></h6>
                 const productosNoVendidos = data.productos_no_vendidos;
 
                 // Configuración del gráfico de productos más vendidos
-                const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
-                if (window.chart1) {
-                    window.chart1.destroy();  // Destruir gráfico existente si existe
+                const ctx1 = document.getElementById('vendidos').getContext('2d');
+                if (chartVendidos) {
+                    chartVendidos.destroy();  // Destruir gráfico existente si existe
                 }
-                window.chart1 = new Chart(ctx1, {
+                chartVendidos = new Chart(ctx1, {
                     type: 'bar',
                     data: {
                         labels: productosMasVendidos,
@@ -335,11 +344,11 @@ echo "MX$ " . $formattedTotal; ?></h6>
                 });
 
                 // Configuración del gráfico de productos no vendidos
-                const ctx2 = document.getElementById('salse-revenue').getContext('2d');
-                if (window.chart2) {
-                    window.chart2.destroy();  // Destruir gráfico existente si existe
+                const ctx2 = document.getElementById('no-vendidos').getContext('2d');
+                if (chartNoVendidos) {
+                    chartNoVendidos.destroy();  // Destruir gráfico existente si existe
                 }
-                window.chart2 = new Chart(ctx2, {
+                chartNoVendidos = new Chart(ctx2, {
                     type: 'pie',
                     data: {
                         labels: productosNoVendidos,
@@ -356,8 +365,6 @@ echo "MX$ " . $formattedTotal; ?></h6>
             .catch(error => console.error('Error al cargar los datos:', error));
     });
 </script>
-
-
 
         <?php include "Footer.php";?>
 </body>
