@@ -1,5 +1,6 @@
 <?php
-include_once "Controladores/ControladorUsuario.php"
+include_once "Controladores/ControladorUsuario.php";
+include_once "Controladores/ConsultaDashboard.php"
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -45,7 +46,7 @@ include_once "Controladores/ControladorUsuario.php"
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Venta del día</p>
-                                <h6 class="mb-0">$1234</h6>
+                                <h6 class="mb-0"><?php echo $row['Total_Venta']; ?></h6>
                             </div>
                         </div>
                     </div>
