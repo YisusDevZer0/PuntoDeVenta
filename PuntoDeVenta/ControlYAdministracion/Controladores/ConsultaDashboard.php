@@ -13,9 +13,9 @@ $result = $conn->query($sql);
 // Verificar y mostrar el resultado
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    echo "Total de venta del día: $" . $row['Total_Venta'];
+   
 } else {
-    echo "No se encontraron ventas para hoy.";
+  
 }
 
 // Cerrar la conexión
