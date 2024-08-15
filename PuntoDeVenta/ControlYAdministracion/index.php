@@ -47,10 +47,10 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Venta del día</p>
-                                <h6 class="mb-0"><?php $totalVenta = $row['Total_Venta'];
+                                <h6 class="mb-0"><?php $VentasGenerales = $row['Total_Venta'];
 
 // Formatear el número con dos decimales y agregar el símbolo de pesos mexicanos
-$formattedTotal = number_format($totalVenta, 2, '.', ',');
+$formattedTotal = number_format($VentasGenerales, 2, '.', ',');
 
 echo "MX$ " . $formattedTotal; ?></h6>
                             </div>

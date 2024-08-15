@@ -12,7 +12,7 @@ $result = $conn->query($sql);
 
 // Verificar y mostrar el resultado
 if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
+    $VentasGenerales = $result->fetch_assoc();
    
 } else {
   
