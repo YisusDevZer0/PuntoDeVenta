@@ -1,6 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
+include_once "Controladores/GraficosVendidosNoVendidos.php";
 
 ?>
 <!DOCTYPE html>
@@ -79,27 +80,27 @@ echo "MX$ " . $formattedTotal; ?></h6>
 
             <!-- Sales Chart Start -->
             <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light text-center rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Worldwide Sales</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <canvas id="worldwide-sales"></canvas>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-xl-6">
-                        <div class="bg-light text-center rounded p-4">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h6 class="mb-0">Salse & Revenue</h6>
-                                <a href="">Show All</a>
-                            </div>
-                            <canvas id="salse-revenue"></canvas>
-                        </div>
-                    </div>
+    <div class="row g-4">
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Productos Más Vendidos del Mes</h6>
+                    <a href="">Mostrar Todos</a>
                 </div>
+                <canvas id="worldwide-sales"></canvas>
             </div>
+        </div>
+        <div class="col-sm-12 col-xl-6">
+            <div class="bg-light text-center rounded p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="mb-0">Productos No Vendidos</h6>
+                    <a href="">Mostrar Todos</a>
+                </div>
+                <canvas id="salse-revenue"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
             <!-- Sales Chart End -->
 
 
@@ -297,7 +298,53 @@ echo "MX$ " . $formattedTotal; ?></h6>
                 </div>
             </div>
             <!-- Widgets End -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
+    const ctx2 = document.getElementById('salse-revenue').getContext('2d');
 
+    const productosMasVendidos = <?php echo json_encode(array_column($productos_mas_vendidos, 'Nombre_Prod')); ?>;
+    const cantidadesVendidas = <?php echo json_encode(array_column($productos_mas_vendidos, 'Total_Vendido')); ?>;
+
+    const productosNoVendidos = <?php echo json_encode($productos_no_vendidos); ?>;
+
+    // Gráfico de productos más vendidos
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: productosMasVendidos,
+            datasets: [{
+                label: 'Total Vendido',
+                data: cantidadesVendidas,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Gráfico de productos no vendidos
+    new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: productosNoVendidos,
+            datasets: [{
+                label: 'Productos No Vendidos',
+                data: productosNoVendidos.map(() => 1), // Asignar valor 1 a cada producto no vendido
+                backgroundColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 0.2)`),
+                borderColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 1)`),
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
 
         <?php include "Footer.php";?>
 </body>
