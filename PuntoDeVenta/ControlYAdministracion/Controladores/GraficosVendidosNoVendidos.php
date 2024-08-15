@@ -20,6 +20,11 @@ while ($row = $mas_vendidos->fetch_assoc()) {
     $productos_mas_vendidos[] = $row;
 }
 
+// Depuración: Verificar si se obtienen productos más vendidos
+var_dump($productos_mas_vendidos);
+
+echo "<br><br>";
+
 // Consulta para productos no vendidos
 $no_vendidos = $conn->query("SELECT p.Nombre_Prod 
     FROM Productos_POS p 
@@ -37,4 +42,8 @@ $productos_no_vendidos = [];
 while ($row = $no_vendidos->fetch_assoc()) {
     $productos_no_vendidos[] = $row['Nombre_Prod'];
 }
+
+// Depuración: Verificar si se obtienen productos no vendidos
+var_dump($productos_no_vendidos);
+
 ?>
