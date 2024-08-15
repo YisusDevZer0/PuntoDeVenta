@@ -299,18 +299,29 @@ echo "MX$ " . $formattedTotal; ?></h6>
             </div>
             <!-- Widgets End -->
             <script>
-    const testLabels = ['Producto 1', 'Producto 2', 'Producto 3'];
-    const testData = [10, 20, 30];
-    
+    // Verifica los datos que se están pasando desde PHP
+    console.log("Productos más vendidos:", <?php echo json_encode(array_column($productos_mas_vendidos, 'Nombre_Prod')); ?>);
+    console.log("Cantidades vendidas:", <?php echo json_encode(array_column($productos_mas_vendidos, 'Total_Vendido')); ?>);
+    console.log("Productos no vendidos:", <?php echo json_encode($productos_no_vendidos); ?>);
+
     const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
-    
+    const ctx2 = document.getElementById('salse-revenue').getContext('2d');
+
+    // Datos para productos más vendidos
+    const productosMasVendidos = <?php echo json_encode(array_column($productos_mas_vendidos, 'Nombre_Prod')); ?>;
+    const cantidadesVendidas = <?php echo json_encode(array_column($productos_mas_vendidos, 'Total_Vendido')); ?>;
+
+    // Datos para productos no vendidos
+    const productosNoVendidos = <?php echo json_encode($productos_no_vendidos); ?>;
+
+    // Gráfico de productos más vendidos
     new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: testLabels,
+            labels: productosMasVendidos,
             datasets: [{
                 label: 'Total Vendido',
-                data: testData,
+                data: cantidadesVendidas,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
@@ -322,6 +333,21 @@ echo "MX$ " . $formattedTotal; ?></h6>
                     beginAtZero: true
                 }
             }
+        }
+    });
+
+    // Gráfico de productos no vendidos
+    new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: productosNoVendidos,
+            datasets: [{
+                label: 'Productos No Vendidos',
+                data: productosNoVendidos.map(() => 1), // Asignar valor 1 a cada producto no vendido
+                backgroundColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 0.2)`),
+                borderColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 1)`),
+                borderWidth: 1
+            }]
         }
     });
 </script>
