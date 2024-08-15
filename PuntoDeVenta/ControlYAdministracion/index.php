@@ -301,8 +301,7 @@ echo "MX$ " . $formattedTotal; ?></h6>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Hacer una solicitud AJAX para obtener los datos
-        fetch('Controladores/GraficosVendidosNoVendidos')  // Asegúrate de reemplazar 'ruta_a_tu_php.php' con la ruta correcta
+        fetch('Controladores/GraficosVendidosNoVendidos.php')
             .then(response => response.json())
             .then(data => {
                 const productosMasVendidos = data.productos_mas_vendidos.map(item => item.Nombre_Prod);
@@ -311,7 +310,10 @@ echo "MX$ " . $formattedTotal; ?></h6>
 
                 // Configuración del gráfico de productos más vendidos
                 const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
-                new Chart(ctx1, {
+                if (window.chart1) {
+                    window.chart1.destroy();  // Destruir gráfico existente si existe
+                }
+                window.chart1 = new Chart(ctx1, {
                     type: 'bar',
                     data: {
                         labels: productosMasVendidos,
@@ -334,7 +336,10 @@ echo "MX$ " . $formattedTotal; ?></h6>
 
                 // Configuración del gráfico de productos no vendidos
                 const ctx2 = document.getElementById('salse-revenue').getContext('2d');
-                new Chart(ctx2, {
+                if (window.chart2) {
+                    window.chart2.destroy();  // Destruir gráfico existente si existe
+                }
+                window.chart2 = new Chart(ctx2, {
                     type: 'pie',
                     data: {
                         labels: productosNoVendidos,
@@ -351,6 +356,7 @@ echo "MX$ " . $formattedTotal; ?></h6>
             .catch(error => console.error('Error al cargar los datos:', error));
     });
 </script>
+
 
         <?php include "Footer.php";?>
 </body>
