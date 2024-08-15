@@ -9,9 +9,11 @@ WHERE MONTH(Fecha_venta) = MONTH(CURRENT_DATE)
 AND YEAR(Fecha_venta) = YEAR(CURRENT_DATE) 
 GROUP BY Nombre_Prod 
 ORDER BY Total_Vendido DESC 
-LIMIT 10;
+LIMIT 10");
 
-");
+if (!$mas_vendidos) {
+    die("Error en la consulta de productos más vendidos: " . $conexion->error);
+}
 
 $productos_mas_vendidos = [];
 while ($row = $mas_vendidos->fetch_assoc()) {
@@ -23,10 +25,13 @@ $no_vendidos = $conexion->query("SELECT p.Nombre_Prod
     FROM Productos_POS p 
     LEFT JOIN Ventas_POS v 
     ON p.ID_Prod_POS = v.ID_Prod_POS 
-    AND MONTH(v.Fecha_venta) = MONTH(CURRENT_DATE()) 
-    AND YEAR(v.Fecha_venta) = YEAR(CURRENT_DATE()) 
-    WHERE v.Cantidad_Venta IS NULL;
-");
+    AND MONTH(v.Fecha_venta) = MONTH(CURRENT_DATE) 
+    AND YEAR(v.Fecha_venta) = YEAR(CURRENT_DATE) 
+    WHERE v.Cantidad_Venta IS NULL");
+
+if (!$no_vendidos) {
+    die("Error en la consulta de productos no vendidos: " . $conexion->error);
+}
 
 $productos_no_vendidos = [];
 while ($row = $no_vendidos->fetch_assoc()) {
