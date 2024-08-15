@@ -298,60 +298,59 @@ echo "MX$ " . $formattedTotal; ?></h6>
                 </div>
             </div>
             <!-- Widgets End -->
-            <script>
-    // Verifica los datos que se están pasando desde PHP
-    console.log("Productos más vendidos:", <?php echo json_encode(array_column($productos_mas_vendidos, 'Nombre_Prod')); ?>);
-    console.log("Cantidades vendidas:", <?php echo json_encode(array_column($productos_mas_vendidos, 'Total_Vendido')); ?>);
-    console.log("Productos no vendidos:", <?php echo json_encode($productos_no_vendidos); ?>);
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hacer una solicitud AJAX para obtener los datos
+        fetch('ruta_a_tu_php.php')  // Asegúrate de reemplazar 'ruta_a_tu_php.php' con la ruta correcta
+            .then(response => response.json())
+            .then(data => {
+                const productosMasVendidos = data.productos_mas_vendidos.map(item => item.Nombre_Prod);
+                const cantidadesVendidas = data.productos_mas_vendidos.map(item => item.Total_Vendido);
+                const productosNoVendidos = data.productos_no_vendidos;
 
-    const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
-    const ctx2 = document.getElementById('salse-revenue').getContext('2d');
+                // Configuración del gráfico de productos más vendidos
+                const ctx1 = document.getElementById('worldwide-sales').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: productosMasVendidos,
+                        datasets: [{
+                            label: 'Total Vendido',
+                            data: cantidadesVendidas,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
 
-    // Datos para productos más vendidos
-    const productosMasVendidos = <?php echo json_encode(array_column($productos_mas_vendidos, 'Nombre_Prod')); ?>;
-    const cantidadesVendidas = <?php echo json_encode(array_column($productos_mas_vendidos, 'Total_Vendido')); ?>;
-
-    // Datos para productos no vendidos
-    const productosNoVendidos = <?php echo json_encode($productos_no_vendidos); ?>;
-
-    // Gráfico de productos más vendidos
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: productosMasVendidos,
-            datasets: [{
-                label: 'Total Vendido',
-                data: cantidadesVendidas,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Gráfico de productos no vendidos
-    new Chart(ctx2, {
-        type: 'pie',
-        data: {
-            labels: productosNoVendidos,
-            datasets: [{
-                label: 'Productos No Vendidos',
-                data: productosNoVendidos.map(() => 1), // Asignar valor 1 a cada producto no vendido
-                backgroundColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 0.2)`),
-                borderColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 1)`),
-                borderWidth: 1
-            }]
-        }
+                // Configuración del gráfico de productos no vendidos
+                const ctx2 = document.getElementById('salse-revenue').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: productosNoVendidos,
+                        datasets: [{
+                            label: 'Productos No Vendidos',
+                            data: productosNoVendidos.map(() => 1), // Asignar valor 1 a cada producto no vendido
+                            backgroundColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 0.2)`),
+                            borderColor: productosNoVendidos.map((_, i) => `rgba(${i * 20}, ${i * 40}, ${i * 60}, 1)`),
+                            borderWidth: 1
+                        }]
+                    }
+                });
+            })
+            .catch(error => console.error('Error al cargar los datos:', error));
     });
 </script>
-
 
         <?php include "Footer.php";?>
 </body>
