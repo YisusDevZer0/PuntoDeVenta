@@ -302,7 +302,7 @@ echo "MX$ " . $formattedTotal; ?></h6>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Hacer una solicitud AJAX para obtener los datos
-        fetch('ruta_a_tu_php.php')  // Asegúrate de reemplazar 'ruta_a_tu_php.php' con la ruta correcta
+        fetch('Controladores/GraficosVendidosNoVendidos')  // Asegúrate de reemplazar 'ruta_a_tu_php.php' con la ruta correcta
             .then(response => response.json())
             .then(data => {
                 const productosMasVendidos = data.productos_mas_vendidos.map(item => item.Nombre_Prod);
