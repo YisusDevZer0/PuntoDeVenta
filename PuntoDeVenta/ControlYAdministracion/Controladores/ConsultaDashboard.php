@@ -18,9 +18,9 @@ if ($result->num_rows > 0) {
     if ($VentasGenerales['Total_Venta'] !== null) {
         // Formatear el número para mostrarlo como pesos mexicanos
         $formattedTotal = number_format($VentasGenerales['Total_Venta'], 2, '.', ',');
-        echo "Total de ventas del día: MX$ " . $formattedTotal;
+        
     } else {
-        echo "Total de ventas del día: MX$ 0.00";
+       
     }
 } else {
     echo "No se encontraron ventas para el día de hoy.";
