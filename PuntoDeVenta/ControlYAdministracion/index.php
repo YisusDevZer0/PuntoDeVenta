@@ -301,7 +301,7 @@ echo "MX$ " . $formattedTotal; ?></h6>
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('Controladores/GraficosVendidosNoVendidos.php')
+        fetch('Controladores/GraficosVendidosNoVendidos.php')  // Ruta actualizada
             .then(response => response.json())
             .then(data => {
                 const productosMasVendidos = data.productos_mas_vendidos.map(item => item.Nombre_Prod);
@@ -356,6 +356,7 @@ echo "MX$ " . $formattedTotal; ?></h6>
             .catch(error => console.error('Error al cargar los datos:', error));
     });
 </script>
+
 
 
         <?php include "Footer.php";?>
