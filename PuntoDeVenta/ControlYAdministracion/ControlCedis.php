@@ -172,6 +172,20 @@ include_once "Controladores/ControladorUsuario.php";
       });
       $('#ModalEdDele').modal('show');
       });
+
+
+
+      $(document).on("click", ".btn-LotesYCaducidades", function() {
+      
+      var id = $(this).data("id");
+      $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/LotesYCaducidadesCedis.php", { id: id }, function(data) {
+        $("#FormCajas").html(data);
+          $("#TitulosCajas").html("Lotes y cadudicades");
+          $("#Di").addClass("modal-dialog  modal-notify modal-warning");
+      });
+      $('#ModalEdDele').modal('show');
+      });
+      
          // Delegación de eventos para el botón ".btn-edit" dentro de .dropdown-menu
     $(document).on("click", ".btn-RealizarIngresos", function() {
       

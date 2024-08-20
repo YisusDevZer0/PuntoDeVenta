@@ -45,7 +45,7 @@ while ($fila = $result->fetch_assoc()) {
         $acciones_html = '
         <td>
            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-RealizarIngresos" title="Realizar Ingresos"><i class="fa-solid fa-boxes-packing"></i></a>
-            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-ConsultarCambios" title="Consultar Cambios"><i class="far fa-calendar-times"></i></a>
+            <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-warning btn-sm btn-LotesYCaducidades" title="Lotes Y Caducidades"><i class="far fa-calendar-times"></i></a>
             <a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminarData" title="Eliminar datos"><i class="fa-solid fa-circle-minus"></i></a>
         </td>';
     
