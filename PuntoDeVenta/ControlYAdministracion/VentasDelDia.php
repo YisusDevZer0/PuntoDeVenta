@@ -37,7 +37,7 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Registro de ventas del dia <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#BusquedaVentasSucursal">
   Filtrar por sucursal <i class="fas fa-clinic-medical"></i>
 </button>
 <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#FiltroEspecificoMesxd" class="btn btn-default">
@@ -54,7 +54,10 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoFondoDeCaja.php";
+            include "Modales/FiltroPorSucursales.php";
+            include "Modales/FiltroPorMeses.php";
+            include "Modales/FiltroPorVendedor.php";
+            include "Modales/FiltroRangoFechas.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
