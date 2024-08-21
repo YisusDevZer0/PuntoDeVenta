@@ -37,7 +37,15 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Registro de ventas del dia <?php echo $row['Licencia']?></h6>
-            
+            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+  Filtrar por sucursal <i class="fas fa-clinic-medical"></i>
+</button>
+<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#FiltroEspecificoMesxd" class="btn btn-default">
+  Busqueda por mes <i class="fas fa-calendar-week"></i>
+</button>
+<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#FiltroEspecificoFechaVentas" class="btn btn-default">
+  Filtrar por rango de fechas <i class="fas fa-calendar"></i>
+</button> <br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
