@@ -45,7 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
 </button>
 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#FiltroEspecificoFechaVentas" class="btn btn-default">
   Filtrar por rango de fechas <i class="fas fa-calendar"></i>
-</button> <br>
+</button> <br><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
