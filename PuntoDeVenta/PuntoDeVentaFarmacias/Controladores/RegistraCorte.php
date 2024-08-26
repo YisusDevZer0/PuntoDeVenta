@@ -2,7 +2,7 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D');
+$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D','Comentarios');
 $missingFields = array();
 foreach ($requiredFields as $field) {
     if (!isset($_POST[$field])) {
@@ -26,7 +26,7 @@ if (!empty($missingFields)) {
     $Sistema = mysqli_real_escape_string($conn, $_POST['Sistema']);
     $ID_H_O_D = mysqli_real_escape_string($conn, $_POST['ID_H_O_D']);
     $FkCaja = mysqli_real_escape_string($conn, $_POST['Fk_Caja']);
-
+    $Comentarios = mysqli_real_escape_string($conn, $_POST['Comentarios']);
     // Consulta para verificar si ya existe un registro con los mismos valores
     $sql = "SELECT Fk_Caja, Turno FROM Cortes_Cajas_POS WHERE Fk_Caja='$FkCaja' AND Turno='$Turno'";
     $resultset = mysqli_query($conn, $sql);
@@ -35,8 +35,8 @@ if (!empty($missingFields)) {
         echo json_encode(array("statusCode" => 250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`) 
-                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', NOW(), '$Sistema', '$ID_H_O_D')";
+        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`,`Comentarios`) 
+                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', NOW(), '$Sistema', '$ID_H_O_D','$Comentarios')";
 
         if(mysqli_query($conn, $sql_insert)) {
             echo json_encode(array("statusCode" => 200)); // Inserción exitosa
