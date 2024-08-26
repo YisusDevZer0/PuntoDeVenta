@@ -2,7 +2,7 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D','Comentarios');
+$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D');
 $missingFields = array();
 foreach ($requiredFields as $field) {
     if (!isset($_POST[$field])) {
