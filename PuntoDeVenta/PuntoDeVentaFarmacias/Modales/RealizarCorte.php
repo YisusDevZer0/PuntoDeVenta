@@ -304,7 +304,10 @@ if (!empty($Especialistas14)) {
     <input type="hidden" name="Sistema" value="Ventas">
     <input type="hidden" name="ID_H_O_D" value="DoctorPez">
   
-
+    <label for="comentarios">Observaciones:</label>
+    <textarea id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
+    <br>
+    <input type="submit
 
     <button type="submit" id="submit" class="btn btn-warning">Realizar corte <i class="fas fa-money-check-alt"></i></button>
 </form>
