@@ -271,14 +271,7 @@ tabla = $('#Clientes').DataTable({
 
 
 
-<th>Descuento</th>
-<th>Forma de pago</th>
-<th>Cliente</th>
-<th>Folio Signo Vital</th>
-<th>Servicio</th>
-<th>Fecha</th>
-<th>Hora</th>   
-<th>Vendedor</th>
+
 </thead>
 
 </div>
