@@ -71,7 +71,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                             <a href="VentasACredito" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-                            <a href="TotalesDeVentaPorVendedor" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
+                            <a href="TotalesDeVentaPorVendedor" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas por personal </a>
                         </div>
                     </div>
 
