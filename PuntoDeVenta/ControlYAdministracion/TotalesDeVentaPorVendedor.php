@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Registro de ventas del dia <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Registro de ventas por vendedor <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#BusquedaVentasSucursal">
   Filtrar por sucursal <i class="fas fa-clinic-medical"></i>
 </button>

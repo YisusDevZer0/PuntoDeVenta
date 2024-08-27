@@ -334,7 +334,9 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                   <!-- BOTONES PARA VACIAR LISTADO Y COMPLETAR LA VENTA -->
                   <div class="col-md-5 text-right">
-
+                  <button class="btn btn-primary btn-sm" id="AplicarDescuentoGlobal">
+                  <i class="fa-solid fa-percent"></i> Descuento global
+                    </button>
                     <button class="btn btn-danger btn-sm" id="btnVaciarListado">
                       <i class="far fa-trash-alt"></i> Cancelar venta
                     </button>
@@ -1361,6 +1363,85 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
 </script>
 
+<script>
+  // Evento click para el botón de aplicar descuento global
+  $('#AplicarDescuentoGlobal').on('click', function() {
+    aplicarDescuentoGlobal();
+  });
+
+  function aplicarDescuentoGlobal() {
+    Swal.fire({
+      title: 'Seleccionar descuento global',
+      html: '<label for="customDescuentoGlobal">Ingresar monto a descontar:</label>' +
+        '<input type="number" class="form-control" id="customDescuentoGlobal" min="0" placeholder="Ingrese monto a descontar">' +
+        '<br>' +
+        '<label for="porcentajeDescuentoGlobal">Seleccionar porcentaje de descuento:</label>' +
+        '<select class="form-control" id="porcentajeDescuentoGlobal">' +
+        '<option value="">Seleccionar</option>' +
+        '<option value="0">0%</option>' +
+        '<option value="5">5%</option>' +
+        '<option value="10">10%</option>' +
+        '<option value="15">15%</option>' +
+        '<option value="20">20%</option>' +
+        '<option value="25">25%</option>' +
+        '<option value="30">30%</option>' +
+        '<option value="35">35%</option>' +
+        '<option value="40">40%</option>' +
+        '<option value="45">45%</option>' +
+        '<option value="50">50%</option>' +
+        '<option value="55">55%</option>' +
+        '<option value="60">60%</option>' +
+        '<option value="65">65%</option>' +
+        '<option value="70">70%</option>' +
+        '<option value="75">75%</option>' +
+        '<option value="80">80%</option>' +
+        '<option value="85">85%</option>' +
+        '<option value="90">90%</option>' +
+        '<option value="95">95%</option>' +
+        '<option value="100">100%</option>' +
+        '</select>',
+      showCancelButton: true,
+      confirmButtonText: 'Aplicar descuento',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        var montoDescontarGlobal = parseFloat($('#customDescuentoGlobal').val());
+        var porcentajeDescuentoGlobal = parseFloat($('#porcentajeDescuentoGlobal').val());
+
+        // Aplicar el descuento a todos los inputs dinámicos
+        $('.importe').each(function() {
+          var importeInput = $(this);
+          var precioInput = importeInput.closest('tr').find('.precio');
+
+          var importeActual = parseFloat(importeInput.val());
+          if (!isNaN(porcentajeDescuentoGlobal) && porcentajeDescuentoGlobal >= 0 && porcentajeDescuentoGlobal <= 100) {
+            var importeDescuento = importeActual * (1 - porcentajeDescuentoGlobal / 100);
+            importeInput.val(importeDescuento.toFixed(2));
+            precioInput.val(importeDescuento.toFixed(2));
+          } else if (!isNaN(montoDescontarGlobal) && montoDescontarGlobal >= 0) {
+            var importeNuevo = importeActual - montoDescontarGlobal;
+            importeInput.val(importeNuevo.toFixed(2));
+            precioInput.val(importeNuevo.toFixed(2));
+          }
+        });
+
+        return true;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Descuento aplicado',
+          text: 'El descuento global ha sido aplicado correctamente.',
+          icon: 'success'
+        });
+        actualizarSuma();
+        mostrarTotalVenta();
+        mostrarSubTotal();
+        mostrarIvaTotal();
+        actualizarImporte();
+      }
+    });
+  }
+</script>
 
 
 
