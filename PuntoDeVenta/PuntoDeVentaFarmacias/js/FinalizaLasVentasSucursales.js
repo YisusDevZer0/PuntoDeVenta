@@ -183,7 +183,7 @@ $(document).ready(function () {
                   data: data,
                   success: function(response) {
                     console.log("Response from ticket generation:", response);
-                   
+                    location.reload();
                   },
                   error: function(error) {
                     console.error("Error generating ticket:", error);
