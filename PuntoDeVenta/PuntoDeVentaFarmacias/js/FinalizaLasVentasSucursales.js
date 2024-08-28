@@ -179,7 +179,7 @@ $(document).ready(function () {
 
                 $.ajax({
                   type: 'POST',
-                  url: 'http://localhost:8080/ticket/TicketVenta.php',
+                  url: 'http://localhost/ticket/TicketVenta.php',
                   data: data,
                   success: function(response) {
                     console.log("Response from ticket generation:", response);
