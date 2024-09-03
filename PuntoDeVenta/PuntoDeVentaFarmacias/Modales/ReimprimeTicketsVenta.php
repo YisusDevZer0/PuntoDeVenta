@@ -210,7 +210,7 @@ WHERE
     <i class="fas fa-check-circle icono-animado" style="font-size: 50px; color: green;"></i>
 </div>
 
-   <button type="submit"   id="EnviaTicket"   class="btn btn-info">Reimprime<i class="fas fa-money-check-alt"></i></button>
+   <button type="submit"   id="EnviaTicket"   class="btn btn-primary">Enviar reimpresion<i class="fas fa-money-check-alt"></i></button>
    </form>
 
 
@@ -248,9 +248,8 @@ WHERE
 }
 </style>
 
-</style>
 
-   <script>
+<script>
 $(document).ready(function() {
     $('#GeneraTicket').on('submit', function(event) {
         event.preventDefault();  // Evita el envío normal del formulario
@@ -263,8 +262,8 @@ $(document).ready(function() {
             data: data,
             success: function(response) {
                 console.log("Response from ticket generation:", response);
-                // Puedes manejar la respuesta aquí, como recargar la página o mostrar un mensaje
-                location.reload();  // Recarga la página
+                $('#GeneraTicket').hide();  // Oculta el formulario
+                $('#mensajeConfirmacion').show();  // Muestra el mensaje de confirmación
             },
             error: function(error) {
                 console.error("Error generating ticket:", error);
@@ -273,6 +272,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 <?php else:?>
 	<p class="alert alert-warning">No hay resultados</p>
 <?php endif;?>
