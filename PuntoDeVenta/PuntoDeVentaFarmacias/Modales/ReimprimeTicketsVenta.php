@@ -89,7 +89,7 @@ WHERE
 
 <?php if($Especialistas!=null):?>
     
-    <form method="post" action="http://localhost:8080/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
+    <form method="post" action="http://localhost/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
 
         <div style="display:none">
     <div class="row">
@@ -253,7 +253,7 @@ WHERE
 $(document).ready(function() {
     $('#GeneraTicket').on('submit', function(event) {
         event.preventDefault();  // Evita el envío normal del formulario
-        alert('Formulario enviado');
+        
         var data = $(this).serialize();  // Serializa los datos del formulario
 
         $.ajax({
