@@ -88,10 +88,8 @@ WHERE
 
 
 <?php if($Especialistas!=null):?>
-  <form method="post" 
-      target="print_popup" 
-      action="http://localhost:8080/ticket/ReimpresionTicketVentas.php/"
-      onsubmit="window.open('about:blank','print_popup','width=400,height=400');"  id="GeneraTicket">
+    <form method="post" action="http://localhost:8080/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
+
 
     <div class="row">
     <div class="col">
@@ -208,7 +206,30 @@ WHERE
 
 
 
-<script src="js/ReimpresionVistaVenta.js"></script>
+
+   <script>
+$(document).ready(function() {
+    $('#GeneraTicket').on('submit', function(event) {
+        event.preventDefault();  // Evita el envío normal del formulario
+
+        var data = $(this).serialize();  // Serializa los datos del formulario
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),  // Usa la URL de la acción del formulario
+            data: data,
+            success: function(response) {
+                console.log("Response from ticket generation:", response);
+                // Puedes manejar la respuesta aquí, como recargar la página o mostrar un mensaje
+                location.reload();  // Recarga la página
+            },
+            error: function(error) {
+                console.error("Error generating ticket:", error);
+            }
+        });
+    });
+});
+</script>
 <?php else:?>
 	<p class="alert alert-warning">No hay resultados</p>
 <?php endif;?>
