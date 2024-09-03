@@ -67,7 +67,7 @@ while ($fila = $result->fetch_assoc()) {
     </td>';
     $data[$c]["Reimpresion"] = '
     <td>
-    <a data-id="' . $fila["Folio_Ticket"] . '" class="btn-Reimpresion" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a>
+    <a data-id="' . $fila["Folio_Ticket"] . '" class=" btn-primary btn-Reimpresion" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a>
     </td>';
     $c++;
 }
