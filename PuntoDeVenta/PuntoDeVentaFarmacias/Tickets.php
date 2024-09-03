@@ -49,18 +49,21 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
 <script>
-   $(document).ready(function() {
-    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+  $(document).ready(function() {
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
     $(document).on("click", ".btn-Reimpresion", function() {
-      console.log("Botón de cancelar clickeado para el ID:", id);
-        var id = $(this).data("id");
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTickets.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desactivar caja actual");
-            
         });
+        
         $('#ModalEdDele').modal('show');
     });
+});
+
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
     $(document).on("click", ".btn-reactiva", function() {
