@@ -203,17 +203,52 @@ WHERE
    </div>
 </div>
 
-   <div id="mensajeConfirmacion" style="display: none; text-align: center; margin-top: 20px;">
+  <!-- Contenedor para el mensaje de confirmación -->
+<div id="mensajeConfirmacion" style=" text-align: center; margin-top: 20px;">
     <p><strong>Ticket listo para reimprimir</strong></p>
-    <!-- Puedes agregar una animación aquí, como un GIF o un icono -->
-    <i class="fas fa-check-circle" style="font-size: 50px; color: green;"></i>
+    <!-- Icono animado -->
+    <i class="fas fa-check-circle icono-animado" style="font-size: 50px; color: green;"></i>
 </div>
+
    <button type="submit"   id="EnviaTicket"   class="btn btn-info">Reimprime<i class="fas fa-money-check-alt"></i></button>
    </form>
 
 
 
+<style>
+    <style>
+/* Estilos para el contenedor del mensaje */
+#mensajeConfirmacion {
+    animation: fadeIn 1s ease-in-out;
+}
 
+/* Animación de entrada */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilo para el icono animado */
+.icono-animado {
+    display: inline-block;
+    animation: bounce 1s infinite;
+}
+
+/* Animación de rebote */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+</style>
+
+</style>
 
    <script>
 $(document).ready(function() {
