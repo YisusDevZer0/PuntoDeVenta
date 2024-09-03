@@ -55,7 +55,7 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTickets.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desactivar caja actual");
         });
