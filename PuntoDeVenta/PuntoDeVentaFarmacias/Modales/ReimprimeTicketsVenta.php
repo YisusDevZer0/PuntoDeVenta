@@ -210,7 +210,7 @@ WHERE
     <i class="fas fa-check-circle icono-animado" style="font-size: 50px; color: green;"></i>
 </div>
 
-   <button type="submit"   id="EnviaTicket"   class="btn btn-primary">Enviar reimpresion<i class="fas fa-money-check-alt"></i></button>
+   <button type="submit"   id="EnviaTicket"   class="btn btn-success">Enviar reimpresion <i class="fa-solid fa-print"></i></button>
    </form>
 
 

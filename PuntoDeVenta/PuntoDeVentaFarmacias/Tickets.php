@@ -57,7 +57,7 @@ include_once "Controladores/ControladorUsuario.php";
         
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desactivar caja actual");
+            $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
         
         $('#ModalEdDele').modal('show');
