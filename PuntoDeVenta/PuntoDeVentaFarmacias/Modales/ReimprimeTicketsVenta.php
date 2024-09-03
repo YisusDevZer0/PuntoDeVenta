@@ -88,6 +88,7 @@ WHERE
 
 
 <?php if($Especialistas!=null):?>
+    <div style="display:none">
     <form method="post" action="http://localhost:8080/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
 
 
@@ -200,6 +201,13 @@ WHERE
     </div>
     </div>
    </div>
+</div>
+
+   <div id="mensajeConfirmacion" style="display: none; text-align: center; margin-top: 20px;">
+    <p><strong>Ticket listo para reimprimir</strong></p>
+    <!-- Puedes agregar una animación aquí, como un GIF o un icono -->
+    <i class="fas fa-check-circle" style="font-size: 50px; color: green;"></i>
+</div>
    <button type="submit"   id="EnviaTicket"   class="btn btn-info">Reimprime<i class="fas fa-money-check-alt"></i></button>
    </form>
 
