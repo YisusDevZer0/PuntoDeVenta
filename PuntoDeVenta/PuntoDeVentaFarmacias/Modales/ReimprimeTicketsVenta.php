@@ -253,7 +253,7 @@ WHERE
 $(document).ready(function() {
     $('#GeneraTicket').on('submit', function(event) {
         event.preventDefault();  // Evita el envío normal del formulario
-
+        alert('Formulario enviado');
         var data = $(this).serialize();  // Serializa los datos del formulario
 
         $.ajax({
@@ -272,6 +272,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 
 <?php else:?>
 	<p class="alert alert-warning">No hay resultados</p>
