@@ -18,60 +18,48 @@ function fechaCastellano($fecha) {
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
 
-$sql = "SELECT
-Ventas_POS.Folio_Ticket,
-Ventas_POS.FolioSucursal,
-Ventas_POS.Fk_Caja,
-Ventas_POS.Venta_POS_ID,
-Ventas_POS.Identificador_tipo,
-Ventas_POS.Cod_Barra,
-Ventas_POS.Clave_adicional,
-Ventas_POS.Nombre_Prod,
-Ventas_POS.Cantidad_Venta,
-Ventas_POS.Fk_sucursal,
-Ventas_POS.AgregadoPor,
-Ventas_POS.AgregadoEl,
-Ventas_POS.Total_Venta,
-Ventas_POS.Lote,
-Ventas_POS.ID_H_O_D,
-Sucursales.ID_Sucursal,
-Sucursales.Nombre_Sucursal
-FROM
-Ventas_POS
-JOIN
-Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
-WHERE
-MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-GROUP BY
-Ventas_POS.Folio_Ticket,
-Ventas_POS.FolioSucursal
-ORDER BY
-Ventas_POS.AgregadoEl DESC;";  // Ordena por fecha y hora más reciente
+// Consulta segura utilizando una sentencia preparada
+$sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
+        Ventas_POS.Identificador_tipo, Ventas_POS.Cod_Barra, Ventas_POS.Clave_adicional, Ventas_POS.Nombre_Prod, 
+        Ventas_POS.Cantidad_Venta, Ventas_POS.Fk_sucursal, Ventas_POS.AgregadoPor, Ventas_POS.AgregadoEl, 
+        Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+        FROM Ventas_POS 
+        JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
+        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
+        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
+        GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
+        ORDER BY Ventas_POS.AgregadoEl DESC;";  // Ordena por fecha y hora más reciente
 
-$result = mysqli_query($conn, $sql);
+// Preparar la declaración
+$stmt = $conn->prepare($sql);
 
-$c = 0;
+// En este caso, no es necesario bind_param ya que no hay parámetros en la consulta
 
-$data = []; // Inicializa el array para evitar errores si no hay resultados
+// Ejecutar la declaración
+$stmt->execute();
+
+// Obtener resultado
+$result = $stmt->get_result();
+
+// Inicializar array para almacenar los resultados
+$data = [];
 
 while ($fila = $result->fetch_assoc()) {
-    $data[$c]["NumberTicket"] = $fila["Folio_Ticket"];
-    $data[$c]["FolioSucursal"] = $fila["FolioSucursal"];
-    $data[$c]["Fecha"] = fechaCastellano($fila["AgregadoEl"]);
-    $data[$c]["Hora"] = date("g:i:s a", strtotime($fila["AgregadoEl"]));
-    $data[$c]["Vendedor"] = $fila["AgregadoPor"];
-    $data[$c]["Desglose"] = '
-    <td>
-    <a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fas fa-receipt"></i></a>
-    </td>';
-    $data[$c]["Reimpresion"] = '
-    <td>
-    <a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a>
-    </td>';
-    $c++;
+    $data[] = [
+        "NumberTicket" => $fila["Folio_Ticket"],
+        "FolioSucursal" => $fila["FolioSucursal"],
+        "Fecha" => fechaCastellano($fila["AgregadoEl"]),
+        "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
+        "Vendedor" => $fila["AgregadoPor"],
+        "Desglose" => '<td><a data-id="' . $fila["Folio_Ticket"] . '-' . $fila["FolioSucursal"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fas fa-receipt"></i></a></td>',
+        "Reimpresion" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>'
+    ];
 }
 
+// Cerrar la declaración
+$stmt->close();
+
+// Construir el array de resultados para la respuesta JSON
 $results = [
     "sEcho" => 1,
     "iTotalRecords" => count($data),
@@ -79,5 +67,8 @@ $results = [
     "aaData" => $data
 ];
 
+// Imprimir la respuesta JSON
 echo json_encode($results);
+
+// Nota: En este caso no hay lógica de "Sweet Alert" porque no se está revisando si hay cajas abiertas en este código.
 ?>
