@@ -91,7 +91,7 @@ WHERE
     
     <form method="post" action="http://localhost:8080/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
 
-
+        <div style="display:none">
     <div class="row">
     <div class="col">
     <label for="exampleFormControlInput1">N° Ticket</label>
