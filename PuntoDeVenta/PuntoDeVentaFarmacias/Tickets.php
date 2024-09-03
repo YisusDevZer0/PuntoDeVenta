@@ -62,7 +62,6 @@ include_once "Controladores/ControladorUsuario.php";
         
         $('#ModalEdDele').modal('show');
     });
-});
 
 
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
