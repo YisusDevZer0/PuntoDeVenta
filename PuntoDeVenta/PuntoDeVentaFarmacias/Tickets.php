@@ -49,76 +49,69 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
 <script>
-    $(document).ready(function() {
-    $(".btn-desglose").click(function(){
+   $(document).ready(function() {
+    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+    $(document).on("click", ".btn-Reimpresion", function() {
+      console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://saludapos.com/POS2/Modales/DesgloseTicket.php", "id=" + id, function(data){
-            $("#FormCancelacion").html(data);
-            $("#TituloCancelacion").html("Desglose del ticket");
-            $("#Di3").removeClass("modal-dialog modal-lg modal-notify modal-info");
-            $("#Di3").removeClass("modal-dialog modal-xl modal-notify modal-success");
-            $("#Di3").addClass("modal-dialog modal-xl modal-notify modal-primary");
-
-            var modal_lv = 0;
-            $('.modal').on('shown.bs.modal', function (e) {
-                $('.modal-backdrop:last').css('zIndex', 1051 + modal_lv);
-                $(e.currentTarget).css('zIndex', 1052 + modal_lv);
-                modal_lv++;
-            });
-
-            $('.modal').on('hidden.bs.modal', function (e) {
-                modal_lv--;
-            });
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTickets.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desactivar caja actual");
+            
         });
-        $('#Cancelacionmodal').modal('show');
+        $('#ModalEdDele').modal('show');
     });
 
-    $(".btn-Reimpresion").click(function(){
+    // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
+    $(document).on("click", ".btn-reactiva", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTicketsVenta.php", "id=" + id, function(data){
-            $("#FormCancelacion").html(data);
-            $("#TituloCancelacion").html("Editar datos de categoría");
-            $("#Di3").removeClass("modal-dialog modal-lg modal-notify modal-info");
-            $("#Di3").removeClass("modal-dialog modal-xl modal-notify modal-primary");
-            $("#Di3").addClass("modal-dialog modal-xl modal-notify modal-success");
-
-            var modal_lv = 0;
-            $('.modal').on('shown.bs.modal', function (e) {
-                $('.modal-backdrop:last').css('zIndex', 1051 + modal_lv);
-                $(e.currentTarget).css('zIndex', 1052 + modal_lv);
-                modal_lv++;
-            });
-
-            $('.modal').on('hidden.bs.modal', function (e) {
-                modal_lv--;
-            });
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Activar Caja Actual");
+           
         });
-        $('#Cancelacionmodal').modal('show');
+        $('#ModalEdDele').modal('show');
     });
+
+    $(document).on("click", ".btn-registraGasto", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Registrar nuevo gasto");
+           
+        });
+        $('#ModalEdDele').modal('show');
+    });
+
 });
+
+
 
 </script>
 
- <div class="modal fade" id="Cancelacionmodal" tabindex="-2" role="dialog" style="overflow-y: scroll;" aria-labelledby="CancelacionmodalLabel" aria-hidden="true">
-  <div id="Di3" class="modal-dialog modal-lg modal-notify modal-info">
+
+
+
+
+  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
       <div class="modal-content">
-      <div class="modal-header">
-         <p class="heading lead" id="TituloCancelacion">Confirmacion de ticket</p>
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true" class="white-text">&times;</span>
-         </button>
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+
+         
        </div>
-       
+        
 	        <div class="modal-body">
           <div class="text-center">
-        <div id="FormCancelacion"></div>
+        <div id="FormCajas"></div>
         
         </div>
 
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-            <!-- Footer Start -->
+  </div><!-- /.modal --></div>
          
 </body>
 
