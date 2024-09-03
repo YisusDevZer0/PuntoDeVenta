@@ -215,7 +215,7 @@ WHERE
 
 
 
-<style>
+
     <style>
 /* Estilos para el contenedor del mensaje */
 #mensajeConfirmacion {
