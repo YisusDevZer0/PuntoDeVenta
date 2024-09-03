@@ -43,7 +43,11 @@ include_once "Controladores/ControladorUsuario.php";
             
           
 <script src="js/DesgloseTicketss.js"></script>
-
+<?php 
+            include "Modales/NuevoFondoDeCaja.php";
+            include "Modales/Modales_Errores.php";
+            include "Modales/Modales_Referencias.php";
+            include "Footer.php";?>
 <script>
     $(document).ready(function() {
     $(".btn-desglose").click(function(){
@@ -115,11 +119,7 @@ include_once "Controladores/ControladorUsuario.php";
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
             <!-- Footer Start -->
-            <?php 
-            include "Modales/NuevoFondoDeCaja.php";
-            include "Modales/Modales_Errores.php";
-            include "Modales/Modales_Referencias.php";
-            include "Footer.php";?>
+         
 </body>
 
 </html>
