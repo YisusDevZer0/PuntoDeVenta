@@ -37,7 +37,7 @@ JOIN
 LEFT JOIN 
     Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
 WHERE 
-    Ventas_POS.Folio_Ticket = '".$_POST["id"]." AND Ventas_POS.Fk_sucursal = '".$row['Fk_Sucursal']."'";
+    Ventas_POS.Folio_Ticket = '".$_POST["id"]."";
 
 $query = $conn->query($sql1);
 $Especialistas = null;
@@ -81,7 +81,7 @@ JOIN
 LEFT JOIN 
     Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
 WHERE 
-    Ventas_POS.Folio_Ticket = '".$_POST["id"]." AND Ventas_POS.Fk_sucursal = '".$row['Fk_Sucursal']."'";
+    Ventas_POS.Folio_Ticket = '".$_POST["id"]." ";
    $query = $conn->query($sql2);
 ?>
 
