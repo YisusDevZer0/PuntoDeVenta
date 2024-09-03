@@ -88,7 +88,7 @@ WHERE
 
 
 <?php if($Especialistas!=null):?>
-    <div style="display:none">
+    
     <form method="post" action="http://localhost:8080/ticket/ReimpresionTicketVentas.php" id="GeneraTicket">
 
 
