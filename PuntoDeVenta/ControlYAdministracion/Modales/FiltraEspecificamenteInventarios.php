@@ -15,7 +15,7 @@
      
       <div class="modal-body">
      
- <form action="javascript:void(0)" method="post" id="Filtrapormediodesucursalconajax">
+ <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
     
  
  <div class="row">
@@ -43,7 +43,7 @@
         ?>  </select>
     </div>
     
-    <input type="text"  name="user" hidden value="<?php echo $row['Pos_ID']?>">
+    <input type="text"  name="user" hidden value="<?php echo $row['Id_PvUser']?>">
   <div>     </div>
   </div>  </div>
       <button type="submit"  id="submit_registroarea" value="Guardar" class="btn btn-success">Aplicar cambio de sucursal <i class="fas fa-exchange-alt"></i></button>
