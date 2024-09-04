@@ -981,7 +981,7 @@ function eliminarFila(element) {
 
 </script>
 
-<script src="js/CompletaSolicitudTraspaso.js"></script>
+<script src="js/RealizaIngreso.js"></script>
 
 <script src="js/ConectaProveedores.js"></script>
 <!-- Control Sidebar -->
