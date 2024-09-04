@@ -11,7 +11,7 @@ if (!$conn) {
 
 $contador = count($_POST["IdBasedatos"]);
 $ProContador = 0;
-$query = "INSERT INTO Solicitudes_Ingresos (`ID_Prod_POS`, `NumFactura`, `Proveedor`, `Cod_Barra`, `Nombre_Prod`, `Fk_Sucursal`, `Contabilizado`, `Fecha_Caducidad`, `Lote`, `PrecioMaximo`, `Precio_Venta`, `Precio_C`, `AgregadoPor`, `AgregadoEl`, `FechaInventario`,`Estatus`,`NumOrden`) VALUES ";
+$query = "INSERT INTO IngresosFarmacias (`ID_Prod_POS`, `NumFactura`, `Proveedor`, `Cod_Barra`, `Nombre_Prod`, `Fk_Sucursal`, `Contabilizado`, `Fecha_Caducidad`, `Lote`, `PrecioMaximo`, `Precio_Venta`, `Precio_C`, `AgregadoPor`, `AgregadoEl`, `FechaInventario`,`Estatus`,`NumOrden`) VALUES ";
 
 $placeholders = [];
 $values = [];
