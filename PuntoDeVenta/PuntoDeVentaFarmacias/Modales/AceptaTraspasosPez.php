@@ -90,6 +90,8 @@ if ($query->num_rows > 0) {
     
 
     <input type="hidden" name="ID_Traspaso_Generado" id="id" value="<?php echo $Traspaso->ID_Traspaso_Generado; ?>">
+    
+    <input type="hidden" name="NombreRecibio" id="id" value="<?php echo $row['Nombre_Apellidos']?>">
     <button type="submit" id="submit" class="btn btn-info">Aceptar Traspaso <i class="fas fa-check"></i></button>
 </form>
 <script src="js/ActualizaDataDeTraspasos.js"></script>

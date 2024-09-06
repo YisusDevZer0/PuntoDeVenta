@@ -2,7 +2,7 @@
 <?php
 include "db_connect.php";
                 $InfoState="Entregado";
-        $ID_Traspaso_Generado=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['IDTraspasoActualiza']))));
+        $ID_Traspaso_Generado=$conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['ID_Traspaso_Generado']))));
        $TraspasoRecibidoPor= $conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['NombreRecibio']))));
         $Estatus= $conn -> real_escape_string(htmlentities(strip_tags(Trim($InfoState))));
         $Fecha_recepcion= $conn -> real_escape_string(htmlentities(strip_tags(Trim($_POST['FechaRecepcion']))));
