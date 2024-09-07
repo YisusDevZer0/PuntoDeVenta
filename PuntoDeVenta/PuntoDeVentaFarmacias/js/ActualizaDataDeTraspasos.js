@@ -16,7 +16,7 @@ $('document').ready(function ($) {
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
   
   
-    $("#ActualizaEstadoTraspaso").validate({
+    $("#ActualizaDatosDeTraspasos").validate({
       rules: {
   
         CodBarra:{
@@ -52,7 +52,7 @@ $('document').ready(function ($) {
       $.ajax({
         type: 'POST',
         url: "Controladores/ActualizaTraspasoOK.php",
-        data: $('#ActualizaEstadoTraspaso').serialize(),
+        data: $('#ActualizaDatosDeTraspasos').serialize(),
         cache: false,
         beforeSend: function () {
   
@@ -89,7 +89,7 @@ $('document').ready(function ($) {
   
             $("#submit_registro").html("Enviado <i class='fas fa-check'></i>")
   
-            $("#ActualizaEstadoTraspaso")[0].reset();
+            $("#ActualizaDatosDeTraspasos")[0].reset();
             $("#AltaProductos").removeClass("in");
             $(".modal-backdrop").remove();
             $("#AltaProductos").hide();
