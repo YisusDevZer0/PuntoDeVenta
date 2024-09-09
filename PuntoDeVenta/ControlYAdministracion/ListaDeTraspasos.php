@@ -41,6 +41,9 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspaso">
       Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
     </button>
+    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspasoSucursales">
+      Traspaso entre sucursales <i class="fas fa-exchange-alt"></i>
+    </button>
     <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
       Modificar traspaso <i class="fas fa-edit"></i>
     </button>
@@ -60,6 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Footer Start -->
             <?php 
             include "Modales/GenerarNuevoTraspaso.php";
+            include "Modales/GenerarNuevoTraspasoSucursales.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
