@@ -41,7 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspaso">
       Generar nuevo traspaso <i class="fas fa-exchange-alt"></i>
     </button>
-    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspasoSucursales">
+    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspasoSucursales">
       Traspaso entre sucursales <i class="fas fa-exchange-alt"></i>
     </button>
     <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
