@@ -44,12 +44,12 @@ include_once "Controladores/ControladorUsuario.php";
     <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#GeneradorDeOrdenesDeTraspasoSucursales">
       Traspaso entre sucursales <i class="fas fa-exchange-alt"></i>
     </button>
-    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
+    <!-- <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#ModificarTraspasoModal">
       Modificar traspaso <i class="fas fa-edit"></i>
     </button>
     <button type="button" class="btn btn-danger btn-sm " data-toggle="modal" data-target="#CancelarTraspasoModal">
       Cancelar Traspaso <i class="fas fa-ban"></i>
-    </button>
+    </button> -->
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
       class="btn btn-default">
       Filtrar por fechas <i class="fas fa-search"></i>
