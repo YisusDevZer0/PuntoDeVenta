@@ -62,7 +62,7 @@ $codBarra = $tipoServicio . $nombreProd . $idProdPos . $fechaActual . $Fk_Sucurs
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Nombre_Prod">Nombre del Producto</label>
-                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" maxlength="60">
+                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo htmlspecialchars($Producto->Nombre_Prod, ENT_QUOTES, 'UTF-8'); ?>" maxlength="600">
             </div>
         </div>
         <div class="col-md-4">
