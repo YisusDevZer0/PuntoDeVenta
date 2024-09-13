@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
   console.log("Document is ready"); 
   var valoresTabla = [];
@@ -20,6 +19,10 @@ $(document).ready(function () {
 
   function validarTicket(ticket) {
     console.log("Validating ticket:", ticket);
+    
+    // Limpiar el array de valoresTabla antes de llenarlo nuevamente
+    valoresTabla = [];
+
     $.ajax({
       type: 'POST',
       url: "Controladores/ValidarTicket.php",
