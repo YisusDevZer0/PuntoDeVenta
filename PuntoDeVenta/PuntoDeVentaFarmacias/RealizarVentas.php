@@ -704,16 +704,24 @@ Efectivo Exacto
 <script>
 
   
-  function actualizarSumaTotal() {
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value);
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value);
-  var cambio;
+function actualizarSumaTotal() {
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
 
-  if (iptTarjeta > 0) {
-    cambio = 0; // Si se ingresa un valor en el campo de tarjeta, el cambio se establece en cero
+  // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
+  if (iptTarjeta >= totalVenta) {
+    iptEfectivo = 0;
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
   } else {
-    cambio = iptEfectivo; // Si no se ingresa un valor en el campo de tarjeta, el cambio se calcula como el efectivo recibido
+    // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
+    iptEfectivo = totalVenta - iptTarjeta;
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
   }
+
+  // Calcular el cambio en base al efectivo ingresado
+  var cambio = iptEfectivo - (totalVenta - iptTarjeta);
+  cambio = cambio > 0 ? cambio : 0; // Si el efectivo es menor al necesario, el cambio es 0
 
   // Actualizar el valor del elemento <span> con el cambio
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
