@@ -704,7 +704,6 @@ Efectivo Exacto
 <!-- function actualizarSumaTotal  -->
 <script>
 
-  
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
   var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
@@ -714,10 +713,12 @@ function actualizarSumaTotal() {
   if (iptTarjeta >= totalVenta) {
     iptEfectivo = 0;
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
   } else {
     // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
     iptEfectivo = totalVenta - iptTarjeta;
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
   }
 
   // Calcular el cambio en base al efectivo ingresado
@@ -735,28 +736,30 @@ function actualizarSumaTotal() {
 
 
 
+
 </script>
 
 
 <script>
-  $(document).ready(function() {
-    // Bloquear el botón al cargar la página
-    $('#btnIniciarVenta').prop('disabled', true);
+ $(document).ready(function() {
+  // Bloquear el botón al cargar la página
+  $('#btnIniciarVenta').prop('disabled', true);
 
-    // Agregar un controlador de eventos al input
-    $('#iptEfectivoRecibido').on('input', function() {
-      var valorInput = $(this).val();
-      var miBoton = $('#btnIniciarVenta');
+  // Agregar un controlador de eventos al input
+  $('#iptEfectivoRecibido').on('input', function() {
+    var valorInput = $(this).val();
+    var miBoton = $('#btnIniciarVenta');
 
-      if (valorInput.length > 0) {
-        // Desbloquear el botón si el input contiene datos
-        miBoton.prop('disabled', false);
-      } else {
-        // Bloquear el botón si el input está vacío
-        miBoton.prop('disabled', true);
-      }
-    });
+    if (valorInput.length > 0) {
+      // Desbloquear el botón si el input contiene datos
+      miBoton.prop('disabled', false);
+    } else {
+      // Bloquear el botón si el input está vacío
+      miBoton.prop('disabled', true);
+    }
   });
+});
+
 
 
   $(document).ready(function() {
