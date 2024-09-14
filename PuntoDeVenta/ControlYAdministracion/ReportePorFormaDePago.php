@@ -50,7 +50,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/VentasVendedor.js"></script>
+<script src="js/VentasPorFormaDePago.js"></script>
 
             <!-- Footer Start -->
             <?php 
