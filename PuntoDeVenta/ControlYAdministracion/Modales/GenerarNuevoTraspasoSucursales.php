@@ -28,7 +28,7 @@
       <div class="text-center">
              <div class="modal-body">
      
- <form  method="POST" action="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GeneradorTraspasosCEDIS">
+ <form  method="POST" action="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GeneradorTraspasosSucursales">
   <div class="form-group">
   <select id="sucursalconordenorigen" name="SucursalConOrdenOrigen" class="form-control" required>
     <option value="">Seleccione sucursal de origen:</option>
