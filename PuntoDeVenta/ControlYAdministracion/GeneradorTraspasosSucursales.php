@@ -2,6 +2,7 @@
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'
 $SucursalDestino = $_POST['SucursalConOrdenDestino'];
+$SucursalOrigen = $_POST['SucursalConOrdenOrigen'];
 $SucursalDestinoLetras = $_POST['sucursalLetras'];
 $ProveedorFijo = $_POST['NombreProveedor'];
 $NumeroOrdenTraspaso = $_POST['NumOrden'];
@@ -381,7 +382,17 @@ if ($ProveedorFijo === "CEDIS") {
                            
                           </div>
                         </div>
+                        <div class="col">
 
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal Destino</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalOrigen?>">
+ 
+ 
+</div>
+</div>
                         <div class="col">
 
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha</label>
