@@ -1,7 +1,16 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
+
+// Verificar si $row['Fk_Sucursal'] está definida
+if (!isset($row['Fk_Sucursal'])) {
+    echo json_encode(['error' => 'Fk_Sucursal no está definida']);
+    exit;
+}
 
 // Escapar la variable para evitar inyección SQL
 $fk_sucursal = mysqli_real_escape_string($conn, $row['Fk_Sucursal']);
@@ -30,7 +39,7 @@ FROM
     Sucursales
 WHERE 
     Traspasos_generados.Fk_SucDestino = Sucursales.ID_Sucursal
-    AND Traspasos_generados.Fk_SucDestino = '$fk_sucursal' -- Usar la variable en la consulta
+    AND Traspasos_generados.Fk_SucDestino = '$fk_sucursal' 
     AND (
         (MONTH(Traspasos_generados.FechaEntrega) = MONTH(CURDATE()) AND YEAR(Traspasos_generados.FechaEntrega) = YEAR(CURDATE()))
         OR
@@ -39,9 +48,17 @@ WHERE
 
 $result = mysqli_query($conn, $sql);
 
+// Manejo de errores para la consulta SQL
+if (!$result) {
+    echo json_encode([
+        'error' => 'Error en la consulta SQL: ' . mysqli_error($conn)
+    ]);
+    exit;
+}
+
 $data = [];
 
-if ($result && mysqli_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $c = 0;
 
     while ($fila = $result->fetch_assoc()) {
