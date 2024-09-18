@@ -62,6 +62,7 @@
 <div class="form-group">
  
   <input type="text" hidden name="sucursalLetras" id="sucursalLetras" class="form-control">
+  <input type="text" hidden name="sucursalLetrasOrigen" id="sucursalLetrasOrigen" class="form-control">
 </div>
 
 <button type="submit" id="registrotraspaso" value="Guardar" class="btn btn-success">
@@ -71,7 +72,14 @@
                                         </form>
                                         </div>
                                         </div> </div>
-     <script>
+    
+                                        <script>
+$(document).on('change', '#sucursalconordenorigen', function(event) {
+     $('#sucursalLetrasOrigen').val($("#sucursalconordenorigen option:selected").text());
+});
+</script>
+
+    <script>
 $(document).on('change', '#sucursalconorden', function(event) {
      $('#sucursalLetras').val($("#sucursalconorden option:selected").text());
 });

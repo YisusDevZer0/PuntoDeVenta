@@ -4,6 +4,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 $SucursalDestino = $_POST['SucursalConOrdenDestino'];
 $SucursalOrigen = $_POST['SucursalConOrdenOrigen'];
 $SucursalDestinoLetras = $_POST['sucursalLetras'];
+$SucursalOrigenLetras = $_POST['sucursalLetrasOrigen'];
 $ProveedorFijo = $_POST['NombreProveedor'];
 $NumeroOrdenTraspaso = $_POST['NumOrden'];
 
@@ -388,7 +389,7 @@ if ($ProveedorFijo === "CEDIS") {
 <div class="input-group mb-3">
   <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
   </div>
-  <input type="text" name=""  id="" readonly class="form-control" value="<?php echo $SucursalOrigen?>">
+  <input type="text" name=""  id="" readonly class="form-control" value="<?php echo $SucursalOrigenLetras ?>">
  
  
 </div>
