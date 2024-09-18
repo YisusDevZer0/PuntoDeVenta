@@ -384,11 +384,11 @@ if ($ProveedorFijo === "CEDIS") {
                         </div>
                         <div class="col">
 
-<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal Destino</label>
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal origen</label>
 <div class="input-group mb-3">
   <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
   </div>
-  <input type="text" name="" hidden id="" readonly class="form-control" value="<?php echo $SucursalOrigen?>">
+  <input type="text" name=""  id="" readonly class="form-control" value="<?php echo $SucursalOrigen?>">
  
  
 </div>
