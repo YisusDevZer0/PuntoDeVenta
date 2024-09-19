@@ -27,13 +27,13 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Cod_Barra">Código de Barra</label>
-                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo $Producto->Cod_Barra; ?>" maxlength="60">
+                <input type="text" class="form-control" id="Cod_Barra" name="Cod_Barra" value="<?php echo $Producto->Cod_Barra; ?>" maxlength="6000">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Clave_adicional">Clave Adicional</label>
-                <input type="text" class="form-control" id="Clave_adicional" name="Clave_adicional" value="<?php echo $Producto->Clave_adicional; ?>" maxlength="60">
+                <input type="text" class="form-control" id="Clave_adicional" name="Clave_adicional" value="<?php echo $Producto->Clave_adicional; ?>" maxlength="6000">
             </div>
         </div>
     </div>

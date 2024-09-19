@@ -10,18 +10,14 @@ $(document).ready(function($) {
             Cod_Barra: {
                 required: true
             },
-            Clave_adicional: {
-                required: true
-            },
+           
             // Otros campos omitidos por brevedad
         },
         messages: {
             Cod_Barra: {
                 required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido"
             },
-            Clave_adicional: {
-                required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido"
-            },
+           
             // Otros mensajes omitidos por brevedad
         },
         submitHandler: function(form) {
