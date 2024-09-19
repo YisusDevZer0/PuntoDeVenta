@@ -6,14 +6,16 @@ include "ControladorUsuario.php";
 $sql = "SELECT 
     DATE(V.Fecha_venta) AS Fecha_Venta,
     SU.Nombre_Sucursal AS Sucursal,
+    V.Turno AS Turno,
     SUM(V.Importe) AS Total_Venta
 FROM 
     Ventas_POS V
     LEFT JOIN Sucursales SU ON V.Fk_sucursal = SU.ID_Sucursal
 GROUP BY 
-    DATE(V.Fecha_venta), SU.Nombre_Sucursal
+    DATE(V.Fecha_venta), SU.Nombre_Sucursal, V.Turno
 ORDER BY 
-    Fecha_Venta ASC;
+    Fecha_Venta ASC, V.Turno ASC;
+;
 
 
 ";
@@ -27,7 +29,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Fecha"] = date("d/m/Y", $fila["Fecha_venta"]);
     $data[$c]["Sucursal"] = $fila["Sucursal"];
     $data[$c]["Total"] = $fila["Total_Venta"];
-
+    $data[$c]["Turno"] = $fila["Turno"];
     $c++; 
 }
 

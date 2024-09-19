@@ -213,7 +213,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Fecha' },
        { mData: 'Sucursal' },
        { mData: 'Total' },
-      
+       { mData: 'Turno' },
       
       ],
      
