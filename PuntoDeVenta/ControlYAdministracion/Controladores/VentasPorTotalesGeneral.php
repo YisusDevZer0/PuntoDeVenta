@@ -263,10 +263,10 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>Vendedor</th>
-<th>Servicio</th>
+<th>Fecha</th>
+<th>Sucursal</th>
 <th>Total de venta</th>
-<th>Fecha de venta</th>
+
  
 
 
