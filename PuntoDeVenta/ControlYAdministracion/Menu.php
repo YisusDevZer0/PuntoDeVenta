@@ -121,7 +121,7 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree"></i>Reportes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
+                            <a href="ReporteDeVentasTotales" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
                             <a href="ReporteServicios" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
                             <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
                             <a href="ReportePorVendedor" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
