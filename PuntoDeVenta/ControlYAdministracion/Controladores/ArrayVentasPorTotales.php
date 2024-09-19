@@ -24,7 +24,7 @@ $c = 0;
 
 while ($fila = $result->fetch_assoc()) {
  
-    $data[$c]["Fecha"] = date("d/m/Y", strtotime($fila["Fecha_venta"]));
+    $data[$c]["Fecha"] = date("d/m/Y", $fila["Fecha_venta"]);
     $data[$c]["Sucursal"] = $fila["Sucursal"];
     $data[$c]["Total"] = $fila["Total_Venta"];
 
