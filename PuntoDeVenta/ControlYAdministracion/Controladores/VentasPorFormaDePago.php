@@ -210,11 +210,11 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasPorFormasDePago.php",
  "aoColumns": [
-       { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'PrecioCompra' },
-       { mData: 'PrecioVenta' },
-      
+       { mData: 'Fecha' },
+       { mData: 'Sucursal' },
+       { mData: 'Metodopago' },
+       { mData: 'Turno' },
+       { mData: 'Total' },
       ],
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
@@ -263,11 +263,11 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>Vendedor</th>
-<th>Servicio</th>
-<th>Total de venta</th>
-<th>Fecha de venta</th>
- 
+<th>Fecha</th>
+<th>Sucursal</th>
+<th>Metodo pago</th>
+<th>Turno</th>
+<th>Total</th>
 
 
 

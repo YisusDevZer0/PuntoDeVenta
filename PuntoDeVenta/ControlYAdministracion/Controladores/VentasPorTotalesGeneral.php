@@ -247,7 +247,7 @@ tabla = $('#Clientes').DataTable({
     extend: 'excelHtml5',
     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
-    title: 'Base de Clientes',
+    title: 'Ventas totales por fechas',
     className: 'btn btn-success',
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
