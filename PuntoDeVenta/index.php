@@ -52,7 +52,7 @@
 </head>
 <body>
     <div class="loader-container">
-        <img src="https://i.gifer.com/origin/41/414f5a7b4fee1ccf9cf5771270d8dfd4.gif" alt="Loader">
+        <img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Loader">
     </div>
     <form  method="post" id="login-form" autocomplete="off">
     <div class="card" style="display:none;">
