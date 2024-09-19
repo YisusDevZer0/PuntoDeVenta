@@ -210,10 +210,10 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasPorTotales.php",
  "aoColumns": [
-       { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
-       { mData: 'PrecioCompra' },
-       { mData: 'PrecioVenta' },
+       { mData: 'Fecha' },
+       { mData: 'Sucursal' },
+       { mData: 'Total' },
+      
       
       ],
      
