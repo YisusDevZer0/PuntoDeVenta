@@ -33,7 +33,7 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Clave_adicional">Clave Adicional</label>
-                <input type="text" class="form-control" id="Clave_adicional" name="Clave_adicional" value="<?php echo $Producto->Clave_adicional; ?>" maxlength="6000">
+                <input type="text" class="form-control" id="Clave_adicional" name="Clave_adicional" value="<?php echo $Producto->Clave_adicional; ?>" >
             </div>
         </div>
     </div>
