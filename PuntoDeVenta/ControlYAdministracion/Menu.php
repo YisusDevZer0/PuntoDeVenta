@@ -123,8 +123,8 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="ReporteDeVentasTotales" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
                             <a href="ReporteServicios" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
-                            <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
-                            <a href="ReportePorProductoFormaPago" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por producto </a>
+                            <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte mas vendidos </a>
+                            <a href="ReportePorProductoFormaPago" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por productos </a>
                             <a href="ReportePorFormaDePago" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
                            
                         </div>

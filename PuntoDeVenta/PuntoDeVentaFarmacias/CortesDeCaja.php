@@ -39,7 +39,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div id="FCajas"></div>
             </div></div></div></div>
             
-            <script src="js/AsignaFondo.js"></script>
+            <script src="js/CortesDeCajaRealizados.js"></script>
 <script src="js/ControlFondosCajas.js"></script>
 <script>
     $(document).ready(function() {
