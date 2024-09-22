@@ -251,14 +251,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
       <div class="card card-gray shadow" style="width: 103%">
 
           <div class="card-body p-3">
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true" style="font-weight: 600;">Ventas</a>
-              </li>
-              
-             
-             
-            </ul>
+            
             <div class="tab-content" id="pills-tabContent">
               <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 <div class="row">
@@ -396,25 +389,9 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                 
               </div>
             
-              <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+             
 
-                <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los tickets y poder reimprimir -->
-
-                 <div id="TableVentasDelDia"></div>
-
-                <!-- Aqui finaliza el div que llama a la tabla por ajax para la consulta de los tickets y poder reimprimir -->
-
-              </div>
-
-              <div class="tab-pane fade" id="pills-contact2" role="tabpanel" aria-labelledby="pills-contact-tab">
-
-                <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
-
-                <!-- <div id="TableStockSucursales"></div> -->
-
-                <!-- aqui va el div que llama a la tabla por medio de ajax para la consulta de los productos  -->
-
-              </div>
+              
 
             </div>
 
