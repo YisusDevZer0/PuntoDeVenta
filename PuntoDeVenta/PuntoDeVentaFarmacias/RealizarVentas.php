@@ -689,24 +689,21 @@ Efectivo Exacto
   var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
   var metodoPago = document.getElementById("metodoPago").value; // Obtén el valor del select de método de pago
 
-  // Si el método de pago es "Crédito", registra el total en el campo de efectivo y tarjeta como 0
+  // Si el método de pago es "Crédito", ajustamos los valores para que todo se registre en efectivo y no en tarjeta
   if (metodoPago === "Credito") {
     iptTarjeta = 0;
     iptEfectivo = totalVenta;
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     document.getElementById("iptTarjeta").value = iptTarjeta.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
   } else {
     // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
     if (iptTarjeta >= totalVenta) {
       iptEfectivo = 0;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     } else {
       // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
       iptEfectivo = totalVenta - iptTarjeta;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     }
   }
 
@@ -745,8 +742,10 @@ $(document).ready(function() {
     // Si se selecciona "Crédito", desbloquear el botón de venta automáticamente
     if (metodoPago === "Credito") {
       miBoton.prop('disabled', false);
-      actualizarSumaTotal(); // Asegurarse de que se actualicen los valores
     }
+
+    // Actualizar la suma total cuando cambia el método de pago
+    actualizarSumaTotal();
   });
 
   // Checkbox de efectivo exacto
