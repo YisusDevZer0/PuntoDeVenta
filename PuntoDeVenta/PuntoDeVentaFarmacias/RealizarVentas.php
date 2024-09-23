@@ -686,7 +686,7 @@ Efectivo Exacto
 
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
-  var metodoPago = document.getElementById("metodoPago").value; // Obtener el método de pago seleccionado
+  var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
   var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
   var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
 
@@ -719,7 +719,7 @@ function actualizarSumaTotal() {
 }
 
 // Asegúrate de que se detecte el cambio en el método de pago:
-document.getElementById("metodoPago").addEventListener("change", actualizarSumaTotal);
+document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
 
 
