@@ -683,42 +683,58 @@ Efectivo Exacto
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
-function manejarMetodoPago() {
-  var metodoPago = document.getElementById("metodoPago").value;
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent);
 
-  // Verifica si el input y el valor están correctamente capturados
-  console.log("Método de Pago:", metodoPago);
-  console.log("Total de la Venta:", totalVenta);
-  console.log("Input Efectivo:", document.getElementById("iptEfectivoRecibido"));
+function actualizarSumaTotal() {
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
+  var metodoPago = document.getElementById("metodoPago").value; // Obtener el método de pago seleccionado
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
 
-  // Si el método de pago es "Credito", establecer el total en efectivo y activar el botón
+  // Si el método de pago es "Crédito", ajustar el total
   if (metodoPago === "Credito") {
-    document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
-    
-    // Verifica si el valor fue asignado correctamente
-    console.log("Valor del input efectivo después de la asignación:", document.getElementById("iptEfectivoRecibido").value);
-    
-    // Desencadenar el evento input manualmente
-    $('#iptEfectivoRecibido').trigger('input');
-    
-    // Activar el botón de venta
-    $('#btnIniciarVenta').prop('disabled', false);
+    iptEfectivo = totalVenta; // Asignar el total de la venta al input de efectivo
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Mostrar el total de venta en el input
+    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta automáticamente si es "Crédito"
+  } else {
+    // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    } else {
+      // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
+      iptEfectivo = totalVenta - iptTarjeta;
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    }
+
+    // Calcular el cambio en base al efectivo ingresado
+    var cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0; // Si el efectivo es menor al necesario, el cambio es 0
+
+    // Actualizar el valor del elemento <span> con el cambio
+    document.getElementById("Vuelto").textContent = cambio.toFixed(2);
   }
 }
 
-$(document).ready(function() {
-  // Bloquear el botón al cargar la página
-  $('#btnIniciarVenta').prop('disabled', true);
-
-  // Detectar cambio en el método de pago
-  $('#metodoPago').change(function() {
-    manejarMetodoPago();
-  });
-});
+// Asegúrate de que se detecte el cambio en el método de pago:
+document.getElementById("metodoPago").addEventListener("change", actualizarSumaTotal);
 
 
-$(document).ready(function() {
+
+
+
+
+
+
+
+
+</script>
+
+
+<script>
+ $(document).ready(function() {
   // Bloquear el botón al cargar la página
   $('#btnIniciarVenta').prop('disabled', true);
 
@@ -735,36 +751,34 @@ $(document).ready(function() {
       miBoton.prop('disabled', true);
     }
   });
-
-  // Detectar cambio en el método de pago
-  $('#metodoPago').change(function() {
-    manejarMetodoPago(); // Ejecutar la función para manejar "Crédito"
-  });
-
-  // Checkbox de efectivo exacto
-  $("#chkEfectivoExacto").change(function() {
-    if ($(this).is(":checked")) {
-      var boletaTotal = parseFloat($("#boleta_total").text());
-      $("#Vuelto").text("0.00");
-      $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-    }
-  });
-
-  $("#iptEfectivoRecibido").change(function() {
-    var boletaTotal = parseFloat($("#boleta_total").text());
-    var efectivoRecibido = parseFloat($(this).val());
-
-    if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-      $("#Vuelto").text("0.00");
-      $("#boleta_total").text(efectivoRecibido.toFixed(2));
-    } else {
-      var vuelto = efectivoRecibido - boletaTotal;
-      $("#Vuelto").text(vuelto.toFixed(2));
-      $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-    }
-  });
 });
 
+
+
+  $(document).ready(function() {
+    $("#chkEfectivoExacto").change(function() {
+      if ($(this).is(":checked")) {
+        var boletaTotal = parseFloat($("#boleta_total").text());
+        $("#Vuelto").text("0.00");
+        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+      }
+    });
+
+    $("#iptEfectivoRecibido").change(function() {
+      var boletaTotal = parseFloat($("#boleta_total").text());
+      var efectivoRecibido = parseFloat($(this).val());
+
+      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
+        $("#Vuelto").text("0.00");
+        $("#boleta_total").text(efectivoRecibido.toFixed(2));
+      } else {
+        var vuelto = efectivoRecibido - boletaTotal;
+        $("#Vuelto").text(vuelto.toFixed(2));
+        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+        
+      }
+    });
+  });
 </script>
 
 <script>
