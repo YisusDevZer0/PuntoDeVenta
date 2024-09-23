@@ -683,7 +683,20 @@ Efectivo Exacto
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
+  // Función para manejar el método de pago
+function manejarMetodoPago() {
+  var metodoPago = document.getElementById("metodoPago").value;
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent);
+  
+  // Si el método de pago es "Crédito", establecer el total en efectivo y activar el botón
+  if (metodoPago === "Credito") {
+    document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input'); // Disparar el evento input manualmente
+    $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta
+  }
+}
 
+// Mantener la lógica original
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
   var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
@@ -709,19 +722,7 @@ function actualizarSumaTotal() {
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 }
 
-
-
-
-
-
-
-
-
-</script>
-
-
-<script>
- $(document).ready(function() {
+$(document).ready(function() {
   // Bloquear el botón al cargar la página
   $('#btnIniciarVenta').prop('disabled', true);
 
@@ -738,34 +739,36 @@ function actualizarSumaTotal() {
       miBoton.prop('disabled', true);
     }
   });
+
+  // Detectar cambio en el método de pago
+  $('#metodoPago').change(function() {
+    manejarMetodoPago(); // Ejecutar la función para manejar "Crédito"
+  });
+
+  // Checkbox de efectivo exacto
+  $("#chkEfectivoExacto").change(function() {
+    if ($(this).is(":checked")) {
+      var boletaTotal = parseFloat($("#boleta_total").text());
+      $("#Vuelto").text("0.00");
+      $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+    }
+  });
+
+  $("#iptEfectivoRecibido").change(function() {
+    var boletaTotal = parseFloat($("#boleta_total").text());
+    var efectivoRecibido = parseFloat($(this).val());
+
+    if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
+      $("#Vuelto").text("0.00");
+      $("#boleta_total").text(efectivoRecibido.toFixed(2));
+    } else {
+      var vuelto = efectivoRecibido - boletaTotal;
+      $("#Vuelto").text(vuelto.toFixed(2));
+      $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+    }
+  });
 });
 
-
-
-  $(document).ready(function() {
-    $("#chkEfectivoExacto").change(function() {
-      if ($(this).is(":checked")) {
-        var boletaTotal = parseFloat($("#boleta_total").text());
-        $("#Vuelto").text("0.00");
-        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-      }
-    });
-
-    $("#iptEfectivoRecibido").change(function() {
-      var boletaTotal = parseFloat($("#boleta_total").text());
-      var efectivoRecibido = parseFloat($(this).val());
-
-      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-        $("#Vuelto").text("0.00");
-        $("#boleta_total").text(efectivoRecibido.toFixed(2));
-      } else {
-        var vuelto = efectivoRecibido - boletaTotal;
-        $("#Vuelto").text(vuelto.toFixed(2));
-        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        
-      }
-    });
-  });
 </script>
 
 <script>
