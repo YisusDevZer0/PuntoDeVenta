@@ -683,18 +683,40 @@ Efectivo Exacto
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
-  // Función para manejar el método de pago
 function manejarMetodoPago() {
   var metodoPago = document.getElementById("metodoPago").value;
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent);
-  
+
+  // Verifica si el input y el valor están correctamente capturados
+  console.log("Método de Pago:", metodoPago);
+  console.log("Total de la Venta:", totalVenta);
+  console.log("Input Efectivo:", document.getElementById("iptEfectivoRecibido"));
+
   // Si el método de pago es "Credito", establecer el total en efectivo y activar el botón
   if (metodoPago === "Credito") {
     document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input'); // Disparar el evento input manualmente
-    $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta
+    
+    // Verifica si el valor fue asignado correctamente
+    console.log("Valor del input efectivo después de la asignación:", document.getElementById("iptEfectivoRecibido").value);
+    
+    // Desencadenar el evento input manualmente
+    $('#iptEfectivoRecibido').trigger('input');
+    
+    // Activar el botón de venta
+    $('#btnIniciarVenta').prop('disabled', false);
   }
 }
+
+$(document).ready(function() {
+  // Bloquear el botón al cargar la página
+  $('#btnIniciarVenta').prop('disabled', true);
+
+  // Detectar cambio en el método de pago
+  $('#metodoPago').change(function() {
+    manejarMetodoPago();
+  });
+});
+
 
 $(document).ready(function() {
   // Bloquear el botón al cargar la página
