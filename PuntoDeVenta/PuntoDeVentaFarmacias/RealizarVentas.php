@@ -688,38 +688,12 @@ function manejarMetodoPago() {
   var metodoPago = document.getElementById("metodoPago").value;
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent);
   
-  // Si el método de pago es "Crédito", establecer el total en efectivo y activar el botón
+  // Si el método de pago es "Credito", establecer el total en efectivo y activar el botón
   if (metodoPago === "Credito") {
     document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input'); // Disparar el evento input manualmente
     $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta
   }
-}
-
-// Mantener la lógica original
-function actualizarSumaTotal() {
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
-
-  // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
-  if (iptTarjeta >= totalVenta) {
-    iptEfectivo = 0;
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-  } else {
-    // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
-    iptEfectivo = totalVenta - iptTarjeta;
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-  }
-
-  // Calcular el cambio en base al efectivo ingresado
-  var cambio = iptEfectivo - (totalVenta - iptTarjeta);
-  cambio = cambio > 0 ? cambio : 0; // Si el efectivo es menor al necesario, el cambio es 0
-
-  // Actualizar el valor del elemento <span> con el cambio
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 }
 
 $(document).ready(function() {
