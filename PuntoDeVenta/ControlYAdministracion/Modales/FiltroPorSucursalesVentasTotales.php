@@ -64,7 +64,7 @@
           <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
 
           <button type="submit" id="submit_registroarea" value="Guardar" class="btn btn-success">
-            Aplicar cambio <i class="fas fa-exchange-alt"></i>
+            Realizar  <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>
       </div>
