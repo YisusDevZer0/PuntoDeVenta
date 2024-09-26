@@ -14,8 +14,8 @@ FROM
 GROUP BY 
     DATE(V.Fecha_venta), SU.Nombre_Sucursal, V.Turno
 ORDER BY 
-    Fecha_Venta ASC, V.Turno ASC;
-;
+    Fecha_Venta ASC, SU.Nombre_Sucursal ASC, V.Turno ASC;
+
 
 
 ";

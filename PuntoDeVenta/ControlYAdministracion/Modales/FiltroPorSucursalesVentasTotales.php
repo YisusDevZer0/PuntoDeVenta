@@ -5,7 +5,7 @@
     
     <div class="text-center">
       <div class="modal-header" style=" background-color: #ef7980 !important;">
-        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Cambiar de sucursal</h5>
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Busqueda por sucursal</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="white-text">&times;</span>
         </button>
