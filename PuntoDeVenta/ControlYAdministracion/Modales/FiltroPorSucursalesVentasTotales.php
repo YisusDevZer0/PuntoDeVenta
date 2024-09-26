@@ -5,9 +5,7 @@
     <div class="text-center">
       <div class="modal-header" style="background-color: #ef7980 !important;">
         <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Búsqueda por sucursal</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true" class="white-text">&times;</span>
-        </button>
+        
       </div>
      
       <div class="modal-body">
@@ -17,9 +15,7 @@
             <div class="col">
               <label for="mesSelect">Mes actual</label>
               <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="mesIcon"><i class="far fa-calendar-alt"></i></span>
-                </div>
+                
                 <select id="mesSelect" class="form-control" name="Mes" required>
                   <option value="">Seleccione un mes:</option>
                   <option value="1">Enero</option>
@@ -42,9 +38,7 @@
             <div class="col">
               <label for="anioSelect">Año a elegir</label>
               <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="anioIcon"><i class="far fa-calendar"></i></span>
-                </div>
+            
                 <select id="anioSelect" class="form-control" name="Anio" required></select>
               </div>
             </div>
@@ -53,9 +47,7 @@
             <div class="col">
               <label for="sucursal">Sucursal a elegir</label>
               <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="sucursalIcon"><i class="far fa-hospital"></i></span>
-                </div>
+               
                 <select id="sucursal" class="form-control" name="Sucursal" required>
                   <option value="">Seleccione una Sucursal:</option>
                   <?php 
