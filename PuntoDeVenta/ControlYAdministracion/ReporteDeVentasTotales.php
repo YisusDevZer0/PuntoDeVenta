@@ -54,7 +54,7 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/FiltroPorSucursales.php";
+            include "Modales/FiltroPorSucursalesVentasTotales.php";
             include "Modales/FiltroPorMeses.php";
             include "Modales/FiltroPorVendedor.php";
             include "Modales/FiltroRangoFechas.php";
