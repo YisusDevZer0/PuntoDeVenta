@@ -9,7 +9,7 @@
       </div>
      
       <div class="modal-body">
-        <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
+      <form  method="POST" action="FiltroPorFechasVentasTotales">
           <div class="row">
             <!-- Mes dinámico -->
             <div class="col">
