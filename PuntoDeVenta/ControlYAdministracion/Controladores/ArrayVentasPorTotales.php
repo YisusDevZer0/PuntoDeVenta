@@ -26,7 +26,7 @@ $c = 0;
 
 while ($fila = $result->fetch_assoc()) {
  
-    $data[$c]["Fecha"] = $fila["Fecha_venta"];
+    $data[$c]["Fecha"] = $fila["Fecha_Venta"];
     $data[$c]["Sucursal"] = $fila["Sucursal"];
     $data[$c]["Total"] = $fila["Total_Venta"];
     $data[$c]["Turno"] = $fila["Turno"];
