@@ -48,7 +48,7 @@ if ($query->num_rows > 0) {
         <div class="col-md-4">
             <div class="form-group">
                 <label for="Nombre_Prod">Nombre del Producto</label>
-                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo $Producto->Nombre_Prod; ?>" maxlength="60">
+                <input type="text" class="form-control" id="Nombre_Prod" name="Nombre_Prod" value="<?php echo $Producto->Nombre_Prod; ?>" >
             </div>
         </div>
         <div class="col-md-4">
