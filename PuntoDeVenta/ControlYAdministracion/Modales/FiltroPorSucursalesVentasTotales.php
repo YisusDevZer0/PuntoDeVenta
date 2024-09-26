@@ -1,11 +1,10 @@
 <div class="modal fade bd-example-modal-xl" id="FiltroPorSucursalesVentasEnTotal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-
-<div class="modal-dialog modal-notify modal-success">
+  <div class="modal-dialog modal-notify modal-success">
     <div class="modal-content">
     
     <div class="text-center">
-      <div class="modal-header" style=" background-color: #ef7980 !important;">
-        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Busqueda por sucursal</h5>
+      <div class="modal-header" style="background-color: #ef7980 !important;">
+        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Búsqueda por sucursal</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true" class="white-text">&times;</span>
         </button>
@@ -14,7 +13,6 @@
       <div class="modal-body">
         <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
           <div class="row">
-            
             <!-- Mes dinámico -->
             <div class="col">
               <label for="mesSelect">Mes actual</label>
@@ -50,9 +48,7 @@
                 <select id="anioSelect" class="form-control" name="Anio" required></select>
               </div>
             </div>
-          </div>
 
-          <div class="row">
             <!-- Sucursal a elegir -->
             <div class="col">
               <label for="sucursal">Sucursal a elegir</label>
