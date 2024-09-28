@@ -1,7 +1,7 @@
 function CargaFCajas(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CortesDeCajasRealizados.php","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/CortesDeCajasRealizados.php","",function(data){
       $("#FCajas").html(data);
     })
   
