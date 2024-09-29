@@ -219,9 +219,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Asignacion' },
        
        { mData: 'ValorTotalCaja' },
-       { mData: 'DesactivarCaja' },
-       { mData: 'ReactivarCaja' },
-       { mData: 'RegistrarGasto' },
+     
        { mData: 'RealizarCorte' },
        
       ],
@@ -300,9 +298,7 @@ if (cajasAbiertasCount >= 2) {
     <th>Turno</th> 
     <th>Activo / Inactivo</th> 
     <th>Valor total de caja</th> 
-    <th>Desactivar Caja</th>
-    <th>Reactivar Caja</th>
-    <th>Registrar gasto</th>
+ 
     <th>Realizar corte</th>
 </thead>
 

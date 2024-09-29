@@ -108,9 +108,7 @@ while ($fila = $result->fetch_assoc()) {
         "Turno" => $fila["Turno"],
         "Asignacion" => "<div style=\"$asignacion_estilo; padding: 5px; border-radius: 5px;\">$asignacion_leyenda</div>",
         "ValorTotalCaja" => $fila["Valor_Total_Caja"],
-        "DesactivarCaja" => $desactivar_caja,
-        "ReactivarCaja" => $reactivar_caja,
-        "RegistrarGasto" => $registrar_gasto,
+     
         "RealizarCorte" => $realizar_corte,
     ];
 }
