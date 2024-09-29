@@ -102,7 +102,6 @@ while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "IdCaja" => $fila["ID_Caja"],
         "Empleado" => $fila["Empleado"],
-        
         "Fecha_Apertura" => $fila["Fecha_Apertura"],
         "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "Turno" => $fila["Turno"],

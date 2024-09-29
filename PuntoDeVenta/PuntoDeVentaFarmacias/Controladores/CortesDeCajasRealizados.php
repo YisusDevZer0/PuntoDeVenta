@@ -212,7 +212,7 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
   { mData: 'IdCaja' },  
   { mData: 'Empleado' },
-  { mData: 'Cantidad_Fondo' },
+
        { mData: 'Fecha_Apertura' },
        { mData: 'Estatus' },
        { mData: 'Turno' },
