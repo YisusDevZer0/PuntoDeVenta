@@ -292,7 +292,7 @@ if (cajasAbiertasCount >= 2) {
 <thead>
 <th>Id de caja</th>
 <th>Nombre Cajero</th>
-<th>Fondo de caja</th>
+
     <th>Fecha de apertura</th>
     <th>Estado</th>
     <th>Turno</th> 
