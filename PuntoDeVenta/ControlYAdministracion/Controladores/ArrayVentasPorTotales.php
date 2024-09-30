@@ -62,9 +62,7 @@ $c = 0;
 $data = []; // Asegúrate de inicializar el array
 
 while ($fila = $result->fetch_assoc()) {
-    $data[$c]["Venta_POS_ID"] = $fila["Venta_POS_ID"];
-    $data[$c]["ID_Prod_POS"] = $fila["ID_Prod_POS"];
-    $data[$c]["Identificador_tipo"] = $fila["Identificador_tipo"];
+   
     $data[$c]["Turno"] = $fila["Turno"];
     $data[$c]["FolioSucursal"] = $fila["FolioSucursal"];
     $data[$c]["Folio_Ticket"] = $fila["Folio_Ticket"];
