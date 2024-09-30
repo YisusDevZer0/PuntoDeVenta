@@ -274,7 +274,7 @@ tabla = $('#Clientes').DataTable({
     },
     customize: function (button) {
       $(button).css({
-        'background-color': '#198754',  // Color verde
+        'background-color': '#198754 !important',  // Color verde
         'border-color': '#198754',      // Borde del mismo color
         'color': 'white'                // Color del texto blanco
       });
