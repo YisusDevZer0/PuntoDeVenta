@@ -302,11 +302,11 @@ if (!empty($Especialistas14)) {
                     </tr>
                     <!-- Totales de combinación Efectivo y Tarjeta -->
                     <tr>
-                        <td><input type="text" class="form-control" readonly value="Efectivo de Combinación"></td>
+                        <td><input type="text" class="form-control" readonly value="Complementos de credito"></td>
                         <td><input type="text" class="form-control" name="TotalEfectivoCombinado" readonly value="<?php echo $totalEfectivoDeComb; ?>"></td>
                     </tr>
                     <tr>
-                        <td><input type="text" class="form-control" readonly value="Tarjeta de Combinación"></td>
+                        <td><input type="text" class="form-control" readonly value="Complementos de tarjeta"></td>
                         <td><input type="text" class="form-control" name="TotalTarjetaCombinado" readonly value="<?php echo $totalTarjetaDeComb; ?>"></td>
                     </tr>
                 </tbody>
