@@ -150,43 +150,22 @@ if ($query13 && $query13->num_rows > 0) {
 }
 
 
+
 $sql_totales = "SELECT 
-    -- Pagos en efectivo solamente
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
-    
-    -- Pagos con tarjeta solamente
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
-    
-    -- Pagos a crédito
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos,
-    
-    -- Parte en efectivo de pagos combinados con efectivo y tarjeta
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeComb,
-    
-    -- Parte en tarjeta de pagos combinados con efectivo y tarjeta
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalTarjetaDeComb,
-    
-    -- Parte en efectivo de pagos combinados con efectivo y crédito
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe - Ventas_POS.Pagos_credito ELSE 0 END) as totalEfectivoDeCreditoComb,
-    
-    -- Parte a crédito de pagos combinados con efectivo y crédito
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Pagos_credito ELSE 0 END) as totalCreditoDeComb,
-    
-    -- Pagos con crédito especializado
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Enfermería' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoEnfermeria,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Limpieza' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoLimpieza,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Farmacéutico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoFarmaceutico,
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Médico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoMedico,
-    
-    -- Total general de todos los pagos
     SUM(Ventas_POS.Importe) as TotalCantidad
 FROM Ventas_POS 
-WHERE Ventas_POS.Fk_Caja = '$fk_caja' 
-    AND Ventas_POS.Fk_sucursal = '$fk_sucursal' 
-    AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
-
-
+WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
 ";
+
 $result_totales = $conn->query($sql_totales);
 
 // Verificar si la consulta se ejecutó correctamente
@@ -213,6 +192,7 @@ if ($result_totales) {
 } else {
     echo '<p class="alert alert-danger">Error en la consulta: ' . $conn->error . '</p>';
 }
+
 $EspecialistasTotales = null;
 if ($result_totales && $result_totales->num_rows > 0) {
     $EspecialistasTotales = $result_totales->fetch_object();
