@@ -48,6 +48,55 @@ include_once "Controladores/ControladorUsuario.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
+
+<script>
+   $(document).ready(function() {
+    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+    $(document).on("click", ".btn-desactiva", function() {
+      console.log("Botón de cancelar clickeado para el ID:", id);
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MuestraElCorteDeCaja.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desactivar caja actual");
+            
+        });
+        $('#ModalEdDele').modal('show');
+    });
+
+    
+
+   
+
+});
+
+
+
+
+</script>
+
+
+
+
+
+  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
+      <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+
+         
+       </div>
+        
+	        <div class="modal-body">
+          <div class="text-center">
+        <div id="FormCajas"></div>
+        
+        </div>
+
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal --></div>
 </body>
 
 </html>
