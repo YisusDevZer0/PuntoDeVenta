@@ -245,8 +245,7 @@ tabla = $('#Clientes').DataTable({
             { mData: 'AgregadoEl' },
          
             { mData: 'Pagos_tarjeta' },
-            { mData: 'Complemento_Tarjeta' },
-            { mData: 'Complemento_Credito' }
+           
       ],
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
@@ -320,8 +319,7 @@ tabla = $('#Clientes').DataTable({
             <th>Agregado El</th>
           
             <th>Pagos Tarjeta</th>
-            <th>Complemento Tarjeta</th>
-            <th>Complemento Crédito</th>
+          
 
 </thead>
 
