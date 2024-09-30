@@ -54,8 +54,7 @@ if ($query13 && $query13->num_rows > 0) {
 }
 
 // CONSULTA TOTALES
-$sql_totales = "
-SELECT 
+$sql_totales = "SELECT 
     SUM(TotalEfectivo) as totalesdepagoEfectivo,
     SUM(TotalTarjeta) as totalesdepagotarjeta,
     SUM(TotalCreditos) as totalesdepagoCreditos,
