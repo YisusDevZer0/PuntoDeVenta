@@ -64,10 +64,9 @@ $data = []; // Asegúrate de inicializar el array
 while ($fila = $result->fetch_assoc()) {
    
     $data[$c]["Turno"] = $fila["Turno"];
-    $data[$c]["FolioSucursal"] = $fila["FolioSucursal"];
+
     $data[$c]["Folio_Ticket"] = $fila["Folio_Ticket"];
-    $data[$c]["Folio_Ticket_Aleatorio"] = $fila["Folio_Ticket_Aleatorio"];
-    $data[$c]["Clave_adicional"] = $fila["Clave_adicional"];
+
     $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
     $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
     $data[$c]["Cantidad_Venta"] = $fila["Cantidad_Venta"];
@@ -81,16 +80,11 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Cambio"] = $fila["Cambio"];
     $data[$c]["Cliente"] = $fila["Cliente"];
     $data[$c]["Fecha_venta"] = $fila["Fecha_venta"];
-    $data[$c]["Fk_Caja"] = $fila["Fk_Caja"];
-    $data[$c]["Lote"] = $fila["Lote"];
-    $data[$c]["Motivo_Cancelacion"] = $fila["Motivo_Cancelacion"];
-    $data[$c]["Estatus"] = $fila["Estatus"];
-    $data[$c]["Sistema"] = $fila["Sistema"];
+  
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["AgregadoEl"] = $fila["AgregadoEl"];
-    $data[$c]["ID_H_O_D"] = $fila["ID_H_O_D"];
-    $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
-    $data[$c]["TicketAnterior"] = $fila["TicketAnterior"];
+
+
     $data[$c]["Pagos_tarjeta"] = $fila["Pagos_tarjeta"];
     $data[$c]["Complemento_Tarjeta"] = $fila["Complemento_Tarjeta"];
     $data[$c]["Complemento_Credito"] = $fila["Complemento_Credito"];

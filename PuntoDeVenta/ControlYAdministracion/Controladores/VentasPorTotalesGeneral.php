@@ -213,10 +213,8 @@ tabla = $('#Clientes').DataTable({
 
           
             { mData: 'Turno' },
-            { mData: 'FolioSucursal' },
             { mData: 'Folio_Ticket' },
-            { mData: 'Folio_Ticket_Aleatorio' },
-            { mData: 'Clave_adicional' },
+
             { mData: 'Cod_Barra' },
             { mData: 'Nombre_Prod' },
             { mData: 'Cantidad_Venta' },
@@ -230,16 +228,10 @@ tabla = $('#Clientes').DataTable({
             { mData: 'Cambio' },
             { mData: 'Cliente' },
             { mData: 'Fecha_venta' },
-            { mData: 'Fk_Caja' },
-            { mData: 'Lote' },
-            { mData: 'Motivo_Cancelacion' },
-            { mData: 'Estatus' },
-            { mData: 'Sistema' },
+           
             { mData: 'AgregadoPor' },
             { mData: 'AgregadoEl' },
-            { mData: 'ID_H_O_D' },
-            { mData: 'FolioSignoVital' },
-            { mData: 'TicketAnterior' },
+         
             { mData: 'Pagos_tarjeta' },
             { mData: 'Complemento_Tarjeta' },
             { mData: 'Complemento_Credito' }
@@ -293,10 +285,10 @@ tabla = $('#Clientes').DataTable({
 <thead>
 
             <th>Turno</th>
-            <th>Folio Sucursal</th>
+           
             <th>Folio Ticket</th>
-            <th>Folio Ticket Aleatorio</th>
-            <th>Clave Adicional</th>
+          
+         
             <th>Código de Barra</th>
             <th>Nombre Producto</th>
             <th>Cantidad Venta</th>
@@ -310,16 +302,10 @@ tabla = $('#Clientes').DataTable({
             <th>Cambio</th>
             <th>Cliente</th>
             <th>Fecha</th> <!-- Agregado -->
-            <th>Fk Caja</th>
-            <th>Lote</th>
-            <th>Motivo Cancelación</th>
-            <th>Estatus</th>
-            <th>Sistema</th>
+          
             <th>Agregado Por</th>
             <th>Agregado El</th>
-            <th>ID H O D</th>
-            <th>Folio Signo Vital</th>
-            <th>Ticket Anterior</th>
+          
             <th>Pagos Tarjeta</th>
             <th>Complemento Tarjeta</th>
             <th>Complemento Crédito</th>
