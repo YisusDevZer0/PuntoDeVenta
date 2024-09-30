@@ -149,6 +149,7 @@ if ($query13 && $query13->num_rows > 0) {
     $Especialistas13 = $query13->fetch_object();
 }
 
+
 $sql_totales = "SELECT 
     -- Pagos en efectivo solamente
     SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
@@ -183,10 +184,9 @@ FROM Ventas_POS
 WHERE Ventas_POS.Fk_Caja = '$fk_caja' 
     AND Ventas_POS.Fk_sucursal = '$fk_sucursal' 
     AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
+
+
 ";
-
-
-
 $result_totales = $conn->query($sql_totales);
 
 // Verificar si la consulta se ejecutó correctamente
