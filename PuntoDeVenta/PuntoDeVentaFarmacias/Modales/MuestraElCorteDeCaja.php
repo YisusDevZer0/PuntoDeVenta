@@ -73,13 +73,13 @@ if ($query && $query->num_rows > 0) {
     </div>
 
     <label for="comentarios">Observaciones:</label>
-    <textarea class="form-control" id="comentarios" name="comentarios" rows="4" cols="50"><?php echo $datosCorte->Comentarios; ?></textarea>
+    <textarea class="form-control" id="comentarios" readonly name="comentarios" rows="4" cols="50"><?php echo $datosCorte->Comentarios; ?></textarea>
     <br>
    
     <input type="hidden" name="Sistema" value="<?php echo $datosCorte->Sistema; ?>">
     <input type="hidden" name="ID_H_O_D" value="<?php echo $datosCorte->ID_H_O_D; ?>">
-
-    <button class="btn btn-primary" type="submit">Realizar corte</button>
+<!-- 
+    <button class="btn btn-primary" type="submit">Realizar corte</button> -->
 
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
