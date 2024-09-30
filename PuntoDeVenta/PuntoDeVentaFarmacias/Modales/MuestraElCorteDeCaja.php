@@ -14,7 +14,7 @@ if (!$fk_caja) {
 
 // CONSULTA PRINCIPAL: Obtener la información completa del corte
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
-               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
+               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos,TarjetaAdicional,CreditoAdicional, 
                Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = '$fk_caja'";
@@ -58,6 +58,14 @@ if ($query && $query->num_rows > 0) {
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Créditos"></td>
                         <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TotalCreditos; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" readonly value="Complemento Tarjetas"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TarjetaAdicional; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" class="form-control" readonly value="Complemento Créditos"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->CreditoAdicional; ?>"></td>
                     </tr>
                 </tbody>
             </table>
