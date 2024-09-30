@@ -8,14 +8,8 @@ $currentYear = date("Y");
 $currentMonth = date("m");
 
 $sql = "SELECT 
-    `Venta_POS_ID`, 
-    `ID_Prod_POS`, 
-    `Identificador_tipo`, 
     `Turno`, 
-    `FolioSucursal`, 
     `Folio_Ticket`, 
-    `Folio_Ticket_Aleatorio`, 
-    `Clave_adicional`, 
     `Cod_Barra`, 
     `Nombre_Prod`, 
     `Cantidad_Venta`, 
@@ -29,44 +23,25 @@ $sql = "SELECT
     `Cambio`, 
     `Cliente`, 
     `Fecha_venta`, 
-    `Fk_Caja`, 
-    `Lote`, 
-    `Motivo_Cancelacion`, 
-    `Estatus`, 
-    `Sistema`, 
     `AgregadoPor`, 
-    `AgregadoEl`, 
-    `ID_H_O_D`, 
-    `FolioSignoVital`, 
-    `TicketAnterior`,
-    `Pagos_tarjeta`, 
-    CASE 
-        WHEN `Pagos_tarjeta` = 'Efectivo y Tarjeta' THEN `CantidadPago`
-        ELSE 0 
-    END AS `Complemento_Tarjeta`,
-    CASE 
-        WHEN `Pagos_tarjeta` = 'Efectivo y Credito' THEN `CantidadPago`
-        ELSE 0 
-    END AS `Complemento_Credito`
+    `AgregadoEl`,
+    `Pagos_tarjeta`
 FROM 
     `Ventas_POS`
 WHERE 
     MONTH(`Fecha_venta`) = $currentMonth
     AND YEAR(`Fecha_venta`) = $currentYear
 ORDER BY 
-    `Fecha_venta`;  -- Ordenar por fecha";
+    `Fecha_venta` DESC";  // Ordenar por fecha en orden descendente
 
 $result = mysqli_query($conn, $sql);
 
 $c = 0;
-$data = []; // Asegúrate de inicializar el array
+$data = []; // Inicializar el array
 
 while ($fila = $result->fetch_assoc()) {
-   
     $data[$c]["Turno"] = $fila["Turno"];
-
     $data[$c]["Folio_Ticket"] = $fila["Folio_Ticket"];
-
     $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
     $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
     $data[$c]["Cantidad_Venta"] = $fila["Cantidad_Venta"];
@@ -80,14 +55,9 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Cambio"] = $fila["Cambio"];
     $data[$c]["Cliente"] = $fila["Cliente"];
     $data[$c]["Fecha_venta"] = $fila["Fecha_venta"];
-  
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["AgregadoEl"] = $fila["AgregadoEl"];
-
-
     $data[$c]["Pagos_tarjeta"] = $fila["Pagos_tarjeta"];
-    $data[$c]["Complemento_Tarjeta"] = $fila["Complemento_Tarjeta"];
-    $data[$c]["Complemento_Credito"] = $fila["Complemento_Credito"];
     $c++; 
 }
 
