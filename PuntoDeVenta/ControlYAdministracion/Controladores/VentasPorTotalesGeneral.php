@@ -109,6 +109,18 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .btn-excel {
+    background-color: #198754 !important; /* Color verde */
+    border-color: #198754 !important;     /* Borde del mismo color */
+    color: white !important;              /* Color del texto blanco */
+}
+
+.btn-excel:hover {
+    background-color: #157347 !important; /* Color de fondo en hover */
+    border-color: #146c43 !important;     /* Borde en hover */
+}
+
 </style>
 
 <script>
@@ -268,16 +280,9 @@ tabla = $('#Clientes').DataTable({
     text: 'Exportar a Excel  <i class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
     title: 'Ventas totales del mes en curso',
-    className: 'btn', // Usar la clase btn y estilo inline
+    className: 'btn btn-excel',  // Añadir una clase personalizada
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
-    },
-    customize: function (button) {
-      $(button).css({
-        'background-color': '#198754 !important',  // Color verde
-        'border-color': '#198754',      // Borde del mismo color
-        'color': 'white'                // Color del texto blanco
-      });
     }
   }
 ],
