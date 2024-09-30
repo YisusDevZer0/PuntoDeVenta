@@ -299,7 +299,7 @@ if (cajasAbiertasCount >= 2) {
     <th>Activo / Inactivo</th> 
     <th>Valor total de caja</th> 
  
-    <th>Realizar corte</th>
+    <th>Desglose corte</th>
 </thead>
 
 </div>
