@@ -52,12 +52,12 @@ include_once "Controladores/ControladorUsuario.php";
 <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
-    $(document).on("click", ".btn-desactiva", function() {
+    $(document).on("click", ".MostrarElCorte", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
         $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MuestraElCorteDeCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desactivar caja actual");
+            $("#TitulosCajas").html("Mostrando corte de caja");
             
         });
         $('#ModalEdDele').modal('show');
