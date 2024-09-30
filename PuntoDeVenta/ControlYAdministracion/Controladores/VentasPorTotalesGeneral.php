@@ -265,15 +265,23 @@ tabla = $('#Clientes').DataTable({
 "buttons": [
   {
     extend: 'excelHtml5',
-    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+    text: 'Exportar a Excel  <i class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
     title: 'Ventas totales del mes en curso',
-    className: 'btn btn-success',
+    className: 'btn', // Usar la clase btn y estilo inline
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
+    },
+    customize: function (button) {
+      $(button).css({
+        'background-color': '#198754',  // Color verde
+        'border-color': '#198754',      // Borde del mismo color
+        'color': 'white'                // Color del texto blanco
+      });
     }
   }
 ],
+
 // Personalizar la posición de los elementos del encabezado
 "dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
