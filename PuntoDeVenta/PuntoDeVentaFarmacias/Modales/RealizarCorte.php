@@ -186,6 +186,38 @@ WHERE Ventas_POS.Fk_Caja = '$fk_caja'
 ";
 
 
+
+$result_totales = $conn->query($sql_totales);
+
+// Verificar si la consulta se ejecutó correctamente
+if ($result_totales) {
+    // Verificar si hay filas retornadas
+    if ($result_totales->num_rows > 0) {
+        // Obtener los resultados como un array asociativo
+        $row_totales = $result_totales->fetch_assoc();
+
+        // Asignar los valores a variables
+        $totalesdepagoEfectivo = $row_totales['totalesdepagoEfectivo'];
+        $totalesdepagotarjeta = $row_totales['totalesdepagotarjeta'];
+        $totalesdepagoCreditos = $row_totales['totalesdepagoCreditos'];
+        $totalEfectivoDeComb = $row_totales['totalEfectivoDeComb'];
+        $totalTarjetaDeComb = $row_totales['totalTarjetaDeComb'];
+        $totalCreditoEnfermeria = $row_totales['totalCreditoEnfermeria'];
+        $totalCreditoLimpieza = $row_totales['totalCreditoLimpieza'];
+        $totalCreditoFarmaceutico = $row_totales['totalCreditoFarmaceutico'];
+        $totalCreditoMedico = $row_totales['totalCreditoMedico'];
+        $TotalCantidad = $row_totales['TotalCantidad'];
+    } else {
+        echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
+    }
+} else {
+    echo '<p class="alert alert-danger">Error en la consulta: ' . $conn->error . '</p>';
+}
+$EspecialistasTotales = null;
+if ($result_totales && $result_totales->num_rows > 0) {
+    $EspecialistasTotales = $result_totales->fetch_object();
+}
+
 ?>
 
 
