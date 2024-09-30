@@ -292,14 +292,40 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>Fecha</th>
-<th>Sucursal</th>
-<th>Total de venta</th>
-
-<th>Turno</th>
-
-
-
+<th>Venta ID</th>
+            <th>ID Producto</th>
+            <th>Identificador Tipo</th>
+            <th>Turno</th>
+            <th>Folio Sucursal</th>
+            <th>Folio Ticket</th>
+            <th>Folio Ticket Aleatorio</th>
+            <th>Clave Adicional</th>
+            <th>Código de Barra</th>
+            <th>Nombre Producto</th>
+            <th>Cantidad Venta</th>
+            <th>Sucursal</th> <!-- Agregado -->
+            <th>Total de Venta</th> <!-- Agregado -->
+            <th>Importe</th>
+            <th>Total Venta G</th>
+            <th>Descuento Aplicado</th>
+            <th>Forma de Pago</th>
+            <th>Cantidad Pago</th>
+            <th>Cambio</th>
+            <th>Cliente</th>
+            <th>Fecha</th> <!-- Agregado -->
+            <th>Fk Caja</th>
+            <th>Lote</th>
+            <th>Motivo Cancelación</th>
+            <th>Estatus</th>
+            <th>Sistema</th>
+            <th>Agregado Por</th>
+            <th>Agregado El</th>
+            <th>ID H O D</th>
+            <th>Folio Signo Vital</th>
+            <th>Ticket Anterior</th>
+            <th>Pagos Tarjeta</th>
+            <th>Complemento Tarjeta</th>
+            <th>Complemento Crédito</th>
 
 </thead>
 
