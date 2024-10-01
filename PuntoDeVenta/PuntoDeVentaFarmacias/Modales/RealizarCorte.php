@@ -280,7 +280,7 @@ if (!empty($Especialistas14)) {
     </table>
 </div>
   <!-- Campo oculto para enviar el array de servicios -->
-  <input type="" name="servicios" value='<?php echo json_encode($servicios); ?>'>
+  <input type="hidden" name="servicios" value='<?php echo json_encode($servicios); ?>'>
 <?php
 } else {
     // Manejar el caso donde $Especialistas14 esté vacío si es necesario
