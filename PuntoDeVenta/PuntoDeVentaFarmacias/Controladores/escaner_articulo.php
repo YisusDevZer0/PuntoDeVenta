@@ -5,7 +5,7 @@ include_once "ControladorUsuario.php";
 $codigo = $_POST['codigoEscaneado'];
 
 // Actualizar la consulta para incluir el campo Tipo
-$sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo) AS tipos
+$sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Tipo_Servicio) AS tiposervicios,GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo) AS tipos
         FROM Stock_POS
         WHERE Cod_Barra = ? OR Nombre_Prod LIKE ? OR Clave_adicional = ?
         GROUP BY Cod_Barra";
@@ -32,6 +32,7 @@ if ($result->num_rows > 0) {
         "lote" => explode(',', $row['lotes'])[0],
         "clave" => explode(',', $row['claves'])[0],
         "tipo" => $tipos[0], // Aquí asigna el primer tipo si es necesario
+        "tiposervicios" =>$row["Tipo_Servicio"],
         "eliminar" => "",
         "esAntibiotico" => $isAntibiotico // Añade esta clave para la verificación
     );

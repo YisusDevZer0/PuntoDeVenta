@@ -1078,7 +1078,9 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="TiposDeServicio[]" /></td>';
+        tr += '<td  class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
+
+        tr += '<td  class="tiposserviciosgood"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tiposervicios + '" name="TiposDeServicio[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Turno"><input type="text" class="form-control " hidden name="TurnoEnTurno[]" style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="CajaDeSucursal"><input type="text" class="form-control " hidden id="valcaja" name="CajaDeSucursal[]" readonly value="<?php echo $ValorCaja["ID_Caja"]; ?>"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
