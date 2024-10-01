@@ -152,17 +152,76 @@ if ($query13 && $query13->num_rows > 0) {
 
 
 $sql_totales = "SELECT 
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoEfectivo,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagotarjeta,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe ELSE 0 END) as totalesdepagoCreditos,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalEfectivoDeComb,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta ELSE 0 END) as totalTarjetaDeComb,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Enfermería' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoEnfermeria,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Limpieza' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoLimpieza,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Farmacéutico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoFarmaceutico,
-    SUM(CASE WHEN Ventas_POS.FormaDePago = 'Crédito Médico' THEN Ventas_POS.Importe ELSE 0 END) as totalCreditoMedico,
-    SUM(Ventas_POS.Importe) as TotalCantidad
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalesdepagoEfectivo,
+    
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalesdepagotarjeta,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END) AS complementoTarjeta,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END) AS complementoEfectivo,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS complementoCreditoEfectivo,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalCredito,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Transferencia' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalTransferencia,
+
+    (SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END)) AS totalPagosEnEfectivo,
+
+    (SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END)) AS totalPagosEnTarjeta,
+
+    (SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END)) AS totalPagosEnCreditos,
+
+    SUM(Ventas_POS.Importe) AS TotalCantidad
 FROM Ventas_POS 
+
+
 WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
 ";
 
