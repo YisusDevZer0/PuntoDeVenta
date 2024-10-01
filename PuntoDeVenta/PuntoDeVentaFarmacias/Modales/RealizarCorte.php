@@ -235,16 +235,19 @@ if ($result_totales) {
         $row_totales = $result_totales->fetch_assoc();
 
         // Asignar los valores a variables
-        $totalesdepagoEfectivo = $row_totales['totalesdepagoEfectivo'];
-        $totalesdepagotarjeta = $row_totales['totalesdepagotarjeta'];
-        $totalesdepagoCreditos = $row_totales['totalesdepagoCreditos'];
-        $totalEfectivoDeComb = $row_totales['totalEfectivoDeComb'];
-        $totalTarjetaDeComb = $row_totales['totalTarjetaDeComb'];
-        $totalCreditoEnfermeria = $row_totales['totalCreditoEnfermeria'];
-        $totalCreditoLimpieza = $row_totales['totalCreditoLimpieza'];
-        $totalCreditoFarmaceutico = $row_totales['totalCreditoFarmaceutico'];
-        $totalCreditoMedico = $row_totales['totalCreditoMedico'];
-        $TotalCantidad = $row_totales['TotalCantidad'];
+     // Asumiendo que ya tienes la consulta ejecutada y el resultado en $row_totales
+$totalesdepagoEfectivo = $row_totales['totalesdepagoEfectivo'];
+$totalesdepagotarjeta = $row_totales['totalesdepagotarjeta'];
+$complementoTarjeta = $row_totales['complementoTarjeta'];
+$complementoEfectivo = $row_totales['complementoEfectivo'];
+$complementoCreditoEfectivo = $row_totales['complementoCreditoEfectivo'];
+$totalCredito = $row_totales['totalCredito'];
+$totalTransferencia = $row_totales['totalTransferencia'];
+$totalPagosEnEfectivo = $row_totales['totalPagosEnEfectivo'];
+$totalPagosEnTarjeta = $row_totales['totalPagosEnTarjeta'];
+$totalPagosEnCreditos = $row_totales['totalPagosEnCreditos'];
+$TotalCantidad = $row_totales['TotalCantidad'];
+
     } else {
         echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
     }
@@ -361,25 +364,22 @@ if (!empty($Especialistas14)) {
                 <tbody>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Efectivo"></td>
-                        <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $totalesdepagoEfectivo; ?>"></td>
+                        <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $totalPagosEnEfectivo; ?>"></td>
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Tarjeta"></td>
-                        <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $totalesdepagotarjeta; ?>"></td>
+                        <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $totalPagosEnTarjeta; ?>"></td>
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Créditos"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalesdepagoCreditos; ?>"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalCredito; ?>"></td>
                     </tr>
                     <!-- Totales de combinación Efectivo y Tarjeta -->
                     <tr>
-                        <td><input type="text" class="form-control" readonly value="Complementos de credito"></td>
-                        <td><input type="text" class="form-control" name="TotalEfectivoCombinado" readonly value="<?php echo $totalEfectivoDeComb; ?>"></td>
+                        <td><input type="text" class="form-control" readonly value="Transferencia"></td>
+                        <td><input type="text" class="form-control" name="TotalEfectivoCombinado" readonly value="<?php echo $totalTransferencia; ?>"></td>
                     </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" readonly value="Complementos de tarjeta"></td>
-                        <td><input type="text" class="form-control" name="TotalTarjetaCombinado" readonly value="<?php echo $totalTarjetaDeComb; ?>"></td>
-                    </tr>
+                   
                 </tbody>
             </table>
         </div>
