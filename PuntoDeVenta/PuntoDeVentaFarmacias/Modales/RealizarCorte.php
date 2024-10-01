@@ -262,17 +262,25 @@ if (!empty($Especialistas14)) {
         </thead>
         <tbody>
             <?php
-            // Recorrer cada objeto en el array $Especialistas14
-            foreach ($Especialistas14 as $especialista) {
-                echo '<tr>';
-                echo '<td><input type="text" class="form-control" readonly value="' . $especialista->Nom_Serv . '"></td>';
-                echo '<td><input type="text" class="form-control" readonly value="' . $especialista->totaldeservicios . '"></td>';
-                echo '</tr>';
-            }
+           $servicios = []; // Array para guardar servicios
+           foreach ($Especialistas14 as $especialista) {
+               echo '<tr>';
+               echo '<td><input type="text" class="form-control" readonly value="' . $especialista->Nom_Serv . '"></td>';
+               echo '<td><input type="text" class="form-control" readonly value="' . $especialista->totaldeservicios . '"></td>';
+               // Agregar servicio al array
+               $servicios[] = [
+                   'nombre' => $especialista->Nom_Serv,
+                   'total' => $especialista->totaldeservicios,
+               ];
+               echo '</tr>';
+           }
             ?>
+            
         </tbody>
     </table>
 </div>
+  <!-- Campo oculto para enviar el array de servicios -->
+  <input type="" name="servicios" value='<?php echo json_encode($servicios); ?>'>
 <?php
 } else {
     // Manejar el caso donde $Especialistas14 esté vacío si es necesario
