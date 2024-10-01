@@ -32,7 +32,7 @@ if ($result->num_rows > 0) {
         "lote" => explode(',', $row['lotes'])[0],
         "clave" => explode(',', $row['claves'])[0],
         "tipo" => $tipos[0], // Aquí asigna el primer tipo si es necesario
-        "tiposervicios" => $row["tiposervicios"],
+        "tiposervicios" => explode(',', $row['tiposervicios'])[0],
         "eliminar" => "",
         "esAntibiotico" => $isAntibiotico // Añade esta clave para la verificación
     );
