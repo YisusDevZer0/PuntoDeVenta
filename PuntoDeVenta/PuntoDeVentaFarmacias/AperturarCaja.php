@@ -70,7 +70,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 
 
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div id="Di" class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div id="Di" class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="Titulo" style="color:white;">Apertura de caja</h5>
@@ -151,7 +151,7 @@ $(document).on("click", ".btn-realizaCorte", function() {
 
 
   <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+  <div id="CajasDi"class="modal-dialog modal-lg  modal-notify modal-success" >
     <div class="text-center">
       <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;" >
