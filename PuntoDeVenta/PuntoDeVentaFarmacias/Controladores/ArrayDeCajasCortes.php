@@ -8,12 +8,13 @@ $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 $nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
 
 // Consulta segura utilizando una sentencia preparada
+// Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
         Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
         Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Cajas
         INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
-        WHERE Cajas.Sucursal = ? AND Cajas.Empleado = ?"; // Se añadió la condición para el empleado
+        WHERE Cajas.Sucursal = ? AND Cajas.Empleado = ? AND Cajas.Estatus = 'Cerrada'"; // Se añadió la condición de estatus Cerrada
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -23,6 +24,7 @@ $stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
 
 // Ejecutar la declaración
 $stmt->execute();
+
 
 // Obtener resultado
 $result = $stmt->get_result();
