@@ -112,7 +112,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                            
                         
-                            <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a>
+                            <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a>
                             <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
                         </div>
                     </div>
