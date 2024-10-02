@@ -38,23 +38,28 @@ $servicios = [];
 if ($queryServicios && $queryServicios->num_rows > 0) {
     $resultServicios = $queryServicios->fetch_object();
     
-    // Mostrar el contenido del campo Servicios para verificar si es un JSON válido
-    echo "<pre>Contenido de Servicios antes de decodificar: " . htmlspecialchars($resultServicios->Servicios) . "</pre>";
+    // Mostrar el contenido del campo Servicios para verificar el formato
+    echo "<pre>Contenido de Servicios antes de procesar: " . htmlspecialchars($resultServicios->Servicios) . "</pre>";
 
-    // Intentar decodificar el campo Servicios
+    // Procesar manualmente la cadena de servicios
     if (!empty($resultServicios->Servicios)) {
-        $servicios = json_decode($resultServicios->Servicios, true);
+        // Dividir la cadena en partes separadas por comas
+        $serviciosArray = explode(", ", $resultServicios->Servicios);
 
-        // Mostrar un mensaje detallado si falla la decodificación
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            echo "Error al decodificar JSON: " . json_last_error_msg();
-            exit;
+        // Recorrer cada parte y dividir en clave y valor
+        foreach ($serviciosArray as $servicio) {
+            $servicioPartes = explode(": ", $servicio);
+            if (count($servicioPartes) === 2) {
+                $servicios[] = [
+                    'nombre' => $servicioPartes[0],
+                    'total' => $servicioPartes[1]
+                ];
+            }
         }
     }
 } else {
     echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
 }
-
 ?>
 
 <?php if ($datosCorte): ?>
