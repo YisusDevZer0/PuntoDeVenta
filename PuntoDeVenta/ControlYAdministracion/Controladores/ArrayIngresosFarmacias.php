@@ -94,9 +94,7 @@ while ($fila = $result->fetch_assoc()) {
         "FechaInventario" => $fila["FechaInventario"],
         "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
         "NumOrden" => $fila["NumOrden"],
-        "RealizarCorte" => $realizar_corte,
-        "EditarIngreso" => $editar_datos_ingreso,
-        "EliminarIngreso" => $eliminar_ingreso,
+      
     ];
 }
 

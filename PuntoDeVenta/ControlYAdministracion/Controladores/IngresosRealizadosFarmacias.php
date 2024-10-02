@@ -220,9 +220,6 @@ tabla = $('#Clientes').DataTable({
 { mData: 'Lote' },              // Lote
 { mData: 'AgregadoPor' },       // Usuario que agregó
 { mData: 'AgregadoEl' },        // Fecha en que se agregó
-{ mData: 'RealizarCorte' },     // Botón para realizar corte
-{ mData: 'EditarIngreso' },      // Botón para editar ingreso
-{ mData: 'EliminarIngreso' }     // Botón para eliminar ingreso
 
 
       ],
@@ -281,8 +278,6 @@ tabla = $('#Clientes').DataTable({
 <th>Fecha de caducidad</th  >
 <th>Solicitante</th>            <!-- Usuario que agregó -->
 <th>Autorizar</th>              <!-- Botón para realizar corte -->
-<th>Editar</th>                 <!-- Botón para editar ingreso -->
-<th>Eliminar</th>               <!-- Botón para eliminar ingreso -->
 
 </thead>
 
