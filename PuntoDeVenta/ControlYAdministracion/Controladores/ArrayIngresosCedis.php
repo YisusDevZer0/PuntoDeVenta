@@ -39,8 +39,8 @@ while ($fila = $result->fetch_assoc()) {
 
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
-        "IDIngreso" => $fila["IDIngreso"],
-  
+      
+        "IdProdCedis" => $fila["ID_Prod_POS"],
         "NumFactura" => $fila["NumFactura"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
