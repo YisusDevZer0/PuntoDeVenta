@@ -12,15 +12,16 @@ if (!$fk_caja) {
     exit;
 }
 
-// CONSULTA PRINCIPAL: Obtener la información completa del corte
+// CONSULTA 1: Obtener la información completa del corte, excepto los servicios
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
-               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos,TarjetaAdicional,CreditoAdicional, 
-               Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
+               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
+               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql);
 
 $datosCorte = null;
+
 if ($query && $query->num_rows > 0) {
     $datosCorte = $query->fetch_object();
 } else {
@@ -28,6 +29,35 @@ if ($query && $query->num_rows > 0) {
     exit;
 }
 
+// CONSULTA 2: Obtener solo los servicios
+$sqlServicios = "SELECT Servicios FROM Cortes_Cajas_POS WHERE Fk_Caja = '$fk_caja'";
+$queryServicios = $conn->query($sqlServicios);
+
+$servicios = [];
+
+if ($queryServicios && $queryServicios->num_rows > 0) {
+    $resultServicios = $queryServicios->fetch_object();
+    
+  
+    // Procesar manualmente la cadena de servicios
+    if (!empty($resultServicios->Servicios)) {
+        // Dividir la cadena en partes separadas por comas
+        $serviciosArray = explode(", ", $resultServicios->Servicios);
+
+        // Recorrer cada parte y dividir en clave y valor
+        foreach ($serviciosArray as $servicio) {
+            $servicioPartes = explode(": ", $servicio);
+            if (count($servicioPartes) === 2) {
+                $servicios[] = [
+                    'nombre' => $servicioPartes[0],
+                    'total' => $servicioPartes[1]
+                ];
+            }
+        }
+    }
+} else {
+    echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
+}
 ?>
 
 <?php if ($datosCorte): ?>
@@ -60,16 +90,39 @@ if ($query && $query->num_rows > 0) {
                         <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TotalCreditos; ?>"></td>
                     </tr>
                     <tr>
-                        <td><input type="text" class="form-control" readonly value="Complemento Tarjetas"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TarjetaAdicional; ?>"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" readonly value="Complemento Créditos"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->CreditoAdicional; ?>"></td>
+                        <td><input type="text" class="form-control" readonly value="Transferencias"></td>
+                        <td><input type="text" class="form-control" name="TransferenciasTotales" readonly value="<?php echo $datosCorte->TotalTransferencias; ?>"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Desglose de servicios -->
+        <div class="table-responsive">
+            <table id="ServiciosCortes" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre del servicio</th>
+                        <th>Total del servicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($servicios)): ?>
+                        <?php foreach ($servicios as $servicio): ?>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['nombre']; ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['total']; ?>"></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="2" class="text-center">No hay servicios disponibles</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <label for="comentarios">Observaciones:</label>
