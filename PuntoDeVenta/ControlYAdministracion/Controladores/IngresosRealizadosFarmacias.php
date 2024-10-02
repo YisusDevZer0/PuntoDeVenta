@@ -276,8 +276,9 @@ tabla = $('#Clientes').DataTable({
 <th>Nombre</th>                 <!-- Nombre del producto -->
 <th style="width:3% !important;">Cantidad</th> <!-- Cantidad de piezas -->
 <th>Fecha de caducidad</th  >
+<th>Lote</th> 
 <th>Solicitante</th>            <!-- Usuario que agregó -->
-<th>Autorizar</th>              <!-- Botón para realizar corte -->
+<th>Agregado el</th>              <!-- Botón para realizar corte -->
 
 </thead>
 
