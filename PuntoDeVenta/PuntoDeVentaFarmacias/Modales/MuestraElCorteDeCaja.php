@@ -12,17 +12,21 @@ if (!$fk_caja) {
     exit;
 }
 
-// CONSULTA PRINCIPAL: Obtener la información completa del corte
+// CONSULTA PRINCIPAL: Obtener la información completa del corte, incluyendo el campo Servicios
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
-               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos,TarjetaAdicional,CreditoAdicional, 
-               Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
+               Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
+               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios, Servicios 
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql);
 
 $datosCorte = null;
+$servicios = [];
+
 if ($query && $query->num_rows > 0) {
     $datosCorte = $query->fetch_object();
+    // Decodificar el campo Servicios si está en formato JSON
+    $servicios = json_decode($datosCorte->Servicios, true);
 } else {
     echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
     exit;
@@ -60,16 +64,39 @@ if ($query && $query->num_rows > 0) {
                         <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TotalCreditos; ?>"></td>
                     </tr>
                     <tr>
-                        <td><input type="text" class="form-control" readonly value="Complemento Tarjetas"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TarjetaAdicional; ?>"></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" class="form-control" readonly value="Complemento Créditos"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->CreditoAdicional; ?>"></td>
+                        <td><input type="text" class="form-control" readonly value="Transferencias"></td>
+                        <td><input type="text" class="form-control" name="TransferenciasTotales" readonly value="<?php echo $datosCorte->TotalTransferencias; ?>"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Desglose de servicios -->
+        <div class="table-responsive">
+            <table id="ServiciosCortes" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre del servicio</th>
+                        <th>Total del servicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($servicios)): ?>
+                        <?php foreach ($servicios as $servicio): ?>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['nombre']; ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['total']; ?>"></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="2" class="text-center">No hay servicios disponibles</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <label for="comentarios">Observaciones:</label>
