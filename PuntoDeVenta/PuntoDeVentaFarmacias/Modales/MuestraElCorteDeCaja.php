@@ -12,33 +12,43 @@ if (!$fk_caja) {
     exit;
 }
 
-// CONSULTA PRINCIPAL: Obtener la información completa del corte, incluyendo el campo Servicios
+// CONSULTA 1: Obtener la información completa del corte, excepto los servicios
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
                Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
-               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios, Servicios 
+               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql);
 
 $datosCorte = null;
-$servicios = [];
 
 if ($query && $query->num_rows > 0) {
     $datosCorte = $query->fetch_object();
+} else {
+    echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
+    exit;
+}
+
+// CONSULTA 2: Obtener solo los servicios
+$sqlServicios = "SELECT Servicios FROM Cortes_Cajas_POS WHERE Fk_Caja = '$fk_caja'";
+$queryServicios = $conn->query($sqlServicios);
+
+$servicios = [];
+
+if ($queryServicios && $queryServicios->num_rows > 0) {
+    $resultServicios = $queryServicios->fetch_object();
     
     // Intentar decodificar el campo Servicios
-    if (!empty($datosCorte->Servicios)) {
-        $servicios = json_decode($datosCorte->Servicios, true);
+    if (!empty($resultServicios->Servicios)) {
+        $servicios = json_decode($resultServicios->Servicios, true);
 
-        // Verificar si hubo algún error en la decodificación del JSON
         if (json_last_error() !== JSON_ERROR_NONE) {
             echo "Error al decodificar JSON: " . json_last_error_msg();
             exit;
         }
     }
 } else {
-    echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
-    exit;
+    echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
 }
 
 ?>
