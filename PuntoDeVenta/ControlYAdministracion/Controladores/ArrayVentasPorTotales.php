@@ -28,9 +28,6 @@ $sql = "SELECT
     `Pagos_tarjeta`
 FROM 
     `Ventas_POS`
-WHERE 
-    MONTH(`Fecha_venta`) = $currentMonth
-    AND YEAR(`Fecha_venta`) = $currentYear
 ORDER BY 
     `Fecha_venta` DESC";  // Ordenar por fecha en orden descendente
 
