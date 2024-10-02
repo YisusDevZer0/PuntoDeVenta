@@ -108,12 +108,12 @@
 
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left"></i>Ingresos</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Ingresos</a>
                         <div class="dropdown-menu bg-transparent border-0">
                            
-                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-list"></i>Solicitudes de ingresos </a>
-                            <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-list-check"></i>Ingresos realizados</a>
-                            <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-list"></i>Ingresos Farmacias </a>
+                        
+                            <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a>
+                            <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
                         </div>
                     </div>
 

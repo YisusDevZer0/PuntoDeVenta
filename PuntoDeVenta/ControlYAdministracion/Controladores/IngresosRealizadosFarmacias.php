@@ -208,22 +208,21 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArraySolicitudesPendientes.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayIngresosFarmacias.php",
  "aoColumns": [
 
-{ mData: 'NumFactura' },
-// { mData: 'NumOrden' },
-{ mData: 'Proveedor' },
-{ mData: 'Cod_Barra' },
-{ mData: 'Nombre_Prod' },
-{ mData: 'Contabilizado' },
-// { mData: 'Estatus' },
-{ mData: 'FechaInventario' },
-{ mData: 'AgregadoPor' },
-
-{ mData: 'RealizarCorte' },
-{ mData: 'EditarIngreso' },
-{ mData: 'EliminarIngreso' },
+  { mData: 'IDIngreso' },         // ID de ingreso
+{ mData: 'NumFactura' },       // Número de factura
+{ mData: 'Cod_Barra' },        // Código de barra
+{ mData: 'Nombre_Prod' },      // Nombre del producto
+{ mData: 'Piezas' },           // Cantidad de piezas
+{ mData: 'Fecha_Caducidad' },  // Fecha de caducidad
+{ mData: 'Lote' },             // Lote
+{ mData: 'AgregadoPor' },      // Usuario que agregó
+{ mData: 'AgregadoEl' },       // Fecha en que se agregó
+{ mData: 'RealizarCorte' },    // Botón para realizar corte
+{ mData: 'EditarIngreso' },     // Botón para editar ingreso
+{ mData: 'EliminarIngreso' }    // Botón para eliminar ingreso
 
 
       ],

@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
 <div id="Cajas"></div>
             </div></div></div></div>
             </div>
-            <script src="js/SolicitudesIngresosPendientes.js"></script>
+            <script src="js/IngresosRealizadosEnFarmacias.js"></script>
            
             <!-- Footer Start -->
             <?php 
