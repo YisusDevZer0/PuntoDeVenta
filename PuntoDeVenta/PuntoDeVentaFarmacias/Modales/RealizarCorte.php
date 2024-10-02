@@ -377,7 +377,7 @@ if (!empty($Especialistas14)) {
                     <!-- Totales de combinación Efectivo y Tarjeta -->
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Transferencia"></td>
-                        <td><input type="text" class="form-control" name="TotalEfectivoCombinado" readonly value="<?php echo $totalTransferencia; ?>"></td>
+                        <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?php echo $totalTransferencia; ?>"></td>
                     </tr>
                    
                 </tbody>
