@@ -101,6 +101,16 @@
                             <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
                             <a href="TraspasosEntreSucursales" class="dropdown-item"><i class="fa-solid fa-coins"></i>Traspasos entre sucursales</a>
                             <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
+                          
+                        </div>
+                    </div>
+
+
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left"></i>Ingresos</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                           
                             <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-list"></i>Solicitudes de ingresos </a>
                             <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-list-check"></i>Ingresos realizados</a>
                             <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-list"></i>Ingresos Farmacias </a>
