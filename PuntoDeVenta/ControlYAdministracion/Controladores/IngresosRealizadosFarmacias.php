@@ -273,18 +273,17 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes" class="table table-hover">
 <thead>
-<th># Factura</th>
-<!-- <th># de solicitud</th> -->
-<th>Proveedor</th>
-<th>Codigo de barras</th>
-    <th>Nombre</th>
-    <th style="width:3% !important;">Cantidad</th>
-    <!-- <th>Estado</th> -->
-    <th>Fecha solicitud</th>
-    <th>Solicitante</th>
-    <th>Autorizar</th>
-    <th>Editar</th>
-    <th>Eliminar</th>
+<th># Factura</th>              <!-- Número de factura -->
+<th>Proveedor</th>              <!-- Proveedor -->
+<th>Código de barras</th>       <!-- Código de barra -->
+<th>Nombre</th>                 <!-- Nombre del producto -->
+<th style="width:3% !important;">Cantidad</th> <!-- Cantidad de piezas -->
+<th>Fecha de caducidad</th  >
+<th>Solicitante</th>            <!-- Usuario que agregó -->
+<th>Autorizar</th>              <!-- Botón para realizar corte -->
+<th>Editar</th>                 <!-- Botón para editar ingreso -->
+<th>Eliminar</th>               <!-- Botón para eliminar ingreso -->
+
 </thead>
 
 </div>
