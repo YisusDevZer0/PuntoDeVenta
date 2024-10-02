@@ -281,9 +281,7 @@ tabla = $('#Clientes').DataTable({
 <th>Lote</th>                   <!-- Lote -->
 <th>Solicitante</th>            <!-- Usuario que agregó -->
 <th>Agregado el</th>            <!-- Fecha en que se agregó -->
-<th>Realizar Corte</th>         <!-- Botón para realizar corte -->
-<th>Editar</th>                 <!-- Botón para editar ingreso -->
-<th>Eliminar</th>               <!-- Botón para eliminar ingreso -->
+
 
 
 </thead>
