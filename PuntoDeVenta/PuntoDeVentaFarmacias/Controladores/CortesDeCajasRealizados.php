@@ -216,7 +216,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Fecha_Apertura' },
        { mData: 'Estatus' },
        { mData: 'Turno' },
-       { mData: 'Asignacion' },
+   
        
        { mData: 'ValorTotalCaja' },
      
@@ -296,7 +296,7 @@ if (cajasAbiertasCount >= 2) {
     <th>Fecha de apertura</th>
     <th>Estado</th>
     <th>Turno</th> 
-    <th>Activo / Inactivo</th> 
+
     <th>Valor total de caja</th> 
  
     <th>Realizar corte</th>
