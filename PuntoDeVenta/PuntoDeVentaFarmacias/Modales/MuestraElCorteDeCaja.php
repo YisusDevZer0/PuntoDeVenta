@@ -25,8 +25,19 @@ $servicios = [];
 
 if ($query && $query->num_rows > 0) {
     $datosCorte = $query->fetch_object();
+    // Verificar el contenido del campo Servicios
+    echo "<pre>";
+    print_r($datosCorte->Servicios);
+    echo "</pre>";
+
     // Decodificar el campo Servicios si está en formato JSON
     $servicios = json_decode($datosCorte->Servicios, true);
+
+    // Verificar si hubo algún error en la decodificación del JSON
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        echo "Error al decodificar JSON: " . json_last_error_msg();
+        exit;
+    }
 } else {
     echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
     exit;
