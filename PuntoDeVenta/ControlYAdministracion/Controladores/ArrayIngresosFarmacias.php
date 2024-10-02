@@ -5,20 +5,32 @@ include_once "ControladorUsuario.php";
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT 
-    IDIngreso, 
-    ID_Prod_POS, 
-    NumFactura, 
-    Cod_Barra, 
-    Nombre_Prod, 
-    Piezas, 
-    Fecha_Caducidad, 
-    Lote, 
-    AgregadoPor, 
-    AgregadoEl 
+    si.IdProdCedis, 
+    si.ID_Prod_POS, 
+    si.NumFactura, 
+    si.Proveedor, 
+    si.Cod_Barra, 
+    si.Nombre_Prod, 
+    si.Fk_Sucursal, 
+    s.Nombre_Sucursal,
+    si.Contabilizado, 
+    si.Fecha_Caducidad, 
+    si.Lote, 
+    si.PrecioMaximo, 
+    si.Precio_Venta, 
+    si.Precio_C, 
+    si.AgregadoPor, 
+    si.AgregadoEl, 
+    si.FechaInventario, 
+    si.Estatus, 
+    si.NumOrden
 FROM 
-    IngresosCedis 
+    IngresosFarmacias si
+JOIN 
+    Sucursales s ON si.Fk_Sucursal = s.ID_Sucursal
 WHERE 
-    Fk_Sucursal = ?"; // Asegúrate de tener el campo Fk_Sucursal en tu tabla o ajusta según sea necesario
+    si.Estatus <> 'Autorizado' AND 
+    si.Fk_Sucursal = ?";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -40,24 +52,51 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
-    $realizar_corte = '<td><a data-id="' . $fila["IDIngreso"] . '" class="btn btn-success btn-sm btn-AutorizaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
-    $EditarDatosDeIngreso = '<td><a data-id="' . $fila["IDIngreso"] . '" class="btn btn-primary btn-sm btn-EditaIngreso" style="color:white;"><i class="fa-solid fa-file-pen"></i></a></td>';
-    $EliminarIngreso = '<td><a data-id="' . $fila["IDIngreso"] . '" class="btn btn-danger btn-sm btn-EliminaIngreso" style="color:white;"><i class="fa-solid fa-trash"></i></a></td>';
+    // Definir el estilo y el texto según el valor de estatus
+    $estatus_estilo = '';
+    $estatus_leyenda = '';
+    switch ($fila["Estatus"]) {
+        case 'Ingresado':
+            $estatus_estilo = 'background-color: #008080; color: white;'; // Verde marino
+            $estatus_leyenda = 'Ingresado';
+            break;
+        case 'Pendiente':
+            $estatus_estilo = 'background-color: red; color: white;'; // Rojo
+            $estatus_leyenda = 'Pendiente';
+            break;
+        default:
+            $estatus_estilo = ''; // No se aplica estilo
+            $estatus_leyenda = $fila["Estatus"];
+            break;
+    }
     
+    $realizar_corte = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-success btn-sm btn-AutorizaIngreso" style="color:white;"><i class="fa-solid fa-check"></i></a></td>';
+    $editar_datos_ingreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-primary btn-sm btn-EditaIngreso" style="color:white;"><i class="fa-solid fa-file-pen"></i></a></td>';
+    $eliminar_ingreso = '<td><a data-id="' . $fila["IdProdCedis"] . '" class="btn btn-danger btn-sm btn-EliminaIngreso" style="color:white;"><i class="fa-solid fa-trash"></i></a></td>';
+
     // Construir el array de datos incluyendo las columnas de la consulta
     $data[] = [
-        "IDIngreso" => $fila["IDIngreso"],
+        "IdProdCedis" => $fila["IdProdCedis"],
+        "ID_Prod_POS" => $fila["ID_Prod_POS"],
         "NumFactura" => $fila["NumFactura"],
+        "Proveedor" => $fila["Proveedor"],
         "Cod_Barra" => $fila["Cod_Barra"],
         "Nombre_Prod" => $fila["Nombre_Prod"],
-        "Piezas" => $fila["Piezas"],
+        "Fk_Sucursal" => $fila["Fk_Sucursal"],
+        "Contabilizado" => $fila["Contabilizado"],
         "Fecha_Caducidad" => $fila["Fecha_Caducidad"],
         "Lote" => $fila["Lote"],
+        "PrecioMaximo" => $fila["PrecioMaximo"],
+        "Precio_Venta" => $fila["Precio_Venta"],
+        "Precio_C" => $fila["Precio_C"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
+        "FechaInventario" => $fila["FechaInventario"],
+        "Estatus" => "<div style=\"$estatus_estilo; padding: 5px; border-radius: 5px;\">$estatus_leyenda</div>",
+        "NumOrden" => $fila["NumOrden"],
         "RealizarCorte" => $realizar_corte,
-        "EditarIngreso" => $EditarDatosDeIngreso,
-        "EliminarIngreso" => $EliminarIngreso,
+        "EditarIngreso" => $editar_datos_ingreso,
+        "EliminarIngreso" => $eliminar_ingreso,
     ];
 }
 
