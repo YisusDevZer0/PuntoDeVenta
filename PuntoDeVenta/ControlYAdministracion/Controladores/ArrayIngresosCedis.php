@@ -49,9 +49,7 @@ while ($fila = $result->fetch_assoc()) {
         "Lote" => $fila["Lote"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
-        "RealizarCorte" => $realizar_corte,
-        "EditarIngreso" => $editar_datos_ingreso,
-        "EliminarIngreso" => $eliminar_ingreso,
+     
     ];
 }
 
