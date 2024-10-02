@@ -38,9 +38,7 @@ $servicios = [];
 if ($queryServicios && $queryServicios->num_rows > 0) {
     $resultServicios = $queryServicios->fetch_object();
     
-    // Mostrar el contenido del campo Servicios para verificar el formato
-    echo "<pre>Contenido de Servicios antes de procesar: " . htmlspecialchars($resultServicios->Servicios) . "</pre>";
-
+  
     // Procesar manualmente la cadena de servicios
     if (!empty($resultServicios->Servicios)) {
         // Dividir la cadena en partes separadas por comas
