@@ -299,7 +299,7 @@ if (cajasAbiertasCount >= 2) {
 
     <th>Valor total de caja</th> 
  
-    <th>Realizar corte</th>
+    <th>Ver el corte</th>
 </thead>
 
 </div>
