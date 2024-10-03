@@ -4,11 +4,11 @@
     
       <div class="text-center">
         <div class="modal-header" style="background-color: #ef7980 !important;">
-          <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Búsqueda por sucursal</h5>
+          <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Búsqueda por rango de fechas</h5>
         </div>
        
         <div class="modal-body">
-          <form method="POST" action="FiltroPorFechasVentasTotales">
+          <form method="POST" action="ReporteVentasTotalesPorFechas">
             <div class="row">
               <!-- Fecha de inicio -->
               <div class="col">
