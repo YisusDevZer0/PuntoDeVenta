@@ -56,10 +56,7 @@ include_once "Controladores/ControladorUsuario.php";
 
               // Realizar las operaciones que necesites con estas variables
               // Por ejemplo, imprimir su valor
-              echo "Fecha inicial: $mes<br>";
-              echo "Fecha final: $anual<br>";
-
-              echo "Sucursal: $sucursal<br>";            } else {
+                 } else {
               // Si alguna de las variables no está seteada o es nula, mostrar un mensaje de error
               echo "Error: No se recibieron todas las variables necesarias.";
           }
