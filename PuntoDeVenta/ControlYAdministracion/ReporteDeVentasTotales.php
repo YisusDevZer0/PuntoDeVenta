@@ -43,7 +43,7 @@ include_once "Controladores/ControladorUsuario.php";
 <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#FiltroEspecificoMesxd" class="btn btn-default">
   Busqueda por mes <i class="fas fa-calendar-week"></i>
 </button>
-<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#FiltroPorrangoDeFechas" class="btn btn-default">
+<button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-bs-target="#FiltroPorrangoDeFechas" >
   Filtrar por rango de fechas <i class="fas fa-calendar"></i>
 </button> <br><br>
             <div id="DataDeServicios"></div>
