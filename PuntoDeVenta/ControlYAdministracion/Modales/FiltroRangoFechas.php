@@ -14,7 +14,7 @@
               <div class="col">
                 <label for="fechaInicio">Fecha de inicio</label>
                 <div class="input-group mb-3">
-                  <input type="date" id="fechaInicio" class="form-control" name="FechaInicio" required>
+                  <input type="date" id="fechaInicio" class="form-control" name="Mes" required>
                 </div>
               </div>
 
@@ -22,7 +22,7 @@
               <div class="col">
                 <label for="fechaFin">Fecha de fin</label>
                 <div class="input-group mb-3">
-                  <input type="date" id="fechaFin" class="form-control" name="FechaFin" required>
+                  <input type="date" id="fechaFin" class="form-control" name="anual" required>
                 </div>
               </div>
 

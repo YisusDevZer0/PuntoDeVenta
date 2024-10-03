@@ -52,6 +52,7 @@ include_once "Controladores/ControladorUsuario.php";
               // Obtener los valores del formulario
               $mes = $_POST['Mes'];
               $anual = $_POST['anual'];
+              $sucursal = $_POST['Sucursal'];
 
               // Realizar las operaciones que necesites con estas variables
               // Por ejemplo, imprimir su valor
