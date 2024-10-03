@@ -72,7 +72,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
     $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
     $data[$c]["Cantidad_Venta"] = $fila["Cantidad_Venta"];
-    $data[$c]["Fk_sucursal"] = $fila["Fk_sucursal"];
+    $data[$c]["Nombre_Sucursal"] = $fila["Nombre_Sucursal"];  // Agregar Nombre de la Sucursal
     $data[$c]["Total_Venta"] = $fila["Total_Venta"];
     $data[$c]["Importe"] = $fila["Importe"];
     $data[$c]["Importetarjeta"] = $fila["PagoTarjeta"];
@@ -85,7 +85,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Fecha_venta"] = $fila["Fecha_venta"];
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["AgregadoEl"] = $fila["AgregadoEl"];
-    $data[$c]["Nombre_Sucursal"] = $fila["Nombre_Sucursal"];  // Agregar Nombre de la Sucursal
+  
     $c++; 
 }
 

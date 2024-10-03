@@ -225,7 +225,7 @@ tabla = $('#Clientes').DataTable({
 
   { mData: 'Cod_Barra' },
   { mData: 'Nombre_Prod' },
-  { mData: 'Fk_sucursal' },
+  { mData: 'Nombre_Sucursal' },
   { mData: 'Folio_Ticket' },
   { mData: 'Turno' },
   
