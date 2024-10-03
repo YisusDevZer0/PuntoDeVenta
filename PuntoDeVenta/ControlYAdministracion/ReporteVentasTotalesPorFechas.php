@@ -28,14 +28,11 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="content">
             <!-- Navbar Start -->
         <?php include "navbar.php";?>
-  <div class="tab-content" id="pills-tabContent">
-    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-      <div class="card text-center">
-        <div class="card-header" style="background-color:#0057b8 !important;color: white;">
-          Registro de ventas al <?php echo fechaCastellano(date('d-m-Y H:i:s')); ?>  
-        </div>
-        <div >
-        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#FiltroPorSucursalesVentasEnTotal">
+        <div class="container-fluid pt-4 px-4">
+    <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4" style="color:#0172b6;">Registro de ventas por vendedor <?php echo $row['Licencia']?></h6>
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#FiltroPorSucursalesVentasEnTotal">
   Filtrar por sucursal <i class="fas fa-clinic-medical"></i>
 </button>
 <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#FiltroEspecificoMesxd" class="btn btn-default">
@@ -43,7 +40,7 @@ include_once "Controladores/ControladorUsuario.php";
 </button>
 <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#FiltroEspecificoFechaVentas" class="btn btn-default">
   Filtrar por rango de fechas <i class="fas fa-calendar"></i>
-</button> <br><br>
+</button><br><br>
         </div>
       </div>
 
