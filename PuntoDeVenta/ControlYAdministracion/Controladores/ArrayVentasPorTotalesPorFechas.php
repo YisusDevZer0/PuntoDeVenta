@@ -12,6 +12,9 @@ $sucursal = $_POST['Sucursal'];
 $fechaInicio = $anual . '-' . $mes . '-01';  // Formato YYYY-MM-01
 $fechaFin = date("Y-m-t", strtotime($fechaInicio));  // Último día del mes
 
+// Debug: Verificar fechas
+var_dump($fechaInicio, $fechaFin); 
+
 $sql = "SELECT 
     Ventas_POS.Turno, 
     Ventas_POS.Folio_Ticket, 
@@ -62,11 +65,21 @@ FROM
     LEFT JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
 WHERE 
     Ventas_POS.Fecha_venta BETWEEN '$fechaInicio' AND '$fechaFin' AND
-    Ventas_POS.Fk_sucursal = '$sucursal'
+    Ventas_POS.Fk_sucursal = $sucursal
 ORDER BY 
     Ventas_POS.Fecha_venta DESC";  // Ordenar por fecha en orden descendente
 
 $result = mysqli_query($conn, $sql);
+
+// Validar si hubo error en la consulta
+if ($result === false) {
+    die("Error en la consulta: " . mysqli_error($conn));
+}
+
+// Validar si se encontraron resultados
+if (mysqli_num_rows($result) == 0) {
+    die("No se encontraron resultados.");
+}
 
 $c = 0;
 $data = []; // Inicializar el array
