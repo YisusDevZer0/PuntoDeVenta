@@ -401,7 +401,7 @@ action: function(e, dt, button, config) {
             include "Modales/FiltroRangoFechas.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
-            include "footer.php";?>
+            include "Footer.php";?>
 
 
   
