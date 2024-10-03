@@ -398,6 +398,10 @@ tabla = $('#Clientes').DataTable({
 
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
 
 
 
