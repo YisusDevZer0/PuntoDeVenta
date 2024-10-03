@@ -71,16 +71,18 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Fk_sucursal"] = $fila["Fk_sucursal"];
     $data[$c]["Total_Venta"] = $fila["Total_Venta"];
     $data[$c]["Importe"] = $fila["Importe"];
+    $data[$c]["Importetarjeta"] = $fila["PagoTarjeta"];
+    $data[$c]["Importecredito"] = $fila["PagoCredito"];
     $data[$c]["Total_VentaG"] = $fila["Total_VentaG"];
     $data[$c]["DescuentoAplicado"] = $fila["DescuentoAplicado"];
     $data[$c]["FormaDePago"] = $fila["FormaDePago"];
-    $data[$c]["CantidadPago"] = $fila["CantidadPago"];
+   
     $data[$c]["Cambio"] = $fila["Cambio"];
     $data[$c]["Cliente"] = $fila["Cliente"];
     $data[$c]["Fecha_venta"] = $fila["Fecha_venta"];
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["AgregadoEl"] = $fila["AgregadoEl"];
-    $data[$c]["Pagos_tarjeta"] = $fila["Pagos_tarjeta"];
+ 
     $c++; 
 }
 

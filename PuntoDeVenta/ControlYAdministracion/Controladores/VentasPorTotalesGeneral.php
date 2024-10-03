@@ -223,20 +223,24 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasPorTotales.php",
  "aoColumns": [
 
-          
-            { mData: 'Turno' },
-            { mData: 'Folio_Ticket' },
+  { mData: 'Cod_Barra' },
+  { mData: 'Nombre_Prod' },
+  { mData: 'Fk_sucursal' },
+  { mData: 'Folio_Ticket' },
+  { mData: 'Turno' },
+  
 
-            { mData: 'Cod_Barra' },
-            { mData: 'Nombre_Prod' },
+           
             { mData: 'Cantidad_Venta' },
-            { mData: 'Fk_sucursal' },
+            
             { mData: 'Total_Venta' },
             { mData: 'Importe' },
+            { mData: 'Importetarjeta' },
+            { mData: 'Importecredito' },
             { mData: 'Total_VentaG' },
             { mData: 'DescuentoAplicado' },
             { mData: 'FormaDePago' },
-            { mData: 'CantidadPago' },
+           
             { mData: 'Cambio' },
             { mData: 'Cliente' },
             { mData: 'Fecha_venta' },
@@ -244,7 +248,7 @@ tabla = $('#Clientes').DataTable({
             { mData: 'AgregadoPor' },
             { mData: 'AgregadoEl' },
          
-            { mData: 'Pagos_tarjeta' },
+           
            
       ],
      
@@ -296,21 +300,25 @@ tabla = $('#Clientes').DataTable({
   <table  id="Clientes"  class="order-column">
 <thead>
 
-            <th>Turno</th>
-           
-            <th>Folio Ticket</th>
-          
+       
          
             <th>Código de Barra</th>
             <th>Nombre Producto</th>
-            <th>Cantidad Venta</th>
             <th>Sucursal</th> <!-- Agregado -->
+            <th>Folio Ticket</th>
+            <th>Turno</th>
+           
+            <th>Cantidad Venta</th>
+          
             <th>Total de Venta</th> <!-- Agregado -->
-            <th>Importe</th>
-            <th>Total Venta G</th>
+            <th>Importe efectivo</th>
+            <th>Importe tarjeta</th>
+            <th>Importe credito</th>
+          
+            <th>Cantidad Pagada</th>
             <th>Descuento Aplicado</th>
             <th>Forma de Pago</th>
-            <th>Cantidad Pago</th>
+          
             <th>Cambio</th>
             <th>Cliente</th>
             <th>Fecha</th> <!-- Agregado -->
@@ -318,7 +326,6 @@ tabla = $('#Clientes').DataTable({
             <th>Agregado Por</th>
             <th>Agregado El</th>
           
-            <th>Pagos Tarjeta</th>
           
 
 </thead>
