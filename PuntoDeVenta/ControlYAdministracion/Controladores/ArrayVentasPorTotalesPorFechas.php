@@ -8,12 +8,7 @@ $mes = $_POST['Mes'];  // Asume que estas variables vienen en una petición POST
 $anual = $_POST['anual'];
 $sucursal = $_POST['Sucursal'];
 
-// Crear las fechas de inicio y fin basadas en las variables enviadas
-$fechaInicio = $anual . '-' . $mes . '-01';  // Formato YYYY-MM-01
-$fechaFin = date("Y-m-t", strtotime($fechaInicio));  // Último día del mes
 
-// Debug: Verificar fechas
-var_dump($fechaInicio, $fechaFin); 
 
 $sql = "SELECT 
     Ventas_POS.Turno, 
@@ -64,7 +59,7 @@ FROM
     LEFT JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID  
     LEFT JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
 WHERE 
-    Ventas_POS.Fecha_venta BETWEEN '$fechaInicio' AND '$fechaFin' AND
+    Ventas_POS.Fecha_venta BETWEEN '$mes' AND '$anual' AND
     Ventas_POS.Fk_sucursal = $sucursal
 ORDER BY 
     Ventas_POS.Fecha_venta DESC";  // Ordenar por fecha en orden descendente
