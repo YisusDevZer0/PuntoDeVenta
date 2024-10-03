@@ -903,6 +903,7 @@ function calcularDiferencia(fila) {
         <td style="display:none;" class="Fecha"><input hidden type="text" class="form-control" name="FechaAprox[]" readonly value="<?php echo $fechaActual; ?>" /></td>
         <td><div class="btn-container"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button></div></td>
        <td style="display:none;"> <input type="text" name="SucursalTraspasa[]" hidden value="<?php echo $row['SucursalOrigen']?>" class="form-control" ></td>
+        <td style="display:none;"> <input type="text" name="SucursalDestino[]" hidden value="<?php echo $row['SucursalDestino']?>" class="form-control" ></td>
      <td style="display:none;"><input type="text" class="form-control "  hidden name="GeneradoPor[]" value="<?php echo $row['Nombre_Apellidos']?>"readonly  ></td>
        <td style="display:none;"> <input type="text" class="form-control " hidden  name="Empresa[]" value="<?php echo $row['Licencia']?>"readonly  ></td>
 
@@ -1115,7 +1116,7 @@ function eliminarFila(element) {
 }
 </style>
 
-<script src="js/RealizaTraspasos.js"></script>
+<script src="js/RealizaTraspasosEntreSucursales.js"></script>
 
 <!-- Control Sidebar -->
 
