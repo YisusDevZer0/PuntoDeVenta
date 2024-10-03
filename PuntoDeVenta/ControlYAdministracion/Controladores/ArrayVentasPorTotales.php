@@ -47,10 +47,14 @@ $sql = "SELECT
     END AS PagoCredito,
 
     Servicios_POS.Servicio_ID,
-    Servicios_POS.Nom_Serv
+    Servicios_POS.Nom_Serv,
+    
+    Sucursales.ID_Sucursal,
+    Sucursales.Nombre_Sucursal
 FROM 
     Ventas_POS
     LEFT JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID  
+    LEFT JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal  -- Unir con la tabla Sucursales
 WHERE 
     YEAR(Ventas_POS.Fecha_venta) = $currentYear AND 
     MONTH(Ventas_POS.Fecha_venta) = $currentMonth
@@ -76,13 +80,12 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Total_VentaG"] = $fila["Total_VentaG"];
     $data[$c]["DescuentoAplicado"] = $fila["DescuentoAplicado"];
     $data[$c]["FormaDePago"] = $fila["FormaDePago"];
-   
     $data[$c]["Cambio"] = $fila["Cambio"];
     $data[$c]["Cliente"] = $fila["Cliente"];
     $data[$c]["Fecha_venta"] = $fila["Fecha_venta"];
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["AgregadoEl"] = $fila["AgregadoEl"];
- 
+    $data[$c]["Nombre_Sucursal"] = $fila["Nombre_Sucursal"];  // Agregar Nombre de la Sucursal
     $c++; 
 }
 
