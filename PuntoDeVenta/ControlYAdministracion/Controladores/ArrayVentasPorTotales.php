@@ -8,28 +8,54 @@ $currentYear = date("Y");
 $currentMonth = date("m");
 
 $sql = "SELECT 
-    `Turno`, 
-    `Folio_Ticket`, 
-    `Cod_Barra`, 
-    `Nombre_Prod`, 
-    `Cantidad_Venta`, 
-    `Fk_sucursal`, 
-    `Total_Venta`, 
-    `Importe`, 
-    `Total_VentaG`, 
-    `DescuentoAplicado`, 
-    `FormaDePago`, 
-    `CantidadPago`, 
-    `Cambio`, 
-    `Cliente`, 
-    `Fecha_venta`, 
-    `AgregadoPor`, 
-    `AgregadoEl`,
-    `Pagos_tarjeta`
+    Ventas_POS.Turno, 
+    Ventas_POS.Folio_Ticket, 
+    Ventas_POS.Cod_Barra, 
+    Ventas_POS.Nombre_Prod, 
+    Ventas_POS.Cantidad_Venta, 
+    Ventas_POS.Fk_sucursal, 
+    Ventas_POS.Total_Venta, 
+    Ventas_POS.Importe, 
+    Ventas_POS.Total_VentaG, 
+    Ventas_POS.DescuentoAplicado, 
+    Ventas_POS.FormaDePago, 
+    Ventas_POS.CantidadPago, 
+    Ventas_POS.Cambio, 
+    Ventas_POS.Cliente, 
+    Ventas_POS.Fecha_venta, 
+    Ventas_POS.AgregadoPor, 
+    Ventas_POS.AgregadoEl, 
+    Ventas_POS.Pagos_tarjeta,
+    
+    CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe
+        ELSE 0 
+    END AS PagoEfectivo,
+    
+    CASE 
+        WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Tarjeta' THEN Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END AS PagoTarjeta,
+    
+    CASE 
+        WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END AS PagoCredito,
+
+    Servicios_POS.Servicio_ID,
+    Servicios_POS.Nom_Serv
 FROM 
-    `Ventas_POS`
+    Ventas_POS
+    LEFT JOIN Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID  
+WHERE 
+    YEAR(Ventas_POS.Fecha_venta) = $currentYear AND 
+    MONTH(Ventas_POS.Fecha_venta) = $currentMonth
 ORDER BY 
-    `Fecha_venta` DESC";  // Ordenar por fecha en orden descendente
+    Ventas_POS.Fecha_venta DESC";  // Ordenar por fecha en orden descendente
 
 $result = mysqli_query($conn, $sql);
 
