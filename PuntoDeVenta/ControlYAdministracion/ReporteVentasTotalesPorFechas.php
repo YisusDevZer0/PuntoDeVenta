@@ -1,29 +1,31 @@
 <?php
-include "Consultas/Consultas.php";
-?>
+include_once "Controladores/ControladorUsuario.php";
 
+?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Ventas realizadas por <?php echo $row['Nombre_Sucursal']?> </title>
-  <?php include "header.php"?>
-  <style>
-    .error {
-      color: red;
-      margin-left: 5px; 
-    }
-  </style>
-</head>
+    <meta charset="utf-8">
+    <title>Reportes por formas de pago <?php echo $row['Licencia']?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   
+
+    <?php
+   include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <body>
-  <div id="loading-overlay">
-    <div class="loader"></div>
-    <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-  </div>
-  <?php include_once ("Menu.php")?>
-  <div class="content">
+    
+        <!-- Spinner End -->
+
+
+        <?php include_once "Menu.php" ?>
+
+        <!-- Content Start -->
+        <div class="content">
             <!-- Navbar Start -->
         <?php include "navbar.php";?>
   <div class="tab-content" id="pills-tabContent">
