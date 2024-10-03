@@ -64,7 +64,7 @@
           <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
 
           <button type="submit" id="submit_registroarea" value="Guardar" class="btn btn-success">
-            Realizar  <i class="fa-solid fa-magnifying-glass"></i>
+            Realizar busqueda <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>
       </div>
