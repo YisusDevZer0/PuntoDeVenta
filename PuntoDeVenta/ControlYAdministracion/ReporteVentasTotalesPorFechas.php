@@ -235,7 +235,7 @@ include_once "Controladores/ControladorUsuario.php";
 
   var tabla;
         $(document).ready(function() {
-          tabla = $('#Productos').DataTable({
+          tabla = $('#Clientes').DataTable({
             "processing": true,
             "ordering": true,
             "stateSave": true,
