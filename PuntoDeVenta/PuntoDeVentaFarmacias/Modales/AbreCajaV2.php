@@ -39,40 +39,39 @@ $hora = date('G');
         <input type="number" class="form-control input-negro" id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1">
       </div>
     </div>
-    
-    <!-- Contador de Billetes -->
-    <div class="col">
-      <label for="exampleFormControlInput1">Contador de Billetes</label>
-      <div id="contadorBilletes">
-        <label>Billetes de $1000:</label>
-        <input type="number" id="billetes1000" class="form-control" value="0" min="0">
-        <label>Billetes de $500:</label>
-        <input type="number" id="billetes500" class="form-control" value="0" min="0">
-        <label>Billetes de $200:</label>
-        <input type="number" id="billetes200" class="form-control" value="0" min="0">
-        <label>Billetes de $100:</label>
-        <input type="number" id="billetes100" class="form-control" value="0" min="0">
-        <label>Billetes de $50:</label>
-        <input type="number" id="billetes50" class="form-control" value="0" min="0">
-        <label>Billetes de $20:</label>
-        <input type="number" id="billetes20" class="form-control" value="0" min="0">
-      </div>
-    </div>
   </div>
 
-  <!-- Contador de Monedas -->
+  <!-- Contadores alineados en dos columnas -->
   <div class="row">
-    <div class="col">
-      <label for="exampleFormControlInput1">Contador de Monedas</label>
+    <div class="col-md-6">
+      <h5>Billetes</h5>
+      <div id="contadorBilletes">
+        <label>Billetes de $1000:</label>
+        <input type="number" id="billetes1000" class="form-control mb-2" value="0" min="0">
+        <label>Billetes de $500:</label>
+        <input type="number" id="billetes500" class="form-control mb-2" value="0" min="0">
+        <label>Billetes de $200:</label>
+        <input type="number" id="billetes200" class="form-control mb-2" value="0" min="0">
+        <label>Billetes de $100:</label>
+        <input type="number" id="billetes100" class="form-control mb-2" value="0" min="0">
+        <label>Billetes de $50:</label>
+        <input type="number" id="billetes50" class="form-control mb-2" value="0" min="0">
+        <label>Billetes de $20:</label>
+        <input type="number" id="billetes20" class="form-control mb-2" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <h5>Monedas</h5>
       <div id="contadorMonedas">
         <label>Monedas de $10:</label>
-        <input type="number" id="monedas10" class="form-control" value="0" min="0">
+        <input type="number" id="monedas10" class="form-control mb-2" value="0" min="0">
         <label>Monedas de $5:</label>
-        <input type="number" id="monedas5" class="form-control" value="0" min="0">
+        <input type="number" id="monedas5" class="form-control mb-2" value="0" min="0">
         <label>Monedas de $2:</label>
-        <input type="number" id="monedas2" class="form-control" value="0" min="0">
+        <input type="number" id="monedas2" class="form-control mb-2" value="0" min="0">
         <label>Monedas de $1:</label>
-        <input type="number" id="monedas1" class="form-control" value="0" min="0">
+        <input type="number" id="monedas1" class="form-control mb-2" value="0" min="0">
       </div>
     </div>
   </div>
