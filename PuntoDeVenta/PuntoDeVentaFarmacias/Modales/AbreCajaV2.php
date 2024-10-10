@@ -86,6 +86,21 @@ $hora = date('G');
   <button type="submit" id="submit" class="btn btn-info">Abrir caja</button>
 </form>
 
+<form method="post"  id="GeneraTicketAperturaCaja">
+
+   
+      <input type="text" class="form-control "   readonly name="VendedorTicket"  readonly value="<?php echo $row['Nombre_Apellidos']?>">
+      <input type="text" class="form-control "   readonly name="TurnoTicket" id="turnoticket"  >
+      <input type="text" readonly name="EstadoColor" value="#157347">
+      <input type="number" class="form-control "   name="FondoBase" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1" >  
+      <input type="number" class="form-control "  step="any" name="TotalCajaDeApertura" id="resultadoticket" readonly   aria-describedby="basic-addon1" >    
+     
+      <input type="datetime" name="Horadeimpresion" value="<?php echo date('h:i:s A');?>">
+      <input type="text" class="form-control" name="SucursalApertura" readonly  value="<?php echo $Especialistas->Nombre_Sucursal; ?>" aria-describedby="basic-addon1" >     
+      <button type="submit"  id="EnviaTicket"  class="btn btn-info">Realizar abono <i class="fas fa-money-check-alt"></i></button>
+</form>
+
+<script src="js/AbreCajas.js"></script>
 <script>
 // Mostrar el formulario cuando el botón sea clickeado
 document.getElementById("mostrarFormulario").addEventListener("click", function() {
