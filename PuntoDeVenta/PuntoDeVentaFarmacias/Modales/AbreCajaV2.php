@@ -31,7 +31,7 @@ $hora = date('G');
 <button id="mostrarFormulario" class="btn btn-primary">Abrir caja</button>
 
 <!-- Formulario oculto inicialmente -->
-< action="javascript:void(0)" method="post" id="OpenCaja" style="display: none;">
+<form action="javascript:void(0)" method="post" id="OpenCaja" style="display: none;">
   
 <div class="row">
     <div class="col">
