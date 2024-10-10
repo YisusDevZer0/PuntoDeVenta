@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 <?php
 date_default_timezone_set("America/Monterrey");
 include "../Controladores/db_connect.php";
@@ -182,7 +172,7 @@ document.getElementById("resultado").addEventListener("input", function() {
 </form>
 
 
-    
+<script src="js/AbreCajas.js"></script>
     <!-- Contador de Billetes -->
   
 
@@ -220,7 +210,7 @@ document.querySelectorAll('#contadorBilletes input, #contadorMonedas input').for
 });
 </script>
 
-<script src="js/AbreCajas.js"></script>
+
 
     <?php else:?>
   <p class="alert alert-danger"><i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i> No encontramos algún fondo de caja asignado, por favor verifica e intenta de nuevo <i class="fas fa-exclamation-triangle fa-2x" style="color: #f50909;"></i></p>
