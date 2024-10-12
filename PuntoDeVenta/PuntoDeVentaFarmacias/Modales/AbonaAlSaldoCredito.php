@@ -124,6 +124,42 @@ WHERE
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    // Al cambiar el valor del campo "Abonado"
+    $('input[name="Abonado[]"]').on('input', function() {
+        var abonoPendiente = parseFloat($('input[name="AbonoPendiente[]"]').val()) || 0;
+        var abonado = parseFloat($(this).val()) || 0;
+
+        // Calcular el nuevo saldo
+        var nuevoSaldo = abonoPendiente - abonado;
+
+        // Actualizar el valor del campo "Nuevo saldo"
+        $('#NuevoSaldo').val(nuevoSaldo.toFixed(2));
+    });
+
+    // Mismo manejo de envío del formulario para la reimpresión del ticket
+    $('#GeneraTicket').on('submit', function(event) {
+        event.preventDefault();
+        
+        var data = $(this).serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: data,
+            success: function(response) {
+                console.log("Response from ticket generation:", response);
+                $('#GeneraTicket').hide();
+                $('#mensajeConfirmacion').show();
+            },
+            error: function(error) {
+                console.error("Error generating ticket:", error);
+            }
+        });
+    });
+});
+</script>
 
 
 <?php else:?>
