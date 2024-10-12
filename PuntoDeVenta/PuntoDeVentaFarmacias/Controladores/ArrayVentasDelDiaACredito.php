@@ -78,8 +78,8 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["AgregadoEl"] = date("d/m/Y", strtotime($fila["Fecha_venta"]));
   
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
-    $data[$c]["Saldar"] =  '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>';
-    $data[$c]["Liquidar"] = '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>';
+    $data[$c]["Saldar"] =  '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Abonar dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fa-solid fa-money-bill-transfer"></i></a></td>';
+    $data[$c]["Liquidar"] = '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Liquidar dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fa-solid fa-file-invoice-dollar"></i></a></td>';
     $c++;
 }
 
