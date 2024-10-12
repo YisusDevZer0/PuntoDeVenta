@@ -73,8 +73,8 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Descuento"] = $fila["DescuentoAplicado"];
     $data[$c]["FormaPago"] = $fila["FormaDePago"];
     $data[$c]["Cliente"] = $fila["Cliente"];
-    $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
-    $data[$c]["NomServ"] = $fila["Nom_Serv"];
+    // $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
+    // $data[$c]["NomServ"] = $fila["Nom_Serv"];
     $data[$c]["AgregadoEl"] = date("d/m/Y", strtotime($fila["Fecha_venta"]));
   
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
