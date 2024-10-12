@@ -90,36 +90,40 @@ WHERE
 <?php if($Especialistas!=null):?>
     
    <!-- Adaptación del formulario -->
+<!-- Adaptación del formulario con inputs uno debajo del otro -->
 <div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Abono pendiente</label>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
+                <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
             <input type="text" class="form-control" readonly name="AbonoPendiente[]" value="<?php echo $Especialistas->Total_VentaG - $Especialistas->CantidadPago; ?>">
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Abonado</label>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
+                <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
             <input type="text" class="form-control" name="Abonado[]" placeholder="Ingrese el monto abonado">
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Nuevo saldo</label>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
+                <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
             <input type="text" class="form-control" readonly id="NuevoSaldo" name="NuevoSaldo[]">
         </div>
     </div>
 </div>
-
 
 
 <?php else:?>
