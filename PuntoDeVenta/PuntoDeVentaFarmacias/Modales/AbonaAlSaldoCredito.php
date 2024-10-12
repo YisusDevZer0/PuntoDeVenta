@@ -86,11 +86,9 @@ WHERE
 ?>
 
 
-
+   <!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if($Especialistas!=null):?>
-    
-   <!-- Adaptación del formulario -->
-<!-- Adaptación del formulario con inputs uno debajo del otro -->
+
 <div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Abono pendiente</label>
@@ -124,6 +122,14 @@ WHERE
         </div>
     </div>
 </div>
+
+<!-- Botón para simular el cobro del abono -->
+<div class="row">
+    <div class="col text-center">
+        <button type="button" class="btn btn-primary" id="cobrarAbono">Cobrar Abono</button>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     // Al cambiar el valor del campo "Abonado"
@@ -136,6 +142,26 @@ $(document).ready(function() {
 
         // Actualizar el valor del campo "Nuevo saldo"
         $('#NuevoSaldo').val(nuevoSaldo.toFixed(2));
+    });
+
+    // Simulación de cobro de abono
+    $('#cobrarAbono').on('click', function() {
+        var abonado = $('input[name="Abonado[]"]').val();
+        if (abonado && parseFloat(abonado) > 0) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Abono Exitoso',
+                text: 'El abono de ' + abonado + ' ha sido registrado con éxito.',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, ingrese un monto válido para el abono.',
+                confirmButtonText: 'OK'
+            });
+        }
     });
 
     // Mismo manejo de envío del formulario para la reimpresión del ticket
@@ -161,28 +187,6 @@ $(document).ready(function() {
 });
 </script>
 
-
 <?php else:?>
 	<p class="alert alert-warning">No hay resultados</p>
 <?php endif;?>
-
-  
-
-
-<?php
-
-function fechaCastellano ($fecha) {
-  $fecha = substr($fecha, 0, 10);
-  $numeroDia = date('d', strtotime($fecha));
-  $dia = date('l', strtotime($fecha));
-  $mes = date('F', strtotime($fecha));
-  $anio = date('Y', strtotime($fecha));
-  $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
-  $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-  $nombredia = str_replace($dias_EN, $dias_ES, $dia);
-$meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
-  $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-  $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
-  return $nombredia." ".$numeroDia." de ".$nombreMes." de ".$anio;
-}
-?>
