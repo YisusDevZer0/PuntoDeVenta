@@ -211,7 +211,7 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDesgloseTickets.php",
  "aoColumns": [
     { mData: 'NumberTicket' },  
-  { mData: 'FolioSucursal' },  
+  
   { mData: 'Fecha' },
   { mData: 'Hora' },
        { mData: 'Vendedor' },
@@ -270,7 +270,7 @@ tabla = $('#Clientes').DataTable({
   <table  id="Clientes"  class="order-column">
 <thead>
 <th>N° Ticket</th>
-<th>Folio Sucursal</th>
+
 <th>Fecha</th>
 <th>Hora</th>
     <th>Vendedor</th>

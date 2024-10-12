@@ -5,9 +5,19 @@ include_once "ControladorUsuario.php";
 
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
-    // (Función como está)
+    $fecha = substr($fecha, 0, 10);
+    $numeroDia = date('d', strtotime($fecha));
+    $dia = date('l', strtotime($fecha));
+    $mes = date('F', strtotime($fecha));
+    $anio = date('Y', strtotime($fecha));
+    $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
+    $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+    $nombredia = str_replace($dias_EN, $dias_ES, $dia);
+    $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+    $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+    $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
+    return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
-
 // Obtener el valor de Fk_Sucursal desde la solicitud
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
@@ -63,7 +73,7 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "NumberTicket" => $fila["Folio_Ticket"],
-        "FolioSucursal" => $fila["FolioSucursal"],
+        
         "Fecha" => fechaCastellano($fila["AgregadoEl"]),
         "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
         "Vendedor" => $fila["AgregadoPor"],
