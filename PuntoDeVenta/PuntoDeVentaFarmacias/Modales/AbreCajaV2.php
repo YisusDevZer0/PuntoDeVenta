@@ -99,14 +99,7 @@ $hora = date('G');
  <input type="text"  hidden name="Licencia" value="<?php echo $row['Licencia']?>">
 <button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
 
-<div class="row">
-    <div class="col">
-      <label for="exampleFormControlInput1">Cantidad asignada en fondo de caja </label>
-      <div class="input-group mb-3">
-        <input type="number" class="form-control input-negro" id="cantidad" name="Cantidad" step="any" readonly value="<?php echo $Especialistas->Fondo_Caja; ?>" aria-describedby="basic-addon1">
-      </div>
-    </div>
-  </div>
+
 
   <!-- Contadores alineados en dos columnas -->
   <div class="row">
@@ -143,12 +136,7 @@ $hora = date('G');
     </div>
   </div>
 
-  <div class="col">
-    <label for="exampleFormControlInput1">Cantidad total en caja<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-      <input type="number" class="form-control input-negro" step="any" name="TotalCaja" id="resultado" aria-describedby="basic-addon1" readonly>
-    </div>
-  </div>
+  
 
   <button type="submit" id="submit" class="btn btn-info">Abrir caja</button>
 </form>
