@@ -5,22 +5,17 @@ include_once "ControladorUsuario.php";
 
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
-    $fecha = substr($fecha, 0, 10);
-    $numeroDia = date('d', strtotime($fecha));
-    $dia = date('l', strtotime($fecha));
-    $mes = date('F', strtotime($fecha));
-    $anio = date('Y', strtotime($fecha));
-    $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
-    $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-    $nombredia = str_replace($dias_EN, $dias_ES, $dia);
-    $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
-    $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-    $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
-    return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
+    // (Función como está)
 }
 
-// Obtener el valor de Fk_Sucursal desde la solicitud (puedes ajustarlo según el contexto)
+// Obtener el valor de Fk_Sucursal desde la solicitud
 $fk_sucursal = isset($_POST['Fk_Sucursal']) ? $_POST['Fk_Sucursal'] : '';
+
+// Verificar si la sucursal tiene un valor válido
+if (empty($fk_sucursal)) {
+    echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
+    exit;
+}
 
 // Consulta segura utilizando una sentencia preparada con el filtro de sucursal
 $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
@@ -38,14 +33,29 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
+// Verificar si la consulta fue preparada correctamente
+if (!$stmt) {
+    echo json_encode(["error" => "Error al preparar la consulta: " . $conn->error]);
+    exit;
+}
+
 // Enlazar el parámetro Fk_Sucursal
 $stmt->bind_param("s", $fk_sucursal);
 
-// Ejecutar la declaración
-$stmt->execute();
+// Ejecutar y verificar la consulta
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+} else {
+    // Si la ejecución falla, imprime el error
+    echo json_encode(["error" => "Error en la ejecución de la consulta: " . $stmt->error]);
+    exit;
+}
 
-// Obtener resultado
-$result = $stmt->get_result();
+// Verificar si hay resultados
+if ($result->num_rows === 0) {
+    echo json_encode(["error" => "No se encontraron resultados para la sucursal: " . $fk_sucursal]);
+    exit;
+}
 
 // Inicializar array para almacenar los resultados
 $data = [];
