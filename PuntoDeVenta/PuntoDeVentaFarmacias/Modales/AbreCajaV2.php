@@ -30,7 +30,7 @@ $hora = date('G');
 
 
 <!-- Formulario oculto inicialmente -->
-<form action="javascript:void(0)" method="post" id="OpenCaja" style="display: none;">
+<form action="javascript:void(0)" method="post" id="OpenCaja" >
   
 <div class="row">
     <div class="col">
