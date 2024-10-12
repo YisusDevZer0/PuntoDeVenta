@@ -74,7 +74,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/LiquidaLaVenta.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
