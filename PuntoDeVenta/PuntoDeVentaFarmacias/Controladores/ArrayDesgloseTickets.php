@@ -29,9 +29,7 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
         Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Ventas_POS 
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-        AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
+        WHERE  Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
         ORDER BY Ventas_POS.AgregadoEl DESC;";
 
