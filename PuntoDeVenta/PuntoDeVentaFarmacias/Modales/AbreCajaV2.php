@@ -27,8 +27,7 @@ $hora = date('G');
   }
 </style>
 
-<!-- Botón para mostrar el formulario -->
-<button id="mostrarFormulario" class="btn btn-primary">Abrir caja</button>
+
 
 <!-- Formulario oculto inicialmente -->
 <form action="javascript:void(0)" method="post" id="OpenCaja" style="display: none;">
@@ -182,11 +181,6 @@ document.getElementById("resultado").addEventListener("input", function() {
 
 <script src="js/AbreCajas.js"></script>
 <script>
-// Mostrar el formulario cuando el botón sea clickeado
-document.getElementById("mostrarFormulario").addEventListener("click", function() {
-    document.getElementById("OpenCaja").style.display = "block";
-    this.style.display = "none"; // Ocultar el botón después de mostrar el formulario
-});
 
 // Actualizar el valor total en caja según el contador de billetes y monedas
 function actualizarTotalCaja() {
