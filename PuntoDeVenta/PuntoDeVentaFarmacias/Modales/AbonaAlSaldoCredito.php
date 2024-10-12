@@ -85,8 +85,7 @@ WHERE
    $query = $conn->query($sql2);
 ?>
 
-
-   <!-- Formulario de reimpresión de ticket con simulación de cobro -->
+<!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if($Especialistas!=null):?>
 
 <div class="row">
@@ -153,6 +152,10 @@ $(document).ready(function() {
                 title: 'Abono Exitoso',
                 text: 'El abono de ' + abonado + ' ha sido registrado con éxito.',
                 confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload(); // Recargar la página al hacer clic en OK
+                }
             });
         } else {
             Swal.fire({
