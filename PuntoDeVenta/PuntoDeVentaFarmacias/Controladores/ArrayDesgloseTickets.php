@@ -3,6 +3,7 @@ header('Content-Type: application/json');
 include("db_connection.php");
 include_once "ControladorUsuario.php";
 
+// Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
     $fecha = substr($fecha, 0, 10);
     $numeroDia = date('d', strtotime($fecha));
@@ -18,7 +19,10 @@ function fechaCastellano($fecha) {
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
 
-// Consulta segura utilizando una sentencia preparada
+// Obtener el valor de Fk_Sucursal desde la solicitud (puedes ajustarlo según el contexto)
+$fk_sucursal = isset($_POST['Fk_Sucursal']) ? $_POST['Fk_Sucursal'] : '';
+
+// Consulta segura utilizando una sentencia preparada con el filtro de sucursal
 $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
         Ventas_POS.Identificador_tipo, Ventas_POS.Cod_Barra, Ventas_POS.Clave_adicional, Ventas_POS.Nombre_Prod, 
         Ventas_POS.Cantidad_Venta, Ventas_POS.Fk_sucursal, Ventas_POS.AgregadoPor, Ventas_POS.AgregadoEl, 
@@ -27,13 +31,15 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
         WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
         AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
+        AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
-        ORDER BY Ventas_POS.AgregadoEl DESC;";  // Ordena por fecha y hora más reciente
+        ORDER BY Ventas_POS.AgregadoEl DESC;";
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// En este caso, no es necesario bind_param ya que no hay parámetros en la consulta
+// Enlazar el parámetro Fk_Sucursal
+$stmt->bind_param("s", $fk_sucursal);
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -69,6 +75,4 @@ $results = [
 
 // Imprimir la respuesta JSON
 echo json_encode($results);
-
-// Nota: En este caso no hay lógica de "Sweet Alert" porque no se está revisando si hay cajas abiertas en este código.
 ?>
