@@ -218,7 +218,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Cantidad_Venta' },
        { mData: 'Total_Venta' },
        { mData: 'Importe' },
-       { mData: 'Descuento' },
+      //  { mData: 'Descuento' },
        { mData: 'FormaPago' },
        { mData: 'Cliente' },
       //  { mData: 'FolioSignoVital' },
@@ -287,7 +287,7 @@ tabla = $('#Clientes').DataTable({
 
 
 
-<th>Descuento</th>
+<!-- <th>Descuento</th> -->
 <th>Forma de pago</th>
 <th>Cliente</th>
 <!-- <th>Folio Signo Vital</th> -->
