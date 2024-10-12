@@ -9,7 +9,7 @@ function fechaCastellano($fecha) {
 }
 
 // Obtener el valor de Fk_Sucursal desde la solicitud
-$fk_sucursal = isset($_POST['Fk_Sucursal']) ? $_POST['Fk_Sucursal'] : '';
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
