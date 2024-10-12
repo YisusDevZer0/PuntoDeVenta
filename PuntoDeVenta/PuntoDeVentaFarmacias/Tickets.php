@@ -64,26 +64,21 @@ include_once "Controladores/ControladorUsuario.php";
     });
 
 
-    // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
-    $(document).on("click", ".btn-reactiva", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+    $(document).on("click", ".btn-desglose", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Activar Caja Actual");
-           
+            $("#TitulosCajas").html("Desglose de ticket");
         });
+        
         $('#ModalEdDele').modal('show');
     });
 
-    $(document).on("click", ".btn-registraGasto", function() {
-        var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Registrar nuevo gasto");
-           
-        });
-        $('#ModalEdDele').modal('show');
-    });
+
+   
 
 });
 
