@@ -76,7 +76,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
     $data[$c]["NomServ"] = $fila["Nom_Serv"];
     $data[$c]["AgregadoEl"] = date("d/m/Y", strtotime($fila["Fecha_venta"]));
-    $data[$c]["AgregadoEnMomento"] = $fila["AgregadoEl"];
+  
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
 
     $c++;

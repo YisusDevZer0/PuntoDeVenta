@@ -224,8 +224,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'FolioSignoVital' },
        { mData: 'NomServ' },
        { mData: 'AgregadoEl' },
-       { mData: 'AgregadoEnMomento' },
-       { mData: 'AgregadoPor' },
+          { mData: 'AgregadoPor' },
       
       ],
      
@@ -294,7 +293,6 @@ tabla = $('#Clientes').DataTable({
 <th>Folio Signo Vital</th>
 <th>Servicio</th>
 <th>Fecha</th>
-<th>Hora</th>   
 <th>Vendedor</th>
 </thead>
 
