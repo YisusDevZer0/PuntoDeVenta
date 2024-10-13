@@ -211,7 +211,7 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayVentasDelDiaACredito.php",
  "aoColumns": [
        { mData: 'Cod_Barra' },
-       { mData: 'Nombre_Prod' },
+      //  { mData: 'Nombre_Prod' },
        { mData: 'FolioTicket' },
       //  { mData: 'Sucursal' },
        { mData: 'Turno' },
