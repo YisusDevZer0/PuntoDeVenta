@@ -296,7 +296,7 @@ tabla = $('#Clientes').DataTable({
 <!-- <th>Servicio</th> -->
 <th>Fecha</th>
 <th>Vendedor</th>
-<th>Saldar</th>
+<th>Abonar</th>
 <th>Liquidar</th>
 </thead>
 

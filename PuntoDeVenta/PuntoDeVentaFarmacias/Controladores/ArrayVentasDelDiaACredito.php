@@ -6,44 +6,35 @@ include "ControladorUsuario.php";
 // Accede directamente a la variable Fk_Sucursal
 $sucursal = $row['Fk_Sucursal']; // Asegúrate de que $row esté disponible y tenga el valor correcto
 
-$sql = "SELECT DISTINCT
-    Ventas_POS.Venta_POS_ID,
-    Ventas_POS.Folio_Ticket,
-    Ventas_POS.FolioSucursal,
-    Ventas_POS.Fk_Caja,
-    Ventas_POS.Identificador_tipo,
-    Ventas_POS.Fecha_venta, 
-    Ventas_POS.Total_Venta,
-    Ventas_POS.Importe,
-    Ventas_POS.Total_VentaG,
-    Ventas_POS.FormaDePago,
-    Ventas_POS.Turno,
-    Ventas_POS.FolioSignoVital,
-    Ventas_POS.Cliente,
-    Cajas.ID_Caja,
-    Cajas.Sucursal,
-    Cajas.MedicoEnturno,
-    Cajas.EnfermeroEnturno,
-    Ventas_POS.Cod_Barra,
-    Ventas_POS.Clave_adicional,
-    Ventas_POS.Nombre_Prod,
-    Ventas_POS.Cantidad_Venta,
-    Ventas_POS.Fk_sucursal,
-    Ventas_POS.AgregadoPor,
-    Ventas_POS.AgregadoEl,
-    Ventas_POS.Lote,
-    Ventas_POS.ID_H_O_D,
+$sql = "SELECT 
+    Ventas_POS.Folio_Ticket, 
+    Ventas_POS.FolioSucursal, 
+    Ventas_POS.Fk_Caja, 
+    Ventas_POS.Venta_POS_ID, 
+    Ventas_POS.Identificador_tipo, 
+    Ventas_POS.Cod_Barra, 
+    Ventas_POS.Clave_adicional, 
+    Ventas_POS.Nombre_Prod, 
+    Ventas_POS.Cantidad_Venta, 
+    Ventas_POS.Fk_sucursal, 
+    Ventas_POS.AgregadoPor, 
+    Ventas_POS.AgregadoEl, 
+    Ventas_POS.Total_Venta, 
+    Ventas_POS.Lote, 
+    Ventas_POS.ID_H_O_D, 
     Sucursales.ID_Sucursal, 
     Sucursales.Nombre_Sucursal,
     Servicios_POS.Servicio_ID,
     Servicios_POS.Nom_Serv,
-    Ventas_POS.DescuentoAplicado,
-    Stock_POS.ID_Prod_POS,
+    Cajas.ID_Caja,
+    Cajas.Sucursal AS Sucursal_Caja,
+    Cajas.MedicoEnturno,
+    Cajas.EnfermeroEnturno,
     Stock_POS.Precio_Venta,
     Stock_POS.Precio_C
 FROM 
     Ventas_POS
-LEFT JOIN 
+JOIN 
     Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
 LEFT JOIN 
     Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID 
@@ -52,10 +43,16 @@ LEFT JOIN
 LEFT JOIN 
     Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
-    YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) 
-    AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE())
-    AND Ventas_POS.Fk_sucursal = '$sucursal'
-    AND Ventas_POS.FormaDePago = 'Crédito';"; // Filtro por la forma de pago "Crédito"
+    MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
+    AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
+    AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
+    AND Ventas_POS.FormaDePago = 'Crédito' 
+GROUP BY 
+    Ventas_POS.Folio_Ticket, 
+    Ventas_POS.FolioSucursal
+ORDER BY 
+    Ventas_POS.AgregadoEl DESC;";
+ // Filtro por la forma de pago "Crédito"
 
 $result = mysqli_query($conn, $sql);
 
