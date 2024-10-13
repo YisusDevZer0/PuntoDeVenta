@@ -119,13 +119,26 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
             </div>
             <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
             
-            <input type="text" class="form-control" readonly name="Ticket" value="<?php echo $Especialistas->Folio_Ticket ?>">
-            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>">
-            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
+            <input type="text" class="form-control" hidden readonly name="Ticket" value="<?php echo $Especialistas->Folio_Ticket ?>">
+            <input type="text" class="form-control " hidden style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>">
+            <input type="text" class="form-control " hidden  style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
       
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="col">
+        <label for="exampleFormControlInput1">Forma de pago </label>
+        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
+<option value="0">Seleccione el Tipo de Pago</option>
+<option value="Efectivo" selected="true">Efectivo</option>
+<option value="Tarjeta">Tarjeta</option>
+<option value="Transferencia">Transferencia</option>
+</select>
+    </div>
+</div>
+
+
 <div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Abonado</label>
