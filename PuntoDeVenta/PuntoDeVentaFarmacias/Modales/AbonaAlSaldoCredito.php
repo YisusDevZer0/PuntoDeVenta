@@ -27,7 +27,14 @@ $sql1= "SELECT
     Ventas_POS.AgregadoPor,
     Ventas_POS.AgregadoEl,
     Ventas_POS.Lote,
-    Ventas_POS.Pagos_tarjeta,
+    COALESCE(
+        (SELECT Pagos_tarjeta 
+         FROM Ventas_POS v 
+         WHERE v.Folio_Ticket = Ventas_POS.Folio_Ticket 
+         AND v.Pagos_tarjeta IS NOT NULL 
+         LIMIT 1), 
+        0
+    ) AS Pagos_tarjeta,
     Ventas_POS.ID_H_O_D,
     Sucursales.ID_Sucursal,
     Sucursales.Nombre_Sucursal
@@ -39,6 +46,7 @@ LEFT JOIN
     Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
 WHERE 
     Ventas_POS.Folio_Ticket = '".$_POST["id"]."'";
+
 
 $query = $conn->query($sql1);
 $Especialistas = null;
