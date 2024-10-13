@@ -143,7 +143,7 @@ $(document).ready(function() {
 
         if (abonado && parseFloat(abonado) > 0) {
             $.ajax({
-                url: '../Controladores/guardar_abono.php',
+                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
                 type: 'POST',
                 data: {
                     FkCaja: "<?php echo $Especialistas->Fk_Caja; ?>",
