@@ -1,8 +1,8 @@
 <?php
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
-include "Controladores/ConsultaCaja.php";
-include "Controladores/SumadeFolioTicketsNuevo.php";
+include "../Controladores/ConsultaCaja.php";
+include "../Controladores/SumadeFolioTicketsNuevo.php";
 
 $fcha = date("Y-m-d");
 $user_id=null;
