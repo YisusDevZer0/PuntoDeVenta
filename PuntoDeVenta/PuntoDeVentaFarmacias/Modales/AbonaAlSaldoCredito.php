@@ -27,6 +27,7 @@ $sql1= "SELECT
     Ventas_POS.AgregadoPor,
     Ventas_POS.AgregadoEl,
     Ventas_POS.Lote,
+    Ventas_POS.Pagos_tarjeta,
     Ventas_POS.ID_H_O_D,
     Sucursales.ID_Sucursal,
     Sucursales.Nombre_Sucursal
@@ -95,7 +96,7 @@ WHERE
             <div class="input-group-prepend">
                 <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
-            <input type="text" class="form-control" readonly name="AbonoPendiente[]" value="<?php echo $Especialistas->Total_VentaG - $Especialistas->CantidadPago; ?>">
+            <input type="text" class="form-control" readonly name="AbonoPendiente[]" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
         </div>
     </div>
 </div>
