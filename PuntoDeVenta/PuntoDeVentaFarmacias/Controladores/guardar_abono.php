@@ -4,7 +4,7 @@ include "../Controladores/db_connect.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $FkCaja = $_POST['FkCaja'];
     $Turno = $_POST['Turno'];
-    $SaldoPrevio = $_POST['AbonoPendiente'];
+    $SaldoPrevio = $_POST['abonoPendiente'];
     $Abono = $_POST['Abonado'];
     $NuevoSaldo = $_POST['NuevoSaldo'];
     $CobradoPor = $_POST['CobradoPor'];
