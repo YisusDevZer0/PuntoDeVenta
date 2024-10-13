@@ -20,6 +20,8 @@ $sql = "SELECT
     Ventas_POS.Fk_sucursal, 
     Ventas_POS.AgregadoPor, 
     Ventas_POS.AgregadoEl, 
+       Ventas_POS.FormaDePago, 
+          Ventas_POS.Cliente, 
     Ventas_POS.Total_Venta, 
     Ventas_POS.Lote, 
     Ventas_POS.ID_H_O_D, 
