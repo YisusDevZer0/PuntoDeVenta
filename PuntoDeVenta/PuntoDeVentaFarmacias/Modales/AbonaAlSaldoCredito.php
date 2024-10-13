@@ -66,17 +66,16 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if ($Especialistas != null): ?>
 
-<div class="row">
+    <div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Abono pendiente</label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
             <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $Especialistas->Folio_Ticket ?>">
-            <input type="text" class="form-control " hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno'] ?>">
-            <input type="text" class="form-control " hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja'] ?>">
-            <input type="text" class="form-control "  name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos']?>">
-            
-            <input type="text" class="form-control " hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
+            <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno'] ?>">
+            <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja'] ?>">
+            <input type="text" class="form-control" name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
+            <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
         </div>
     </div>
 </div>
@@ -84,7 +83,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <div class="row">
     <div class="col">
         <label for="exampleFormControlInput1">Forma de pago </label>
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" name="FormaPago"id="selTipoPago" required>
+        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" name="FormaPago" id="selTipoPago" required>
             <option value="0">Seleccione el Tipo de Pago</option>
             <option value="Efectivo" selected="true">Efectivo</option>
             <option value="Tarjeta">Tarjeta</option>
@@ -111,12 +110,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
     </div>
 </div>
 
-<!-- Botón para simular el cobro del abono -->
-<div class="row">
-    <div class="col text-center">
-        <button type="button" class="btn btn-primary" id="cobrarAbono">Cobrar Abono</button>
-    </div>
-</div>
+<button type="button" class="btn btn-primary" id="cobrarAbono">Cobrar Abono</button>
 
 <script>
 $(document).ready(function() {
@@ -138,23 +132,23 @@ $(document).ready(function() {
         var abonoPendiente = $('input[name="AbonoPendiente"]').val();
         var nuevoSaldo = $('#NuevoSaldo').val();
         var formaPago = $('#selTipoPago').val();
-        var ticket = $('input[name="Ticket"]').val();
-        var cobrador = '<?php echo $_SESSION["usuario_nombre"]; ?>';
+        var ticket = $('input[name="TicketAnterior"]').val(); // Actualizado para usar TicketAnterior
+        var cobrador = $('input[name="CobradoPor"]').val(); // Actualizado para usar el campo CobradoPor
 
         if (abonado && parseFloat(abonado) > 0) {
             $.ajax({
                 url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
                 type: 'POST',
                 data: {
-                    FkCaja: "<?php echo $Especialistas->Fk_Caja; ?>",
-                    Turno: "<?php echo $ValorCaja['Turno']; ?>",
+                    FkCaja: $('input[name="FkCaja"]').val(), // Actualizado para usar FkCaja
+                    Turno: $('input[name="Turno"]').val(), // Actualizado para usar Turno
                     SaldoPrevio: abonoPendiente,
                     Abono: abonado,
                     NuevoSaldo: nuevoSaldo,
                     CobradoPor: cobrador,
                     FormaPago: formaPago,
                     NumTicket: ticket,
-                    TicketNuevo: 'No',
+                    TicketNuevo: $('input[name="TicketNuevo"]').val(), // Actualizado para usar TicketNuevo
                 },
                 success: function(response) {
                     Swal.fire({
