@@ -10,6 +10,7 @@ $sql = "SELECT
     Ventas_POS.Folio_Ticket, 
     Ventas_POS.FolioSucursal, 
     Ventas_POS.Fk_Caja, 
+      Ventas_POS.Turno, 
     Ventas_POS.Venta_POS_ID, 
     Ventas_POS.Identificador_tipo, 
     Ventas_POS.Cod_Barra, 
@@ -28,8 +29,6 @@ $sql = "SELECT
     Servicios_POS.Nom_Serv,
     Cajas.ID_Caja,
     Cajas.Sucursal AS Sucursal_Caja,
-    Cajas.MedicoEnturno,
-    Cajas.EnfermeroEnturno,
     Stock_POS.Precio_Venta,
     Stock_POS.Precio_C
 FROM 
