@@ -210,7 +210,7 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayVentasDelDiaACredito.php",
  "aoColumns": [
-       { mData: 'Cod_Barra' },
+      
       //  { mData: 'Nombre_Prod' },
        { mData: 'FolioTicket' },
       //  { mData: 'Sucursal' },
@@ -276,8 +276,8 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>Cod</th>
-<th>Nombre</th>
+<!-- <th>Cod</th> -->
+<!-- <th>Nombre</th> -->
 
 
 <th>N° Ticket</th>
