@@ -104,7 +104,9 @@ WHERE
             <div class="input-group-prepend">
                 <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
-            <input type="text" class="form-control" readonly name="AbonoPendiente[]" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
+            <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
+            
+            <input type="text" class="form-control" readonly name="Ticket" value="<?php echo $Especialistas->Folio_Ticket ?>">
         </div>
     </div>
 </div>
@@ -115,7 +117,7 @@ WHERE
             <div class="input-group-prepend">
                 <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
-            <input type="text" class="form-control" name="Abonado[]" placeholder="Ingrese el monto abonado">
+            <input type="text" class="form-control" name="Abonado" placeholder="Ingrese el monto abonado">
         </div>
     </div>
 </div>
@@ -126,7 +128,7 @@ WHERE
             <div class="input-group-prepend">
                 <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
             </div>
-            <input type="text" class="form-control" readonly id="NuevoSaldo" name="NuevoSaldo[]">
+            <input type="text" class="form-control" readonly id="NuevoSaldo" name="NuevoSaldo">
         </div>
     </div>
 </div>
@@ -141,8 +143,8 @@ WHERE
 <script>
 $(document).ready(function() {
     // Al cambiar el valor del campo "Abonado"
-    $('input[name="Abonado[]"]').on('input', function() {
-        var abonoPendiente = parseFloat($('input[name="AbonoPendiente[]"]').val()) || 0;
+    $('input[name="Abonado"]').on('input', function() {
+        var abonoPendiente = parseFloat($('input[name="AbonoPendiente"]').val()) || 0;
         var abonado = parseFloat($(this).val()) || 0;
 
         // Calcular el nuevo saldo
@@ -154,7 +156,7 @@ $(document).ready(function() {
 
     // Simulación de cobro de abono
     $('#cobrarAbono').on('click', function() {
-        var abonado = $('input[name="Abonado[]"]').val();
+        var abonado = $('input[name="Abonado"]').val();
         if (abonado && parseFloat(abonado) > 0) {
             Swal.fire({
                 icon: 'success',
