@@ -1,7 +1,8 @@
 <?php
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
-
+include "Controladores/ConsultaCaja.php";
+include "Controladores/SumadeFolioTicketsNuevo.php";
 
 $fcha = date("Y-m-d");
 $user_id=null;
@@ -92,6 +93,18 @@ LEFT JOIN
 WHERE 
     Ventas_POS.Folio_Ticket = '".$_POST["id"]."'";
    $query = $conn->query($sql2);
+
+   $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
+
+
+// Concatenar las primeras 3 letras con el valor de $totalmonto
+$resultado_concatenado = $primeras_tres_letras . $totalmonto;
+
+// Convertir el resultado a mayúsculas
+$resultado_en_mayusculas = strtoupper($resultado_concatenado);
+
+// Imprimir el resultado en mayúsculas
+
 ?>
 
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
@@ -107,6 +120,9 @@ WHERE
             <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
             
             <input type="text" class="form-control" readonly name="Ticket" value="<?php echo $Especialistas->Folio_Ticket ?>">
+            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>">
+            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
+      
         </div>
     </div>
 </div>
