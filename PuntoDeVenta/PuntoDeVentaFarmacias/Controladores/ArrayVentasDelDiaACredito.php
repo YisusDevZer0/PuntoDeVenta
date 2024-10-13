@@ -45,7 +45,7 @@ LEFT JOIN
 WHERE 
     MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
     AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-    AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
+    AND Ventas_POS.Fk_sucursal = '$sucursal' -- Filtrar por sucursal
     AND Ventas_POS.FormaDePago = 'Crédito' 
 GROUP BY 
     Ventas_POS.Folio_Ticket, 
