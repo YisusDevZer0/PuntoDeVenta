@@ -126,60 +126,72 @@ $(document).ready(function() {
         $('#NuevoSaldo').val(nuevoSaldo.toFixed(2));
     });
 
-    // Simulación de cobro de abono con AJAX
     $('#cobrarAbono').on('click', function() {
-        var abonado = $('input[name="Abonado"]').val();
-        var abonoPendiente = $('input[name="AbonoPendiente"]').val();
-        var nuevoSaldo = $('#NuevoSaldo').val();
-        var formaPago = $('#selTipoPago').val();
-        var ticket = $('input[name="TicketAnterior"]').val(); // Actualizado para usar TicketAnterior
-        var cobrador = $('input[name="CobradoPor"]').val(); // Actualizado para usar el campo CobradoPor
+    var abonado = $('input[name="Abonado"]').val();
+    var abonoPendiente = $('input[name="AbonoPendiente"]').val();
+    var nuevoSaldo = $('#NuevoSaldo').val();
+    var formaPago = $('#selTipoPago').val();
+    var ticket = $('input[name="TicketAnterior"]').val(); 
+    var cobrador = $('input[name="CobradoPor"]').val(); 
 
-        if (abonado && parseFloat(abonado) > 0) {
-            $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
-                type: 'POST',
-                data: {
-                    FkCaja: $('input[name="FkCaja"]').val(), // Actualizado para usar FkCaja
-                    Turno: $('input[name="Turno"]').val(), // Actualizado para usar Turno
-                    SaldoPrevio: abonoPendiente,
-                    Abono: abonado,
-                    NuevoSaldo: nuevoSaldo,
-                    CobradoPor: cobrador,
-                    FormaPago: formaPago,
-                    NumTicket: ticket,
-                    TicketNuevo: $('input[name="TicketNuevo"]').val(), // Actualizado para usar TicketNuevo
-                },
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Abono Exitoso',
-                        text: 'El abono de ' + abonado + ' ha sido registrado con éxito.',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload(); // Recargar la página al hacer clic en OK
-                        }
-                    });
-                },
-                error: function(error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Hubo un problema al registrar el abono. Por favor, inténtalo de nuevo.',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor, ingrese un monto válido para el abono.',
-                confirmButtonText: 'OK'
-            });
-        }
+    // Verificar en la consola si se están enviando correctamente
+    console.log({
+        FkCaja: $('input[name="FkCaja"]').val(),
+        Turno: $('input[name="Turno"]').val(),
+        SaldoPrevio: abonoPendiente,
+        Abono: abonado,
+        NuevoSaldo: nuevoSaldo,
+        CobradoPor: cobrador,
+        FormaPago: formaPago,
+        NumTicket: ticket,
+        TicketNuevo: $('input[name="TicketNuevo"]').val()
     });
+
+    if (abonado && parseFloat(abonado) > 0) {
+        $.ajax({
+            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
+            type: 'POST',
+            data: {
+                FkCaja: $('input[name="FkCaja"]').val(),
+                Turno: $('input[name="Turno"]').val(),
+                SaldoPrevio: abonoPendiente,
+                Abono: abonado,
+                NuevoSaldo: nuevoSaldo,
+                CobradoPor: cobrador,
+                FormaPago: formaPago,
+                NumTicket: ticket,
+                TicketNuevo: $('input[name="TicketNuevo"]').val(),
+            },
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Abono Exitoso',
+                    text: 'El abono de ' + abonado + ' ha sido registrado con éxito.',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    }
+                });
+            },
+            error: function(error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al registrar el abono. Por favor, inténtalo de nuevo.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Por favor, ingrese un monto válido para el abono.',
+            confirmButtonText: 'OK'
+        });
+    }
+})
 });
 </script>
 

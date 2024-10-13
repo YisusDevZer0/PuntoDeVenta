@@ -2,15 +2,26 @@
 include "../Controladores/db_connect.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Depuración: Mostrar los valores que llegan
+    echo "<pre>";
+    print_r($_POST);
+    echo "</pre>";
+    
     $FkCaja = $_POST['FkCaja'];
     $Turno = $_POST['Turno'];
-    $SaldoPrevio = $_POST['abonoPendiente'];
-    $Abono = $_POST['Abonado'];
+    $SaldoPrevio = $_POST['SaldoPrevio'];
+    $Abono = $_POST['Abono'];
     $NuevoSaldo = $_POST['NuevoSaldo'];
     $CobradoPor = $_POST['CobradoPor'];
     $FormaPago = $_POST['FormaPago'];
-    $NumTicket = $_POST['TicketAnterior'];
-    $TicketNuevo = $_POST['TicketNuevo']; // Esto dependerá de tu lógica
+    $NumTicket = $_POST['NumTicket'];
+    $TicketNuevo = $_POST['TicketNuevo']; 
+
+    // Validar si se recibieron correctamente
+    if (empty($SaldoPrevio) || empty($Abono) || empty($CobradoPor)) {
+        echo "Error: Faltan datos. Revise los campos.";
+        exit;
+    }
 
     $FechaHora = date("Y-m-d H:i:s");
 
@@ -29,4 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     echo "Acceso denegado";
 }
-?>
+
