@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Obtener datos enviados por AJAX
     $FkCaja = $_POST['FkCaja'];
     $Turno = $_POST['Turno'];
-    $SaldoPrevio = $_POST['AbonoPendiente'];
+    $SaldoPrevio = $_POST['Abono'];
     $Abono = $_POST['Abono'];
     $CobradoPor = $_POST['CobradoPor'];
     $FormaPago = $_POST['FormaPago'];
