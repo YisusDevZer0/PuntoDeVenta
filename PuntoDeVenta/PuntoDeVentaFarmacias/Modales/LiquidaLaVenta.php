@@ -65,49 +65,51 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if ($Especialistas != null): ?>
-<div class="row">
-    <div class="col">
-        <label for="exampleFormControlInput1">Saldo pendiente</label>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
-            <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $Especialistas->Folio_Ticket ?>">
-            <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno'] ?>">
-            <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja'] ?>">
-            <input type="text" class="form-control" name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
-            <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col">
-        <label for="exampleFormControlInput1">Abonado (Monto exacto)</label>
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
+    <form id="formLiquidacion" method="POST" action="ruta_a_tu_php.php">
+    <div class="row">
+        <div class="col">
+            <label for="exampleFormControlInput1">Saldo pendiente</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" readonly name="AbonoPendiente" id="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta; ?>">
+                <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $Especialistas->Folio_Ticket; ?>">
+                <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno']; ?>">
+                <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja']; ?>">
+                <input type="text" class="form-control" name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos']; ?>">
+                <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
             </div>
-            <!-- El campo de abonado estará bloqueado con el valor del saldo pendiente -->
-            <input type="text" class="form-control"  id="Abonado" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col">
-        <label for="exampleFormControlInput1">Forma de pago </label>
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" name="FormaPago" id="selTipoPago" required>
-            <option value="0">Seleccione el Tipo de Pago</option>
-            <option value="Efectivo" selected="true">Efectivo</option>
-            <option value="Tarjeta">Tarjeta</option>
-            <option value="Transferencia">Transferencia</option>
-        </select>
+
+    <div class="row">
+        <div class="col">
+            <label for="exampleFormControlInput1">Abonado (Monto exacto)</label>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
+                </div>
+                <!-- El campo de abonado estará bloqueado con el valor del saldo pendiente -->
+                <input type="text" class="form-control" readonly id="Abonado" value="<?php echo $Especialistas->Total_VentaG - $Especialistas->CantidadPago; ?>">
+            </div>
+        </div>
     </div>
-</div>
-<!-- Botón para simular la liquidación del abono -->
-<div class="row">
-    <div class="col text-center">
-        <button type="button" class="btn btn-primary" id="liquidarSaldo">Liquidar</button>
+    <div class="row">
+        <div class="col">
+            <label for="exampleFormControlInput1">Forma de pago </label>
+            <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" name="FormaPago" id="selTipoPago" required>
+                <option value="0">Seleccione el Tipo de Pago</option>
+                <option value="Efectivo" selected="true">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+            </select>
+        </div>
     </div>
-</div>
+    <!-- Botón para simular la liquidación del abono -->
+    <div class="row">
+        <div class="col text-center">
+            <button type="button" class="btn btn-primary" id="liquidarSaldo">Liquidar</button>
+        </div>
+    </div>
+</form>
 
 <script>
 $(document).ready(function() {
@@ -116,51 +118,28 @@ $(document).ready(function() {
         var saldoPendiente = parseFloat($('#AbonoPendiente').val()) || 0;
         var abonado = parseFloat($('#Abonado').val()) || 0;
 
-        // Validar que el abonado sea exactamente el saldo pendiente
-        if (abonado === saldoPendiente && saldoPendiente > 0) {
-            // Recopilar los datos del formulario
-            var datos = {
-                FkCaja: $('input[name="FkCaja"]').val(),
-                Turno: $('input[name="Turno"]').val(),
-                SaldoPrevio: saldoPendiente,
-                Abono: abonado,
-                CobradoPor: $('input[name="CobradoPor"]').val(),
-                FormaPago: $('#selTipoPago').val(),
-                NumTicket: $('input[name="TicketAnterior"]').val(),
-                TicketNuevo: $('input[name="TicketNuevo"]').val()
-            };
+        // Imprimir valores en la consola para verificar
+        console.log("Saldo Pendiente: ", saldoPendiente);
+        console.log("Abonado: ", abonado);
 
-            // Realizar la petición AJAX para guardar el abono
-            $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_liquidacion.php', // Cambia a la URL de tu script PHP
-                type: 'POST',
-                data: datos,
-                success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Liquidación exitosa',
-                        text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload(); // Recargar la página al hacer clic en OK
-                        }
-                    });
-                },
-                error: function(error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Hubo un problema al liquidar el saldo. Por favor, inténtalo de nuevo.',
-                        confirmButtonText: 'OK'
-                    });
+        // Validar que el abonado sea exactamente el saldo pendiente
+        if (abonado.toFixed(2) === saldoPendiente.toFixed(2) && saldoPendiente > 0) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Liquidación exitosa',
+                text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Aquí puedes enviar el formulario de liquidación
+                    $('#formLiquidacion').submit(); // Asegúrate de tener el ID del formulario
                 }
             });
         } else {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'El saldo pendiente debe ser liquidado completamente.',
+                text: 'El saldo pendiente debe ser liquidado completamente. Asegúrate de que el monto abonado sea exacto.',
                 confirmButtonText: 'OK'
             });
         }
