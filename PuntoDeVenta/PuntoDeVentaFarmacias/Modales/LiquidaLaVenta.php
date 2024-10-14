@@ -65,7 +65,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if ($Especialistas != null): ?>
-    <form id="formLiquidacion">
+<form id="formLiquidacion">
     <div class="row">
         <div class="col">
             <label for="exampleFormControlInput1">Saldo pendiente</label>
@@ -126,7 +126,7 @@ $(document).ready(function() {
                 data: {
                     FkCaja: $('input[name="FkCaja"]').val(),
                     Turno: $('input[name="Turno"]').val(),
-                    SaldoPrevio: saldoPendiente,
+                    SaldoPrevio: $('input[name="AbonoPendiente"]').val(),
                     Abono: abonado,
                     CobradoPor: $('input[name="CobradoPor"]').val(),
                     FormaPago: $('#selTipoPago').val(),
@@ -134,18 +134,28 @@ $(document).ready(function() {
                     TicketNuevo: $('input[name="TicketNuevo"]').val(),
                 },
                 success: function(response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Liquidación exitosa',
-                        text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
-                        confirmButtonText: 'OK'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.reload(); // Recargar la página al hacer clic en OK
-                        }
-                    });
+                    var res = JSON.parse(response);
+                    if (res.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Liquidación exitosa',
+                            text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.reload(); // Recargar la página al hacer clic en OK
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message,
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 },
-                error: function(error) {
+                error: function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -165,8 +175,6 @@ $(document).ready(function() {
     });
 });
 </script>
-
-
-<?php else:?>
-	<p class="alert alert-warning">No hay resultados</p>
-<?php endif;?>
+<?php else: ?>
+    <p class="alert alert-warning">No hay resultados</p>
+<?php endif; ?>

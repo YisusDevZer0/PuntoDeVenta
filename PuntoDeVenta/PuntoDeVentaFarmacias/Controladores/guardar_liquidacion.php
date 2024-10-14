@@ -2,32 +2,33 @@
 include "../Controladores/db_connect.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Obtener datos enviados por AJAX
     $FkCaja = $_POST['FkCaja'];
     $Turno = $_POST['Turno'];
     $SaldoPrevio = $_POST['AbonoPendiente'];
-    $Abono = $_POST['Abonado'];
-    $NuevoSaldo = $_POST['NuevoSaldo']; // Asegúrate de calcular esto si es necesario
+    $Abono = $_POST['Abono'];
     $CobradoPor = $_POST['CobradoPor'];
     $FormaPago = $_POST['FormaPago'];
-    $NumTicket = $_POST['TicketAnterior'];
-    $TicketNuevo = $_POST['TicketNuevo']; // Esto dependerá de tu lógica
+    $NumTicket = $_POST['NumTicket'];
+    $TicketNuevo = $_POST['TicketNuevo'];
 
+    // Formato de fecha y hora
     $FechaHora = date("Y-m-d H:i:s");
 
-    // Asegúrate de que se calculen correctamente SaldoPrevio y Abono
+    // Inserción en la tabla de liquidaciones
     $sql = "INSERT INTO AbonosCreditosLiquidaciones 
         (FkCaja, Turno, SaldoPrevio, Abono, CobradoPor, FormaPago, NumTicket, TicketNuevo, FechaHora) 
         VALUES 
         ('$FkCaja', '$Turno', '$SaldoPrevio', '$Abono', '$CobradoPor', '$FormaPago', '$NumTicket', '$TicketNuevo', '$FechaHora')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Abono registrado con éxito";
+        echo json_encode(["success" => true, "message" => "Liquidación registrada con éxito."]);
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo json_encode(["success" => false, "message" => "Error: " . $sql . "<br>" . $conn->error]);
     }
 
     $conn->close();
 } else {
-    echo "Acceso denegado";
+    echo json_encode(["success" => false, "message" => "Acceso denegado."]);
 }
 ?>
