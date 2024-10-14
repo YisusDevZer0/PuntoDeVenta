@@ -88,7 +88,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                     <span class="input-group-text" id="Tarjeta"><i class="fas fa-info-circle"></i></span>
                 </div>
                 <!-- El campo de abonado estará bloqueado con el valor del saldo pendiente -->
-                <input type="text" class="form-control" readonly id="Abonado" value="<?php echo $Especialistas->Total_VentaG - $Especialistas->CantidadPago; ?>">
+                <input type="text" class="form-control" readonly id="Abonado" value="<?php echo $Especialistas->Pagos_tarjeta;  ?>">
             </div>
         </div>
     </div>
