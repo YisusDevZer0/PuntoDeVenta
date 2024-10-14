@@ -97,7 +97,7 @@ $hora = date('G');
  <input type="text" hidden name="CodEstatus" value="background-color: #2BBB1D !important;">
  <input type="text"  hidden name="Sistema" value="POS <?php echo $row['Nombre_rol']?>">
  <input type="text"  hidden name="Licencia" value="<?php echo $row['Licencia']?>">
-<button type="submit"  id="submit"  class="btn btn-info">Abrir caja <i class="fas fa-check"></i></button>
+
 
 
 
