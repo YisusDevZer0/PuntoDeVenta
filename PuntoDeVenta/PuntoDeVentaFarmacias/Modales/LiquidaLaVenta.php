@@ -65,7 +65,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
 <?php if ($Especialistas != null): ?>
-    <form id="formLiquidacion" method="POST" action="ruta_a_tu_php.php">
+    <form id="formLiquidacion">
     <div class="row">
         <div class="col">
             <label for="exampleFormControlInput1">Saldo pendiente</label>
@@ -110,36 +110,55 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         </div>
     </div>
 </form>
-
 <script>
 $(document).ready(function() {
     // Simulación de liquidación de abono
     $('#liquidarSaldo').on('click', function() {
-        var saldoPendiente = parseFloat($('#AbonoPendiente').val()) || 0;
+        var saldoPendiente = parseFloat($('input[name="AbonoPendiente"]').val()) || 0;
         var abonado = parseFloat($('#Abonado').val()) || 0;
 
-        // Imprimir valores en la consola para verificar
-        console.log("Saldo Pendiente: ", saldoPendiente);
-        console.log("Abonado: ", abonado);
-
         // Validar que el abonado sea exactamente el saldo pendiente
-        if (abonado.toFixed(2) === saldoPendiente.toFixed(2) && saldoPendiente > 0) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Liquidación exitosa',
-                text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Aquí puedes enviar el formulario de liquidación
-                    $('#formLiquidacion').submit(); // Asegúrate de tener el ID del formulario
+        if (abonado === saldoPendiente && saldoPendiente > 0) {
+            // Realizar la llamada AJAX para guardar los datos
+            $.ajax({
+                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_liquidacion.php',
+                type: 'POST',
+                data: {
+                    FkCaja: $('input[name="FkCaja"]').val(),
+                    Turno: $('input[name="Turno"]').val(),
+                    SaldoPrevio: saldoPendiente,
+                    Abono: abonado,
+                    CobradoPor: $('input[name="CobradoPor"]').val(),
+                    FormaPago: $('#selTipoPago').val(),
+                    NumTicket: $('input[name="TicketAnterior"]').val(),
+                    TicketNuevo: $('input[name="TicketNuevo"]').val(),
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Liquidación exitosa',
+                        text: 'El saldo de ' + abonado + ' ha sido liquidado con éxito.',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload(); // Recargar la página al hacer clic en OK
+                        }
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema al liquidar el saldo. Por favor, inténtalo de nuevo.',
+                        confirmButtonText: 'OK'
+                    });
                 }
             });
         } else {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'El saldo pendiente debe ser liquidado completamente. Asegúrate de que el monto abonado sea exacto.',
+                text: 'El saldo pendiente debe ser liquidado completamente.',
                 confirmButtonText: 'OK'
             });
         }
