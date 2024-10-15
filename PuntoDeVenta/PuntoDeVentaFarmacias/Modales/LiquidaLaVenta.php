@@ -74,6 +74,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                 <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $Especialistas->Folio_Ticket; ?>">
                 <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno']; ?>">
                 <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja']; ?>">
+                <input type="text" class="form-control" hidden name="Sucursal" readonly value="<?php echo $row['Fk_Sucursal'] ?>">
                 <input type="text" class="form-control" name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos']; ?>">
                 <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
             </div>
@@ -132,6 +133,8 @@ $(document).ready(function() {
                     FormaPago: $('#selTipoPago').val(),
                     NumTicket: $('input[name="TicketAnterior"]').val(),
                     TicketNuevo: $('input[name="TicketNuevo"]').val(),
+                    Sucursal: $('input[name="Sucursal"]').val(),
+                    
                 },
                 success: function(response) {
                     var res = JSON.parse(response);

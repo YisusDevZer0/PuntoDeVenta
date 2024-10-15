@@ -11,15 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $FormaPago = $_POST['FormaPago'];
     $NumTicket = $_POST['NumTicket'];
     $TicketNuevo = $_POST['TicketNuevo'];
-
+    $Sucursal = $_POST['Sucursal']; 
     // Formato de fecha y hora
     $FechaHora = date("Y-m-d H:i:s");
 
     // Inserción en la tabla de liquidaciones
     $sql = "INSERT INTO AbonosCreditosLiquidaciones 
-        (FkCaja, Turno, SaldoPrevio, Abono, CobradoPor, FormaPago, NumTicket, TicketNuevo, FechaHora) 
+        (FkCaja, Turno, SaldoPrevio, Abono, CobradoPor, FormaPago, NumTicket, TicketNuevo, FechaHora,Sucursal) 
         VALUES 
-        ('$FkCaja', '$Turno', '$SaldoPrevio', '$Abono', '$CobradoPor', '$FormaPago', '$NumTicket', '$TicketNuevo', '$FechaHora')";
+        ('$FkCaja', '$Turno', '$SaldoPrevio', '$Abono', '$CobradoPor', '$FormaPago', '$NumTicket', '$TicketNuevo', '$FechaHora','$Sucursal')";
 
     if ($conn->query($sql) === TRUE) {
         echo json_encode(["success" => true, "message" => "Liquidación registrada con éxito."]);
