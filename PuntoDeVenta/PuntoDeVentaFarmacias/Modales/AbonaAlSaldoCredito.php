@@ -75,6 +75,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
             <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno'] ?>">
             <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja'] ?>">
             <input type="text" class="form-control" name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
+            <input type="text" class="form-control" name="Sucursal" readonly value="<?php echo $row['Fk_Sucursal'] ?>">
             <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
         </div>
     </div>
@@ -132,7 +133,8 @@ $(document).ready(function() {
     var nuevoSaldo = $('#NuevoSaldo').val();
     var formaPago = $('#selTipoPago').val();
     var ticket = $('input[name="TicketAnterior"]').val(); 
-    var cobrador = $('input[name="CobradoPor"]').val(); 
+    var cobrador = $('input[name="CobradoPor"]').val();
+    var sucursalcobro = $('input[name="Sucursal"]').val(); 
 
     // Verificar en la consola si se están enviando correctamente
     console.log({
@@ -161,6 +163,7 @@ $(document).ready(function() {
                 FormaPago: formaPago,
                 NumTicket: ticket,
                 TicketNuevo: $('input[name="TicketNuevo"]').val(),
+                sucursalcobro:sucursalcobro,
             },
             success: function(response) {
                 Swal.fire({

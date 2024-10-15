@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $CobradoPor = $_POST['CobradoPor'];
     $FormaPago = $_POST['FormaPago'];
     $NumTicket = $_POST['NumTicket'];
-    $TicketNuevo = $_POST['TicketNuevo']; 
+    $TicketNuevo = $_POST['TicketNuevo'];
+    $Sucursal = $_POST['sucursalcobro']; 
 
     // Validar si se recibieron correctamente
     if (empty($SaldoPrevio) || empty($Abono) || empty($CobradoPor)) {
@@ -26,9 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $FechaHora = date("Y-m-d H:i:s");
 
     $sql = "INSERT INTO AbonosCreditosVentas 
-        (FkCaja, Turno, SaldoPrevio, Abono, NuevoSaldo, CobradoPor, FormaPago, NumTicket, TicketNuevo, FechaHora) 
+        (FkCaja, Turno, SaldoPrevio, Abono, NuevoSaldo, CobradoPor, FormaPago, NumTicket, TicketNuevo, FechaHora,Sucursal) 
         VALUES 
-        ('$FkCaja', '$Turno', '$SaldoPrevio', '$Abono', '$NuevoSaldo', '$CobradoPor', '$FormaPago', '$NumTicket', '$TicketNuevo', '$FechaHora')";
+        ('$FkCaja', '$Turno', '$SaldoPrevio', '$Abono', '$NuevoSaldo', '$CobradoPor', '$FormaPago', '$NumTicket', '$TicketNuevo', '$FechaHora','$Sucursal')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Abono registrado con éxito";

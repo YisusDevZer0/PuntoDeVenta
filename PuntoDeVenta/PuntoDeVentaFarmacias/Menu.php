@@ -62,6 +62,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-ticket"></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
+                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
                            
                         </div>
                         <div class="dropdown-menu bg-transparent border-0">
