@@ -10,7 +10,9 @@ $sql = "SELECT SUM(Importe) + SUM(Pagos_tarjeta) AS Total_Venta
 
 $result = $conn->query($sql);
 
-// Verificar y mostrar el resultado
+// Inicializamos la variable para evitar el error
+$formattedTotal = "0.00";  // Valor predeterminado en caso de que no haya ventas
+
 if ($result->num_rows > 0) {
     $VentasGenerales = $result->fetch_assoc();
     
@@ -18,14 +20,14 @@ if ($result->num_rows > 0) {
     if ($VentasGenerales['Total_Venta'] !== null) {
         // Formatear el número para mostrarlo como pesos mexicanos
         $formattedTotal = number_format($VentasGenerales['Total_Venta'], 2, '.', ',');
-        
-    } else {
-       
     }
 } else {
     echo "No se encontraron ventas para el día de hoy.";
 }
 
-// Cerrar la conexión
+// Ahora puedes usar $formattedTotal sin el error
+echo "MX$ " . $formattedTotal;
 
+// Cerrar la conexión
+$conn->close();
 ?>
