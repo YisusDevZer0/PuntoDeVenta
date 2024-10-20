@@ -29,6 +29,5 @@ if ($result->num_rows > 0) {
     echo "No se encontraron resultados.";
 }
 
-// Cerrar la conexión
-$conn->close();
+
 ?> 
