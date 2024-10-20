@@ -1,7 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
-include_once "Controladores/ConsultaCajasDashboard.php";  // Este archivo debe contener tu lógica
+include_once "Controladores/ConsultaCajasDasboard.php";  // Este archivo debe contener tu lógica
 
 // Asegúrate de que la lógica para calcular $CajasAbiertas esté en el archivo ConsultaCajasDashboard.php o en este mismo archivo
 
