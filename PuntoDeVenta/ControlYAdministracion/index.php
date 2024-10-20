@@ -1,7 +1,9 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
-include_once "Controladores/ConsultaCajasDashboard.php";
+include_once "Controladores/ConsultaCajasDashboard.php";  // Este archivo debe contener tu lógica
+
+// Asegúrate de que la lógica para calcular $CajasAbiertas esté en el archivo ConsultaCajasDashboard.php o en este mismo archivo
 
 ?>
 <!DOCTYPE html>
@@ -16,6 +18,7 @@ include_once "Controladores/ConsultaCajasDashboard.php";
 
    <?php
    include "header.php";?>
+</head>
 
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
@@ -48,9 +51,7 @@ include_once "Controladores/ConsultaCajasDashboard.php";
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Venta del día</p>
-                                <h6 class="mb-0"><?php 
-
-echo "MX$ " . $formattedTotal; ?></h6>
+                                <h6 class="mb-0"><?php echo "MX$ " . $formattedTotal; ?></h6>
                             </div>
                         </div>
                     </div>
@@ -60,12 +61,11 @@ echo "MX$ " . $formattedTotal; ?></h6>
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Cajas abiertas</p>
-                             
-<h6 class="mb-0"><?php echo $CajasAbiertas; ?></h6>
-
+                                <h6 class="mb-0"><?php echo $CajasAbiertas; ?></h6>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-sm-6 col-xl-3">
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa fa-chart-pie fa-3x text-primary"></i>
