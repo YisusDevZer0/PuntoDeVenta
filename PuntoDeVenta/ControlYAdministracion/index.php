@@ -60,9 +60,9 @@ echo "MX$ " . $formattedTotal; ?></h6>
                             <i class="fa fa-chart-area fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2">Cajas abiertas</p>
-                                <h6 class="mb-0"><?php 
+                             
+<h6 class="mb-0"><?php echo $CajasAbiertas; ?></h6>
 
-echo $CajasAbiertas['CajasAbiertas']?></h6>
                             </div>
                         </div>
                     </div>
