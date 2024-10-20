@@ -1,6 +1,10 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
+include_once "Controladores/ConsultaCajasDasboard.php";
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 
 ?>
