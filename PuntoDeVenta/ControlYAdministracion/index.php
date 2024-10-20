@@ -1,7 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
-
+include_once "Controladores/ConsultaCajasDasboard.php";
 
 ?>
 <!DOCTYPE html>

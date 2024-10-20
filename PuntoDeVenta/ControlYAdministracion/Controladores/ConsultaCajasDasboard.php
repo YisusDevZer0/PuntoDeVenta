@@ -3,9 +3,6 @@ date_default_timezone_set("America/Monterrey");
 
 include_once("db_connect.php");
 
-// Inicializar la variable antes de la consulta
-$CajasAbiertas = 0;
-
 // Consulta SQL para contar las cajas abiertas excluyendo la sucursal 4
 $sql = "SELECT COUNT(*) AS CajasAbiertas 
         FROM Cajas 
@@ -14,13 +11,15 @@ $sql = "SELECT COUNT(*) AS CajasAbiertas
 
 $result = $conn->query($sql);
 
-// Verificar y asignar el resultado
+// Verificar y mostrar el resultado
 if ($result->num_rows > 0) {
-    $CajasAbiertasResult = $result->fetch_assoc();
+    $CajasAbiertas = $result->fetch_assoc();
     
-    // Asegurarse de que no sea null y asignar el valor
-    if ($CajasAbiertasResult['CajasAbiertas'] !== null) {
-        $CajasAbiertas = $CajasAbiertasResult['CajasAbiertas'];
+    // Asegúrate de que no sea null
+    if ($CajasAbiertas['CajasAbiertas'] !== null) {
+        echo "Cajas abiertas: " . $CajasAbiertas['CajasAbiertas'];
+    } else {
+        echo "No hay cajas abiertas.";
     }
 } else {
     echo "No se encontraron resultados.";
@@ -28,6 +27,4 @@ if ($result->num_rows > 0) {
 
 // Cerrar la conexión
 $conn->close();
-?>
-
-<!-- Mostrar el resultado en HTML -->
+?> 
