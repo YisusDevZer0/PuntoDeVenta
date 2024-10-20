@@ -27,5 +27,5 @@ if ($result->num_rows > 0) {
 }
 
 // Cerrar la conexión
-$conn->close();
+
 ?>
