@@ -1,33 +1,25 @@
-<?php 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-date_default_timezone_set("America/Monterrey");
-
+<?php
+// Incluir el archivo de conexión
 include_once("db_connect.php");
 
-// Consulta SQL para contar las cajas abiertas excluyendo la sucursal 4
-$sql = "SELECT COUNT(*) AS CajasAbiertas 
-        FROM Cajas 
-        WHERE Estatus = 'Abierta' 
-        AND Sucursal != 4";
+// Asegúrate de que la conexión esté disponible
+global $conn;
 
-$result = $conn->query($sql);
+if ($conn && $conn->ping()) {
+    // Consulta SQL
+    $sql = "SELECT COUNT(*) AS CajasAbiertas FROM Cajas WHERE Estatus = 'Abierta' AND Sucursal != 4";
+    $result = $conn->query($sql);
 
-// Verificar y mostrar el resultado
-if ($result->num_rows > 0) {
-    $CajasAbiertas = $result->fetch_assoc();
-    
-    // Asegúrate de que no sea null
-    if ($CajasAbiertas['CajasAbiertas'] !== null) {
+    if ($result && $result->num_rows > 0) {
+        $CajasAbiertas = $result->fetch_assoc();
         echo "Cajas abiertas: " . $CajasAbiertas['CajasAbiertas'];
     } else {
-        echo "No hay cajas abiertas.";
+        echo "No se encontraron resultados.";
     }
 } else {
-    echo "No se encontraron resultados.";
+    echo "Error: la conexión a la base de datos no está disponible.";
 }
 
-
-?> 
+// La conexión se debe cerrar después de usarla
+// conn->close(); si ya no vas a usar la conexión
+?>

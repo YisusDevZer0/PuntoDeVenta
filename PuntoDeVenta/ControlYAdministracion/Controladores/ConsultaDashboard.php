@@ -26,4 +26,6 @@ if ($result->num_rows > 0) {
     echo "No se encontraron ventas para el día de hoy.";
 }
 
+// Cerrar la conexión
+$conn->close();
 ?>
