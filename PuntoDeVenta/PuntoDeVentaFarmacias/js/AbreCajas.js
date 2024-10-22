@@ -13,6 +13,21 @@ $(document).ready(function($) {
                 required: "Por favor, selecciona un turno"
             }
         },
+        // En lugar de mostrar los errores predeterminados, usa SweetAlert
+        errorPlacement: function(error, element) {
+            if (element.attr("name") == "Turno") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Campo obligatorio',
+                    text: 'Por favor, selecciona un turno antes de continuar.',
+                    toast: true,  // Esto convierte la alerta en un estilo "toast"
+                    position: 'top-right',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            }
+        },
         submitHandler: submitForm
     });
 
