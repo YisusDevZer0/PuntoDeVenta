@@ -16,6 +16,10 @@ $(document).ready(function($) {
         // En lugar de mostrar los errores predeterminados, usa SweetAlert
         errorPlacement: function(error, element) {
             if (element.attr("name") == "Turno") {
+                // Evitar que se muestre el mensaje de error predeterminado
+                error.remove();
+
+                // Mostrar SweetAlert2 con el mensaje de error
                 Swal.fire({
                     icon: 'error',
                     title: 'Campo obligatorio',
