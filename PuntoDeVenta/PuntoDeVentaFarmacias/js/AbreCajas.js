@@ -13,26 +13,28 @@ $(document).ready(function($) {
                 required: "Por favor, selecciona un turno"
             }
         },
-        // Este método se usa para intervenir cuando hay errores
-        invalidHandler: function(event, validator) {
-            var errors = validator.numberOfInvalids();
-            if (errors) {
-                // Buscar el elemento con error (en este caso el select Turno)
-                var errorElement = validator.errorList[0].element;
-                
-                if ($(errorElement).attr("name") == "Turno") {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Campo obligatorio',
-                        text: 'Por favor, selecciona un turno antes de continuar.',
-                        toast: true,  // Esto convierte la alerta en un estilo "toast"
-                        position: 'top-right',
-                        timer: 3000,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    });
-                }
+        // Sobreescribimos showErrors para controlar cómo se muestran los errores
+        showErrors: function(errorMap, errorList) {
+            // Si hay errores
+            if (errorList.length) {
+                // Recorremos los errores y verificamos si es el campo "Turno"
+                $.each(errorList, function(index, error) {
+                    if (error.element.name === "Turno") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Campo obligatorio',
+                            text: 'Por favor, selecciona un turno antes de continuar.',
+                            toast: true,  // Esto convierte la alerta en un estilo "toast"
+                            position: 'top-right',
+                            timer: 3000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             }
+            // Impedimos que los errores se muestren en el DOM
+            this.defaultShowErrors();
         },
         submitHandler: submitForm
     });
