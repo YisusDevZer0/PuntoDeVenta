@@ -72,7 +72,7 @@ $hora = date('G');
     <label for="exampleFormControlInput1">Turno </label>
     <div class="input-group mb-3">
  
-  <select name="Turno" id="turno"  onchange="TurnoElegido();"class="form-control" required>
+  <select name="Turno" id="turno"  onchange="TurnoElegido();" class="form-control" required>
   <option value="">Escoge un turno</option>
  
   <option value="Matutino">Matutino</option>
