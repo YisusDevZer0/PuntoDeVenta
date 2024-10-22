@@ -13,23 +13,25 @@ $(document).ready(function($) {
                 required: "Por favor, selecciona un turno"
             }
         },
-        // En lugar de mostrar los errores predeterminados, usa SweetAlert
-        errorPlacement: function(error, element) {
-            if (element.attr("name") == "Turno") {
-                // Evitar que se muestre el mensaje de error predeterminado
-                error.remove();
-
-                // Mostrar SweetAlert2 con el mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Campo obligatorio',
-                    text: 'Por favor, selecciona un turno antes de continuar.',
-                    toast: true,  // Esto convierte la alerta en un estilo "toast"
-                    position: 'top-right',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
+        // Este método se usa para intervenir cuando hay errores
+        invalidHandler: function(event, validator) {
+            var errors = validator.numberOfInvalids();
+            if (errors) {
+                // Buscar el elemento con error (en este caso el select Turno)
+                var errorElement = validator.errorList[0].element;
+                
+                if ($(errorElement).attr("name") == "Turno") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Campo obligatorio',
+                        text: 'Por favor, selecciona un turno antes de continuar.',
+                        toast: true,  // Esto convierte la alerta en un estilo "toast"
+                        position: 'top-right',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
+                    });
+                }
             }
         },
         submitHandler: submitForm
