@@ -1,7 +1,18 @@
 $(document).ready(function($) {
     $("#GeneraTicketAperturaCaja").hide();
 
+    // Configura las reglas de validación para el formulario
     $("#OpenCaja").validate({
+        rules: {
+            Turno: {
+                required: true
+            }
+        },
+        messages: {
+            Turno: {
+                required: "Por favor, selecciona un turno"
+            }
+        },
         submitHandler: submitForm
     });
 
@@ -31,13 +42,13 @@ $(document).ready(function($) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Éxito!',
-                        text: 'Apertura realizada con exito',
+                        text: 'Apertura realizada con éxito',
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
                         $("#editModal").removeClass("in");
-                    $(".modal-backdrop").remove();
-                    $("#editModal").hide();
+                        $(".modal-backdrop").remove();
+                        $("#editModal").hide();
 
                         // Enviar los datos del formulario oculto
                         $.ajax({
