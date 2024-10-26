@@ -74,8 +74,8 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
                             <a href="TicketsCredito" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
-                            <a href="CancelacionDeTickets" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Cancelacion de tickets </a>
-                            <a href="EdicionDeTickets" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Edicion de tickets</a>
+                            <a href="CancelacionDeTickets" class="dropdown-item"><i class="fa-solid fa-ban"></i>Cancelacion de tickets </a>
+                            <a href="EdicionDeTickets" class="dropdown-item"><i class="fa-solid fa-file-pen"></i>Edicion de tickets</a>
                            
                         </div>
                     </div>
