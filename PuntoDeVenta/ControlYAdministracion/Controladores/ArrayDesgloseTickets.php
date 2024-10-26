@@ -78,7 +78,7 @@ while ($fila = $result->fetch_assoc()) {
         "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
         "Vendedor" => $fila["AgregadoPor"],
         "Desglose" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fas fa-receipt"></i></a></td>',
-        "Reimpresion" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>'
+        
     ];
 }
 
