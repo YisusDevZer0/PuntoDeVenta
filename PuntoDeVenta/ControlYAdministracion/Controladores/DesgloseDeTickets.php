@@ -261,7 +261,7 @@ tabla = $('#Clientes').DataTable({
   }
 ],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
 </script>
