@@ -248,18 +248,18 @@ tabla = $('#Clientes').DataTable({
   ocultarCargando();
 },
 // Para personalizar el estilo del botón de Excel
-"buttons": [
-  {
-    extend: 'excelHtml5',
-    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
-    titleAttr: 'Exportar a Excel',
-    title: 'Base de Clientes',
-    className: 'btn btn-success',
-    exportOptions: {
-      columns: ':visible' // Exportar solo las columnas visibles
-    }
-  }
-],
+// "buttons": [
+//   {
+//     extend: 'excelHtml5',
+//     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+//     titleAttr: 'Exportar a Excel',
+//     title: 'Base de Clientes',
+//     className: 'btn btn-success',
+//     exportOptions: {
+//       columns: ':visible' // Exportar solo las columnas visibles
+//     }
+//   }
+// ],
 // Personalizar la posición de los elementos del encabezado
 "dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
 "responsive": true
