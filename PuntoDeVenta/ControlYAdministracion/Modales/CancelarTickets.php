@@ -120,7 +120,7 @@ WHERE
     }).then((result) => {
         if (result.isConfirmed) {
             // Hacer la solicitud AJAX para eliminar el ticket
-            fetch('eliminar_ticket.php', {
+            fetch('../Controladores/eliminar_ticket.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
