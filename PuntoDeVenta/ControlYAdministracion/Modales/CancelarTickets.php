@@ -194,6 +194,31 @@ WHERE
 
 
 
+<div id="advertencia" class="alert alert-warning">
+    <strong>Advertencia:</strong> Antes de eliminar, por favor valide los datos del ticket.
+    <button id="validarBtn" class="btn btn-primary btn-sm mt-2">Ticket Validado</button>
+</div>
+
+<div id="confirmacionEliminar" class="alert alert-danger mt-3" style="display:none;">
+    ¿Está seguro que desea eliminar el ticket <strong><?php echo $Especialistas->Folio_Ticket; ?></strong>?
+    <button id="eliminarBtn" class="btn btn-danger btn-sm">Eliminar Ticket</button>
+</div>
+
+<!-- Aquí va el resto de tu formulario y tabla -->
+
+<script>
+    document.getElementById("validarBtn").addEventListener("click", function() {
+        // Oculta el mensaje de advertencia y muestra el de confirmación
+        document.getElementById("advertencia").style.display = "none";
+        document.getElementById("confirmacionEliminar").style.display = "block";
+    });
+
+    document.getElementById("eliminarBtn").addEventListener("click", function() {
+        // Lógica de eliminación (puedes llamar una función AJAX aquí si es necesario)
+        alert("Ticket " + "<?php echo $Especialistas->Folio_Ticket; ?>" + " eliminado.");
+    });
+</script>
+
 
 
 
