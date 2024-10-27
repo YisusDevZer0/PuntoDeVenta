@@ -13,6 +13,8 @@ include_once "Controladores/ControladorUsuario.php";
 
     <?php
    include "header.php";?>
+     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
    <div id="loading-overlay">
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
@@ -39,7 +41,7 @@ include_once "Controladores/ControladorUsuario.php";
             <h6 class="mb-4" style="color:#0172b6;">Tickets de venta de  <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
  Cambiar de sucursal <i class="fas fa-clinic-medical"></i> 
-</button><br><br><br>
+</button><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
