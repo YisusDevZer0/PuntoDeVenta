@@ -92,7 +92,7 @@ WHERE
 <div id="advertencia" class="alert alert-warning">
     <strong>Advertencia:</strong> Antes de eliminar, por favor valide los datos del ticket <?php echo $Especialistas->Folio_Ticket; ?>
     <button id="validarBtn" class="btn btn-primary btn-sm mt-2">Ticket Validado</button>
-
+</div>
 
 
 <!-- Aquí va el resto de tu formulario y tabla -->
