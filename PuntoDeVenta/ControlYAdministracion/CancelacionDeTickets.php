@@ -45,6 +45,7 @@ include_once "Controladores/ControladorUsuario.php";
             
           
 <script src="js/DesgloseTicketss.js"></script>
+<script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
 <?php 
        include ("Modales/FiltraEspecificamenteInventarios.php");
             include "Footer.php";?>
