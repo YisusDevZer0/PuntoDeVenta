@@ -106,9 +106,54 @@ WHERE
     });
 
     document.getElementById("eliminarBtn").addEventListener("click", function() {
-        // Lógica de eliminación (puedes llamar una función AJAX aquí si es necesario)
-        alert("Ticket " + "<?php echo $Especialistas->Folio_Ticket; ?>" + " eliminado.");
+    const folioTicket = "<?php echo $Especialistas->Folio_Ticket; ?>";
+    
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: "No podrá recuperar este ticket",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Hacer la solicitud AJAX para eliminar el ticket
+            fetch('eliminar_ticket.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'folio_ticket=' + folioTicket
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Eliminado',
+                        'Ticket eliminado exitosamente.',
+                        'success'
+                    );
+                } else {
+                    Swal.fire(
+                        'Error',
+                        data.message,
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                Swal.fire(
+                    'Error',
+                    'Ocurrió un error al intentar eliminar el ticket.',
+                    'error'
+                );
+            });
+        }
     });
+});
+
 </script>
 <div id="advertencia2">
     <div class="row">
