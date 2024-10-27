@@ -134,7 +134,10 @@ WHERE
                         'Eliminado',
                         'Ticket eliminado exitosamente.',
                         'success'
-                    );
+                    ).then(() => {
+                        // Recargar la página al cerrar el SweetAlert
+                        window.location.reload();
+                    });
                 } else {
                     Swal.fire(
                         'Error',
@@ -153,6 +156,7 @@ WHERE
         }
     });
 });
+
 
 </script>
 <div id="advertencia2">
