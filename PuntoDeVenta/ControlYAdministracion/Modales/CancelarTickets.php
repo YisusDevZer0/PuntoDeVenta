@@ -109,7 +109,7 @@ WHERE
         alert("Ticket " + "<?php echo $Especialistas->Folio_Ticket; ?>" + " eliminado.");
     });
 </script>
-
+<div id="advertencia">
     <div class="row">
     <div class="col">
     <label for="exampleFormControlInput1">N° Ticket</label>
@@ -213,10 +213,6 @@ WHERE
 </div>
 
 </div>
-</div>
-</div>
-
-
 
 <div id="confirmacionEliminar" class="alert alert-danger mt-3" style="display:none;">
     ¿Está seguro que desea eliminar el ticket <strong><?php echo $Especialistas->Folio_Ticket; ?></strong>?
