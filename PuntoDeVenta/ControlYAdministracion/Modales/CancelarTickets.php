@@ -125,7 +125,6 @@ WHERE
 <th>Servicio</th>
 <th>Cod barra</th>
 <th>Prod</th>
-<th>Lote</th>
 <th>Cantidad</th>
 <th>P.U</th>
 <th>Descuento</th>
@@ -143,7 +142,6 @@ WHERE
     
 <td><input type="text" class="form-control" readonly value=<?php echo $Tickets["Cod_Barra"]; ?>></td>
 <td><textarea  type="text" class="form-control" name="NombreProd[]" readonly ><?php echo $Tickets["Nombre_Prod"]; ?></textarea></td>
-<td><input type="text" class="form-control" readonly value=<?php echo $Tickets["Lote"]; ?>></td>
 <td><input type="text" class="form-control" name="CantidadTotal[]"readonly value=<?php echo $Tickets["Cantidad_Venta"]; ?>></td>
 <td><input type="text" class="form-control" readonly name="pro_cantidad[]"value=<?php echo $Tickets["Total_Venta"]; ?>></td>
 <td><input type="text" class="form-control"  readonly name="Descuento[]"value="<?php echo $Tickets["DescuentoAplicado"]; ?> %"></td>
