@@ -101,6 +101,7 @@ WHERE
     document.getElementById("validarBtn").addEventListener("click", function() {
         // Oculta el mensaje de advertencia y muestra el de confirmación
         document.getElementById("advertencia").style.display = "none";
+        document.getElementById("advertencia2").style.display = "none";
         document.getElementById("confirmacionEliminar").style.display = "block";
     });
 
@@ -109,7 +110,7 @@ WHERE
         alert("Ticket " + "<?php echo $Especialistas->Folio_Ticket; ?>" + " eliminado.");
     });
 </script>
-<div id="advertencia">
+<div id="advertencia2">
     <div class="row">
     <div class="col">
     <label for="exampleFormControlInput1">N° Ticket</label>
