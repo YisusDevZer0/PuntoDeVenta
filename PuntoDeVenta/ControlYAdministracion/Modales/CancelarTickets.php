@@ -93,24 +93,21 @@ WHERE
     <div class="col">
     <label for="exampleFormControlInput1">N° Ticket</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly name="TicketVal"value="<?php echo $Especialistas->Folio_Ticket; ?>">
     </div>
     </div>
     <div class="col">
     <label for="exampleFormControlInput1">Sucursal </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly value="<?php echo $Especialistas->Nombre_Sucursal; ?>">
     </div>
     </div>
     <div class="col">
     <label for="exampleFormControlInput1">Vendedor</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly value="<?php echo $Especialistas->	AgregadoPor; ?>">
     </div>
     </div>
@@ -165,8 +162,7 @@ WHERE
     <div class="col">
     <label for="exampleFormControlInput1">Total de venta</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly name="TotalVentas[]" value="<?php echo $Especialistas->Total_VentaG; ?>">
   
     </div>
@@ -174,24 +170,21 @@ WHERE
     <div class="col">
     <label for="exampleFormControlInput1">El cliente pago </label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly name="PagoReal[]" value="<?php echo $Especialistas->CantidadPago; ?>">
     </div>
     </div>
     <div class="col">
     <label for="exampleFormControlInput1">Cambio</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" readonly name="Cambio[]"value="<?php echo $Especialistas->Cambio; ?>">
     </div>
     </div>
     <div class="col">
     <label for="exampleFormControlInput1">Forma de pago</label>
     <div class="input-group mb-3">
-  <div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"> <i class="fas fa-info-circle"></i></span>
-  </div>
+  
   <input type="text" class="form-control" name="Formadepago" readonly value="<?php echo $Especialistas->FormaDePago; ?>">
     </div>
     </div>
