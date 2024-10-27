@@ -53,7 +53,6 @@ include_once "Controladores/ControladorUsuario.php";
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
     $(document).on("click", ".btn-eliminar", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
-        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CancelarTickets.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
@@ -80,7 +79,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 
   <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+  <div id="CajasDi"class="modal-dialog modal-xl modal-notify modal-success" >
     <div class="text-center">
       <div class="modal-content">
       <div class="modal-header" style=" background-color: #ef7980 !important;" >
