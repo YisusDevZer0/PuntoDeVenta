@@ -38,8 +38,8 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Tickets de venta de  <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
- Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
-</button>
+ Cambiar de sucursal <i class="fas fa-clinic-medical"></i> 
+</button><br>
             <div id="DataDeServicios"></div>
             </div></div></div></div>
             
