@@ -92,12 +92,8 @@ WHERE
 <div id="advertencia" class="alert alert-warning">
     <strong>Advertencia:</strong> Antes de eliminar, por favor valide los datos del ticket <?php echo $Especialistas->Folio_Ticket; ?>
     <button id="validarBtn" class="btn btn-primary btn-sm mt-2">Ticket Validado</button>
-</div>
 
-<div id="confirmacionEliminar" class="alert alert-danger mt-3" style="display:none;">
-    ¿Está seguro que desea eliminar el ticket <strong><?php echo $Especialistas->Folio_Ticket; ?></strong>?
-    <button id="eliminarBtn" class="btn btn-danger btn-sm">Eliminar Ticket</button>
-</div>
+
 
 <!-- Aquí va el resto de tu formulario y tabla -->
 
@@ -216,10 +212,14 @@ WHERE
    </div>
 </div>
 
+</div>
 
 
 
-
+<div id="confirmacionEliminar" class="alert alert-danger mt-3" style="display:none;">
+    ¿Está seguro que desea eliminar el ticket <strong><?php echo $Especialistas->Folio_Ticket; ?></strong>?
+    <button id="eliminarBtn" class="btn btn-danger btn-sm">Eliminar Ticket</button>
+</div>
 
 
 
