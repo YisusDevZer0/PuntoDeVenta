@@ -53,7 +53,7 @@ include_once "Controladores/ControladorUsuario.php";
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
     $(document).on("click", ".btn-eliminar", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
-        $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+        $('#CajasDi').removeClass('modal-dialog   modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CancelarTickets.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Cancelar ticket");
