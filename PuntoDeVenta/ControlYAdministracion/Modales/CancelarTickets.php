@@ -87,6 +87,8 @@ WHERE
 
 
 
+<?php if($Especialistas!=null):?>
+    
 <div id="advertencia" class="alert alert-warning">
     <strong>Advertencia:</strong> Antes de eliminar, por favor valide los datos del ticket.
     <button id="validarBtn" class="btn btn-primary btn-sm mt-2">Ticket Validado</button>
@@ -112,8 +114,6 @@ WHERE
     });
 </script>
 
-<?php if($Especialistas!=null):?>
-    
     <div class="row">
     <div class="col">
     <label for="exampleFormControlInput1">N° Ticket</label>
