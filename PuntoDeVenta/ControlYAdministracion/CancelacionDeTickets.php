@@ -56,7 +56,7 @@ include_once "Controladores/ControladorUsuario.php";
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/CancelarTickets.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Generando archivo para reimpresion");
+            $("#TitulosCajas").html("Cancelar ticket");
         });
         
         $('#ModalEdDele').modal('show');
