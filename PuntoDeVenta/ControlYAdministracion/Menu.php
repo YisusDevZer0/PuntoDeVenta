@@ -18,13 +18,11 @@
 
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Punto de venta</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Apertura de caja</a>
-                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Realizar Ventas</a>
-                            <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
-                            <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Mensajes</a>
-                            <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
+                            <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-cash-register"></i>Apertura de caja</a>A
+                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i>Realizar Ventas</a>
+                          
                         </div>
                     </div>
                     <div class="nav-item dropdown">
