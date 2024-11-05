@@ -30,8 +30,8 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Navbar End -->
 <style>
     .imgpez {
-    width: 150px;
-    height: 150px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 8px; /* Esto añade bordes redondeados, opcional */
 }
