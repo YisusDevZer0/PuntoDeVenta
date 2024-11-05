@@ -137,7 +137,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a>
                             <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
-                            <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a>
+                            <!-- <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a> -->
                             <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
                             <a href="ReportesCedisInventario" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
                             <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
