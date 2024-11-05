@@ -26,7 +26,7 @@ if ($result && $result->num_rows > 0) {
             "Registro" => $fila["Registro"],
             "Agregadoel" => $fila["Agregadoel"],
             "Licencia" => $fila["Licencia"],
-            "Foto" => "<img alt='avatar' class='img' src='https://doctorpez.mx/PuntoDeVenta/FotosMedidores/{$fila['file_name']}'>"
+            "Foto" => "<img alt='avatar' class='imgpez' src='https://doctorpez.mx/PuntoDeVenta/FotosMedidores/{$fila['file_name']}'>"
         ];
     }
 }

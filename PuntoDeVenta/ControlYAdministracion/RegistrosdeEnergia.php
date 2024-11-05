@@ -28,7 +28,15 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Navbar Start -->
         <?php include "navbar.php";?>
             <!-- Navbar End -->
+<style>
+    .imgpez {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px; /* Esto añade bordes redondeados, opcional */
+}
 
+</style>
 
             <!-- Table Start -->
           
