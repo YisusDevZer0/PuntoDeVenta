@@ -59,7 +59,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
            <script>
     $(".btn-editcaja").click(function(){
         id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AbreCajaV2.php", "id=" + id, function(data){
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AbreCajaV2.php", "id=" + id, function(data){
             $("#form-edit").html(data);
             $("#Titulo").html("Apertura de caja");
             $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
@@ -94,7 +94,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     $(document).on("click", ".btn-desactiva", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesactivaCaja.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desactivar caja actual");
             
@@ -105,7 +105,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
     $(document).on("click", ".btn-reactiva", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReactivaCaja.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ReactivaCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Activar Caja Actual");
            
@@ -115,7 +115,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
 
     $(document).on("click", ".btn-registraGasto", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RegistrarGasto.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Registrar nuevo gasto");
            
@@ -130,7 +130,7 @@ $(document).on("click", ".btn-realizaCorte", function() {
     var fk_sucursal = $(this).data("sucursal");
     var id_h_o_d = $(this).data("hod");
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/RealizarCorte.php", 
+    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RealizarCorte.php", 
     { 
         id: id, 
         fk_sucursal: fk_sucursal, 
