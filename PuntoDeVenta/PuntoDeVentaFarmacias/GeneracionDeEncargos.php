@@ -42,7 +42,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         <?php include_once "Menu.php" ?>
         <script>
         function showAlertWithPassword() {
-            const correctPassword = 'DoctorFishman'; // Cambia esto a tu contraseña secreta
+            const correctPassword = 'DoctorPez'; // Cambia esto a tu contraseña secreta
 
             Swal.fire({
                 title: 'Área en Mantenimiento',
