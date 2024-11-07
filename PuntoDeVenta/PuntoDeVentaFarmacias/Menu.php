@@ -90,8 +90,8 @@
                             <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
                             <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
                             <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>                           
-                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Devoluciones</a>    
-                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Caducados</a>    
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Devoluciones</a>    
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Caducados</a>    
                            
                         </div>
                     </div>
