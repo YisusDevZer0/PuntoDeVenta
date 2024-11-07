@@ -982,39 +982,51 @@ document.getElementById("selTipoPago").addEventListener("change", actualizarSuma
     dataType: 'json',
     success: function (data) {
       if ($.isEmptyObject(data)) {
-        // Manejar caso de no resultados
+        // Si no encuentra el artículo, abre el modal para agregarlo
+        $('#modalAgregarArticulo').modal('show');
       } else if (data.codigo || data.descripcion) {
+        // Si el artículo existe, agregarlo a la tabla
         agregarArticulo(data);
-        if (data.esAntibiotico) {
-          Swal.fire({
-    title: '¡Atención!',
-    text: 'El artículo escaneado es de tipo "ANTIBIOTICO". Por favor, recuerde solicitar la receta médica al paciente antes de proceder con la venta.',
-    icon: 'warning',
-    confirmButtonText: 'Entendido',
-    confirmButtonColor: '#3085d6',
-    background: '#fff3cd', // Color de fondo amarillo claro para llamar la atención
-    customClass: {
-        title: 'swal-title',
-        content: 'swal-content'
-    },
-    backdrop: `
-        rgba(0,0,123,0.4)
-        url("https://via.placeholder.com/150") // Puedes añadir una imagen o dejarlo en blanco
-        center center
-        no-repeat
-    `
-});
-
-        }
       }
 
       limpiarCampo();
     },
-    error: function (data) {
+    error: function () {
       msjError('Error en la búsqueda');
     }
   });
 }
+
+$('#btnAgregarArticulo').click(function() {
+  var codigo = $('#codigo').val();
+  var descripcion = $('#descripcion').val();
+  var cantidad = $('#cantidad').val();
+  var precio = $('#precio').val();
+
+  // Validar que todos los campos están llenos
+  if (!codigo || !descripcion || !cantidad || !precio) {
+    alert('Por favor complete todos los campos.');
+    return;
+  }
+
+  // Crear el objeto con los datos del artículo
+  var articulo = {
+    codigo: codigo,
+    descripcion: descripcion,
+    cantidad: cantidad,
+    precio: precio,
+    id: new Date().getTime() // Generar un ID único temporal
+  };
+
+  // Agregar el artículo a la tabla
+  agregarArticulo(articulo);
+
+  // Cerrar el modal
+  $('#modalAgregarArticulo').modal('hide');
+  
+  // Limpiar el formulario del modal
+  $('#formAgregarArticulo')[0].reset();
+});
 
 
 function limpiarCampo() {
@@ -1516,6 +1528,43 @@ $(document).ready(function()
 }
 
 ?>
+<!-- Modal para agregar artículo -->
+<div class="modal fade" id="modalAgregarArticulo" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Agregar Artículo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="formAgregarArticulo">
+          <div class="form-group">
+            <label for="codigo">Código</label>
+            <input type="text" class="form-control" id="codigo" name="codigo" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <input type="text" class="form-control" id="descripcion" name="descripcion" required>
+          </div>
+          <div class="form-group">
+            <label for="cantidad">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+          </div>
+          <div class="form-group">
+            <label for="precio">Precio</label>
+            <input type="number" class="form-control" id="precio" name="precio" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btnAgregarArticulo">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Control Sidebar -->
