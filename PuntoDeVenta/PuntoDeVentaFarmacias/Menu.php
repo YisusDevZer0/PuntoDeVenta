@@ -62,7 +62,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-ticket"></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
-                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
+                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets credito</a>
                            
                         </div>
                         <div class="dropdown-menu bg-transparent border-0">
@@ -77,7 +77,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                             <a href="VentasAcredito" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas a credito</a>
-                            <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Generar encargo</a>
+                           
                         </div>
                     </div>
 
@@ -89,11 +89,25 @@
                             <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock</a>
                             <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
                             <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
-                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Generar cotizacion</a>
+                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>                           
+                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Devoluciones</a>    
+                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Caducados</a>    
                            
                         </div>
                     </div>
 
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Pedidos</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                 
+                            <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
+                            <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Generar encargo</a>
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Generar cotizacion</a>
+                                                       
+                           
+                           
+                        </div>
+                    </div>
 
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-right-left"></i>Traspasos</a>
