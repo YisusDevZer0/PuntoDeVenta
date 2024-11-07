@@ -1001,36 +1001,6 @@ document.getElementById("selTipoPago").addEventListener("change", actualizarSuma
   });
 }
 
-$('#btnAgregarArticulo').click(function() {
-  var codigo = $('#codigo').val();
-  var descripcion = $('#descripcion').val();
-  var cantidad = $('#cantidad').val();
-  var precio = $('#precio').val();
-
-  // Validar que todos los campos están llenos
-  if (!codigo || !descripcion || !cantidad || !precio) {
-    alert('Por favor complete todos los campos.');
-    return;
-  }
-
-  // Crear el objeto con los datos del artículo
-  var articulo = {
-    codigo: codigo,
-    descripcion: descripcion,
-    cantidad: cantidad,
-    precio: precio,
-    id: new Date().getTime() // Generar un ID único temporal
-  };
-
-  // Agregar el artículo a la tabla
-  agregarArticulo(articulo);
-
-  // Cerrar el modal
-  $('#modalAgregarArticulo').modal('hide');
-  
-  // Limpiar el formulario del modal
-  $('#formAgregarArticulo')[0].reset();
-});
 
 
 function limpiarCampo() {
@@ -1511,6 +1481,57 @@ $('#abrirSweetAlertBtn').on('click', function() {
       }
     });
   }
+
+
+  function agregarArticuloModal() {
+  // Obtener los datos del artículo desde el modal
+  var codigo = $('#codigoArticulo').val();
+  var descripcion = $('#descripcionArticulo').val();
+  var cantidad = $('#cantidadArticulo').val();
+  var precio = $('#precioArticulo').val();
+
+  // Validar si los campos están vacíos
+  if (!codigo || !descripcion || !cantidad || !precio) {
+    alert('Por favor, complete todos los campos.');
+    return;
+  }
+
+  // Crear el artículo
+  var articulo = {
+    id: Date.now(),  // Usamos el timestamp como ID único
+    codigo: codigo,
+    descripcion: descripcion,
+    cantidad: cantidad,
+    precio: precio
+  };
+
+  // Agregar el artículo a la tabla
+  var tr = '<tr data-id="' + articulo.id + '">';
+  tr += '<td>' + articulo.codigo + '</td>';
+  tr += '<td>' + articulo.descripcion + '</td>';
+  tr += '<td>' + articulo.cantidad + '</td>';
+  tr += '<td>' + articulo.precio + '</td>';
+  tr += '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button></td>';
+  tr += '</tr>';
+
+  // Agregar la fila a la tabla
+  $('#tablaAgregarArticulos tbody').append(tr);
+
+  // Cerrar el modal
+  $('#modalAgregarArticulo').modal('hide');
+
+  // Limpiar los campos del modal
+  $('#codigoArticulo').val('');
+  $('#descripcionArticulo').val('');
+  $('#cantidadArticulo').val('');
+  $('#precioArticulo').val('');
+
+  // Actualizar los totales
+  mostrarTotalVenta();
+  mostrarSubTotal();
+  mostrarIvaTotal();
+}
+
 </script>
 
 
@@ -1533,38 +1554,37 @@ $(document).ready(function()
 
 ?>
 <!-- Modal para agregar artículo -->
-<div class="modal fade" id="modalAgregarArticulo" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="modal" id="modalAgregarArticulo">
+  <div class="modal-dialog">
     <div class="modal-content">
+      <!-- Modal Header -->
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Agregar Artículo</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title">Agregar Artículo</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
+      <!-- Modal Body -->
       <div class="modal-body">
-        <form id="formAgregarArticulo">
-          <div class="form-group">
-            <label for="codigo">Código</label>
-            <input type="text" class="form-control" id="codigo" name="codigo" required>
-          </div>
-          <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <input type="text" class="form-control" id="descripcion" name="descripcion" required>
-          </div>
-          <div class="form-group">
-            <label for="cantidad">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
-          </div>
-          <div class="form-group">
-            <label for="precio">Precio</label>
-            <input type="number" class="form-control" id="precio" name="precio" required>
-          </div>
-        </form>
+        <div class="form-group">
+          <label for="codigoArticulo">Código</label>
+          <input type="text" id="codigoArticulo" class="form-control" placeholder="Código del Artículo">
+        </div>
+        <div class="form-group">
+          <label for="descripcionArticulo">Descripción</label>
+          <textarea id="descripcionArticulo" class="form-control" placeholder="Descripción del Artículo"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="cantidadArticulo">Cantidad</label>
+          <input type="number" id="cantidadArticulo" class="form-control" placeholder="Cantidad">
+        </div>
+        <div class="form-group">
+          <label for="precioArticulo">Precio</label>
+          <input type="number" id="precioArticulo" class="form-control" placeholder="Precio">
+        </div>
       </div>
+      <!-- Modal Footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" id="btnAgregarArticulo">Agregar</button>
+        <button type="button" class="btn btn-primary" onclick="agregarArticuloModal();">Agregar</button>
       </div>
     </div>
   </div>
