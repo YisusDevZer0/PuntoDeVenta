@@ -40,65 +40,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 
         <?php include_once "Menu.php" ?>
-        <script>
-        function showAlertWithPassword() {
-            const correctPassword = 'DoctorPez'; // Cambia esto a tu contraseña secreta
 
-            Swal.fire({
-                title: 'Área en Mantenimiento',
-                text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
-                input: 'password',
-                inputLabel: 'Ingresa la contraseña',
-                inputPlaceholder: 'Contraseña',
-                showCancelButton: false,
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#d9534f',
-                inputAttributes: {
-                    autocapitalize: 'off',
-                    autocorrect: 'off'
-                },
-                customClass: {
-                    popup: 'swal2-popup',
-                    title: 'swal2-title',
-                    input: 'swal2-input',
-                    confirmButton: 'swal2-confirm'
-                },
-                didOpen: () => {
-                    Swal.getInput().focus();
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (result.value === correctPassword) {
-                        Swal.fire({
-                            title: '¡Acceso Permitido!',
-                            text: 'Puedes proceder a utilizar la funcionalidad.',
-                            icon: 'success',
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#5bc0de'
-                        }).then(() => {
-                            // Aquí puedes agregar lógica para redirigir a otra página si es necesario
-                        });
-                    } else {
-                        Swal.fire({
-                            title: 'Contraseña Incorrecta',
-                            text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
-                            icon: 'error',
-                            confirmButtonText: 'Intentar de nuevo',
-                            confirmButtonColor: '#d9534f'
-                        }).then(() => {
-                            showAlertWithPassword(); // Mostrar la alerta nuevamente si la contraseña es incorrecta
-                        });
-                    }
-                } else {
-                    // No hacemos nada si el usuario cierra la alerta, solo la mostramos de nuevo
-                    showAlertWithPassword();
-                }
-            });
-        }
-
-        // Mostrar la alerta cuando se carga la página
-        showAlertWithPassword();
-    </script>
         <!-- Content Start -->
         <div class="content">
             <!-- Navbar Start -->
@@ -107,9 +49,117 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 
             <!-- Table Start -->
-          
-        
+             <script>
+            // Primer script: función para mostrar la alerta con contraseña
+function showAlertWithPassword() {
+    const correctPassword = 'DoctorPez';
 
+    Swal.fire({
+        title: 'Área en Mantenimiento',
+        text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
+        input: 'password',
+        inputLabel: 'Ingresa la contraseña',
+        inputPlaceholder: 'Contraseña',
+        showCancelButton: false,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#d9534f',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        customClass: {
+            popup: 'swal2-popup',
+            title: 'swal2-title',
+            input: 'swal2-input',
+            confirmButton: 'swal2-confirm'
+        },
+        didOpen: () => {
+            Swal.getInput().focus();
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (result.value === correctPassword) {
+                Swal.fire({
+                    title: '¡Acceso Permitido!',
+                    text: 'Puedes proceder a utilizar la funcionalidad.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#5bc0de'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Contraseña Incorrecta',
+                    text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Intentar de nuevo',
+                    confirmButtonColor: '#d9534f'
+                }).then(() => {
+                    showAlertWithPassword();
+                });
+            }
+        } else {
+            showAlertWithPassword();
+        }
+    });
+}
+
+// Segundo script: mostrar alerta de carga y luego abrir la alerta de contraseña
+const loadingMessages = [
+    'Cargando...',
+    'Por favor, espera...',
+    'Procesando...',
+    'Cargando datos...',
+    'Cargando contenido...',
+    '¡Casi listo!',
+    'Estamos preparando todo...',
+];
+
+function getRandomMessage() {
+    return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+}
+
+Swal.fire({
+    title: 'Cargando',
+    html: `<div class="loader-container">
+              <div class="absCenter">
+                <div class="loaderPill">
+                  <div class="loaderPill-anim">
+                    <div class="loaderPill-anim-bounce">
+                      <div class="loaderPill-anim-flop">
+                        <div class="loaderPill-pill"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="loaderPill-floor">
+                    <div class="loaderPill-floor-shadow"></div>
+                  </div>
+                  <div class="loaderPill-text" style="color: #C80096">${getRandomMessage()}</div>
+                </div>
+              </div>
+           </div>`,
+    showCancelButton: false,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    customClass: {
+        container: 'animated fadeInDown'
+    }
+});
+
+// Actualizar mensaje cada 2 segundos
+setInterval(() => {
+    const messageElement = document.querySelector('.loaderPill-text');
+    if (messageElement) {
+        messageElement.textContent = getRandomMessage();
+    }
+}, 2000);
+
+// Cerrar alerta de carga y mostrar la alerta de contraseña cuando la página haya cargado
+window.addEventListener('load', function() {
+    Swal.close();
+    setTimeout(showAlertWithPassword, 500); // Agrega un ligero retraso para que la alerta de carga cierre completamente antes de abrir la alerta de contraseña
+});
+</script>
 <style>
   .loader-container {
     display: flex;
@@ -248,10 +298,13 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
       <div class="card card-gray shadow" style="width: 103%">
 
           <div class="card-body p-3">
+
+
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
               <li class="nav-item">
                 <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true" style="font-weight: 600;">Ventas</a>
               </li>
+              
               
             </ul>
             <div class="tab-content" id="pills-tabContent">
@@ -285,7 +338,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                         </div>
                         <div class="col">
 
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha de caja</label>
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket</label>
                           <div class="input-group mb-3">
                         
                             <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
@@ -295,7 +348,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                         <div class="col">
 
-<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket</label>
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha de caja</label>
 <div class="input-group mb-3">
 
   <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $ValorCaja['Fecha_Apertura'] ?> "readonly>
@@ -325,7 +378,9 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                   <!-- BOTONES PARA VACIAR LISTADO Y COMPLETAR LA VENTA -->
                   <div class="col-md-5 text-right">
-
+                  <button class="btn btn-primary btn-sm" id="AplicarDescuentoGlobal">
+                  <i class="fa-solid fa-percent"></i> Descuento global
+                    </button>
                     <button class="btn btn-danger btn-sm" id="btnVaciarListado">
                       <i class="far fa-trash-alt"></i> Cancelar venta
                     </button>
@@ -389,9 +444,9 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                 
               </div>
             
-              
+           
 
-              
+
             </div>
 
           </div> <!-- ./ end card-body -->
@@ -422,6 +477,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
 <option value="0">Seleccione el Tipo de Pago</option>
 <option value="Efectivo" selected="true">Efectivo</option>
+<option value="Credito" >Credito</option>
 <option value="Efectivo y Tarjeta">Efectivo y tarjeta</option>
 <option value="Efectivo Y Credito">Efectivo y credito</option>
 <option value="Tarjeta">Tarjeta</option>
@@ -611,10 +667,6 @@ $fechaActual = date('Y-m-d H:i:s');
 
     <!-- INPUT DE EFECTIVO ENTREGADO -->
     <div class="form-group mb-2">
-      <label for="iptEfectivoRecibido" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con efectivo</label>
-      <input type="number" min="0" name="iptEfectivo" id="iptEfectivoRecibido" class="form-control form-control-sm" placeholder="Cantidad de efectivo recibida" onkeyup="actualizarEfectivoEntregado()">
-      <input type="number" name="iptEfectivoOculto[]" id="iptEfectivoOculto" hidden class="form-control ">
-    </div>
     <div id="divTarjeta" style="display: none;">
 <div class="form-group mb-2">
 <label for="iptTarjeta" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con tarjeta o credito</label>
@@ -623,6 +675,11 @@ $fechaActual = date('Y-m-d H:i:s');
 
 </div>
 </div>
+      <label for="iptEfectivoRecibido" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con efectivo</label>
+      <input type="number" min="0" name="iptEfectivo" id="iptEfectivoRecibido" class="form-control form-control-sm" placeholder="Cantidad de efectivo recibida" onkeyup="actualizarEfectivoEntregado()">
+      <input type="number" name="iptEfectivoOculto[]" id="iptEfectivoOculto" hidden class="form-control ">
+    </div>
+    
     <!-- INPUT CHECK DE EFECTIVO EXACTO -->
     <div class="form-check">
 <input class="form-check-input" type="checkbox" value="" id="chkEfectivoExacto">
@@ -674,21 +731,44 @@ Efectivo Exacto
 <!-- function actualizarSumaTotal  -->
 <script>
 
-  
-  function actualizarSumaTotal() {
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value);
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value);
-  var cambio;
+function actualizarSumaTotal() {
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
+  var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
 
-  if (iptTarjeta > 0) {
-    cambio = 0; // Si se ingresa un valor en el campo de tarjeta, el cambio se establece en cero
+  // Si el método de pago es "Crédito", ajustar el total
+  if (metodoPago === "Credito") {
+    iptEfectivo = totalVenta; // Asignar el total de la venta al input de efectivo
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Mostrar el total de venta en el input
+    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta automáticamente si es "Crédito"
   } else {
-    cambio = iptEfectivo; // Si no se ingresa un valor en el campo de tarjeta, el cambio se calcula como el efectivo recibido
-  }
+    // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    } else {
+      // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
+      iptEfectivo = totalVenta - iptTarjeta;
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
+      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    }
 
-  // Actualizar el valor del elemento <span> con el cambio
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+    // Calcular el cambio en base al efectivo ingresado
+    var cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0; // Si el efectivo es menor al necesario, el cambio es 0
+
+    // Actualizar el valor del elemento <span> con el cambio
+    document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+  }
 }
+
+// Asegúrate de que se detecte el cambio en el método de pago:
+document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+
+
 
 
 
@@ -701,24 +781,25 @@ Efectivo Exacto
 
 
 <script>
-  $(document).ready(function() {
-    // Bloquear el botón al cargar la página
-    $('#btnIniciarVenta').prop('disabled', true);
+ $(document).ready(function() {
+  // Bloquear el botón al cargar la página
+  $('#btnIniciarVenta').prop('disabled', true);
 
-    // Agregar un controlador de eventos al input
-    $('#iptEfectivoRecibido').on('input', function() {
-      var valorInput = $(this).val();
-      var miBoton = $('#btnIniciarVenta');
+  // Agregar un controlador de eventos al input
+  $('#iptEfectivoRecibido').on('input', function() {
+    var valorInput = $(this).val();
+    var miBoton = $('#btnIniciarVenta');
 
-      if (valorInput.length > 0) {
-        // Desbloquear el botón si el input contiene datos
-        miBoton.prop('disabled', false);
-      } else {
-        // Bloquear el botón si el input está vacío
-        miBoton.prop('disabled', true);
-      }
-    });
+    if (valorInput.length > 0) {
+      // Desbloquear el botón si el input contiene datos
+      miBoton.prop('disabled', false);
+    } else {
+      // Bloquear el botón si el input está vacío
+      miBoton.prop('disabled', true);
+    }
   });
+});
+
 
 
   $(document).ready(function() {
@@ -1044,7 +1125,9 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="TiposDeServicio[]" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
+
+        tr += '<td style="visibility:collapse; display:none;" class="tiposserviciosgood"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tiposervicios + '" name="TiposDeServicio[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Turno"><input type="text" class="form-control " hidden name="TurnoEnTurno[]" style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="CajaDeSucursal"><input type="text" class="form-control " hidden id="valcaja" name="CajaDeSucursal[]" readonly value="<?php echo $ValorCaja["ID_Caja"]; ?>"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
@@ -1334,6 +1417,85 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
 </script>
 
+<script>
+  // Evento click para el botón de aplicar descuento global
+  $('#AplicarDescuentoGlobal').on('click', function() {
+    aplicarDescuentoGlobal();
+  });
+
+  function aplicarDescuentoGlobal() {
+    Swal.fire({
+      title: 'Seleccionar descuento global',
+      html: '<label for="customDescuentoGlobal">Ingresar monto a descontar:</label>' +
+        '<input type="number" class="form-control" id="customDescuentoGlobal" min="0" placeholder="Ingrese monto a descontar">' +
+        '<br>' +
+        '<label for="porcentajeDescuentoGlobal">Seleccionar porcentaje de descuento:</label>' +
+        '<select class="form-control" id="porcentajeDescuentoGlobal">' +
+        '<option value="">Seleccionar</option>' +
+        '<option value="0">0%</option>' +
+        '<option value="5">5%</option>' +
+        '<option value="10">10%</option>' +
+        '<option value="15">15%</option>' +
+        '<option value="20">20%</option>' +
+        '<option value="25">25%</option>' +
+        '<option value="30">30%</option>' +
+        '<option value="35">35%</option>' +
+        '<option value="40">40%</option>' +
+        '<option value="45">45%</option>' +
+        '<option value="50">50%</option>' +
+        '<option value="55">55%</option>' +
+        '<option value="60">60%</option>' +
+        '<option value="65">65%</option>' +
+        '<option value="70">70%</option>' +
+        '<option value="75">75%</option>' +
+        '<option value="80">80%</option>' +
+        '<option value="85">85%</option>' +
+        '<option value="90">90%</option>' +
+        '<option value="95">95%</option>' +
+        '<option value="100">100%</option>' +
+        '</select>',
+      showCancelButton: true,
+      confirmButtonText: 'Aplicar descuento',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+        var montoDescontarGlobal = parseFloat($('#customDescuentoGlobal').val());
+        var porcentajeDescuentoGlobal = parseFloat($('#porcentajeDescuentoGlobal').val());
+
+        // Aplicar el descuento a todos los inputs dinámicos
+        $('.importe').each(function() {
+          var importeInput = $(this);
+          var precioInput = importeInput.closest('tr').find('.precio');
+
+          var importeActual = parseFloat(importeInput.val());
+          if (!isNaN(porcentajeDescuentoGlobal) && porcentajeDescuentoGlobal >= 0 && porcentajeDescuentoGlobal <= 100) {
+            var importeDescuento = importeActual * (1 - porcentajeDescuentoGlobal / 100);
+            importeInput.val(importeDescuento.toFixed(2));
+            precioInput.val(importeDescuento.toFixed(2));
+          } else if (!isNaN(montoDescontarGlobal) && montoDescontarGlobal >= 0) {
+            var importeNuevo = importeActual - montoDescontarGlobal;
+            importeInput.val(importeNuevo.toFixed(2));
+            precioInput.val(importeNuevo.toFixed(2));
+          }
+        });
+
+        return true;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Descuento aplicado',
+          text: 'El descuento global ha sido aplicado correctamente.',
+          icon: 'success'
+        });
+        actualizarSuma();
+        mostrarTotalVenta();
+        mostrarSubTotal();
+        mostrarIvaTotal();
+        actualizarImporte();
+      }
+    });
+  }
+</script>
 
 
 
