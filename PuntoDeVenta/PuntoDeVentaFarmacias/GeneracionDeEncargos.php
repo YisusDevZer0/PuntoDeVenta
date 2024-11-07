@@ -51,7 +51,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
             
             // Primer script: función para mostrar la alerta con contraseña
 function showAlertWithPassword() {
-    const correctPassword = 'DoctorPez';
+    const correctPassword = 'DevZero';
 
     // Generamos un nombre aleatorio para evitar el autocompletado del navegador
     const randomInputId = 'password_' + Math.random().toString(36).substring(2, 15);
