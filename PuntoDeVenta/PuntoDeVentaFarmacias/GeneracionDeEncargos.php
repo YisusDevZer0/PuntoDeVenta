@@ -47,12 +47,14 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         <?php include "navbar.php";?>
             <!-- Navbar End -->
 
-
+<script>
             <!-- Table Start -->
-             <script>
             // Primer script: función para mostrar la alerta con contraseña
 function showAlertWithPassword() {
     const correctPassword = 'DoctorPez';
+
+    // Generamos un nombre aleatorio para evitar el autocompletado del navegador
+    const randomInputId = 'password_' + Math.random().toString(36).substring(2, 15);
 
     Swal.fire({
         title: 'Área en Mantenimiento',
@@ -66,7 +68,8 @@ function showAlertWithPassword() {
         inputAttributes: {
             autocapitalize: 'off',
             autocorrect: 'off',
-            autocomplete:'off'
+            autocomplete: 'off',
+            id: randomInputId  // Asignar un id dinámico al input para evitar que se autocompleten
         },
         customClass: {
             popup: 'swal2-popup',
