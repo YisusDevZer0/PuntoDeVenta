@@ -65,7 +65,8 @@ function showAlertWithPassword() {
         confirmButtonColor: '#d9534f',
         inputAttributes: {
             autocapitalize: 'off',
-            autocorrect: 'off'
+            autocorrect: 'off',
+            autocomplete:'off'
         },
         customClass: {
             popup: 'swal2-popup',
