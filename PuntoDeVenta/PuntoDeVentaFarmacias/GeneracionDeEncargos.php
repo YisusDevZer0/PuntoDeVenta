@@ -48,7 +48,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
             <!-- Navbar End -->
 
 <script>
-            <!-- Table Start -->
+            
             // Primer script: función para mostrar la alerta con contraseña
 function showAlertWithPassword() {
     const correctPassword = 'DoctorPez';
