@@ -16,10 +16,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 <div class="navbar-nav align-items-center ms-auto">
                 <div class="navbar-nav align-items-center ms-auto">
                 <div class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-            <i class="fa fa-envelope me-lg-2 position-relative" id="messageIcon"></i>
-            <span class="d-none d-lg-inline-flex">Mensajes</span>
-        </a>
+        
         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
             <!-- Mensajes se agregarán dinámicamente aquí -->
         </div>
