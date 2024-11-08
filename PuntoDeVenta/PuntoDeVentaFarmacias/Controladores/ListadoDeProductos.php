@@ -193,8 +193,8 @@ tabla = $('#StocksDESucursales').DataTable({
 
        { mData: 'UltimoMovimiento' },
        { mData: 'Existencias_R' },
-       { mData: 'Min_Existencia' },
-       { mData: 'Max_Existencia' },
+      //  { mData: 'Min_Existencia' },
+      //  { mData: 'Max_Existencia' },
        {mData: "Existencias_R",
         "searchable": true,
         "orderable":true,
@@ -214,8 +214,8 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
         }
  
     },
-       { mData: 'Editar' },
-       { mData: 'Eliminar' },
+      //  { mData: 'Editar' },
+      //  { mData: 'Eliminar' },
   
       ],
      
