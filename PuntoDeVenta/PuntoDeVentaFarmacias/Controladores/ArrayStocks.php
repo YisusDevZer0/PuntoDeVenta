@@ -2,6 +2,7 @@
 header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
+var_dump($licencia, $Fk_Sucursal);
 
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
