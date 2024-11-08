@@ -6,7 +6,6 @@ include_once "ControladorUsuario.php";
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
-var_dump($licencia, $Fk_Sucursal);
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Stock_POS.Folio_Prod_Stock,Stock_POS.Clave_adicional,Stock_POS.ID_Prod_POS,Stock_POS.AgregadoEl,Stock_POS.Clave_adicional,Stock_POS.Clave_Levic,
