@@ -1496,41 +1496,54 @@ $('#abrirSweetAlertBtn').on('click', function() {
     return;
   }
 
-  // Crear el artículo
+  // Crear el artículo con datos adicionales
   var articulo = {
     id: Date.now(),  // Usamos el timestamp como ID único
     codigo: codigo,
     descripcion: descripcion,
     cantidad: cantidad,
-    precio: precio
+    precio: precio,
+    lote: '',           // Otros campos adicionales según el formato de la tabla
+    clave: '',
+    tipo: '',
+    tiposervicios: ''
   };
 
-  // Agregar el artículo a la tabla
+  // Construir la fila de la tabla en el formato necesario
   var tr = '<tr data-id="' + articulo.id + '">';
-  tr += '<td>' + articulo.codigo + '</td>';
-  tr += '<td>' + articulo.descripcion + '</td>';
-  tr += '<td>' + articulo.cantidad + '</td>';
-  tr += '<td>' + articulo.precio + '</td>';
+  tr += '<td class="codigo"><input class="form-control codigo-barras-input" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
+  tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
+  tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
+  tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
+  tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden class="form-control precio" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
+  tr += '<td><input class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>';
+  
+  // Agregar campos ocultos adicionales según el formato que necesitas
+  tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
+  tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
+  tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
+  tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
   tr += '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button></td>';
   tr += '</tr>';
 
   // Agregar la fila a la tabla
   $('#tablaAgregarArticulos tbody').append(tr);
 
-  // Cerrar el modal
-  $('#modalAgregarArticulo').modal('hide');
+  // Actualizar los cálculos necesarios
+  actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
+  calcularIVA();
+  actualizarSuma();
+  mostrarTotalVenta();
+  mostrarSubTotal();
+  mostrarIvaTotal();
 
   // Limpiar los campos del modal
   $('#codigoArticulo').val('');
   $('#descripcionArticulo').val('');
   $('#cantidadArticulo').val('');
   $('#precioArticulo').val('');
-
-  // Actualizar los totales
-  mostrarTotalVenta();
-  mostrarSubTotal();
-  mostrarIvaTotal();
 }
+
 
 </script>
 
