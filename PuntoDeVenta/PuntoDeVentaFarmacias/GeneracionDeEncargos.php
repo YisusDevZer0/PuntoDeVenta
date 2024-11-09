@@ -50,62 +50,62 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <script>
             
          
-// function showAlertWithPassword() {
-//     const correctPassword = 'DevZero';
+function showAlertWithPassword() {
+    const correctPassword = 'DevZero';
 
-//     // Generamos un nombre aleatorio para evitar el autocompletado del navegador
-//     const randomInputId = 'password_' + Math.random().toString(36).substring(2, 15);
+    // Generamos un nombre aleatorio para evitar el autocompletado del navegador
+    const randomInputId = 'password_' + Math.random().toString(36).substring(2, 15);
 
-//     Swal.fire({
-//         title: 'Área en Mantenimiento',
-//         text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
-//         input: 'password',
-//         inputLabel: 'Ingresa la contraseña',
-//         inputPlaceholder: 'Contraseña',
-//         showCancelButton: false,
-//         confirmButtonText: 'Aceptar',
-//         confirmButtonColor: '#d9534f',
-//         inputAttributes: {
-//             autocapitalize: 'off',
-//             autocorrect: 'off',
-//             autocomplete: 'off',
-//             id: randomInputId  // Asignar un id dinámico al input para evitar que se autocompleten
-//         },
-//         customClass: {
-//             popup: 'swal2-popup',
-//             title: 'swal2-title',
-//             input: 'swal2-input',
-//             confirmButton: 'swal2-confirm'
-//         },
-//         didOpen: () => {
-//             Swal.getInput().focus();
-//         }
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             if (result.value === correctPassword) {
-//                 Swal.fire({
-//                     title: '¡Acceso Permitido!',
-//                     text: 'Puedes proceder a utilizar la funcionalidad.',
-//                     icon: 'success',
-//                     confirmButtonText: 'Aceptar',
-//                     confirmButtonColor: '#5bc0de'
-//                 });
-//             } else {
-//                 Swal.fire({
-//                     title: 'Contraseña Incorrecta',
-//                     text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
-//                     icon: 'error',
-//                     confirmButtonText: 'Intentar de nuevo',
-//                     confirmButtonColor: '#d9534f'
-//                 }).then(() => {
-//                     showAlertWithPassword();
-//                 });
-//             }
-//         } else {
-//             showAlertWithPassword();
-//         }
-//     });
-// }
+    Swal.fire({
+        title: 'Área en Mantenimiento',
+        text: 'Esta área está actualmente en mantenimiento y no se puede usar (Si eres desarrollador por favor ingresa tu clave para continuar).',
+        input: 'password',
+        inputLabel: 'Ingresa la contraseña',
+        inputPlaceholder: 'Contraseña',
+        showCancelButton: false,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#d9534f',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off',
+            autocomplete: 'off',
+            id: randomInputId  // Asignar un id dinámico al input para evitar que se autocompleten
+        },
+        customClass: {
+            popup: 'swal2-popup',
+            title: 'swal2-title',
+            input: 'swal2-input',
+            confirmButton: 'swal2-confirm'
+        },
+        didOpen: () => {
+            Swal.getInput().focus();
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (result.value === correctPassword) {
+                Swal.fire({
+                    title: '¡Acceso Permitido!',
+                    text: 'Puedes proceder a utilizar la funcionalidad.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#5bc0de'
+                });
+            } else {
+                Swal.fire({
+                    title: 'Contraseña Incorrecta',
+                    text: 'La contraseña ingresada es incorrecta. Inténtalo nuevamente.',
+                    icon: 'error',
+                    confirmButtonText: 'Intentar de nuevo',
+                    confirmButtonColor: '#d9534f'
+                }).then(() => {
+                    showAlertWithPassword();
+                });
+            }
+        } else {
+            showAlertWithPassword();
+        }
+    });
+}
 
 // Segundo script: mostrar alerta de carga y luego abrir la alerta de contraseña
 const loadingMessages = [
