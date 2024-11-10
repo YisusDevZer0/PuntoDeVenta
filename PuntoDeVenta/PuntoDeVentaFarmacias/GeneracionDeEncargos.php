@@ -1482,8 +1482,8 @@ $('#abrirSweetAlertBtn').on('click', function() {
   // Actualizar los cálculos necesarios
   actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
 
-  actualizarSuma();
-  mostrarTotalVenta();
+  // actualizarSuma();
+  // mostrarTotalVenta();
   
  
 
