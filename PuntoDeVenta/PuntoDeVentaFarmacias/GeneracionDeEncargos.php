@@ -1485,7 +1485,7 @@ $('#abrirSweetAlertBtn').on('click', function() {
   actualizarSuma();
   mostrarTotalVenta();
   mostrarSubTotal();
-  mostrarIvaTotal();
+ 
 
   // Limpiar los campos del modal
   $('#codigoArticulo').val('');
