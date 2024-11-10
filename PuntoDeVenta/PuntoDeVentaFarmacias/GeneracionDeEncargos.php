@@ -911,17 +911,24 @@ function mostrarSubTotal() {
 }
 
 
-  function mostrarIvaTotal() {
+function mostrarIvaTotal() {
     var subtotal = 0;
     $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.valordelniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
+        var importeElemento = $(this).find('.valordelniva');
+        var importeSinIVA = importeElemento.val();
+        
+        // Verificar si el valor existe antes de aplicar replace
+        if (importeSinIVA !== undefined && importeSinIVA !== null && importeSinIVA !== "") {
+            importeSinIVA = parseFloat(importeSinIVA.replace(/[^\d.-]/g, ''));
+            if (!isNaN(importeSinIVA)) {
+                subtotal += importeSinIVA;
+            }
+        }
     });
 
     $('#ivatotal').text(subtotal.toFixed(2));
-  }
+}
+
 
   function buscarArticulo(codigoEscaneado) {
   var formData = new FormData();
@@ -1481,11 +1488,11 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
   // Actualizar los cálculos necesarios
   actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
-
-  // actualizarSuma();
-  // mostrarTotalVenta();
-  
- 
+  calcularIVA();
+  actualizarSuma();
+  mostrarTotalVenta();
+  mostrarSubTotal();
+  mostrarIvaTotal();
 
   // Limpiar los campos del modal
   $('#codigoArticulo').val('');
