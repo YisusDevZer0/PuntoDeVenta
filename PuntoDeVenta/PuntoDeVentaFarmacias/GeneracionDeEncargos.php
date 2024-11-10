@@ -1481,10 +1481,10 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
   // Actualizar los cálculos necesarios
   actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
-  calcularIVA();
+
   actualizarSuma();
   mostrarTotalVenta();
-  mostrarSubTotal();
+  
  
 
   // Limpiar los campos del modal
