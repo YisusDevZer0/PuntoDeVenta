@@ -893,17 +893,22 @@ document.getElementById("selTipoPago").addEventListener("change", actualizarSuma
 
 
 
-  function mostrarSubTotal() {
+function mostrarSubTotal() {
     var subtotal = 0;
     $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.importe_siniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
+        var importeElemento = $(this).find('.importe_siniva');
+        var importeSinIVA = importeElemento.val();
+        
+        if (importeSinIVA !== undefined && importeSinIVA !== null && importeSinIVA !== "") {
+            importeSinIVA = parseFloat(importeSinIVA.replace(/[^\d.-]/g, ''));
+            if (!isNaN(importeSinIVA)) {
+                subtotal += importeSinIVA;
+            }
+        }
     });
 
     $('#boleta_subtotal').text(subtotal.toFixed(2));
-  }
+}
 
 
   function mostrarIvaTotal() {
