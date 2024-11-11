@@ -141,10 +141,15 @@ $(document).ready(function () {
       $.ajax({
         type: 'POST',
         url: "Controladores/RegistroDeEncargosSucursales.php",
-        data: $('#VentasAlmomento').serialize(),
-        cache: false,
-        beforeSend: function () {
-          $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
+        data: {
+            NombreDelCliente: valoresTabla.map(item => item.nombreCliente),  // Asegúrate de que esta propiedad exista en los valoresTabla
+            NombreDelProducto: valoresTabla.map(item => item.descripcionProducto),
+            CantidadVendida: valoresTabla.map(item => item.cantidadVendida),
+            PrecioVentaProd: valoresTabla.map(item => item.precioVenta),
+            FechaDeVenta: valoresTabla.map(item => item.fechaVenta),
+            estado: valoresTabla.map(item => item.estado),
+            TotalDeVenta: valoresTabla.map(item => item.totalVenta),
+            iptEfectivoOculto: valoresTabla.map(item => item.efectivoOculto)
         },
         success: function (data) {
           var response = JSON.parse(data);
