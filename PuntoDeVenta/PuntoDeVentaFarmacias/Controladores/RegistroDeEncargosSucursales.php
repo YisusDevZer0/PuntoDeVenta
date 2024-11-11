@@ -1,4 +1,20 @@
 <?php
+
+
+
+// Depurar los datos recibidos
+echo '<pre>';
+var_dump($_POST["NombreDelCliente"]);
+var_dump($_POST["NombreDelProducto"]);
+var_dump($_POST["CantidadVendida"]);
+var_dump($_POST["PrecioVentaProd"]);
+var_dump($_POST["FechaDeVenta"]);
+var_dump($_POST["estado"]);
+var_dump($_POST["TotalDeVenta"]);
+var_dump($_POST["iptEfectivoOculto"]);
+echo '</pre>';
+exit;  // Esto detiene la ejecución para que puedas ver los datos
+
 include_once 'db_connect.php';
 
 $contador = count($_POST["NombreDelCliente"]);
