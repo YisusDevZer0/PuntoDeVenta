@@ -583,25 +583,9 @@ $fechaActual = date('Y-m-d H:i:s');
 </div>
 </div>
 </div>
-    <div style="display: none;" class="form-group mb-2">
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Folio de signo vital</label>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text"  id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
-        <input type="text" class="form-control " name="SignoVital[]" required>
-      </div>
+    
 
-    </div>
-
-    <div class="form-group mb-2">
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket anterior</label>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
-        <input type="text" class="form-control " name="TicketAnterior[]" required>
-      </div>
-
-    </div>
+    
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1081,6 +1065,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Pagado"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Empresa"><input hidden type="text" class="form-control " name="Empresa[]" readonly value="Doctor Pez"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="FechaDeVenta[]" readonly value="<?php echo $ValorCaja["Fecha_Apertura"]; ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="estado[]" readonly value="Encargo generado"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Descuentosugerido"><input hidden type="text" class="form-control descuento-aplicado" id="descuentoaplicado_' + articulo.id + '" name="DescuentoAplicado[]" readonly></td>';
         tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div></td>';
@@ -1478,7 +1463,8 @@ $('#abrirSweetAlertBtn').on('click', function() {
   tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
   tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden class="form-control precio" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
   tr += '<td><input class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>';
-  
+  tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="FechaDeVenta[]" readonly value="<?php echo $ValorCaja["Fecha_Apertura"]; ?>"></td>';
+  tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="estado[]" readonly value="Encargo generado"></td>';
   // Agregar campos ocultos adicionales según el formato que necesitas
   tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
   tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
@@ -1598,7 +1584,7 @@ include("footer.php") ?>
 
 
 
-  <script src="js/FinalizaLasVentasSucursales.js"></script>
+  <script src="js/FinalizaElEncargoSucursales.js"></script>
   
   <script src="js/BuscaDataPacientes.js"></script>
   <script src="js/BusquedaProductos.js"></script>
