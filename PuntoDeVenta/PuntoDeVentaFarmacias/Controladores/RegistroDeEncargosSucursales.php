@@ -23,7 +23,7 @@ for ($i = 0; $i < $contador; $i++) {
         $values[] = $_POST["fecha_creacion"][$i];
         $values[] = $_POST["TotalDeVenta"][$i];
         $values[] = $_POST["iptEfectivoOculto"][$i];
-        
+
         $valueTypes .= 'sssssssss'; // Cambia el tipo según sea necesario: 's' para strings, 'i' para enteros, 'd' para decimales
     }
 }
@@ -35,8 +35,12 @@ if ($ProContador != 0) {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
-        // Vincula todos los valores a la consulta
-        mysqli_stmt_bind_param($stmt, $valueTypes, ...$values);
+        // Usa `call_user_func_array` para pasar los valores de forma correcta
+        $bindNames[] = &$valueTypes;
+        foreach ($values as $key => $value) {
+            $bindNames[] = &$values[$key];
+        }
+        call_user_func_array(array($stmt, 'bind_param'), $bindNames);
 
         $resultadocon = mysqli_stmt_execute($stmt);
 
