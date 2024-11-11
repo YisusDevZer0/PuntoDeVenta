@@ -10,7 +10,7 @@ $values = [];
 $valueTypes = '';
 
 for ($i = 0; $i < $contador; $i++) {
-    if (!empty($_POST["NombreDelCliente"][$i]) || !empty($_POST["medicamento"][$i]) || !empty($_POST["cantidad"][$i])) {
+    if (!empty($_POST["NombreDelCliente"][$i]) || !empty($_POST["NombreDelProducto"][$i]) || !empty($_POST["CantidadVendida"][$i])) {
         $ProContador++;
         $placeholders[] = "(?, ?, ?, ?, ?, ?, ?, ?)";
         
