@@ -1440,7 +1440,7 @@ $('#abrirSweetAlertBtn').on('click', function() {
   }
 
 
-  function agregarArticuloModal() {
+ function agregarArticuloModal() {
   // Obtener los datos del artículo desde el modal
   var codigo = $('#codigoArticulo').val();
   var descripcion = $('#descripcionArticulo').val();
@@ -1449,7 +1449,11 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
   // Validar si los campos están vacíos
   if (!codigo || !descripcion || !cantidad || !precio) {
-    alert('Por favor, complete todos los campos.');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campos incompletos',
+      text: 'Por favor, complete todos los campos.'
+    });
     return;
   }
 
@@ -1499,6 +1503,18 @@ $('#abrirSweetAlertBtn').on('click', function() {
   $('#descripcionArticulo').val('');
   $('#cantidadArticulo').val('');
   $('#precioArticulo').val('');
+
+  // Mostrar mensaje de SweetAlert2 y ocultar el modal
+  Swal.fire({
+    icon: 'success',
+    title: 'Artículo agregado',
+    text: 'El artículo se ha agregado correctamente a la tabla.',
+    showConfirmButton: false,
+    timer: 1500
+  }).then(() => {
+    // Cerrar el modal
+    $('#modalAgregarArticulo').modal('hide');
+  });
 }
 
 
