@@ -13,7 +13,7 @@ for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["NombreDelCliente"][$i]) || !empty($_POST["medicamento"][$i]) || !empty($_POST["cantidad"][$i])) {
         $ProContador++;
         $placeholders[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $values[] = $_POST["NombreDelCliente"][$i];
         $values[] = $_POST["NombreDelProducto"][$i];
         $values[] = $_POST["CantidadVendida"][$i];
@@ -35,6 +35,7 @@ if ($ProContador != 0) {
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
+        // Vincula todos los valores a la consulta
         mysqli_stmt_bind_param($stmt, $valueTypes, ...$values);
 
         $resultadocon = mysqli_stmt_execute($stmt);
