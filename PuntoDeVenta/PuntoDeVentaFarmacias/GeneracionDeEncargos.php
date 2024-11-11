@@ -161,7 +161,7 @@ setInterval(() => {
 // Cerrar alerta de carga y mostrar la alerta de contraseña cuando la página haya cargado
 window.addEventListener('load', function() {
     Swal.close();
-    setTimeout(500); // Agrega un ligero retraso para que la alerta de carga cierre completamente antes de abrir la alerta de contraseña
+    setTimeout(showAlertWithPassword,500); // Agrega un ligero retraso para que la alerta de carga cierre completamente antes de abrir la alerta de contraseña
 });
 </script>
 <style>
