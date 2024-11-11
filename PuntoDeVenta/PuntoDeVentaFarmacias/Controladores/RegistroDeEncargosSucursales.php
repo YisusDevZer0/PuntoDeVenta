@@ -2,64 +2,50 @@
 include_once 'db_connect.php';
 
 $contador = count($_POST["NombreDelCliente"]);
-$ProContador = 0;
-$query = "INSERT INTO encargos (`nombre_paciente`, `medicamento`, `cantidad`, `precioventa`, `fecha_encargo`, `estado`, `fecha_creacion`, `costo`, `abono_parcial`) VALUES ";
-
-$placeholders = [];
-$values = [];
-$valueTypes = '';
+$response = array();
+$errores = 0;
 
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["NombreDelCliente"][$i]) || !empty($_POST["medicamento"][$i]) || !empty($_POST["cantidad"][$i])) {
-        $ProContador++;
-        $placeholders[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        // Preparar la consulta para cada fila sin el campo fecha_creacion
+        $query = "INSERT INTO encargos (`nombre_paciente`, `medicamento`, `cantidad`, `precioventa`, `fecha_encargo`, `estado`, `costo`, `abono_parcial`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $query);
 
-        $values[] = $_POST["NombreDelCliente"][$i];
-        $values[] = $_POST["NombreDelProducto"][$i];
-        $values[] = $_POST["CantidadVendida"][$i];
-        $values[] = $_POST["PrecioVentaProd"][$i];
-        $values[] = $_POST["FechaDeVenta"][$i];
-        $values[] = $_POST["estado"][$i];
-        $values[] = $_POST["fecha_creacion"][$i];
-        $values[] = $_POST["TotalDeVenta"][$i];
-        $values[] = $_POST["iptEfectivoOculto"][$i];
+        // Verificar que la preparación fue exitosa
+        if ($stmt) {
+            // Asignar valores de cada campo individualmente
+            mysqli_stmt_bind_param($stmt, 'ssssssss',
+                $_POST["NombreDelCliente"][$i],
+                $_POST["NombreDelProducto"][$i],
+                $_POST["CantidadVendida"][$i],
+                $_POST["PrecioVentaProd"][$i],
+                $_POST["FechaDeVenta"][$i],
+                $_POST["estado"][$i],
+                $_POST["TotalDeVenta"][$i],
+                $_POST["iptEfectivoOculto"][$i]
+            );
 
-        $valueTypes .= 'sssssssss'; // Cambia el tipo según sea necesario: 's' para strings, 'i' para enteros, 'd' para decimales
+            // Ejecutar la consulta
+            if (!mysqli_stmt_execute($stmt)) {
+                $errores++;
+            }
+
+            // Cerrar cada statement después de la ejecución
+            mysqli_stmt_close($stmt);
+        } else {
+            $errores++;
+        }
     }
 }
 
-$response = array();
-
-if ($ProContador != 0) {
-    $query .= implode(', ', $placeholders);
-    $stmt = mysqli_prepare($conn, $query);
-
-    if ($stmt) {
-        // Usa `call_user_func_array` para pasar los valores de forma correcta
-        $bindNames[] = &$valueTypes;
-        foreach ($values as $key => $value) {
-            $bindNames[] = &$values[$key];
-        }
-        call_user_func_array(array($stmt, 'bind_param'), $bindNames);
-
-        $resultadocon = mysqli_stmt_execute($stmt);
-
-        if ($resultadocon) {
-            $response['status'] = 'success';
-            $response['message'] = 'Registro(s) agregado(s) correctamente.';
-        } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Error en la consulta de inserción: ' . mysqli_error($conn);
-        }
-    } else {
-        $response['status'] = 'error';
-        $response['message'] = 'Error en la preparación de la consulta: ' . mysqli_error($conn);
-    }
-
-    mysqli_stmt_close($stmt);
+// Verificar el resultado y generar respuesta
+if ($errores === 0) {
+    $response['status'] = 'success';
+    $response['message'] = 'Registro(s) agregado(s) correctamente.';
 } else {
     $response['status'] = 'error';
-    $response['message'] = 'No se encontraron registros para agregar.';
+    $response['message'] = "Error al agregar algunos registros. Total de errores: $errores.";
 }
 
 echo json_encode($response);
