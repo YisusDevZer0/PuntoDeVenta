@@ -738,7 +738,6 @@ document.getElementById('numberSelect').addEventListener('change', function() {
 var Fk_sucursal = <?php echo json_encode($row['Fk_Sucursal']); ?>;
 var scanBuffer = "";
 var scanInterval = 5; // Milisegundos
-
 function procesarBuffer() {
   // Buscar el carácter delimitador
   var delimiter = "\n";
@@ -763,6 +762,13 @@ function procesarBuffer() {
 function agregarEscaneo(escaneo) {
   scanBuffer += escaneo;
 }
+
+function esCodigoBarrasValido(codigoEscaneado) {
+  // Verificar si el código de barras tiene una longitud válida
+  var longitud = codigoEscaneado.length;
+  return longitud >= 2 && longitud <= 13; // Ajusta el rango según sea necesario
+}
+
 
 function buscarArticulo(codigoEscaneado) {
   if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
