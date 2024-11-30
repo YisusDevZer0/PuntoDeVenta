@@ -26,6 +26,8 @@ if (isset($_POST["import"])) {
         }
 
         $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
+        $ActualizadoEl = date("Y-m-d H:i:s"); // Fecha y hora actual
+
         $Reader = new SpreadsheetReader($targetPath);
         
         $sheetCount = count($Reader->sheets());
@@ -33,25 +35,38 @@ if (isset($_POST["import"])) {
             $Reader->ChangeSheet($i);
             
             foreach ($Reader as $Row) {
-                $Id_Actualizado = isset($Row[0]) ? mysqli_real_escape_string($con, $Row[0]) : "";
+                $ID_Prod_POS = isset($Row[0]) ? mysqli_real_escape_string($con, $Row[0]) : "";
                 $Cod_Barra = isset($Row[1]) ? mysqli_real_escape_string($con, $Row[1]) : "";
                 $Clave_adicional = isset($Row[2]) ? mysqli_real_escape_string($con, $Row[2]) : "";
-                $Nombre_Prod = isset($Row[3]) ? mysqli_real_escape_string($con, $Row[3]) : "";
-                $Precio_Venta = isset($Row[4]) ? mysqli_real_escape_string($con, $Row[4]) : "";
-                $Precio_C = isset($Row[5]) ? mysqli_real_escape_string($con, $Row[5]) : "";
-                $Componente_Activo = isset($Row[6]) ? mysqli_real_escape_string($con, $Row[6]) : "";
-                $Tipo = isset($Row[7]) ? mysqli_real_escape_string($con, $Row[7]) : "";
-                $FkCategoria = isset($Row[8]) ? mysqli_real_escape_string($con, $Row[8]) : "";
-                $FkMarca = isset($Row[9]) ? mysqli_real_escape_string($con, $Row[9]) : "";
-                $FkPresentacion = isset($Row[10]) ? mysqli_real_escape_string($con, $Row[10]) : "";
-                $Proveedor1 = isset($Row[11]) ? mysqli_real_escape_string($con, $Row[11]) : "";
-                $Proveedor2 = isset($Row[12]) ? mysqli_real_escape_string($con, $Row[12]) : "";
-                $RecetaMedica = isset($Row[13]) ? mysqli_real_escape_string($con, $Row[13]) : "";
-                $Licencia = isset($Row[14]) ? mysqli_real_escape_string($con, $Row[14]) : "";
-                $Ivaal16 = isset($Row[15]) ? mysqli_real_escape_string($con, $Row[15]) : "";
+                $Clave_Levic = isset($Row[3]) ? mysqli_real_escape_string($con, $Row[3]) : "";
+                $Nombre_Prod = isset($Row[4]) ? mysqli_real_escape_string($con, $Row[4]) : "";
+                $Precio_Venta = isset($Row[5]) ? mysqli_real_escape_string($con, $Row[5]) : "";
+                $Precio_C = isset($Row[6]) ? mysqli_real_escape_string($con, $Row[6]) : "";
+                $Tipo_Servicio = isset($Row[7]) ? mysqli_real_escape_string($con, $Row[7]) : "";
+                $Componente_Activo = isset($Row[8]) ? mysqli_real_escape_string($con, $Row[8]) : "";
+                $Tipo = isset($Row[9]) ? mysqli_real_escape_string($con, $Row[9]) : "";
+                $FkCategoria = isset($Row[10]) ? mysqli_real_escape_string($con, $Row[10]) : "";
+                $FkMarca = isset($Row[11]) ? mysqli_real_escape_string($con, $Row[11]) : "";
+                $FkPresentacion = isset($Row[12]) ? mysqli_real_escape_string($con, $Row[12]) : "";
+                $Proveedor1 = isset($Row[13]) ? mysqli_real_escape_string($con, $Row[13]) : "";
+                $Proveedor2 = isset($Row[14]) ? mysqli_real_escape_string($con, $Row[14]) : "";
+                $RecetaMedica = isset($Row[15]) ? mysqli_real_escape_string($con, $Row[15]) : "";
+                $Licencia = isset($Row[16]) ? mysqli_real_escape_string($con, $Row[16]) : "";
+                $Ivaal16 = isset($Row[17]) ? mysqli_real_escape_string($con, $Row[17]) : "";
+                $Contable = isset($Row[18]) ? mysqli_real_escape_string($con, $Row[18]) : "";
                 
                 if (!empty($Cod_Barra) || !empty($Nombre_Prod) || !empty($Precio_Venta)) {
-                    $query = "INSERT INTO ActualizacionesMasivasProductosPOS (Id_Actualizado, Cod_Barra, Clave_adicional, Nombre_Prod, Precio_Venta, Precio_C, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, Proveedor1, Proveedor2, RecetaMedica, Licencia, Ivaal16, ActualizadoPor) VALUES ('$Id_Actualizado', '$Cod_Barra', '$Clave_adicional', '$Nombre_Prod', '$Precio_Venta', '$Precio_C', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$Licencia', '$Ivaal16', '$ActualizadoPor')";
+                    $query = "INSERT INTO ActualizacionMasivaProductosGlobales (
+                        ID_Prod_POS, Cod_Barra, Clave_adicional, Clave_Levic, Nombre_Prod, Precio_Venta, 
+                        Precio_C, Tipo_Servicio, Componente_Activo, Tipo, FkCategoria, FkMarca, FkPresentacion, 
+                        Proveedor1, Proveedor2, RecetaMedica, AgregadoPor, AgregadoEl, Licencia, Ivaal16, 
+                        ActualizadoPor, ActualizadoEl, Contable
+                    ) VALUES (
+                        '$ID_Prod_POS', '$Cod_Barra', '$Clave_adicional', '$Clave_Levic', '$Nombre_Prod', '$Precio_Venta', 
+                        '$Precio_C', '$Tipo_Servicio', '$Componente_Activo', '$Tipo', '$FkCategoria', '$FkMarca', '$FkPresentacion', 
+                        '$Proveedor1', '$Proveedor2', '$RecetaMedica', '$ActualizadoPor', '$ActualizadoEl', '$Licencia', '$Ivaal16', 
+                        '$ActualizadoPor', '$ActualizadoEl', '$Contable'
+                    )";
                     $resultados = mysqli_query($con, $query);
                 
                     if ($resultados) {
@@ -76,6 +91,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 $fcha = date("Y-m-d");
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
