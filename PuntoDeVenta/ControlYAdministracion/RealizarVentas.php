@@ -927,7 +927,7 @@ document.getElementById("selTipoPago").addEventListener("change", actualizarSuma
   formData.append('codigoEscaneado', codigoEscaneado);
 
   $.ajax({
-    url: "Controladores/escaner_articulo.php",
+    url: "Controladores/escaner_articulo_administrativo.php",
     type: 'POST',
     data: formData,
     processData: false,
@@ -994,7 +994,7 @@ $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
     // Realiza una solicitud AJAX para obtener los resultados de autocompletado
     $.ajax({
-      url: 'Controladores/autocompletado.php',
+      url: 'Controladores/autocompletadoAdministrativo.php',
       type: 'GET',
       dataType: 'json',
       data: {
