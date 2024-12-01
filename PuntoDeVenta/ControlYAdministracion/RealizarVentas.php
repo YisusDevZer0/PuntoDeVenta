@@ -1482,20 +1482,16 @@ include("Modales/Exito.php");
 include("Modales/AdvierteDeCaja.php");
 
 include("Modales/ReimpresionTicketsVistaVentas.php");
-include("Modales/ExitoActualiza.php");
-
-include("footer.php") ?>
+include("Modales/ExitoActualiza.php"); ?>
 
 
   <!-- ./wrapper -->
-  <script src="js/ControlDeTicketsVentas.js"></script>
+
 
 
 
   <script src="js/FinalizaLasVentasSucursales.js"></script>
-  
-  <script src="js/BuscaDataPacientes.js"></script>
-  <script src="js/BusquedaProductos.js"></script>
+  >
   <!-- Bootstrap -->
 
 
