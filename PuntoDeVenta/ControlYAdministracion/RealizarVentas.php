@@ -689,7 +689,7 @@ function actualizarSumaTotal() {
   var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
   var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
   var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
-  var totalCubierto = 0; // Variable para almacenar el total cubierto por los pagos
+  var totalCubierto = 0; // Total pagado (Efectivo + Tarjeta)
 
   // Si el método de pago es "Crédito", ajustar el total
   if (metodoPago === "Credito") {
@@ -697,6 +697,7 @@ function actualizarSumaTotal() {
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Mostrar el total de venta en el input
     $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
     $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta automáticamente si es "Crédito"
+    totalCubierto = iptEfectivo; // Total cubierto será igual al efectivo en caso de crédito
   } else {
     // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
     if (iptTarjeta >= totalVenta) {
@@ -716,21 +717,23 @@ function actualizarSumaTotal() {
 
     // Actualizar el valor del elemento <span> con el cambio
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+
+    // Calcular el total cubierto (Efectivo + Tarjeta)
+    totalCubierto = iptTarjeta + iptEfectivo;
   }
 
-  // Calcular el total cubierto por los pagos (tarjeta + efectivo)
-  totalCubierto = iptTarjeta + iptEfectivo;
-
-  // Actualizar el input total de cliente si el método incluye efectivo y otro medio
-  if (metodoPago === "Efectivo y tarjeta" || metodoPago === "Efectivo y credito") {
-    document.getElementById("totaldeventacliente").value = totalCubierto.toFixed(2); // Actualiza el total cubierto
+  // Actualizar el campo "totaldeventacliente" siempre que sea Efectivo y Tarjeta o Efectivo y Crédito
+  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+    document.getElementById("totaldeventacliente").value = totalCubierto.toFixed(2);
+  } else {
+    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2); // Por defecto, mostrar el total de venta
   }
 }
 
-// Detectar cambios en el método de pago:
+// Asegúrate de que se detecte el cambio en el método de pago
 document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
-// Detectar cambios en los inputs de tarjeta y efectivo:
+// Detectar cambios en los campos de efectivo y tarjeta para recalcular
 document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
 document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
 
