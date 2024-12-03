@@ -683,7 +683,6 @@ Efectivo Exacto
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
-
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
   var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
@@ -722,8 +721,8 @@ function actualizarSumaTotal() {
     totalCubierto = iptTarjeta + iptEfectivo;
   }
 
-  // Solo mostrar el valor de efectivo en el campo "totaldeventacliente"
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+  // Solo mostrar el valor de efectivo en el campo "totaldeventacliente" si el pago es Efectivo + Tarjeta o Efectivo + Crédito
+  if ((metodoPago === "Efectivo y Tarjeta") || (metodoPago === "Efectivo y Credito")) {
     // Si se paga con efectivo y tarjeta o crédito, mostrar solo el valor de efectivo
     document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
   } else {
@@ -738,14 +737,6 @@ document.getElementById("selTipoPago").addEventListener("change", actualizarSuma
 // Detectar cambios en los campos de efectivo y tarjeta para recalcular
 document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
 document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
-
-
-
-
-
-
-
-
 
 
 
