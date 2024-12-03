@@ -700,7 +700,7 @@ function actualizarSumaTotal() {
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input');
     $('#btnIniciarVenta').prop('disabled', false); // Activar el botón automáticamente
-  } else if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+  } else if (metodoPago === "Efectivo y tarjeta" || metodoPago === "Efectivo y credito") {
     // Calcula el total cubierto por tarjeta y efectivo
     totalCubierto = iptTarjeta + iptEfectivo;
 
