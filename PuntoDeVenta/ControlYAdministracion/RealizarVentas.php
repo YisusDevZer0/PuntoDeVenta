@@ -722,7 +722,7 @@ function actualizarSumaTotal() {
   totalCubierto = iptTarjeta + iptEfectivo;
 
   // Actualizar el input total de cliente si el método incluye efectivo y otro medio
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+  if (metodoPago === "Efectivo y tarjeta" || metodoPago === "Efectivo y credito") {
     document.getElementById("totaldeventacliente").value = totalCubierto.toFixed(2); // Actualiza el total cubierto
   }
 }
