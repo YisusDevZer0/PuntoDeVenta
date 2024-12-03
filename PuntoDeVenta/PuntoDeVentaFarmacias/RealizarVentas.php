@@ -658,7 +658,7 @@ Efectivo Exacto
 </div>
 <div class="col-md-7 text-end">
 <span class="" id="boleta_total" name="" style="float: right;">MXN $0.00</span>
-<input type="text" class="form-control"  value="" name="TotalDeVenta[]"  id="totaldeventacliente">
+<input type="text" class="form-control"  value="" hidden name="TotalDeVenta[]"  id="totaldeventacliente">
 </div>
 <div class="col-12 text-end">
 <h6 class="text-danger fw-bold">Cambio:  <span id="Vuelto" style="float: right;">MXN $0.00</span></h6>
