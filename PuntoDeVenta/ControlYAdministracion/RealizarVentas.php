@@ -685,41 +685,46 @@ Efectivo Exacto
 <script>
 
 function actualizarSumaTotal() {
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
-  var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
+    var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
+    var metodoPago = document.getElementById("selTipoPago").value; // Método de pago seleccionado
+    var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta
+    var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago en efectivo
 
-  // Si el método de pago es "Crédito", ajustar el total
-  if (metodoPago === "Credito") {
-    iptEfectivo = totalVenta; // Asignar el total de la venta al input de efectivo
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Mostrar el total de venta en el input
-    $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-    $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta automáticamente si es "Crédito"
-  } else {
-    // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
-    if (iptTarjeta >= totalVenta) {
-      iptEfectivo = 0;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-    } else {
-      // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
-      iptEfectivo = totalVenta - iptTarjeta;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
+    if (metodoPago === "Credito") {
+        // Todo el monto se considera como crédito
+        iptEfectivo = 0;
+        iptTarjeta = 0;
+        document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+        document.getElementById("iptTarjeta").value = iptTarjeta.toFixed(2);
+        $("#totaldeventacliente").val(totalVenta.toFixed(2));
+    } else if (metodoPago === "Efectivo y Tarjeta") {
+        // Resta del total el monto pagado con tarjeta
+        if (iptTarjeta >= totalVenta) {
+            iptEfectivo = 0;
+        } else {
+            iptEfectivo = totalVenta - iptTarjeta;
+        }
+        document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+        $("#totaldeventacliente").val((iptEfectivo + iptTarjeta).toFixed(2));
+    } else if (metodoPago === "Efectivo y Crédito") {
+        // Crédito es la diferencia entre el total y el efectivo
+        var credito = totalVenta - iptEfectivo;
+        document.getElementById("iptTarjeta").value = "0.00";
+        $("#totaldeventacliente").val((iptEfectivo + credito).toFixed(2));
     }
 
-    // Calcular el cambio en base al efectivo ingresado
+    // Calcular cambio si corresponde
     var cambio = iptEfectivo - (totalVenta - iptTarjeta);
-    cambio = cambio > 0 ? cambio : 0; // Si el efectivo es menor al necesario, el cambio es 0
-
-    // Actualizar el valor del elemento <span> con el cambio
+    cambio = cambio > 0 ? cambio : 0;
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
-  }
 }
 
-// Asegúrate de que se detecte el cambio en el método de pago:
+// Detectar cambios en el método de pago y actualizar valores
 document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+
+// Detectar cambios en los inputs de tarjeta y efectivo
+document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
+document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
 
 
 
