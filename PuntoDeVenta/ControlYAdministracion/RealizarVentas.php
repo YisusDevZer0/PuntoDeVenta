@@ -691,7 +691,7 @@ function actualizarSumaTotal() {
     var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago en efectivo
 
     if (metodoPago === "Credito") {
-        // Todo el monto se considera como crédito
+      
         iptEfectivo = 0;
         iptTarjeta = 0;
         document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
