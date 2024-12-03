@@ -728,13 +728,13 @@ function actualizarSumaTotal() {
   }
 
   // Condición cuando el método de pago es "Efectivo y Crédito"
-  if (metodoPago === "Efectivo y Credito") {
+  if (metodoPago === "Efectivo Y Credito") {
     // Si se paga con efectivo y crédito, mostrar solo el valor de efectivo
     document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
   }
 
   // Si el método de pago es otro, mostrar el valor total de la venta
-  if (metodoPago !== "Efectivo y Tarjeta" && metodoPago !== "Efectivo y Credito") {
+  if (metodoPago !== "Efectivo y Tarjeta" && metodoPago !== "Efectivo Y Credito") {
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
 }
