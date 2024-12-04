@@ -372,7 +372,7 @@ if (!empty($Especialistas14)) {
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Créditos"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalCredito; ?>"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $totalPagosEnCreditos; ?>"></td>
                     </tr>
                     <!-- Totales de combinación Efectivo y Tarjeta -->
                     <tr>
