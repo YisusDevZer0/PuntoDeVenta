@@ -693,46 +693,49 @@ function actualizarSumaTotal() {
   var cambio = 0; // Inicializamos el cambio
 
   switch (metodoPago) {
-    case "Credito":
-      // Todo el monto se asigna como efectivo
-      iptEfectivo = totalVenta;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento manualmente
-      $('#btnIniciarVenta').prop('disabled', false); // Habilitar botón de venta
-      totalCubierto = iptEfectivo; // El total cubierto es igual al efectivo
-      cambio = 0; // No hay cambio
-      break;
+  case "Credito":
+    iptEfectivo = totalVenta;
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
+    $('#btnIniciarVenta').prop('disabled', false);
+    totalCubierto = iptEfectivo;
+    cambio = 0;
+    break;
 
-    case "Efectivo y Tarjeta":
-      if (iptTarjeta >= totalVenta) {
-        // Si la tarjeta cubre el total, el efectivo queda en 0
-        iptEfectivo = 0;
-      } else {
-        // Si la tarjeta no cubre el total, el resto se paga en efectivo
-        iptEfectivo = totalVenta - iptTarjeta;
-      }
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input'); // Actualizamos el input
-      totalCubierto = iptTarjeta + iptEfectivo;
-      cambio = iptEfectivo - (totalVenta - iptTarjeta); // Cambio calculado si el efectivo supera lo necesario
-      cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
-      break;
+  case "Efectivo y Tarjeta":
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
+    } else {
+      iptEfectivo = totalVenta - iptTarjeta;
+    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
+    totalCubierto = iptTarjeta + iptEfectivo;
+    cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0;
+    break;
 
-    case "Efectivo y Credito":
-      if (iptTarjeta >= totalVenta) {
-        // Si la tarjeta cubre el total, el efectivo queda en 0
-        iptEfectivo = 0;
-      } else {
-        // Si la tarjeta no cubre el total, el resto se paga en efectivo
-        iptEfectivo = totalVenta - iptTarjeta;
-      }
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input'); // Actualizamos el input
-      totalCubierto = iptTarjeta + iptEfectivo;
-      cambio = iptEfectivo - (totalVenta - iptTarjeta); // Cambio calculado si el efectivo supera lo necesario
-      cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
-      break;
-  }
+  case "Efectivo y Credito":
+    if (iptEfectivo >= totalVenta) {
+      iptCredito = 0;
+      cambio = iptEfectivo - totalVenta;
+      cambio = cambio > 0 ? cambio : 0;
+    } else {
+      iptCredito = totalVenta - iptEfectivo;
+      cambio = 0;
+    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
+    console.log(`Crédito restante: ${iptCredito.toFixed(2)}`);
+    totalCubierto = iptEfectivo;
+    break;
+
+  default:
+    cambio = iptEfectivo - totalVenta;
+    cambio = cambio > 0 ? cambio : 0;
+    totalCubierto = iptEfectivo + iptTarjeta;
+    break;
+}
 
   // Actualizar el cambio en el elemento <span>
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
