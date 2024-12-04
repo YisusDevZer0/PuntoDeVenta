@@ -715,7 +715,7 @@ function actualizarSumaTotal() {
     cambio = cambio > 0 ? cambio : 0;
     break;
 
-  case "Efectivo y Credito":
+  case "Efectivo Y Credito":
     if (iptTarjeta >= totalVenta) {
       iptEfectivo = 0;
     } else {
