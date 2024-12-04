@@ -704,34 +704,34 @@ function actualizarSumaTotal() {
       break;
 
     case "Efectivo y Tarjeta":
-    case "Efectivo y Credito":
-      // Si se ingresa más del total en tarjeta, ajustamos para que el pago en efectivo sea 0
       if (iptTarjeta >= totalVenta) {
-        iptEfectivo = 0;
-        cambio = 0;
+        iptEfectivo = 0; // Si se cubre todo con tarjeta, no se requiere efectivo
       } else {
-        // Si el pago con tarjeta es menor al total, calculamos la diferencia que debe pagarse en efectivo
-        iptEfectivo = totalVenta - iptTarjeta;
-        cambio = iptEfectivo - (totalVenta - iptTarjeta);
-        cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
+        iptEfectivo = totalVenta - iptTarjeta; // Diferencia a pagar con efectivo
       }
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Actualiza el input de efectivo
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-      totalCubierto = iptTarjeta + iptEfectivo; // Calcular el total cubierto
+      cambio = iptEfectivo - (totalVenta - iptTarjeta);
+      cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
+      totalCubierto = iptTarjeta + iptEfectivo; // Total cubierto suma tarjeta y efectivo
+      break;
+
+    case "Efectivo y Credito":
+      iptEfectivo = totalVenta; // Todo el monto queda como efectivo
+      cambio = 0; // No hay cambio en esta modalidad
+      totalCubierto = iptEfectivo; // Total cubierto es igual al efectivo
       break;
 
     default:
-      // Otros métodos de pago, el cambio es lo ingresado menos el total
+      // Otros métodos de pago (Efectivo, Tarjeta, etc.)
       cambio = iptEfectivo - totalVenta;
       cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
-      totalCubierto = iptEfectivo + iptTarjeta;
+      totalCubierto = iptEfectivo + iptTarjeta; // Total cubierto
       break;
   }
 
   // Actualizar el valor del cambio en el elemento <span>
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 
-  // Mostrar valores en el campo "totaldeventacliente" según el método de pago
+  // Actualizar el valor de "totaldeventacliente" según el método de pago
   switch (metodoPago) {
     case "Efectivo y Tarjeta":
     case "Efectivo y Credito":
@@ -743,7 +743,7 @@ function actualizarSumaTotal() {
   }
 }
 
-// Asegúrate de que se detecte el cambio en el método de pago
+// Detectar cambios en el método de pago
 document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
 // Detectar cambios en los campos de efectivo y tarjeta para recalcular
