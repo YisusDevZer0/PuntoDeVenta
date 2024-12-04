@@ -714,7 +714,7 @@ function actualizarSumaTotal() {
     cambio = cambio > 0 ? cambio : 0;
     break;
 
-    case "Efectivo y Credito":
+    case "Efectivo Y Credito":
    
     if (iptTarjeta >= totalVenta) {
       iptEfectivo = 0;
@@ -734,7 +734,7 @@ function actualizarSumaTotal() {
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 
   // Actualizar el total que se muestra al cliente
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito") {
     document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
   } else {
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
