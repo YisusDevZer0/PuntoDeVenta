@@ -196,7 +196,7 @@ $sql_totales = "SELECT
         ELSE 0 
     END) +
     SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo Y Crédito' THEN Ventas_POS.Importe 
         ELSE 0 
     END)) AS totalPagosEnEfectivo,
 
