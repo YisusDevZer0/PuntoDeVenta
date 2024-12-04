@@ -706,21 +706,21 @@ switch (metodoPago) {
     cambio = cambio > 0 ? cambio : 0;
     break;
 
-  case "Efectivo y Credito":
-    if (iptEfectivo >= totalVenta) {
-      iptEfectivo = totalVenta;
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      cambio = iptEfectivo - totalVenta;
-      cambio = cambio > 0 ? cambio : 0;
+
+    case "Efectivo y Credito":
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
     } else {
-      var restanteCredito = totalVenta - iptEfectivo;
-      cambio = 0;
-      console.log(`Crédito restante: ${restanteCredito.toFixed(2)}`);
+      iptEfectivo = totalVenta - iptTarjeta;
     }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input');
-    totalCubierto = iptEfectivo;
+    totalCubierto = iptTarjeta + iptEfectivo;
+    cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0;
     break;
 
+    
   default:
     cambio = iptEfectivo - totalVenta;
     cambio = cambio > 0 ? cambio : 0;
