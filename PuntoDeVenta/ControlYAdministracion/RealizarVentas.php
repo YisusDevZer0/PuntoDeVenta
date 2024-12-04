@@ -715,30 +715,25 @@ function actualizarSumaTotal() {
     break;
 
     case "Efectivo y Credito":
-  // Verificamos si el efectivo es suficiente para cubrir el total
+  // Calcular el pago restante como crédito
   if (iptEfectivo >= totalVenta) {
-    iptCredito = 0; // No hay crédito si el efectivo cubre todo
-    cambio = iptEfectivo - totalVenta; // Calculamos el cambio
-    cambio = cambio > 0 ? cambio : 0; // Evitar valores negativos
+    iptTarjeta = 0; // No hay necesidad de crédito si el efectivo cubre el total
+    cambio = iptEfectivo - totalVenta; // Calcula el cambio
   } else {
-    // Si el efectivo no cubre el total, el resto será crédito
-    iptCredito = totalVenta - iptEfectivo;
+    iptTarjeta = totalVenta - iptEfectivo; // Lo que falta lo consideramos como crédito
     cambio = 0; // No hay cambio
   }
 
-  // Actualizamos el input de efectivo y mostramos el valor correspondiente
-  document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+  // Actualiza los valores en los inputs
+  document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Muestra el efectivo ingresado
+  document.getElementById("iptTarjeta").value = iptTarjeta.toFixed(2); // Muestra el crédito (usando el mismo campo que tarjeta)
+  document.getElementById("Vuelto").textContent = cambio.toFixed(2); // Actualiza el vuelto
 
-  // Actualizamos el input o elemento donde se muestra el crédito restante
-  document.getElementById("iptCredito").value = iptCredito.toFixed(2);
-
-  // Actualizamos el valor del cambio en el UI
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
-
-  // Total cubierto solo incluye el efectivo en este caso
+  // Asegúrate de calcular correctamente el total cubierto
   totalCubierto = iptEfectivo;
 
   break;
+
 
 }
 
