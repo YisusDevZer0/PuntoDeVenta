@@ -716,20 +716,17 @@ function actualizarSumaTotal() {
     break;
 
   case "Efectivo y Credito":
-    if (iptEfectivo >= totalVenta) {
-      iptCredito = 0;
-      cambio = iptEfectivo - totalVenta;
-      cambio = cambio > 0 ? cambio : 0;
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
     } else {
-      iptCredito = totalVenta - iptEfectivo;
-      cambio = 0;
+      iptEfectivo = totalVenta - iptTarjeta;
     }
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input');
-    console.log(`Crédito restante: ${iptCredito.toFixed(2)}`);
-    totalCubierto = iptEfectivo;
+    totalCubierto = iptTarjeta + iptEfectivo;
+    cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0;
     break;
-
   default:
     cambio = iptEfectivo - totalVenta;
     cambio = cambio > 0 ? cambio : 0;
