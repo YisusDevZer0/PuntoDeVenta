@@ -691,7 +691,6 @@ function actualizarSumaTotal() {
   var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo (por defecto 0)
   var totalCubierto = 0; // Inicializamos el total cubierto
   var cambio = 0; // Inicializamos el cambio
-
   switch (metodoPago) {
   case "Credito":
     iptEfectivo = totalVenta;
@@ -716,16 +715,18 @@ function actualizarSumaTotal() {
     break;
 
   case "Efectivo y Credito":
-    if (iptTarjeta >= totalVenta) {
-      iptEfectivo = 0;
+    if (iptEfectivo >= totalVenta) {
+      iptCredito = 0;
+      cambio = iptEfectivo - totalVenta;
+      cambio = cambio > 0 ? cambio : 0;
     } else {
-      iptEfectivo = totalVenta - iptTarjeta;
+      iptCredito = totalVenta - iptEfectivo;
+      cambio = 0;
     }
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input');
-    totalCubierto = iptTarjeta + iptEfectivo;
-    cambio = iptEfectivo - (totalVenta - iptTarjeta);
-    cambio = cambio > 0 ? cambio : 0;
+    console.log(`Crédito restante: ${iptCredito.toFixed(2)}`);
+    totalCubierto = iptEfectivo;
     break;
 
   default:
