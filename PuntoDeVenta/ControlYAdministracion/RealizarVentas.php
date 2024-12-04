@@ -715,25 +715,18 @@ function actualizarSumaTotal() {
     break;
 
     case "Efectivo y Credito":
-  // Calcular el pago restante como crédito
-  if (iptEfectivo >= totalVenta) {
-    iptTarjeta = 0; // No hay necesidad de crédito si el efectivo cubre el total
-    cambio = iptEfectivo - totalVenta; // Calcula el cambio
-  } else {
-    iptTarjeta = totalVenta - iptEfectivo; // Lo que falta lo consideramos como crédito
-    cambio = 0; // No hay cambio
-  }
-
-  // Actualiza los valores en los inputs
-  document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Muestra el efectivo ingresado
-  document.getElementById("iptTarjeta").value = iptTarjeta.toFixed(2); // Muestra el crédito (usando el mismo campo que tarjeta)
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2); // Actualiza el vuelto
-
-  // Asegúrate de calcular correctamente el total cubierto
-  totalCubierto = iptEfectivo;
-
-  break;
-
+   
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
+    } else {
+      iptEfectivo = totalVenta - iptTarjeta;
+    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
+    totalCubierto = iptTarjeta + iptEfectivo;
+    cambio = iptEfectivo - (totalVenta - iptTarjeta);
+    cambio = cambio > 0 ? cambio : 0;
+    break;
 
 }
 
