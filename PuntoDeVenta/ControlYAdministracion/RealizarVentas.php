@@ -714,26 +714,32 @@ function actualizarSumaTotal() {
     cambio = cambio > 0 ? cambio : 0;
     break;
 
-  case "Efectivo y Credito":
-    if (iptEfectivo >= totalVenta) {
-      iptCredito = 0;
-      cambio = iptEfectivo - totalVenta;
-      cambio = cambio > 0 ? cambio : 0;
-    } else {
-      iptCredito = totalVenta - iptEfectivo;
-      cambio = 0;
-    }
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
-    console.log(`Crédito restante: ${iptCredito.toFixed(2)}`);
-    totalCubierto = iptEfectivo;
-    break;
+    case "Efectivo y Credito":
+  // Verificamos si el efectivo es suficiente para cubrir el total
+  if (iptEfectivo >= totalVenta) {
+    iptCredito = 0; // No hay crédito si el efectivo cubre todo
+    cambio = iptEfectivo - totalVenta; // Calculamos el cambio
+    cambio = cambio > 0 ? cambio : 0; // Evitar valores negativos
+  } else {
+    // Si el efectivo no cubre el total, el resto será crédito
+    iptCredito = totalVenta - iptEfectivo;
+    cambio = 0; // No hay cambio
+  }
 
-  default:
-    cambio = iptEfectivo - totalVenta;
-    cambio = cambio > 0 ? cambio : 0;
-    totalCubierto = iptEfectivo + iptTarjeta;
-    break;
+  // Actualizamos el input de efectivo y mostramos el valor correspondiente
+  document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+
+  // Actualizamos el input o elemento donde se muestra el crédito restante
+  document.getElementById("iptCredito").value = iptCredito.toFixed(2);
+
+  // Actualizamos el valor del cambio en el UI
+  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+
+  // Total cubierto solo incluye el efectivo en este caso
+  totalCubierto = iptEfectivo;
+
+  break;
+
 }
 
   // Actualizar el cambio en el elemento <span>
