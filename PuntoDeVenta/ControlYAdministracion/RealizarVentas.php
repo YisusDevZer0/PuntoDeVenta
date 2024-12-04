@@ -432,7 +432,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <option value="Efectivo" selected="true">Efectivo</option>
 <option value="Credito" >Credito</option>
 <option value="Efectivo y Tarjeta">Efectivo y tarjeta</option>
-<option value="Efectivo Y Credito">Efectivo y credito</option>
+<option value="Efectivo y Credito">Efectivo y credito</option>
 <option value="Tarjeta">Tarjeta</option>
 <option value="Transferencia">Transferencia</option>
 <!-- <option value="CreditoEnfermeria">Crédito Enfermería</option>
