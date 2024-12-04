@@ -683,74 +683,74 @@ Efectivo Exacto
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
-
 function actualizarSumaTotal() {
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // El total de la venta
-  var metodoPago = document.getElementById("selTipoPago").value; // Obtener el método de pago seleccionado
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta, 0 si no se ingresa nada
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo, 0 si no se ingresa nada
-  var totalCubierto = 0; // Total cubierto (Efectivo + Tarjeta)
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
+  var metodoPago = document.getElementById("selTipoPago").value; // Método de pago seleccionado
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta (por defecto 0)
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo (por defecto 0)
+  var totalCubierto = 0; // Inicializamos el total cubierto
   var cambio = 0; // Inicializamos el cambio
 
   switch (metodoPago) {
     case "Credito":
-      // Si el método de pago es "Crédito", ajustar el total
-      iptEfectivo = totalVenta; // Asignar el total de la venta al input de efectivo
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2); // Mostrar el total de venta en el input
-      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento input manualmente
-      $('#btnIniciarVenta').prop('disabled', false); // Activar el botón de venta automáticamente si es "Crédito"
-      totalCubierto = iptEfectivo; // Total cubierto será igual al efectivo en caso de crédito
-      cambio = 0; // No hay cambio en crédito
+      // Todo el monto se asigna como efectivo
+      iptEfectivo = totalVenta;
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input'); // Disparar evento manualmente
+      $('#btnIniciarVenta').prop('disabled', false); // Habilitar botón de venta
+      totalCubierto = iptEfectivo; // El total cubierto es igual al efectivo
+      cambio = 0; // No hay cambio
       break;
 
     case "Efectivo y Tarjeta":
       if (iptTarjeta >= totalVenta) {
-        iptEfectivo = 0; // Si se cubre todo con tarjeta, no se requiere efectivo
+        // Si la tarjeta cubre el total, el efectivo queda en 0
+        iptEfectivo = 0;
       } else {
-        iptEfectivo = totalVenta - iptTarjeta; // Diferencia a pagar con efectivo
+        // Si la tarjeta no cubre el total, el resto se paga en efectivo
+        iptEfectivo = totalVenta - iptTarjeta;
       }
-      cambio = iptEfectivo - (totalVenta - iptTarjeta);
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input'); // Actualizamos el input
+      totalCubierto = iptTarjeta + iptEfectivo;
+      cambio = iptEfectivo - (totalVenta - iptTarjeta); // Cambio calculado si el efectivo supera lo necesario
       cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
-      totalCubierto = iptTarjeta + iptEfectivo; // Total cubierto suma tarjeta y efectivo
       break;
 
     case "Efectivo y Credito":
-      iptEfectivo = totalVenta; // Todo el monto queda como efectivo
-      cambio = 0; // No hay cambio en esta modalidad
-      totalCubierto = iptEfectivo; // Total cubierto es igual al efectivo
+      // Similar a crédito, pero ajustado para pagos mixtos
+      iptEfectivo = totalVenta; // Asignar todo como efectivo
+      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input');
+      totalCubierto = iptEfectivo; // Todo se considera efectivo
+      cambio = 0; // No hay cambio
       break;
 
     default:
-      // Otros métodos de pago (Efectivo, Tarjeta, etc.)
-      cambio = iptEfectivo - totalVenta;
-      cambio = cambio > 0 ? cambio : 0; // Aseguramos que el cambio no sea negativo
+      // Otros métodos de pago (Efectivo, Tarjeta)
+      cambio = iptEfectivo - totalVenta; // Cambio si hay exceso en efectivo
+      cambio = cambio > 0 ? cambio : 0; // Cambio no negativo
       totalCubierto = iptEfectivo + iptTarjeta; // Total cubierto
       break;
   }
 
-  // Actualizar el valor del cambio en el elemento <span>
+  // Actualizar el cambio en el elemento <span>
   document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 
-  // Actualizar el valor de "totaldeventacliente" según el método de pago
-  switch (metodoPago) {
-    case "Efectivo y Tarjeta":
-    case "Efectivo y Credito":
-      document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
-      break;
-    default:
-      document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
-      break;
+  // Actualizar el total que se muestra al cliente
+  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo y Credito") {
+    document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
+  } else {
+    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
 }
 
 // Detectar cambios en el método de pago
 document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
-// Detectar cambios en los campos de efectivo y tarjeta para recalcular
+// Detectar cambios en los campos de tarjeta y efectivo
 document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
 document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
-
-
 
 </script>
 
