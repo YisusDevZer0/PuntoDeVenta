@@ -23,7 +23,8 @@ $sql = "SELECT
        Ventas_POS.FormaDePago, 
           Ventas_POS.Cliente, 
     Ventas_POS.Total_Venta, 
-    Ventas_POS.Lote, 
+    Ventas_POS.Lote,
+    Ventas_POS.Fecha_venta,
     Ventas_POS.ID_H_O_D, 
     Sucursales.ID_Sucursal, 
     Sucursales.Nombre_Sucursal,
@@ -72,7 +73,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[$c]["Cliente"] = $fila["Cliente"];
     // $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
     // $data[$c]["NomServ"] = $fila["Nom_Serv"];
-    $data[$c]["AgregadoEl"] =  $fila["Fecha_venta"];
+    $data[$c]["AgregadoEl"] = date("d/m/Y", $fila["Fecha_venta"]);
   
     $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
     $data[$c]["Saldar"] =  '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Abonar dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fa-solid fa-money-bill-transfer"></i></a></td>';
