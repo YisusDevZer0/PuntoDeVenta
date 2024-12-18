@@ -45,9 +45,7 @@ LEFT JOIN
 LEFT JOIN 
     Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
-    MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-    AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-    AND Ventas_POS.FormaDePago = 'Crédito' 
+    Ventas_POS.FormaDePago = 'Crédito' 
 GROUP BY 
     Ventas_POS.Folio_Ticket, 
     Ventas_POS.FolioSucursal
