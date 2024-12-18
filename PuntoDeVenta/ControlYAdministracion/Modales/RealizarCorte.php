@@ -396,8 +396,8 @@ if (!empty($Especialistas14)) {
 </form>
 
 
-
+<script src="js/RealizaCorteDeCaja.js"></script>
 
 <?php else: ?>
     <p class="alert alert-danger">No se encontraron datos para mostrar.</p>
-<?php endif; ?><script src="js/RealizaCorteDeCaja.js"></script>
+<?php endif; ?>
