@@ -23,7 +23,7 @@ $sql = "SELECT
        Ventas_POS.FormaDePago, 
           Ventas_POS.Cliente, 
     Ventas_POS.Total_Venta, 
-    Ventas_POS.Lote,
+    Ventas_POS.Lote, 
     Ventas_POS.ID_H_O_D, 
     Sucursales.ID_Sucursal, 
     Sucursales.Nombre_Sucursal,
