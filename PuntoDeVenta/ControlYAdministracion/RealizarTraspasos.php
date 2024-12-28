@@ -1,6 +1,5 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
- include "Controladores/ConsultaCaja.php";
 include "Controladores/SumadeFolioTicketsNuevo.php";
 include("Controladores/db_connect.php");
 $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
@@ -270,15 +269,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                       <div class="row">
                         <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
-                        <div class="col">
-
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Caja</label>
-                          <div class="input-group mb-3">
-                          
-                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Valor_Total_Caja'] ?>">
-                           
-                          </div>
-                        </div>
+                        
 
                         <div class="col">
 
@@ -1437,7 +1428,7 @@ include("Modales/ExitoActualiza.php"); ?>
 
 
   <script src="js/FinalizaLasVentasSucursales.js"></script>
-  >
+  
   <!-- Bootstrap -->
 
 
