@@ -11,6 +11,7 @@
                     <div class="ms-3">
                         <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
                         <span><?php echo $row['TipoUsuario']?></span>
+                        <span><?php echo $row['Nombre_Sucursal']?></span>
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
