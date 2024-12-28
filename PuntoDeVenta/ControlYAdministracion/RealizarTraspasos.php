@@ -1416,24 +1416,6 @@ $('#abrirSweetAlertBtn').on('click', function() {
 
 
 
-<?php
-if ($ValorCaja["Estatus"] == 'Abierta') {
-} else {
-
-  echo '
-      <script>
-$(document).ready(function()
-{
-  // id de nuestro modal
-  $("#NoCaja").modal("show");
-  $("#codigoEscaneado").prop("disabled", true); // Desactivar el input con el ID "miInput"
-});
-</script>
-      ';
-}
-
-?>
-
 
 <!-- Control Sidebar -->
 
