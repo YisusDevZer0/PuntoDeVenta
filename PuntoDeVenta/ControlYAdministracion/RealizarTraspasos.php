@@ -321,14 +321,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                   </div>
 
                   <!-- BOTONES PARA VACIAR LISTADO Y COMPLETAR LA VENTA -->
-                  <div class="col-md-5 text-right">
-                  <button class="btn btn-primary btn-sm" id="AplicarDescuentoGlobal">
-                  <i class="fa-solid fa-percent"></i> Descuento global
-                    </button>
-                    <button class="btn btn-danger btn-sm" id="btnVaciarListado">
-                      <i class="far fa-trash-alt"></i> Cancelar venta
-                    </button>
-                  </div>
+                
 
                   <!-- LISTADO QUE CONTIENE LOS PRODUCTOS QUE SE VAN AGREGANDO PARA LA COMPRA -->
                   <div class="table-responsive">
