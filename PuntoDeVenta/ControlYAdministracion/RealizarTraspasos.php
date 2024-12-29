@@ -490,7 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
     </div>
-    <div id="PersonalEnfermeria" style="display: none;">
+    
 <div class="form-group">
   
 <label for="exampleFormControlInput1">Elije al enfermero<span class="text-danger">*</span></label>
