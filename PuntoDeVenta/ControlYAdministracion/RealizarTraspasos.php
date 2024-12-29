@@ -529,13 +529,7 @@ $fechaActual = date('Y-m-d H:i:s');
     </script>
 
     <!-- INPUT DE EFECTIVO ENTREGADO -->
-    <
-    <!-- INPUT CHECK DE EFECTIVO EXACTO -->
-    <div class="form-check">
-<input class="form-check-input" type="checkbox" value="" id="chkEfectivoExacto">
-<label class="form-check-label" for="chkEfectivoExacto">
-Efectivo Exacto
-</label>
+   
 </div>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
