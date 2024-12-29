@@ -407,7 +407,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
       <label class="col-form-label p-0" for="selCategoriaReg">
 
-        <span class="small">Tipo Pago</span><span class="text-danger">*</span>
+        <span class="small">Tipo de movimiento</span><span class="text-danger">*</span>
       </label>
       <div class="input-group mb-3">
         
@@ -478,7 +478,7 @@ divCliente.style.display = "block"; // Mostrar el div del cliente
 
 
     <div class="form-group mb-2" id="divCliente">
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Cliente</label>
+      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal</label>
       <div class="input-group mb-3">
        
         <input type="text" class="form-control " id="clienteInput" name="NombreDelCliente[]">
@@ -490,36 +490,13 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
     </div>
-    <div id="PersonalEnfermeria" style="display: none;">
-<div class="form-group">
-  
-<label for="exampleFormControlInput1">Elije al enfermero<span class="text-danger">*</span></label>
-<div class="input-group mb-3">
-<div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
-</div>
-<select name="NombreEnfemero" id="nombreenfermero" class = "form-control"  onchange="CapturaNombreEnfermero();">
-                                       <option value="">Seleccione un enfermero:</option>
-<?
-  $query = $conn -> query ("SELECT Enfermero_ID,Nombre_Apellidos,ID_H_O_D,Fk_Sucursal,Estatus FROM Personal_Enfermeria WHERE Estatus='Vigente' AND ID_H_O_D='".$row['ID_H_O_D']."' AND Fk_Sucursal='".$row['Fk_Sucursal']."' ");
-  while ($valores = mysqli_fetch_array($query)) {
-    echo '<option value="'.$valores["Nombre_Apellidos"].'">'.$valores["Nombre_Apellidos"].'</option>';
-  }
-?>  </select>  
-</div>
+   
 <div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
 ¡Debes elegir una forma de pago!
 </div>
 </div>
 </div>
-    <div style="display: none;" class="form-group mb-2">
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Folio de signo vital</label>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text"  id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
-        <input type="text" class="form-control " name="SignoVital[]" required>
-      </div>
-
-    </div>
+    
 
     <div class="form-group mb-2">
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket anterior</label>
