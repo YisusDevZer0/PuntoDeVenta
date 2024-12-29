@@ -490,7 +490,22 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
     </div>
-   
+    <div id="PersonalEnfermeria" style="display: none;">
+<div class="form-group">
+  
+<label for="exampleFormControlInput1">Elije al enfermero<span class="text-danger">*</span></label>
+<div class="input-group mb-3">
+<div class="input-group-prepend">  <span class="input-group-text" id="Tarjeta"><i class="fas fa-receipt"></i></span>
+</div>
+<select name="NombreEnfemero" id="nombreenfermero" class = "form-control"  onchange="CapturaNombreEnfermero();">
+                                       <option value="">Seleccione un enfermero:</option>
+<?
+  $query = $conn -> query ("SELECT Enfermero_ID,Nombre_Apellidos,ID_H_O_D,Fk_Sucursal,Estatus FROM Personal_Enfermeria WHERE Estatus='Vigente' AND ID_H_O_D='".$row['ID_H_O_D']."' AND Fk_Sucursal='".$row['Fk_Sucursal']."' ");
+  while ($valores = mysqli_fetch_array($query)) {
+    echo '<option value="'.$valores["Nombre_Apellidos"].'">'.$valores["Nombre_Apellidos"].'</option>';
+  }
+?>  </select>  
+</div>
 <div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
 ¡Debes elegir una forma de pago!
 </div>
