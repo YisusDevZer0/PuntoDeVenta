@@ -546,9 +546,9 @@ $fechaActual = date('Y-m-d H:i:s');
     <!-- INPUT CHECK DE EFECTIVO EXACTO -->
     <div class="form-check">
 <input class="form-check-input" type="checkbox" value="" id="chkEfectivoExacto">
-<label class="form-check-label" for="chkEfectivoExacto">
+<!-- <label class="form-check-label" for="chkEfectivoExacto">
 Efectivo Exacto
-</label>
+</label> -->
 </div>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -571,15 +571,15 @@ Efectivo Exacto
 <input type="text" class="form-control"  value="" hidden name="TotalDeVenta[]"  id="totaldeventacliente">
 </div>
 <div class="col-12 text-end">
-<h6 class="text-danger fw-bold">Cambio:  <span id="Vuelto" style="float: right;">MXN $0.00</span></h6>
-<input type="text" class="form-control"  value="" name="CambioDelCliente[]" hidden id="cambiorecibidocliente">
+<!-- <h6 class="text-danger fw-bold">Cambio:  <span id="Vuelto" style="float: right;">MXN $0.00</span></h6>
+<input type="text" class="form-control"  value="" name="CambioDelCliente[]" hidden id="cambiorecibidocliente"> -->
 </div>
 </div>
 
       <div class="col-md-12 text-center">
         <div class="my-3">
           <button class="btn btn-primary btn-sm" id="btnIniciarVenta">
-            <i class="fas fa-shopping-cart"></i> Realizar Venta
+            <i class="fas fa-shopping-cart"></i> Realizar Traspaso
           </button>
         </div>
       </div>
