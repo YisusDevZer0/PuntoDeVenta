@@ -490,7 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
     </div>
-    
+    <div id="PersonalEnfermeria" style="display: none;">
 <div class="form-group">
   
 <label for="exampleFormControlInput1">Elije al enfermero<span class="text-danger">*</span></label>
@@ -512,13 +512,7 @@ $fechaActual = date('Y-m-d H:i:s');
 </div>
 </div>
     <div style="display: none;" class="form-group mb-2">
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Folio de signo vital</label>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend"> <span class="input-group-text"  id="Tarjeta2"><i class="fas fa-receipt"></i></span>
-        </div>
-        <input type="text" class="form-control " name="SignoVital[]" required>
-      </div>
-
+    
     </div>
 
     <div class="form-group mb-2">
