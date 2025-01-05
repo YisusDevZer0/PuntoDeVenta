@@ -423,43 +423,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
       </div>
 
 
-      <script>
-function CapturaFormadePago() {
-// Obtener el valor seleccionado del select
-var formaDePago = document.getElementById("selTipoPago").value;
-
-// Obtener todos los elementos de entrada con la clase "forma-pago-input"
-var inputsFormaPago = document.querySelectorAll(".forma-pago-input");
-
-// Asignar el valor seleccionado a cada elemento de entrada
-inputsFormaPago.forEach(function (input) {
-input.value = formaDePago;
-});
-
-var selectElement = document.getElementById("selTipoPago");
-var divTarjeta = document.getElementById("divTarjeta");
-var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
-var divCliente = document.getElementById("divCliente");
-
-if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito") {
-divTarjeta.style.display = "block";
-} else {
-divTarjeta.style.display = "none";
-}
-
-if (selectElement.value === "CreditoEnfermeria") {
-divPersonalEnfermeria.style.display = "block";
-divCliente.style.display = "none"; // Ocultar el div del cliente
-} else {
-divPersonalEnfermeria.style.display = "none";
-divCliente.style.display = "block"; // Mostrar el div del cliente
-}
-}
-
-
-</script>
-
-
+      
       
 
 <div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
