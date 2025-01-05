@@ -938,7 +938,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Pagado"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Empresa"><input hidden type="text" class="form-control " name="Empresa[]" readonly value="Doctor Pez"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="FechaDeVenta[]" readonly value="<?php echo $ValorCaja["Fecha_Apertura"]; ?>"></td>';
+        tr += '<td " class="Fecha"><input  type="text" class="form-control " name="FechaDeTraspaso[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"></td>';
         tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div><div class="btn-container"></td>';
         tr += '</tr>';
@@ -1297,7 +1297,33 @@ $('#abrirSweetAlertBtn').on('click', function() {
   }
 </script>
 
+<script>
+  <script>
+    function establecerFechaActual() {
+        const hoy = new Date();
+        return hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    }
 
+    
+    const inputFechaApertura = document.getElementById('fecha-apertura');
+    inputFechaApertura.value = establecerFechaActual();
+
+    
+    const inputsFechaOculta = document.querySelectorAll('input[name="FechaDeTraspaso[]"]');
+
+    // Actualizar el valor de los inputs ocultos al cargar la página
+    inputsFechaOculta.forEach(input => {
+        input.value = inputFechaApertura.value;
+    });
+
+    
+    inputFechaApertura.addEventListener('change', () => {
+        inputsFechaOculta.forEach(input => {
+            input.value = inputFechaApertura.value;
+        });
+    });
+</script>
+</script>
 
 
 <!-- Control Sidebar -->
