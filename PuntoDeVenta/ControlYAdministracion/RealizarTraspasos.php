@@ -310,6 +310,15 @@ $fechaActual = date('Y-m-d H:i:s');
                         </div>
                         <div class="col">
 
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal origen</label>
+                          <div class="input-group mb-3">
+                        
+                            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $row['Nombre_Sucursal'] ?>" readonly>
+
+                          </div>
+                        </div>
+                        <div class="col">
+
                           <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket</label>
                           <div class="input-group mb-3">
                         
@@ -331,6 +340,7 @@ $fechaActual = date('Y-m-d H:i:s');
 
     // Asignar la fecha al input
     document.getElementById('fecha-apertura').value = fechaFormateada;
+    document.getElementById('fecha-apertura2').value = fechaFormateada;
 </script>
 
 
