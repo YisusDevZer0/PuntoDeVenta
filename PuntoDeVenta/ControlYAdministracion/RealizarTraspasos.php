@@ -461,9 +461,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
-<div class="col-12">
-<h6 class="text-end fw-bold">Monto Efectivo:  <span id="EfectivoEntregado" style="float: right;">MXN $0.00</span></h6>
-</div>
+
 
 
 </div>
