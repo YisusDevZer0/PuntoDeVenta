@@ -115,6 +115,31 @@ $fechaActual = date('Y-m-d H:i:s');
   });
 </script>
 
+<script>
+    function establecerFechaActual() {
+        const hoy = new Date();
+        return hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    }
+
+    
+    const inputFechaApertura = document.getElementById('fecha-apertura');
+    inputFechaApertura.value = establecerFechaActual();
+
+    
+    const inputsFechaOculta = document.querySelectorAll('input[name="FechaDeTraspaso[]"]');
+
+    // Actualizar el valor de los inputs ocultos al cargar la página
+    inputsFechaOculta.forEach(input => {
+        input.value = inputFechaApertura.value;
+    });
+
+    
+    inputFechaApertura.addEventListener('change', () => {
+        inputsFechaOculta.forEach(input => {
+            input.value = inputFechaApertura.value;
+        });
+    });
+</script>
 <style>
   .loader-container {
     display: flex;
@@ -1298,31 +1323,6 @@ $('#abrirSweetAlertBtn').on('click', function() {
 </script>
 
 
-  <script>
-    function establecerFechaActual() {
-        const hoy = new Date();
-        return hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-    }
-
-    
-    const inputFechaApertura = document.getElementById('fecha-apertura');
-    inputFechaApertura.value = establecerFechaActual();
-
-    
-    const inputsFechaOculta = document.querySelectorAll('input[name="FechaDeTraspaso[]"]');
-
-    // Actualizar el valor de los inputs ocultos al cargar la página
-    inputsFechaOculta.forEach(input => {
-        input.value = inputFechaApertura.value;
-    });
-
-    
-    inputFechaApertura.addEventListener('change', () => {
-        inputsFechaOculta.forEach(input => {
-            input.value = inputFechaApertura.value;
-        });
-    });
-</script>
 
 
 <!-- Control Sidebar -->
