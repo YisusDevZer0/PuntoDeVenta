@@ -1297,7 +1297,7 @@ $('#abrirSweetAlertBtn').on('click', function() {
   }
 </script>
 
-<script>
+
   <script>
     function establecerFechaActual() {
         const hoy = new Date();
@@ -1322,7 +1322,6 @@ $('#abrirSweetAlertBtn').on('click', function() {
             input.value = inputFechaApertura.value;
         });
     });
-</script>
 </script>
 
 
