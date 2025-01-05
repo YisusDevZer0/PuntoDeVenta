@@ -364,7 +364,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                               <!-- <th>importe_Sin_Iva</th>
             <th>Iva</th>
             <th>valorieps</th> -->
-                              <th>Acciones</th>
+                              <th>Eliminar</th>
                             
                             </tr>
                           </thead>
