@@ -514,28 +514,7 @@ $fechaActual = date('Y-m-d H:i:s');
         });
     </script>
 
-    <!-- INPUT DE EFECTIVO ENTREGADO -->
-    <div class="form-group mb-2">
-    <div id="divTarjeta" style="display: none;">
-<div class="form-group mb-2">
-<label for="iptTarjeta" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con tarjeta o credito</label>
-<input type="number" min="0" name="iptTarjeta" id="iptTarjeta" class="form-control form-control-sm" placeholder="Cantidad a pagar" onkeyup="actualizarSumaTotal()">
-<input type="number" name="iptTarjetaCreditosOculto[]" id="iptTarjetasCreditosOculto" hidden class="form-control ">
-
-</div>
-</div>
-      <label for="iptEfectivoRecibido" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con efectivo</label>
-      <input type="number" min="0" name="iptEfectivo" id="iptEfectivoRecibido" class="form-control form-control-sm" placeholder="Cantidad de efectivo recibida" onkeyup="actualizarEfectivoEntregado()">
-      <input type="number" name="iptEfectivoOculto[]" id="iptEfectivoOculto" hidden class="form-control ">
-    </div>
-    
-    <!-- INPUT CHECK DE EFECTIVO EXACTO -->
-    <div class="form-check">
-<input class="form-check-input" type="checkbox" value="" id="chkEfectivoExacto">
-<!-- <label class="form-check-label" for="chkEfectivoExacto">
-Efectivo Exacto
-</label> -->
-</div>
+  
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
