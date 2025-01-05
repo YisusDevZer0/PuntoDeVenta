@@ -484,7 +484,7 @@ $fechaActual = date('Y-m-d H:i:s');
       <div class="col-md-12 text-center">
         <div class="my-3">
           <button class="btn btn-primary btn-sm" id="btnIniciarVenta">
-            <i class="fas fa-shopping-cart"></i> Realizar Traspaso
+          <i class="fa-solid fa-right-left"></i> Realizar Traspaso
           </button>
         </div>
       </div>
