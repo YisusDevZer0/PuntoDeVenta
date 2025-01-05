@@ -295,10 +295,19 @@ $fechaActual = date('Y-m-d H:i:s');
 
                         <div class="col">
 
-<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha de caja</label>
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha de traspaso</label>
 <div class="input-group mb-3">
 
-  <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $ValorCaja['Fecha_Apertura'] ?> "readonly>
+<input type="date" class="form-control" style="font-size: 0.75rem !important;" id="fecha-apertura" readonly>
+<script>
+    // Obtener la fecha actual
+    const hoy = new Date();
+    const fechaFormateada = hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+
+    // Asignar la fecha al input
+    document.getElementById('fecha-apertura').value = fechaFormateada;
+</script>
+
 
 </div>
 </div>
