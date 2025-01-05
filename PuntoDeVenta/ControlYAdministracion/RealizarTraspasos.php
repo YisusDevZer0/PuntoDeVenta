@@ -896,6 +896,7 @@ $('#codigoEscaneado').autocomplete({
   // Variable para almacenar el total del IVA
   var totalIVA = 0;
   function agregarArticulo(articulo) {
+    const fechaApertura = document.getElementById('fecha-apertura').value; // Obtener la fecha seleccionada
     if (!articulo || (!articulo.id && !articulo.descripcion)) {
         mostrarMensaje('El artículo no es válido');
         return;
@@ -987,6 +988,12 @@ $('#codigoEscaneado').autocomplete({
 
 
 
+$('#fecha-apertura').on('change', function() {
+    const nuevaFecha = $(this).val();
+    $('input[name="FechaDeTraspaso[]"]').each(function() {
+        $(this).val(nuevaFecha);
+    });
+});
 
 
 
