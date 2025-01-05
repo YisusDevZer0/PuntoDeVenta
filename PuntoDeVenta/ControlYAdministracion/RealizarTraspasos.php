@@ -490,29 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
     </div>
-    <div id="PersonalEnfermeria" style="display: none;">
-
-<div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
-¡Debes elegir una forma de pago!
-</div>
-</div>
-</div>
-    <div style="display: none;" class="form-group mb-2">
     
-    </div>
-
-   
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var iptTarjeta = document.getElementById("iptTarjeta");
-            var iptTarjetasCreditosOculto = document.getElementById("iptTarjetasCreditosOculto");
-
-            iptTarjeta.addEventListener("keyup", function() {
-                iptTarjetasCreditosOculto.value = iptTarjeta.value;
-            });
-        });
-    </script>
 
   
 
