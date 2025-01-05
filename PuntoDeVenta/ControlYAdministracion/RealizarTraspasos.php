@@ -298,7 +298,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha de traspaso</label>
 <div class="input-group mb-3">
 
-<input type="date" class="form-control" style="font-size: 0.75rem !important;" id="fecha-apertura" readonly>
+<input type="date" class="form-control" style="font-size: 0.75rem !important;" id="fecha-apertura" >
 <script>
     // Obtener la fecha actual
     const hoy = new Date();
