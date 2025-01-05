@@ -36,7 +36,10 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <body>
     
         <!-- Spinner End -->
+        <?php
+$fechaActual = date('Y-m-d H:i:s');
 
+?>
 
         <?php include_once "Menu.php" ?>
 
@@ -267,16 +270,16 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                     <div class="form-group mb-2">
                       <div class="row">
-                        <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
+                        
 
                         
 
                         <div class="col">
 
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Turno</label>
+                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Realizado por</label>
                           <div class="input-group mb-3">
                             
-                            <input type="text" class="form-control "  style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>">
+                          <input  type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
 
                           </div>
                         </div>
@@ -446,10 +449,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
       <div class="input-group mb-3">
        
         <input type="text" class="form-control " id="clienteInput" name="NombreDelCliente[]">
-        <?php
-$fechaActual = date('Y-m-d H:i:s');
-
-?>
+       
       
       </div>
 
