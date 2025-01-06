@@ -770,32 +770,34 @@ function esCodigoBarrasValido(codigoEscaneado) {
 }
 
 function buscarArticulo(codigoEscaneado) {
-  // Verificar si codigoEscaneado es nulo o no es una cadena
+  // Verificar si el código escaneado es válido
   if (!codigoEscaneado || typeof codigoEscaneado !== 'string' || !codigoEscaneado.trim()) {
-    console.warn('Código escaneado inválido o vacío');
     return; // No hacer nada si el código es inválido o vacío
   }
 
+  // Crear FormData para enviar datos
+  var formData = new FormData();
+  formData.append('codigoEscaneado', codigoEscaneado);
+  formData.append('Fk_sucursal', Fk_sucursal); // Asegúrate de que esta variable esté definida previamente
+
   $.ajax({
-    url: "Controladores/BusquedaPorEscanerSucursales.php",
+    url: "Controladores/BusquedaPorEscanerSucursales.php", // Cambia la URL si es necesario
     type: 'POST',
-    data: { 
-      codigoEscaneado: codigoEscaneado,
-      Fk_sucursal: Fk_sucursal // Asegúrate de definir esta variable antes de usarla
-    },
+    data: formData,
+    processData: false, // Necesario para FormData
+    contentType: false, // Necesario para FormData
     dataType: 'json',
     success: function (data) {
       if (!data || !data.id) {
-        mostrarMensaje('El artículo no es válido');
-        return;
+        return; // No hacer nada si no hay datos válidos
       }
-      agregarArticulo(data);
-      calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
-      limpiarCampo();
-      $('#codigoEscaneado').focus();
+      agregarArticulo(data); // Agregar artículo a la tabla
+      calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child')); // Calcular diferencias
+      limpiarCampo(); // Limpiar el campo de entrada
+      $('#codigoEscaneado').focus(); // Enfocar nuevamente el input
     },
     error: function (data) {
-      console.error('Error en la solicitud AJAX', data);
+      console.error('Error en la solicitud AJAX', data); // Manejo de error
     }
   });
 }
