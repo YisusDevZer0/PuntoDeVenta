@@ -474,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                       <div class="input-group">
 
-                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo();">
+                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo(this.value)">
                       </div>
                     </div>
 
