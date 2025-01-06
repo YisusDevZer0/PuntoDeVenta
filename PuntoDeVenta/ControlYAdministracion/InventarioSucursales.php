@@ -771,7 +771,7 @@ function esCodigoBarrasValido(codigoEscaneado) {
 
 
 function buscarArticulo(codigoEscaneado) {
-  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
+  // if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
 
   $.ajax({
     url: "Controladores/BusquedaPorEscanerSucursales.php",
