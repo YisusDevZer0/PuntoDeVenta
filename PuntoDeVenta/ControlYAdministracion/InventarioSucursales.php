@@ -474,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                       <div class="input-group">
 
-                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo(this.value)">
+                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo();">
                       </div>
                     </div>
 
@@ -771,49 +771,31 @@ function esCodigoBarrasValido(codigoEscaneado) {
 
 
 function buscarArticulo(codigoEscaneado) {
-  if (!codigoEscaneado || typeof codigoEscaneado !== 'string' || !codigoEscaneado.trim()) {
-    console.warn('Código inválido o vacío:', codigoEscaneado);
-    return; // No proceder si el código es inválido
-  }
+  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
 
   $.ajax({
     url: "Controladores/BusquedaPorEscanerSucursales.php",
     type: 'POST',
     data: { 
       codigoEscaneado: codigoEscaneado,
-      Fk_sucursal: Fk_sucursal
+      Fk_sucursal: Fk_sucursal // Asegúrate de definir esta variable antes de usarla
     },
     dataType: 'json',
     success: function (data) {
-      if (!data || !data.success || !data.id) {
-        mostrarMensaje('El artículo no es válido o no encontrado');
+      if (!data || !data.id) {
+        mostrarMensaje('El artículo no es válido');
         return;
       }
-
       agregarArticulo(data);
       calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
-
-      // Limpia y enfoca solo si todo fue exitoso
-      $('#codigoEscaneado').val('').focus();
+      limpiarCampo();
+      $('#codigoEscaneado').focus();
     },
-    error: function (xhr, status, error) {
-      console.error('Error en la solicitud AJAX:', status, error);
-      mostrarMensaje('Error en la comunicación con el servidor');
+    error: function (data) {
+      console.error('Error en la solicitud AJAX', data);
     }
   });
 }
-
-// Manejo de Enter en el campo de entrada
-$('#codigoEscaneado').on('keypress', function (e) {
-  if (e.key === 'Enter') {
-    const codigo = $(this).val().trim();
-    if (codigo === '') {
-      console.warn('Código vacío ignorado');
-      return false; // Detener el evento
-    }
-    buscarArticulo(codigo);
-  }
-});
 
 
 
