@@ -769,9 +769,12 @@ function esCodigoBarrasValido(codigoEscaneado) {
   return longitud >= 2 && longitud <= 13; // Ajusta el rango según sea necesario
 }
 
-
 function buscarArticulo(codigoEscaneado) {
-  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
+  // Verificar si codigoEscaneado es nulo o no es una cadena
+  if (!codigoEscaneado || typeof codigoEscaneado !== 'string' || !codigoEscaneado.trim()) {
+    console.warn('Código escaneado inválido o vacío');
+    return; // No hacer nada si el código es inválido o vacío
+  }
 
   $.ajax({
     url: "Controladores/BusquedaPorEscanerSucursales.php",
@@ -796,6 +799,7 @@ function buscarArticulo(codigoEscaneado) {
     }
   });
 }
+
 
 
 
