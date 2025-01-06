@@ -771,31 +771,49 @@ function esCodigoBarrasValido(codigoEscaneado) {
 
 
 function buscarArticulo(codigoEscaneado) {
-  if (!codigoEscaneado.trim()) return; // No hacer nada si el código está vacío
+  if (!codigoEscaneado || typeof codigoEscaneado !== 'string' || !codigoEscaneado.trim()) {
+    console.warn('Código inválido o vacío:', codigoEscaneado);
+    return; // No proceder si el código es inválido
+  }
 
   $.ajax({
     url: "Controladores/BusquedaPorEscanerSucursales.php",
     type: 'POST',
     data: { 
       codigoEscaneado: codigoEscaneado,
-      Fk_sucursal: Fk_sucursal // Asegúrate de definir esta variable antes de usarla
+      Fk_sucursal: Fk_sucursal
     },
     dataType: 'json',
     success: function (data) {
-      if (!data || !data.id) {
-        mostrarMensaje('El artículo no es válido');
+      if (!data || !data.success || !data.id) {
+        mostrarMensaje('El artículo no es válido o no encontrado');
         return;
       }
+
       agregarArticulo(data);
       calcularDiferencia($('#tablaAgregarArticulos tbody tr:last-child'));
-      limpiarCampo();
-      $('#codigoEscaneado').focus();
+
+      // Limpia y enfoca solo si todo fue exitoso
+      $('#codigoEscaneado').val('').focus();
     },
-    error: function (data) {
-      console.error('Error en la solicitud AJAX', data);
+    error: function (xhr, status, error) {
+      console.error('Error en la solicitud AJAX:', status, error);
+      mostrarMensaje('Error en la comunicación con el servidor');
     }
   });
 }
+
+// Manejo de Enter en el campo de entrada
+$('#codigoEscaneado').on('keypress', function (e) {
+  if (e.key === 'Enter') {
+    const codigo = $(this).val().trim();
+    if (codigo === '') {
+      console.warn('Código vacío ignorado');
+      return false; // Detener el evento
+    }
+    buscarArticulo(codigo);
+  }
+});
 
 
 
