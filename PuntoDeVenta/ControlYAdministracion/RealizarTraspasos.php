@@ -980,6 +980,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '</tr>';
 
         $('#tablaAgregarArticulos tbody').append(tr);
+        document.getElementById('fecha-apertura2-' + articulo.id).value = fechaApertura;
         actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
         calcularIVA();
         actualizarSuma();
