@@ -493,7 +493,28 @@ $fechaActual = date('Y-m-d H:i:s');
         </select>
     </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectSucursal = document.getElementById('clienteSelect');
 
+    // Realizar la solicitud para obtener las sucursales
+    fetch('Controladores/obtenerSucursales.php')
+        .then(response => response.json())
+        .then(data => {
+            // Llenar el select con las opciones
+            data.forEach(sucursal => {
+                const option = document.createElement('option');
+                option.value = sucursal.ID_Sucursal;
+                option.textContent = sucursal.Nombre_Sucursal;
+                selectSucursal.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error al obtener las sucursales:', error);
+        });
+});
+
+</script>
 
   
 
