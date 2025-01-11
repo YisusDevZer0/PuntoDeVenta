@@ -486,7 +486,7 @@ $fechaActual = date('Y-m-d H:i:s');
 
 
     <div class="form-group mb-2" id="divCliente">
-    <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal</label>
+    <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
         <select class="form-control form-select form-select-sm" id="clienteSelect" name="NombreDelCliente[]">
             <option value="0">Seleccione una sucursal</option>
