@@ -118,7 +118,7 @@
                         </div>
                     </div>
 
-                   
+                    <a href="index" class="nav-item nav-link "><i class="fa-solid fa-file-video"></i>Video tutoriales</a>
                 </div>
             </nav>
         </div>
