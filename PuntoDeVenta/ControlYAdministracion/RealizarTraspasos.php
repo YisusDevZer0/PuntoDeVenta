@@ -462,10 +462,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <option value="0">Seleccione el Tipo de movimiento</option>
 <option value="Traspaso">Traspaso</option>
 <option value="Nota de credito">Nota de credito</option>
-<!-- <option value="CreditoEnfermeria">Crédito Enfermería</option>
-<option value="CreditoFarmaceutico">Crédito Farmacéutico</option>
-<option value="CreditoMedico">Crédito Médico</option>
-<option value="CreditoLimpieza">Crédito Limpieza</option> -->
+
 </select>
       </div>
 
@@ -540,6 +537,26 @@ $fechaActual = date('Y-m-d H:i:s');
 </div>
 </div>
 </div>
+<script>
+  function CapturaFormadePago() {
+    // Obtener el valor seleccionado del select
+    const tipoMovimiento = document.getElementById('selTipoPago').value;
+
+    if (tipoMovimiento === "0") {
+        alert("Por favor, selecciona un tipo de movimiento.");
+        return;
+    }
+
+    // Actualizar el valor del input oculto en cada fila de la tabla
+    $('#tablaAgregarArticulos tbody tr').each(function () {
+        const inputMovimiento = $(this).find('.TipoMovimiento input');
+        if (inputMovimiento.length) {
+            inputMovimiento.val(tipoMovimiento); // Asignar el valor seleccionado
+        }
+    });
+}
+
+</script>
 <!-- function actualizarSumaTotal  -->
 <script>
 
@@ -964,12 +981,10 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
 
-        tr += '<td style="visibility:collapse; display:none;" class="tiposserviciosgood"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tiposervicios + '" name="TiposDeServicio[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Turno"><input type="text" class="form-control " hidden name="TurnoEnTurno[]" style="font-size: 0.75rem !important;" readonly value="<?php echo $ValorCaja['Turno'] ?>"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="CajaDeSucursal"><input type="text" class="form-control " hidden id="valcaja" name="CajaDeSucursal[]" readonly value="<?php echo $ValorCaja["ID_Caja"]; ?>"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
+            tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="SucursalEnVenta[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="TipoMovimiento"><input hidden type="text" class="form-control " name="TipoMovimiento[]" readonly value=""></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="SucursalEnVenta[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Pagado"></td>';
