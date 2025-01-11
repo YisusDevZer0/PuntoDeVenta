@@ -1000,7 +1000,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
 
             tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="NumeroDeTickeT[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregoElVendedor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
         tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_sucursal"'] ?>></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
