@@ -591,7 +591,7 @@ function actualizarSumaTotal() {
     iptEfectivo = totalVenta;
     document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
     $('#iptEfectivoRecibido').trigger('input');
-    $('#btnIniciarVenta').prop('disabled', false);
+  
     totalCubierto = iptEfectivo;
     cambio = 0;
     break;
@@ -654,8 +654,7 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
 
 <script>
  $(document).ready(function() {
-  // Bloquear el botón al cargar la página
-  $('#btnIniciarVenta').prop('disabled', true);
+  
 
   // Agregar un controlador de eventos al input
   $('#iptEfectivoRecibido').on('input', function() {
