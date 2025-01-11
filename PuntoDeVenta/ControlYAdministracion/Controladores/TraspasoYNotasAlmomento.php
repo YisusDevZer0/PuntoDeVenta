@@ -15,7 +15,6 @@ $required_fields = [
     "Estatus",
     "Sistema",
     "AgregadoPor",
-    "AgregadoEl",
     "ID_H_O_D",
     "Folio_Ticket"
 ];
@@ -41,7 +40,7 @@ $values = [];
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && isset($_POST["Cantidad"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Fk_SucursalDestino"][$i]) && isset($_POST["TotalVenta"][$i]) && !empty($_POST["Pc"][$i]) && !empty($_POST["TipoDeMov"][$i]) && !empty($_POST["FechaVenta"][$i]) && !empty($_POST["Estatus"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["AgregadoPor"][$i]) && !empty($_POST["AgregadoEl"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["Folio_Ticket"][$i])) {
         $ProContador++;
-        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
         // Agregar valores al array de valores
         $values = array_merge($values, [
             null, // `ID_Prod_POS` es generado automáticamente
@@ -58,7 +57,6 @@ for ($i = 0; $i < $contador; $i++) {
             $_POST["Estatus"][$i],
             $_POST["Sistema"][$i],
             $_POST["AgregadoPor"][$i],
-            $_POST["AgregadoEl"][$i],
             $_POST["ID_H_O_D"][$i]
         ]);
     } else {
