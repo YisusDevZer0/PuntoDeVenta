@@ -31,16 +31,16 @@ $contador = count($_POST["CodBarras"]);
 $ProContador = 0;
 
 // Preparar la consulta SQL con marcadores de posición
-$query = "INSERT INTO TraspasosYNotasC (ID_Prod_POS, Folio_Ticket, Cod_Barra, Nombre_Prod, Cantidad, Fk_sucursal, Fk_SucursalDestino, Total_VentaG, Pc, TipoDeMov, Fecha_venta, Estatus, Sistema, AgregadoPor, AgregadoEl, ID_H_O_D) VALUES ";
+$query = "INSERT INTO TraspasosYNotasC (ID_Prod_POS, Folio_Ticket, Cod_Barra, Nombre_Prod, Cantidad, Fk_sucursal, Fk_SucursalDestino, Total_VentaG, Pc, TipoDeMov, Fecha_venta, Estatus, Sistema, AgregadoPor, ID_H_O_D) VALUES ";
 
 $queryValue = [];
 $values = [];
 
 // Crear la parte de los valores de la consulta
 for ($i = 0; $i < $contador; $i++) {
-    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && isset($_POST["Cantidad"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Fk_SucursalDestino"][$i]) && isset($_POST["TotalVenta"][$i]) && !empty($_POST["Pc"][$i]) && !empty($_POST["TipoDeMov"][$i]) && !empty($_POST["FechaVenta"][$i]) && !empty($_POST["Estatus"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["AgregadoPor"][$i]) && !empty($_POST["AgregadoEl"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["Folio_Ticket"][$i])) {
+    if (!empty($_POST["CodBarras"][$i]) && !empty($_POST["NombreDelProducto"][$i]) && isset($_POST["Cantidad"][$i]) && !empty($_POST["Fk_sucursal"][$i]) && !empty($_POST["Fk_SucursalDestino"][$i]) && isset($_POST["TotalVenta"][$i]) && !empty($_POST["Pc"][$i]) && !empty($_POST["TipoDeMov"][$i]) && !empty($_POST["FechaVenta"][$i]) && !empty($_POST["Estatus"][$i]) && !empty($_POST["Sistema"][$i]) && !empty($_POST["AgregadoPor"][$i]) && !empty($_POST["ID_H_O_D"][$i]) && !empty($_POST["Folio_Ticket"][$i])) {
         $ProContador++;
-        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         // Agregar valores al array de valores
         $values = array_merge($values, [
             null, // `ID_Prod_POS` es generado automáticamente
