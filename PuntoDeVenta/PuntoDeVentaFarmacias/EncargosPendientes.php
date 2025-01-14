@@ -42,7 +42,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/DesgloseTicketss.js"></script>
+<script src="js/DesgloseTicketssEncargos.js"></script>
 <?php 
             include "Modales/NuevoFondoDeCaja.php";
             include "Modales/Modales_Errores.php";
