@@ -63,7 +63,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
                             <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets credito</a>
-                            <a href="EncargosPendientes" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Encargos</a>
+                            <a href="EncargosPendientes" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Encargos</a>
                            
                         </div>
                         <div class="dropdown-menu bg-transparent border-0">
