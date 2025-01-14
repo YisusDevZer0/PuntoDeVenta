@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Ventas del dia de <?php echo $row['Licencia']?></title>
+    <title>Encargos pendientes de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -36,7 +36,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">Tickets de venta de  <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Tickets de encargos de  <?php echo $row['Licencia']?></h6>
             
             <div id="DataDeServicios"></div>
             </div></div></div></div>
