@@ -3,7 +3,7 @@ include_once 'db_connect.php';
 
 $contador = count($_POST["NombreDelProducto"]);
 $ProContador = 0;
-$query = "INSERT INTO encargos (`nombre_paciente`, `medicamento`, `cantidad`, `precioventa`, `fecha_encargo`, `estado`, `costo`, `abono_parcial`) VALUES ";
+$query = "INSERT INTO encargos (`nombre_paciente`, `medicamento`, `cantidad`, `precioventa`, `fecha_encargo`, `estado`, `costo`, `abono_parcial`,`NumTicket`,`Fk_Sucursal`) VALUES ";
 
 $placeholders = [];
 $values = [];
@@ -22,8 +22,9 @@ for ($i = 0; $i < $contador; $i++) {
         $values[] = $_POST["estado"][$i];
         $values[] = $_POST["TotalDeVenta"][$i];
         $values[] = $_POST["iptEfectivoOculto"][$i];
-        
-        $valueTypes .= 'ssssssss'; // Cada 's' representa un string, ajusta según el tipo de dato de cada campo
+        $values[] = $_POST["NumeroDeTickeT"][$i];
+        $values[] = $_POST["SucursalEnVenta"][$i];
+        $valueTypes .= 'ssssssssss'; // Cada 's' representa un string, ajusta según el tipo de dato de cada campo
     }
 }
 
