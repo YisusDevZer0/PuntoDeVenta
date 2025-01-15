@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-include("Controladores/db_connect.php");
+include("../db_connect.php");
 
 $id = $_POST['id'] ?? 'Prueba';
 
