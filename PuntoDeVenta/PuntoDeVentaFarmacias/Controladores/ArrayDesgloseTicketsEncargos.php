@@ -10,53 +10,62 @@ function fechaCastellano($fecha) {
     $dia = date('l', strtotime($fecha));
     $mes = date('F', strtotime($fecha));
     $anio = date('Y', strtotime($fecha));
-    $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
-    $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+    $dias_ES = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+    $dias_EN = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     $nombredia = str_replace($dias_EN, $dias_ES, $dia);
-    $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
-    $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+    $meses_ES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    $meses_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
-// Obtener el valor de Fk_Sucursal desde la solicitud
-$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
-// Verificar si la sucursal tiene un valor válido
+// Obtener el valor de Fk_Sucursal desde la solicitud
+$fk_sucursal = isset($_GET['Fk_Sucursal']) ? $_GET['Fk_Sucursal'] : '';
+
 if (empty($fk_sucursal)) {
     echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
     exit;
 }
 
-// Consulta segura utilizando una sentencia preparada con el filtro de sucursal
-$sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
-        Ventas_POS.Identificador_tipo, Ventas_POS.Cod_Barra, Ventas_POS.Clave_adicional, Ventas_POS.Nombre_Prod, 
-        Ventas_POS.Cantidad_Venta, Ventas_POS.Fk_sucursal, Ventas_POS.AgregadoPor, Ventas_POS.AgregadoEl, 
-        Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
-        FROM Ventas_POS 
-        JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-        AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
-        GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
-        ORDER BY Ventas_POS.AgregadoEl DESC;";
+// Consulta segura utilizando una sentencia preparada
+$sql = "SELECT 
+            e.NumTicket, 
+            e.nombre_paciente, 
+            e.medicamento, 
+            e.cantidad, 
+            e.precioventa, 
+            e.fecha_encargo, 
+            e.estado, 
+            e.costo, 
+            e.abono_parcial, 
+            s.nombre_sucursal
+        FROM 
+            encargos e
+        JOIN 
+            Sucursales s
+        ON 
+            e.Fk_Sucursal = s.ID_Sucursal
+        WHERE 
+            e.Fk_Sucursal = ?
+        GROUP BY 
+            e.NumTicket
+        ORDER BY 
+            e.fecha_encargo DESC";
 
-// Preparar la declaración
+// Preparar la consulta
 $stmt = $conn->prepare($sql);
-
-// Verificar si la consulta fue preparada correctamente
 if (!$stmt) {
     echo json_encode(["error" => "Error al preparar la consulta: " . $conn->error]);
     exit;
 }
 
-// Enlazar el parámetro Fk_Sucursal
+// Enlazar el parámetro
 $stmt->bind_param("s", $fk_sucursal);
 
-// Ejecutar y verificar la consulta
+// Ejecutar la consulta
 if ($stmt->execute()) {
     $result = $stmt->get_result();
 } else {
-    // Si la ejecución falla, imprime el error
     echo json_encode(["error" => "Error en la ejecución de la consulta: " . $stmt->error]);
     exit;
 }
@@ -67,25 +76,27 @@ if ($result->num_rows === 0) {
     exit;
 }
 
-// Inicializar array para almacenar los resultados
+// Construir los datos para la respuesta
 $data = [];
-
 while ($fila = $result->fetch_assoc()) {
     $data[] = [
-        "NumberTicket" => $fila["Folio_Ticket"],
-        
-        "Fecha" => fechaCastellano($fila["AgregadoEl"]),
-        "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
-        "Vendedor" => $fila["AgregadoPor"],
-        "Desglose" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fas fa-receipt"></i></a></td>',
-        "Reimpresion" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>'
+        "NumberTicket" => $fila["NumTicket"],
+        "Paciente" => $fila["nombre_paciente"],
+        "Medicamento" => $fila["medicamento"],
+        "Cantidad" => $fila["cantidad"],
+        "PrecioVenta" => $fila["precioventa"],
+        "FechaEncargo" => fechaCastellano($fila["fecha_encargo"]),
+        "Estado" => $fila["estado"],
+        "Costo" => $fila["costo"],
+        "AbonoParcial" => $fila["abono_parcial"],
+        "Sucursal" => $fila["nombre_sucursal"]
     ];
 }
 
 // Cerrar la declaración
 $stmt->close();
 
-// Construir el array de resultados para la respuesta JSON
+// Construir la respuesta JSON
 $results = [
     "sEcho" => 1,
     "iTotalRecords" => count($data),
@@ -93,6 +104,5 @@ $results = [
     "aaData" => $data
 ];
 
-// Imprimir la respuesta JSON
 echo json_encode($results);
 ?>
