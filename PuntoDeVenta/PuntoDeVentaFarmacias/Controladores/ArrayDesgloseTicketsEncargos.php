@@ -87,7 +87,7 @@ while ($fila = $result->fetch_assoc()) {
        
         "Costo" => $fila["costo"],
         "AbonoParcial" => $fila["abono_parcial"],
-        "Sucursal" => $fila["nombre_sucursal"]
+        "Sucursal" => $fila["nombre_sucursal"],
           "Saldar" => '<td><a data-id="' . $fila["NumTicket"] . '" class="btn btn-primary btn-sm btn-Abonar dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fa-solid fa-money-bill-transfer"></i></a></td>'
     ];
 }
