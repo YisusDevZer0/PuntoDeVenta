@@ -217,7 +217,7 @@ tabla = $('#Clientes').DataTable({
     { mData: 'Estado' },
     { mData: 'AbonoParcial' },
     { mData: 'Costo' },
-
+    { mData: 'Saldar' },
       
        
       
