@@ -20,7 +20,7 @@ function fechaCastellano($fecha) {
 }
 
 // Obtener el valor de Fk_Sucursal desde la solicitud
-$fk_sucursal = isset($_GET['Fk_Sucursal']) ? $_GET['Fk_Sucursal'] : '';
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 if (empty($fk_sucursal)) {
     echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
