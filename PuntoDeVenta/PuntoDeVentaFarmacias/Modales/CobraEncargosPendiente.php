@@ -1,84 +1,71 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 include "../Controladores/ConsultaCaja.php";
 include "../Controladores/SumadeFolioTicketsNuevo.php";
 
-$fcha = date("Y-m-d");
-$user_id = null;
+// Obtener el valor del ID del ticket
+$id = $_POST["id"];
 
-$sql1 = "SELECT 
-    Ventas_POS.Folio_Ticket,
-    Ventas_POS.Fk_Caja,
-    Ventas_POS.Venta_POS_ID,
-    Ventas_POS.Identificador_tipo,
-    Ventas_POS.Cod_Barra,
-    Ventas_POS.FormaDePago,
-    Ventas_POS.Fecha_venta,
-    Ventas_POS.Clave_adicional,
-    Ventas_POS.Total_Venta,
-    Ventas_POS.Importe,
-    Ventas_POS.Total_VentaG,
-    Ventas_POS.CantidadPago,
-    Ventas_POS.Cambio,
-    Servicios_POS.Servicio_ID,
-    Servicios_POS.Nom_Serv,
-    Ventas_POS.Nombre_Prod,
-    Ventas_POS.Cantidad_Venta,
-    Ventas_POS.Fk_sucursal,
-    Ventas_POS.AgregadoPor,
-    Ventas_POS.AgregadoEl,
-    Ventas_POS.Lote,
-    COALESCE(
-        (SELECT Pagos_tarjeta 
-         FROM Ventas_POS v 
-         WHERE v.Folio_Ticket = Ventas_POS.Folio_Ticket 
-         AND v.Pagos_tarjeta IS NOT NULL 
-         LIMIT 1), 
-        0
-    ) AS Pagos_tarjeta,
-    Ventas_POS.ID_H_O_D,
-    Sucursales.ID_Sucursal,
-    Sucursales.Nombre_Sucursal
-FROM 
-    Ventas_POS
-JOIN 
-    Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal
-LEFT JOIN 
-    Servicios_POS ON Ventas_POS.Identificador_tipo = Servicios_POS.Servicio_ID
-WHERE 
-    Ventas_POS.Folio_Ticket = '".$_POST["id"]."'";
+// Consulta para obtener los datos del ticket
+$sql = "SELECT 
+            id, 
+            nombre_paciente, 
+            medicamento, 
+            cantidad, 
+            precioventa, 
+            fecha_encargo, 
+            estado, 
+            costo, 
+            abono_parcial, 
+            NumTicket, 
+            Fk_Sucursal 
+        FROM encargos 
+        WHERE NumTicket = ?";
 
-$query = $conn->query($sql1);
-$Especialistas = null;
-if ($query->num_rows > 0) {
-    while ($r = $query->fetch_object()) {
-        $Especialistas = $r;
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $id);
+
+if ($stmt->execute()) {
+    $result = $stmt->get_result();
+} else {
+    echo json_encode(["error" => "Error en la consulta: " . $stmt->error]);
+    exit;
+}
+
+$ticketData = null;
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $ticketData = $row;
         break;
     }
 }
 
-$primeras_tres_letras = substr($Especialistas->Nombre_Sucursal, 0, 3);
-$resultado_concatenado = $primeras_tres_letras . $totalmonto;
+$stmt->close();
+
+// Verificar si se encontraron datos
+if (!$ticketData) {
+    echo '<p class="alert alert-warning">No hay resultados</p>';
+    exit;
+}
+
+// Crear valores concatenados y procesados
+$primeras_tres_letras = substr($ticketData['Fk_Sucursal'], 0, 3);
+$totalMonto = $ticketData['precioventa'] * $ticketData['cantidad'];
+$resultado_concatenado = $primeras_tres_letras . $totalMonto;
 $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 ?>
 
 <!-- Formulario de reimpresión de ticket con simulación de cobro -->
-<?php if ($Especialistas != null): ?>
-
-    <div class="row">
+<div class="row">
     <div class="col">
-        <label for="exampleFormControlInput1">Abono pendiente</label>
+        <label for="abonoPendiente">Abono pendiente</label>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $Especialistas->Pagos_tarjeta ?>">
-            <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $Especialistas->Folio_Ticket ?>">
-            <input type="text" class="form-control" hidden name="Turno" readonly value="<?php echo $ValorCaja['Turno'] ?>">
-            <input type="text" class="form-control" hidden name="FkCaja" readonly value="<?php echo $ValorCaja['ID_Caja'] ?>">
-            <input type="text" class="form-control" hidden name="CobradoPor" readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
-            <input type="text" class="form-control" hidden name="Sucursal" readonly value="<?php echo $row['Fk_Sucursal'] ?>">
+            <input type="text" class="form-control" readonly name="AbonoPendiente" value="<?php echo $ticketData['abono_parcial']; ?>">
+            <input type="text" class="form-control" hidden readonly name="TicketAnterior" value="<?php echo $ticketData['NumTicket']; ?>">
             <input type="text" class="form-control" hidden name="TicketNuevo" value="<?php echo $resultado_en_mayusculas; ?>" readonly>
         </div>
     </div>
@@ -86,8 +73,8 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <div class="row">
     <div class="col">
-        <label for="exampleFormControlInput1">Forma de pago </label>
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" name="FormaPago" id="selTipoPago" required>
+        <label for="formaPago">Forma de pago</label>
+        <select class="form-control form-select form-select-sm" aria-label="Tipo de pago" name="FormaPago" id="selTipoPago" required>
             <option value="0">Seleccione el Tipo de Pago</option>
             <option value="Efectivo" selected="true">Efectivo</option>
             <option value="Tarjeta">Tarjeta</option>
@@ -98,7 +85,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <div class="row">
     <div class="col">
-        <label for="exampleFormControlInput1">Abonado</label>
+        <label for="abonado">Abonado</label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="Abonado" placeholder="Ingrese el monto abonado">
         </div>
@@ -107,7 +94,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <div class="row">
     <div class="col">
-        <label for="exampleFormControlInput1">Nuevo saldo</label>
+        <label for="nuevoSaldo">Nuevo saldo</label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" readonly id="NuevoSaldo" name="NuevoSaldo">
         </div>
@@ -118,89 +105,60 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
 <script>
 $(document).ready(function() {
-    // Al cambiar el valor del campo "Abonado"
     $('input[name="Abonado"]').on('input', function() {
         var abonoPendiente = parseFloat($('input[name="AbonoPendiente"]').val()) || 0;
         var abonado = parseFloat($(this).val()) || 0;
-
-        // Calcular el nuevo saldo
         var nuevoSaldo = abonoPendiente - abonado;
-
-        // Actualizar el valor del campo "Nuevo saldo"
         $('#NuevoSaldo').val(nuevoSaldo.toFixed(2));
     });
 
     $('#cobrarAbono').on('click', function() {
-    var abonado = $('input[name="Abonado"]').val();
-    var abonoPendiente = $('input[name="AbonoPendiente"]').val();
-    var nuevoSaldo = $('#NuevoSaldo').val();
-    var formaPago = $('#selTipoPago').val();
-    var ticket = $('input[name="TicketAnterior"]').val(); 
-    var cobrador = $('input[name="CobradoPor"]').val();
-    var sucursalcobro = $('input[name="Sucursal"]').val(); 
+        var abonado = $('input[name="Abonado"]').val();
+        var abonoPendiente = $('input[name="AbonoPendiente"]').val();
+        var nuevoSaldo = $('#NuevoSaldo').val();
+        var formaPago = $('#selTipoPago').val();
+        var ticket = $('input[name="TicketAnterior"]').val();
 
-    // Verificar en la consola si se están enviando correctamente
-    console.log({
-        FkCaja: $('input[name="FkCaja"]').val(),
-        Turno: $('input[name="Turno"]').val(),
-        SaldoPrevio: abonoPendiente,
-        Abono: abonado,
-        NuevoSaldo: nuevoSaldo,
-        CobradoPor: cobrador,
-        FormaPago: formaPago,
-        NumTicket: ticket,
-        TicketNuevo: $('input[name="TicketNuevo"]').val()
+        if (abonado && parseFloat(abonado) > 0) {
+            $.ajax({
+                url: 'guardar_abono.php',
+                type: 'POST',
+                data: {
+                    Abono: abonado,
+                    SaldoPrevio: abonoPendiente,
+                    NuevoSaldo: nuevoSaldo,
+                    FormaPago: formaPago,
+                    NumTicket: ticket
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Abono Exitoso',
+                        text: 'El abono ha sido registrado con éxito.',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function(error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un problema al registrar el abono.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, ingrese un monto válido para el abono.',
+                confirmButtonText: 'OK'
+            });
+        }
     });
-
-    if (abonado && parseFloat(abonado) > 0) {
-        $.ajax({
-            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
-            type: 'POST',
-            data: {
-                FkCaja: $('input[name="FkCaja"]').val(),
-                Turno: $('input[name="Turno"]').val(),
-                SaldoPrevio: abonoPendiente,
-                Abono: abonado,
-                NuevoSaldo: nuevoSaldo,
-                CobradoPor: cobrador,
-                FormaPago: formaPago,
-                NumTicket: ticket,
-                TicketNuevo: $('input[name="TicketNuevo"]').val(),
-                sucursalcobro:sucursalcobro,
-            },
-            success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Abono Exitoso',
-                    text: 'El abono de ' + abonado + ' ha sido registrado con éxito.',
-                    confirmButtonText: 'OK'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        location.reload();
-                    }
-                });
-            },
-            error: function(error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Hubo un problema al registrar el abono. Por favor, inténtalo de nuevo.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Por favor, ingrese un monto válido para el abono.',
-            confirmButtonText: 'OK'
-        });
-    }
-})
 });
 </script>
-
-<?php else: ?>
-    <p class="alert alert-warning">No hay resultados</p>
-<?php endif; ?>
