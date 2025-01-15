@@ -212,10 +212,11 @@ tabla = $('#Clientes').DataTable({
  "aoColumns": [
  
     { mData: 'NumberTicket' },  
+    { mData: 'Paciente' },  
     { mData: 'FechaEncargo' },
     { mData: 'Estado' },
     { mData: 'AbonoParcial' },
-
+    { mData: 'Costo' },
 
       
        
@@ -270,12 +271,12 @@ tabla = $('#Clientes').DataTable({
   <table  id="Clientes"  class="order-column">
 <thead>
 <th>N° Ticket</th>
-
+<th>Paciente</th>
 <th>Fecha</th>
  
-    <th>Desglose</th>
-    <th>Reimpresion</th>
-  
+    <th>Estatus</th>
+    <th>Abono Parcial</th>
+    <th>Costo total</th>
 </thead>
 
 </div>
