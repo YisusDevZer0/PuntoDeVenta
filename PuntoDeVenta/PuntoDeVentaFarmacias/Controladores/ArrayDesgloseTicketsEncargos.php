@@ -82,11 +82,11 @@ while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "NumberTicket" => $fila["NumTicket"],
         "Paciente" => $fila["nombre_paciente"],
-        "Medicamento" => $fila["medicamento"],
+        "Estado" => $fila["estado"],
         "Cantidad" => $fila["cantidad"],
         "PrecioVenta" => $fila["precioventa"],
         "FechaEncargo" => fechaCastellano($fila["fecha_encargo"]),
-        "Estado" => $fila["estado"],
+       
         "Costo" => $fila["costo"],
         "AbonoParcial" => $fila["abono_parcial"],
         "Sucursal" => $fila["nombre_sucursal"]
