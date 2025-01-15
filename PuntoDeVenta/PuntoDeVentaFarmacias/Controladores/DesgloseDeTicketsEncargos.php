@@ -213,10 +213,8 @@ tabla = $('#Clientes').DataTable({
  
     { mData: 'NumberTicket' },  
     { mData: 'FechaEncargo' },
-    { mData: 'Hora' },
-    { mData: 'Paciente' },
-    { mData: 'Desglose' },
-    { mData: 'Reimpresion' }
+    { mData: 'Estado' },
+    { mData: 'AbonoParcial' },
 
 
       
@@ -274,8 +272,7 @@ tabla = $('#Clientes').DataTable({
 <th>N° Ticket</th>
 
 <th>Fecha</th>
-<th>Hora</th>
-    <th>Vendedor</th>
+ 
     <th>Desglose</th>
     <th>Reimpresion</th>
   
