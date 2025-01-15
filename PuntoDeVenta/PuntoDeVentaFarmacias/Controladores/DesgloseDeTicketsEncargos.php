@@ -210,14 +210,14 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDesgloseTicketsEncargos.php",
  "aoColumns": [
-  "aoColumns": [
+ 
     { mData: 'NumberTicket' },  
     { mData: 'FechaEncargo' },
     { mData: 'Hora' },
     { mData: 'Paciente' },
     { mData: 'Desglose' },
     { mData: 'Reimpresion' }
-]
+
 
       
        
