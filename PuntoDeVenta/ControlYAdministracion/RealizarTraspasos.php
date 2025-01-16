@@ -408,6 +408,8 @@ $fechaActual = date('Y-m-d H:i:s');
                               <th style="width:6%">Cantidad</th>
                               <th>Precio</th>
                               <th>Importe</th>
+                              <th>Tipo de mov</th>
+                              <th>Fecha</th>
                               <!-- <th>importe_Sin_Iva</th>
             <th>Iva</th>
             <th>valorieps</th> -->
