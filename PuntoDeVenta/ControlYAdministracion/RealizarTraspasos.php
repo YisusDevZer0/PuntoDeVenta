@@ -496,28 +496,39 @@ $fechaActual = date('Y-m-d H:i:s');
     </div>
 </div>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
+    // Obtener el select específico para sucursales dinámicas
     const selectSucursal = document.getElementById('clienteSelect');
 
     // Realizar la solicitud para obtener las sucursales
     fetch('Controladores/obtenerSucursales.php')
         .then(response => response.json())
         .then(data => {
-            // Llenar el select con las opciones
-            data.forEach(sucursal => {
-                const option = document.createElement('option');
-                option.value = sucursal.ID_Sucursal;
-                option.textContent = sucursal.Nombre_Sucursal;
-                selectSucursal.appendChild(option);
-            });
+            // Llenar solo el select para sucursales dinámicas
+            if (selectSucursal) {
+                data.forEach(sucursal => {
+                    const option = document.createElement('option');
+                    option.value = sucursal.ID_Sucursal;
+                    option.textContent = sucursal.Nombre_Sucursal;
+                    selectSucursal.appendChild(option);
+                });
+            }
         })
         .catch(error => {
             console.error('Error al obtener las sucursales:', error);
         });
 });
 
-</script>
+function actualizarInput(selectElement) {
+    const fila = selectElement.closest('tr');
+    const inputDestino = fila.querySelector('.SucursalDestino input');
 
+    if (inputDestino) {
+        const textoSeleccionado = selectElement.options[selectElement.selectedIndex].text;
+        inputDestino.value = textoSeleccionado;
+    }
+}
+</script>
 
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
