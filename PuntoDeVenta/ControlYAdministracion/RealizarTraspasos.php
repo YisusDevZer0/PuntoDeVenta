@@ -460,7 +460,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </label>
       <div class="input-group mb-3">
         
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  >
+        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
 <option value="0">Seleccione el Tipo de movimiento</option>
 <option value="Traspaso">Traspaso</option>
 <option value="Nota de credito">Nota de credito</option>
@@ -490,15 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-<<<<<<< HEAD
-<<<<<<< HEAD
-        <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida" >
-=======
-        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]" onchange="actualizarInput(this)">
->>>>>>> parent of 000dfa3 (Update RealizarTraspasos.php)
-=======
-        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]">
->>>>>>> parent of 44829c9 (Update RealizarTraspasos.php)
+        <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida"  onchange="actualizarInput(this)">
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
@@ -506,7 +498,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Obtener el select específico para sucursales dinámicas
-    const selectSucursal = document.getElementById('sucursaldestinoelegida');
+    const selectSucursal = document.getElementById('clienteSelect');
 
     // Realizar la solicitud para obtener las sucursales
     fetch('Controladores/obtenerSucursales.php')
@@ -528,35 +520,11 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-       let selectedAdjustment = "";
-
-document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
-    selectedAdjustment = this.value;
-});
-
 
 </script>
 
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-=======
-    // Buscar el input correspondiente dentro de la misma fila
-    const fila = selectElement.closest("tr");
-    const inputDestino = fila.querySelector("input[name='Fk_SucursalDestino[]']");
 
-    // Asignar el valor seleccionado al input
-    if (inputDestino) {
-      inputDestino.value = valorSeleccionado;
-    }
-  }
-</script>
->>>>>>> parent of 000dfa3 (Update RealizarTraspasos.php)
-
-=======
-  
-
->>>>>>> parent of 44829c9 (Update RealizarTraspasos.php)
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
@@ -596,6 +564,7 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 </div>
 </div>
 <script>
+
 
 
 
@@ -1003,100 +972,17 @@ $('#codigoEscaneado').autocomplete({
   } else {
     const btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
 
-<<<<<<< HEAD
     const tr = `
-          <tr data-id="${articulo.id}">
-            <td class="codigo"><input class="form-control codigo-barras-input" style="font-size: 0.75rem;" type="text" value="${articulo.codigo || ''}" name="CodBarras[]" /></td>
-            <td class="descripcion"><textarea class="form-control descripcion-producto-input" name="NombreDelProducto[]" style="font-size: 0.75rem;">${articulo.descripcion}</textarea></td>
-            <td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem;" type="number" name="Cantidad[]" value="${articulo.cantidad}" onchange="actualizarImporte($(this).parent().parent());" /></td>
-            <td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem;" type="number" value="${articulo.precio}" /></td>
-            <td style="display:none;" class="precio"><input hidden id="precio_${articulo.id}" class="form-control precio" style="font-size: 0.75rem;" type="number" name="Pc[]" value="${articulo.precio}" onchange="actualizarImporte($(this).parent().parent());" /></td>
-            <td><input id="importe_${articulo.id}" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem;" type="number" readonly /></td>
-            <td style="display:none;"><input id="importe_siniva_${articulo.id}" class="form-control importe_siniva" type="number" readonly /></td>
-            <td style="display:none;"><input id="valordelniva_${articulo.id}" class="form-control valordelniva" type="number" readonly /></td>
-            <td style="display:none;"><input id="ieps_${articulo.id}" class="form-control ieps" type="number" readonly /></td>
-            <td style="display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem;" type="text" value="${articulo.id}" name="IdBasedatos[]" /></td>
-            <td style="display:none;" class="lote"><input class="form-control" style="font-size: 0.75rem;" type="text" value="${articulo.lote}" name="LoteDelProducto[]" /></td>
-            <td style="display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem;" type="text" value="${articulo.clave}" name="ClaveAdicional[]" /></td>
-            <td style="display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem;" type="text" value="${articulo.tipo}" name="Tipo[]" /></td>
-            <td style="display:none;" class="NumeroTicket"><input type="text" class="form-control" hidden id="Folio_Ticket" name="Folio_Ticket[]" value="<?php echo $resultado_en_mayusculas; ?>" readonly /></td>
-            <td style="display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control" name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>" /></td>
-            <td class="TipoMovimiento"><input type="text" class="form-control" name="TipoDeMov[]" readonly value="" /></td>
-            <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>" /></td>
-            <td class="SucursalDestino"><input type="text" class="form-control tipoajuste-input" id="inputDestino" name="Fk_SucursalDestino[]" readonly /></td>
-            <td style="display:none;" class="Sistema"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POSVENTAS" /></td>
-            <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
-            <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
-            <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Doctor Pez" /></td>
-            <td class="Fecha"><input type="date" class="form-control" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="" /></td>
-            <td style="display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo" /></td>
-            <td><div class="btn-container">${btnEliminar}</div></td>
-          </tr>`;
-=======
-    if (row && row.length) {
-        var cantidadActual = parseInt(row.find('.cantidad input').val());
-        var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
-        if (nuevaCantidad < 0) {
-            mostrarMensaje('La cantidad no puede ser negativa');
-            return;
-        }
-        row.find('.cantidad input').val(nuevaCantidad);
-        actualizarImporte(row);
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
-    } else {
-        var tr = '';
-        var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
-
-        var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
-        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
-
-        tr += '<tr data-id="' + articulo.id + '">';
-        tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + (articulo.codigo || '') + '" name="CodBarras[]" /></td>';
-        tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
-        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Cantidad[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
-        tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="Pc[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
-        tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="importe_siniva_' + articulo.id + '" class="form-control importe_siniva" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="valordelniva_' + articulo.id + '" class="form-control valordelniva" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;"><input id="ieps_' + articulo.id + '" class="form-control ieps" type="number" readonly /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="lote"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.lote + '" name="LoteDelProducto[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="claveess"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.clave + '" name="ClaveAdicional[]" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.tipo + '" name="Tipo[]" /></td>';
-
-            tr += '<td style="visibility:collapse; display:none;" class="NumeroTicket"><input type="text" class="form-control " hidden id="Folio_Ticket" name="Folio_Ticket[]" style="font-size: 0.75rem !important;" value="<?php echo $resultado_en_mayusculas; ?>" readonly></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
-        tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Generado"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Empresa"><input hidden type="text" class="form-control " name="ID_H_O_D[]" readonly value="Doctor Pez"></td>';
-        tr += '<td " class="Fecha"><input type="date" class="form-control " name="FechaVenta[]" id="fecha-apertura2-' + articulo.id + '" readonly value=""></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"></td>';
-        tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div><div class="btn-container"></td>';
-        tr += '</tr>';
-
-        $('#tablaAgregarArticulos tbody').append(tr);
-        document.getElementById('fecha-apertura2-' + articulo.id).value = fechaApertura;
-        actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
-        calcularIVA();
-        actualizarSuma();
-        mostrarTotalVenta();
-        mostrarSubTotal();
-        mostrarIvaTotal();
-        
-    }
-
-    $('#codigoEscaneado').val('');
-    $('#codigoEscaneado').focus();
-}
->>>>>>> parent of 44829c9 (Update RealizarTraspasos.php)
+      <tr data-id="${articulo.id}">
+        <td class="codigo"><input class="form-control codigo-barras-input" readonly style="font-size: 0.75rem !important;" type="text" value="${articulo.codigo || ''}" name="CodBarras[]" /></td>
+        <td class="descripcion"><textarea class="form-control descripcion-producto-input" readonly style="font-size: 0.75rem !important;" name="NombreDelProducto[]">${articulo.descripcion}</textarea></td>
+        <td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Cantidad[]" value="${articulo.cantidad}" onchange="actualizarImporte($(this).parent().parent());" /></td>
+        <td class="preciofijo"><input class="form-control preciou-input" readonly style="font-size: 0.75rem !important;" type="number" value="${articulo.precio}" /></td>
+        <td style="display:none;" class="precio"><input hidden id="precio_${articulo.id}" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="Pc[]" value="${articulo.precio}" onchange="actualizarImporte($(this).parent().parent());" /></td>
+        <td><input id="importe_${articulo.id}" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>
+        <td style="visibility:collapse; display:none;" class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="${articulo.id}" name="IdBasedatos[]" /></td>
+        <td><div class="btn-container">${btnEliminar}</div></td>
+      </tr>`;
 
     $('#tablaAgregarArticulos tbody').append(tr);
 
