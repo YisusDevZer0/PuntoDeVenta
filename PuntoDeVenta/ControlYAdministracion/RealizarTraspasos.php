@@ -516,7 +516,6 @@ $fechaActual = date('Y-m-d H:i:s');
 
 </script>
 
-  
 <script>
   function actualizarInput(selectElement) {
     // Obtener el valor seleccionado
@@ -532,6 +531,7 @@ $fechaActual = date('Y-m-d H:i:s');
     }
   }
 </script>
+
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
