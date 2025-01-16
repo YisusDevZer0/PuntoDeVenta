@@ -490,53 +490,35 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-        <select class="form-control form-select form-select-sm" id="clienteSelect" onchange="actualizarInput(this)" required>
+        <select class="form-control form-select form-select-sm" id="clienteSelect"  onchange="actualizarInput(this)">
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
 </div>
-
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Obtener todos los selectores dinámicamente
-        const selects = document.querySelectorAll('#miTabla select');
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectSucursal = document.getElementById('clienteSelect');
 
-        // Realizar la solicitud para obtener las sucursales
-        fetch('Controladores/obtenerSucursales.php')
-            .then(response => response.json())
-            .then(data => {
-                // Llenar todos los selects dinámicamente
-                selects.forEach(select => {
-                    data.forEach(sucursal => {
-                        const option = document.createElement('option');
-                        option.value = sucursal.ID_Sucursal;
-                        option.textContent = sucursal.Nombre_Sucursal;
-                        select.appendChild(option);
-                    });
-                });
-            })
-            .catch(error => {
-                console.error('Error al obtener las sucursales:', error);
+    // Realizar la solicitud para obtener las sucursales
+    fetch('Controladores/obtenerSucursales.php')
+        .then(response => response.json())
+        .then(data => {
+            // Llenar el select con las opciones
+            data.forEach(sucursal => {
+                const option = document.createElement('option');
+                option.value = sucursal.ID_Sucursal;
+                option.textContent = sucursal.Nombre_Sucursal;
+                selectSucursal.appendChild(option);
             });
-    });
+        })
+        .catch(error => {
+            console.error('Error al obtener las sucursales:', error);
+        });
+});
 
-    function actualizarInput(selectElement) {
-        // Obtener la fila en la que está el select
-        const fila = selectElement.closest('tr');
-
-        // Buscar el input correspondiente en la misma fila
-        const inputDestino = fila.querySelector('.sucursalDestinoInput');
-
-        // Asignar el valor seleccionado al input
-        if (inputDestino) {
-            const valorSeleccionado = selectElement.value;
-            inputDestino.value = valorSeleccionado !== "0" ? valorSeleccionado : ""; // Limpia si no hay selección válida
-        } else {
-            console.error('No se encontró el input correspondiente en la fila.');
-        }
-    }
 </script>
+
+
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -594,7 +576,7 @@ $fechaActual = date('Y-m-d H:i:s');
         }
     });
 }
-tablaAgregarArticulos
+
 </script>
 <!-- function actualizarSumaTotal  -->
 <script>
@@ -1026,7 +1008,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
         tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
-        tr += '<td  class="SucursalDestino"><input type="text" class="form-control sucursalDestinoInput"" id="inputDestino" name="Fk_SucursalDestino[]" readonly ></td>';
+        tr += '<td  class="SucursalDestino"><input type="text" class="form-control " id="inputDestino"name="Fk_SucursalDestino[]" readonly ></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Generado"></td>';
