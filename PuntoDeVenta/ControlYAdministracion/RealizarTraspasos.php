@@ -530,7 +530,57 @@ function actualizarInput(selectElement) {
         }
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectSucursal = document.getElementById('clienteSelect');
 
+        // Realizar la solicitud para obtener las sucursales
+        fetch('Controladores/obtenerSucursales.php')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!Array.isArray(data) || data.length === 0) {
+                    console.error("No se recibieron datos válidos del servidor.");
+                    return;
+                }
+
+                // Llenar el select con las opciones
+                data.forEach(sucursal => {
+                    const option = document.createElement('option');
+                    option.value = sucursal.ID_Sucursal;
+                    option.textContent = sucursal.Nombre_Sucursal;
+                    selectSucursal.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener las sucursales:', error);
+            });
+    });
+
+    function actualizarInput(selectElement) {
+        // Obtener el valor seleccionado del <select>
+        const valorSeleccionado = selectElement.value;
+
+        // Buscar el input correspondiente
+        const inputDestino = document.getElementById('inputDestino');
+
+        // Verificar si el valor es válido y asignarlo al input
+        if (inputDestino) {
+            if (valorSeleccionado === "0") {
+                inputDestino.value = ""; // Limpia el input si no se seleccionó nada
+            } else {
+                inputDestino.value = valorSeleccionado; // Asigna el valor seleccionado
+            }
+            console.log(`Valor guardado en el input: ${inputDestino.value}`);
+        } else {
+            console.error('No se encontró el input correspondiente.');
+        }
+    }
+</script>
 
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
