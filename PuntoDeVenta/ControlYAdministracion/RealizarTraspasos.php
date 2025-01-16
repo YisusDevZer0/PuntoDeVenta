@@ -520,6 +520,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+       let selectedAdjustment = "";
+
+document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
+    selectedAdjustment = this.value;
+});
+
 
 </script>
 
