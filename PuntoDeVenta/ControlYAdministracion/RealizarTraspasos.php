@@ -460,7 +460,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </label>
       <div class="input-group mb-3">
         
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
+        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  >
 <option value="0">Seleccione el Tipo de movimiento</option>
 <option value="Traspaso">Traspaso</option>
 <option value="Nota de credito">Nota de credito</option>
@@ -490,7 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-        <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida"  onchange="actualizarInput(this)">
+        <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida" >
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
