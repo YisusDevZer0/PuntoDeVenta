@@ -1015,8 +1015,7 @@ $('#codigoEscaneado').autocomplete({
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
-    mostrarSubTotal();
-    mostrarIvaTotal();
+  
   }
 
   limpiarCampo();
