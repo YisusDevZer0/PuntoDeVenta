@@ -490,7 +490,11 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
+<<<<<<< HEAD
         <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida" >
+=======
+        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]" onchange="actualizarInput(this)">
+>>>>>>> parent of 000dfa3 (Update RealizarTraspasos.php)
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
@@ -530,6 +534,19 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 </script>
 
 
+<<<<<<< HEAD
+=======
+    // Buscar el input correspondiente dentro de la misma fila
+    const fila = selectElement.closest("tr");
+    const inputDestino = fila.querySelector("input[name='Fk_SucursalDestino[]']");
+
+    // Asignar el valor seleccionado al input
+    if (inputDestino) {
+      inputDestino.value = valorSeleccionado;
+    }
+  }
+</script>
+>>>>>>> parent of 000dfa3 (Update RealizarTraspasos.php)
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
