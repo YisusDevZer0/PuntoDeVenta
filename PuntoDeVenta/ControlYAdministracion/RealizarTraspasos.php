@@ -831,17 +831,21 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
 }
 
 
-  function mostrarIvaTotal() {
+function mostrarIvaTotal() {
     var subtotal = 0;
     $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.valordelniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
+        var valordelnivaElement = $(this).find('.valordelniva');
+        if (valordelnivaElement.length > 0 && valordelnivaElement.val()) {
+            var importeSinIVA = parseFloat(valordelnivaElement.val().replace(/[^\d.-]/g, ''));
+            if (!isNaN(importeSinIVA)) {
+                subtotal += importeSinIVA;
+            }
+        }
     });
 
     $('#ivatotal').text(subtotal.toFixed(2));
-  }
+}
+
 
   function buscarArticulo(codigoEscaneado) {
   var formData = new FormData();
