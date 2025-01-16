@@ -500,7 +500,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Obtener todos los selectores dinámicamente
-        const selects = document.querySelectorAll('#tablaAgregarArticulos select');
+        const selects = document.querySelectorAll('#miTabla select');
 
         // Realizar la solicitud para obtener las sucursales
         fetch('Controladores/obtenerSucursales.php')
@@ -537,6 +537,7 @@ $fechaActual = date('Y-m-d H:i:s');
         }
     }
 </script>
+
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
