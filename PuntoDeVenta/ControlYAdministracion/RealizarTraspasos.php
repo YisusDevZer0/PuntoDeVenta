@@ -488,7 +488,7 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]">
+        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]" onchange="actualizarInput(this)">
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
@@ -517,7 +517,21 @@ $fechaActual = date('Y-m-d H:i:s');
 </script>
 
   
+<script>
+  function actualizarInput(selectElement) {
+    // Obtener el valor seleccionado
+    const valorSeleccionado = selectElement.value;
 
+    // Buscar el input correspondiente dentro de la misma fila
+    const fila = selectElement.closest("tr");
+    const inputDestino = fila.querySelector("input[name='Fk_SucursalDestino[]']");
+
+    // Asignar el valor seleccionado al input
+    if (inputDestino) {
+      inputDestino.value = valorSeleccionado;
+    }
+  }
+</script>
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
@@ -1003,6 +1017,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
         tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="SucursalDestino"><input hidden type="text" class="form-control " name="Fk_SucursalDestino[]" readonly ></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Generado"></td>';
