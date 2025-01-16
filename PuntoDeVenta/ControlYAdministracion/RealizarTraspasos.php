@@ -496,22 +496,19 @@ $fechaActual = date('Y-m-d H:i:s');
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     const selectSucursal = document.getElementById('clienteSelect');
 
-    // Poblar dinámicamente el select al cargar la página
+    // Realizar la solicitud para obtener las sucursales
     fetch('Controladores/obtenerSucursales.php')
         .then(response => response.json())
         .then(data => {
-            const selects = document.querySelectorAll('.form-select');
-
-            selects.forEach(select => {
-                data.forEach(sucursal => {
-                    const option = document.createElement('option');
-                    option.value = sucursal.ID_Sucursal;
-                    option.textContent = sucursal.Nombre_Sucursal;
-                    select.appendChild(option);
-                });
+            // Llenar el select con las opciones
+            data.forEach(sucursal => {
+                const option = document.createElement('option');
+                option.value = sucursal.ID_Sucursal;
+                option.textContent = sucursal.Nombre_Sucursal;
+                selectSucursal.appendChild(option);
             });
         })
         .catch(error => {
@@ -519,15 +516,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-function actualizarInput(selectElement) {
-    const fila = selectElement.closest('tr');
-    const inputDestino = fila.querySelector('.SucursalDestino input');
-
-    if (inputDestino) {
-        const textoSeleccionado = selectElement.options[selectElement.selectedIndex].text;
-        inputDestino.value = textoSeleccionado;
-    }
-}
 </script>
 
 
