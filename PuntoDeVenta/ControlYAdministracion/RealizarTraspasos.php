@@ -721,7 +721,7 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
-    mostrarSubTotal();
+  
     mostrarIvaTotal()
   });
 
@@ -829,20 +829,6 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
     $("#totaldeventacliente").val(totalVenta.toFixed(2));
     
 }
-
-
-
-  function mostrarSubTotal() {
-    var subtotal = 0;
-    $('#tablaAgregarArticulos tbody tr').each(function() {
-      var importeSinIVA = parseFloat($(this).find('.importe_siniva').val().replace(/[^\d.-]/g, ''));
-      if (!isNaN(importeSinIVA)) {
-        subtotal += importeSinIVA;
-      }
-    });
-
-    $('#boleta_subtotal').text(subtotal.toFixed(2));
-  }
 
 
   function mostrarIvaTotal() {
@@ -991,7 +977,7 @@ $('#codigoEscaneado').autocomplete({
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
-    mostrarSubTotal();
+   
     mostrarIvaTotal();
   } else {
     const btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
@@ -1064,7 +1050,6 @@ $('#fecha-apertura').on('change', function() {
   // Llamar a la función para recalcular la suma de importes
   actualizarSuma();
   mostrarTotalVenta();
-  mostrarSubTotal();
   mostrarIvaTotal();
 }
 
@@ -1113,7 +1098,7 @@ function eliminarFila(element) {
   calcularIVA();
   actualizarSuma();
   mostrarTotalVenta();
-  mostrarSubTotal();
+
   mostrarIvaTotal();
 }
 /// INICIO CODIGO DESCUENTOS///
@@ -1239,7 +1224,7 @@ function abrirSweetAlert(elemento) {
 
       actualizarSuma();
       mostrarTotalVenta();
-      mostrarSubTotal();
+   
       mostrarIvaTotal();
       actualizarImporte();
     },
