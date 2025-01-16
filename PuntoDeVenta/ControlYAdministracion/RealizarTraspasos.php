@@ -490,7 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-        <select class="form-control form-select form-select-sm" id="clienteSelect" name="Fk_SucursalDestino[]" onchange="actualizarInput(this)">
+        <select class="form-control form-select form-select-sm" id="clienteSelect"  onchange="actualizarInput(this)">
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
@@ -523,17 +523,22 @@ $fechaActual = date('Y-m-d H:i:s');
     // Obtener el valor seleccionado
     const valorSeleccionado = selectElement.value;
 
-    // Buscar el input correspondiente dentro de la misma fila
+    // Buscar la fila en la que está el <select>
     const fila = selectElement.closest("tr");
+
+    // Buscar el <input> correspondiente dentro de la misma fila
     const inputDestino = fila.querySelector("input[name='Fk_SucursalDestino[]']");
 
-    // Asignar el valor seleccionado al input
+    // Validar si el input fue encontrado
     if (inputDestino) {
+      // Asignar el valor seleccionado del <select> al <input>
       inputDestino.value = valorSeleccionado;
+      console.log(`Valor guardado: ${valorSeleccionado}`);
+    } else {
+      console.error("No se encontró el input correspondiente.");
     }
   }
 </script>
-
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
