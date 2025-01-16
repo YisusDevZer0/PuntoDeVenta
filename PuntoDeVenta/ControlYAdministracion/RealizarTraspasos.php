@@ -520,14 +520,17 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function actualizarInput(selectElement) {
-    const fila = selectElement.closest('tr');
-    const inputDestino = fila.querySelector('.SucursalDestino input');
+    const fila = selectElement.closest('tr'); // Encuentra la fila del select
+    const inputDestino = fila.querySelector('.SucursalDestino input'); // Encuentra el input en la misma fila
 
     if (inputDestino) {
         const textoSeleccionado = selectElement.options[selectElement.selectedIndex].text;
         inputDestino.value = textoSeleccionado;
+    } else {
+        console.warn('No se encontró un input relacionado con el select.');
     }
 }
+
 </script>
 
 
