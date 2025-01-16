@@ -799,6 +799,9 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
       {
         "data": "descuentos2"
       },
+      {
+        "data": "descuento2"
+      },
     ],
 
     "order": [
