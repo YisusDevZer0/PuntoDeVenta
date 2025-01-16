@@ -538,7 +538,6 @@ $fechaActual = date('Y-m-d H:i:s');
     }
 </script>
 
-
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
@@ -595,7 +594,7 @@ $fechaActual = date('Y-m-d H:i:s');
         }
     });
 }
-
+tablaAgregarArticulos
 </script>
 <!-- function actualizarSumaTotal  -->
 <script>
