@@ -523,7 +523,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </script>
 
+<script>
+    let selectedAdjustment = "";
 
+document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
+    selectedAdjustment = this.value;
+});
+</script>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
