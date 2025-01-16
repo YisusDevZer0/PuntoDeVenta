@@ -530,6 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
     selectedAdjustment = this.value;
 });
+</script>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -588,7 +589,7 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
     });
 }
 
-</script>
+</>
 <!-- function actualizarSumaTotal  -->
 <script>
 
