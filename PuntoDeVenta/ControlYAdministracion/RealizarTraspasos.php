@@ -490,7 +490,7 @@ $fechaActual = date('Y-m-d H:i:s');
     <div class="form-group mb-2" id="divCliente">
     <label for="clienteSelect" style="font-size: 0.75rem !important;">Sucursal destino</label>
     <div class="input-group mb-3">
-        <select class="form-control form-select form-select-sm" id="clienteSelect"  onchange="actualizarInput(this)">
+        <select class="form-control form-select form-select-sm" id="sucursaldestinoelegida"  onchange="actualizarInput(this)">
             <option value="0">Seleccione una sucursal</option>
         </select>
     </div>
@@ -519,26 +519,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-function actualizarInput(selectElement) {
-    // Encontrar la fila (<tr>) que contiene el select
-    const fila = selectElement.closest('tr');
 
-    // Buscar el input dentro de la misma fila con la clase SucursalDestino
-    const inputDestino = fila.querySelector('.SucursalDestino input');
-
-    if (inputDestino) {
-        // Obtener el texto de la opción seleccionada en el select
-        const textoSeleccionado = selectElement.options[selectElement.selectedIndex].text;
-
-        // Asignar el texto seleccionado al input
-        inputDestino.value = textoSeleccionado;
-    } else {
-        console.warn('No se encontró un input relacionado con el select en la misma fila.');
-    }
-}
 
 </script>
 
+
+<script>
+       let selectedAdjustment = "";
+
+document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
+    selectedAdjustment = this.value;
+});
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -1028,7 +1019,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
         tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
-        tr += '<td  class="SucursalDestino"><input type="text" class="form-control " id="inputDestino"name="Fk_SucursalDestino[]" readonly ></td>';
+        tr += '<td  class="SucursalDestino"><input type="text" class="form-control tipoajuste-input " id="inputDestino"name="Fk_SucursalDestino[]" readonly ></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Generado"></td>';
@@ -1041,6 +1032,7 @@ $('#codigoEscaneado').autocomplete({
         $('#tablaAgregarArticulos tbody').append(tr);
         document.getElementById('fecha-apertura2-' + articulo.id).value = fechaApertura;
         actualizarImporte($('#tablaAgregarArticulos tbody tr:last-child'));
+        newRow.find('.tipoajuste-input').val(selectedAdjustment);
         calcularIVA();
         actualizarSuma();
         mostrarTotalVenta();
