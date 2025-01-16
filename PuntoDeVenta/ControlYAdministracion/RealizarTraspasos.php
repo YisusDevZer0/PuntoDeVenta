@@ -520,14 +520,20 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function actualizarInput(selectElement) {
-    const fila = selectElement.closest('tr'); // Encuentra la fila del select
-    const inputDestino = fila.querySelector('.SucursalDestino input'); // Encuentra el input en la misma fila
+    // Encontrar la fila (<tr>) que contiene el select
+    const fila = selectElement.closest('tr');
+
+    // Buscar el input dentro de la misma fila con la clase SucursalDestino
+    const inputDestino = fila.querySelector('.SucursalDestino input');
 
     if (inputDestino) {
+        // Obtener el texto de la opción seleccionada en el select
         const textoSeleccionado = selectElement.options[selectElement.selectedIndex].text;
+
+        // Asignar el texto seleccionado al input
         inputDestino.value = textoSeleccionado;
     } else {
-        console.warn('No se encontró un input relacionado con el select.');
+        console.warn('No se encontró un input relacionado con el select en la misma fila.');
     }
 }
 
