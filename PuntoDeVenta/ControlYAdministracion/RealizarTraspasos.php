@@ -515,30 +515,24 @@ $fechaActual = date('Y-m-d H:i:s');
             console.error('Error al obtener las sucursales:', error);
         });
 });
+function actualizarInput(selectElement) {
+        // Obtener el valor seleccionado del <select>
+        const valorSeleccionado = selectElement.value;
 
-</script>
+        // Buscar el input correspondiente en el contenedor
+        const inputDestino = document.getElementById('inputDestino');
 
-<script>
-  function actualizarInput(selectElement) {
-    // Obtener el valor seleccionado
-    const valorSeleccionado = selectElement.value;
-
-    // Buscar la fila en la que está el <select>
-    const fila = selectElement.closest("tr");
-
-    // Buscar el <input> correspondiente dentro de la misma fila
-    const inputDestino = fila.querySelector("input[name='Fk_SucursalDestino[]']");
-
-    // Validar si el input fue encontrado
-    if (inputDestino) {
-      // Asignar el valor seleccionado del <select> al <input>
-      inputDestino.value = valorSeleccionado;
-      console.log(`Valor guardado: ${valorSeleccionado}`);
-    } else {
-      console.error("No se encontró el input correspondiente.");
+        // Asignar el valor al input
+        if (inputDestino) {
+            inputDestino.value = valorSeleccionado;
+        } else {
+            console.error('No se encontró el input correspondiente.');
+        }
     }
-  }
 </script>
+
+
+
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <div class="row mt-2">
@@ -1027,7 +1021,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control " name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>"></td>';
         tr += '<td class="TipoMovimiento"><input  type="text" class="form-control " name="TipoDeMov[]" readonly value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sucursal"><input hidden type="text" class="form-control " name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>"></td>';
-        tr += '<td  class="SucursalDestino"><input type="text" class="form-control " name="Fk_SucursalDestino[]" readonly ></td>';
+        tr += '<td  class="SucursalDestino"><input type="text" class="form-control " id="inputDestino" name="Fk_SucursalDestino[]" readonly ></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Sistema"><input hidden type="text" class="form-control " name="Sistema[]" readonly value="POSVENTAS"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Liquidado"><input hidden type="text" class="form-control " name="Liquidado[]" readonly value="N/A"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Generado"></td>';
