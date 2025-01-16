@@ -498,7 +498,7 @@ $fechaActual = date('Y-m-d H:i:s');
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Obtener el select específico para sucursales dinámicas
-    const selectSucursal = document.getElementById('clienteSelect');
+    const selectSucursal = document.getElementById('sucursaldestinoelegida');
 
     // Realizar la solicitud para obtener las sucursales
     fetch('Controladores/obtenerSucursales.php')
