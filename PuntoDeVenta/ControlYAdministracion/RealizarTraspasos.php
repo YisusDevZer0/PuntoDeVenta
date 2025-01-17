@@ -469,23 +469,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
 
-      <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Obtener el select del tipo de movimiento
-        const selectTipoPago = document.getElementById('selTipoPago');
-
-        // Evento para capturar el valor seleccionado y mostrarlo en el input
-        selectTipoPago.addEventListener('change', function () {
-            const selectedValue = this.value; // Captura el valor seleccionado
-            const inputMovimiento = document.querySelector('td.TipoMovimiento .tipo-movimiento'); // Selecciona el input
-
-            // Verifica si hay un input encontrado y actualiza su valor
-            if (inputMovimiento) {
-                inputMovimiento.value = selectedValue; // Asigna el valor al input
-            }
-        });
-    });
-</script>
+     
       
 
 <div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
