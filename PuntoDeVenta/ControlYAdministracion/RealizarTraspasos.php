@@ -1013,7 +1013,7 @@ $('#codigoEscaneado').autocomplete({
 
     const newRow = $('#tablaAgregarArticulos tbody tr:last-child');
     actualizarImporte(newRow);
-    newRow.find('.tipoajuste-input').val(this.value);
+    newRow.find('.tipoajuste-input').val(selectedAdjustment);
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
