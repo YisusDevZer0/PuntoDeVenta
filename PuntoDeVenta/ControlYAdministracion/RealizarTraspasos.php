@@ -460,7 +460,7 @@ $fechaActual = date('Y-m-d H:i:s');
       </label>
       <div class="input-group mb-3">
         
-        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required  onchange="CapturaFormadePago();">
+        <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPago" required >
 <option value="0">Seleccione el Tipo de movimiento</option>
 <option value="Traspaso">Traspaso</option>
 <option value="Nota de credito">Nota de credito</option>
@@ -469,7 +469,23 @@ $fechaActual = date('Y-m-d H:i:s');
       </div>
 
 
-      
+      <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el select y los inputs correspondientes
+        const selectTipoPago = document.getElementById('selTipoPago');
+        const inputsTipoMovimiento = document.querySelectorAll('td.TipoMovimiento input');
+
+        // Evento para capturar el valor seleccionado del select
+        selectTipoPago.addEventListener('change', function () {
+            const selectedValue = this.value; // Captura el valor seleccionado
+            
+            // Actualiza todos los inputs con el valor seleccionado
+            inputsTipoMovimiento.forEach(input => {
+                input.value = selectedValue; // Asigna el valor al input
+            });
+        });
+    });
+</script>
       
 
 <div class="alert alert-danger" id="avisaselTipoPago" role="alert" style="display:none;">
