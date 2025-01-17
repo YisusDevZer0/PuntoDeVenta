@@ -337,13 +337,14 @@ $fechaActual = date('Y-m-d H:i:s');
     document.addEventListener('DOMContentLoaded', function () {
         // Obtener el input base
         const fechaBase = document.getElementById('fecha-apertura');
+        const fechaBase2 = document.getElementById('fecha-apertura2');
         
         // Obtener la fecha actual en formato YYYY-MM-DD
         const today = new Date().toISOString().split('T')[0];
 
         // Establecer la fecha actual como valor por defecto en el input base
         fechaBase.value = today;
-
+        fechaBase2.value = today;
         // Función para actualizar todos los inputs dinámicos
         function actualizarFechasDinamicas(valor) {
             const inputsDinamicos = document.querySelectorAll('.fecha-dinamica');
