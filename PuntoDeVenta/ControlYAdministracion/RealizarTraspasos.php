@@ -477,7 +477,7 @@ document.getElementById('selTipoPago').addEventListener('change', function () {
     selectedAdjustmentTipoMov = selectedOption.value; // Obtiene el value
 
     // Actualiza el input correspondiente en la tabla con el value
-    document.querySelectorAll('.form-control tipo-movimiento').forEach(input => {
+    document.querySelectorAll('.tipo-movimiento').forEach(input => {
         input.value = selectedAdjustmentTipoMov;
     });
 
@@ -1044,7 +1044,7 @@ $('#codigoEscaneado').autocomplete({
     actualizarImporte(newRow);
     newRow.find('.tipoajuste-input').val(selectedAdjustment);
     newRow.find('.tipoajusteletras-input').val(selectedText);
-    newRow.find('.form-control tipo-movimiento').val(selectedAdjustmentTipoMov);
+    newRow.find('.tipo-movimiento').val(selectedAdjustmentTipoMov);
    
     calcularIVA();
     actualizarSuma();
