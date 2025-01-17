@@ -471,18 +471,18 @@ $fechaActual = date('Y-m-d H:i:s');
 
       <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Obtener el select y los inputs correspondientes
+        // Obtener el select del tipo de movimiento
         const selectTipoPago = document.getElementById('selTipoPago');
-        const inputsTipoMovimiento = document.querySelectorAll('td.TipoMovimiento input');
 
-        // Evento para capturar el valor seleccionado del select
+        // Evento para capturar el valor seleccionado y mostrarlo en el input
         selectTipoPago.addEventListener('change', function () {
             const selectedValue = this.value; // Captura el valor seleccionado
-            
-            // Actualiza todos los inputs con el valor seleccionado
-            inputsTipoMovimiento.forEach(input => {
-                input.value = selectedValue; // Asigna el valor al input
-            });
+            const inputMovimiento = document.querySelector('td.TipoMovimiento .tipo-movimiento'); // Selecciona el input
+
+            // Verifica si hay un input encontrado y actualiza su valor
+            if (inputMovimiento) {
+                inputMovimiento.value = selectedValue; // Asigna el valor al input
+            }
         });
     });
 </script>
@@ -1026,7 +1026,7 @@ $('#codigoEscaneado').autocomplete({
         <td style="display:none;" class="tiposservicios"><input class="form-control" style="font-size: 0.75rem;" type="text" value="${articulo.tipo}" name="Tipo[]" /></td>
         <td style="display:none;" class="NumeroTicket"><input type="text" class="form-control" hidden id="Folio_Ticket" name="Folio_Ticket[]" value="<?php echo $resultado_en_mayusculas; ?>" readonly /></td>
         <td style="display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control" name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>" /></td>
-        <td class="TipoMovimiento"><input type="text" class="form-control" name="TipoDeMov[]" readonly value="" /></td>
+        <td class="TipoMovimiento"><input type="text" class="form-control tipo-movimiento" name="TipoDeMov[]" readonly value="" /></td>
         <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>" /></td>
         <td class="SucursalDestino"><input type="text" class="form-control tipoajuste-input" id="inputDestino" name="Fk_SucursalDestino[]" readonly /></td>
         <td class="SucursalDestinoLetras"><input type="text" class="form-control tipoajusteletras-input" id="inputDestino" name="Fk_SucursalDestinoLetras[]" readonly /></td>
@@ -1045,6 +1045,8 @@ $('#codigoEscaneado').autocomplete({
     actualizarImporte(newRow);
     newRow.find('.tipoajuste-input').val(selectedAdjustment);
     newRow.find('.tipoajusteletras-input').val(selectedText);
+    newRow.find('.tipoajusteletras-input').val(selectedValue);
+   
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
