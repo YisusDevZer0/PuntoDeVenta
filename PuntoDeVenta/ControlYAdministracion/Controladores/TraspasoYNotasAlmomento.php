@@ -30,9 +30,6 @@ foreach ($required_fields as $field) {
 $contador = count($_POST["CodBarras"]);
 $ProContador = 0;
 
-// Obtener el valor de TotalVenta solo una vez
-$totalVenta = $_POST["TotalVenta"][0]; // Asumiendo que TotalVenta es el mismo para todos los productos
-
 // Preparar la consulta SQL
 $query = "INSERT INTO TraspasosYNotasC (Folio_Ticket, Cod_Barra, Nombre_Prod, Cantidad, Fk_sucursal, Fk_SucursalDestino, Total_VentaG, Pc, TipoDeMov, Fecha_venta, Estatus, Sistema, AgregadoPor, ID_H_O_D) VALUES ";
 $queryValue = [];
@@ -53,7 +50,7 @@ for ($i = 0; $i < $contador; $i++) {
         exit;
     }
 
-    // Agregar consulta y valores (sin TotalVenta, ya que lo asignamos previamente)
+    // Agregar consulta y valores
     $ProContador++;
     $queryValue[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $values = array_merge($values, [
@@ -63,7 +60,7 @@ for ($i = 0; $i < $contador; $i++) {
         $_POST["Cantidad"][$i],
         $_POST["Fk_sucursal"][$i],
         $_POST["Fk_SucursalDestino"][$i],
-        $totalVenta, // Usamos el valor de TotalVenta preestablecido
+        $_POST["TotalVenta"][$i],
         $_POST["Pc"][$i],
         $_POST["TipoDeMov"][$i],
         $_POST["FechaVenta"][$i],
