@@ -60,7 +60,7 @@ for ($i = 0; $i < $contador; $i++) {
         $_POST["Cantidad"][$i],
         $_POST["Fk_sucursal"][$i],
         $_POST["Fk_SucursalDestino"][$i],
-        $_POST["TotalVenta"][$i],
+        $_POST["TotalVenta"],
         $_POST["Pc"][$i],
         $_POST["TipoDeMov"][$i],
         $_POST["FechaVenta"][$i],
