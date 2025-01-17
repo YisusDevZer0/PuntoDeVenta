@@ -840,7 +840,13 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
 
     $('#ivatotal').text(subtotal.toFixed(2));
   }
-
+  function mostrarToast(mensaje) {
+  var toast = $('<div class="toast"></div>').text(mensaje);
+  $('body').append(toast);
+  toast.fadeIn(400).delay(3000).fadeOut(400, function() {
+    $(this).remove();
+  });
+}
   function buscarArticulo(codigoEscaneado) {
   var formData = new FormData();
   formData.append('codigoEscaneado', codigoEscaneado);
