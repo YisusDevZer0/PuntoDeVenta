@@ -526,9 +526,11 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
     let selectedAdjustment = "";
 
+// Evento para capturar el valor seleccionado del select
 document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
     selectedAdjustment = this.value;
 });
+
 </script>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -1011,7 +1013,7 @@ $('#codigoEscaneado').autocomplete({
 
     const newRow = $('#tablaAgregarArticulos tbody tr:last-child');
     actualizarImporte(newRow);
-    newRow.find('.tipoajuste-input').val(selectedAdjustment);
+    newRow.find('.tipoajuste-input').val(this.value);
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
