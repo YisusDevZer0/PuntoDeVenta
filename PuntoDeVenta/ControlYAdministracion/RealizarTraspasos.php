@@ -468,7 +468,22 @@ $fechaActual = date('Y-m-d H:i:s');
 </select>
       </div>
 
+<script>
+  let selectedAdjustmentTipoMov = "";
 
+// Evento para capturar el valor seleccionado del select
+document.getElementById('selTipoPago').addEventListener('change', function () {
+    const selectedOption = this.options[this.selectedIndex];
+    selectedAdjustmentTipoMov = selectedOption.value; // Obtiene el value
+
+    // Actualiza el input correspondiente en la tabla con el value
+    document.querySelectorAll('.form-control tipo-movimiento').forEach(input => {
+        input.value = selectedAdjustmentTipoMov;
+    });
+
+   
+});
+</script>
      
       
 
@@ -1029,7 +1044,7 @@ $('#codigoEscaneado').autocomplete({
     actualizarImporte(newRow);
     newRow.find('.tipoajuste-input').val(selectedAdjustment);
     newRow.find('.tipoajusteletras-input').val(selectedText);
-    newRow.find('.tipoajusteletras-input').val(selectedValue);
+    newRow.find('.form-control tipo-movimiento').val(selectedAdjustmentTipoMov);
    
     calcularIVA();
     actualizarSuma();
