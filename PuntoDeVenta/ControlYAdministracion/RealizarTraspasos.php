@@ -520,17 +520,25 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 let selectedAdjustment = "";
+let selectedText = "";
 
 // Evento para capturar el valor seleccionado del select
 document.getElementById('sucursaldestinoelegida').addEventListener('change', function () {
-    selectedAdjustment = this.value;
-    // Actualiza el input correspondiente en la tabla
+    const selectedOption = this.options[this.selectedIndex];
+    selectedAdjustment = selectedOption.value; // Obtiene el value
+    selectedText = selectedOption.textContent; // Obtiene el texto visible
+
+    // Actualiza el input correspondiente en la tabla con el value
     document.querySelectorAll('.tipoajuste-input').forEach(input => {
         input.value = selectedAdjustment;
     });
+
+    // Actualiza el input correspondiente en la tabla con el texto
+    document.querySelectorAll('.tipoajusteletras-input').forEach(input => {
+        input.value = selectedText;
+    });
 });
 </script>
-
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -1005,6 +1013,7 @@ $('#codigoEscaneado').autocomplete({
         <td class="TipoMovimiento"><input type="text" class="form-control" name="TipoDeMov[]" readonly value="" /></td>
         <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>" /></td>
         <td class="SucursalDestino"><input type="text" class="form-control tipoajuste-input" id="inputDestino" name="Fk_SucursalDestino[]" readonly /></td>
+        <td class="SucursalDestinoLetras"><input type="text" class="form-control tipoajusteletras-input" id="inputDestino" name="Fk_SucursalDestinoLetras[]" readonly /></td>
         <td style="display:none;" class="Sistema"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POSVENTAS" /></td>
         <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
         <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
@@ -1019,6 +1028,7 @@ $('#codigoEscaneado').autocomplete({
     const newRow = $('#tablaAgregarArticulos tbody tr:last-child');
     actualizarImporte(newRow);
     newRow.find('.tipoajuste-input').val(selectedAdjustment);
+    newRow.find('.tipoajusteletras-input').val(selectedText);
     calcularIVA();
     actualizarSuma();
     mostrarTotalVenta();
