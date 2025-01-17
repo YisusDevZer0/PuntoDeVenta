@@ -335,28 +335,32 @@ $fechaActual = date('Y-m-d H:i:s');
 <input type="date" class="form-control" style="font-size: 0.75rem !important;" id="fecha-apertura" >
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Obtener el input principal y el secundario
+        // Obtener el input base
         const fechaBase = document.getElementById('fecha-apertura');
-        const fechaSecundaria = document.getElementById('fecha-apertura2-${articulo.id}');
-
+        
         // Obtener la fecha actual en formato YYYY-MM-DD
         const today = new Date().toISOString().split('T')[0];
 
-        // Establecer la fecha actual como valor por defecto en ambos inputs
+        // Establecer la fecha actual como valor por defecto en el input base
         fechaBase.value = today;
-        if (fechaSecundaria) {
-            fechaSecundaria.value = today;
+
+        // Función para actualizar todos los inputs dinámicos
+        function actualizarFechasDinamicas(valor) {
+            const inputsDinamicos = document.querySelectorAll('.fecha-dinamica');
+            inputsDinamicos.forEach(input => {
+                input.value = valor;
+            });
         }
 
-        // Escuchar cambios en el input base y actualizar el secundario
+        // Al cargar la página, establecer la fecha actual en los inputs dinámicos
+        actualizarFechasDinamicas(today);
+
+        // Escuchar cambios en el input base y actualizar los dinámicos
         fechaBase.addEventListener('change', function () {
-            if (fechaSecundaria) {
-                fechaSecundaria.value = this.value; // Actualizar el valor del input secundario
-            }
+            actualizarFechasDinamicas(this.value);
         });
     });
 </script>
-
 </div>
 </div>
 
