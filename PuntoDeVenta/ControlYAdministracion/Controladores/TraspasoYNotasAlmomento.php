@@ -8,7 +8,7 @@ $required_fields = [
     "Cantidad",
     "Fk_sucursal",
     "Fk_SucursalDestino",
-    "TotalVenta", // Este campo se tomará solo una vez antes del bucle
+   
     "Pc",
     "TipoDeMov",
     "FechaVenta",
