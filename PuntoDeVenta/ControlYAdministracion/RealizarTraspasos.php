@@ -344,23 +344,23 @@ $fechaActual = date('Y-m-d H:i:s');
         // Establecer la fecha actual como valor por defecto en el input base
         fechaBase.value = today;
 
-        // Obtener todos los inputs dinámicos
-        const inputsDinamicos = document.querySelectorAll('.fecha-dinamica');
+        // Función para actualizar todos los inputs dinámicos
+        function actualizarFechasDinamicas(valor) {
+            const inputsDinamicos = document.querySelectorAll('.fecha-dinamica');
+            inputsDinamicos.forEach(input => {
+                input.value = valor;
+            });
+        }
 
-        // Establecer la fecha actual en todos los inputs dinámicos al cargar
-        inputsDinamicos.forEach(input => {
-            input.value = today;
-        });
+        // Al cargar la página, establecer la fecha actual en los inputs dinámicos
+        actualizarFechasDinamicas(today);
 
         // Escuchar cambios en el input base y actualizar los dinámicos
         fechaBase.addEventListener('change', function () {
-            inputsDinamicos.forEach(input => {
-                input.value = this.value;  // Actualizar cada input dinámico
-            });
+            actualizarFechasDinamicas(this.value);
         });
     });
 </script>
-
 </div>
 </div>
 
