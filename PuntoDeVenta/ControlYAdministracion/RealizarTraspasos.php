@@ -334,15 +334,28 @@ $fechaActual = date('Y-m-d H:i:s');
 
 <input type="date" class="form-control" style="font-size: 0.75rem !important;" id="fecha-apertura" >
 <script>
-    // Obtener la fecha actual
-    const hoy = new Date();
-    const fechaFormateada = hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el input principal y el secundario
+        const fechaBase = document.getElementById('fecha-apertura');
+        const fechaSecundaria = document.getElementById('fecha-apertura2-${articulo.id}');
 
-    // Asignar la fecha al input
-    document.getElementById('fecha-apertura').value = fechaFormateada;
-    document.getElementById('fecha-apertura2').value = fechaFormateada;
+        // Obtener la fecha actual en formato YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+
+        // Establecer la fecha actual como valor por defecto en ambos inputs
+        fechaBase.value = today;
+        if (fechaSecundaria) {
+            fechaSecundaria.value = today;
+        }
+
+        // Escuchar cambios en el input base y actualizar el secundario
+        fechaBase.addEventListener('change', function () {
+            if (fechaSecundaria) {
+                fechaSecundaria.value = this.value; // Actualizar el valor del input secundario
+            }
+        });
+    });
 </script>
-
 
 </div>
 </div>
