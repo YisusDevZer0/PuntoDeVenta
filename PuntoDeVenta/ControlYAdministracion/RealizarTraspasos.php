@@ -519,19 +519,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
-
-
-</script>
-
-<script>
-    let selectedAdjustment = "";
+let selectedAdjustment = "";
 
 // Evento para capturar el valor seleccionado del select
-document.getElementById('sucursaldestinoelegida').addEventListener('change', function() {
+document.getElementById('sucursaldestinoelegida').addEventListener('change', function () {
     selectedAdjustment = this.value;
+    // Actualiza el input correspondiente en la tabla
+    document.querySelectorAll('.tipoajuste-input').forEach(input => {
+        input.value = selectedAdjustment;
+    });
 });
-
 </script>
+
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
