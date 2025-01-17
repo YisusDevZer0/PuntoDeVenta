@@ -1040,8 +1040,8 @@ $('#codigoEscaneado').autocomplete({
         <td style="display:none;" class="Vendedor"><input hidden id="VendedorFarma" type="text" class="form-control" name="AgregadoPor[]" readonly value="<?php echo $row['Nombre_Apellidos'] ?>" /></td>
         <td class="TipoMovimiento"><input type="text" class="form-control tipo-movimiento" name="TipoDeMov[]" readonly value="" /></td>
         <td style="display:none;" class="Sucursal"><input hidden type="text" class="form-control" name="Fk_sucursal[]" readonly value="<?php echo $row['Fk_Sucursal'] ?>" /></td>
-        <td class="SucursalDestino"><input type="text" class="form-control tipoajuste-input" id="inputDestino" name="Fk_SucursalDestino[]" readonly /></td>
-        <td class="SucursalDestinoLetras"><input type="text" class="form-control tipoajusteletras-input" id="inputDestino" name="Fk_SucursalDestinoLetras[]" readonly /></td>
+        <td style="display:none;" class="SucursalDestino"><input type="text" class="form-control tipoajuste-input" id="inputDestino" name="Fk_SucursalDestino[]" readonly /></td>
+        <td style="display:none;" class="SucursalDestinoLetras"><input type="text" class="form-control tipoajusteletras-input" id="inputDestino" name="Fk_SucursalDestinoLetras[]" readonly /></td>
         <td style="display:none;" class="Sistema"><input hidden type="text" class="form-control" name="Sistema[]" readonly value="POSVENTAS" /></td>
         <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
         <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
