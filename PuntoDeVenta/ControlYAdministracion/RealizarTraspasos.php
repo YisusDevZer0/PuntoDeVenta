@@ -337,14 +337,13 @@ $fechaActual = date('Y-m-d H:i:s');
     document.addEventListener('DOMContentLoaded', function () {
         // Obtener el input base
         const fechaBase = document.getElementById('fecha-apertura');
-        const fechaBase2 = document.getElementById('fecha-apertura2');
         
         // Obtener la fecha actual en formato YYYY-MM-DD
         const today = new Date().toISOString().split('T')[0];
 
         // Establecer la fecha actual como valor por defecto en el input base
         fechaBase.value = today;
-        fechaBase2.value = today;
+
         // Función para actualizar todos los inputs dinámicos
         function actualizarFechasDinamicas(valor) {
             const inputsDinamicos = document.querySelectorAll('.fecha-dinamica');
@@ -1051,7 +1050,7 @@ $('#codigoEscaneado').autocomplete({
         <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
         <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
         <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Doctor Pez" /></td>
-        <td class="Fecha"> <input type="date" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2" readonly  /></td>
+        <td class="Fecha"> <input type="date" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="" /></td>
         <td style="display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo" /></td>
         <td><div class="btn-container">${btnEliminar}</div></td>
       </tr>`;
