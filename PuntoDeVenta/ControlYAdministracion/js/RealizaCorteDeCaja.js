@@ -73,7 +73,6 @@ $(document).ready(function () {
                         success: function (data) {
                             var response = JSON.parse(data);
 
-                        Swal.fire({
                             if (response.statusCode === 200) {
                                 // Enviar los datos al ticket
                                 $.ajax({
