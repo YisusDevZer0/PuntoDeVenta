@@ -587,7 +587,7 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 </div>
 <div class="col-md-7 text-end">
 <span class="" id="boleta_total" name="" style="float: right;">MXN $0.00</span>
-<input type="text" class="form-control"  value=""  name="TotalVenta"  id="totaldeventacliente">
+<input type="text" class="form-control"  value="" hidden  name="TotalVenta"  id="totaldeventacliente">
 </div>
 <div class="col-12 text-end">
 <!-- <h6 class="text-danger fw-bold">Cambio:  <span id="Vuelto" style="float: right;">MXN $0.00</span></h6>
