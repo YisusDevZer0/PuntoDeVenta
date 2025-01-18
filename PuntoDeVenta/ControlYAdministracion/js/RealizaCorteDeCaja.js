@@ -96,7 +96,7 @@ $(document).ready(function () {
                                     timer: 2000,
                                     didOpen: () => {
                                         setTimeout(() => {
-                                            location.reload();
+                                         
                                         }, 1500);
                                     },
                                 });
