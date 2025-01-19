@@ -631,7 +631,7 @@ $fechaActual = date('Y-m-d H:i:s');
 </div>
       <label for="iptEfectivoRecibido" class="p-0 m-0" style="font-size: 0.75rem !important;">Pago con efectivo</label>
       <input type="number" min="0" name="iptEfectivo" id="iptEfectivoRecibido" class="form-control form-control-sm" placeholder="Cantidad de efectivo recibida" onkeyup="actualizarEfectivoEntregado()">
-      <input type="number" name="iptEfectivoOculto[]" id="iptEfectivoOculto"  class="form-control ">
+      <input type="number" name="iptEfectivoOculto[]" hidden id="iptEfectivoOculto"  class="form-control ">
     </div>
     
     <!-- INPUT CHECK DE EFECTIVO EXACTO -->
