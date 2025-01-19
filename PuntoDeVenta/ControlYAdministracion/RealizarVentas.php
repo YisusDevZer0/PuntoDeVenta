@@ -700,6 +700,7 @@ function actualizarSumaTotal() {
     $('#btnIniciarVenta').prop('disabled', false);
     totalCubierto = iptEfectivo;
     cambio = 0;
+    
     break;
 
   case "Efectivo y Tarjeta":
@@ -740,6 +741,7 @@ function actualizarSumaTotal() {
   } else {
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
+  actualizarEfectivoEntregado();
 }
 
 // Detectar cambios en el método de pago
