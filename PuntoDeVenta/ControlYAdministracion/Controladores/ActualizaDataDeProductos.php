@@ -30,12 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $ActualizadoPor = $_POST['ActualizadoPor'];
 
     // Depuración: mostrar valores de las variables
-    echo "<h3>Valores asignados a variables:</h3>";
-    var_dump($ID_Prod_POS, $Cod_Barra, $Clave_adicional, $Clave_Levic, $Nombre_Prod, 
-        $Precio_Venta, $Precio_C, $Tipo_Servicio, $Componente_Activo, 
-        $Tipo, $FkCategoria, $FkMarca, $FkPresentacion, 
-        $Proveedor1, $Proveedor2, $RecetaMedica, $Ivaal16, 
-        $ActualizadoPor);
+    // echo "<h3>Valores asignados a variables:</h3>";
+    // var_dump($ID_Prod_POS, $Cod_Barra, $Clave_adicional, $Clave_Levic, $Nombre_Prod, 
+    //     $Precio_Venta, $Precio_C, $Tipo_Servicio, $Componente_Activo, 
+    //     $Tipo, $FkCategoria, $FkMarca, $FkPresentacion, 
+    //     $Proveedor1, $Proveedor2, $RecetaMedica, $Ivaal16, 
+    //     $ActualizadoPor);
 
     // Consulta SQL para depuración (sin ejecución)
     $sql_debug = "UPDATE Productos_POS SET 
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ActualizadoEl = NOW()
             WHERE ID_Prod_POS = '{$ID_Prod_POS}'";
 
-    echo "<h3>Consulta SQL generada:</h3><pre>$sql_debug</pre>";
+    
 
     // Preparar la consulta segura con parámetros
     $sql = "UPDATE Productos_POS SET 
