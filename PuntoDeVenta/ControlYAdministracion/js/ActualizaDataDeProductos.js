@@ -39,7 +39,7 @@ $(document).ready(function($) {
                             showConfirmButton: false,
                             timer: 2000
                         }).then(() => {
-                            location.reload(); // Recargar la página
+                          
                         });
                     } else {
                         Swal.fire({
