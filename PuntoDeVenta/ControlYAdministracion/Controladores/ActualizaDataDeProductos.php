@@ -18,12 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Precio_C = $_POST['Precio_C'];
     $Tipo_Servicio = $_POST['Tipo_Servicio'];
     $Componente_Activo = $_POST['Componente_Activo'];
-    $Tipo = $_POST['Tipo'];
-    $FkCategoria = $_POST['FkCategoria'];
-    $FkMarca = $_POST['FkMarca'];
-    $FkPresentacion = $_POST['FkPresentacion'];
-    $Proveedor1 = $_POST['Proveedor1'];
-    $Proveedor2 = $_POST['Proveedor2'];
+    $Tipo = $_POST['Tip'];
+    $FkCategoria = $_POST['Categoria'];
+    $FkMarca = $_POST['Marca'];
+    $FkPresentacion = $_POST['Presentacion'];
+    $Proveedor1 = $_POST['Proveedor'];
+    $Proveedor2 = $_POST['Prov2'];
+    
     $RecetaMedica = $_POST['RecetaMedica'];
     $Ivaal16 = $_POST['Ivaal16'];
     $ActualizadoPor = $_POST['ActualizadoPor'];
