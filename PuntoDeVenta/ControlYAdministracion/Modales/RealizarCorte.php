@@ -59,6 +59,7 @@ $sql14 = "SELECT
             Ventas_POS.Fecha_venta,
             Ventas_POS.AgregadoPor, 
             Ventas_POS.Fk_Caja, 
+             Ventas_POS.Turno, 
             Ventas_POS.AgregadoEl, 
             Sucursales.ID_Sucursal, 
             Sucursales.Nombre_Sucursal, 
