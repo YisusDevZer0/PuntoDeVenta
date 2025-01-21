@@ -238,7 +238,7 @@ if ($query->num_rows > 0) {
     <input type="hidden" name="ID_Prod_POS" id="id" value="<?php echo $Producto->ID_Prod_POS; ?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
-<script src="js/ActualizaDataDeProductos.js"></script>
+<script src="js/ActualizaDataDeLosProductos.js"></script>
 
 <?php else: ?>
   <p class="alert alert-danger">404 No se encuentra</p>
