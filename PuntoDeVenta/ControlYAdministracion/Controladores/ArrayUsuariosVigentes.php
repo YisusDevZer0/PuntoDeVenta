@@ -40,7 +40,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "Idpersonal" => $fila["Id_PvUser"],
         "NombreApellidos" => $fila["Nombre_Apellidos"],
-        "Foto" => $fila["file_name"],
+        "Foto" => '<img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/' . $fila["file_name"] . '" alt="Foto" width="50" height="50">',
         "Tipousuario" => $fila["TipoUsuario"],
         "Sucursal" => $fila["Nombre_Sucursal"],
         "CreadoEl" => $fila["AgregadoEl"], // Cambiado de "CreadoPorEl" a "CreadoEl"

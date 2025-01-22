@@ -3,8 +3,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header" style=" background-color: #ef7980 !important;">
-    <h5 class="modal-title" id="exampleModalLabel" style="color:white" >Agregar Nuevo Personal</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="exampleModalLabel">Agregar Nuevo Tipo De Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- Formulario con el estilo proporcionado -->
