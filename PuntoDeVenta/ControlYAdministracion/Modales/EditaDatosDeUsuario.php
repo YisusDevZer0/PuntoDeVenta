@@ -53,7 +53,7 @@ while ($r=$query->fetch_object()){
                 <label for="exampleFormControlInput1">Otro dato</label>
                 <div class="input-group mb-3">
                 <select id = "proveedor2" class = "form-control" name = "Prov2">
-                                               <option value="<?php echo $Producto->Nombre_Sucursal; ?>"><?php echo $Producto->Nombre_Sucursal; ?></option>
+                                               <option value="<?php echo $Especialistas->Nombre_Sucursal; ?>"><?php echo $Especialistas->Nombre_Sucursal; ?></option>
         <?php
           $query = $conn -> query ("SELECT * FROM Sucursales");
           while ($valores = mysqli_fetch_array($query)) {
