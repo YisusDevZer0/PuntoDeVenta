@@ -781,6 +781,18 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
     });
   });
 </script>
+
+<script>
+  // Seleccionar todos los inputs con la clase "fecha-dinamica"
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.fecha-dinamica').forEach(input => {
+      // Obtener la fecha actual en formato YYYY-MM-DD
+      let today = new Date().toISOString().split('T')[0];
+      input.value = today;
+    });
+  });
+</script>
+
 <script>
   table = $('#tablaAgregarArticulos').DataTable({
     searching: false, // Deshabilitar la funcionalidad de búsqueda
