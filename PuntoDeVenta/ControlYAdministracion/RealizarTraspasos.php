@@ -1062,7 +1062,7 @@ $('#codigoEscaneado').autocomplete({
         <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
         <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
         <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Doctor Pez" /></td>
-        <td class="Fecha"> <input type="date" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="" /></td>
+        <td class="Fecha"> <input type="text" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="" /></td>
         <td style="display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo" /></td>
         <td><div class="btn-container">${btnEliminar}</div></td>
       </tr>`;
