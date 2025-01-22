@@ -121,25 +121,38 @@ $fechaActual = date('Y-m-d H:i:s');
         return hoy.toISOString().split('T')[0]; // Formato YYYY-MM-DD
     }
 
-    
-    const inputFechaApertura = document.getElementById('fecha-apertura');
-    inputFechaApertura.value = establecerFechaActual();
-
-    
-    const inputsFechaOculta = document.querySelectorAll('input[name="FechaDeTraspaso[]"]');
-
-    // Actualizar el valor de los inputs ocultos al cargar la página
-    inputsFechaOculta.forEach(input => {
-        input.value = inputFechaApertura.value;
-    });
-
-    
-    inputFechaApertura.addEventListener('change', () => {
-        inputsFechaOculta.forEach(input => {
-            input.value = inputFechaApertura.value;
+    // Función para actualizar todos los campos de fecha dinámicamente
+    function actualizarFechas() {
+        // Buscar todos los inputs dinámicos con la clase 'fecha-dinamica'
+        document.querySelectorAll('input.fecha-dinamica').forEach(input => {
+            if (!input.value) { // Solo establecer si está vacío
+                input.value = establecerFechaActual();
+            }
         });
+
+        // Sincronizar los campos ocultos con los valores seleccionados
+        document.querySelectorAll('input[name="FechaDeTraspaso[]"]').forEach(inputOculto => {
+            inputOculto.value = document.getElementById('fecha-apertura').value || establecerFechaActual();
+        });
+    }
+
+    // Ejecutar la función al cargar la página
+    document.addEventListener('DOMContentLoaded', actualizarFechas);
+
+    // Escuchar eventos en el documento para manejar inputs dinámicos
+    document.addEventListener('change', (event) => {
+        if (event.target && event.target.id === 'fecha-apertura') {
+            document.querySelectorAll('input[name="FechaDeTraspaso[]"]').forEach(inputOculto => {
+                inputOculto.value = event.target.value;
+            });
+        }
     });
+
+    // Observador de cambios en el DOM para detectar elementos agregados dinámicamente
+    const observer = new MutationObserver(actualizarFechas);
+    observer.observe(document.body, { childList: true, subtree: true });
 </script>
+
 <style>
   .loader-container {
     display: flex;
@@ -783,17 +796,6 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
 </script>
 
 <script>
-  // Seleccionar todos los inputs con la clase "fecha-dinamica"
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll('.fecha-dinamica').forEach(input => {
-      // Obtener la fecha actual en formato YYYY-MM-DD
-      let today = new Date().toISOString().split('T')[0];
-      input.value = today;
-    });
-  });
-</script>
-
-<script>
   table = $('#tablaAgregarArticulos').DataTable({
     searching: false, // Deshabilitar la funcionalidad de búsqueda
     paging: false, // Deshabilitar el paginador
@@ -1062,7 +1064,7 @@ $('#codigoEscaneado').autocomplete({
         <td style="display:none;" class="Liquidado"><input hidden type="text" class="form-control" name="Liquidado[]" readonly value="N/A" /></td>
         <td style="display:none;" class="Estatus"><input hidden type="text" class="form-control" name="Estatus[]" readonly value="Generado" /></td>
         <td style="display:none;" class="Empresa"><input hidden type="text" class="form-control" name="ID_H_O_D[]" readonly value="Doctor Pez" /></td>
-        <td class="Fecha"> <input type="text" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="<?php echo date('Y-m-d'); ?>"  /></td>
+        <td class="Fecha"> <input type="date" class="form-control fecha-dinamica" name="FechaVenta[]" id="fecha-apertura2-${articulo.id}" readonly value="" /></td>
         <td style="display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo" /></td>
         <td><div class="btn-container">${btnEliminar}</div></td>
       </tr>`;
