@@ -102,7 +102,7 @@ $('document').ready(function () {
 
         $.ajax({
             type: 'POST',
-            url: 'http://localhost/ticket/TicketVenta.php',
+            url: 'http://localhost/ticket/TicketTraspasoONotaDeCredito.php',
             data: data,
             success: function (response) {
                 console.log("Ticket generado exitosamente:", response);
