@@ -38,7 +38,7 @@ while ($r=$query->fetch_object()){
     <label for="exampleFormControlInput1">Nombre del servicio<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
   
-  <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->TipoUsuario; ?>" aria-describedby="basic-addon1" maxlength="60">            
+  <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
 </div></div></div>
 
     
