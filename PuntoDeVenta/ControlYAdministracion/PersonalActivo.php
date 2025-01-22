@@ -65,7 +65,7 @@ include_once "Controladores/ControladorUsuario.php";
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar datos del usuario");
              // Cambiar tamaño del modal agregando la clase 'modal-xl'
-             $("#ModalEdDele .modal-dialog").removeClass("modal-sm modal-lg modal-xl").addClass("modal-xl");
+             $("#ModalEdDele .modal-dialog").removeClass("modal-sm modal-lg modal-xl").addClass("modal-lg");
             
         });
         $('#ModalEdDele').modal('show');
