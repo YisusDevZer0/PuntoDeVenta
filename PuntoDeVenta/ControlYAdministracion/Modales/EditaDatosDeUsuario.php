@@ -25,25 +25,40 @@ while ($r=$query->fetch_object()){
 <?php if($Especialistas!=null):?>
 
 <form action="javascript:void(0)" method="post" id="ActualizaDatosDelUsuario" >
-<div class="form-group">
-    <label for="exampleFormControlInput1">Folio</label>
-    <div class="input-group mb-3">
-  
-  <input type="text" class="form-control " disabled readonly value="<?php echo $Especialistas->Id_PvUser; ?>">
-    </div>
-    </div>
-    
-   
-    <div class="form-group">
-    <label for="exampleFormControlInput1">Nombre del servicio<span class="text-danger">*</span></label>
-     <div class="input-group mb-3">
-  
-  <input type="text" class="form-control "  id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
-</div></div></div>
+<div class="container">
+    <div class="row">
+        <!-- Primera columna -->
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Folio</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Id_PvUser; ?>">
+                </div>
+            </div>
+        </div>
 
-    
-</div>
+        <!-- Segunda columna -->
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Nombre del servicio <span class="text-danger">*</span></label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
+                </div>
+            </div>
+        </div>
+
+        <!-- Tercera columna -->
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="exampleFormControlInput1">Otro dato</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="otrodato" name="OtroDato" value="" maxlength="60">
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
    
     <input type="text" class="form-control " hidden  readonly id="actusuariocserv" name="ActUsuarioCServ" readonly value="<?php echo $row['Nombre_Apellidos']?>">
 <input type="text" class="form-control "  hidden  readonly id="actsistemacserv" name="ActSistemaCServ" readonly value="Administrador">
