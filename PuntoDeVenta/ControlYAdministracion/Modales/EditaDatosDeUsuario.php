@@ -130,16 +130,14 @@ while ($r=$query->fetch_object()){
         <!-- Tercera columna -->
         <div class="col-md-4">
             <div class="form-group">
-                <label for="exampleFormControlInput1">Tipo de usuario</label>
+                <label for="exampleFormControlInput1">Estado</label>
                 <div class="input-group mb-3">
                 <select id = "proveedor2" class = "form-control" name = "Prov2">
                                                <option value="<?php echo $Especialistas->Estatus; ?>"><?php echo $Especialistas->Estatus; ?></option>
-        <?php
-          $query = $conn -> query ("SELECT * FROM Sucursales");
-          while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
-          }
-        ?>  </select>
+        <option value="Baja">Baja</option>
+        <option value="Baja Temporal">Baja Temporal</option>
+        <option value="Activo">Activo</option>
+          </select>
                 </div>
             </div>
         </div>
