@@ -32,7 +32,7 @@
 
 <style>
   /* Estilos personalizados para la tabla */
-  #Productos th {
+  #Clientes th {
     font-size: 12px; /* Tamaño de letra para los encabezados */
     padding: 4px; /* Ajustar el espaciado entre los encabezados */
     white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
@@ -41,21 +41,21 @@
 
 <style>
   /* Estilos para la tabla */
-  #Productos {
+  #Clientes {
     font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
     border-collapse: collapse; /* Colapsar los bordes de las celdas */
     width: 100%;
     text-align: center; /* Centrar el contenido de las celdas */
   }
 
-  #Productos th {
+  #Clientes th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
     background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
 
-  #Productos td {
+  #Clientes td {
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
@@ -155,6 +155,36 @@
 "Cargando... Ten paciencia, incluso los programadores necesitan tiempo para pensar en nombres de variables.",
 
 "Estamos destilando líneas de código para obtener la solución perfecta. ¡Casi listo!",
+"Buscando el café perdido... ☕️",
+"Cargando unicornios pixelados...",
+"Generando excusas para la lentitud...",
+"Contando hasta el infinito... dos veces.",
+"Alineando los bits desobedientes...",
+"Convocando hamsters de velocidad...",
+"Reorganizando cajones virtuales...",
+"¿Estás ahí, mundo digital?",
+"Haciendo magia binaria...",
+"Consultando el manual del universo...",
+"Midiendo la velocidad de la luz en píxeles...",
+"Desenredando cables imaginarios...",
+"Haciendo una pausa para tomar un byte.",
+"Cargando una oveja contadora de sueños...",
+"¡Alerta! Bits desordenados, se necesita aspiradora digital.",
+"Comprando boletos para el hiperespacio...",
+"Dibujando una puerta en la pared de ladrillos...",
+"Esperando a que los electrones hagan ejercicio.",
+"Silencio, estamos calibrando los chistes.",
+"Revolviendo el caos en cámara lenta...",
+"🚀 Preparándose para despegar hacia el ciberespacio...",
+"🐢 Cargando a la velocidad de una tortuga con resaca...",
+"🌀 Girando los engranajes de la paciencia...",
+"⚡ Generando rayos de alta velocidad...",
+"🎮 Insertando monedas virtuales para acelerar...",
+"🌌 Navegando por el agujero de gusano del sistema...",
+"🤖 Despertando a los gnomos del procesador...",
+"🍕 Ordenando pizza digital mientras esperas...",
+"🕒 Viajando en el tiempo para cargar más rápido...",
+"🎩 Sacando conejos del sombrero de la programación...",
   ];
 
   // Función para mostrar el mensaje de carga con un texto aleatorio
@@ -265,7 +295,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th >Clave</th>
+<th style="background-color:#0057b8 !important;">Clave</th>
 <th style="background-color:#0057b8 !important;">Cod interno</th>
 <th style="background-color:#0057b8 !important;">Cod levic</th>
 <th style="background-color:#0057b8 !important;">Nombre</th>
