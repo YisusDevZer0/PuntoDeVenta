@@ -32,7 +32,7 @@
 
 <style>
   /* Estilos personalizados para la tabla */
-  #Clientes th {
+  #Productos th {
     font-size: 12px; /* Tamaño de letra para los encabezados */
     padding: 4px; /* Ajustar el espaciado entre los encabezados */
     white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
@@ -41,21 +41,21 @@
 
 <style>
   /* Estilos para la tabla */
-  #Clientes {
+  #Productos {
     font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
     border-collapse: collapse; /* Colapsar los bordes de las celdas */
     width: 100%;
     text-align: center; /* Centrar el contenido de las celdas */
   }
 
-  #Clientes th {
+  #Productos th {
     font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
     background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
     color: white; /* Cambiar el color del texto a blanco para contrastar */
     padding: 10px; /* Ajustar el espaciado de los encabezados */
   }
 
-  #Clientes td {
+  #Productos td {
     font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
     padding: 8px; /* Ajustar el espaciado de las celdas */
     border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
@@ -295,21 +295,21 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th style="background-color:#0057b8 !important;">Clave</th>
-<th style="background-color:#0057b8 !important;">Cod interno</th>
-<th style="background-color:#0057b8 !important;">Cod levic</th>
-<th style="background-color:#0057b8 !important;">Nombre</th>
-<th style="background-color:#0057b8 !important;">PV</th>
-<th style="background-color:#0057b8 !important;">Servicio</th>
-<th style="background-color:#0057b8 !important;">Tipo</th>
-<th style="background-color:#0057b8 !important;">Proveedor 1</th>
-<th style="background-color:#0057b8 !important;">Proveedor 2</th>
-<th style="background-color:#0057b8 !important;">Sucursal</th>
-<th style="background-color:#0057b8 !important;">Ultimo movimiento registrado</th>
-<th style="background-color:#0057b8 !important;">Stock</th>
-<th style="background-color:#0057b8 !important;">Min</th>
-<th style="background-color:#0057b8 !important;">Max</th>
-<th style="background-color:#0057b8 !important;">Estatus</th>
+<th >Clave</th>
+<th >Cod interno</th>
+<th >Cod levic</th>
+<th >Nombre</th>
+<th >PV</th>
+<th >Servicio</th>
+<th >Tipo</th>
+<th >Proveedor 1</th>
+<th >Proveedor 2</th>
+<th >Sucursal</th>
+<th >Ultimo movimiento registrado</th>
+<th >Stock</th>
+<th >Min</th>
+<th >Max</th>
+<th >Estatus</th>
 
     <th>Editar</th> 
     <th>Eliminar</th> 
