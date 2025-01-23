@@ -42,7 +42,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Nombre del servicio <span class="text-danger">*</span></label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
+                    <input type="text" class="form-control" id="actnomserv" name="NombreEmpleado" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
                 </div>
             </div>
         </div>
@@ -52,7 +52,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Sucursal</label>
                 <div class="input-group mb-3">
-                <select id = "proveedor2" class = "form-control" name = "Prov2">
+                <select id = "sucursal" class = "form-control" name = "Sucursal">
                                                <option value="<?php echo $Especialistas->Nombre_Sucursal; ?>"><?php echo $Especialistas->Nombre_Sucursal; ?></option>
         <?php
           $query = $conn -> query ("SELECT * FROM Sucursales");
@@ -72,7 +72,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Correo</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Correo_Electronico; ?>">
+                    <input type="text" class="form-control" name="Correo" value="<?php echo $Especialistas->Correo_Electronico; ?>">
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Contraseña <span class="text-danger">*</span></label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
+                    <input type="text" class="form-control" id="contra" name="Contra" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
                 </div>
             </div>
         </div>
@@ -92,12 +92,12 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Tipo de usuario</label>
                 <div class="input-group mb-3">
-                <select id = "proveedor2" class = "form-control" name = "Prov2">
-                                               <option value="<?php echo $Especialistas->TipoUsuario; ?>"><?php echo $Especialistas->TipoUsuario; ?></option>
+                <select id = "proveedor2" class = "form-control" name = "TiposUsuarios">
+                                               <option value="<?php echo $Especialistas->ID_User; ?>"><?php echo $Especialistas->TipoUsuario; ?></option>
         <?php
-          $query = $conn -> query ("SELECT * FROM Sucursales");
+          $query = $conn -> query ("SELECT * FROM Tipos_Usuarios");
           while ($valores = mysqli_fetch_array($query)) {
-            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
+            echo '<option value="'.$valores["ID_User"].'">'.$valores["Tipos_Usuarios"].'</option>';
           }
         ?>  </select>
                 </div>
@@ -110,9 +110,9 @@ while ($r=$query->fetch_object()){
         <!-- Primera columna -->
         <div class="col-md-4">
             <div class="form-group">
-                <label for="exampleFormControlInput1">Correo</label>
+                <label for="exampleFormControlInput1">Telefono</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Telefono; ?>">
+                    <input type="text" class="form-control" name="Telefono" value="<?php echo $Especialistas->Telefono; ?>">
                 </div>
             </div>
         </div>
@@ -120,9 +120,9 @@ while ($r=$query->fetch_object()){
         <!-- Segunda columna -->
         <div class="col-md-4">
             <div class="form-group">
-                <label for="exampleFormControlInput1">Contraseña <span class="text-danger">*</span></label>
+                <label for="exampleFormControlInput1">Fecha nacimiento <span class="text-danger">*</span></label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="actnomserv" name="ActNomServ" value="<?php echo $Especialistas->Fecha_Nacimiento; ?>" aria-describedby="basic-addon1" maxlength="60">            
+                    <input type="text" class="form-control" id="contra" name="Fechana" value="<?php echo $Especialistas->Fecha_Nacimiento; ?>" aria-describedby="basic-addon1" maxlength="60">            
                 </div>
             </div>
         </div>
@@ -132,7 +132,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Estado</label>
                 <div class="input-group mb-3">
-                <select id = "proveedor2" class = "form-control" name = "Prov2">
+                <select id = "estado" class = "form-control" name = "Estado">
                                                <option value="<?php echo $Especialistas->Estatus; ?>"><?php echo $Especialistas->Estatus; ?></option>
         <option value="Baja">Baja</option>
         <option value="Baja Temporal">Baja Temporal</option>
