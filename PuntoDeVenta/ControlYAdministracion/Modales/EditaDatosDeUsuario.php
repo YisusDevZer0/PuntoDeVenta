@@ -112,7 +112,7 @@ while ($r=$query->fetch_object()){
             <div class="form-group">
                 <label for="exampleFormControlInput1">Correo</label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Id_PvUser; ?>">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Correo_Electronico; ?>">
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@ while ($r=$query->fetch_object()){
                 <label for="exampleFormControlInput1">Tipo de usuario</label>
                 <div class="input-group mb-3">
                 <select id = "proveedor2" class = "form-control" name = "Prov2">
-                                               <option value="<?php echo $Especialistas->Nombre_Sucursal; ?>"><?php echo $Especialistas->Nombre_Sucursal; ?></option>
+                                               <option value="<?php echo $Especialistas->Nombre_Sucursal; ?>"><?php echo $Especialistas->TipoUsuario; ?></option>
         <?php
           $query = $conn -> query ("SELECT * FROM Sucursales");
           while ($valores = mysqli_fetch_array($query)) {
