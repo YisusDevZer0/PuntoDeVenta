@@ -295,7 +295,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th style="background-color:#0057b8 !important;">Clave</th>
+<th >Clave</th>
 <th style="background-color:#0057b8 !important;">Cod interno</th>
 <th style="background-color:#0057b8 !important;">Cod levic</th>
 <th style="background-color:#0057b8 !important;">Nombre</th>
