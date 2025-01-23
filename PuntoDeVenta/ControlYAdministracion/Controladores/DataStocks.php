@@ -295,21 +295,21 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th >Clave</th>
-<th >Cod interno</th>
-<th >Cod levic</th>
-<th >Nombre</th>
-<th >PV</th>
-<th >Servicio</th>
-<th >Tipo</th>
-<th >Proveedor 1</th>
-<th >Proveedor 2</th>
-<th >Sucursal</th>
-<th >Ultimo movimiento registrado</th>
-<th >Stock</th>
-<th >Min</th>
-<th >Max</th>
-<th >Estatus</th>
+<th style="background-color:#0057b8 !important;">Clave</th>
+<th style="background-color:#0057b8 !important;">Cod interno</th>
+<th style="background-color:#0057b8 !important;">Cod levic</th>
+<th style="background-color:#0057b8 !important;">Nombre</th>
+<th style="background-color:#0057b8 !important;">PV</th>
+<th style="background-color:#0057b8 !important;">Servicio</th>
+<th style="background-color:#0057b8 !important;">Tipo</th>
+<th style="background-color:#0057b8 !important;">Proveedor 1</th>
+<th style="background-color:#0057b8 !important;">Proveedor 2</th>
+<th style="background-color:#0057b8 !important;">Sucursal</th>
+<th style="background-color:#0057b8 !important;">Ultimo movimiento registrado</th>
+<th style="background-color:#0057b8 !important;">Stock</th>
+<th style="background-color:#0057b8 !important;">Min</th>
+<th style="background-color:#0057b8 !important;">Max</th>
+<th style="background-color:#0057b8 !important;">Estatus</th>
 
     <th>Editar</th> 
     <th>Eliminar</th> 
