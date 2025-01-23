@@ -295,21 +295,21 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th style="background-color:#0057b8 !important;">Clave</th>
-<th style="background-color:#0057b8 !important;">Cod interno</th>
-<th style="background-color:#0057b8 !important;">Cod levic</th>
-<th style="background-color:#0057b8 !important;">Nombre</th>
-<th style="background-color:#0057b8 !important;">PV</th>
-<th style="background-color:#0057b8 !important;">Servicio</th>
-<th style="background-color:#0057b8 !important;">Tipo</th>
-<th style="background-color:#0057b8 !important;">Proveedor 1</th>
-<th style="background-color:#0057b8 !important;">Proveedor 2</th>
-<th style="background-color:#0057b8 !important;">Sucursal</th>
-<th style="background-color:#0057b8 !important;">Ultimo movimiento registrado</th>
-<th style="background-color:#0057b8 !important;">Stock</th>
-<th style="background-color:#0057b8 !important;">Min</th>
-<th style="background-color:#0057b8 !important;">Max</th>
-<th style="background-color:#0057b8 !important;">Estatus</th>
+<th style="background-color:#ef7980 !important;">Clave</th>
+<th style="background-color:#ef7980 !important;">Cod interno</th>
+<th style="background-color:#ef7980 !important;">Cod levic</th>
+<th style="background-color:#ef7980 !important;">Nombre</th>
+<th style="background-color:#ef7980 !important;">PV</th>
+<th style="background-color:#ef7980 !important;">Servicio</th>
+<th style="background-color:#ef7980 !important;">Tipo</th>
+<th style="background-color:#ef7980 !important;">Proveedor 1</th>
+<th style="background-color:#ef7980 !important;">Proveedor 2</th>
+<th style="background-color:#ef7980 !important;">Sucursal</th>
+<th style="background-color:#ef7980 !important;">Ultimo movimiento registrado</th>
+<th style="background-color:#ef7980 !important;">Stock</th>
+<th style="background-color:#ef7980 !important;">Min</th>
+<th style="background-color:#ef7980 !important;">Max</th>
+<th style="background-color:#ef7980 !important;">Estatus</th>
 
     <th>Editar</th> 
     <th>Eliminar</th> 
