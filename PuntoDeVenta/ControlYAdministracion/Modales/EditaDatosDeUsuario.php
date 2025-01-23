@@ -149,7 +149,7 @@ while ($r=$query->fetch_object()){
 <button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
                           
 </form>
-<script src="js/ActualizacionDeTiposDeUsuarios.js"></script>
+<script src="js/ActualizaDatosUsuario.js"></script>
 
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>
