@@ -24,7 +24,7 @@ $('document').ready(function ($) {
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Verifique el NSS");
 
 
-    $("#ActualizaServicios").validate({
+    $("#ActualizaDatosDelUsuario").validate({
         rules: {
 
 
@@ -64,7 +64,7 @@ $('document').ready(function ($) {
         $.ajax({
             type: 'POST',
             url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ActualizaDatosDeUsuario.php",
-            data: $('#ActualizaServicios').serialize(),
+            data: $('#ActualizaDatosDelUsuario').serialize(),
             cache: false,
             beforeSend: function () {
                 $("#success").fadeOut();
