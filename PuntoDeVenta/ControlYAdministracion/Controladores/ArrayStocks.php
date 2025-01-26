@@ -49,7 +49,7 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item ver-coincidencias' data-id='" $fila['ID_Prod_POS']. "'>
+                    <a class='dropdown-item ver-coincidencias' data-id=' . $fila[Folio_Ticket] . '>
                         Ver coincidencias
                     </a>
                 </li>
