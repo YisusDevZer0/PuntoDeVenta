@@ -286,7 +286,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   }
 ],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
 </script>
@@ -308,7 +308,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 <th style="background-color:#ef7980 !important;">Max</th>
 <th style="background-color:#ef7980 !important;">Estatus</th>
 
-    <th>Editar</th> 
+    <th>Opciones</th> 
     <th>Eliminar</th> 
 </thead>
 
