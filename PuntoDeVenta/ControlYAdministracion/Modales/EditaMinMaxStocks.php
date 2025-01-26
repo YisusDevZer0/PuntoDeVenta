@@ -35,6 +35,7 @@ while ($r=$query->fetch_object()){
     </div>
     </div>
     
+   
     <div class="form-group">
     <label for="exampleFormControlInput1">Maximo<span class="text-danger">*</span></label>
      <div class="input-group mb-3">
