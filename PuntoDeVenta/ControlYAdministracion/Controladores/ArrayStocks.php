@@ -67,7 +67,7 @@ while ($fila = $result->fetch_assoc()) {
         </li>
     </ul>
 </div>
-";
+",
         "Eliminar" => "<a href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Stocks?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
        
     ];
