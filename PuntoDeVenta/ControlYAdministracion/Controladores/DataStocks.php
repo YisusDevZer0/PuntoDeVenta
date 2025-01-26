@@ -229,14 +229,14 @@ tabla = $('#Clientes').DataTable({
         "render": function (data, type, row) {
             if ( row.Existencias_R < row.Min_Existencia) {
 
-            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;">Resurtir</button>';
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;">Solicitar</button>';
         }
         else if ( row.Existencias_R > row.Max_Existencia) {
-return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
+return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">SobreStock</button>'
         }
             else {
  
-    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Completo</button>';
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Stock Completo</button>';
  
 }
         }
