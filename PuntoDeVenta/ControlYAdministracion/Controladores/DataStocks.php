@@ -229,7 +229,7 @@ tabla = $('#Clientes').DataTable({
         "render": function (data, type, row) {
             if ( row.Existencias_R < row.Min_Existencia) {
 
-            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important, color:white;">Resurtir</button>';
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;">Resurtir</button>';
         }
         else if ( row.Existencias_R > row.Max_Existencia) {
 return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">Sobregirado</button>'
