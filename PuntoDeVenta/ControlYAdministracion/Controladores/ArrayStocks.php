@@ -48,13 +48,13 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item ver-coincidencias' data-id=' . $fila[Folio_Prod_Stock] . '>
-                        Ver coincidencias
+                    <a class='dropdown-item btn-desglose' data-id=' . $fila[Folio_Prod_Stock] . '>
+                        Editar minimo y maximo
                     </a>
                 </li>
                 <li>
                     <a class='dropdown-item editar-producto' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "'>
-                        Editar producto
+                        Editar datos del producto
                     </a>
                 </li>
                 <li>
@@ -64,9 +64,7 @@ while ($fila = $result->fetch_assoc()) {
                 </li>
             </ul>
         </div>",
-        'Eliminar' => "<a href='#' data-id='" . base64_encode($fila['Folio_Prod_Stock']) . "' class='btn btn-info btn-sm eliminar-ticket'>
-                        <i class='fas fa-capsules'></i>
-                    </a>",
+        
     ];
 }
 

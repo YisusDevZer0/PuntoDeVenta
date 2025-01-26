@@ -243,7 +243,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
  
     },
        { mData: 'Editar' },
-       { mData: 'Eliminar' },
+     
       
   
       ],
@@ -309,7 +309,6 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 <th style="background-color:#ef7980 !important;">Estatus</th>
 
     <th>Opciones</th> 
-    <th>Eliminar</th> 
 </thead>
 
 </div>
