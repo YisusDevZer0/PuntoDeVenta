@@ -56,7 +56,7 @@ include_once "Controladores/ControladorUsuario.php";
 <script>
   $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
-    $(document).on("click", ".btn-Reimpresion", function() {
+    $(document).on("click", ".btn-minimomaximo", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
@@ -70,7 +70,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
-    $(document).on("click", ".btn-desglose", function() {
+    $(document).on("click", ".btn-editproducto", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         
@@ -87,6 +87,21 @@ include_once "Controladores/ControladorUsuario.php";
 
 
    
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+    $(document).on("click", ".btn-eliminarprod", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desglose de ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
 
 });
 

@@ -48,17 +48,17 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item btn-desglose' data-id=' . $fila[Folio_Prod_Stock] . '>
+                    <a class='dropdown-item btn-minimomaximo' data-id=' . $fila[Folio_Prod_Stock] . '>
                         Editar minimo y maximo
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item editar-producto' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "'>
+                    <a class='dropdown-item btn-editproducto' data-id=' . $fila[Folio_Prod_Stock] . '>
                         Editar datos del producto
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item eliminar-producto' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este producto?\");'>
+                    <a class='dropdown-item eliminarprod' data-id=' . $fila[Folio_Prod_Stock] . '>
                         Eliminar producto
                     </a>
                 </li>
