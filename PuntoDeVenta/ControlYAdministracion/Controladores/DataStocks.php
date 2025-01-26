@@ -217,7 +217,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Nom_Serv' },
        { mData: 'Tipo' },
        { mData: 'Proveedor1' },
-       { mData: 'Proveedor2' },
+   
        { mData: 'Sucursal' },
     
        { mData: 'Existencias_R' },
