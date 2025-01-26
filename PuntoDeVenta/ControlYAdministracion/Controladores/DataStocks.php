@@ -211,8 +211,7 @@ tabla = $('#Clientes').DataTable({
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayStocks.php",
  "aoColumns": [
     { mData: 'Cod_Barra' },
-       { mData: 'Clave_adicional' },
-       { mData: 'Clave_Levic' },
+      
        { mData: 'Nombre_Prod' },
        { mData: 'Precio_Venta' },
        { mData: 'Nom_Serv' },
@@ -220,7 +219,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Proveedor1' },
        { mData: 'Proveedor2' },
        { mData: 'Sucursal' },
-       { mData: 'UltimoMovimiento' },
+    
        { mData: 'Existencias_R' },
        { mData: 'Min_Existencia' },
        { mData: 'Max_Existencia' },
@@ -295,9 +294,8 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th style="background-color:#ef7980 !important;">Clave</th>
-<th style="background-color:#ef7980 !important;">Cod interno</th>
-<th style="background-color:#ef7980 !important;">Cod levic</th>
+<th style="background-color:#ef7980 !important;">Codigo de barras</th>
+
 <th style="background-color:#ef7980 !important;">Nombre</th>
 <th style="background-color:#ef7980 !important;">PV</th>
 <th style="background-color:#ef7980 !important;">Servicio</th>
@@ -305,8 +303,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 <th style="background-color:#ef7980 !important;">Proveedor 1</th>
 <th style="background-color:#ef7980 !important;">Proveedor 2</th>
 <th style="background-color:#ef7980 !important;">Sucursal</th>
-<th style="background-color:#ef7980 !important;">Ultimo movimiento registrado</th>
-<th style="background-color:#ef7980 !important;">Stock</th>
+<th style="background-color:#ef7980 !important;">Existencias</th>
 <th style="background-color:#ef7980 !important;">Min</th>
 <th style="background-color:#ef7980 !important;">Max</th>
 <th style="background-color:#ef7980 !important;">Estatus</th>
