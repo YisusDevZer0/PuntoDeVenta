@@ -49,7 +49,7 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item ver-coincidencias' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "'>
+                    <a class='dropdown-item ver-coincidencias' data-id='" $fila['ID_Prod_POS']. "'>
                         Ver coincidencias
                     </a>
                 </li>
