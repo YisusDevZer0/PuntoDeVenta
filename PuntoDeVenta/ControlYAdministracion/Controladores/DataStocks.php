@@ -301,7 +301,7 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 <th style="background-color:#ef7980 !important;">Servicio</th>
 <th style="background-color:#ef7980 !important;">Tipo</th>
 <th style="background-color:#ef7980 !important;">Proveedor 1</th>
-<th style="background-color:#ef7980 !important;">Proveedor 2</th>
+
 <th style="background-color:#ef7980 !important;">Sucursal</th>
 <th style="background-color:#ef7980 !important;">Existencias</th>
 <th style="background-color:#ef7980 !important;">Min</th>
