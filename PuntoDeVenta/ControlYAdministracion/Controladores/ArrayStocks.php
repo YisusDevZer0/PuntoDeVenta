@@ -45,7 +45,7 @@ while ($fila = $result->fetch_assoc()) {
         'Max_Existencia' => $fila['Max_Existencia'],
         'Editar' => "<div class='btn-group'>
             <button type='button' class='btn btn-info btn-sm dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
-                <i class='fas fa-capsules'></i> Opciones
+                Selecciona por favor<i class='fa-solid fa-chevron-down'></i>
             </button>
             <ul class='dropdown-menu'>
                 <li>
