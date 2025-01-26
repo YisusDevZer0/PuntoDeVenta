@@ -28,12 +28,11 @@ $result = $stmt->get_result();
 $data = [];
 
 // Procesar resultados
+// Procesar resultados
 while ($fila = $result->fetch_assoc()) {
     // Construir el array de datos
     $data[] = [
         'Cod_Barra' => $fila['Cod_Barra'],
-        // 'Clave_adicional' => $fila['Clave_adicional'],
-        // 'Clave_Levic' => $fila['Clave_Levic'],
         'Nombre_Prod' => $fila['Nombre_Prod'],
         'Precio_Venta' => $fila['Precio_Venta'],
         'Nom_Serv' => $fila['Nom_Serv'],
@@ -41,7 +40,6 @@ while ($fila = $result->fetch_assoc()) {
         'Proveedor1' => $fila['Proveedor1'],
         'Proveedor2' => $fila['Proveedor2'],
         'Sucursal' => $fila['Nombre_Sucursal'],
-        // 'UltimoMovimiento' => $fila['AgregadoEl'],
         'Existencias_R' => $fila['Existencias_R'],
         'Min_Existencia' => $fila['Min_Existencia'],
         'Max_Existencia' => $fila['Max_Existencia'],
@@ -51,23 +49,25 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item' href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CoincidenciaSucursales?Disid=" . base64_encode($fila['ID_Prod_POS']) . "'>
+                    <a class='dropdown-item ver-coincidencias' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "'>
                         Ver coincidencias
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item' href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EditarProducto?Disid=" . base64_encode($fila['ID_Prod_POS']) . "'>
+                    <a class='dropdown-item editar-producto' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "'>
                         Editar producto
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item' href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EliminarProducto?Disid=" . base64_encode($fila['ID_Prod_POS']) . "' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este producto?\");'>
+                    <a class='dropdown-item eliminar-producto' href='#' data-id='" . base64_encode($fila['ID_Prod_POS']) . "' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este producto?\");'>
                         Eliminar producto
                     </a>
                 </li>
             </ul>
         </div>",
-        'Eliminar' => "<a href='https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Stocks?idProd=" . base64_encode($fila['Folio_Prod_Stock']) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        'Eliminar' => "<a href='#' data-id='" . base64_encode($fila['Folio_Prod_Stock']) . "' class='btn btn-info btn-sm eliminar-ticket'>
+                        <i class='fas fa-capsules'></i>
+                    </a>",
     ];
 }
 
