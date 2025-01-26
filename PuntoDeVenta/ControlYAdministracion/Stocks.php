@@ -60,7 +60,7 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaMinMaxStocks.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
@@ -76,7 +76,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProducto.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
@@ -94,7 +94,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
