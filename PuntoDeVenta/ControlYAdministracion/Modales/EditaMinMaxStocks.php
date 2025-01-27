@@ -53,12 +53,12 @@ while ($r=$query->fetch_object()){
     </div>
    
     <input type="text" class="form-control " hidden  readonly id="actusuariocserv" name="ActUsuarioCServ" readonly value="<?php echo $row['Nombre_Apellidos']?>">
-<input type="text" class="form-control "  hidden  readonly id="actsistemacserv" name="ActSistemaCServ" readonly value="Administrador">
-<input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Marca_ID; ?>">
+
+<input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Folio_Prod_Stock; ?>">
 <button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
                           
 </form>
-<script src="js/ActualizacionDeMarcas.js"></script>
+<script src="js/ActualizalosMinMax.js"></script>
 
 <?php else:?>
   <p class="alert alert-danger">404 No se encuentra</p>
