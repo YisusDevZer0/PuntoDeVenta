@@ -1,40 +1,42 @@
-
 <?php
-include "../Controladores/db_connect.php"; // Conexión a la base de datos
+include "../Controladores/db_connect.php";
+include "../Controladores/ControladorUsuario.php";
 
-// Validación y limpieza de datos
+// Depuración: imprime los datos recibidos para verificar qué se está enviando desde el formulario.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo json_encode($_POST);
+    exit;
+}
+
+// Obtener y validar datos del formulario
 $Folio_Prod_Stock = isset($_POST['Id_Serv']) ? intval($_POST['Id_Serv']) : 0;
-$Max_Existencia = isset($_POST['ActNomServ']) ? intval($_POST['ActNomServ']) : 0;
-$Min_Existencia = isset($_POST['ActUsuarioCServ']) ? intval($_POST['ActUsuarioCServ']) : 0;
+$Max_Existencia = isset($_POST['ActNomServ']) ? trim($_POST['ActNomServ']) : '';
+$Min_Existencia = isset($_POST['ActMinServ']) ? trim($_POST['ActMinServ']) : '';
 $ActualizadoPor = isset($_POST['ActUsuarioCServ']) ? trim($_POST['ActUsuarioCServ']) : '';
-$Sistema = isset($_POST['ActSistemaCServ']) ? trim($_POST['ActSistemaCServ']) : '';
 
 // Verificar si todos los datos requeridos están presentes
-if ($Folio_Prod_Stock && $Max_Existencia && $Min_Existencia && $ActualizadoPor && $Sistema) {
-    // Consulta preparada para actualizar el registro
-    $sql = "UPDATE `Stock_POS` SET `Max_Existencia`=?, `Min_Existencia`=?, `ActualizadoPor`=?, `ID_H_O_D`=? WHERE `Folio_Prod_Stock`=?";
-    $stmt = $conn->prepare($sql);
-
-    if ($stmt) {
-        // Enlazar parámetros
-        $stmt->bind_param("iissi", $Max_Existencia, $Min_Existencia, $ActualizadoPor, $Sistema, $Folio_Prod_Stock);
-        
-        // Ejecutar consulta
-        if ($stmt->execute()) {
-            echo json_encode(array("statusCode" => 200, "message" => "Actualización exitosa"));
-        } else {
-            echo json_encode(array("statusCode" => 201, "error" => "Error al ejecutar la consulta: " . $stmt->error));
-        }
-        
-        // Cerrar la declaración
-        $stmt->close();
-    } else {
-        echo json_encode(array("statusCode" => 201, "error" => "Error en la preparación de la consulta: " . $conn->error));
-    }
-} else {
+if (empty($Folio_Prod_Stock) || empty($Max_Existencia) || empty($Min_Existencia) || empty($ActualizadoPor)) {
     echo json_encode(array("statusCode" => 201, "error" => "Faltan datos requeridos."));
+    exit;
+}
+
+// Preparar la consulta para actualizar la base de datos de manera segura
+$sql = "UPDATE `Stock_POS` SET `Max_Existencia`=?, `Min_Existencia`=?, `ActualizadoPor`=? WHERE `Folio_Prod_Stock`=?";
+$stmt = $conn->prepare($sql);
+
+if ($stmt) {
+    $stmt->bind_param("iisi", $Max_Existencia, $Min_Existencia, $ActualizadoPor, $Folio_Prod_Stock);
+
+    if ($stmt->execute()) {
+        echo json_encode(array("statusCode" => 200, "message" => "Actualización exitosa."));
+    } else {
+        echo json_encode(array("statusCode" => 201, "error" => "Error al ejecutar la consulta: " . $conn->error));
+    }
+    $stmt->close();
+} else {
+    echo json_encode(array("statusCode" => 201, "error" => "Error en la preparación de la consulta: " . $conn->error));
 }
 
 // Cerrar conexión
-mysqli_close($conn);
+$conn->close();
 ?>
