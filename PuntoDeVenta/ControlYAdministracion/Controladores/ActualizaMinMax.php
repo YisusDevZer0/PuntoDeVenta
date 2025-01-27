@@ -2,7 +2,11 @@
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
-
+// Depuración: imprime los datos recibidos para verificar qué se está enviando desde el formulario.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo json_encode($_POST);
+    exit;
+}
 
 // Obtener y validar datos del formulario
 $Folio_Prod_Stock = isset($_POST['Id_Serv']) ? intval($_POST['Id_Serv']) : 0;
