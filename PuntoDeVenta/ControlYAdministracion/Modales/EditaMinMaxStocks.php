@@ -1,5 +1,5 @@
 <?php
-include "../Controladores/db_connect.php.php";
+include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
 $user_id=null;
