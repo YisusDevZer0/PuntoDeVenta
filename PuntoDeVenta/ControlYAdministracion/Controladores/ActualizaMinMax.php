@@ -17,7 +17,7 @@ $ActualizadoPor = isset($_POST['ActUsuarioCServ']) ? trim($_POST['ActUsuarioCSer
 // Verificar si todos los datos requeridos están presentes
 if (empty($Folio_Prod_Stock) || empty($Max_Existencia) || empty($Min_Existencia) || empty($ActualizadoPor)) {
     echo json_encode(array("statusCode" => 201, "error" => "Faltan datos requeridos."));
-    exit;
+    return;
 }
 
 // Preparar la consulta para actualizar la base de datos de manera segura
