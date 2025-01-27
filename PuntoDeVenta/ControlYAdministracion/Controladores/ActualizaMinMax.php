@@ -12,7 +12,7 @@ $Sistema = isset($_POST['ActSistemaCServ']) ? trim($_POST['ActSistemaCServ']) : 
 // Verificar si todos los datos requeridos están presentes
 if ($Folio_Prod_Stock && $Max_Existencia && $Min_Existencia && $ActualizadoPor && $Sistema) {
     // Consulta preparada para actualizar el registro
-    $sql = "UPDATE `Stock_POS` SET `Max_Existencia`=?, `Min_Existencia`=?, `ActualizadoPor`=?, `Sistema`=? WHERE `Folio_Prod_Stock`=?";
+    $sql = "UPDATE `Stock_POS` SET `Max_Existencia`=?, `Min_Existencia`=?, `ActualizadoPor`=?, `ID_H_O_D`=? WHERE `Folio_Prod_Stock`=?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt) {
