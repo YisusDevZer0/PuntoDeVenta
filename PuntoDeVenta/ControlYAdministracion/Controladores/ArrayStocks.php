@@ -48,17 +48,17 @@ while ($fila = $result->fetch_assoc()) {
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item btn-minimomaximo' data-id=' . $fila[Folio_Prod_Stock] . '>
+                    <a class='dropdown-item btn-minimomaximo' data-id='$fila[Folio_Prod_Stock] '>
                         Editar minimo y maximo
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item btn-editproducto' data-id=' . $fila[Folio_Prod_Stock] . '>
+                    <a class='dropdown-item btn-editproducto' data-id='$fila[Folio_Prod_Stock] '>
                         Editar datos del producto
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item eliminarprod' data-id=' . $fila[Folio_Prod_Stock] . '>
+                    <a class='dropdown-item eliminarprod' data-id='$fila[Folio_Prod_Stock]'>
                         Eliminar producto
                     </a>
                 </li>
