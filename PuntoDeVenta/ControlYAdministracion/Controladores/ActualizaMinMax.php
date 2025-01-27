@@ -14,11 +14,6 @@ $Max_Existencia = isset($_POST['ActNomServ']) ? trim($_POST['ActNomServ']) : '';
 $Min_Existencia = isset($_POST['ActMinServ']) ? trim($_POST['ActMinServ']) : '';
 $ActualizadoPor = isset($_POST['ActUsuarioCServ']) ? trim($_POST['ActUsuarioCServ']) : '';
 
-// Verificar si todos los datos requeridos están presentes
-if (empty($Folio_Prod_Stock) || empty($Max_Existencia) || empty($Min_Existencia) || empty($ActualizadoPor)) {
-    echo json_encode(array("statusCode" => 201, "error" => "Faltan datos requeridos."));
-   
-}
 
 // Preparar la consulta para actualizar la base de datos de manera segura
 $sql = "UPDATE `Stock_POS` SET `Max_Existencia`=?, `Min_Existencia`=?, `ActualizadoPor`=? WHERE `Folio_Prod_Stock`=?";
