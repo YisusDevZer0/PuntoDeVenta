@@ -39,7 +39,7 @@ $Especialistas = $result->fetch_object();
     <label>Existencia Actual<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
         <input type="number" class="form-control" id="existencia_actual" 
-               value="100" readonly>
+        value="<?php echo $Especialistas->Existencias_R; ?>"readonly>
     </div>
 </div>
 
