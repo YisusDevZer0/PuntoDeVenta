@@ -54,7 +54,7 @@ $Especialistas = $result->fetch_object();
 <div class="form-group">
     <label>Resultado del Ajuste<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-        <input type="number" class="form-control" id="resultado_ajuste" readonly>
+        <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" readonly>
     </div>
 </div>
 
