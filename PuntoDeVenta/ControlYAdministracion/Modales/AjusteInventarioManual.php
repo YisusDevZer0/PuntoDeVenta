@@ -12,12 +12,11 @@ $id = isset($_POST["id"]) ? intval($_POST["id"]) : 0;
 
 // Consulta para obtener los datos de Existencias_R
 $sql1 = "SELECT 
-    Existencias_R.Folio_Prod_Stock, Existencias_R.Cod_Barra, Existencias_R.Existencia_Actual, 
-    Existencias_R.Ajuste, Existencias_R.Resultado_Ajuste, Existencias_R.Justificacion, 
-    Sucursales.Nombre_Sucursal 
-FROM Existencias_R
-INNER JOIN Sucursales ON Existencias_R.Fk_sucursal = Sucursales.ID_Sucursal
-WHERE Existencias_R.Folio_Prod_Stock = ?";
+    Stock_POS.Folio_Prod_Stock, Stock_POS.Cod_Barra,Stock_POS.Existencias_R, Stock_POS.Max_Existencia, 
+    Stock_POS.Min_Existencia, Sucursales.Nombre_Sucursal 
+FROM Stock_POS
+INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
+WHERE Stock_POS.Folio_Prod_Stock = ?";
 $stmt = $conn->prepare($sql1);
 $stmt->bind_param("i", $id);
 $stmt->execute();
