@@ -85,6 +85,22 @@ include_once "Controladores/ControladorUsuario.php";
         $('#ModalEdDele').modal('show');
     });
 
+ // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+ $(document).on("click", ".btn-AjustInvetario", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AjusteInventarioManual.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desglose de ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
+
 
    
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu

@@ -57,6 +57,11 @@ while ($fila = $result->fetch_assoc()) {
                         Editar datos del producto
                     </a>
                 </li>
+                 <li>
+                    <a class='dropdown-item btn-AjustInvetario' data-id='$fila[Folio_Prod_Stock] '>
+                        Ajuste de inventario
+                    </a>
+                </li>
                 <li>
                     <a class='dropdown-item eliminarprod' data-id='$fila[Folio_Prod_Stock]'>
                         Eliminar producto
