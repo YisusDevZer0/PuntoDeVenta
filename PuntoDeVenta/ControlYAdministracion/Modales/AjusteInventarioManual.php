@@ -38,7 +38,7 @@ $Especialistas = $result->fetch_object();
         <label>Existencia Actual<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" id="existencia_actual" name="existencia_actual" 
-                   value="<?php echo $Especialistas->Existencia_Actual; ?>" maxlength="60" readonly>
+                   value="<?php echo $Especialistas->Existencias_R; ?>" maxlength="60" readonly>
         </div>
     </div>
 
@@ -46,7 +46,7 @@ $Especialistas = $result->fetch_object();
         <label>Valor de Ajuste<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" id="ajuste" name="ajuste" 
-                   value="<?php echo $Especialistas->Ajuste; ?>" maxlength="60">
+                    maxlength="60">
         </div>
     </div>
 
@@ -54,7 +54,7 @@ $Especialistas = $result->fetch_object();
         <label>Resultado del Ajuste<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <input type="text" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
-                   value="<?php echo $Especialistas->Resultado_Ajuste; ?>" maxlength="60" readonly>
+                   value="" maxlength="60" readonly>
         </div>
     </div>
 
@@ -62,7 +62,7 @@ $Especialistas = $result->fetch_object();
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <textarea class="form-control" id="justificacion" name="justificacion" 
-                      maxlength="255"><?php echo $Especialistas->Justificacion; ?></textarea>
+                      maxlength="255"></textarea>
         </div>
     </div>
 
