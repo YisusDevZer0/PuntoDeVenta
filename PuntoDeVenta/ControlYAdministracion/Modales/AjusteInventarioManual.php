@@ -58,6 +58,7 @@ $Especialistas = $result->fetch_object();
                    value="" maxlength="60" readonly>
         </div>
     </div>
+    </div>
     <div class="form-group">
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
