@@ -69,37 +69,21 @@ $Especialistas = $result->fetch_object();
     <input type="hidden" name="ActUsuarioCServ" id="ActUsuarioCServ" value="<?php echo $row['Nombre_Apellidos']?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("Script cargado y DOM listo."); // Verifica si el DOM está cargado correctamente
-
-    // Obtener referencias a los elementos
-    const existenciaActualInput = document.getElementById('existencia_actual');
-    const ajusteInput = document.getElementById('ajuste');
-    const resultadoAjusteInput = document.getElementById('resultado_ajuste');
-
-    // Verificar que los elementos existan
-    if (!existenciaActualInput || !ajusteInput || !resultadoAjusteInput) {
-        console.error("No se encontraron uno o más elementos del formulario.");
-        return;
-    }
-
-    console.log("Todos los elementos encontrados.");
-
-    // Función para calcular el ajuste
-    const calcularAjuste = () => {
-        const existenciaActual = parseFloat(existenciaActualInput.value) || 0;
-        const ajuste = parseFloat(ajusteInput.value) || 0;
+    // Definir la función que calcula el ajuste
+    function calcularAjuste() {
+        // Obtener referencias a los elementos
+        const existenciaActual = parseFloat(document.getElementById('existencia_actual').value) || 0;
+        const ajuste = parseFloat(document.getElementById('ajuste').value) || 0;
         const resultado = existenciaActual + ajuste;
 
-        resultadoAjusteInput.value = resultado.toFixed(2);
-    };
+        // Mostrar el resultado en el campo correspondiente
+        document.getElementById('resultado_ajuste').value = resultado.toFixed(2);
+    }
 
-    // Evento para escuchar los cambios en el campo de ajuste
-    ajusteInput.addEventListener('input', calcularAjuste);
-
-    console.log("Evento de ajuste vinculado correctamente.");
-});
+    // Asignar la función al evento 'input' del campo de ajuste
+    document.getElementById('ajuste').addEventListener('input', calcularAjuste);
 </script>
 
 
