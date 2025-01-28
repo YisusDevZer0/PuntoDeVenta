@@ -79,7 +79,7 @@ $Especialistas = $result->fetch_object();
         const resultado = existenciaActual + ajuste;
 
         // Mostrar el resultado en el campo correspondiente
-        document.getElementById('resultado_ajuste').value = resultado.toFixed(2);
+        document.getElementById('resultado_ajuste').value = resultado;
     }
 
     // Asignar la función al evento 'input' del campo de ajuste
