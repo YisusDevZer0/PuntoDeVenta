@@ -38,26 +38,26 @@ $Especialistas = $result->fetch_object();
     <div class="form-group">
     <label>Existencia Actual<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-        <input type="number" class="form-control" id="existencia_actual" name="existencia_actual" 
-               value="<?php echo $Especialistas->Existencias_R; ?>" maxlength="60" readonly>
+        <input type="number" class="form-control" id="existencia_actual" 
+               value="100" readonly>
     </div>
 </div>
 
 <div class="form-group">
     <label>Valor de Ajuste<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-        <input type="number" class="form-control" id="ajuste" name="ajuste" 
-               maxlength="60" step="any" placeholder="Ej. +50 o -30">
+        <input type="number" class="form-control" id="ajuste" 
+               placeholder="Ej. +50 o -30">
     </div>
 </div>
 
 <div class="form-group">
     <label>Resultado del Ajuste<span class="text-danger">*</span></label>
     <div class="input-group mb-3">
-        <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
-               value="" maxlength="60" readonly>
+        <input type="number" class="form-control" id="resultado_ajuste" readonly>
     </div>
 </div>
+
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <textarea class="form-control" id="justificacion" name="justificacion" 
@@ -71,24 +71,34 @@ $Especialistas = $result->fetch_object();
 </form>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Obtener referencias a los elementos del DOM
-    const existenciaActual = document.getElementById('existencia_actual');
-    const inputAjuste = document.getElementById('ajuste');
-    const resultadoAjuste = document.getElementById('resultado_ajuste');
+    console.log("Script cargado y DOM listo."); // Verifica si el DOM está cargado correctamente
 
-    // Función para calcular el resultado del ajuste
+    // Obtener referencias a los elementos
+    const existenciaActualInput = document.getElementById('existencia_actual');
+    const ajusteInput = document.getElementById('ajuste');
+    const resultadoAjusteInput = document.getElementById('resultado_ajuste');
+
+    // Verificar que los elementos existan
+    if (!existenciaActualInput || !ajusteInput || !resultadoAjusteInput) {
+        console.error("No se encontraron uno o más elementos del formulario.");
+        return;
+    }
+
+    console.log("Todos los elementos encontrados.");
+
+    // Función para calcular el ajuste
     const calcularAjuste = () => {
-        // Convertir los valores en números
-        const existencia = parseFloat(existenciaActual.value) || 0; // Valor inicial
-        const ajuste = parseFloat(inputAjuste.value) || 0;          // Valor del ajuste
-        const resultado = existencia + ajuste;                     // Sumar o restar
+        const existenciaActual = parseFloat(existenciaActualInput.value) || 0;
+        const ajuste = parseFloat(ajusteInput.value) || 0;
+        const resultado = existenciaActual + ajuste;
 
-        // Mostrar el resultado en el campo correspondiente
-        resultadoAjuste.value = resultado.toFixed(2);
+        resultadoAjusteInput.value = resultado.toFixed(2);
     };
 
-    // Escuchar los cambios en el input de ajuste
-    inputAjuste.addEventListener('input', calcularAjuste);
+    // Evento para escuchar los cambios en el campo de ajuste
+    ajusteInput.addEventListener('input', calcularAjuste);
+
+    console.log("Evento de ajuste vinculado correctamente.");
 });
 </script>
 
