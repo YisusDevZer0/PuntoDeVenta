@@ -71,17 +71,16 @@ $Especialistas = $result->fetch_object();
 </form>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("El DOM ha sido cargado correctamente."); // Verificar que el evento se ejecuta
+    console.log("El DOM ha sido cargado correctamente."); 
 
     // Obtener el valor inicial de la existencia desde PHP
-    const existenciaInicial = parseFloat(<?php echo $Especialistas->Existencias_R; ?> || 0);
-    console.log("Existencia inicial:", existenciaInicial); // Verificar el valor inicial
+    const existenciaInicial = parseFloat("<?php echo $Especialistas->Existencias_R ?? 0; ?>");
+    console.log("Existencia inicial:", existenciaInicial);
 
     // Obtener referencias a los elementos del DOM
     const inputAjuste = document.getElementById('ajuste');
     const resultadoAjuste = document.getElementById('resultado_ajuste');
 
-    // Verificar que los elementos existen
     if (!inputAjuste || !resultadoAjuste) {
         console.error("No se encontraron los elementos del DOM.");
         return;
@@ -91,27 +90,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para calcular el ajuste
     function calcularAjuste() {
-        console.log("Calculando ajuste..."); // Verificar que la función se ejecuta
+        console.log("Calculando ajuste...");
 
-        // Obtener el valor del ajuste (puede ser positivo o negativo)
-        const ajuste = parseFloat(inputAjuste.value) || 0;
-        console.log("Valor de ajuste:", ajuste); // Verificar el valor del ajuste
+        const ajuste = parseFloat(inputAjuste.value) || 0; // Obtener ajuste
+        console.log("Valor de ajuste:", ajuste);
 
-        // Calcular el resultado sumando la existencia inicial con el ajuste
-        const resultado = existenciaInicial + ajuste;
-        console.log("Resultado del cálculo:", resultado); // Verificar el resultado
+        const resultado = existenciaInicial + ajuste; // Calcular resultado
+        console.log("Resultado del cálculo:", resultado);
 
-        // Mostrar el resultado en el campo correspondiente
         resultadoAjuste.value = resultado.toFixed(2); // Mostrar con 2 decimales
     }
 
     // Escuchar el evento 'input' en el campo de ajuste
     inputAjuste.addEventListener('input', calcularAjuste);
 
-    // Calcular el ajuste inicialmente (por si hay algún valor precargado)
-    calcularAjuste();
+    calcularAjuste(); // Calcular inicialmente (por si hay valor precargado)
 });
 </script>
+
+
 <script src="js/ActualizalosMinMax.js"></script>
 
 <?php else: ?>
