@@ -72,19 +72,29 @@ $Especialistas = $result->fetch_object();
 </form>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Obtener el valor inicial de la existencia desde PHP
     const existenciaInicial = parseFloat(<?php echo $Especialistas->Existencias_R; ?> || 0);
+
+    // Obtener referencias a los elementos del DOM
     const inputAjuste = document.getElementById('ajuste');
     const resultadoAjuste = document.getElementById('resultado_ajuste');
 
+    // Función para calcular el ajuste
     function calcularAjuste() {
+        // Obtener el valor del ajuste (puede ser positivo o negativo)
         const ajuste = parseFloat(inputAjuste.value) || 0;
+
+        // Calcular el resultado sumando la existencia inicial con el ajuste
         const resultado = existenciaInicial + ajuste;
+
+        // Mostrar el resultado en el campo correspondiente
         resultadoAjuste.value = resultado.toFixed(2); // Mostrar con 2 decimales
     }
 
+    // Escuchar el evento 'input' en el campo de ajuste
     inputAjuste.addEventListener('input', calcularAjuste);
-    
-    // Calcular inicialmente por si hay algún valor precargado
+
+    // Calcular el ajuste inicialmente (por si hay algún valor precargado)
     calcularAjuste();
 });
 </script>
