@@ -106,7 +106,7 @@ $('document').ready(function () {
             data: data,
             success: function (response) {
                 console.log("Ticket generado exitosamente:", response);
-                location.reload();
+                
             },
             error: function (error) {
                 console.error("Error al generar el ticket:", error);
