@@ -36,28 +36,28 @@ $Especialistas = $result->fetch_object();
 
   
     <div class="form-group">
-        <label>Existencia Actual<span class="text-danger">*</span></label>
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" id="existencia_actual" name="existencia_actual" 
-                   value="<?php echo $Especialistas->Existencias_R; ?>" maxlength="60" readonly>
-        </div>
+    <label>Existencia Actual<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+        <input type="number" class="form-control" id="existencia_actual" name="existencia_actual" 
+               value="<?php echo $Especialistas->Existencias_R; ?>" maxlength="60" readonly>
     </div>
+</div>
 
-    <div class="form-group">
-        <label>Valor de Ajuste<span class="text-danger">*</span></label>
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" id="ajuste" name="ajuste" 
-                   maxlength="60" step="any" placeholder="Ej. +50 o -30">
-        </div>
+<div class="form-group">
+    <label>Valor de Ajuste<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+        <input type="number" class="form-control" id="ajuste" name="ajuste" 
+               maxlength="60" step="any" placeholder="Ej. +50 o -30">
     </div>
+</div>
 
-    <div class="form-group">
-        <label>Resultado del Ajuste<span class="text-danger">*</span></label>
-        <div class="input-group mb-3">
-            <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
-                   value="" maxlength="60" readonly>
-        </div>
+<div class="form-group">
+    <label>Resultado del Ajuste<span class="text-danger">*</span></label>
+    <div class="input-group mb-3">
+        <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
+               value="" maxlength="60" readonly>
     </div>
+</div>
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <textarea class="form-control" id="justificacion" name="justificacion" 
@@ -70,42 +70,25 @@ $Especialistas = $result->fetch_object();
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("El DOM ha sido cargado correctamente."); 
-
-    // Obtener el valor inicial de la existencia desde PHP
-    const existenciaInicial = parseFloat("<?php echo $Especialistas->Existencias_R ?? 0; ?>");
-
-    console.log("Existencia inicial:", existenciaInicial);
-
+document.addEventListener('DOMContentLoaded', function () {
     // Obtener referencias a los elementos del DOM
+    const existenciaActual = document.getElementById('existencia_actual');
     const inputAjuste = document.getElementById('ajuste');
     const resultadoAjuste = document.getElementById('resultado_ajuste');
 
-    if (!inputAjuste || !resultadoAjuste) {
-        console.error("No se encontraron los elementos del DOM.");
-        return;
-    }
+    // Función para calcular el resultado del ajuste
+    const calcularAjuste = () => {
+        // Convertir los valores en números
+        const existencia = parseFloat(existenciaActual.value) || 0; // Valor inicial
+        const ajuste = parseFloat(inputAjuste.value) || 0;          // Valor del ajuste
+        const resultado = existencia + ajuste;                     // Sumar o restar
 
-    console.log("Elementos del DOM encontrados correctamente.");
+        // Mostrar el resultado en el campo correspondiente
+        resultadoAjuste.value = resultado.toFixed(2);
+    };
 
-    // Función para calcular el ajuste
-    function calcularAjuste() {
-        console.log("Calculando ajuste...");
-
-        const ajuste = parseFloat(inputAjuste.value) || 0; // Obtener ajuste
-        console.log("Valor de ajuste:", ajuste);
-
-        const resultado = existenciaInicial + ajuste; // Calcular resultado
-        console.log("Resultado del cálculo:", resultado);
-
-        resultadoAjuste.value = resultado.toFixed(2); // Mostrar con 2 decimales
-    }
-
-    // Escuchar el evento 'input' en el campo de ajuste
+    // Escuchar los cambios en el input de ajuste
     inputAjuste.addEventListener('input', calcularAjuste);
-
-    calcularAjuste(); // Calcular inicialmente (por si hay valor precargado)
 });
 </script>
 
