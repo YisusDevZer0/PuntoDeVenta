@@ -38,7 +38,7 @@ $Especialistas = $result->fetch_object();
     <div class="form-group">
         <label>Existencia Actual<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="existencia_actual" name="existencia_actual" 
+            <input type="number" class="form-control" id="existencia_actual" name="existencia_actual" 
                    value="<?php echo $Especialistas->Existencias_R; ?>" maxlength="60" readonly>
         </div>
     </div>
@@ -54,7 +54,7 @@ $Especialistas = $result->fetch_object();
     <div class="form-group">
         <label>Resultado del Ajuste<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
+            <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
                    value="" maxlength="60" readonly>
         </div>
     </div>
