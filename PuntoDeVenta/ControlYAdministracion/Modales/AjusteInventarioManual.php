@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Obtener el valor inicial de la existencia desde PHP
     const existenciaInicial = parseFloat("<?php echo $Especialistas->Existencias_R ?? 0; ?>");
+
     console.log("Existencia inicial:", existenciaInicial);
 
     // Obtener referencias a los elementos del DOM
