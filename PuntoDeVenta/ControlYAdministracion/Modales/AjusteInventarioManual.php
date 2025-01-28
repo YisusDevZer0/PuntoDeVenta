@@ -57,7 +57,7 @@ $Especialistas = $result->fetch_object();
             <input type="text" class="form-control" id="resultado_ajuste" name="resultado_ajuste" 
                    value="" maxlength="60" readonly>
         </div>
-    </div>ss="form-group">
+    </div>
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
             <textarea class="form-control" id="justificacion" name="justificacion" 
