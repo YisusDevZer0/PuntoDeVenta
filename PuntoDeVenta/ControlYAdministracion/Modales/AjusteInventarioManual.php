@@ -34,6 +34,7 @@ $Especialistas = $result->fetch_object();
         </div>
     </div>
 
+  
     <div class="form-group">
         <label>Existencia Actual<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
@@ -45,8 +46,8 @@ $Especialistas = $result->fetch_object();
     <div class="form-group">
         <label>Valor de Ajuste<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" id="ajuste" name="ajuste" 
-                    maxlength="60">
+            <input type="number" class="form-control" id="ajuste" name="ajuste" 
+                   maxlength="60" step="any" placeholder="Ej. +50 o -30">
         </div>
     </div>
 
@@ -57,7 +58,6 @@ $Especialistas = $result->fetch_object();
                    value="" maxlength="60" readonly>
         </div>
     </div>
-
     <div class="form-group">
         <label>Justificación<span class="text-danger">*</span></label>
         <div class="input-group mb-3">
@@ -70,6 +70,24 @@ $Especialistas = $result->fetch_object();
     <input type="hidden" name="ActUsuarioCServ" id="ActUsuarioCServ" value="<?php echo $row['Nombre_Apellidos']?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const existenciaInicial = parseFloat(<?php echo $Especialistas->Existencias_R; ?> || 0);
+    const inputAjuste = document.getElementById('ajuste');
+    const resultadoAjuste = document.getElementById('resultado_ajuste');
+
+    function calcularAjuste() {
+        const ajuste = parseFloat(inputAjuste.value) || 0;
+        const resultado = existenciaInicial + ajuste;
+        resultadoAjuste.value = resultado.toFixed(2); // Mostrar con 2 decimales
+    }
+
+    inputAjuste.addEventListener('input', calcularAjuste);
+    
+    // Calcular inicialmente por si hay algún valor precargado
+    calcularAjuste();
+});
+</script>
 
 <script src="js/ActualizalosMinMax.js"></script>
 
