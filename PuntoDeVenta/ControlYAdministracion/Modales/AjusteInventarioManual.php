@@ -26,7 +26,7 @@ $Especialistas = $result->fetch_object();
 ?>
 
 <?php if($Especialistas != null): ?>
-<form action="javascript:void(0)" method="post" id="ActualizaServicios">
+<form action="javascript:void(0)" method="post" id="AjusteInventarioManualForm">
     <div class="form-group">
         <label>Código de barras</label>
         <div class="input-group mb-3">
@@ -87,7 +87,7 @@ $Especialistas = $result->fetch_object();
 </script>
 
 
-<script src="js/ActualizalosMinMax.js"></script>
+<script src="js/AjusteDeInventarioManual.js"></script>
 
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
