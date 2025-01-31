@@ -236,62 +236,65 @@
     ],
     "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
     "aoColumns": [{
-        mData: 'ID_Traspaso_Generado',
-      },
-      {
-        mData: 'Num_Orden',
-      },
-      {
-        mData: 'Num_Factura',
-      },
-      {
-        mData: 'Cod_Barra',
-      },
-      {
-        mData: 'Nombre_Prod',
-      },
-      // {
-      //   mData: 'Fk_SucDestino',
-      // },
-      {
-        mData: 'Precio_Venta',
-      },
-      {
-        mData: 'Precio_Compra',
-      },
-      {
-        mData: 'Cantidad_Enviada',
-      },
-      {
-        mData: 'FechaEntrega',
-      },
-      {
-        mData: 'TraspasoGeneradoPor',
-      },
-      {
-        mData: 'TraspasoRecibidoPor',
-      },
-      {
-        mData: 'Estatus',
-      },
-      {
-        mData: 'AgregadoPor',
-      },
-      {
-        mData: 'AgregadoEl',
-      },
-      // {
-      //   mData: 'ID_H_O_D',
-      // },
-      // {
-      //   mData: 'TotaldePiezas',
-      // },
-      {
-        mData: 'Fecha_recepcion',
-      },
-      {
-        mData: 'SucursalDestino',
-      }
+      mData: 'TraspaNotID',
+},
+{
+    mData: 'Folio_Ticket',
+},
+{
+    mData: 'Cod_Barra',
+},
+{
+    mData: 'Nombre_Prod',
+},
+{
+    mData: 'Cantidad',
+},
+{
+    mData: 'Fk_sucursal',
+},
+{
+    mData: 'Sucursal_Origen',
+},
+{
+    mData: 'Fk_SucursalDestino',
+},
+{
+    mData: 'Sucursal_Destino',
+},
+{
+    mData: 'Total_VentaG',
+},
+{
+    mData: 'Pc',
+},
+{
+    mData: 'TipoDeMov',
+},
+{
+    mData: 'Fecha_venta',
+},
+{
+    mData: 'Estatus',
+},
+{
+    mData: 'Sistema',
+},
+{
+    mData: 'AgregadoPor',
+},
+{
+    mData: 'AgregadoEl',
+},
+{
+    mData: 'ID_H_O_D',
+},
+{
+    mData: 'Fecha_recepcion',
+},
+{
+    mData: 'Sucursal_Destino', // ya está en el campo de la base de datos
+}
 
     ],
     "lengthMenu": [
@@ -341,25 +344,25 @@
   <div class="table-responsive">
     <table id="Clientes" class="order-column">
       <thead>
-        <th style="background-color:#ef7980 !important">ID_Traspaso_Generado</th>
-        <th style="background-color:#ef7980 !important">Num_Orden</th>
-        <th style="background-color:#ef7980 !important">Num_Factura</th>
-        <th style="background-color:#ef7980 !important">Cod_Barra</th>
-        <th style="background-color:#ef7980 !important">Nombre_Prod</th>
+      <th style="background-color:#ef7980 !important">TraspaNotID</th>
+<th style="background-color:#ef7980 !important">Folio_Ticket</th>
+<th style="background-color:#ef7980 !important">Cod_Barra</th>
+<th style="background-color:#ef7980 !important">Nombre_Prod</th>
+<th style="background-color:#ef7980 !important">Cantidad</th>
+<th style="background-color:#ef7980 !important">Sucursal_Origen</th>
+<th style="background-color:#ef7980 !important">Sucursal_Destino</th>
+<th style="background-color:#ef7980 !important">Total_VentaG</th>
+<th style="background-color:#ef7980 !important">Pc</th>
+<th style="background-color:#ef7980 !important">TipoDeMov</th>
+<th style="background-color:#ef7980 !important">Fecha_venta</th>
+<th style="background-color:#ef7980 !important">Estatus</th>
+<th style="background-color:#ef7980 !important">Sistema</th>
+<th style="background-color:#ef7980 !important">AgregadoPor</th>
+<th style="background-color:#ef7980 !important">AgregadoEl</th>
+<th style="background-color:#ef7980 !important">ID_H_O_D</th>
+<th style="background-color:#ef7980 !important">Fecha_recepcion</th>
+<th style="background-color:#ef7980 !important">Sucursal_Destino</th>
 
-        <th style="background-color:#ef7980 !important">Precio_Venta</th>
-        <th style="background-color:#ef7980 !important">Precio_Compra</th>
-        <th style="background-color:#ef7980 !important">Cantidad_Enviada</th>
-        <th style="background-color:#ef7980 !important">FechaEntrega</th>
-        <th style="background-color:#ef7980 !important">TraspasoGeneradoPor</th>
-        <th style="background-color:#ef7980 !important">TraspasoRecibidoPor</th>
-        <th style="background-color:#ef7980 !important">Estatus</th>
-        <th style="background-color:#ef7980 !important">AgregadoPor</th>
-        <th style="background-color:#ef7980 !important">AgregadoEl</th>
-        <!-- <th style="background-color:#ef7980 !important">ID_H_O_D</th> -->
-        <!-- <th style="background-color:#ef7980 !important">TotaldePiezas</th> -->
-        <th style="background-color:#ef7980 !important">Fecha_recepcion</th>
-        <th style="background-color:#ef7980 !important">SucursalDestino</th>
 
 
 
