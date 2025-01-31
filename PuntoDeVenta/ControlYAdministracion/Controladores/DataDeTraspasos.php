@@ -250,9 +250,7 @@
 {
     mData: 'Cantidad',
 },
-{
-    mData: 'Fk_sucursal',
-},
+
 {
     mData: 'Sucursal_Origen',
 },
