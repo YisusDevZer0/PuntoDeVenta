@@ -286,9 +286,7 @@
 {
     mData: 'AgregadoEl',
 },
-{
-    mData: 'ID_H_O_D',
-},
+
 {
     mData: 'Fecha_recepcion',
 },
