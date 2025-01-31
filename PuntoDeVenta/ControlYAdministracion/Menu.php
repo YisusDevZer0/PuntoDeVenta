@@ -53,6 +53,14 @@
                             <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
                         </div>
                     </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
+                            <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-calendar"></i>Reporte General </a>
+
+                        </div>
+                    </div>
 
                     <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
                     
