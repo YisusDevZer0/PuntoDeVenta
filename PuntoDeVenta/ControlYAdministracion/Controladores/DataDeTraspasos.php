@@ -283,9 +283,7 @@
     mData: 'AgregadoEl',
 },
 
-{
-    mData: 'Fecha_recepcion',
-},
+
 {
     mData: 'Sucursal_Destino', // ya está en el campo de la base de datos
 }
