@@ -88,7 +88,7 @@
     margin: 0 5px;
     color: white;
     /* Cambiar el color del texto a blanco */
-    background-color: #fff;
+  
     /* Cambiar el color de fondo a blanco */
   }
 </style>
