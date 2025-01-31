@@ -65,7 +65,7 @@ while ($fila = $result->fetch_assoc()) {
         "Sistema" => $fila["Sistema"],
         "AgregadoPor" => $fila["AgregadoPor"],
         "AgregadoEl" => $fila["AgregadoEl"],
-        "ID_H_O_D" => $fila["ID_H_O_D"]
+  
     ];
 }
 
