@@ -131,7 +131,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                         <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-truck-ramp-box"></i>Realizar traspasos</a>
                             <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
-                            <a href="TraspasosEntreSucursales" class="dropdown-item"><i class="fa-solid fa-coins"></i>Traspasos entre sucursales</a>
+                          
                             <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
                           
                         </div>
@@ -144,7 +144,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                            
                         
-                            <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a>
+                            <!-- <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a> -->
                             <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a>
+                            <!-- <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a> -->
                             <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
                             <!-- <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a> -->
                             <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
