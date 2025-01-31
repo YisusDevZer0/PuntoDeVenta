@@ -254,9 +254,7 @@
 {
     mData: 'Sucursal_Origen',
 },
-{
-    mData: 'Fk_SucursalDestino',
-},
+
 {
     mData: 'Sucursal_Destino',
 },
