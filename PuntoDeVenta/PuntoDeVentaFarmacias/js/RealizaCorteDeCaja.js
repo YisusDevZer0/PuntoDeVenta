@@ -54,41 +54,78 @@ $(document).ready(function () {
             },
         },
         submitHandler: function (form) {
-            $.ajax({
-                type: 'POST',
-                url: "Controladores/RegistraCorte.php",
-                data: $(form).serialize(),
-                cache: false,
-                success: function (data) {
-                    var response = JSON.parse(data);
+            // Mostrar confirmación antes de enviar
+            Swal.fire({
+                icon: 'warning',
+                title: '¿Está seguro de realizar el corte?',
+                text: 'Esta acción no se puede deshacer.',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, realizar corte',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, enviamos la información
+                    $.ajax({
+                        type: 'POST',
+                        url: "Controladores/RegistraCorte.php",
+                        data: $(form).serialize(),
+                        cache: false,
+                        success: function (data) {
+                            var response = JSON.parse(data);
 
-                    if (response.statusCode === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'El corte se ha realizado con exito!',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            didOpen: () => {
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1500);
-                            },
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Algo salió mal',
-                            text: response.error || 'Error inesperado',
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error en la petición',
-                        text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                            if (response.statusCode === 200) {
+                                // Enviar los datos al ticket
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "http://localhost/ticket/GenerarTicketCorte.php",
+                                    data: $(form).serialize(),
+                                    cache: false,
+                                    success: function (ticketResponse) {
+                                        console.log("Datos enviados al ticket correctamente:", ticketResponse);
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.log("Error al generar el ticket:", xhr.responseText);
+                                    }
+                                });
+
+                                // Mostrar mensaje de éxito
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'El corte se ha realizado con éxito!',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    didOpen: () => {
+                                        setTimeout(() => {
+                                         
+                                        }, 1500);
+                                    },
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Algo salió mal',
+                                    text: response.error || 'Error inesperado',
+                                });
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error en la petición',
+                                text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                            });
+                            console.log(xhr.responseText); // Para ver la respuesta del servidor
+                        }
                     });
-                    console.log(xhr.responseText); // Para ver la respuesta del servidor
+                } else {
+                    // Si el usuario cancela, no hacemos nada
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Corte cancelado',
+                        text: 'El proceso de corte ha sido cancelado.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
                 }
             });
         },
