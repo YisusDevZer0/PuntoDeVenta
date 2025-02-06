@@ -214,7 +214,7 @@ tabla = $('#Clientes').DataTable({
     { mData: 'CategoriaID' },
 { mData: 'Nombre_Categoria' },
 { mData: 'Estado' },
-{ mData: 'Codigo_Estado' },
+
 { mData: 'AgregadoPor' },
 { mData: 'FechaAgregado' },
 { mData: 'Sistema' },
@@ -264,7 +264,7 @@ tabla = $('#Clientes').DataTable({
   }
 ],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
 </script>
@@ -275,7 +275,7 @@ tabla = $('#Clientes').DataTable({
 <th>ID Categoría</th>
 <th>Nombre Categoría</th>
 <th>Estado</th>
-<th>Código Estado</th>
+
 <th>Creado por</th>
 <th>Hora creación</th>
 <th>Sistema</th>

@@ -30,7 +30,7 @@ while ($fila = $result->fetch_assoc()) {
         "CategoriaID" => $fila["Cat_ID"],
         "Nombre_Categoria" => $fila["Nom_Cat"],
         "Estado" => $fila["Estado"],
-        "Codigo_Estado" => $fila["Cod_Estado"],
+      
         "AgregadoPor" => $fila["Agregado_Por"],
         "FechaAgregado" => $fila["Agregadoel"],
         "Sistema" => $fila["Sistema"],
