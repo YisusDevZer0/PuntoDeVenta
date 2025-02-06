@@ -120,7 +120,7 @@
                             <a href="Presentaciones" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Presentaciones </a>
                             <a href="Componentes" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Componentes </a>
                             <a href="TiposProductos" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Tipos productos </a>
-                            
+                            <a href="Categorias" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Tipos productos </a>
                            
                         </div>
                     </div>
