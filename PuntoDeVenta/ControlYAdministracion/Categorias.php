@@ -38,17 +38,17 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Servicios registrados para <?php echo $row['Licencia']?></h6>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Agregar nuevo tipo de producto/uso
+  Agregar nueva categoria
 </button> <br>
             <div id="DataDeServicios"></div>
             </div></div></div></div></div>
             
           
 <script src="js/ControlDeCategorias.js"></script>
-<script src="js/GuardaTiposDeProductos.js"></script>
+<script src="js/GuardaCategorias.js"></script>
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoTipoProducto.php";
+            include "Modales/NuevaCategoria.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
           
