@@ -506,6 +506,17 @@ function showInstructions() {
  
 </div>
 </div>            
+<div class="col">
+
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Sucursal de ingreso
+</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  </div>
+  <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo $row['Nombre_Sucursal'] ?>">
+ 
+</div>
+</div>            
 
 
                       </div>
