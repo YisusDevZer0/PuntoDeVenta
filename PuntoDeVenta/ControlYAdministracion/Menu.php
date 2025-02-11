@@ -146,6 +146,7 @@
                         
                             <!-- <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a> -->
                             <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
+                            <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Realizar ingresos </a>
                         </div>
                     </div>
 
