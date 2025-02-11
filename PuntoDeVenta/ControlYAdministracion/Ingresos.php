@@ -441,7 +441,9 @@ function showInstructions() {
 
 <div class="row mb-3">
 
-
+<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+ Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
+</button>
 
 <div class="card-body p-3">
             
