@@ -441,12 +441,12 @@ function showInstructions() {
 
 <div class="row mb-3">
 
+
+<div class="card-body p-3">
 <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
  Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
 </button>
 
-<div class="card-body p-3">
-            
             <div class="tab-content" id="pills-tabContent">
               <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 <div class="row">
