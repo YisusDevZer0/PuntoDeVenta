@@ -1,7 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'$fecha
-  $sql = "SELECT * FROM Solicitudes_Ingresos ORDER BY IdProdCedis  DESC LIMIT 1";
+  $sql = "SELECT * FROM IngresosFarmacias ORDER BY IdProdCedis  DESC LIMIT 1";
   $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
   $Ticketss = mysqli_fetch_assoc($resultset);
   
