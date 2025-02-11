@@ -985,6 +985,7 @@ function eliminarFila(element) {
 
 <script src="js/RealizaIngreso.js"></script>
 
+<script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
 <script src="js/ConectaProveedores.js"></script>
 <!-- Control Sidebar -->
 
@@ -993,7 +994,7 @@ function eliminarFila(element) {
 
 include("Modales/Error.php");
 include("Modales/Exito.php");
-            
+include ("Modales/FiltraEspecificamenteInventarios.php");
 include "Footer.php";?>
 
 
