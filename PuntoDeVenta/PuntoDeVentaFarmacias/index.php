@@ -95,6 +95,15 @@ body[data-theme="light"] .navbar.bg-light {
     background-color: #f8f9fa !important;
     color: #000 !important;
 }
+body[data-theme="dark"] .sidebar {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+body[data-theme="light"] .sidebar {
+    background-color: #f8f9fa !important;
+    color: #000 !important;
+}
 
 </style>
 
