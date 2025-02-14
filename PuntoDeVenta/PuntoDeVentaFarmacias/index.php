@@ -15,6 +15,29 @@ include_once "Controladores/ControladorUsuario.php"
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
 </div>
+
+<style>
+  body[data-theme="light"] {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  body[data-theme="dark"] {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+
+  .bg-light[data-theme="dark"] {
+    background-color: #333 !important;
+    color: #fff;
+  }
+
+  .btn-primary[data-theme="dark"] {
+    background-color: #555;
+    border-color: #666;
+  }
+</style>
+
    <?php
    include "header.php";?>
 
