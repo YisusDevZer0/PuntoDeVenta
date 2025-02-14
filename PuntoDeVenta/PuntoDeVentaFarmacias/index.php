@@ -41,8 +41,8 @@ include_once "Controladores/ControladorUsuario.php"
                         <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
                             <i class="fa-solid fa-capsules fa-3x text-primary"></i>
                             <div class="ms-3">
-                            <button onclick="toggleTheme()" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Alternar Modo</button>
-                                <p class="mb-2">Productos</p>
+                                <p class="mb-2">Productos</p><button onclick="toggleTheme()" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Alternar Modo</button>
+                            
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ConsultaProductosModal">
   Consultar Productos
 </button>
