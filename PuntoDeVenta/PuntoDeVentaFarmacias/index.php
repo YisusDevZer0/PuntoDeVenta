@@ -18,23 +18,37 @@ include_once "Controladores/ControladorUsuario.php"
 
 <style>
   body[data-theme="light"] {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #ffffff !important;
+    color: #000000 !important;
   }
 
   body[data-theme="dark"] {
-    background-color: #1e1e1e;
-    color: #ffffff;
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
   }
 
-  .bg-light[data-theme="dark"] {
+  .bg-light {
+    background-color: #f8f9fa !important;
+  }
+
+  body[data-theme="dark"] .bg-light {
     background-color: #333 !important;
-    color: #fff;
+    color: #fff !important;
   }
 
-  .btn-primary[data-theme="dark"] {
-    background-color: #555;
-    border-color: #666;
+  .btn-primary {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+  }
+
+  body[data-theme="dark"] .btn-primary {
+    background-color: #555 !important;
+    border-color: #666 !important;
+  }
+
+  /* Ajuste para encabezados */
+  body[data-theme="dark"] h6 {
+    color: #fff !important;
   }
 </style>
 
