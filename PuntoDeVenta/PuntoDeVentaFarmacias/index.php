@@ -96,7 +96,7 @@ body[data-theme="light"] .navbar.bg-light {
     color: #000 !important;
 }
 body[data-theme="dark"] .sidebar {
-    background-color: #000 !important;
+    background-color: #2b2b2b !important!important;
     color: #fff !important;
 }
 
