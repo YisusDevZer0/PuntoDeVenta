@@ -18,9 +18,9 @@ include_once "Controladores/ControladorUsuario.php"
    <?php
    include "header.php";?>
 
-<body>
+<body data-theme="light">
   
-
+<button onclick="toggleTheme()" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">Alternar Modo</button>
 
         <!-- Sidebar Start -->
        <?php include_once "Menu.php" ?>
@@ -70,7 +70,32 @@ include_once "Controladores/ControladorUsuario.php"
 <div id="Cajas"></div>
             </div></div></div></div>
             <!-- Sale & Revenue End -->
+            <script>
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+        });
+        </script>
+
+        <script>
+   $(document).ready(function() {
+    $(document).on("click", ".btn-cambiaestadomensaje", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desactivar caja actual");
+        });
+        $('#ModalEdDele').modal('show');
+    });
+});
+    </script>
             <script>
    $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
