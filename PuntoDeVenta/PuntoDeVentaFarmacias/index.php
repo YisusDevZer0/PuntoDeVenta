@@ -78,6 +78,15 @@ include_once "Controladores/ControladorUsuario.php"
     background-color: #444 !important;
     color: #fff !important;
   }
+
+  body[data-theme="light"] .content {
+    background: #ffffff !important;
+}
+
+body[data-theme="dark"] .content {
+    background: #2b2b2b !important;
+}
+
 </style>
 
    <?php
