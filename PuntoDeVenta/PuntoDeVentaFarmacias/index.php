@@ -147,7 +147,7 @@ body[data-theme="light"] .navbar.bg-light {
                     <div class="container-fluid pt-4 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-        <button onclick="toggleTheme()" >Alternar Modo</button>
+        <!-- <button onclick="toggleTheme()" >Alternar Modo</button> -->
                             
             <h6 class="mb-4" style="color:#0172b6;">Mensajes o recordatorios de  <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
             <div class="text-center">
