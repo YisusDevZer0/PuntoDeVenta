@@ -25,46 +25,46 @@ include_once "Controladores/ControladorUsuario.php"
 
   /* Tema oscuro */
   body[data-theme="dark"] {
-    background-color: #1e1e1e !important;
+    background-color: #121212 !important;
     color: #ffffff !important;
   }
 
-  /* Ajuste de fondo para tablas */
-  body[data-theme="dark"] .bg-light {
+  /* Ajustar tablas de Bootstrap */
+  body[data-theme="dark"] .table {
     background-color: #333 !important;
     color: #fff !important;
   }
 
-  /* Asegurar tablas */
-  body[data-theme="dark"] table {
+  body[data-theme="dark"] .table thead th {
     background-color: #444 !important;
     color: #fff !important;
   }
 
-  /* Encabezados de tabla */
-  body[data-theme="dark"] th {
+  body[data-theme="dark"] .table tbody tr {
     background-color: #555 !important;
     color: #fff !important;
   }
 
-  /* Celdas de tabla */
-  body[data-theme="dark"] td {
-    background-color: #666 !important;
+  /* Ajustar tarjetas */
+  body[data-theme="dark"] .bg-light {
+    background-color: #2c2c2c !important;
     color: #fff !important;
   }
 
-  /* Botones */
+  /* Ajustar botones */
   body[data-theme="dark"] .btn-primary {
-    background-color: #555 !important;
-    border-color: #666 !important;
-  }
-
-  /* Títulos */
-  body[data-theme="dark"] h6 {
+    background-color: #0172b6 !important;
+    border-color: #0172b6 !important;
     color: #fff !important;
   }
 
-  /* Botón alternar modo */
+  /* Ajustar texto en encabezados */
+  body[data-theme="dark"] h6,
+  body[data-theme="dark"] .card-title {
+    color: #fff !important;
+  }
+
+  /* Estilo para el botón alternar */
   #toggleThemeBtn {
     background-color: #007bff;
     color: #fff;
