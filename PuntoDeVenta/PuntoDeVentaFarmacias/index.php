@@ -17,37 +17,65 @@ include_once "Controladores/ControladorUsuario.php"
 </div>
 
 <style>
+  /* Tema claro */
   body[data-theme="light"] {
     background-color: #ffffff !important;
     color: #000000 !important;
   }
 
+  /* Tema oscuro */
   body[data-theme="dark"] {
     background-color: #1e1e1e !important;
     color: #ffffff !important;
   }
 
-  .bg-light {
-    background-color: #f8f9fa !important;
-  }
-
+  /* Ajuste de fondo para tablas */
   body[data-theme="dark"] .bg-light {
     background-color: #333 !important;
     color: #fff !important;
   }
 
-  .btn-primary {
-    background-color: #007bff !important;
-    border-color: #007bff !important;
+  /* Asegurar tablas */
+  body[data-theme="dark"] table {
+    background-color: #444 !important;
+    color: #fff !important;
   }
 
+  /* Encabezados de tabla */
+  body[data-theme="dark"] th {
+    background-color: #555 !important;
+    color: #fff !important;
+  }
+
+  /* Celdas de tabla */
+  body[data-theme="dark"] td {
+    background-color: #666 !important;
+    color: #fff !important;
+  }
+
+  /* Botones */
   body[data-theme="dark"] .btn-primary {
     background-color: #555 !important;
     border-color: #666 !important;
   }
 
-  /* Ajuste para encabezados */
+  /* Títulos */
   body[data-theme="dark"] h6 {
+    color: #fff !important;
+  }
+
+  /* Botón alternar modo */
+  #toggleThemeBtn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  body[data-theme="dark"] #toggleThemeBtn {
+    background-color: #444 !important;
     color: #fff !important;
   }
 </style>
