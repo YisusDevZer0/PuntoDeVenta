@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐟 Inicio de sesión | Doctor Pez 🐟</title>
+    <title>🐟 Inicio de sesión🐟</title>
 
     <!-- Fuentes y estilos -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,400,500,700&display=swap">
@@ -102,9 +102,7 @@
         .card .card-action {
     background-color: rgba(79, 37, 37, 0); /* Fondo transparente */
     border-top: 1px solid rgba(160, 160, 160, 0.2); /* Mantiene el borde */
-    padding: 0; /* Elimina el padding */
-    margin: 0; /* Elimina el margen */
-    position: unset; /* Asegúrate de que el 'position' no agregue espacio extra */
+   
 }
 
     </style>
