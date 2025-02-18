@@ -12,9 +12,14 @@
 
     <!-- Iconos -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- jQuery y jQuery Validation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- Noty.js --><script type="text/javascript" src="js/validation.min.js"></script>
-<script type="text/javascript" src="js/Validaciondeloginsingresos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
+    <!-- Noty.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
 
     <style>
@@ -100,12 +105,11 @@
             0% { transform: translateX(-20px) rotate(15deg); }
             100% { transform: translateX(20px) rotate(-15deg); }
         }
-        .card .card-action {
-    background-color: rgba(79, 37, 37, 0); /* Fondo transparente */
-    border-top: 1px solid rgba(160, 160, 160, 0.2); /* Mantiene el borde */
-   
-}
 
+        .card .card-action {
+            background-color: rgba(79, 37, 37, 0); /* Fondo transparente */
+            border-top: 1px solid rgba(160, 160, 160, 0.2); /* Mantiene el borde */
+        }
     </style>
 </head>
 <body>
@@ -124,7 +128,6 @@
             <div class="center-align">
                 <span class="material-icons fish-icon">fish</span>
                 <h5 class="card-title" id="welcome-message">Bienvenido al arrecife 🌊</h5>
-
                 <p class="blue-text text-darken-4">Ingresa tus datos para sumergirte en el sistema.</p>
             </div>
             <div class="input-field">
@@ -142,7 +145,6 @@
     </form>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
@@ -150,54 +152,49 @@
     <script>
         AOS.init();
 
-       
-    
+        // Lista de mensajes aleatorios
+        const messages = [
+            "¡Listo para sumergirte en un mar de salud! 🌊",
+            "Tu bienestar acuático empieza aquí. 🐠",
+            "Recetas frescas y saludables para ti. 🐟💊",
+            "¡Bienvenido al arrecife de la salud! 🌊",
+            "Un océano de soluciones para tu bienestar. 🌊",
+            "Con nosotros, tu salud siempre será de primera. 🐡",
+            "Sumérgete en el cuidado que tu cuerpo necesita. 🌊",
+            "Aquí, la salud siempre está en su mejor forma. 🐠",
+            "Deja que el océano cuide de ti. 🌊",
+            "La farmacia submarina está abierta para ti. 🐠💊",
+            "¡Respira profundo y siente la frescura del mar! 🌊",
+            "Con Doctor Pez, tu salud siempre está nadando en buenas manos. 🐠",
+            "Tómate una dosis de bienestar. 🌊💊",
+            "Salud a la vista, ¡y no necesitamos lupa! 🐟",
+            "Tratamientos frescos como el agua del océano. 🌊",
+            "¡Tu salud, nuestro compromiso acuático! 🐡",
+            "La receta perfecta para tu bienestar te espera. 💊",
+            "Bienvenido a un océano de posibilidades para tu salud. 🌊",
+            "Cuidamos tu salud con todo el amor del océano. 🐠",
+            "¡La salud es un mar sin fin de posibilidades! 🌊",
+            "Vamos a navegar hacia un futuro saludable juntos. 🐠",
+            "Tu bienestar es nuestra prioridad acuática. 🌊",
+            "Recibe el mejor tratamiento submarino para tu salud. 🐡",
+            "Cuidamos de ti con las mejores olas de salud. 🌊",
+            "¡Las mejores recetas están en nuestro arrecife! 💊🐠",
+            "Siente la brisa fresca de la salud en cada respiro. 🌊",
+            "Tu salud en cada ola, siempre más cerca de ti. 🐟",
+            "¡Nada con nosotros hacia un mejor bienestar! 🌊",
+            "Tu tratamiento, directo del mar a ti. 🐡",
+            "Aquí, las soluciones para tu salud siempre son frescas. 🐠"
+        ];
+
+        // Función para seleccionar un mensaje aleatorio
+        function setRandomMessage() {
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('welcome-message').textContent = randomMessage;
+        }
+
+        // Ejecutar al cargar la página
+        setRandomMessage();
     </script>
-
-<script>
-    // Lista de mensajes aleatorios
-    const messages = [
-        "¡Listo para sumergirte en un mar de salud! 🌊",
-        "Tu bienestar acuático empieza aquí. 🐠",
-        "Recetas frescas y saludables para ti. 🐟💊",
-        "¡Bienvenido al arrecife de la salud! 🌊",
-        "Un océano de soluciones para tu bienestar. 🌊",
-        "Con nosotros, tu salud siempre será de primera. 🐡",
-        "Sumérgete en el cuidado que tu cuerpo necesita. 🌊",
-        "Aquí, la salud siempre está en su mejor forma. 🐠",
-        "Deja que el océano cuide de ti. 🌊",
-        "La farmacia submarina está abierta para ti. 🐠💊",
-        "¡Respira profundo y siente la frescura del mar! 🌊",
-        "Con Doctor Pez, tu salud siempre está nadando en buenas manos. 🐠",
-        "Tómate una dosis de bienestar. 🌊💊",
-        "Salud a la vista, ¡y no necesitamos lupa! 🐟",
-        "Tratamientos frescos como el agua del océano. 🌊",
-        "¡Tu salud, nuestro compromiso acuático! 🐡",
-        "La receta perfecta para tu bienestar te espera. 💊",
-        "Bienvenido a un océano de posibilidades para tu salud. 🌊",
-        "Cuidamos tu salud con todo el amor del océano. 🐠",
-        "¡La salud es un mar sin fin de posibilidades! 🌊",
-        "Vamos a navegar hacia un futuro saludable juntos. 🐠",
-        "Tu bienestar es nuestra prioridad acuática. 🌊",
-        "Recibe el mejor tratamiento submarino para tu salud. 🐡",
-        "Cuidamos de ti con las mejores olas de salud. 🌊",
-        "¡Las mejores recetas están en nuestro arrecife! 💊🐠",
-        "Siente la brisa fresca de la salud en cada respiro. 🌊",
-        "Tu salud en cada ola, siempre más cerca de ti. 🐟",
-        "¡Nada con nosotros hacia un mejor bienestar! 🌊",
-        "Tu tratamiento, directo del mar a ti. 🐡",
-        "Aquí, las soluciones para tu salud siempre son frescas. 🐠"
-    ];
-
-    // Función para seleccionar un mensaje aleatorio
-    function setRandomMessage() {
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        document.getElementById('welcome-message').textContent = randomMessage;
-    }
-
-    // Ejecutar al cargar la página
-    setRandomMessage();
-</script>
 
 </body>
 </html>
