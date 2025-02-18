@@ -20,7 +20,7 @@
 
 <script src="Componentes/jquery.min.js"></script>
 <script type="text/javascript" src="js/validation.min.js"></script>
-<script type="text/javascript" src="js/Validaciondeloginsingreso.js"></script>
+<script type="text/javascript" src="js/Validaciondeloginsingresos.js"></script>
     <style>
         body {
             background-color: #f0f0f0;
