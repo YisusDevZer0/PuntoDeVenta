@@ -1,4 +1,4 @@
-$(document).ready(function() { 
+$(document).ready(function() {
     // Inicializar los modales
     $('.modal').modal();
 
@@ -32,31 +32,29 @@ $(document).ready(function() {
     function submitForm() {       
         // Recolecta los datos del formulario
         var data = $("#login-form").serialize();             
+
+        // Muestra una notificación llamativa con Noty.js antes de enviar
+        new Noty({
+            text: '🐟 Validando tus credenciales, por favor espera...',
+            type: 'info',
+            layout: 'topCenter',
+            timeout: 3000,
+            theme: 'metroui'
+        }).show();
+
         $.ajax({                
             type: 'POST',
             url: 'Consultas/ValidadorUsuario.php',
             data: data,
-            beforeSend: function() {    
-                // Muestra una notificación llamativa con Noty.js
-                new Noty({
-                    text: 'Validando... Por favor, espera un momento.',
-                    type: 'info',
-                    layout: 'topCenter',
-                    theme: 'metroui',
-                    timeout: 3000,
-                    progressBar: true
-                }).show();
-            },
             success: function(response) {                        
-                if (response.trim().includes("ok")) {                                    
+                if (response.trim() === 'ok') {                                    
                     // Muestra una notificación de éxito con Noty.js
                     new Noty({
-                        text: '¡Bienvenido! Acceso concedido. Redirigiendo...',
+                        text: '🌊 ¡Bienvenido al arrecife! Redirigiendo... 🐠',
                         type: 'success',
                         layout: 'topCenter',
-                        theme: 'metroui',
                         timeout: 2000,
-                        progressBar: true
+                        theme: 'metroui'
                     }).show();
                     setTimeout(function() {
                         window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
@@ -64,12 +62,11 @@ $(document).ready(function() {
                 } else {                                    
                     // Muestra una notificación de error con Noty.js
                     new Noty({
-                        text: '¡Error! Usuario o contraseña incorrectos. Por favor, intenta de nuevo.',
+                        text: '⚠️ ¡Error! Usuario o contraseña incorrectos. 🦀',
                         type: 'error',
                         layout: 'topCenter',
-                        theme: 'metroui',
                         timeout: 3000,
-                        progressBar: true
+                        theme: 'metroui'
                     }).show();
                 }
             }
