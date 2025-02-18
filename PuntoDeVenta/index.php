@@ -147,7 +147,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-   
+    <script>
+        AOS.init();
+
+        $(document).ready(function() {
+            $('#login-form').on('submit', function(e) {
+                e.preventDefault();
+
+                new Noty({
+                    text: '🐟 Validando tus credenciales, por favor espera...',
+                    type: 'info',
+                    layout: 'topCenter',
+                    timeout: 3000,
+                    theme: 'metroui'
+                }).show();
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'Consultas/ValidadorUsuario.php',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.trim() === 'ok') {
+                            new Noty({
+                                text: '🌊 ¡Bienvenido al arrecife! Redirigiendo... 🐠',
+                                type: 'success',
+                                layout: 'topCenter',
+                                timeout: 2000,
+                                theme: 'metroui'
+                            }).show();
+                            setTimeout(function() {
+                                window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
+                            }, 2000);
+                        } else {
+                            new Noty({
+                                text: '⚠️ ¡Error! Usuario o contraseña incorrectos. 🦀',
+                                type: 'error',
+                                layout: 'topCenter',
+                                timeout: 3000,
+                                theme: 'metroui'
+                            }).show();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
 <script>
     // Lista de mensajes aleatorios
