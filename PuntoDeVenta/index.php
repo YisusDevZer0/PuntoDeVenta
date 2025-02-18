@@ -99,6 +99,11 @@
             0% { transform: translateX(-20px) rotate(15deg); }
             100% { transform: translateX(20px) rotate(-15deg); }
         }
+        .card-action {
+    padding: 0; /* Elimina el padding */
+    margin: 0;  /* Elimina el margen */
+}
+
     </style>
 </head>
 <body>
