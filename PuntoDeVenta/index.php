@@ -147,28 +147,16 @@
 <style>
     .fish-icon {
       font-size: 48px;
-      transition: transform 0.3s ease;
-    }
-
-    .fish-icon:hover {
-      animation: swim 1.5s infinite;
+      position: relative;
+      animation: swim 3s linear infinite;
     }
 
     @keyframes swim {
       0% {
-        transform: translateX(0) rotate(0deg);
-      }
-      25% {
-        transform: translateX(10px) rotate(15deg);
-      }
-      50% {
-        transform: translateX(-10px) rotate(-15deg);
-      }
-      75% {
-        transform: translateX(10px) rotate(15deg);
+        transform: translateX(100%);
       }
       100% {
-        transform: translateX(0) rotate(0deg);
+        transform: translateX(-100%);
       }
     }
   </style>
