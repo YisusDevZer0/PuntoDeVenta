@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- Noty.js --><script type="text/javascript" src="js/validation.min.js"></script>
-<script type="text/javascript" src="js/Validaciondeloginsingresosssss.js"></script>
+<script type="text/javascript" src="js/Validaciondeloginsingresos.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
 
     <style>
