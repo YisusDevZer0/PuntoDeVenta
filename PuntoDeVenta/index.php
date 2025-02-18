@@ -144,11 +144,45 @@
 }
 
 </style>
+<style>
+        /* Estilo para los iconos de los peces */
+        .fish-icon {
+            font-size: 50px;
+            display: inline-block;
+            margin: 10px;
+            animation: swim 6s ease-in-out infinite, colorChange 8s infinite;
+        }
+
+        /* Movimiento de los peces: nadando de un lado a otro */
+        @keyframes swim {
+            0% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateX(20px) translateY(10px) rotate(30deg);
+            }
+            100% {
+                transform: translateX(0) translateY(0) rotate(0deg);
+            }
+        }
+
+        /* Efectos de cambio de color para los peces */
+        @keyframes colorChange {
+            0% { color: #00c6ff; }
+            25% { color: #ff6600; }
+            50% { color: #00ff00; }
+            75% { color: #ff007f; }
+            100% { color: #00c6ff; }
+        }
+    </style>
     <!-- Formulario de inicio de sesión -->
     <form method="post" id="login-form" autocomplete="off">
         <div class="card" data-aos="fade-up">
             <div class="center-align">
-            <span class="mdi mdi-fish fish-icon"></span>
+            <div class="fish-container">
+        <!-- Icono de pez en un lugar específico -->
+        <span class="mdi mdi-fish fish-icon"></span>
+    </div>
 
 
                 <h5 class="card-title" id="welcome-message">Bienvenido al arrecife 🌊</h5>
