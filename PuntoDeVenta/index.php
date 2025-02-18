@@ -22,7 +22,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
     <script type="text/javascript" src="js/validation.min.js"></script>
-    <script type="text/javascript" src="js/Validaciondeloginsingresos.js"></script>
+    <script type="text/javascript" src="js/IngresaAlArrecife.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #00c6ff, #0072ff);
