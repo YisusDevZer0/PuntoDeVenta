@@ -12,7 +12,7 @@
 
     <!-- Iconos -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- Noty.js --><script type="text/javascript" src="js/validation.min.js"></script>
 <script type="text/javascript" src="js/Validaciondeloginsingresosssss.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" />
