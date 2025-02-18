@@ -140,7 +140,7 @@
                 <label for="password">Contraseña</label>
             </div>
             <div class="card-action">
-                <button type="submit" class="btn waves-effect waves-light">Sumergirse 🐠</button>
+                <button type="submit" class="btn waves-effect waves-light" name="login_button">Sumergirse 🐠</button>
             </div>
         </div>
     </form>
