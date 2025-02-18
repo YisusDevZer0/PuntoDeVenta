@@ -144,6 +144,34 @@
 }
 
 </style>
+<style>
+    .fish-icon {
+      font-size: 48px;
+      transition: transform 0.3s ease;
+    }
+
+    .fish-icon:hover {
+      animation: swim 1.5s infinite;
+    }
+
+    @keyframes swim {
+      0% {
+        transform: translateX(0) rotate(0deg);
+      }
+      25% {
+        transform: translateX(10px) rotate(15deg);
+      }
+      50% {
+        transform: translateX(-10px) rotate(-15deg);
+      }
+      75% {
+        transform: translateX(10px) rotate(15deg);
+      }
+      100% {
+        transform: translateX(0) rotate(0deg);
+      }
+    }
+  </style>
     <!-- Formulario de inicio de sesión -->
     <form method="post" id="login-form" autocomplete="off">
         <div class="card" data-aos="fade-up">
