@@ -144,54 +144,11 @@
 }
 
 </style>
-<style>
-        .fish-icon {
-            font-size: 50px;
-            display: inline-block;
-            margin: 10px;
-            animation: swim 6s ease-in-out infinite, colorChange 8s infinite;
-        }
-
-        /* Movimiento de los peces: nadando de un lado a otro */
-        @keyframes swim {
-            0% {
-                transform: translateX(0) rotate(0deg);
-            }
-            50% {
-                transform: translateX(20px) rotate(30deg);
-            }
-            100% {
-                transform: translateX(0) rotate(0deg);
-            }
-        }
-
-        /* Efectos de cambio de color para los peces */
-        @keyframes colorChange {
-            0% { color: #00c6ff; }
-            25% { color: #ff6600; }
-            50% { color: #00ff00; }
-            75% { color: #ff007f; }
-            100% { color: #00c6ff; }
-        }
-
-        /* Contenedor de los peces alineados en fila */
-        .fish-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-    </style>
     <!-- Formulario de inicio de sesión -->
     <form method="post" id="login-form" autocomplete="off">
         <div class="card" data-aos="fade-up">
             <div class="center-align">
-            <div class="fish-container">
-        <!-- Tres iconos de pez nadando en fila -->
-        <span class="mdi mdi-fish fish-icon"></span>
-        <span class="mdi mdi-fish fish-icon"></span>
-        <span class="mdi mdi-fish fish-icon"></span>
-    </div>
+            <span class="mdi mdi-fish fish-icon"></span>
 
 
                 <h5 class="card-title" id="welcome-message">Bienvenido al arrecife 🌊</h5>
