@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
 
     <!-- Iconos -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+
 
 
     <!-- jQuery y jQuery Validation -->
@@ -147,7 +148,8 @@
     <form method="post" id="login-form" autocomplete="off">
         <div class="card" data-aos="fade-up">
             <div class="center-align">
-            <span class="material-icons fish-icon">fish</span>
+            <span class="mdi mdi-fish fish-icon"></span>
+
 
                 <h5 class="card-title" id="welcome-message">Bienvenido al arrecife 🌊</h5>
                 <p class="blue-text text-darken-4">Ingresa tus datos para sumergirte en el sistema.</p>
