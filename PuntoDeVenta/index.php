@@ -99,9 +99,12 @@
             0% { transform: translateX(-20px) rotate(15deg); }
             100% { transform: translateX(20px) rotate(-15deg); }
         }
-        .card-action {
+        .card .card-action {
+    background-color: rgba(79, 37, 37, 0); /* Fondo transparente */
+    border-top: 1px solid rgba(160, 160, 160, 0.2); /* Mantiene el borde */
     padding: 0; /* Elimina el padding */
-    margin: 0;  /* Elimina el margen */
+    margin: 0; /* Elimina el margen */
+    position: unset; /* Asegúrate de que el 'position' no agregue espacio extra */
 }
 
     </style>
