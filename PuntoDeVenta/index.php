@@ -122,12 +122,32 @@
         <div class="bubble" style="left: 70%; animation-duration: 6s;"></div>
         <div class="bubble" style="left: 90%; animation-duration: 7s;"></div>
     </div>
+<style>
+    .fish-icon {
+    font-size: 48px; /* Tamaño del icono */
+    color: #1E90FF;  /* Color azul del pez */
+    animation: swim 2s infinite; /* Animación que simula movimiento lateral */
+}
 
+@keyframes swim {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(10px); /* Movimiento hacia la derecha */
+    }
+    100% {
+        transform: translateX(0); /* Regresa a su posición original */
+    }
+}
+
+</style>
     <!-- Formulario de inicio de sesión -->
     <form method="post" id="login-form" autocomplete="off">
         <div class="card" data-aos="fade-up">
             <div class="center-align">
-                <span class="material-icons fish-icon">fish</span>
+            <span class="material-icons fish-icon">fish</span>
+
                 <h5 class="card-title" id="welcome-message">Bienvenido al arrecife 🌊</h5>
                 <p class="blue-text text-darken-4">Ingresa tus datos para sumergirte en el sistema.</p>
             </div>
