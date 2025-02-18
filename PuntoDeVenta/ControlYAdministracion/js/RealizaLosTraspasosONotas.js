@@ -1,7 +1,7 @@
-$(document).ready(function () {
+$('document').ready(function () {
     // Métodos de validación personalizados
     $.validator.addMethod("Sololetras", function (value, element) {
-        return this.optional(element) || /^[a-zA-ZÀ-ÿñÑ\s]+$/.test(value);
+        return this.optional(element) || /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value);
     }, "<i class='fas fa-exclamation-triangle' style='color:red'></i> Solo debes ingresar letras!");
 
     $.validator.addMethod("Telefonico", function (value, element) {
@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     // Función para generar vista previa del ticket
     function generarVistaPreviaYConfirmar() {
-        // Recopilamos los datos de la tabla #tablaAgregarArticulos
+        // Datos específicos para mostrar en la confirmación
         var tablaDatos = [];
         $('#tablaAgregarArticulos tbody tr').each(function () {
             var fila = {
@@ -57,13 +57,12 @@ $(document).ready(function () {
                 </table>
             </div>`;
 
-        // Mostramos la confirmación con SweetAlert
         Swal.fire({
             icon: 'warning',
-            title: 'Verifique los datos del traspaso o nota de crédito',
-            html: tablaConfirmacion,
+            title: 'Verifique los datos de la venta',
+            html: mensajeConfirmacion,
             showCancelButton: true,
-            confirmButtonText: 'Confirmar datos',
+            confirmButtonText: 'Confirmar',
             cancelButtonText: 'Cancelar',
             width: '800px',
         }).then((result) => {
@@ -78,7 +77,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: "Controladores/TraspasoYNotasAlmomento.php",
-            data: $('#TraspasosNotasALMomento').serialize(),
+            data: $('#TraspasosNotasALMomento').serialize(), // Enviamos todos los datos del formulario
             cache: false,
             beforeSend: function () {
                 $("#submit_registro").html("Guardando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
@@ -93,7 +92,7 @@ $(document).ready(function () {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        enviarDatosTicket();
+                        enviarDatosTicket(); // Llamada a la función para generar el ticket
                     });
                 } else {
                     Swal.fire({
@@ -115,7 +114,7 @@ $(document).ready(function () {
 
     // Función para enviar los datos del ticket
     function enviarDatosTicket() {
-        var data = $('#TraspasosNotasALMomento').serialize();
+        var data = $('#TraspasosNotasALMomento').serialize(); // Serializamos todos los datos del formulario
 
         $.ajax({
             type: 'POST',
@@ -123,6 +122,7 @@ $(document).ready(function () {
             data: data,
             success: function (response) {
                 console.log("Ticket generado exitosamente:", response);
+                
             },
             error: function (error) {
                 console.error("Error al generar el ticket:", error);
@@ -143,7 +143,7 @@ $(document).ready(function () {
             },
         },
         submitHandler: function () {
-            generarVistaPreviaYConfirmar();
+            generarVistaPreviaYConfirmar(); // Generamos la vista previa antes de enviar
         }
     });
 });
