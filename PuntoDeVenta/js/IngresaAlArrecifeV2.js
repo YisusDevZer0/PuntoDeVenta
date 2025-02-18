@@ -30,7 +30,11 @@ $(document).ready(function() {
             animation: {
                 open: 'animated bounceIn',
                 close: 'animated bounceOut'
-            }
+            },
+            maxWidth: '500px', // Aumentar el ancho de la notificación
+            fontSize: '18px',  // Tamaño de fuente más grande
+            progressBar: true, // Barra de progreso
+            closeWith: ['click'], // Cerrar al hacer clic
         }).show();
 
         $.ajax({                
@@ -49,7 +53,10 @@ $(document).ready(function() {
                             open: 'animated fadeIn',
                             close: 'animated fadeOut'
                         },
-                        progressBar: true, // Agregar barra de progreso
+                        maxWidth: '500px', // Aumentar el ancho de la notificación
+                        fontSize: '20px',  // Tamaño de fuente más grande
+                        progressBar: true,
+                        closeWith: ['click'], // Cerrar al hacer clic
                         buttons: [
                             Noty.button('¡Listo!', 'btn btn-success', function() {
                                 window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
@@ -67,13 +74,21 @@ $(document).ready(function() {
                             open: 'animated shake',
                             close: 'animated bounceOut'
                         },
+                        maxWidth: '500px', // Aumentar el ancho de la notificación
+                        fontSize: '20px',  // Tamaño de fuente más grande
                         progressBar: true,
+                        closeWith: ['click'], // Cerrar al hacer clic
                         buttons: [
                             Noty.button('Reintentar', 'btn btn-danger', function() {
                                 // Lógica para intentar nuevamente
                             })
                         ]
                     }).show();
+
+                    // Redirigir en caso de error (opcional)
+                    setTimeout(function() {
+                        window.location.href = "https://doctorpez.mx/login"; // O cualquier URL donde quieras redirigir
+                    }, 4000);
                 }
             }
         });
