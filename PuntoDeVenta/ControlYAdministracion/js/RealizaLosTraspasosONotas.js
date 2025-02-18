@@ -65,7 +65,7 @@ $('document').ready(function () {
                 producto: $(this).find('.descripcion textarea').val(),
                 cantidad: $(this).find('.cantidad input').val(),
                 precio: $(this).find('.preciofijo input').val(),
-                importe: $(this).find('.importe input').val(),
+               
                 tipoMov: $(this).find('.TipoMovimiento input').val(),
                 fecha: $(this).find('.Fecha input').val()
             };
@@ -82,7 +82,7 @@ $('document').ready(function () {
                             <th>Producto</th>
                             <th>Cantidad</th>
                             <th>Precio</th>
-                            <th>Importe</th>
+                          
                             <th>Tipo de mov</th>
                             <th>Fecha</th>
                         </tr>
@@ -96,7 +96,7 @@ $('document').ready(function () {
                     <td>${fila.producto}</td>
                     <td>${fila.cantidad}</td>
                     <td>${fila.precio}</td>
-                    <td>${fila.importe}</td>
+                   
                     <td>${fila.tipoMov}</td>
                     <td>${fila.fecha}</td>
                 </tr>`;
@@ -110,7 +110,7 @@ $('document').ready(function () {
         // Mostramos la confirmación con SweetAlert
         Swal.fire({
             icon: 'warning',
-            title: 'Verifique los datos de la venta',
+            title: 'Verifique los datos del traspaso o nota de crédito',
             html: tablaConfirmacion,
             showCancelButton: true,
             confirmButtonText: 'Confirmar datos',
