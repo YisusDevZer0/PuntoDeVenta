@@ -10,7 +10,6 @@ $(document).ready(function () {
 
     // Función para generar vista previa del ticket
     function generarVistaPreviaYConfirmar() {
-        // Recopilamos los datos de la tabla #tablaAgregarArticulos
         var tablaDatos = [];
         $('#tablaAgregarArticulos tbody tr').each(function () {
             var fila = {
@@ -24,7 +23,6 @@ $(document).ready(function () {
             tablaDatos.push(fila);
         });
 
-        // Construimos la tabla de confirmación
         var tablaConfirmacion = `
             <div class="dataTable">
                 <table id="tablaConfirmacion">
@@ -57,7 +55,6 @@ $(document).ready(function () {
                 </table>
             </div>`;
 
-        // Mostramos la confirmación con SweetAlert
         Swal.fire({
             icon: 'warning',
             title: 'Verifique los datos del traspaso o nota de crédito',
@@ -73,7 +70,6 @@ $(document).ready(function () {
         });
     }
 
-    // Función para guardar datos en la base de datos
     function guardarEnBaseDeDatos() {
         $.ajax({
             type: 'POST',
@@ -84,36 +80,48 @@ $(document).ready(function () {
                 $("#submit_registro").html("Guardando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
             },
             success: function (response) {
-                let res = JSON.parse(response);
-                if (res.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Datos guardados correctamente. Generando ticket...',
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        enviarDatosTicket();
-                    });
-                } else {
+                try {
+                    let res = JSON.parse(response);
+                    if (res.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Datos guardados correctamente. Generando ticket...',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            enviarDatosTicket();
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message,
+                        });
+                    }
+                } catch (e) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: res.message,
+                        title: 'Error inesperado',
+                        text: 'No se pudo procesar la respuesta del servidor.',
                     });
+                    console.error('Error al procesar la respuesta:', e);
                 }
             },
-            error: function () {
+            error: function (xhr, status, error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                    title: 'Error en la conexión',
+                    text: `No se pudo conectar con el servidor: ${status} - ${error}`,
                 });
+                console.error('Error AJAX:', xhr.responseText);
             }
         });
     }
 
-    // Función para enviar los datos del ticket
     function enviarDatosTicket() {
         var data = $('#TraspasosNotasALMomento').serialize();
 
@@ -122,15 +130,37 @@ $(document).ready(function () {
             url: 'http://localhost/ticket/TicketTraspasoONotaDeCredito.php',
             data: data,
             success: function (response) {
-                console.log("Ticket generado exitosamente:", response);
+                try {
+                    let res = JSON.parse(response);
+                    if (res.status === 'success') {
+                        console.log("Ticket generado exitosamente:", response);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al generar el ticket',
+                            text: res.message,
+                        });
+                    }
+                } catch (e) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Respuesta inesperada',
+                        text: 'El servidor devolvió un formato no esperado.',
+                    });
+                    console.error('Error al procesar la respuesta del ticket:', e);
+                }
             },
-            error: function (error) {
-                console.error("Error al generar el ticket:", error);
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al generar el ticket',
+                    text: `No se pudo conectar con el servidor: ${status} - ${error}`,
+                });
+                console.error('Error AJAX al generar el ticket:', xhr.responseText);
             }
         });
     }
 
-    // Configuración del validador
     $("#TraspasosNotasALMomento").validate({
         rules: {
             codbarras: {
