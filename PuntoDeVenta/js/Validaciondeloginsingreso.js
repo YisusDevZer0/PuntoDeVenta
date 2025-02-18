@@ -1,4 +1,4 @@
-$('document').ready(function() { 
+$(document).ready(function() { 
     // Inicializar los modales
     $('.modal').modal();
 
@@ -37,23 +37,46 @@ $('document').ready(function() {
             url: 'Consultas/ValidadorUsuario.php',
             data: data,
             beforeSend: function() {    
-                // Muestra el modal de validación
-                $('#Validacion').modal('open');
+                // Muestra una notificación llamativa con Noty.js
+                new Noty({
+                    text: 'Validando... Por favor, espera un momento.',
+                    type: 'info',
+                    layout: 'topCenter',
+                    theme: 'metroui',
+                    timeout: 3000,
+                    progressBar: true
+                }).show();
             },
             success: function(response) {                        
-                // Cierra el modal de validación
-                $('#Validacion').modal('close');
                 if (response.trim().includes("ok")) {                                    
-                    // Redirecciona al usuario después de 2 segundos
+                    // Muestra una notificación de éxito con Noty.js
+                    new Noty({
+                        text: '¡Bienvenido! Acceso concedido. Redirigiendo...',
+                        type: 'success',
+                        layout: 'topCenter',
+                        theme: 'metroui',
+                        timeout: 2000,
+                        progressBar: true
+                    }).show();
                     setTimeout(function() {
                         window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
                     }, 2000);
                 } else {                                    
-                    // Muestra el modal de error
-                    $('#Error').modal('open');
+                    // Muestra una notificación de error con Noty.js
+                    new Noty({
+                        text: '¡Error! Usuario o contraseña incorrectos. Por favor, intenta de nuevo.',
+                        type: 'error',
+                        layout: 'topCenter',
+                        theme: 'metroui',
+                        timeout: 3000,
+                        progressBar: true
+                    }).show();
                 }
             }
         });
         return false; // Evita que el formulario se envíe de forma convencional
     }   
+
+    // Inicializar AOS para animaciones
+    AOS.init();
 });
