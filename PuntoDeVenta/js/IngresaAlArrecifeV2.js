@@ -87,7 +87,7 @@ $(document).ready(function() {
 
                     // Redirigir en caso de error (opcional)
                     setTimeout(function() {
-                        window.location.href = "https://doctorpez.mx/login"; // O cualquier URL donde quieras redirigir
+                        window.location.href = "https://doctorpez.mx/PuntoDeVenta/"; // O cualquier URL donde quieras redirigir
                     }, 4000);
                 }
             }
