@@ -1373,7 +1373,7 @@ include("Modales/ExitoActualiza.php"); ?>
 
 
 
-  <script src="js/RealizaLosTraspasosONotas.js"></script>
+  <script src="js/RealizaLosTraspasosONotass.js"></script>
   
   <!-- Bootstrap -->
 
