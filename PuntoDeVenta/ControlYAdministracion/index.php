@@ -14,100 +14,13 @@ include_once "Controladores/ConsultaDashboard.php";
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #f0f8ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-        }
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #0077b6;
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .wave {
-            position: absolute;
-            width: 100%;
-            height: 20vh;
-            bottom: 0;
-            background: url('https://i.imgur.com/Og7nWjv.png') repeat-x;
-            animation: waveAnimation 5s linear infinite;
-        }
-        @keyframes waveAnimation {
-            from { background-position-x: 0; }
-            to { background-position-x: 1000px; }
-        }
-        .bubble {
-            position: absolute;
-            bottom: -50px;
-            width: 20px;
-            height: 20px;
-            background: rgba(173, 216, 230, 0.7);
-            border-radius: 50%;
-            animation: floatBubble 4s linear infinite;
-        }
-        @keyframes floatBubble {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-100vh); opacity: 0; }
-        }
-    </style>
+   
    <?php
    include "header.php";?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <body>
-<div class="container">
-        <div class="logo">Doctor Pez</div>
-        <div class="wave"></div>
-    </div>
 
-    
-         <script>
-        function randomAnimation() {
-            const animations = [animateBubbles, animateFish];
-            const randomIndex = Math.floor(Math.random() * animations.length);
-            animations[randomIndex]();
-        }
-        
-        function animateBubbles() {
-            for (let i = 0; i < 10; i++) {
-                let bubble = document.createElement("div");
-                bubble.classList.add("bubble");
-                document.body.appendChild(bubble);
-                bubble.style.left = Math.random() * window.innerWidth + "px";
-                bubble.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                setTimeout(() => bubble.remove(), 4000);
-            }
-        }
-        
-        function animateFish() {
-            let fish = document.createElement("img");
-            fish.src = "https://i.imgur.com/JVgtpH2.png";
-            fish.style.position = "absolute";
-            fish.style.width = "100px";
-            fish.style.left = "-100px";
-            fish.style.top = Math.random() * window.innerHeight + "px";
-            document.body.appendChild(fish);
-            gsap.to(fish, { x: window.innerWidth + 100, duration: 5, ease: "power1.inOut", onComplete: () => fish.remove() });
-        }
-        
-        randomAnimation();
-    </scrip>
-    </script>
         <!-- Spinner End -->
 
 
