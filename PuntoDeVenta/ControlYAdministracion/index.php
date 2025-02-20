@@ -21,7 +21,7 @@ include_once "Controladores/ConsultaDashboard.php";
             background: #87CEEB;
             overflow: hidden;
             height: 100vh;
-            display: flex;
+         
             align-items: center;
             justify-content: center;
         }
