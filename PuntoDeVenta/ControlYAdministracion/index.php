@@ -75,7 +75,7 @@ include_once "Controladores/ConsultaDashboard.php";
         <div class="wave"></div>
     </div>
 
-    <script>
+    
          <script>
         function randomAnimation() {
             const animations = [animateBubbles, animateFish];
@@ -106,7 +106,7 @@ include_once "Controladores/ConsultaDashboard.php";
         }
         
         randomAnimation();
-    </script>
+    </scrip>
     </script>
         <!-- Spinner End -->
 
