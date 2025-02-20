@@ -11,6 +11,74 @@ include_once "Controladores/ConsultaDashboard.php";
 <head>
     <meta charset="utf-8">
     <title>Pantalla de inicio administrativa <?php echo $row['Licencia']?> </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #87CEEB;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animación de Olas */
+        .olas {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,64L60,85.3C120,107,240,149,360,149.3C480,149,600,107,720,96C840,85,960,107,1080,138.7C1200,171,1320,213,1380,234.7L1440,256V320H0Z"></path></svg>');
+            background-size: cover;
+            animation: moverOlas 4s linear infinite;
+        }
+        @keyframes moverOlas {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 0; }
+        }
+
+        /* Animación de Burbujas */
+        .burbuja {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: subirBurbujas 4s infinite ease-in-out;
+        }
+        @keyframes subirBurbujas {
+            0% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Animación de Pez Nadando */
+        .pez {
+            position: absolute;
+            left: -100px;
+            width: 50px;
+            height: 30px;
+            background: orange;
+            border-radius: 50%;
+            clip-path: polygon(0% 50%, 100% 0, 80% 50%, 100% 100%);
+            animation: nadar 5s linear infinite;
+        }
+        @keyframes nadar {
+            0% { left: -100px; }
+            100% { left: 100vw; }
+        }
+    </style>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -20,7 +88,30 @@ include_once "Controladores/ConsultaDashboard.php";
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <body>
-
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let animacion = Math.floor(Math.random() * 3);
+            let elemento;
+            if (animacion === 0) {
+                elemento = document.createElement("div");
+                elemento.className = "olas";
+                document.body.appendChild(elemento);
+            } else if (animacion === 1) {
+                for (let i = 0; i < 10; i++) {
+                    let burbuja = document.createElement("div");
+                    burbuja.className = "burbuja";
+                    burbuja.style.left = Math.random() * 100 + "vw";
+                    burbuja.style.animationDuration = (2 + Math.random() * 3) + "s";
+                    burbuja.style.width = burbuja.style.height = (10 + Math.random() * 20) + "px";
+                    document.body.appendChild(burbuja);
+                }
+            } else {
+                elemento = document.createElement("div");
+                elemento.className = "pez";
+                document.body.appendChild(elemento);
+            }
+        });
+    </script>
         <!-- Spinner End -->
 
 
