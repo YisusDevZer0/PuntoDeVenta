@@ -11,14 +11,14 @@ include_once "Controladores/ConsultaDashboard.php";
 <head>
     <meta charset="utf-8">
     <title>Pantalla de inicio administrativa <?php echo $row['Licencia']?> </title>
-    <style>
+    <!-- <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            background:#0072ff;
+            background: #87CEEB;
             overflow: hidden;
             height: 100vh;
          
@@ -78,7 +78,7 @@ include_once "Controladores/ConsultaDashboard.php";
             0% { left: -100px; }
             100% { left: 100vw; }
         }
-    </style>
+    </style> -->
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -88,7 +88,7 @@ include_once "Controladores/ConsultaDashboard.php";
 
 
 <body>
-<script>
+<!-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             let animacion = Math.floor(Math.random() * 3);
             let elemento;
@@ -111,7 +111,7 @@ include_once "Controladores/ConsultaDashboard.php";
                 document.body.appendChild(elemento);
             }
         });
-    </script>
+    </script> -->
         <!-- Spinner End -->
 
 

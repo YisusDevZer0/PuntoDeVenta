@@ -21,9 +21,7 @@ if ($resultVentas && $resultVentas->num_rows > 0) {
     $formattedTotal = number_format($ventasData['Total_Venta'], 2, '.', ',') ?? "0.00";
 }
 
-// Mostrar resultados
-echo "Cajas abiertas: " . $CajasAbiertas . "<br>";
-echo "Total ventas del día: MX$ " . $formattedTotal;
+
 
 // Cerrar la conexión
 $conn->close();
