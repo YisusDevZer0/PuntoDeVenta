@@ -14,54 +14,100 @@ include_once "Controladores/ConsultaDashboard.php";
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0077b6;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .wave {
+            position: absolute;
+            width: 100%;
+            height: 20vh;
+            bottom: 0;
+            background: url('https://i.imgur.com/Og7nWjv.png') repeat-x;
+            animation: waveAnimation 5s linear infinite;
+        }
+        @keyframes waveAnimation {
+            from { background-position-x: 0; }
+            to { background-position-x: 1000px; }
+        }
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            width: 20px;
+            height: 20px;
+            background: rgba(173, 216, 230, 0.7);
+            border-radius: 50%;
+            animation: floatBubble 4s linear infinite;
+        }
+        @keyframes floatBubble {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-100vh); opacity: 0; }
+        }
+    </style>
    <?php
    include "header.php";?>
-<style>
-    .overlay-animation {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2); /* Color con transparencia */
-    backdrop-filter: blur(10px); /* Desenfoque elegante */
-    z-index: 9999; /* Asegura que esté sobre el contenido */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    animation: fadeOut 2.5s forwards; /* Animación para desaparecer */
-}
-
-@keyframes fadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-</style>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(() => {
-        const overlay = document.querySelector(".overlay-animation");
-        if (overlay) {
-            overlay.remove(); // Elimina el overlay después de la animación
-        }
-    }, 2500); // Coincide con la duración de la animación
-});
-
-</script><div class="overlay-animation">
-    <h2 style="color: white; font-size: 2rem;">Bienvenido a Doctor Pez</h2>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
 <body>
-    <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
+<div class="container">
+        <div class="logo">Doctor Pez</div>
+        <div class="wave"></div>
+    </div>
+
+    <script>
+         <script>
+        function randomAnimation() {
+            const animations = [animateBubbles, animateFish];
+            const randomIndex = Math.floor(Math.random() * animations.length);
+            animations[randomIndex]();
+        }
+        
+        function animateBubbles() {
+            for (let i = 0; i < 10; i++) {
+                let bubble = document.createElement("div");
+                bubble.classList.add("bubble");
+                document.body.appendChild(bubble);
+                bubble.style.left = Math.random() * window.innerWidth + "px";
+                bubble.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                setTimeout(() => bubble.remove(), 4000);
+            }
+        }
+        
+        function animateFish() {
+            let fish = document.createElement("img");
+            fish.src = "https://i.imgur.com/JVgtpH2.png";
+            fish.style.position = "absolute";
+            fish.style.width = "100px";
+            fish.style.left = "-100px";
+            fish.style.top = Math.random() * window.innerHeight + "px";
+            document.body.appendChild(fish);
+            gsap.to(fish, { x: window.innerWidth + 100, duration: 5, ease: "power1.inOut", onComplete: () => fish.remove() });
+        }
+        
+        randomAnimation();
+    </script>
+    </script>
         <!-- Spinner End -->
 
 
