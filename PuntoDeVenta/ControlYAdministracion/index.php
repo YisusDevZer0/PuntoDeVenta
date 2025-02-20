@@ -17,6 +17,42 @@ include_once "Controladores/ConsultaDashboard.php";
 
    <?php
    include "header.php";?>
+<style>
+    .overlay-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2); /* Color con transparencia */
+    backdrop-filter: blur(10px); /* Desenfoque elegante */
+    z-index: 9999; /* Asegura que esté sobre el contenido */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    animation: fadeOut 2.5s forwards; /* Animación para desaparecer */
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+        const overlay = document.querySelector(".overlay-animation");
+        if (overlay) {
+            overlay.remove(); // Elimina el overlay después de la animación
+        }
+    }, 2500); // Coincide con la duración de la animación
+});
+
+</script><div class="overlay-animation">
+    <h2 style="color: white; font-size: 2rem;">Bienvenido a Doctor Pez</h2>
+</div>
 
 <body>
     <div class="container-xxl position-relative bg-white d-flex p-0">
