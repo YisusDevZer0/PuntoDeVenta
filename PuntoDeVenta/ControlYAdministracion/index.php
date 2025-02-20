@@ -18,7 +18,7 @@ include_once "Controladores/ConsultaDashboard.php";
             box-sizing: border-box;
         }
         body {
-            background: #87CEEB;
+            background:#0072ff;
             overflow: hidden;
             height: 100vh;
          
