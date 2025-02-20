@@ -36,13 +36,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 
-<div class="bubbles">
-    <div class="bubble" style="left: 10%; animation-duration: 6s;"></div>
-    <div class="bubble" style="left: 30%; animation-duration: 7s;"></div>
-    <div class="bubble" style="left: 50%; animation-duration: 5s;"></div>
-    <div class="bubble" style="left: 70%; animation-duration: 6s;"></div>
-    <div class="bubble" style="left: 90%; animation-duration: 7s;"></div>
-</div>
 
 
 </head>
