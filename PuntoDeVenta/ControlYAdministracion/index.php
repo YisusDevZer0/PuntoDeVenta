@@ -14,6 +14,13 @@ include_once "Controladores/ConsultaDashboard.php";
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
+    <div class="bubbles">
+    <div class="bubble" style="left: 10%; animation-duration: 6s;"></div>
+    <div class="bubble" style="left: 30%; animation-duration: 7s;"></div>
+    <div class="bubble" style="left: 50%; animation-duration: 5s;"></div>
+    <div class="bubble" style="left: 70%; animation-duration: 6s;"></div>
+    <div class="bubble" style="left: 90%; animation-duration: 7s;"></div>
+</div>
 
    <?php
    include "header.php";?>
@@ -62,14 +69,7 @@ include_once "Controladores/ConsultaDashboard.php";
 
 </style>
 <body>
-<div class="bubbles">
-    <div class="bubble" style="left: 10%; animation-duration: 6s;"></div>
-    <div class="bubble" style="left: 30%; animation-duration: 7s;"></div>
-    <div class="bubble" style="left: 50%; animation-duration: 5s;"></div>
-    <div class="bubble" style="left: 70%; animation-duration: 6s;"></div>
-    <div class="bubble" style="left: 90%; animation-duration: 7s;"></div>
-</div>
-
+   
         <!-- Spinner End -->
 
 
