@@ -17,15 +17,59 @@ include_once "Controladores/ConsultaDashboard.php";
 
    <?php
    include "header.php";?>
+<style>
+    body {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
 
+.bubbles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: bubble 10s infinite;
+}
+
+@keyframes bubble {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+</style>
 <body>
-    <div class="container-xxl position-relative bg-white d-flex p-0">
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
+<div class="bubbles">
+    <div class="bubble" style="left: 10%; animation-duration: 6s;"></div>
+    <div class="bubble" style="left: 30%; animation-duration: 7s;"></div>
+    <div class="bubble" style="left: 50%; animation-duration: 5s;"></div>
+    <div class="bubble" style="left: 70%; animation-duration: 6s;"></div>
+    <div class="bubble" style="left: 90%; animation-duration: 7s;"></div>
+</div>
+
         <!-- Spinner End -->
 
 
