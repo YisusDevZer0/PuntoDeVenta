@@ -55,6 +55,67 @@ include_once "Controladores/ControladorUsuario.php";
             <script src="js/RegistrosDeBitacora.js"></script>
             <script src="js/GuardaRegistrosBitacora.js"></script>
             <!-- Footer Start -->
+            <script>
+                // Función para agregar una fila de elemento a la tabla
+function agregarElemento() {
+    const tabla = document.getElementById("tablaElementos");
+    const fila = document.createElement("tr");
+
+    // Campo para el nombre del elemento
+    fila.innerHTML = `
+        <td><input type="text" class="form-control" name="elemento[]" required></td>
+        <td>
+            <input type="checkbox" name="lunes_mat[]"> Mañana
+            <input type="checkbox" name="lunes_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="martes_mat[]"> Mañana
+            <input type="checkbox" name="martes_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="miercoles_mat[]"> Mañana
+            <input type="checkbox" name="miercoles_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="jueves_mat[]"> Mañana
+            <input type="checkbox" name="jueves_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="viernes_mat[]"> Mañana
+            <input type="checkbox" name="viernes_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="sabado_mat[]"> Mañana
+            <input type="checkbox" name="sabado_vesp[]"> Tarde
+        </td>
+        <td>
+            <input type="checkbox" name="domingo_mat[]"> Mañana
+            <input type="checkbox" name="domingo_vesp[]"> Tarde
+        </td>
+    `;
+    tabla.appendChild(fila);
+}
+
+// Función para guardar la bitácora
+function guardarBitacora() {
+    const formData = new FormData(document.getElementById("formRegistroLimpieza"));
+
+    fetch("Controladores/GuardarBitacoraLimpieza.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Bitácora guardada correctamente.");
+            location.reload(); // Recargar la página para ver los cambios
+        } else {
+            alert("Error al guardar la bitácora.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+            </script>
             <?php 
            include "Modales/RegistroDeBitacora.php";
             include "Modales/Modales_Errores.php";
