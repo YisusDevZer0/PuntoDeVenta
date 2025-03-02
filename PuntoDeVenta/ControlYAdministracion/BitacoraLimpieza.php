@@ -45,18 +45,18 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Registros de bitacora de limpieza de  <?php echo $row['Licencia']?></h6>
             <div class="text-center">
-            <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RegistroEnergiaVentanaModal">
-  Registrar control de energia en watss
-</button>  -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#RegistroLimpiezaModal">
+                            Registrar Bitácora de Limpieza
+                        </button>
         <br>
 <div id="Cajas"></div>
             </div></div></div></div>
             </div>
-            <script src="js/RegistrosDeEnergia.js"></script>
-            <script src="js/GuardaDatosEnergia.js"></script>
+            <script src="js/RegistrosDeBitacora.js"></script>
+            <script src="js/GuardaRegistrosBitacora.js"></script>
             <!-- Footer Start -->
             <?php 
-           include "Modales/RegistroDeEnergia.php";
+           include "Modales/RegistroDeBitacora.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
