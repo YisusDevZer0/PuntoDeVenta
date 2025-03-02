@@ -1,7 +1,12 @@
 <?php
+// Habilitar visualización de errores
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Incluir archivos de configuración y controladores
 include "db_connect.php";
 include "ControladorUsuario.php";
-
 
 // Validar que todos los campos requeridos estén presentes
 if (
