@@ -8,6 +8,11 @@ error_reporting(E_ALL);
 include "db_connect.php";
 include "ControladorUsuario.php";
 
+// Depuración: Verificar si los datos POST están llegando
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
+
 // Validar que todos los campos requeridos estén presentes
 if (
     !isset($_POST['area'], $_POST['semana'], $_POST['fecha_inicio'], $_POST['fecha_fin'], 
