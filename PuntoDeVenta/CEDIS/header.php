@@ -36,4 +36,17 @@
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Punto de venta" />
-    <link rel="manifest" href="/PuntoDeVenta/PuntoDeVentaFarmacias/manifest.json" />
+    <script>
+  // Función para detectar si es un dispositivo móvil
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  // Si es un dispositivo móvil, agregar el Manifest dinámicamente
+  if (isMobileDevice()) {
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = '/PuntoDeVenta/PuntoDeVentaFarmacias/manifest.json';
+    document.head.appendChild(link);
+  }
+</script>
