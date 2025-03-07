@@ -35,7 +35,25 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
 </div>
 <body>
-    
+<script>
+        // Función para detectar si es un dispositivo móvil
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Si es un dispositivo móvil, cargar el Service Worker y el Manifest
+        if (isMobileDevice()) {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/PuntoDeVenta/PuntoDeVentaFarmacias/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado con éxito:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error('Error al registrar el Service Worker:', error);
+                    });
+            }
+        }
+    </script>
         <!-- Spinner End -->
 
 

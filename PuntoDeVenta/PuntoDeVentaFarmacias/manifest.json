@@ -1,0 +1,21 @@
+{
+    "short_name": "PuntoVenta",
+    "name": "Punto de Venta Farmacitas del doctor pez",
+    "icons": [
+      {
+        "src": "/PuntoDeVenta/PuntoDeVentaFarmacias/icon-192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/PuntoDeVenta/PuntoDeVentaFarmacias/icon-512x512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": "/PuntoDeVenta/PuntoDeVentaFarmacias/RealizarVentas.php",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/PuntoDeVenta/PuntoDeVentaFarmacias/",
+    "theme_color": "#000000"
+  }
