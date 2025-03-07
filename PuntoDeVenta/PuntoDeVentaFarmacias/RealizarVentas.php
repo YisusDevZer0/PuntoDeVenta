@@ -41,7 +41,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         }
 
-        // Si es un dispositivo móvil, cargar el Service Worker y el Manifest
+        // Si es un dispositivo móvil, cargar el Service Worker
         if (isMobileDevice()) {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/PuntoDeVenta/PuntoDeVentaFarmacias/sw.js')
