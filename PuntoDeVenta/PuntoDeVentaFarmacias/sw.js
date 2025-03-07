@@ -8,10 +8,13 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Intentando cachear recursos:', urlsToCache);
-        return cache.addAll(urlsToCache);
-      })
-      .catch((error) => {
-        console.error('Error al cachear recursos:', error);
+        return cache.addAll(urlsToCache)
+          .then(() => {
+            console.log('Recursos cacheados correctamente');
+          })
+          .catch((error) => {
+            console.error('Error al cachear recursos:', error);
+          });
       })
   );
 });
