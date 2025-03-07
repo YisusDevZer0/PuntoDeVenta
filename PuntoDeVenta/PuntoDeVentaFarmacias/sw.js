@@ -1,9 +1,7 @@
 const CACHE_NAME = 'punto-de-venta-cache-v1';
 const urlsToCache = [
   '/PuntoDeVenta/PuntoDeVentaFarmacias/RealizarVentas.php',
-  '/PuntoDeVenta/PuntoDeVentaFarmacias/styles.css', // Si tienes un archivo CSS
-  '/PuntoDeVenta/PuntoDeVentaFarmacias/scripts.js', // Si tienes un archivo JS
-  '/PuntoDeVenta/PuntoDeVentaFarmacias/logo.png'    // Si tienes un logo
+  
 ];
 
 self.addEventListener('install', (event) => {
