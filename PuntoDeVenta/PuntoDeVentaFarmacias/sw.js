@@ -1,6 +1,11 @@
 const CACHE_NAME = 'punto-de-venta-cache-v1';
 const urlsToCache = [
-  '/PuntoDeVenta/PuntoDeVentaFarmacias/RealizarVentas.php',
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/js/ControlDeTicketsVentas.js', // Archivo JavaScript
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/js/FinalizaLasVentasSucursales.js', // Archivo JavaScript
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/js/BuscaDataPacientes.js', // Archivo JavaScript
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/js/BusquedaProductos.js', // Archivo JavaScript
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/logo.png',  // Imagen
+  '/PuntoDeVenta/PuntoDeVentaFarmacias/favicon.ico' // Favicon
 ];
 
 self.addEventListener('install', (event) => {
