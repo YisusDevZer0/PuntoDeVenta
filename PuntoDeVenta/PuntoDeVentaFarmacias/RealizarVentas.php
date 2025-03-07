@@ -53,10 +53,45 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                     });
             }
         }
+
+        
     </script>
         <!-- Spinner End -->
 
+        <script>
+        let deferredPrompt;
 
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            mostrarBotonInstalacion();
+        });
+
+        function mostrarBotonInstalacion() {
+            const botonInstalar = document.getElementById('boton-instalar');
+            if (botonInstalar) {
+                botonInstalar.style.display = 'block';
+            }
+        }
+
+        const botonInstalar = document.getElementById('boton-instalar');
+        if (botonInstalar) {
+            botonInstalar.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('El usuario aceptó instalar la PWA');
+                        } else {
+                            console.log('El usuario rechazó instalar la PWA');
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+        }
+    </script>
+     <button id="boton-instalar" style="display: none;">Instalar la aplicación</button>
         <?php include_once "Menu.php" ?>
 
         <!-- Content Start -->
