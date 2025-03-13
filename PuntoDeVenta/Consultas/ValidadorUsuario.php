@@ -1,63 +1,107 @@
 <?php
 session_start();
-include_once("db_connect.php");
+require_once("db_connect.php");
 
-if(isset($_POST['login_button'])) {
-    $Correo_electronico = trim($_POST['user_email']);
-    $Password = trim($_POST['password']);
+/**
+ * Clase para manejar la validación de usuarios
+ */
+class ValidadorUsuario {
+    private $conn;
+    private $stmt;
+
+    public function __construct($conexion) {
+        $this->conn = $conexion;
+    }
+
+    /**
+     * Limpia y sanitiza los datos de entrada
+     * @param string $data
+     * @return string
+     */
+    private function sanitizarDatos($data) {
+        return htmlspecialchars(strip_tags(trim($data)));
+    }
+
+    /**
+     * Valida las credenciales del usuario
+     * @param string $email
+     * @param string $password
+     * @return array|bool
+     */
+    public function validarCredenciales($email, $password) {
+        try {
+            $email = $this->sanitizarDatos($email);
+            $password = $this->sanitizarDatos($password);
+
+            $sql = "SELECT u.Id_PvUser, u.Correo_Electronico, u.Password, u.Estatus,
+                    u.Fk_Usuario, t.ID_User, t.TipoUsuario 
+                    FROM Usuarios_PV u
+                    INNER JOIN Tipos_Usuarios t ON u.Fk_Usuario = t.ID_User 
+                    WHERE u.Correo_Electronico = ? AND u.Estatus = 'Activo'
+                    LIMIT 1";
+
+            $this->stmt = mysqli_prepare($this->conn, $sql);
+            if (!$this->stmt) {
+                throw new Exception("Error en la preparación de la consulta");
+            }
+
+            mysqli_stmt_bind_param($this->stmt, "s", $email);
+            mysqli_stmt_execute($this->stmt);
+            $resultado = mysqli_stmt_get_result($this->stmt);
+            
+            if ($row = mysqli_fetch_assoc($resultado)) {
+                if ($row['Password'] === $password) { // En un entorno real, usar password_verify()
+                    return $row;
+                }
+            }
+            return false;
+        } catch (Exception $e) {
+            error_log("Error en validación de usuario: " . $e->getMessage());
+            return false;
+        } finally {
+            if ($this->stmt) {
+                mysqli_stmt_close($this->stmt);
+            }
+        }
+    }
+
+    /**
+     * Establece la sesión según el tipo de usuario
+     * @param array $userData
+     * @return bool
+     */
+    public function establecerSesion($userData) {
+        if (!$userData) return false;
+
+        $tiposUsuario = [
+            'Administrador' => 'ControlMaestro',
+            'Farmaceutico' => 'VentasPos',
+            'Administrador General' => 'AdministradorGeneral',
+            'Supervisor' => 'ResponsableDeSupervision',
+            'Recursos Humanos' => 'AdministradorRH',
+            'Responsable Cedis' => 'ResponsableDelCedis',
+            'Inventarios' => 'Inventarios',
+            'Enfermero' => 'Enfermeria'
+        ];
+
+        if (isset($tiposUsuario[$userData['TipoUsuario']])) {
+            $_SESSION[$tiposUsuario[$userData['TipoUsuario']]] = $userData['Id_PvUser'];
+            $_SESSION['ultima_actividad'] = time();
+            return true;
+        }
+        return false;
+    }
+}
+
+// Procesar la solicitud de login
+if (isset($_POST['login_button'])) {
+    $validador = new ValidadorUsuario($conn);
+    $userData = $validador->validarCredenciales($_POST['user_email'], $_POST['password']);
     
-    $sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Correo_Electronico, Usuarios_PV.Password, Usuarios_PV.Estatus,
-        Usuarios_PV.Fk_Usuario, Tipos_Usuarios.ID_User, Tipos_Usuarios.TipoUsuario 
-    FROM Usuarios_PV 
-    INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User 
-    WHERE Usuarios_PV.Correo_Electronico = ?";
-
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "s", $Correo_electronico);
-    mysqli_stmt_execute($stmt);
-
-    $resultset = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($resultset);
-
-    switch(true) {
-        case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
-            echo "ok";
-            $_SESSION['ControlMaestro'] = $row['Id_PvUser'];
-            break;
-        case $row['Password'] == $Password && $row['TipoUsuario'] == "Farmaceutico" && $row['Estatus'] == "Activo":
-            echo "ok";
-            $_SESSION['VentasPos'] = $row['Id_PvUser'];
-            break;
-
-            case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador General" && $row['Estatus'] == "Activo":
-                echo "ok";
-                $_SESSION['AdministradorGeneral'] = $row['Id_PvUser'];
-                break;
-                case $row['Password'] == $Password && $row['TipoUsuario'] == "Supervisor" && $row['Estatus'] == "Activo":
-                    echo "ok";
-                    $_SESSION['ResponsableDeSupervision'] = $row['Id_PvUser'];
-                    break;
-                    case $row['Password'] == $Password && $row['TipoUsuario'] == "Recursos Humanos" && $row['Estatus'] == "Activo":
-                        echo "ok";
-                        $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
-                        break;
-
-                        case $row['Password'] == $Password && $row['TipoUsuario'] == "Responsable Cedis" && $row['Estatus'] == "Activo":
-                            echo "ok";
-                            $_SESSION['ResponsableDelCedis'] = $row['Id_PvUser'];
-                            break;
-                            case $row['Password'] == $Password && $row['TipoUsuario'] == "Inventarios" && $row['Estatus'] == "Activo":
-                                echo "ok";
-                                $_SESSION['Inventarios'] = $row['Id_PvUser'];
-                                break;
-                                case $row['Password'] == $Password && $row['TipoUsuario'] == "Enfermero" && $row['Estatus'] == "Activo":
-                                    echo "ok";
-                                    $_SESSION['Enfermeria'] = $row['Id_PvUser'];
-                                    break;
-        // Agrega los demás casos según la lógica que necesites
-        default:
-            // Manejar otros casos o mostrar un mensaje de error
-            echo "Error: Usuario no autorizado";
+    if ($userData && $validador->establecerSesion($userData)) {
+        echo "ok";
+    } else {
+        echo "Error: Usuario no autorizado";
     }
 }
 ?>
