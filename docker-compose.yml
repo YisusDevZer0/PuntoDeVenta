@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.8'  # Opcional, pero recomendado para compatibilidad
 
 services:
   php-app:
@@ -25,5 +25,16 @@ services:
     ports:
       - "3306:3306"
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db  # Nombre del servicio MySQL
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - db
+
 volumes:
-  db_data:  # <-- Declaración correcta del volumen gestionado
+  db_data:
