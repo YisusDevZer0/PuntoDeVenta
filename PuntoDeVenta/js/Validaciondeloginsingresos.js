@@ -1,105 +1,79 @@
-// Configuración de notificaciones
-const NOTY_CONFIG = {
-    layout: 'topCenter',
-    theme: 'metroui',
-    timeout: 3000,
-    closeWith: ['click', 'button']
-};
-
-// Mensajes del sistema
-const MESSAGES = {
-    validating: '🐟 Validando tus credenciales, por favor espera...',
-    success: '🌊 ¡Bienvenido al arrecife! Redirigiendo... 🐠',
-    error: '⚠️ ¡Error! Usuario o contraseña incorrectos. 🦀'
-};
-
-// URLs del sistema
-const URLS = {
-    validator: 'Consultas/ValidadorUsuario.php',
-    redirect: 'https://doctorpez.mx/PuntoDeVenta/ControlPOS'
-};
-
-/**
- * Muestra una notificación usando Noty
- * @param {string} message - Mensaje a mostrar
- * @param {string} type - Tipo de notificación (success, error, info)
- */
-function showNotification(message, type) {
-    new Noty({
-        ...NOTY_CONFIG,
-        text: message,
-        type: type
-    }).show();
-}
-
-/**
- * Maneja el envío del formulario
- * @param {Event} e - Evento del formulario
- */
-function handleSubmit(e) {
-    e.preventDefault();
-    showNotification(MESSAGES.validating, 'info');
-
-    const formData = $(e.target).serialize();
-
-    $.ajax({
-        type: 'POST',
-        url: URLS.validator,
-        data: formData,
-        cache: false,
-        success: function(response) {
-            if (response.trim() === 'ok') {
-                showNotification(MESSAGES.success, 'success');
-                setTimeout(() => window.location.href = URLS.redirect, 2000);
-            } else {
-                showNotification(MESSAGES.error, 'error');
-            }
-        },
-        error: function() {
-            showNotification('🔥 Error de conexión. Intenta nuevamente.', 'error');
-        }
-    });
-}
-
-// Inicialización cuando el documento está listo
 $(document).ready(function() {
-    // Inicializar componentes
+    // Inicializar los modales
     $('.modal').modal();
-    AOS.init();
 
-    // Configurar validación del formulario
+    // Validación del formulario utilizando el plugin jQuery Validation
     $("#login-form").validate({
+        // Reglas de validación para los campos del formulario
         rules: {
             password: {
                 required: true,
-                minlength: 6
+            },
+            nivel: {
+                required: true,
             },
             user_email: {
                 required: true,
                 email: true
-            }
+            },
         },
+        // Mensajes de error para cada campo del formulario
         messages: {
             password: {
-                required: "<i class='fas fa-times'></i> Se requiere tu contraseña",
-                minlength: "<i class='fas fa-times'></i> La contraseña debe tener al menos 6 caracteres"
+                required: "<i class='fas fa-times'></i> Se requiere tu contraseña " 
             },
-            user_email: {
-                required: "<i class='fas fa-times'></i> Ingresa tu correo por favor",
-                email: "<i class='fas fa-times'></i> Ingresa un correo válido"
+            user_email: "<i class='fas fa-times'></i> Ingresa tu correo por favor ",
+        },
+        // Función que se ejecuta cuando el formulario se envía correctamente
+        submitHandler: submitForm    
+    });   
+
+    // Función para manejar el envío del formulario
+    function submitForm() {       
+        // Recolecta los datos del formulario
+        var data = $("#login-form").serialize();             
+
+        // Muestra una notificación llamativa con Noty.js antes de enviar
+        new Noty({
+            text: '🐟 Validando tus credenciales, por favor espera...',
+            type: 'info',
+            layout: 'topCenter',
+            timeout: 3000,
+            theme: 'metroui'
+        }).show();
+
+        $.ajax({                
+            type: 'POST',
+            url: 'Consultas/ValidadorUsuario.php',
+            data: data,
+            success: function(response) {                        
+                if (response.trim() === 'ok') {                                    
+                    // Muestra una notificación de éxito con Noty.js
+                    new Noty({
+                        text: '🌊 ¡Bienvenido al arrecife! Redirigiendo... 🐠',
+                        type: 'success',
+                        layout: 'topCenter',
+                        timeout: 2000,
+                        theme: 'metroui'
+                    }).show();
+                    setTimeout(function() {
+                        window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
+                    }, 2000);
+                } else {                                    
+                    // Muestra una notificación de error con Noty.js
+                    new Noty({
+                        text: '⚠️ ¡Error! Usuario o contraseña incorrectos. 🦀',
+                        type: 'error',
+                        layout: 'topCenter',
+                        timeout: 3000,
+                        theme: 'metroui'
+                    }).show();
+                }
             }
-        },
-        errorElement: 'div',
-        errorPlacement: function(error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.input-field').append(error);
-        },
-        highlight: function(element) {
-            $(element).addClass('invalid').removeClass('valid');
-        },
-        unhighlight: function(element) {
-            $(element).addClass('valid').removeClass('invalid');
-        },
-        submitHandler: handleSubmit
-    });
+        });
+        return false; // Evita que el formulario se envíe de forma convencional
+    }   
+
+    // Inicializar AOS para animaciones
+    AOS.init();
 });
