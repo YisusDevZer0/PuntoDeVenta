@@ -86,7 +86,29 @@ if ($query14 && $query14->num_rows > 0) {
         $Especialistas14[] = $r;
     }
 }
+// ==================================================
+// AQUÍ VA EL NUEVO CÓDIGO
+// ==================================================
 
+// Inicializar $servicios con un arreglo vacío o un valor predeterminado
+$servicios = [];
+
+if (!empty($Especialistas14)) {
+    foreach ($Especialistas14 as $especialista) {
+        $servicios[] = [
+            'nombre' => $especialista->Nom_Serv,
+            'total' => $especialista->totaldeservicios ?? 0,
+        ];
+    }
+} else {
+    // Si no hay servicios, asignar un valor predeterminado
+    $servicios = [
+        [
+            'nombre' => 'Sin servicios registrados',
+            'total' => 0
+        ]
+    ];
+}
 // Consulta 6: Total de venta por crédito en enfermería
 $sql6 = "SELECT Venta_POS_ID, Fk_Caja, Fk_sucursal, Turno, ID_H_O_D, COUNT(DISTINCT Folio_Ticket) AS Total_tickets, SUM(Importe) AS VentaTotalCredito 
          FROM Ventas_POS 
@@ -307,37 +329,32 @@ $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
             </div>
         </div>
 
-        <!-- Tabla de servicios -->
-        <?php if (!empty($Especialistas14)) : ?>
-        <div class="table-responsive">
-            <table id="TotalesGeneralesCortes" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Nombre Servicio</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $servicios = [];
-                    foreach ($Especialistas14 as $especialista) {
-                        echo '<tr>';
-                        echo '<td><input type="text" class="form-control" readonly value="' . htmlspecialchars($especialista->Nom_Serv) . '"></td>';
-                        echo '<td><input type="text" class="form-control" readonly value="' . ($especialista->totaldeservicios ?? 0) . '"></td>';
-                        $servicios[] = [
-                            'nombre' => $especialista->Nom_Serv,
-                            'total' => $especialista->totaldeservicios ?? 0,
-                        ];
-                        echo '</tr>';
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-        <input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
-        <?php else : ?>
-        <p class="alert alert-danger">No se encontraron servicios para mostrar.</p>
-        <?php endif; ?>
+      <!-- Mostrar la tabla de servicios si hay datos -->
+<?php if (!empty($Especialistas14)) : ?>
+<div class="table-responsive">
+    <table id="TotalesGeneralesCortes" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre Servicio</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($Especialistas14 as $especialista) : ?>
+            <tr>
+                <td><input type="text" class="form-control" readonly value="<?= htmlspecialchars($especialista->Nom_Serv) ?>"></td>
+                <td><input type="text" class="form-control" readonly value="<?= $especialista->totaldeservicios ?? 0 ?>"></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+<?php else : ?>
+<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>
+<?php endif; ?>
+
+<!-- Campo oculto con el valor de servicios -->
+<input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
 
         <!-- Tabla de totales -->
         <div class="text-center">
