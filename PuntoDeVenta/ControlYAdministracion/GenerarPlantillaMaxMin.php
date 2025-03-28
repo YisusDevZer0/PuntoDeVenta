@@ -14,6 +14,9 @@ if (!$conn) {
     die("Error en la conexión a la base de datos: " . mysqli_connect_error());
 }
 
+// Asegurar que la conexión use UTF-8
+$conn->set_charset("utf8");
+
 $sql = "SELECT 
         s.Folio_Prod_Stock,
         s.ID_Prod_POS,
@@ -38,6 +41,7 @@ if (!$result) {
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
+// Agregar encabezados
 $sheet->setCellValue('A1', 'Folio Producto');
 $sheet->setCellValue('B1', 'ID Producto');
 $sheet->setCellValue('C1', 'Código de Barra');
@@ -52,7 +56,7 @@ if ($result->num_rows > 0) {
     while ($data = $result->fetch_assoc()) {
         $sheet->setCellValue('A' . $row, $data['Folio_Prod_Stock']);
         $sheet->setCellValue('B' . $row, $data['ID_Prod_POS']);
-        $sheet->setCellValue('C' . $row, $data['Cod_Barra']);
+        $sheet->setCellValueExplicit('C' . $row, $data['Cod_Barra'], \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING); // Código de barra como texto
         $sheet->setCellValue('D' . $row, $data['Nombre_Prod']);
         $sheet->setCellValue('E' . $row, $data['Fk_sucursal']);
         $sheet->setCellValue('F' . $row, $data['Nombre_Sucursal']);

@@ -80,8 +80,22 @@ document.getElementById('openAlertmaxmin').addEventListener('click', function() 
       // Redirige a la URL para proceder si el usuario ya tiene la plantilla
       window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin';
     } else if (result.isDismissed) {
-      // Redirige a la URL para descargar la plantilla si el usuario no la tiene
-      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GenerarPlantillaMaxMin';
+      // Descarga la plantilla y redirige automáticamente después
+      const downloadUrl = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GenerarPlantillaMaxMin';
+      const redirectUrl = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin';
+
+      // Crea un formulario invisible para descargar la plantilla
+      const form = document.createElement('form');
+      form.style.display = 'none';
+      form.action = downloadUrl;
+      form.method = 'GET';
+      document.body.appendChild(form);
+      form.submit();
+
+      // Redirige después de un tiempo (ajusta el tiempo según sea necesario)
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 3000); // 3 segundos de espera
     }
   });
 });
