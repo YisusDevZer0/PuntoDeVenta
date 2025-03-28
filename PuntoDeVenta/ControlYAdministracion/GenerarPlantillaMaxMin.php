@@ -1,13 +1,19 @@
 <?php
-require __DIR__ . '/vendor/autoload.php'; // Asegúrate de ajustar la ruta si es necesario
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require __DIR__ . '/vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-// Conexión a la base de datos
-include_once "Controladores/db_connect.php"; // Ajusta la ruta según tu estructura
+include_once "Controladores/db_connect.php";
 
-// Consulta SQL para obtener los datos
+if (!$conn) {
+    die("Error en la conexión a la base de datos: " . mysqli_connect_error());
+}
+
 $sql = "SELECT 
         s.Folio_Prod_Stock,
         s.ID_Prod_POS,
@@ -22,16 +28,16 @@ $sql = "SELECT
     INNER JOIN 
         Sucursales su ON s.Fk_sucursal = su.ID_Sucursal
     ORDER BY 
-        su.Nombre_Sucursal, s.Nombre_Prod;
-";
+        su.Nombre_Sucursal, s.Nombre_Prod;";
 
 $result = $conn->query($sql);
+if (!$result) {
+    die("Error en la consulta SQL: " . $conn->error);
+}
 
-// Crear un nuevo archivo Excel
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-// Agregar encabezados
 $sheet->setCellValue('A1', 'Folio Producto');
 $sheet->setCellValue('B1', 'ID Producto');
 $sheet->setCellValue('C1', 'Código de Barra');
@@ -41,8 +47,7 @@ $sheet->setCellValue('F1', 'Nombre Sucursal');
 $sheet->setCellValue('G1', 'Máximo');
 $sheet->setCellValue('H1', 'Mínimo');
 
-// Agregar datos al archivo Excel
-$row = 2; // Comenzar en la fila 2
+$row = 2;
 if ($result->num_rows > 0) {
     while ($data = $result->fetch_assoc()) {
         $sheet->setCellValue('A' . $row, $data['Folio_Prod_Stock']);
@@ -57,14 +62,11 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Cerrar la conexión a la base de datos
 $conn->close();
 
-// Configurar las cabeceras para la descarga
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment; filename="Plantilla_Maximos_Minimos.xlsx"');
 
-// Crear el archivo Excel y enviarlo al navegador
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
 exit;
