@@ -42,7 +42,11 @@ include_once "Controladores/ControladorUsuario.php";
 </button> 
 <button type="button" class="btn btn-success" id="openAlert">
   Actualizacion masiva
-</button> <br>
+</button> 
+<button type="button" class="btn btn-success" id="openAlertmaxmin">
+  Actualizacion masiva de maximos y minimos
+</button>
+<br>
 <script>
 document.getElementById('openAlert').addEventListener('click', function() {
   Swal.fire({
@@ -59,6 +63,25 @@ document.getElementById('openAlert').addEventListener('click', function() {
     } else if (result.isDismissed) {
       // Redirige a la URL para descargar la plantilla si el usuario no la tiene
       window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Plantillaexcel';
+    }
+  });
+});
+
+document.getElementById('openAlertmaxmin').addEventListener('click', function() {
+  Swal.fire({
+    title: '¿Has descargado la plantilla de máximos y mínimos?',
+    text: "Primero debes descargar la plantilla antes de proceder.",
+    icon: 'info',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, ya tengo la plantilla',
+    cancelButtonText: 'No, descargar ahora'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Redirige a la URL para proceder si el usuario ya tiene la plantilla
+      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin';
+    } else if (result.isDismissed) {
+      // Redirige a la URL para descargar la plantilla si el usuario no la tiene
+      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GenerarPlantillaMaxMin';
     }
   });
 });
