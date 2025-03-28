@@ -1,15 +1,14 @@
 <?php
-header("Content-Type: application/vnd.ms-excel");
-header("Content-Disposition: attachment; filename=Plantilla_Maximos_Minimos.xls");
-header("Pragma: no-cache");
-header("Expires: 0");
+require __DIR__ . '/vendor/autoload.php'; // Asegúrate de ajustar la ruta si es necesario
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // Conexión a la base de datos
 include_once "Controladores/db_connect.php"; // Ajusta la ruta según tu estructura
 
 // Consulta SQL para obtener los datos
-$sql = "
-    SELECT 
+$sql = "SELECT 
         s.Folio_Prod_Stock,
         s.ID_Prod_POS,
         s.Cod_Barra,
@@ -22,18 +21,51 @@ $sql = "
         Stock_POS s
     INNER JOIN 
         Sucursales su ON s.Fk_sucursal = su.ID_Sucursal
-    -- WHERE s.Fk_sucursal = 1  -- (Ejemplo de filtro opcional)
     ORDER BY 
         su.Nombre_Sucursal, s.Nombre_Prod;
 ";
 
 $result = $conn->query($sql);
 
-// Generar el contenido del archivo Excel
-echo "Folio Producto\tID Producto\tCódigo de Barra\tNombre Producto\tID Sucursal\tNombre Sucursal\tMáximo\tMínimo\n";
+// Crear un nuevo archivo Excel
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
 
-echo "12345\t1\t1234567890123\tProducto A\t1\tSucursal A\t100\t10\n";
-echo "12346\t2\t1234567890124\tProducto B\t1\tSucursal A\t200\t20\n";
+// Agregar encabezados
+$sheet->setCellValue('A1', 'Folio Producto');
+$sheet->setCellValue('B1', 'ID Producto');
+$sheet->setCellValue('C1', 'Código de Barra');
+$sheet->setCellValue('D1', 'Nombre Producto');
+$sheet->setCellValue('E1', 'ID Sucursal');
+$sheet->setCellValue('F1', 'Nombre Sucursal');
+$sheet->setCellValue('G1', 'Máximo');
+$sheet->setCellValue('H1', 'Mínimo');
 
+// Agregar datos al archivo Excel
+$row = 2; // Comenzar en la fila 2
+if ($result->num_rows > 0) {
+    while ($data = $result->fetch_assoc()) {
+        $sheet->setCellValue('A' . $row, $data['Folio_Prod_Stock']);
+        $sheet->setCellValue('B' . $row, $data['ID_Prod_POS']);
+        $sheet->setCellValue('C' . $row, $data['Cod_Barra']);
+        $sheet->setCellValue('D' . $row, $data['Nombre_Prod']);
+        $sheet->setCellValue('E' . $row, $data['Fk_sucursal']);
+        $sheet->setCellValue('F' . $row, $data['Nombre_Sucursal']);
+        $sheet->setCellValue('G' . $row, $data['Max_Existencia']);
+        $sheet->setCellValue('H' . $row, $data['Min_Existencia']);
+        $row++;
+    }
+}
+
+// Cerrar la conexión a la base de datos
 $conn->close();
+
+// Configurar las cabeceras para la descarga
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment; filename="Plantilla_Maximos_Minimos.xlsx"');
+
+// Crear el archivo Excel y enviarlo al navegador
+$writer = new Xlsx($spreadsheet);
+$writer->save('php://output');
+exit;
 ?>
