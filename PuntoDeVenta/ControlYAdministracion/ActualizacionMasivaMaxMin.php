@@ -159,14 +159,12 @@ $fcha = date("Y-m-d");
 
     <!-- Modal para la vista previa -->
     <?php if (isset($_GET['showModal']) && $_GET['showModal'] == 1): ?>
-    <div class="modal fade show" id="previewModal" tabindex="-1" role="dialog" style="display: block;">
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Vista previa del archivo Excel</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='ActualizacionMasivaMaxMin.php';">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title" id="previewModalLabel">Vista previa del archivo Excel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post">
@@ -181,6 +179,11 @@ $fcha = date("Y-m-d");
             </div>
         </div>
     </div>
+    <script>
+        // Mostrar el modal automáticamente
+        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.show();
+    </script>
     <?php endif; ?>
 
     <?php include "Footer.php"; ?>
