@@ -26,8 +26,6 @@ if (isset($_POST["import"])) {
         }
 
         $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
-        $ActualizadoEl = date("Y-m-d H:i:s"); // Fecha y hora actual
-
         $Reader = new SpreadsheetReader($targetPath);
         
         $sheetCount = count($Reader->sheets());
@@ -40,22 +38,27 @@ if (isset($_POST["import"])) {
                 $Cod_Barra = isset($Row[2]) ? mysqli_real_escape_string($con, $Row[2]) : "";
                 $Nombre_Prod = isset($Row[3]) ? mysqli_real_escape_string($con, $Row[3]) : "";
                 $Fk_sucursal = isset($Row[4]) ? mysqli_real_escape_string($con, $Row[4]) : "";
-                $Max_Existencia = isset($Row[5]) ? mysqli_real_escape_string($con, $Row[5]) : "";
-                $Min_Existencia = isset($Row[6]) ? mysqli_real_escape_string($con, $Row[6]) : "";
+                $Nombre_Sucursal = isset($Row[5]) ? mysqli_real_escape_string($con, $Row[5]) : "";
+                $Max_Existencia = isset($Row[6]) ? mysqli_real_escape_string($con, $Row[6]) : "";
+                $Min_Existencia = isset($Row[7]) ? mysqli_real_escape_string($con, $Row[7]) : "";
                 
                 if (!empty($Folio_Prod_Stock) && !empty($Max_Existencia) && !empty($Min_Existencia)) {
-                    $query = "UPDATE Stock_POS 
-                              SET Max_Existencia = '$Max_Existencia', Min_Existencia = '$Min_Existencia', 
-                                  ActualizadoPor = '$ActualizadoPor', ActualizadoEl = '$ActualizadoEl'
-                              WHERE Folio_Prod_Stock = '$Folio_Prod_Stock'";
+                    // Insertar los datos en la tabla ActualizacionMaxMin
+                    $query = "INSERT INTO ActualizacionMaxMin (
+                        Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
+                        Max_Existencia, Min_Existencia, AgregadoPor
+                    ) VALUES (
+                        '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
+                        '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor'
+                    )";
                     $resultados = mysqli_query($con, $query);
                 
                     if ($resultados) {
                         $type = "success";
-                        $message = "Excel importado correctamente y datos actualizados.";
+                        $message = "Excel importado correctamente y datos insertados.";
                     } else {
                         $type = "error";
-                        $message = "Hubo un problema al actualizar los registros.";
+                        $message = "Hubo un problema al insertar los registros.";
                     }
                 }
             }
