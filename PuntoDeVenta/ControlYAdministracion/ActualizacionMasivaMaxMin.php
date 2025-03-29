@@ -12,7 +12,6 @@ if (!file_exists($autoloadPath)) {
 
 require $autoloadPath;
 
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (isset($_POST["import"])) {
