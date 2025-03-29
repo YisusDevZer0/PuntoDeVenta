@@ -112,11 +112,13 @@ if (isset($_POST["import"])) {
         $processedRows++; // Incrementar el contador de filas procesadas
     }
 
-    // Mostrar un mensaje al usuario
+    // Preparar el mensaje para SweetAlert2
     if ($processedRows > 0) {
         $message = "Se procesaron $processedRows filas correctamente.";
+        $icon = "success";
     } else {
         $message = "No se procesaron filas debido a campos vacíos o errores.";
+        $icon = "warning";
     }
 
     if (!empty($ignoredRows)) {
@@ -124,12 +126,13 @@ if (isset($_POST["import"])) {
     }
 
     // Mostrar notificación con SweetAlert2
+    echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
     echo "<script>
         document.addEventListener('DOMContentLoaded', function() {
             Swal.fire({
                 title: 'Resultado del procesamiento',
                 text: '$message',
-                icon: '" . ($processedRows > 0 ? 'success' : 'warning') . "',
+                icon: '$icon',
                 confirmButtonText: 'Aceptar'
             }).then(() => {
                 window.location.href = 'ActualizacionMasivaMaxMin.php';
