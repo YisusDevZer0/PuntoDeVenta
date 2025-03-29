@@ -34,11 +34,11 @@ if (isset($_POST["preview"])) {
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
-        // Mostrar una vista previa del contenido del archivo en una tabla editable
+        // Mostrar una vista previa del contenido del archivo en una tabla editable con DataTables
         echo "<h3 style='color:#0172b6;'>Vista previa del archivo Excel</h3>";
         echo "<form method='post'>";
         echo "<div class='table-responsive'>";
-        echo "<table class='table table-bordered'>";
+        echo "<table id='dataTable' class='table table-bordered'>";
         echo "<thead class='table-primary'><tr>
                 <th>Folio_Prod_Stock</th>
                 <th>ID_Prod_POS</th>
@@ -66,6 +66,19 @@ if (isset($_POST["preview"])) {
         echo "<input type='hidden' name='filePath' value='$targetPath'>";
         echo "<button type='submit' name='import' class='btn btn-success'>Confirmar y Procesar</button>";
         echo "</form>";
+        echo "<script>
+                $(document).ready(function() {
+                    $('#dataTable').DataTable({
+                        paging: true,
+                        searching: true,
+                        ordering: true,
+                        responsive: true,
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+                        }
+                    });
+                });
+              </script>";
         exit();
     } else {
         die("El archivo enviado es inválido. Por favor vuelva a intentarlo.");
@@ -129,6 +142,9 @@ $fcha = date("Y-m-d");
     <title>Actualización de máximos y mínimos</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <style>
         .error {
             color: red;
