@@ -123,8 +123,19 @@ if (isset($_POST["import"])) {
         $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos: " . implode(', ', $ignoredRows) . ".";
     }
 
-    echo "<script>alert('$message');</script>";
-    header("Location: ActualizacionMasivaMaxMin.php");
+    // Mostrar notificación con SweetAlert2
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Resultado del procesamiento',
+                text: '$message',
+                icon: '" . ($processedRows > 0 ? 'success' : 'warning') . "',
+                confirmButtonText: 'Aceptar'
+            }).then(() => {
+                window.location.href = 'ActualizacionMasivaMaxMin.php';
+            });
+        });
+    </script>";
     exit();
 }
 
@@ -143,6 +154,8 @@ $fcha = date("Y-m-d");
     <!-- Incluir Bootstrap CSS y JS si no están en header.php -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Función para eliminar una fila
