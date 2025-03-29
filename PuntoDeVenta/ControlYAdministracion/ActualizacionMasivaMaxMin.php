@@ -4,7 +4,14 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include('dbconect.php');
-require 'vendor/autoload.php';
+// Verificar si el archivo autoload.php existe
+$autoloadPath = __DIR__ . '/../../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    die("Error: El archivo 'vendor/autoload.php' no existe. Asegúrate de ejecutar 'composer install'.");
+}
+
+require $autoloadPath;
+
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
