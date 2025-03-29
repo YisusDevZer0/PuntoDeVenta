@@ -10,7 +10,6 @@ if (!file_exists($autoloadPath)) {
     die("Error: El archivo 'vendor/autoload.php' no existe. Asegúrate de ejecutar 'composer install'.");
 }
 
-require $autoloadPath;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -36,8 +35,15 @@ if (isset($_POST["import"])) {
         // Definir el usuario que realiza la actualización
         $ActualizadoPor = isset($_POST["ActualizadoPor"]) ? mysqli_real_escape_string($con, $_POST["ActualizadoPor"]) : 'Desconocido';
 
+        $ignoredRows = []; // Para registrar las filas ignoradas
+        $processedRows = 0; // Contador de filas procesadas
+
         foreach ($rows as $index => $row) {
-            if ($index === 0) continue; // Saltar la fila de encabezados
+            // Saltar la fila de encabezados (puedes ajustar esta lógica si los encabezados tienen un patrón específico)
+            if ($index === 0 || empty($row[0])) {
+                $ignoredRows[] = $index + 1; // Registrar la fila ignorada (sumamos 1 porque los índices comienzan en 0)
+                continue;
+            }
 
             // Validar y limpiar los datos
             $Folio_Prod_Stock = isset($row[0]) ? mysqli_real_escape_string($con, $row[0]) : '';
@@ -49,23 +55,36 @@ if (isset($_POST["import"])) {
             $Max_Existencia = isset($row[6]) ? mysqli_real_escape_string($con, $row[6]) : '';
             $Min_Existencia = isset($row[7]) ? mysqli_real_escape_string($con, $row[7]) : '';
 
-            // Insertar los datos en la tabla
-            if (!empty($Folio_Prod_Stock) && !empty($Max_Existencia) && !empty($Min_Existencia)) {
-                $query = "INSERT INTO ActualizacionMaxMin (
-                    Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
-                    Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
-                ) VALUES (
-                    '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
-                    '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW(), '$ActualizadoPor', NOW()
-                )";
-                $resultados = mysqli_query($con, $query);
-
-                if (!$resultados) {
-                    die("Error en la consulta SQL: " . mysqli_error($con));
-                }
+            // Validar que los campos obligatorios no estén vacíos
+            if (empty($Folio_Prod_Stock) || empty($Max_Existencia) || empty($Min_Existencia)) {
+                $ignoredRows[] = $index + 1; // Registrar la fila ignorada
+                continue;
             }
+
+            // Insertar los datos en la tabla
+            $query = "INSERT INTO ActualizacionMaxMin (
+                Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
+                Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
+            ) VALUES (
+                '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
+                '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW(), '$ActualizadoPor', NOW()
+            )";
+            $resultados = mysqli_query($con, $query);
+
+            if (!$resultados) {
+                die("Error en la consulta SQL: " . mysqli_error($con));
+            }
+
+            $processedRows++; // Incrementar el contador de filas procesadas
         }
 
+        // Mostrar un mensaje al usuario
+        $message = "Se procesaron $processedRows filas correctamente.";
+        if (!empty($ignoredRows)) {
+            $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos o encabezados: " . implode(', ', $ignoredRows) . ".";
+        }
+
+        echo "<script>alert('$message');</script>";
         header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ResultadoActualizacionMaxMin");
         exit();
     } else {
