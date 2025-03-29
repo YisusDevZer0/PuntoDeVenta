@@ -34,13 +34,9 @@ if (isset($_POST["preview"])) {
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
-        // Mostrar una vista previa del contenido del archivo en una tabla editable con DataTables
-        echo "<div class='container-fluid pt-4 px-4'>";
-        echo "<h3 style='color:#0172b6;'>Vista previa del archivo Excel</h3>";
-        echo "<form method='post'>";
-        echo "<div class='table-responsive'>";
-        echo "<table id='dataTable' class='table table-bordered'>";
-        echo "<thead class='table-primary'><tr>
+        // Generar la tabla para el modal
+        $tableHtml = "<table id='dataTable' class='table table-bordered'>";
+        $tableHtml .= "<thead class='table-primary'><tr>
                 <th>Folio_Prod_Stock</th>
                 <th>ID_Prod_POS</th>
                 <th>Cod_Barra</th>
@@ -50,37 +46,24 @@ if (isset($_POST["preview"])) {
                 <th>Max_Existencia</th>
                 <th>Min_Existencia</th>
               </tr></thead>";
-        echo "<tbody>";
+        $tableHtml .= "<tbody>";
         foreach ($rows as $index => $row) {
             if ($index === 0) continue; // Saltar encabezados
-            echo "<tr>";
+            $tableHtml .= "<tr>";
             foreach ($row as $key => $cell) {
-                // Validar que el valor no sea null antes de usar htmlspecialchars
                 $value = isset($cell) ? htmlspecialchars($cell, ENT_QUOTES, 'UTF-8') : '';
-                echo "<td><input type='text' name='data[$index][$key]' value='$value' class='form-control'></td>";
+                $tableHtml .= "<td><input type='text' name='data[$index][$key]' value='$value' class='form-control'></td>";
             }
-            echo "</tr>";
+            $tableHtml .= "</tr>";
         }
-        echo "</tbody>";
-        echo "</table>";
-        echo "</div>";
-        echo "<input type='hidden' name='filePath' value='$targetPath'>";
-        echo "<button type='submit' name='import' class='btn btn-success'>Confirmar y Procesar</button>";
-        echo "</form>";
-        echo "</div>";
-        echo "<script>
-                $(document).ready(function() {
-                    $('#dataTable').DataTable({
-                        paging: true,
-                        searching: true,
-                        ordering: true,
-                        responsive: true,
-                        language: {
-                            url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
-                        }
-                    });
-                });
-              </script>";
+        $tableHtml .= "</tbody></table>";
+
+        // Guardar la tabla en una variable de sesión para mostrarla en el modal
+        session_start();
+        $_SESSION['tableHtml'] = $tableHtml;
+        $_SESSION['filePath'] = $targetPath;
+
+        header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin.php?showModal=1");
         exit();
     } else {
         die("El archivo enviado es inválido. Por favor vuelva a intentarlo.");
@@ -95,18 +78,15 @@ if (isset($_POST["import"])) {
     $processedRows = 0; // Contador de filas procesadas
 
     foreach ($data as $index => $row) {
-        // Validar y limpiar los datos
         $Folio_Prod_Stock = isset($row[0]) && trim($row[0]) !== '' ? mysqli_real_escape_string($con, $row[0]) : null;
         $Max_Existencia = isset($row[6]) && trim($row[6]) !== '' ? mysqli_real_escape_string($con, $row[6]) : null;
         $Min_Existencia = isset($row[7]) && trim($row[7]) !== '' ? mysqli_real_escape_string($con, $row[7]) : null;
 
-        // Validar que los campos obligatorios no estén vacíos
         if (is_null($Folio_Prod_Stock) || is_null($Max_Existencia) || is_null($Min_Existencia)) {
-            $ignoredRows[] = $index + 1; // Registrar la fila ignorada
+            $ignoredRows[] = $index + 1;
             continue;
         }
 
-        // Insertar los datos en la tabla
         $query = "INSERT INTO ActualizacionMaxMin (
             Folio_Prod_Stock, Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
         ) VALUES (
@@ -118,10 +98,9 @@ if (isset($_POST["import"])) {
             die("Error en la consulta SQL: " . mysqli_error($con));
         }
 
-        $processedRows++; // Incrementar el contador de filas procesadas
+        $processedRows++;
     }
 
-    // Mostrar un mensaje al usuario
     $message = "Se procesaron $processedRows filas correctamente.";
     if (!empty($ignoredRows)) {
         $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos o encabezados: " . implode(', ', $ignoredRows) . ".";
@@ -167,6 +146,34 @@ $fcha = date("Y-m-d");
             </div>
         </div>
     </div>
+
+    <!-- Modal para la vista previa -->
+    <?php if (isset($_GET['showModal']) && $_GET['showModal'] == 1): ?>
+    <div class="modal fade show" id="previewModal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Vista previa del archivo Excel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="window.location.href='ActualizacionMasivaMaxMin.php';">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        <div class="table-responsive">
+                            <?php
+                            session_start();
+                            echo $_SESSION['tableHtml'];
+                            ?>
+                        </div>
+                        <button type="submit" name="import" class="btn btn-success mt-3">Confirmar y Procesar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <?php include "footer.php"; ?>
 </body>
 </html>
