@@ -113,9 +113,14 @@ if (isset($_POST["import"])) {
     }
 
     // Mostrar un mensaje al usuario
-    $message = "Se procesaron $processedRows filas correctamente.";
+    if ($processedRows > 0) {
+        $message = "Se procesaron $processedRows filas correctamente.";
+    } else {
+        $message = "No se procesaron filas debido a campos vacíos o errores.";
+    }
+
     if (!empty($ignoredRows)) {
-        $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos o encabezados: " . implode(', ', $ignoredRows) . ".";
+        $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos: " . implode(', ', $ignoredRows) . ".";
     }
 
     echo "<script>alert('$message');</script>";
