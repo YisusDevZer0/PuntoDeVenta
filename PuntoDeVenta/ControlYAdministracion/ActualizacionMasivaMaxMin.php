@@ -35,6 +35,7 @@ if (isset($_POST["preview"])) {
         $rows = $sheet->toArray();
 
         // Mostrar una vista previa del contenido del archivo en una tabla editable con DataTables
+        echo "<div class='container-fluid pt-4 px-4'>";
         echo "<h3 style='color:#0172b6;'>Vista previa del archivo Excel</h3>";
         echo "<form method='post'>";
         echo "<div class='table-responsive'>";
@@ -66,6 +67,7 @@ if (isset($_POST["preview"])) {
         echo "<input type='hidden' name='filePath' value='$targetPath'>";
         echo "<button type='submit' name='import' class='btn btn-success'>Confirmar y Procesar</button>";
         echo "</form>";
+        echo "</div>";
         echo "<script>
                 $(document).ready(function() {
                     $('#dataTable').DataTable({
@@ -145,39 +147,6 @@ $fcha = date("Y-m-d");
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <style>
-        .error {
-            color: red;
-            margin-left: 5px;
-        }
-        #frmExcelImport {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="file"] {
-            margin-bottom: 10px;
-        }
-        button.btn-submit {
-            background-color: #4caf50;
-            color: #fff;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        select {
-            padding: 8px;
-            margin-right: 10px;
-        }
-    </style>
 </head>
 <body>
     <?php include_once "Menu.php"; ?>
