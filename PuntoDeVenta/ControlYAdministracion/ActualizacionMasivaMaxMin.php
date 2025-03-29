@@ -128,11 +128,11 @@ $fcha = date("Y-m-d");
     <script>
         // Función para eliminar una fila
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.delete-row').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    const row = this.closest('tr');
+            document.querySelector('#previewModal').addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-row')) {
+                    const row = event.target.closest('tr');
                     row.remove();
-                });
+                }
             });
         });
     </script>
