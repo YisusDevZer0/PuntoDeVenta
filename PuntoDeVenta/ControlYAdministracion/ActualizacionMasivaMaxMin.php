@@ -47,6 +47,7 @@ if (isset($_POST["preview"])) {
                 <th>Nombre_Sucursal</th>
                 <th>Max_Existencia</th>
                 <th>Min_Existencia</th>
+                <th>Acciones</th>
               </tr></thead>";
         $tableHtml .= "<tbody>";
         foreach ($rows as $index => $row) {
@@ -56,6 +57,7 @@ if (isset($_POST["preview"])) {
                 $value = isset($cell) ? htmlspecialchars($cell, ENT_QUOTES, 'UTF-8') : '';
                 $tableHtml .= "<td><input type='text' name='data[$index][$key]' value='$value' class='form-control'></td>";
             }
+            $tableHtml .= "<td><button type='button' class='btn btn-danger btn-sm delete-row'>Eliminar</button></td>";
             $tableHtml .= "</tr>";
         }
         $tableHtml .= "</tbody></table>";
@@ -123,6 +125,17 @@ $fcha = date("Y-m-d");
     <meta charset="utf-8">
     <title>Actualización de máximos y mínimos</title>
     <?php include "header.php"; ?>
+    <script>
+        // Función para eliminar una fila
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-row').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    row.remove();
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <?php include_once "Menu.php"; ?>
