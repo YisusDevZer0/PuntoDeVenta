@@ -183,6 +183,6 @@ $fcha = date("Y-m-d");
     </div>
     <?php endif; ?>
 
-    <?php include "footer.php"; ?>
+    <?php include "Footer.php"; ?>
 </body>
 </html>
