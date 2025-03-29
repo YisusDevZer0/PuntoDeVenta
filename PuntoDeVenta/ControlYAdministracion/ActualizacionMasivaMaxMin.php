@@ -4,14 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include('dbconect.php');
-
-// Verificar si el archivo autoload.php existe
-$autoloadPath = __DIR__ . '/../../vendor/autoload.php';
-if (!file_exists($autoloadPath)) {
-    die("Error: El archivo 'vendor/autoload.php' no existe. Asegúrate de ejecutar 'composer install'.");
-}
-
-require $autoloadPath;
+require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -34,25 +27,30 @@ if (isset($_POST["import"])) {
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
+        // Definir el usuario que realiza la actualización
+        $ActualizadoPor = isset($_POST["ActualizadoPor"]) ? mysqli_real_escape_string($con, $_POST["ActualizadoPor"]) : 'Desconocido';
+
         foreach ($rows as $index => $row) {
             if ($index === 0) continue; // Saltar la fila de encabezados
 
-            $Folio_Prod_Stock = mysqli_real_escape_string($con, $row[0]);
-            $ID_Prod_POS = mysqli_real_escape_string($con, $row[1]);
-            $Cod_Barra = mysqli_real_escape_string($con, $row[2]);
-            $Nombre_Prod = mysqli_real_escape_string($con, $row[3]);
-            $Fk_sucursal = mysqli_real_escape_string($con, $row[4]);
-            $Nombre_Sucursal = mysqli_real_escape_string($con, $row[5]);
-            $Max_Existencia = mysqli_real_escape_string($con, $row[6]);
-            $Min_Existencia = mysqli_real_escape_string($con, $row[7]);
+            // Validar y limpiar los datos
+            $Folio_Prod_Stock = isset($row[0]) ? mysqli_real_escape_string($con, $row[0]) : '';
+            $ID_Prod_POS = isset($row[1]) ? mysqli_real_escape_string($con, $row[1]) : '';
+            $Cod_Barra = isset($row[2]) ? mysqli_real_escape_string($con, $row[2]) : '';
+            $Nombre_Prod = isset($row[3]) ? mysqli_real_escape_string($con, $row[3]) : '';
+            $Fk_sucursal = isset($row[4]) ? mysqli_real_escape_string($con, $row[4]) : '';
+            $Nombre_Sucursal = isset($row[5]) ? mysqli_real_escape_string($con, $row[5]) : '';
+            $Max_Existencia = isset($row[6]) ? mysqli_real_escape_string($con, $row[6]) : '';
+            $Min_Existencia = isset($row[7]) ? mysqli_real_escape_string($con, $row[7]) : '';
 
+            // Insertar los datos en la tabla
             if (!empty($Folio_Prod_Stock) && !empty($Max_Existencia) && !empty($Min_Existencia)) {
                 $query = "INSERT INTO ActualizacionMaxMin (
                     Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
-                    Max_Existencia, Min_Existencia, AgregadoPor, FechaActualizado
+                    Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
                 ) VALUES (
                     '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
-                    '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW()
+                    '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW(), '$ActualizadoPor', NOW()
                 )";
                 $resultados = mysqli_query($con, $query);
 
