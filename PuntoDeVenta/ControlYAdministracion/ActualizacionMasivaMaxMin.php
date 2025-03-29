@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include('dbconect.php');
+require 'vendor/autoload.php';
 // Verificar si el archivo autoload.php existe
 $autoloadPath = __DIR__ . '/../../vendor/autoload.php';
 if (!file_exists($autoloadPath)) {
@@ -11,7 +12,6 @@ if (!file_exists($autoloadPath)) {
 }
 
 require $autoloadPath;
-
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (isset($_POST["preview"])) {
@@ -33,24 +33,37 @@ if (isset($_POST["preview"])) {
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 
-        // Mostrar una vista previa del contenido del archivo
-        echo "<h3>Vista previa del archivo Excel</h3>";
+        // Mostrar una vista previa del contenido del archivo en una tabla editable
+        echo "<h3 style='color:#0172b6;'>Vista previa del archivo Excel</h3>";
         echo "<form method='post'>";
-        echo "<table border='1' cellpadding='5'>";
-        echo "<thead><tr><th>Folio_Prod_Stock</th><th>ID_Prod_POS</th><th>Cod_Barra</th><th>Nombre_Prod</th><th>Fk_sucursal</th><th>Nombre_Sucursal</th><th>Max_Existencia</th><th>Min_Existencia</th></tr></thead>";
+        echo "<div class='table-responsive'>";
+        echo "<table class='table table-bordered'>";
+        echo "<thead class='table-primary'><tr>
+                <th>Folio_Prod_Stock</th>
+                <th>ID_Prod_POS</th>
+                <th>Cod_Barra</th>
+                <th>Nombre_Prod</th>
+                <th>Fk_sucursal</th>
+                <th>Nombre_Sucursal</th>
+                <th>Max_Existencia</th>
+                <th>Min_Existencia</th>
+              </tr></thead>";
         echo "<tbody>";
         foreach ($rows as $index => $row) {
             if ($index === 0) continue; // Saltar encabezados
             echo "<tr>";
-            foreach ($row as $cell) {
-                echo "<td>" . htmlspecialchars($cell) . "</td>";
+            foreach ($row as $key => $cell) {
+                // Validar que el valor no sea null antes de usar htmlspecialchars
+                $value = isset($cell) ? htmlspecialchars($cell, ENT_QUOTES, 'UTF-8') : '';
+                echo "<td><input type='text' name='data[$index][$key]' value='$value' class='form-control'></td>";
             }
             echo "</tr>";
         }
         echo "</tbody>";
         echo "</table>";
+        echo "</div>";
         echo "<input type='hidden' name='filePath' value='$targetPath'>";
-        echo "<button type='submit' name='import'>Confirmar y Procesar</button>";
+        echo "<button type='submit' name='import' class='btn btn-success'>Confirmar y Procesar</button>";
         echo "</form>";
         exit();
     } else {
@@ -59,29 +72,13 @@ if (isset($_POST["preview"])) {
 }
 
 if (isset($_POST["import"])) {
-    $filePath = $_POST["filePath"];
-    if (!file_exists($filePath)) {
-        die("El archivo no existe. Por favor vuelva a cargarlo.");
-    }
-
-    // Leer el archivo Excel
-    $spreadsheet = IOFactory::load($filePath);
-    $sheet = $spreadsheet->getActiveSheet();
-    $rows = $sheet->toArray();
-
-    // Definir el usuario que realiza la actualización
+    $data = $_POST['data']; // Datos editados por el usuario
     $ActualizadoPor = isset($_POST["ActualizadoPor"]) ? mysqli_real_escape_string($con, $_POST["ActualizadoPor"]) : 'Desconocido';
 
     $ignoredRows = []; // Para registrar las filas ignoradas
     $processedRows = 0; // Contador de filas procesadas
 
-    foreach ($rows as $index => $row) {
-        // Saltar la fila de encabezados
-        if ($index === 0) {
-            $ignoredRows[] = $index + 1; // Registrar la fila ignorada
-            continue;
-        }
-
+    foreach ($data as $index => $row) {
         // Validar y limpiar los datos
         $Folio_Prod_Stock = isset($row[0]) && trim($row[0]) !== '' ? mysqli_real_escape_string($con, $row[0]) : null;
         $Max_Existencia = isset($row[6]) && trim($row[6]) !== '' ? mysqli_real_escape_string($con, $row[6]) : null;
