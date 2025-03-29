@@ -15,6 +15,8 @@ require $autoloadPath;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+session_start(); // Asegurarse de que la sesión esté iniciada
+
 if (isset($_POST["preview"])) {
     $allowedFileType = ['application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 
@@ -59,11 +61,10 @@ if (isset($_POST["preview"])) {
         $tableHtml .= "</tbody></table>";
 
         // Guardar la tabla en una variable de sesión para mostrarla en el modal
-        session_start();
         $_SESSION['tableHtml'] = $tableHtml;
         $_SESSION['filePath'] = $targetPath;
 
-        header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin.php?showModal=1");
+        header("Location: ActualizacionMasivaMaxMin.php?showModal=1");
         exit();
     } else {
         die("El archivo enviado es inválido. Por favor vuelva a intentarlo.");
@@ -107,7 +108,7 @@ if (isset($_POST["import"])) {
     }
 
     echo "<script>alert('$message');</script>";
-    header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ResultadoActualizacionMaxMin");
+    header("Location: ActualizacionMasivaMaxMin.php");
     exit();
 }
 
@@ -121,11 +122,7 @@ $fcha = date("Y-m-d");
 <head>
     <meta charset="utf-8">
     <title>Actualización de máximos y mínimos</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     <?php include_once "Menu.php"; ?>
@@ -162,7 +159,6 @@ $fcha = date("Y-m-d");
                     <form method="post">
                         <div class="table-responsive">
                             <?php
-                            session_start();
                             echo $_SESSION['tableHtml'];
                             ?>
                         </div>
