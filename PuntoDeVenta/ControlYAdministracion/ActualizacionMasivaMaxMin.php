@@ -3,74 +3,61 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include('dbconect.php');
-require_once('vendor/php-excel-reader/excel_reader2.php');
-require_once('vendor/SpreadsheetReader.php');
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 if (isset($_POST["import"])) {
     $allowedFileType = ['application/vnd.ms-excel', 'text/xls', 'text/xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-    
+
     if (isset($_FILES["file"]) && in_array($_FILES["file"]["type"], $allowedFileType)) {
         $uploadDir = 'subidas/';
-        
         if (!is_dir($uploadDir)) {
             die("El directorio de carga no existe.");
         }
 
         $targetPath = $uploadDir . $_FILES['file']['name'];
-        
-        // Verificar errores de archivo
-        if ($_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-            die("Error al subir el archivo. Código de error: " . $_FILES['file']['error']);
-        }
-        
-        // Intentar mover el archivo
         if (!move_uploaded_file($_FILES['file']['tmp_name'], $targetPath)) {
             die("Error al mover el archivo subido. Verifica los permisos y la ruta.");
         }
 
-        $ActualizadoPor = mysqli_real_escape_string($con, $_POST["ActualizadoPor"]); // Hidden input for user
-        $Reader = new SpreadsheetReader($targetPath);
-        
-        $sheetCount = count($Reader->sheets());
-        for ($i = 0; $i < $sheetCount; $i++) {
-            $Reader->ChangeSheet($i);
-            
-            foreach ($Reader as $Row) {
-                $Folio_Prod_Stock = isset($Row[0]) ? mysqli_real_escape_string($con, $Row[0]) : "";
-                $ID_Prod_POS = isset($Row[1]) ? mysqli_real_escape_string($con, $Row[1]) : "";
-                $Cod_Barra = isset($Row[2]) ? mysqli_real_escape_string($con, $Row[2]) : "";
-                $Nombre_Prod = isset($Row[3]) ? mysqli_real_escape_string($con, $Row[3]) : "";
-                $Fk_sucursal = isset($Row[4]) ? mysqli_real_escape_string($con, $Row[4]) : "";
-                $Nombre_Sucursal = isset($Row[5]) ? mysqli_real_escape_string($con, $Row[5]) : "";
-                $Max_Existencia = isset($Row[6]) ? mysqli_real_escape_string($con, $Row[6]) : "";
-                $Min_Existencia = isset($Row[7]) ? mysqli_real_escape_string($con, $Row[7]) : "";
-                
-                if (!empty($Folio_Prod_Stock) && !empty($Max_Existencia) && !empty($Min_Existencia)) {
-                    // Insertar los datos en la tabla ActualizacionMaxMin
-                    $query = "INSERT INTO ActualizacionMaxMin (
-                        Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
-                        Max_Existencia, Min_Existencia, AgregadoPor
-                    ) VALUES (
-                        '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
-                        '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor'
-                    )";
-                    $resultados = mysqli_query($con, $query);
-                
-                    if ($resultados) {
-                        $type = "success";
-                        $message = "Excel importado correctamente y datos insertados.";
-                    } else {
-                        $type = "error";
-                        $message = "Hubo un problema al insertar los registros.";
-                    }
+        // Leer el archivo Excel
+        $spreadsheet = IOFactory::load($targetPath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+
+        foreach ($rows as $index => $row) {
+            if ($index === 0) continue; // Saltar la fila de encabezados
+
+            $Folio_Prod_Stock = mysqli_real_escape_string($con, $row[0]);
+            $ID_Prod_POS = mysqli_real_escape_string($con, $row[1]);
+            $Cod_Barra = mysqli_real_escape_string($con, $row[2]);
+            $Nombre_Prod = mysqli_real_escape_string($con, $row[3]);
+            $Fk_sucursal = mysqli_real_escape_string($con, $row[4]);
+            $Nombre_Sucursal = mysqli_real_escape_string($con, $row[5]);
+            $Max_Existencia = mysqli_real_escape_string($con, $row[6]);
+            $Min_Existencia = mysqli_real_escape_string($con, $row[7]);
+
+            if (!empty($Folio_Prod_Stock) && !empty($Max_Existencia) && !empty($Min_Existencia)) {
+                $query = "INSERT INTO ActualizacionMaxMin (
+                    Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, 
+                    Max_Existencia, Min_Existencia, AgregadoPor, FechaActualizado
+                ) VALUES (
+                    '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', 
+                    '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW()
+                )";
+                $resultados = mysqli_query($con, $query);
+
+                if (!$resultados) {
+                    die("Error en la consulta SQL: " . mysqli_error($con));
                 }
             }
         }
+
         header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ResultadoActualizacionMaxMin");
         exit();
     } else {
-        $type = "error";
-        $message = "El archivo enviado es inválido. Por favor vuelva a intentarlo.";
+        die("El archivo enviado es inválido. Por favor vuelva a intentarlo.");
     }
 }
 
