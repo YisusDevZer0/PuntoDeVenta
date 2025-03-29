@@ -125,6 +125,11 @@ $fcha = date("Y-m-d");
     <meta charset="utf-8">
     <title>Actualización de máximos y mínimos</title>
     <?php include "header.php"; ?>
+
+    <!-- Incluir Bootstrap CSS y JS si no están en header.php -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         // Función para eliminar una fila
         document.addEventListener('DOMContentLoaded', function () {
@@ -144,12 +149,12 @@ $fcha = date("Y-m-d");
         <div class="text-center">
             <div class="container-fluid pt-4 px-4">
                 <div class="col-12">
-                <h6 class="mb-4" style="color:#0172b6;">Actualización masiva de máximos y mínimos</h6> <br>
+                    <h6 class="mb-4" style="color:#0172b6;">Actualización masiva de máximos y mínimos</h6> <br>
                     <form id="frmExcelImport" method="post" enctype="multipart/form-data">
                         <label for="file">Seleccionar archivo Excel:</label>
                         <input type="file" name="file" id="file" required>
                         <input type="hidden" name="ActualizadoPor" value="<?php echo $row['Nombre_Apellidos']; ?>">
-                        <button class="btn-submit" type="submit" name="preview">Vista previa</button>
+                        <button class="btn-submit btn btn-primary" type="submit" name="preview">Vista previa</button>
                         <div class="error"><?php if (isset($message)) echo $message; ?></div>
                     </form>
                 </div>
@@ -159,8 +164,8 @@ $fcha = date("Y-m-d");
 
     <!-- Modal para la vista previa -->
     <?php if (isset($_GET['showModal']) && $_GET['showModal'] == 1): ?>
-    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="previewModalLabel">Vista previa del archivo Excel</h5>
@@ -170,7 +175,11 @@ $fcha = date("Y-m-d");
                     <form method="post">
                         <div class="table-responsive">
                             <?php
-                            echo $_SESSION['tableHtml'];
+                            if (isset($_SESSION['tableHtml'])) {
+                                echo $_SESSION['tableHtml'];
+                            } else {
+                                echo "<p>No hay datos para mostrar.</p>";
+                            }
                             ?>
                         </div>
                         <button type="submit" name="import" class="btn btn-success mt-3">Confirmar y Procesar</button>
@@ -181,8 +190,10 @@ $fcha = date("Y-m-d");
     </div>
     <script>
         // Mostrar el modal automáticamente
-        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
-        previewModal.show();
+        document.addEventListener('DOMContentLoaded', function () {
+            var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+            previewModal.show();
+        });
     </script>
     <?php endif; ?>
 
