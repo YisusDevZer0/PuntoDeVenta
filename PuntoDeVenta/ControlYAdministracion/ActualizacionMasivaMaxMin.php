@@ -81,19 +81,27 @@ if (isset($_POST["import"])) {
     $processedRows = 0; // Contador de filas procesadas
 
     foreach ($data as $index => $row) {
+        // Validar y limpiar los datos
         $Folio_Prod_Stock = isset($row[0]) && trim($row[0]) !== '' ? mysqli_real_escape_string($con, $row[0]) : null;
+        $ID_Prod_POS = isset($row[1]) && trim($row[1]) !== '' ? mysqli_real_escape_string($con, $row[1]) : null;
+        $Cod_Barra = isset($row[2]) && trim($row[2]) !== '' ? mysqli_real_escape_string($con, $row[2]) : null;
+        $Nombre_Prod = isset($row[3]) && trim($row[3]) !== '' ? mysqli_real_escape_string($con, $row[3]) : null;
+        $Fk_sucursal = isset($row[4]) && trim($row[4]) !== '' ? mysqli_real_escape_string($con, $row[4]) : null;
+        $Nombre_Sucursal = isset($row[5]) && trim($row[5]) !== '' ? mysqli_real_escape_string($con, $row[5]) : null;
         $Max_Existencia = isset($row[6]) && trim($row[6]) !== '' ? mysqli_real_escape_string($con, $row[6]) : null;
         $Min_Existencia = isset($row[7]) && trim($row[7]) !== '' ? mysqli_real_escape_string($con, $row[7]) : null;
 
+        // Validar que los campos obligatorios no estén vacíos
         if (is_null($Folio_Prod_Stock) || is_null($Max_Existencia) || is_null($Min_Existencia)) {
-            $ignoredRows[] = $index + 1;
+            $ignoredRows[] = $index + 1; // Registrar la fila ignorada
             continue;
         }
 
+        // Insertar los datos en la tabla
         $query = "INSERT INTO ActualizacionMaxMin (
-            Folio_Prod_Stock, Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
+            Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Nombre_Sucursal, Max_Existencia, Min_Existencia, AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
         ) VALUES (
-            '$Folio_Prod_Stock', '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW(), '$ActualizadoPor', NOW()
+            '$Folio_Prod_Stock', '$ID_Prod_POS', '$Cod_Barra', '$Nombre_Prod', '$Fk_sucursal', '$Nombre_Sucursal', '$Max_Existencia', '$Min_Existencia', '$ActualizadoPor', NOW(), '$ActualizadoPor', NOW()
         )";
         $resultados = mysqli_query($con, $query);
 
@@ -101,9 +109,10 @@ if (isset($_POST["import"])) {
             die("Error en la consulta SQL: " . mysqli_error($con));
         }
 
-        $processedRows++;
+        $processedRows++; // Incrementar el contador de filas procesadas
     }
 
+    // Mostrar un mensaje al usuario
     $message = "Se procesaron $processedRows filas correctamente.";
     if (!empty($ignoredRows)) {
         $message .= " Las siguientes filas fueron ignoradas debido a campos vacíos o encabezados: " . implode(', ', $ignoredRows) . ".";
