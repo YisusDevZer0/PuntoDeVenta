@@ -10,6 +10,7 @@ if (!file_exists($autoloadPath)) {
     die("Error: El archivo 'vendor/autoload.php' no existe. Asegúrate de ejecutar 'composer install'.");
 }
 
+require $autoloadPath;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
