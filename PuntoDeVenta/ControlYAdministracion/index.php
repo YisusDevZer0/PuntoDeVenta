@@ -10,10 +10,7 @@ include_once "Controladores/ConsultaDashboard.php"; // Aquí puedes incluir tus 
     <title>Dashboard Administrativo</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
     <?php include_once "Menu.php"; ?>
@@ -91,7 +88,7 @@ include_once "Controladores/ConsultaDashboard.php"; // Aquí puedes incluir tus 
                             <div class="card">
                                 <div class="card-header">Detalles de Productos</div>
                                 <div class="card-body">
-                                    <table id="tablaProductos" class="display" style="width:100%">
+                                    <table class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
@@ -174,11 +171,6 @@ include_once "Controladores/ConsultaDashboard.php"; // Aquí puedes incluir tus 
                     borderWidth: 1
                 }]
             }
-        });
-
-        // Inicializar DataTable
-        $(document).ready(function() {
-            $('#tablaProductos').DataTable();
         });
     </script>
 </body>
