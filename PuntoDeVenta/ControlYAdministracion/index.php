@@ -88,31 +88,45 @@ include_once "Controladores/ConsultaDashboard.php";
 
 
 <body>
-<!-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let animacion = Math.floor(Math.random() * 3);
-            let elemento;
-            if (animacion === 0) {
-                elemento = document.createElement("div");
-                elemento.className = "olas";
-                document.body.appendChild(elemento);
-            } else if (animacion === 1) {
-                for (let i = 0; i < 10; i++) {
-                    let burbuja = document.createElement("div");
-                    burbuja.className = "burbuja";
-                    burbuja.style.left = Math.random() * 100 + "vw";
-                    burbuja.style.animationDuration = (2 + Math.random() * 3) + "s";
-                    burbuja.style.width = burbuja.style.height = (10 + Math.random() * 20) + "px";
-                    document.body.appendChild(burbuja);
-                }
-            } else {
-                elemento = document.createElement("div");
-                elemento.className = "pez";
-                document.body.appendChild(elemento);
-            }
-        });
-    </script> -->
-        <!-- Spinner End -->
+    <!-- Elementos decorativos acuáticos -->
+    <div class="ocean-floor"></div>
+    <div class="coral-reef"></div>
+    <div class="seaweed-container"></div>
+    <div class="coral-container"></div>
+    <div class="bubbles-container"></div>
+    
+    <!-- Peces decorativos -->
+    <div class="fish"></div>
+    <div class="fish"></div>
+    <div class="fish"></div>
+    
+    <!-- Burbujas decorativas -->
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    
+    <!-- Algas decorativas -->
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+    <div class="seaweed"></div>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
 
 
         <!-- Sidebar Start -->
