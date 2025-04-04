@@ -225,7 +225,7 @@
     
    </div>
 
-    <input type="text" class="form-control " name="Licencia" id="empresa" hidden value="<?php echo $row['Licencia']?>"aria-describedby="basic-addon1" >       
+    <input type="text" class="form-control " name="Licencia" id="empresa"  value="<?php echo $row['Licencia']?>"aria-describedby="basic-addon1" >       
       
     <input type="text" class="form-control"  name="AgregaProductosBy" id="agrega" hidden readonly value=" <?php echo $row['Nombre_Apellidos']?>">
     <input type="text" class="form-control"  name="SistemaProductos" id="sistema" hidden readonly value="Administrador">
