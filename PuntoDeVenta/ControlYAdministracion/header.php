@@ -1,5 +1,5 @@
-<!-- Favicon -->
-<link href="img/favicon.ico" rel="icon">
+ <!-- Favicon -->
+ <link href="img/favicon.ico" rel="icon">
 
 <!-- Google Web Fonts --><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,37 +36,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 
-<style>
-    /* Estilos adicionales para el logo de Doctor Pez */
-    .doctor-pez-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    
-    .doctor-pez-logo {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: var(--primary);
-        text-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
-        margin-right: 10px;
-    }
-    
-    .water-drop {
-        position: absolute;
-        width: 15px;
-        height: 15px;
-        background: var(--primary);
-        border-radius: 50%;
-        opacity: 0.8;
-        animation: drop 2s linear infinite;
-    }
-    
-    @keyframes drop {
-        0% { transform: translateY(-20px); opacity: 0.8; }
-        100% { transform: translateY(100px); opacity: 0; }
-    }
-</style>
+
 
 </head>
 
