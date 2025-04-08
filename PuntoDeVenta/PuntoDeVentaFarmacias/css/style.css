@@ -190,85 +190,80 @@ body::before {
     left: 0;
     height: 100vh;
     width: 280px;
-    background: #FFFFFF;
-    z-index: 100;
-    transition: all 0.3s;
+    background: var(--light);
+    z-index: 999;
+    transition: all 0.3s ease;
     overflow-y: auto;
-    box-shadow: 0 0 45px 0 rgba(0, 0, 0, .08);
+    box-shadow: var(--elevation-2);
 }
 
 .sidebar .navbar {
-    padding: 0;
+    padding: 15px;
 }
 
-.sidebar .navbar-brand {
-    padding: 20px 25px;
-    display: block;
+.sidebar .navbar-nav {
     width: 100%;
 }
 
-.sidebar .navbar-brand h3 {
-    font-size: 1.1rem;
-    margin: 0;
-    line-height: 1.4;
-}
-
 .sidebar .nav-item {
-    padding: 0 10px;
-    margin: 2px 0;
+    position: relative;
+    margin: 5px 0;
 }
 
 .sidebar .nav-link {
-    padding: 10px 15px;
-    font-size: 0.9rem;
-    color: #666666;
+    padding: 12px 15px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
     border-radius: 5px;
-    transition: all 0.3s;
     display: flex;
     align-items: center;
+    transition: all 0.3s ease;
 }
 
 .sidebar .nav-link i {
-    margin-right: 12px;
-    width: 20px;
+    width: 25px;
+    font-size: 1.1rem;
     text-align: center;
-    font-size: 1rem;
+    margin-right: 10px;
+    color: var(--primary);
 }
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
-    color: #ef7980;
-    background: #f8f9fa;
+    color: var(--primary);
+    background: rgba(0, 188, 212, 0.1);
 }
 
 .sidebar .dropdown-menu {
-    margin: 0;
     padding: 5px;
+    margin: 0 10px;
     border: none;
     border-radius: 5px;
-    background: #ffffff;
-    box-shadow: 0 0 45px 0 rgba(0, 0, 0, .08);
+    background: var(--light);
+    box-shadow: var(--elevation-1);
 }
 
 .sidebar .dropdown-item {
     padding: 8px 15px;
-    font-size: 0.85rem;
-    color: #666666;
+    color: var(--text-primary);
+    font-size: 0.9rem;
     border-radius: 4px;
     display: flex;
     align-items: center;
-}
-
-.sidebar .dropdown-item:hover {
-    color: #ef7980;
-    background: #f8f9fa;
+    transition: all 0.3s ease;
 }
 
 .sidebar .dropdown-item i {
-    margin-right: 12px;
-    width: 20px;
+    width: 25px;
+    font-size: 1rem;
     text-align: center;
-    font-size: 0.9rem;
+    margin-right: 10px;
+    color: var(--primary);
+}
+
+.sidebar .dropdown-item:hover {
+    color: var(--primary);
+    background: rgba(0, 188, 212, 0.1);
 }
 
 .content {
