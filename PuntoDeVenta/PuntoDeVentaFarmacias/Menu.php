@@ -1,7 +1,7 @@
 <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-light navbar-light">
                 <a href="index.html" class="navbar-brand mx-4 mb-3">
-                    <h3 class="text-primary"><i style="color: #ef7980!important;" class="fa-solid fa-fish"></i><?php echo $row['Licencia']?><br> <?php echo $row['Nombre_Sucursal']?></h3> 
+                    <h3 class="text-primary"><i class="fa fa-hospital me-2"></i><?php echo $row['Licencia']?><br> <?php echo $row['Nombre_Sucursal']?></h3>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
@@ -14,112 +14,95 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="index" class="nav-item nav-link "><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-                   
-                   
+                    <a href="index" class="nav-item nav-link"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
                    
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-hospital me-2"></i>Farmacia</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
-                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
-                            <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
-                            <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Mensajes</a>
-                            <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
+                            <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa fa-bolt me-2"></i>Registro de energía</a>
+                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa fa-broom me-2"></i>Bitácora de limpieza</a>
+                            <a href="TareasPorHacer" class="dropdown-item"><i class="fa fa-tasks me-2"></i>Lista de tareas</a>
+                            <a href="Mensajes" class="dropdown-item"><i class="fa fa-envelope me-2"></i>Mensajes</a>
+                            <a href="Recordatorios" class="dropdown-item"><i class="fa fa-bell me-2"></i>Crear recordatorios</a>
                         </div>
                     </div>
 
-                    
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-cash-register me-2"></i>Cajas</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-coins"></i>Apertura de caja</a>
-                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
-                            <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa-solid fa-print"></i>Reimpresion de corte</a>
+                            <a href="AperturarCajaV2" class="dropdown-item"><i class="fa fa-door-open me-2"></i>Apertura de caja</a>
+                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa fa-file-invoice-dollar me-2"></i>Cortes de caja</a>
+                            <a href="ReimpresionDeCortes" class="dropdown-item"><i class="fa fa-print me-2"></i>Reimpresión de corte</a>
                         </div>
                     </div>
                         
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-regular fa-calendar"></i>Agenda</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-calendar me-2"></i>Agenda</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-calendar-days"></i>Revaloraciones</a>
-                            <a href="AgendaLaboratorios" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Laboratorios</a>
-                            <a href="AgendaEspecialistas" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Especialistas</a>
+                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa fa-calendar-check me-2"></i>Revaloraciones</a>
+                            <a href="AgendaLaboratorios" class="dropdown-item"><i class="fa fa-flask me-2"></i>Laboratorios</a>
+                            <a href="AgendaEspecialistas" class="dropdown-item"><i class="fa fa-user-md me-2"></i>Especialistas</a>
                         </div>
                     </div>
-                    <a href="RealizarVentas" class="nav-item nav-link "><i class="fa-solid fa-cart-shopping"></i>Realizar Venta</a>
+                    <a href="RealizarVentas" class="nav-item nav-link"><i class="fa fa-shopping-cart me-2"></i>Realizar Venta</a>
                     
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-users me-2"></i>Clientes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-people-group"></i>Lista de clientes</a>
-                            <a href="Creditos" class="dropdown-item"><i class="fa-regular fa-credit-card"></i>Creditos </a>
-                           
+                            <a href="DatosDeClientes" class="dropdown-item"><i class="fa fa-user-friends me-2"></i>Lista de clientes</a>
+                            <a href="Creditos" class="dropdown-item"><i class="fa fa-credit-card me-2"></i>Créditos</a>
                         </div>
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-ticket"></i>Tickets</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-receipt me-2"></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets</a>
-                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Desglose de tickets credito</a>
-                            <a href="EncargosPendientes" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Encargos</a>
-                           
-                        </div>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket-simple"></i>Reimpresion de tickets</a>
-                           
-                        </div>
-                    </div>
-
-                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Ventas</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
-                            <a href="VentasAcredito" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas a credito</a>
-                           
-                        </div>
-                    </div>
-
-
-                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock</a>
-                            <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock de insumos</a>
-                            <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
-                            <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Conteo diario</a>                           
-                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Devoluciones</a>    
-                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Caducados</a>    
-                           
+                            <a href="Tickets" class="dropdown-item"><i class="fa fa-file-invoice me-2"></i>Desglose de tickets</a>
+                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa fa-file-invoice-dollar me-2"></i>Desglose de tickets crédito</a>
+                            <a href="EncargosPendientes" class="dropdown-item"><i class="fa fa-clipboard-list me-2"></i>Encargos</a>
+                            <a href="Tickets" class="dropdown-item"><i class="fa fa-print me-2"></i>Reimpresión de tickets</a>
                         </div>
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Pedidos</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-chart-line me-2"></i>Ventas</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                 
-                            <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Pedidos</a>
-                            <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Generar encargo</a>
-                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Generar cotizacion</a>
-                                                       
-                           
-                           
+                            <a href="VentasDelDia" class="dropdown-item"><i class="fa fa-calendar-day me-2"></i>Ventas del día</a>
+                            <a href="VentasAcredito" class="dropdown-item"><i class="fa fa-credit-card me-2"></i>Ventas a crédito</a>
                         </div>
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-right-left"></i>Traspasos</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-warehouse me-2"></i>Almacén</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ListadoDeTraspasos" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Listado de traspasos</a>
-                            <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Solicitar ingresos</a>
-                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-arrows-turn-to-dots"></i>Solicitudes pendientes</a>
+                            <a href="StockSucursal" class="dropdown-item"><i class="fa fa-boxes me-2"></i>Stock</a>
+                            <a href="StockInsumos" class="dropdown-item"><i class="fa fa-box me-2"></i>Stock de insumos</a>
+                            <a href="Pedidos" class="dropdown-item"><i class="fa fa-shopping-basket me-2"></i>Pedidos</a>
+                            <a href="ConteoDiario" class="dropdown-item"><i class="fa fa-clipboard-check me-2"></i>Conteo diario</a>
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa fa-undo me-2"></i>Devoluciones</a>
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa fa-exclamation-triangle me-2"></i>Caducados</a>
                         </div>
                     </div>
 
-                    <a href="index" class="nav-item nav-link "><i class="fa-solid fa-file-video"></i>Video tutoriales</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-shopping-basket me-2"></i>Pedidos</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="Pedidos" class="dropdown-item"><i class="fa fa-clipboard-list me-2"></i>Pedidos</a>
+                            <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa fa-file-invoice me-2"></i>Generar encargo</a>
+                            <a href="Cotizaciones" class="dropdown-item"><i class="fa fa-file-invoice-dollar me-2"></i>Generar cotización</a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-exchange-alt me-2"></i>Traspasos</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a href="ListadoDeTraspasos" class="dropdown-item"><i class="fa fa-list me-2"></i>Listado de traspasos</a>
+                            <a href="Ingresos" class="dropdown-item"><i class="fa fa-sign-in-alt me-2"></i>Solicitar ingresos</a>
+                            <a href="SolicitudPendientes" class="dropdown-item"><i class="fa fa-clock me-2"></i>Solicitudes pendientes</a>
+                        </div>
+                    </div>
+
+                    <a href="index" class="nav-item nav-link"><i class="fa fa-video me-2"></i>Video tutoriales</a>
                 </div>
             </nav>
         </div>
