@@ -9,6 +9,8 @@
                     Diseñado con <i class="fa fa-heart text-primary"></i> por Zero
                 </div>
             </div>
+            <!-- Fondo de ondas para el footer -->
+            <div class="wave-bg"></div>
         </div>
     </div>
     <!-- Footer End -->
@@ -55,7 +57,7 @@
             bubble.classList.add('bubble-effect');
             
             // Tamaño aleatorio
-            const size = Math.random() * 12 + 4;
+            const size = Math.random() * 10 + 4;
             bubble.style.width = `${size}px`;
             bubble.style.height = `${size}px`;
             
@@ -97,7 +99,7 @@
     /* Estilos para las burbujas */
     .bubble-effect {
         position: absolute;
-        background-color: rgba(0, 188, 212, 0.2);
+        background-color: rgba(0, 188, 212, 0.15);
         border-radius: 50%;
         pointer-events: none;
         z-index: 1;
@@ -109,10 +111,10 @@
             opacity: 0;
         }
         50% {
-            opacity: 0.5;
+            opacity: 0.3;
         }
         100% {
-            transform: translateY(-80px) scale(1.2);
+            transform: translateY(-60px) scale(1.2);
             opacity: 0;
         }
     }
@@ -121,7 +123,7 @@
     .bg-light.p-4 {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(180deg, #ffffff, rgba(224, 247, 250, 0.5));
+        background: linear-gradient(180deg, #ffffff, rgba(224, 247, 250, 0.3));
     }
     
     /* Estilo para el botón volver arriba */
@@ -131,29 +133,42 @@
         right: 30px;
         bottom: 30px;
         z-index: 99;
-        background-color: #00BCD4 !important;
+        background-color: #00BCD4;
         color: white;
         border-radius: 50%;
-        width: 45px;
-        height: 45px;
+        width: 44px;
+        height: 44px;
         text-align: center;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 188, 212, 0.1);
         border: none;
         transition: all 0.3s ease;
-        animation: float 2s ease-in-out infinite;
+        animation: float 3s ease-in-out infinite;
     }
     
     .back-to-top:hover {
-        background-color: #0097A7 !important;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        background-color: #0097A7;
         transform: translateY(-5px);
     }
     
     @keyframes float {
         0% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
+        50% { transform: translateY(-6px); }
         100% { transform: translateY(0); }
+    }
+    
+    /* Efecto de wave para el footer */
+    .wave-bg {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(0,188,212,0.05)" d="M0,192L48,176C96,160,192,128,288,138.7C384,149,480,203,576,202.7C672,203,768,149,864,144C960,139,1056,181,1152,181.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+        background-size: cover;
+        z-index: -1;
+        opacity: 0.8;
+        pointer-events: none;
     }
 </style>
