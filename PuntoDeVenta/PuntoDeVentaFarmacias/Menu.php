@@ -1,33 +1,30 @@
 <!-- Wrapper principal -->
 <div class="wrapper">
     <!-- Sidebar -->
-    <div class="sidebar">
-        <nav class="navbar">
+    <div class="sidebar pe-4 pb-3">
+        <nav class="navbar bg-light navbar-light">
             <!-- Logo y título -->
-            <div class="navbar-brand">
+            <a href="index.html" class="navbar-brand mx-4 mb-3">
                 <h3 class="text-primary">
-                    <i class="fa-solid fa-fish me-2"></i>
+                    <i style="color: #ef7980!important;" class="fa-solid fa-fish"></i>
                     <?php echo $row['Licencia']?>
                 </h3>
-                <small class="text-muted"><?php echo $row['Nombre_Sucursal']?></small>
-            </div>
+            </a>
 
             <!-- Perfil de usuario -->
-            <div class="profile-section">
-                <div class="d-flex align-items-center">
-                    <div class="position-relative">
-                        <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                    </div>
-                    <div class="ms-3">
-                        <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
-                        <span><?php echo $row['TipoUsuario']?></span>
-                    </div>
+            <div class="d-flex align-items-center ms-4 mb-4">
+                <div class="position-relative">
+                    <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
+                    <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                </div>
+                <div class="ms-3">
+                    <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
+                    <span><?php echo $row['TipoUsuario']?></span>
                 </div>
             </div>
 
             <!-- Menú de navegación -->
-            <div class="navbar-nav">
+            <div class="navbar-nav w-100">
                 <a href="index" class="nav-item nav-link active">
                     <i class="fa fa-tachometer-alt me-2"></i>
                     <span>Inicio</span>

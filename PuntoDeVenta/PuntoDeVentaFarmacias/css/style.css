@@ -187,12 +187,12 @@ body::before {
 }
 
 /*** Layout ***/
-/* .wrapper {
+.wrapper {
     display: flex;
     min-height: 100vh;
     width: 100%;
     position: relative;
-} */
+}
 
 /* SIDEBAR */
 .sidebar {
@@ -200,12 +200,12 @@ body::before {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 280px;
-    background-color: white;
-    box-shadow: 0 0 15px rgba(0, 188, 212, 0.15);
+    width: 250px;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--light);
+    transition: 0.5s;
     z-index: 999;
-    transition: all 0.3s ease;
-    border-right: 1px solid rgba(0, 188, 212, 0.1);
 }
 
 .sidebar::before {
@@ -390,7 +390,7 @@ body::before {
 .navbar-bottom {
     position: fixed;
     bottom: 50px; /* Espacio para el footer */
-    left: 280px;
+    left: 250px;
     right: 0;
     height: 60px;
     background-color: white;
@@ -415,9 +415,10 @@ body::before {
 
 /* CONTENIDO PRINCIPAL */
 .content {
-    margin-left: 280px;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
+    margin-left: 250px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    transition: 0.5s;
 }
 
 .sidebar.active + .content {
@@ -467,7 +468,7 @@ body::before {
 .footer {
     position: fixed;
     bottom: 0;
-    left: 280px;
+    left: 250px;
     right: 0;
     height: 50px;
     background-color: white;
@@ -604,7 +605,7 @@ body::before {
 /* RESPONSIVE */
 @media (max-width: 992px) {
     .sidebar {
-        margin-left: -280px;
+        margin-left: -250px;
         box-shadow: none;
     }
     
