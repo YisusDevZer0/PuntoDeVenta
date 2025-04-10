@@ -11,37 +11,16 @@
                     <div class="ms-3">
                         <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
                         <span><?php echo $row['TipoUsuario']?></span>
-                        <span><?php echo $row['Nombre_Sucursal']?></span>
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-cash-register"></i> Apertura de caja</a>
-                            <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
-                            <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
-                            <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
-                            <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
-                            <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Mensajes</a>
-                            <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
-                        </div>
-                    </div>
                    
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Agendas</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-person-walking-arrow-loop-left"></i>Revaloraciones</a>
-                            <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-hospital-user"></i>Especialistas </a>
+                            <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-users"></i>Revaloraciones</a>
+                            <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Especialistas </a>
                            
                         </div>
                     </div>
@@ -51,14 +30,6 @@
                             <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
                             <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Personal activo </a>
                             <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
-                            <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-calendar"></i>Reporte General </a>
-
                         </div>
                     </div>
 
@@ -89,9 +60,7 @@
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
-                            <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
-                            <a href="CancelacionDeTickets" class="dropdown-item"><i class="fa-solid fa-ban"></i>Cancelacion de tickets </a>
-                            <a href="EdicionDeTickets" class="dropdown-item"><i class="fa-solid fa-file-pen"></i>Edicion de tickets</a>
+                            <a href="TicketsCredito" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
                            
                         </div>
                     </div>
@@ -102,7 +71,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                             <a href="VentasACredito" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-                            <a href="TotalesDeVentaPorVendedor" class="dropdown-item"><i class="fa-solid fa-users"></i>Ventas por personal </a>
+                           
                         </div>
                     </div>
 
@@ -111,8 +80,8 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historico general </a>
-                          
+                            <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Historial general </a>
+                            <a href="ControlCedis" class="dropdown-item"><i class="fa-solid fa-house-medical"></i>CEDIS </a>
                             <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
                             <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-truck-field"></i>Proveedores </a> 
                             <a href="Servicios" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Servicios </a>
@@ -120,55 +89,36 @@
                             <a href="Presentaciones" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Presentaciones </a>
                             <a href="Componentes" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Componentes </a>
                             <a href="TiposProductos" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Tipos productos </a>
-                            <a href="Categorias" class="dropdown-item"><i class="fa-solid fa-staff-snake"></i>Categorias </a>
+                            
                            
                         </div>
                     </div>
              <!-- MENUS DE ALMACEN -->
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left"></i>Traspasos</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                        <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-truck-ramp-box"></i>Realizar traspasos</a>
                             <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
-                          
                             <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
-                          
-                        </div>
-                    </div>
-
-
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Ingresos</a>
-                        <div class="dropdown-menu bg-transparent border-0">
                            
-                        
-                            <!-- <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a> -->
-                            <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
-                            <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Realizar ingresos </a>
                         </div>
                     </div>
 
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Inventarios</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <!-- <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a> -->
-                            <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
-                            <!-- <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a> -->
-                            <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Insumos </a>
-                            <a href="ReportesCedisInventario" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
-                            <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
+                            <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-coins"></i>Inventario de cedis</a>
+                            <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>inventario de sucursales </a>
+                            <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ajuste de inventarios </a>
+                           
                         </div>
                     </div>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree"></i>Reportes</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Reportes</a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="ReporteDeVentasTotales" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
-                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
-                            <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte mas vendidos </a>
-                            <a href="ReportePorProductoFormaPago" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por productos </a>
-                            <a href="ReportePorFormaDePago" class="dropdown-item"><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
+                            <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-coins"></i>Reporte de ventas</a>
+                            <a href="ReporteServicios" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Reporte por tipo de servicios </a>
+                            
                            
                         </div>
                     </div>
