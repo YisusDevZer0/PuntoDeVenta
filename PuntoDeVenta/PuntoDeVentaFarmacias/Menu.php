@@ -268,54 +268,6 @@
     </div>
 </div>
 
-<!-- Navbar inferior -->
-<nav class="navbar-bottom">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <!-- Toggle Sidebar Button -->
-        <button class="sidebar-toggler">
-            <i class="fa fa-bars"></i>
-        </button>
-
-        <!-- Buscador -->
-        <div class="search-box">
-            <input type="text" class="form-control" placeholder="Buscar...">
-            <i class="fa fa-search search-icon"></i>
-        </div>
-
-        <!-- Notificaciones y perfil -->
-        <div class="d-flex">
-            <!-- Notificaciones -->
-            <div class="dropdown">
-                <a href="#" class="nav-link dropdown-toggle position-relative" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-bell"></i>
-                    <span class="badge">3</span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
-                    <li><h6 class="dropdown-header">Notificaciones</h6></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Nueva venta registrada</a></li>
-                    <li><a class="dropdown-item" href="#">Nuevo cliente registrado</a></li>
-                    <li><a class="dropdown-item" href="#">Recordatorio: Inventario</a></li>
-                </ul>
-            </div>
-            
-            <!-- Perfil de usuario -->
-            <div class="dropdown ms-3">
-                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="rounded-circle me-2" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" width="32" height="32">
-                    <span class="d-none d-md-inline-block"><?php echo $row['Nombre_Apellidos']?></span>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                    <li><a class="dropdown-item" href="#"><i class="fa fa-user me-2"></i>Mi Perfil</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa fa-cog me-2"></i>Configuración</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</nav>
-
 <!-- Footer -->
 <footer class="footer">
     <div>Doctor Pez &copy; <?php echo date('Y'); ?> - Todos los derechos reservados.</div>
@@ -329,7 +281,6 @@
         const sidebar = document.querySelector('.sidebar');
         const content = document.querySelector('.content');
         const footer = document.querySelector('.footer');
-        const navbarBottom = document.querySelector('.navbar-bottom');
         
         sidebarToggler.addEventListener('click', function() {
             sidebar.classList.toggle('active');
@@ -338,12 +289,10 @@
                     content.style.marginLeft = '0';
                     content.style.width = '100%';
                     footer.style.left = '0';
-                    navbarBottom.style.left = '0';
                 } else {
                     content.style.marginLeft = '280px';
                     content.style.width = 'calc(100% - 280px)';
                     footer.style.left = '280px';
-                    navbarBottom.style.left = '280px';
                 }
             }
         });
