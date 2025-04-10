@@ -14,86 +14,239 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-                   
-                   
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
-                            <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Personal activo </a>
-                            <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
-                        </div>
-                    </div>
+                    <!-- Menú de navegación -->
+            <div class="navbar-nav w-100">
+                <a href="index" class="nav-item nav-link active">
+                    <i class="fa fa-tachometer-alt me-2"></i>
+                    <span>Inicio</span>
+                </a>
 
-                    <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i> Fondos de caja</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Cajas activas </a>
-                            <a href="HistorialDeCajas" class="dropdown-item"><i class="fa-solid fa-vault"></i>Historial de cajas </a>
-                            <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Cortes de caja</a>
-                        </div>
-                    </div>
-                   
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-people-group"></i>Data de clientes</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-regular fa-credit-card"></i>Creditos </a>
-                           
-                        </div>
-                    </div>
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Tickets</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
-                           
-                        </div>
-                    </div>
-
-                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Ventas</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-                           
-                        </div>
-                    </div>
-
-
-                    
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Almacen</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Control de productos</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-                           
-                        </div>
-                    </div>
-
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Traspasos</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins"></i>Control de productos</a>
-                            <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-                           
-                        </div>
-                    </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="far fa-file-alt me-2"></i>Pages</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="signin.html" class="dropdown-item">Sign In</a>
-                            <a href="signup.html" class="dropdown-item">Sign Up</a>
-                            <a href="404.html" class="dropdown-item">404 Error</a>
-                            <a href="blank.html" class="dropdown-item">Blank Page</a>
-                        </div>
+                <!-- Menú Farmacia -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-house-medical me-2"></i>
+                        <span>Farmacia</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="RegistrosdeEnergia" class="dropdown-item">
+                            <i class="fa-solid fa-lightbulb me-2"></i>
+                            <span>Registro de energía</span>
+                        </a>
+                        <a href="BitacoraLimpieza" class="dropdown-item">
+                            <i class="fa-solid fa-broom me-2"></i>
+                            <span>Bitácora de limpieza</span>
+                        </a>
+                        <a href="TareasPorHacer" class="dropdown-item">
+                            <i class="fa-solid fa-list me-2"></i>
+                            <span>Lista de tareas</span>
+                        </a>
+                        <a href="Mensajes" class="dropdown-item">
+                            <i class="fa-solid fa-message me-2"></i>
+                            <span>Mensajes</span>
+                        </a>
+                        <a href="Recordatorios" class="dropdown-item">
+                            <i class="fa-solid fa-bell me-2"></i>
+                            <span>Recordatorios</span>
+                        </a>
                     </div>
                 </div>
-            </nav>
+                
+                <!-- Menú Cajas -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-cash-register me-2"></i>
+                        <span>Cajas</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="AperturarCajaV2" class="dropdown-item">
+                            <i class="fa-solid fa-coins me-2"></i>
+                            <span>Apertura de caja</span>
+                        </a>
+                        <a href="CortesDeCaja" class="dropdown-item">
+                            <i class="fa-solid fa-calculator me-2"></i>
+                            <span>Cortes de caja</span>
+                        </a>
+                        <a href="ReimpresionDeCortes" class="dropdown-item">
+                            <i class="fa-solid fa-print me-2"></i>
+                            <span>Reimpresión de corte</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Agenda -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-regular fa-calendar me-2"></i>
+                        <span>Agenda</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="AgendaRevaloraciones" class="dropdown-item">
+                            <i class="fa-solid fa-calendar-check me-2"></i>
+                            <span>Revaloraciones</span>
+                        </a>
+                        <a href="AgendaLaboratorios" class="dropdown-item">
+                            <i class="fa-solid fa-flask me-2"></i>
+                            <span>Laboratorios</span>
+                        </a>
+                        <a href="AgendaEspecialistas" class="dropdown-item">
+                            <i class="fa-solid fa-user-md me-2"></i>
+                            <span>Especialistas</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="RealizarVentas" class="nav-item nav-link">
+                    <i class="fa-solid fa-cart-shopping me-2"></i>
+                    <span>Realizar Venta</span>
+                </a>
+                
+                <!-- Menú Clientes -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-users me-2"></i>
+                        <span>Clientes</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="DatosDeClientes" class="dropdown-item">
+                            <i class="fa-solid fa-people-group me-2"></i>
+                            <span>Lista de clientes</span>
+                        </a>
+                        <a href="Creditos" class="dropdown-item">
+                            <i class="fa-regular fa-credit-card me-2"></i>
+                            <span>Créditos</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Tickets -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-ticket me-2"></i>
+                        <span>Tickets</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="Tickets" class="dropdown-item">
+                            <i class="fa-solid fa-receipt me-2"></i>
+                            <span>Desglose de tickets</span>
+                        </a>
+                        <a href="AbonosEnCreditos" class="dropdown-item">
+                            <i class="fa-solid fa-money-bill me-2"></i>
+                            <span>Tickets crédito</span>
+                        </a>
+                        <a href="EncargosPendientes" class="dropdown-item">
+                            <i class="fa-solid fa-file-invoice me-2"></i>
+                            <span>Encargos</span>
+                        </a>
+                        <a href="Tickets" class="dropdown-item">
+                            <i class="fa-solid fa-print me-2"></i>
+                            <span>Reimpresión</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Ventas -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-chart-line me-2"></i>
+                        <span>Ventas</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="VentasDelDia" class="dropdown-item">
+                            <i class="fa-solid fa-coins me-2"></i>
+                            <span>Ventas del día</span>
+                        </a>
+                        <a href="VentasAcredito" class="dropdown-item">
+                            <i class="fa-solid fa-credit-card me-2"></i>
+                            <span>Ventas a crédito</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Almacen -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-boxes-stacked me-2"></i>
+                        <span>Almacén</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="StockSucursal" class="dropdown-item">
+                            <i class="fa-solid fa-box me-2"></i>
+                            <span>Stock</span>
+                        </a>
+                        <a href="StockInsumos" class="dropdown-item">
+                            <i class="fa-solid fa-box-open me-2"></i>
+                            <span>Stock de insumos</span>
+                        </a>
+                        <a href="Pedidos" class="dropdown-item">
+                            <i class="fa-solid fa-truck me-2"></i>
+                            <span>Pedidos</span>
+                        </a>
+                        <a href="ConteoDiario" class="dropdown-item">
+                            <i class="fa-solid fa-clipboard-list me-2"></i>
+                            <span>Conteo diario</span>
+                        </a>
+                        <a href="Cotizaciones" class="dropdown-item">
+                            <i class="fa-solid fa-rotate-left me-2"></i>
+                            <span>Devoluciones</span>
+                        </a>
+                        <a href="Cotizaciones" class="dropdown-item">
+                            <i class="fa-solid fa-calendar-xmark me-2"></i>
+                            <span>Caducados</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Pedidos -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-clipboard-check me-2"></i>
+                        <span>Pedidos</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="Pedidos" class="dropdown-item">
+                            <i class="fa-solid fa-list-check me-2"></i>
+                            <span>Pedidos</span>
+                        </a>
+                        <a href="GeneracionDeEncargos" class="dropdown-item">
+                            <i class="fa-solid fa-file-circle-plus me-2"></i>
+                            <span>Generar encargo</span>
+                        </a>
+                        <a href="Cotizaciones" class="dropdown-item">
+                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                            <span>Generar cotización</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Menú Traspasos -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-right-left me-2"></i>
+                        <span>Traspasos</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="ListadoDeTraspasos" class="dropdown-item">
+                            <i class="fa-solid fa-list-ul me-2"></i>
+                            <span>Listado de traspasos</span>
+                        </a>
+                        <a href="Ingresos" class="dropdown-item">
+                            <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>
+                            <span>Solicitar ingresos</span>
+                        </a>
+                        <a href="SolicitudPendientes" class="dropdown-item">
+                            <i class="fa-solid fa-clock me-2"></i>
+                            <span>Solicitudes pendientes</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="index" class="nav-item nav-link">
+                    <i class="fa-solid fa-circle-play me-2"></i>
+                    <span>Video tutoriales</span>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+            
         </div>
