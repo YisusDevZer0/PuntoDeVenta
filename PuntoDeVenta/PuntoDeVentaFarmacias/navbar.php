@@ -3,67 +3,74 @@
 $Licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
 
-<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0" style="border-bottom: 1px solid rgba(0,188,212,0.15); box-shadow: 0 2px 15px rgba(0,0,0,0.03);">
-    <a href="index.html" class="navbar-brand d-flex d-lg-none me-4 py-3">
-        <h2 class="text-primary mb-0"><i class="fa-solid fa-fish" style="color: #00BCD4;"></i></h2>
-    </a>
-    <a href="#" class="sidebar-toggler flex-shrink-0 border rounded-3 p-2 me-3">
-        <i class="fa fa-bars"></i>
-    </a>
-    <div class="navbar-nav align-items-center ms-auto">
-        <div class="nav-item dropdown border-end px-3">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="fa fa-envelope me-lg-2 text-primary"></i>
-                <span class="d-none d-lg-inline-flex">Mensajes</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border rounded-3 shadow-sm m-0">
-                <a href="#" class="dropdown-item">
-                    <div class="d-flex align-items-center">
-                        <img class="rounded-circle border" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                        <div class="ms-2">
-                            <h6 class="fw-normal mb-0">Tienes un nuevo mensaje</h6>
+<nav class="navbar navbar-expand bg-light navbar-light sticky-top px-0 border-bottom" style="border-color: rgba(0,188,212,0.1) !important; box-shadow: none !important;">
+    <div class="d-flex align-items-center h-100 ps-4 border-end" style="width: 250px; border-color: rgba(0,188,212,0.1) !important;">
+        <a href="#" class="sidebar-toggler d-inline-block d-lg-none p-2 me-3">
+            <i class="fa fa-bars"></i>
+        </a>
+        <a href="index.html" class="navbar-brand d-flex d-lg-none me-0">
+            <h2 class="text-primary mb-0"><i class="fa-solid fa-fish" style="color: #00BCD4;"></i></h2>
+        </a>
+    </div>
+    <div class="navbar-nav align-items-center w-100 px-4">
+        <div class="d-flex justify-content-between w-100">
+            <div class="d-flex">
+                <div class="nav-item dropdown border-end pe-3" style="border-color: rgba(0,188,212,0.1) !important;">
+                    <a href="#" class="nav-link dropdown-toggle py-3" data-bs-toggle="dropdown">
+                        <i class="fa fa-envelope me-2 text-primary"></i>
+                        <span class="d-none d-lg-inline-flex">Mensajes</span>
+                    </a>
+                    <div class="dropdown-menu border" style="margin-top: 0; border-radius: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-color: rgba(0,188,212,0.1) !important;">
+                        <a href="#" class="dropdown-item py-2">
+                            <div class="d-flex align-items-center">
+                                <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                <div class="ms-2">
+                                    <h6 class="fw-normal mb-0">Tienes un nuevo mensaje</h6>
+                                    <small>Hace 15 minutos</small>
+                                </div>
+                            </div>
+                        </a>
+                        <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
+                        <a href="#" class="dropdown-item py-2 text-center">Ver todos los mensajes</a>
+                    </div>
+                </div>
+                <div class="nav-item dropdown border-end px-3" style="border-color: rgba(0,188,212,0.1) !important;">
+                    <a href="#" class="nav-link dropdown-toggle py-3" data-bs-toggle="dropdown">
+                        <i class="fa fa-bell me-2 text-primary"></i>
+                        <span class="d-none d-lg-inline-flex">Notificaciones</span>
+                    </a>
+                    <div class="dropdown-menu border" style="margin-top: 0; border-radius: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-color: rgba(0,188,212,0.1) !important;">
+                        <a href="#" class="dropdown-item py-2">
+                            <h6 class="fw-normal mb-0">Inventario actualizado</h6>
                             <small>Hace 15 minutos</small>
-                        </div>
+                        </a>
+                        <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
+                        <a href="#" class="dropdown-item py-2">
+                            <h6 class="fw-normal mb-0">Nuevos productos agregados</h6>
+                            <small>Hace 30 minutos</small>
+                        </a>
+                        <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
+                        <a href="#" class="dropdown-item py-2 text-center">Ver todas las notificaciones</a>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle py-3 d-flex align-items-center" data-bs-toggle="dropdown">
+                    <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 36px; height: 36px; object-fit: cover;">
+                    <div class="d-none d-lg-flex flex-column ms-3 text-end">
+                        <span class="fw-bold"><?php echo $row['Nombre_Apellidos']?></span>
+                        <small class="text-muted"><?php echo $row['TipoUsuario']?></small>
                     </div>
                 </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item text-center">Ver todos los mensajes</a>
-            </div>
-        </div>
-        <div class="nav-item dropdown border-end px-3">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="fa fa-bell me-lg-2 text-primary"></i>
-                <span class="d-none d-lg-inline-flex">Notificaciones</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border rounded-3 shadow-sm m-0">
-                <a href="#" class="dropdown-item">
-                    <h6 class="fw-normal mb-0">Inventario actualizado</h6>
-                    <small>Hace 15 minutos</small>
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    <h6 class="fw-normal mb-0">Nuevos productos agregados</h6>
-                    <small>Hace 30 minutos</small>
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item text-center">Ver todas las notificaciones</a>
-            </div>
-        </div>
-        <div class="nav-item dropdown px-3">
-            <a href="#" class="nav-link dropdown-toggle py-3 d-flex align-items-center" data-bs-toggle="dropdown">
-                <img class="rounded-circle border border-2" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 36px; height: 36px; object-fit: cover;">
-                <div class="d-none d-lg-flex flex-column ms-3">
-                    <span class="fw-bold"><?php echo $row['Nombre_Apellidos']?></span>
-                    <small class="text-muted"><?php echo $row['TipoUsuario']?></small>
+                <div class="dropdown-menu border" style="margin-top: 0; border-radius: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-color: rgba(0,188,212,0.1) !important;">
+                    <a href="MiPerfilDeUsuarioYMas" class="dropdown-item py-2">
+                        <i class="fa fa-user me-2 text-primary"></i> Mi perfil
+                    </a>
+                    <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
+                    <a href="cerrar_sesion.php" class="dropdown-item py-2" id="logout-link">
+                        <i class="fa fa-sign-out-alt me-2 text-primary"></i> Cerrar sesión
+                    </a>
                 </div>
-            </a>
-            <div class="dropdown-menu dropdown-menu-end bg-light border rounded-3 shadow-sm m-0">
-                <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">
-                    <i class="fa fa-user me-2 text-primary"></i> Mi perfil
-                </a>
-                <a href="cerrar_sesion.php" class="dropdown-item" id="logout-link">
-                    <i class="fa fa-sign-out-alt me-2 text-primary"></i> Cerrar sesión
-                </a>
             </div>
         </div>
     </div>

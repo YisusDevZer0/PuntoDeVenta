@@ -76,24 +76,24 @@ body::before {
 .back-to-top {
     position: fixed;
     display: none;
-    right: 45px;
-    bottom: 45px;
+    right: 30px;
+    bottom: 30px;
     z-index: 99;
-    background-color: var(--primary);
+    background-color: #0097A7;
     color: white;
-    border-radius: 50%;
+    border-radius: 2px;
     width: 45px;
     height: 45px;
     text-align: center;
     line-height: 45px;
-    box-shadow: 0 3px 10px rgba(0, 188, 212, 0.3);
+    box-shadow: none;
     transition: all 0.3s ease;
-    animation: float 3s ease-in-out infinite;
+    animation: none;
 }
 
 .back-to-top:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-5px);
+    transform: none;
+    background-color: #0097A7;
 }
 
 /*** Spinner ***/
@@ -115,23 +115,23 @@ body::before {
     transition: all 0.3s ease;
     font-weight: 500;
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: none;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: none;
+    box-shadow: none;
 }
 
 .btn.btn-primary {
     color: #FFFFFF;
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background-color: #00BCD4;
+    border-color: #00BCD4;
 }
 
 .btn.btn-primary:hover {
-    background-color: var(--primary-dark);
-    border-color: var(--primary-dark);
+    background-color: #0097A7;
+    border-color: #0097A7;
 }
 
 .btn-square {
@@ -177,11 +177,11 @@ body::before {
     width: 250px;
     height: 100vh;
     overflow-y: auto;
-    background: #f3f6f9; /* Color más sólido */
+    background: #f3f6f9;
     transition: 0.3s ease;
     z-index: 999;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
-    border-right: 1px solid rgba(0, 188, 212, 0.1); /* Borde para distinguir del contenido */
+    box-shadow: none !important;
+    border-right: 1px solid rgba(0, 188, 212, 0.1);
 }
 
 .sidebar::before {
@@ -285,29 +285,30 @@ body::before {
 
 .sidebar .nav-item .nav-link {
     color: #3c4858;
-    font-weight: 500;
+    font-weight: 400;
     padding: 10px 15px;
-    border-radius: 50px;
-    margin: 3px 10px;
+    border-radius: 0;
     transition: all 0.2s ease;
+    position: relative;
+    border-left: 4px solid transparent;
 }
 
 .sidebar .nav-item .nav-link:hover,
 .sidebar .nav-item .nav-link.active {
     color: #00BCD4;
-    background-color: rgba(0, 188, 212, 0.08);
+    background-color: rgba(0, 188, 212, 0.05);
+    border-left-color: #00BCD4;
+}
+
+.sidebar .nav-item .nav-link.active {
+    font-weight: 500;
 }
 
 .sidebar .nav-item .nav-link i {
     width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
+    text-align: center;
     margin-right: 10px;
     color: #00BCD4;
-    font-size: 1rem;
 }
 
 .sidebar .dropdown-toggle::after {
@@ -385,9 +386,9 @@ body::before {
 .content {
     margin-left: 250px;
     min-height: 100vh;
-    transition: 0.3s ease;
-    background-color: #f9fafc; /* Fondo ligeramente gris */
-    padding-top: 60px; /* Espacio para el navbar fijo */
+    transition: 0.3s;
+    background-color: #f9fafc;
+    padding-top: 60px;
 }
 
 .sidebar.active + .content {
@@ -541,13 +542,13 @@ body::before {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     border: 1px solid rgba(0, 188, 212, 0.2);
-    border-radius: 5px;
+    border-radius: 2px;
     transition: all 0.3s ease;
 }
 
 .form-control:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(0, 188, 212, 0.25);
+    box-shadow: none;
 }
 
 .form-select {
@@ -555,13 +556,13 @@ body::before {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     border: 1px solid rgba(0, 188, 212, 0.2);
-    border-radius: 5px;
+    border-radius: 2px;
     transition: all 0.3s ease;
 }
 
 .form-select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(0, 188, 212, 0.25);
+    box-shadow: none;
 }
 
 .form-label {
@@ -813,17 +814,17 @@ body::before {
 /* Navbar mejorado */
 .navbar {
     background-color: #ffffff !important;
-    border-bottom: 1px solid rgba(0, 188, 212, 0.1);
-    padding: 0;
-    height: 60px;
+    border-bottom: 1px solid rgba(0, 188, 212, 0.1) !important;
+    padding: 0 !important;
+    height: 60px !important;
 }
 
 .content {
     margin-left: 250px;
     min-height: 100vh;
-    transition: 0.3s ease;
-    background-color: #f9fafc; /* Fondo ligeramente gris */
-    padding-top: 60px; /* Espacio para el navbar fijo */
+    transition: 0.3s;
+    background-color: #f9fafc;
+    padding-top: 60px;
 }
 
 .content.active {
@@ -837,10 +838,11 @@ body::before {
 }
 
 .bg-light.rounded-top.p-4 {
-    border-top: 1px solid rgba(0, 188, 212, 0.1);
-    margin-top: 20px;
+    position: relative;
+    border-top: 1px solid rgba(0, 188, 212, 0.1) !important;
+    background: #f9fafc !important;
     border-radius: 0 !important;
-    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: none !important;
 }
 
 .bg-light.rounded-top.p-4 a {
@@ -854,10 +856,9 @@ body::before {
 
 /* Estilos adicionales para mejorar la apariencia */
 .dropdown-menu {
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 188, 212, 0.1);
-    padding: 8px 0;
+    border-radius: 0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 188, 212, 0.1) !important;
 }
 
 .dropdown-item {
@@ -880,16 +881,15 @@ body::before {
 /* Mejoras para las tarjetas y contenedores */
 .card {
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    border-radius: 0 !important;
+    box-shadow: none;
     margin-bottom: 20px;
     overflow: hidden;
     transition: all 0.3s ease;
 }
 
 .card:hover {
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
+    transform: none !important;
 }
 
 .card-header {
@@ -905,28 +905,27 @@ body::before {
 
 /* Mejoras para botones y acciones */
 .btn-primary {
-    background-color: #00BCD4;
-    border-color: #00BCD4;
+    background-color: #00BCD4 !important;
+    border-color: #00BCD4 !important;
 }
 
 .btn-primary:hover {
-    background-color: #0097A7;
-    border-color: #0097A7;
+    background-color: #0097A7 !important;
+    border-color: #0097A7 !important;
 }
 
 /* Mejoras para tablas */
 .table thead th {
-    background-color: rgba(0, 188, 212, 0.05);
-    color: #3c4858;
-    font-weight: 600;
-    border-bottom: 2px solid rgba(0, 188, 212, 0.1);
+    background-color: #f3f6f9 !important;
+    border-bottom: 1px solid rgba(0, 188, 212, 0.1) !important;
+    font-weight: 600 !important;
 }
 
 .table td, 
 .table th {
     padding: 12px 15px;
     vertical-align: middle;
-    border-color: rgba(0, 188, 212, 0.05);
+    border-color: rgba(0, 188, 212, 0.05) !important;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
@@ -939,12 +938,12 @@ body::before {
 
 /* Mejoras para formularios */
 .form-control:focus {
-    border-color: #00BCD4;
-    box-shadow: 0 0 0 0.2rem rgba(0, 188, 212, 0.25);
+    border-color: #00BCD4 !important;
+    box-shadow: none !important;
 }
 
 .form-control {
-    border: 1px solid rgba(0, 188, 212, 0.2);
+    border: 1px solid rgba(0, 188, 212, 0.2) !important;
 }
 
 .input-group-text {
@@ -966,4 +965,62 @@ body::before {
 .page-item.disabled .page-link {
     color: #6c757d;
     border-color: rgba(0, 188, 212, 0.05);
+}
+
+/* Estilos para elementos de menú colapsables */
+.collapse-menu {
+    background-color: rgba(0, 188, 212, 0.03);
+    padding-left: 20px;
+}
+
+.collapse-menu .nav-link {
+    padding-left: 35px !important;
+    font-size: 0.9rem;
+}
+
+/* Botones más planos */
+.btn {
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+
+.btn:hover {
+    transform: none !important;
+}
+
+/* Hacer que las burbujas sean más sutiles */
+.bubble-effect {
+    opacity: 0.3;
+}
+
+/* Dropdown más plano */
+.dropdown-menu {
+    border-radius: 0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 188, 212, 0.1) !important;
+}
+
+.dropdown-item {
+    border-radius: 0 !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(0, 188, 212, 0.05) !important;
+}
+
+/* Adaptaciones responsivas */
+@media (max-width: 991.98px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .sidebar {
+        margin-left: -250px;
+    }
+    
+    .sidebar.active {
+        margin-left: 0;
+    }
 }
