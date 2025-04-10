@@ -386,15 +386,16 @@ body::before {
     color: var(--primary);
 }
 
-/* NAVBAR SUPERIOR */
-.navbar-custom {
+/* NAVBAR INFERIOR */
+.navbar-bottom {
     position: fixed;
-    top: 0;
-    right: 0;
+    bottom: 50px; /* Espacio para el footer */
     left: 280px;
-    height: 65px;
+    right: 0;
+    height: 60px;
     background-color: white;
-    box-shadow: 0 2px 10px rgba(0, 188, 212, 0.1);
+    border-top: 1px solid rgba(0, 188, 212, 0.1);
+    box-shadow: 0 -2px 10px rgba(0, 188, 212, 0.1);
     z-index: 998;
     padding: 0 25px;
     transition: all 0.3s ease;
@@ -402,91 +403,30 @@ body::before {
     align-items: center;
 }
 
-.navbar-custom::before {
+.navbar-bottom::before {
     content: '';
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     width: 100%;
     height: 3px;
     background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
 }
 
-/* Botón toggler */
-.sidebar-toggler {
-    background-color: rgba(0, 188, 212, 0.08);
-    color: var(--primary);
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.sidebar-toggler:hover {
-    background-color: rgba(0, 188, 212, 0.15);
-    color: var(--primary-dark);
-}
-
-.sidebar-toggler i {
-    font-size: 1.1rem;
-}
-
-/* Menú de notificaciones y perfil */
-.navbar-custom .navbar-nav {
-    display: flex;
-    align-items: center;
-}
-
-.navbar-custom .nav-link {
-    padding: 0 15px;
-    height: 65px;
-    display: flex;
-    align-items: center;
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.navbar-custom .nav-link:hover {
-    color: var(--primary);
-}
-
-.navbar-custom .nav-link .badge {
-    position: absolute;
-    top: 15px;
-    right: 10px;
-    padding: 3px 5px;
-    min-width: 18px;
-    height: 18px;
-    border-radius: 10px;
-    font-size: 0.6rem;
-    background-color: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* CONTENIDO PRINCIPAL */
 .content {
     margin-left: 280px;
-    padding-top: 65px;
+    padding-top: 0; /* Ya no necesitamos el padding para la navbar superior */
+    padding-bottom: 110px; /* Espacio para la navbar inferior y el footer */
     width: calc(100% - 280px);
     min-height: 100vh;
     background-color: #f8f9fa;
     transition: all 0.3s ease;
-    padding-bottom: 60px; /* Espacio para el footer */
 }
 
 .content-inner {
     padding: 25px;
-    min-height: calc(100vh - 125px);
+    min-height: calc(100vh - 110px);
 }
 
 /* Header de página */
@@ -673,7 +613,7 @@ body::before {
         box-shadow: 0 0 15px rgba(0, 188, 212, 0.15);
     }
     
-    .navbar-custom {
+    .navbar-bottom {
         left: 0;
     }
     
@@ -688,7 +628,7 @@ body::before {
 }
 
 @media (max-width: 768px) {
-    .navbar-custom {
+    .navbar-bottom {
         padding: 0 15px;
     }
     
@@ -748,4 +688,152 @@ body::before {
 
 .text-muted {
     color: #999 !important;
+}
+
+/* Ajustes para el buscador en la navbar inferior */
+.navbar-bottom .search-box {
+    width: 40%;
+    max-width: 500px;
+}
+
+.navbar-bottom .search-box .form-control {
+    padding-left: 40px;
+    border-radius: 50px;
+    background-color: rgba(0, 188, 212, 0.05);
+    border: 1px solid rgba(0, 188, 212, 0.1);
+    height: 40px;
+}
+
+.navbar-bottom .search-box .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+/* Estilos para notificaciones en navbar inferior */
+.navbar-bottom .nav-link {
+    padding: 0 15px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.navbar-bottom .nav-link:hover {
+    color: var(--primary);
+}
+
+.navbar-bottom .badge {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    padding: 3px 5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 10px;
+    font-size: 0.6rem;
+    background-color: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ajustes para dropdown de notificaciones */
+.notification-dropdown {
+    width: 300px;
+    padding: 0;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+    overflow: hidden;
+}
+
+.notification-dropdown .dropdown-header {
+    background-color: rgba(0, 188, 212, 0.05);
+    padding: 15px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(0, 188, 212, 0.05);
+    transition: all 0.2s ease;
+}
+
+.notification-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background-color: rgba(0, 188, 212, 0.05);
+}
+
+/* Ajustes para dropdown de perfil */
+.navbar-bottom .dropdown-menu {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.2);
+    overflow: hidden;
+}
+
+.navbar-bottom .dropdown-menu .dropdown-item {
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+}
+
+.navbar-bottom .dropdown-menu .dropdown-divider {
+    margin: 0;
+    border-top: 1px solid rgba(0, 188, 212, 0.1);
+}
+
+.navbar-bottom .dropdown-menu .dropdown-item:hover {
+    background-color: rgba(0, 188, 212, 0.05);
+    color: var(--primary);
+}
+
+/* Ajustes responsive */
+@media (max-width: 992px) {
+    .navbar-bottom {
+        left: 0;
+    }
+    
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .footer {
+        left: 0;
+    }
+    
+    .navbar-bottom .search-box {
+        width: 50%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-bottom {
+        padding: 0 15px;
+    }
+    
+    .navbar-bottom .search-box {
+        width: 40%;
+    }
+    
+    .navbar-bottom .d-none.d-md-inline-block {
+        display: none !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-bottom .search-box {
+        display: none;
+    }
 }
