@@ -203,26 +203,29 @@ body::before {
 }
 
 .sidebar .navbar-brand {
-    padding: 20px 25px;
+    padding: 20px;
     margin: 0;
     width: 100%;
-    color: var(--primary);
 }
 
 .sidebar .navbar-brand h3 {
     font-size: 1.2rem;
     margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    color: var(--primary);
 }
 
 .sidebar .navbar-brand i {
+    color: var(--primary) !important;
     font-size: 1.4rem;
 }
 
+.sidebar .navbar-brand small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
 .sidebar .d-flex {
-    padding: 15px 25px;
+    padding: 15px 20px;
     border-bottom: 1px solid var(--divider);
 }
 
@@ -231,14 +234,14 @@ body::before {
 }
 
 .sidebar .nav-item {
-    padding: 0 15px;
-    margin: 4px 0;
+    padding: 0 10px;
+    margin: 2px 0;
 }
 
 .sidebar .nav-link {
-    padding: 10px 15px;
+    padding: 8px 15px;
     color: var(--text-primary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -247,17 +250,26 @@ body::before {
 }
 
 .sidebar .nav-link i {
-    width: 24px;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    min-width: 25px;
     text-align: center;
-    margin-right: 10px;
+    transition: all 0.3s ease;
     color: var(--primary);
+}
+
+.sidebar .nav-link span {
+    transition: all 0.3s ease;
 }
 
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
     color: var(--primary);
     background: rgba(0, 188, 212, 0.1);
+}
+
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i {
+    transform: translateX(3px);
 }
 
 .sidebar .dropdown-menu {
@@ -267,22 +279,12 @@ body::before {
     border-radius: 5px;
     background: var(--light);
     box-shadow: var(--elevation-1);
-    max-height: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.sidebar .dropdown-menu.show {
-    max-height: 1000px;
-    opacity: 1;
-    visibility: visible;
 }
 
 .sidebar .dropdown-item {
     padding: 8px 15px;
     color: var(--text-primary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -291,16 +293,20 @@ body::before {
 }
 
 .sidebar .dropdown-item i {
-    width: 24px;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    min-width: 25px;
     text-align: center;
-    margin-right: 10px;
+    transition: all 0.3s ease;
     color: var(--primary);
 }
 
 .sidebar .dropdown-item:hover {
     color: var(--primary);
     background: rgba(0, 188, 212, 0.1);
+}
+
+.sidebar .dropdown-item:hover i {
+    transform: translateX(3px);
 }
 
 .content {
