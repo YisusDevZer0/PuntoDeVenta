@@ -177,10 +177,11 @@ body::before {
     width: 250px;
     height: 100vh;
     overflow-y: auto;
-    background: var(--light);
-    transition: 0.5s;
+    background: #f3f6f9; /* Color más sólido */
+    transition: 0.3s ease;
     z-index: 999;
-    box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Sombra más sutil */
+    border-right: 1px solid rgba(0, 188, 212, 0.1); /* Borde para distinguir del contenido */
 }
 
 .sidebar::before {
@@ -199,8 +200,6 @@ body::before {
 
 .sidebar .navbar {
     padding: 0;
-    height: 100%;
-    overflow-y: auto;
 }
 
 .sidebar .navbar::-webkit-scrollbar {
@@ -284,28 +283,31 @@ body::before {
     margin: 2px 15px;
 }
 
-.sidebar .nav-link {
-    padding: 10px 15px;
-    color: var(--text-primary);
+.sidebar .nav-item .nav-link {
+    color: #3c4858;
     font-weight: 500;
-    font-size: 0.9rem;
-    border-radius: 8px;
+    padding: 10px 15px;
+    border-radius: 50px;
+    margin: 3px 10px;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
 }
 
-.sidebar .nav-link i {
-    width: 22px;
-    margin-right: 10px;
-    font-size: 1rem;
-    text-align: center;
-}
-
-.sidebar .nav-link:hover,
-.sidebar .nav-link.active {
-    color: var(--primary);
+.sidebar .nav-item .nav-link:hover,
+.sidebar .nav-item .nav-link.active {
+    color: #00BCD4;
     background-color: rgba(0, 188, 212, 0.08);
+}
+
+.sidebar .nav-item .nav-link i {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    margin-right: 10px;
+    color: #00BCD4;
+    font-size: 1rem;
 }
 
 .sidebar .dropdown-toggle::after {
@@ -324,45 +326,32 @@ body::before {
 
 /* Dropdown en el sidebar */
 .sidebar .dropdown-menu {
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
     background-color: transparent;
-    position: static !important;
-    transform: none !important;
-    float: none;
-    width: 100%;
-    animation: fadeInUp 0.3s ease;
+    border: none;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .sidebar .dropdown-item {
-    padding: 8px 15px 8px 45px;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    border-radius: 8px;
-    margin: 2px 0;
-    transition: all 0.2s ease;
-}
-
-.sidebar .dropdown-item i {
-    width: 18px;
-    margin-right: 8px;
-    font-size: 0.85rem;
-    text-align: center;
-    color: var(--text-secondary);
+    color: #3c4858;
+    padding: 8px 8px 8px 45px;
+    border-radius: 50px;
+    margin: 2px 10px;
+    font-size: 0.9rem;
 }
 
 .sidebar .dropdown-item:hover,
 .sidebar .dropdown-item.active {
-    color: var(--primary);
-    background-color: rgba(0, 188, 212, 0.05);
+    color: #00BCD4;
+    background-color: rgba(0, 188, 212, 0.08);
 }
 
-.sidebar .dropdown-item:hover i,
-.sidebar .dropdown-item.active i {
-    color: var(--primary);
+.sidebar .dropdown-item i {
+    color: #00BCD4;
+    margin-right: 10px;
+    font-size: 0.9rem;
 }
 
 /* NAVBAR INFERIOR */
@@ -396,8 +385,9 @@ body::before {
 .content {
     margin-left: 250px;
     min-height: 100vh;
-    background: #FFFFFF;
-    transition: 0.5s;
+    transition: 0.3s ease;
+    background-color: #f9fafc; /* Fondo ligeramente gris */
+    padding-top: 60px; /* Espacio para el navbar fijo */
 }
 
 .sidebar.active + .content {
@@ -611,8 +601,13 @@ body::before {
     }
 
     .content {
-        width: 100%;
         margin-left: 0;
+        width: 100%;
+    }
+    
+    .navbar {
+        width: 100%;
+        left: 0;
     }
 }
 
@@ -811,4 +806,164 @@ body::before {
     .navbar-bottom .search-box {
         display: none;
     }
+}
+
+/* MEJORAR POSICIONAMIENTO Y ASPECTO DEL MENÚ, NAVBAR Y FOOTER */
+
+/* Navbar mejorado */
+.navbar {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid rgba(0, 188, 212, 0.1);
+    padding: 0;
+    height: 60px;
+}
+
+.content {
+    margin-left: 250px;
+    min-height: 100vh;
+    transition: 0.3s ease;
+    background-color: #f9fafc; /* Fondo ligeramente gris */
+    padding-top: 60px; /* Espacio para el navbar fijo */
+}
+
+.content.active {
+    margin-left: 0;
+}
+
+/* Footer mejorado */
+.container-fluid.pt-4.px-4 {
+    margin-top: auto;
+    padding-bottom: 0 !important;
+}
+
+.bg-light.rounded-top.p-4 {
+    border-top: 1px solid rgba(0, 188, 212, 0.1);
+    margin-top: 20px;
+    border-radius: 0 !important;
+    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bg-light.rounded-top.p-4 a {
+    color: #00BCD4;
+    text-decoration: none;
+}
+
+.bg-light.rounded-top.p-4 a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos adicionales para mejorar la apariencia */
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 188, 212, 0.1);
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    padding: 8px 15px;
+    color: #3c4858;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(0, 188, 212, 0.08);
+    color: #00BCD4;
+}
+
+.dropdown-divider {
+    margin: 5px 0;
+    border-top: 1px solid rgba(0, 188, 212, 0.1);
+}
+
+/* Mejoras para las tarjetas y contenedores */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: rgba(0, 188, 212, 0.05);
+    border-bottom: 1px solid rgba(0, 188, 212, 0.1);
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Mejoras para botones y acciones */
+.btn-primary {
+    background-color: #00BCD4;
+    border-color: #00BCD4;
+}
+
+.btn-primary:hover {
+    background-color: #0097A7;
+    border-color: #0097A7;
+}
+
+/* Mejoras para tablas */
+.table thead th {
+    background-color: rgba(0, 188, 212, 0.05);
+    color: #3c4858;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(0, 188, 212, 0.1);
+}
+
+.table td, 
+.table th {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-color: rgba(0, 188, 212, 0.05);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 188, 212, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 188, 212, 0.05);
+}
+
+/* Mejoras para formularios */
+.form-control:focus {
+    border-color: #00BCD4;
+    box-shadow: 0 0 0 0.2rem rgba(0, 188, 212, 0.25);
+}
+
+.form-control {
+    border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+.input-group-text {
+    background-color: rgba(0, 188, 212, 0.05);
+    border: 1px solid rgba(0, 188, 212, 0.2);
+}
+
+/* Mejoras para estilos de paginación */
+.page-link {
+    color: #00BCD4;
+    border: 1px solid rgba(0, 188, 212, 0.1);
+}
+
+.page-item.active .page-link {
+    background-color: #00BCD4;
+    border-color: #00BCD4;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    border-color: rgba(0, 188, 212, 0.05);
 }
