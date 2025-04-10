@@ -1,12 +1,12 @@
     <!-- Footer Start -->
     <div class="container-fluid px-0">
-        <div class="bg-light rounded-0 p-4 mt-4" style="border-top: 1px solid rgba(0,188,212,0.15); box-shadow: 0 -2px 15px rgba(0,0,0,0.03);">
+        <div class="bg-light p-4 border-top" style="border-color: rgba(0,188,212,0.1) !important; box-shadow: none !important; border-radius: 0 !important;">
             <div class="row">
                 <div class="col-12 col-sm-6 text-center text-sm-start">
-                    &copy; <a href="#" class="text-primary">Doctor Pez</a> - Derechos Reservados. 
+                    &copy; <a href="#" class="text-primary" style="text-decoration: none;">Doctor Pez</a> - Derechos Reservados. 
                 </div>
                 <div class="col-12 col-sm-6 text-center text-sm-end">
-                    Diseñado con <i class="fa fa-heart text-primary"></i> por Zero
+                    Diseñado por <span class="text-primary">Zero</span>
                 </div>
             </div>
         </div>
@@ -17,7 +17,7 @@
 
 
 <!-- Back to Top -->
-<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top" style="display: none; border-radius: 0 !important; box-shadow: none !important;"><i class="bi bi-arrow-up"></i></a>
 </div>
 
 <!-- JavaScript Libraries -->
@@ -43,39 +43,8 @@
 <!-- Template Javascript -->
 <script src="js/main.js"></script>
 
-<!-- Bubble animation effect -->
 <script>
-    // Función para crear burbujas en el footer
-    function createBubbles() {
-        const footer = document.querySelector('.bg-light.p-4');
-        const bubbleCount = 8;
-        
-        for (let i = 0; i < bubbleCount; i++) {
-            const bubble = document.createElement('div');
-            bubble.classList.add('bubble-effect');
-            
-            // Tamaño aleatorio
-            const size = Math.random() * 12 + 4;
-            bubble.style.width = `${size}px`;
-            bubble.style.height = `${size}px`;
-            
-            // Posición aleatoria
-            const posX = Math.random() * 100;
-            bubble.style.left = `${posX}%`;
-            bubble.style.bottom = '0';
-            
-            // Animación con retardo aleatorio
-            const delay = Math.random() * 3;
-            bubble.style.animation = `bubbleRise 3s ease-in ${delay}s infinite`;
-            
-            footer.appendChild(bubble);
-        }
-    }
-    
-    // Ejecutar cuando el DOM esté cargado
     document.addEventListener('DOMContentLoaded', function() {
-        createBubbles();
-        
         // Hacer que el botón de volver arriba aparezca al hacer scroll
         window.addEventListener('scroll', function() {
             if (window.scrollY > 100) {
@@ -94,34 +63,9 @@
 </script>
 
 <style>
-    /* Estilos para las burbujas */
-    .bubble-effect {
-        position: absolute;
-        background-color: rgba(0, 188, 212, 0.2);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 1;
-    }
-    
-    @keyframes bubbleRise {
-        0% {
-            transform: translateY(0) scale(1);
-            opacity: 0;
-        }
-        50% {
-            opacity: 0.5;
-        }
-        100% {
-            transform: translateY(-80px) scale(1.2);
-            opacity: 0;
-        }
-    }
-    
     /* Estilos para el footer */
     .bg-light.p-4 {
-        position: relative;
-        overflow: hidden;
-        background: linear-gradient(180deg, #ffffff, rgba(224, 247, 250, 0.5));
+        background-color: #f9fafc !important;
     }
     
     /* Estilo para el botón volver arriba */
@@ -133,27 +77,18 @@
         z-index: 99;
         background-color: #00BCD4 !important;
         color: white;
-        border-radius: 50%;
+        border-radius: 0 !important;
         width: 45px;
         height: 45px;
         text-align: center;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: none !important;
         border: none;
-        transition: all 0.3s ease;
-        animation: float 2s ease-in-out infinite;
+        transition: background-color 0.3s ease;
     }
     
     .back-to-top:hover {
         background-color: #0097A7 !important;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        transform: translateY(-5px);
-    }
-    
-    @keyframes float {
-        0% { transform: translateY(0); }
-        50% { transform: translateY(-8px); }
-        100% { transform: translateY(0); }
     }
 </style>
