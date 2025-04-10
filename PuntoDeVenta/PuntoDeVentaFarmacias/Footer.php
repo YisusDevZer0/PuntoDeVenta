@@ -1,6 +1,6 @@
     <!-- Footer Start -->
-    <div class="container-fluid pt-4 px-4">
-        <div class="bg-light rounded-top p-4">
+    <div class="container-fluid px-0">
+        <div class="bg-light rounded-0 p-4 mt-4" style="border-top: 1px solid rgba(0,188,212,0.15); box-shadow: 0 -2px 15px rgba(0,0,0,0.03);">
             <div class="row">
                 <div class="col-12 col-sm-6 text-center text-sm-start">
                     &copy; <a href="#" class="text-primary">Doctor Pez</a> - Derechos Reservados. 
@@ -47,15 +47,15 @@
 <script>
     // Función para crear burbujas en el footer
     function createBubbles() {
-        const footer = document.querySelector('.bg-light.rounded-top');
-        const bubbleCount = 10;
+        const footer = document.querySelector('.bg-light.p-4');
+        const bubbleCount = 8;
         
         for (let i = 0; i < bubbleCount; i++) {
             const bubble = document.createElement('div');
             bubble.classList.add('bubble-effect');
             
             // Tamaño aleatorio
-            const size = Math.random() * 15 + 5;
+            const size = Math.random() * 12 + 4;
             bubble.style.width = `${size}px`;
             bubble.style.height = `${size}px`;
             
@@ -75,6 +75,21 @@
     // Ejecutar cuando el DOM esté cargado
     document.addEventListener('DOMContentLoaded', function() {
         createBubbles();
+        
+        // Hacer que el botón de volver arriba aparezca al hacer scroll
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                document.querySelector('.back-to-top').style.display = 'flex';
+            } else {
+                document.querySelector('.back-to-top').style.display = 'none';
+            }
+        });
+        
+        // Acción del botón volver arriba
+        document.querySelector('.back-to-top').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
     });
 </script>
 
@@ -97,27 +112,48 @@
             opacity: 0.5;
         }
         100% {
-            transform: translateY(-100px) scale(1.2);
+            transform: translateY(-80px) scale(1.2);
             opacity: 0;
         }
     }
     
-    /* Efecto acuático en el footer */
-    .bg-light.rounded-top {
+    /* Estilos para el footer */
+    .bg-light.p-4 {
         position: relative;
         overflow: hidden;
         background: linear-gradient(180deg, #ffffff, rgba(224, 247, 250, 0.5));
-        border-top: 2px solid rgba(0, 188, 212, 0.2);
     }
     
+    /* Estilo para el botón volver arriba */
     .back-to-top {
+        display: none;
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        z-index: 99;
         background-color: #00BCD4 !important;
+        color: white;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        border: none;
+        transition: all 0.3s ease;
         animation: float 2s ease-in-out infinite;
+    }
+    
+    .back-to-top:hover {
+        background-color: #0097A7 !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        transform: translateY(-5px);
     }
     
     @keyframes float {
         0% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-8px); }
         100% { transform: translateY(0); }
     }
 </style>
