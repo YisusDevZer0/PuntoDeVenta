@@ -189,7 +189,7 @@ body::before {
 /*** Layout ***/
 .wrapper {
     display: flex;
-    
+    min-height: 100vh;
     width: 100%;
     position: relative;
 }
@@ -416,12 +416,12 @@ body::before {
 /* CONTENIDO PRINCIPAL */
 .content {
     margin-left: 280px;
-    padding-top: 0; /* Ya no necesitamos el padding para la navbar superior */
-    padding-bottom: 110px; /* Espacio para la navbar inferior y el footer */
-    width: calc(100% - 280px);
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    transition: all 0.3s ease;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.active + .content {
+    margin-left: 0;
 }
 
 .content-inner {

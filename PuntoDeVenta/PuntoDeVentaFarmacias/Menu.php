@@ -284,16 +284,12 @@
         
         sidebarToggler.addEventListener('click', function() {
             sidebar.classList.toggle('active');
-            if (window.innerWidth > 992) {
-                if (sidebar.classList.contains('active')) {
-                    content.style.marginLeft = '0';
-                    content.style.width = '100%';
-                    footer.style.left = '0';
-                } else {
-                    content.style.marginLeft = '280px';
-                    content.style.width = 'calc(100% - 280px)';
-                    footer.style.left = '280px';
-                }
+            if (sidebar.classList.contains('active')) {
+                content.style.marginLeft = '0';
+                footer.style.left = '0';
+            } else {
+                content.style.marginLeft = '280px';
+                footer.style.left = '280px';
             }
         });
     });
