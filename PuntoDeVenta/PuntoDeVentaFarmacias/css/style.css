@@ -29,7 +29,7 @@
     --elevation-5: 0 3px 5px -1px rgba(0,188,212,0.2), 0 5px 8px 0 rgba(0,188,212,0.14), 0 1px 14px 0 rgba(0,188,212,0.12);
 }
 
-/* Animaciones de agua mejoradas */
+/* Animaciones de agua */
 @keyframes wave {
     0% { transform: translateX(0); }
     50% { transform: translateX(-25%); }
@@ -52,7 +52,7 @@ body {
     font-family: 'Roboto', sans-serif;
     color: var(--text-primary);
     background-color: #f8f9fa;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(0,188,212,0.1)"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(0,188,212,0.03)"/></svg>');
     background-size: 30px 30px;
     line-height: 1.5;
     position: relative;
@@ -86,14 +86,13 @@ body::before {
     height: 45px;
     text-align: center;
     line-height: 45px;
-    box-shadow: var(--elevation-3);
+    box-shadow: 0 3px 10px rgba(0, 188, 212, 0.3);
     transition: all 0.3s ease;
     animation: float 3s ease-in-out infinite;
 }
 
 .back-to-top:hover {
     background-color: var(--primary-dark);
-    box-shadow: var(--elevation-4);
     transform: translateY(-5px);
 }
 
@@ -114,66 +113,40 @@ body::before {
 /*** Button ***/
 .btn {
     transition: all 0.3s ease;
-    text-transform: uppercase;
     font-weight: 500;
-    letter-spacing: 0.5px;
     border-radius: 4px;
-    box-shadow: var(--elevation-1);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: var(--bubble);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.btn:hover::after {
-    width: 200%;
-    height: 200%;
-    opacity: 0.1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .btn:hover {
-    box-shadow: var(--elevation-2);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn.btn-primary {
     color: #FFFFFF;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    border: none;
+    background-color: var(--primary);
+    border-color: var(--primary);
 }
 
 .btn.btn-primary:hover {
-    background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
 }
 
 .btn-square {
     width: 38px;
     height: 38px;
-    border-radius: 50%;
 }
 
 .btn-sm-square {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
 }
 
 .btn-lg-square {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
 }
 
 .btn-square,
@@ -184,6 +157,7 @@ body::before {
     align-items: center;
     justify-content: center;
     font-weight: normal;
+    border-radius: 50px;
 }
 
 /*** Layout ***/
@@ -206,6 +180,7 @@ body::before {
     background: var(--light);
     transition: 0.5s;
     z-index: 999;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.1);
 }
 
 .sidebar::before {
@@ -230,6 +205,10 @@ body::before {
 
 .sidebar .navbar::-webkit-scrollbar {
     width: 5px;
+}
+
+.sidebar .navbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .sidebar .navbar::-webkit-scrollbar-thumb {
@@ -603,42 +582,37 @@ body::before {
 }
 
 /* RESPONSIVE */
-@media (max-width: 992px) {
+@media (min-width: 992px) {
     .sidebar {
+        margin-left: 0;
+    }
+
+    .sidebar.open {
         margin-left: -250px;
-        box-shadow: none;
     }
-    
-    .sidebar.active {
-        margin-left: 0;
-        box-shadow: 0 0 15px rgba(0, 188, 212, 0.15);
-    }
-    
-    .navbar-bottom {
-        left: 0;
-    }
-    
+
     .content {
-        margin-left: 0;
-        width: 100%;
+        width: calc(100% - 250px);
     }
-    
-    .footer {
-        left: 0;
+
+    .content.open {
+        width: 100%;
+        margin-left: 0;
     }
 }
 
-@media (max-width: 768px) {
-    .navbar-bottom {
-        padding: 0 15px;
+@media (max-width: 991.98px) {
+    .sidebar {
+        margin-left: -250px;
     }
-    
-    .content-inner {
-        padding: 15px;
+
+    .sidebar.open {
+        margin-left: 0;
     }
-    
-    .page-header {
-        padding: 15px;
+
+    .content {
+        width: 100%;
+        margin-left: 0;
     }
 }
 

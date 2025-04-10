@@ -4,141 +4,68 @@ $Licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
 
 <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-                </a>
-                <a href="#" class="sidebar-toggler flex-shrink-0">
-                    <i class="fa fa-bars"></i>
-                </a>
-                <!-- <form class="d-none d-md-flex ms-4">
-                    <input class="form-control border-0" type="search" placeholder="Search">
-                </form> -->
-                <div class="navbar-nav align-items-center ms-auto">
-                <div class="navbar-nav align-items-center ms-auto">
-                <div class="nav-item dropdown">
-        
-        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="messageDropdown">
-            <!-- Mensajes se agregarán dinámicamente aquí -->
-        </div>
-    </div>
-    
-    <!-- Audio element -->
-    <audio id="notificationSound" src="Audio/NuevoMensaje.mp3" preload="auto"></audio>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-        <div id="toastMessage" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <i class="fa fa-envelope me-2"></i>
-                <strong class="me-auto">Notificación</strong>
-                <small>Ahora</small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                Tienes nuevos mensajes sin leer.
-            </div>
-        </div>
-    </div>
-
-    <script>
-        $(document).ready(function() {
-            function loadMessages() {
-                const licencia = "<?php echo $Licencia; ?>";
-                const Fk_Sucursal = "<?php echo $Fk_Sucursal; ?>";
-
-                $.ajax({
-                    url: 'Controladores/Mensajes.php',
-                    method: 'POST',
-                    data: { 
-                        licencia: licencia,
-                        Fk_Sucursal: Fk_Sucursal
-                    },
-                    success: function(data) {
-                        const messageDropdown = $('#messageDropdown');
-                        const messageIcon = $('#messageIcon');
-                        const notificationSound = $('#notificationSound')[0];
-                        messageDropdown.empty();
-
-                        if (data.length > 0) {
-                            // Añadir animación al icono de mensajes
-                            messageIcon.addClass('animate__animated animate__heartBeat');
-
-                            // Reproducir sonido de notificación
-                            notificationSound.play();
-
-                            data.forEach(message => {
-                                messageDropdown.append(`
-                                    <a href="#" class="dropdown-item">
-                                        <div class="d-flex align-items-center">
-                                            <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>"  alt="" style="width: 40px; height: 40px;">
-                                            <div class="ms-2">
-                                                <h6 class="fw-normal mb-0">${message.Encabezado}</h6>
-                                                <small>${message.Registrado}</small>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <hr class="dropdown-divider">
-                                `);
-                            });
-                            messageDropdown.append(`<a href="https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mensajes" class="dropdown-item text-center">Ver todos los mensajes</a>`);
-
-                            // Show toast notification
-                            const toastElement = new bootstrap.Toast(document.getElementById('toastMessage'));
-                            toastElement.show();
-                        } else {
-                            messageIcon.removeClass('animate__animated animate__heartBeat');
-                            messageDropdown.append('<a href="#" class="dropdown-item text-center">No new messages</a>');
-                        }
-                    }
-                });
-            }
-
-            loadMessages();
-        });
-    </script>
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-bell me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Notificaciones</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Profile updated</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">New user added</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <h6 class="fw-normal mb-0">Password changed</h6>
-                                <small>15 minutes ago</small>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all notifications</a>
+    <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+        <h2 class="text-primary mb-0"><i class="fa-solid fa-fish" style="color: #00BCD4;"></i></h2>
+    </a>
+    <a href="#" class="sidebar-toggler flex-shrink-0">
+        <i class="fa fa-bars"></i>
+    </a>
+    <div class="navbar-nav align-items-center ms-auto">
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="fa fa-envelope me-lg-2"></i>
+                <span class="d-none d-lg-inline-flex">Mensajes</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                <a href="#" class="dropdown-item">
+                    <div class="d-flex align-items-center">
+                        <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                        <div class="ms-2">
+                            <h6 class="fw-normal mb-0">Tienes un nuevo mensaje</h6>
+                            <small>Hace 15 minutos</small>
                         </div>
                     </div>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex"><?php echo $row['Nombre_Apellidos']?></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">Mi perfil</a>
-                            <!-- <a href="Ajustes" class="dropdown-item">Ajustes</a> -->
-                            <a href="Cierre" class="dropdown-item">Cerrar sesion</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-            <script>
+                </a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-item text-center">Ver todos los mensajes</a>
+            </div>
+        </div>
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="fa fa-bell me-lg-2"></i>
+                <span class="d-none d-lg-inline-flex">Notificaciones</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                <a href="#" class="dropdown-item">
+                    <h6 class="fw-normal mb-0">Inventario actualizado</h6>
+                    <small>Hace 15 minutos</small>
+                </a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-item">
+                    <h6 class="fw-normal mb-0">Nuevos productos agregados</h6>
+                    <small>Hace 30 minutos</small>
+                </a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-item text-center">Ver todas las notificaciones</a>
+            </div>
+        </div>
+        <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img class="rounded-circle me-lg-2" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
+                <span class="d-none d-lg-inline-flex"><?php echo $row['Nombre_Apellidos']?></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">Mi perfil</a>
+                <a href="cerrar_sesion.php" class="dropdown-item" id="logout-link">Cerrar sesión</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         // Selecciona el enlace de cierre de sesión
-        const logoutLink = document.querySelector('.dropdown-item[href="Cierre"]');
+        const logoutLink = document.querySelector('#logout-link');
         
         // Agrega un evento de clic al enlace
         logoutLink.addEventListener('click', function(event) {
@@ -151,16 +78,23 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                 text: '¿Estás seguro de que deseas cerrar sesión?',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#00BCD4',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Sí, cerrar sesión',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 // Si el usuario confirma, redirige a la página de cierre de sesión
                 if (result.isConfirmed) {
-                    window.location.href = "cerrar_sesion.php"; // Reemplaza con la URL de tu página de cierre de sesión
+                    window.location.href = "cerrar_sesion.php";
                 }
             });
+        });
+
+        // Efecto para el toggler de la barra lateral
+        const sidebarToggler = document.querySelector('.sidebar-toggler');
+        sidebarToggler.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+            document.querySelector('.content').classList.toggle('active');
         });
     });
 </script>
