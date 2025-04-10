@@ -6,7 +6,7 @@
             <!-- Logo y título -->
             <div class="navbar-brand">
                 <h3 class="text-primary">
-                    <i class="fa-solid fa-fish me-2"></i>
+                    <i class="fa-solid fa-fish"></i>
                     <?php echo $row['Licencia']?>
                 </h3>
                 <small class="text-muted"><?php echo $row['Nombre_Sucursal']?></small>
@@ -66,20 +66,20 @@
                 <!-- Menú Cajas -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-cash-register me-2"></i>
+                        <i class="fa-solid fa-cash-register"></i>
                         <span>Cajas</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="AperturarCajaV2" class="dropdown-item">
-                            <i class="fa-solid fa-coins me-2"></i>
+                            <i class="fa-solid fa-coins"></i>
                             <span>Apertura de caja</span>
                         </a>
                         <a href="CortesDeCaja" class="dropdown-item">
-                            <i class="fa-solid fa-calculator me-2"></i>
+                            <i class="fa-solid fa-calculator"></i>
                             <span>Cortes de caja</span>
                         </a>
                         <a href="ReimpresionDeCortes" class="dropdown-item">
-                            <i class="fa-solid fa-print me-2"></i>
+                            <i class="fa-solid fa-print"></i>
                             <span>Reimpresión de corte</span>
                         </a>
                     </div>
@@ -88,43 +88,43 @@
                 <!-- Menú Agenda -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-regular fa-calendar me-2"></i>
+                        <i class="fa-regular fa-calendar"></i>
                         <span>Agenda</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="AgendaRevaloraciones" class="dropdown-item">
-                            <i class="fa-solid fa-calendar-check me-2"></i>
+                            <i class="fa-solid fa-calendar-check"></i>
                             <span>Revaloraciones</span>
                         </a>
                         <a href="AgendaLaboratorios" class="dropdown-item">
-                            <i class="fa-solid fa-flask me-2"></i>
+                            <i class="fa-solid fa-flask"></i>
                             <span>Laboratorios</span>
                         </a>
                         <a href="AgendaEspecialistas" class="dropdown-item">
-                            <i class="fa-solid fa-user-md me-2"></i>
+                            <i class="fa-solid fa-user-md"></i>
                             <span>Especialistas</span>
                         </a>
                     </div>
                 </div>
                 
                 <a href="RealizarVentas" class="nav-item nav-link">
-                    <i class="fa-solid fa-cart-shopping me-2"></i>
+                    <i class="fa-solid fa-cart-shopping"></i>
                     <span>Realizar Venta</span>
                 </a>
                 
                 <!-- Menú Clientes -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-users me-2"></i>
+                        <i class="fa-solid fa-users"></i>
                         <span>Clientes</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="DatosDeClientes" class="dropdown-item">
-                            <i class="fa-solid fa-people-group me-2"></i>
+                            <i class="fa-solid fa-people-group"></i>
                             <span>Lista de clientes</span>
                         </a>
                         <a href="Creditos" class="dropdown-item">
-                            <i class="fa-regular fa-credit-card me-2"></i>
+                            <i class="fa-regular fa-credit-card"></i>
                             <span>Créditos</span>
                         </a>
                     </div>
@@ -133,24 +133,24 @@
                 <!-- Menú Tickets -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-ticket me-2"></i>
+                        <i class="fa-solid fa-ticket"></i>
                         <span>Tickets</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="Tickets" class="dropdown-item">
-                            <i class="fa-solid fa-receipt me-2"></i>
+                            <i class="fa-solid fa-receipt"></i>
                             <span>Desglose de tickets</span>
                         </a>
                         <a href="AbonosEnCreditos" class="dropdown-item">
-                            <i class="fa-solid fa-money-bill me-2"></i>
+                            <i class="fa-solid fa-money-bill"></i>
                             <span>Tickets crédito</span>
                         </a>
                         <a href="EncargosPendientes" class="dropdown-item">
-                            <i class="fa-solid fa-file-invoice me-2"></i>
+                            <i class="fa-solid fa-file-invoice"></i>
                             <span>Encargos</span>
                         </a>
                         <a href="Tickets" class="dropdown-item">
-                            <i class="fa-solid fa-print me-2"></i>
+                            <i class="fa-solid fa-print"></i>
                             <span>Reimpresión</span>
                         </a>
                     </div>
@@ -159,16 +159,16 @@
                 <!-- Menú Ventas -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-chart-line me-2"></i>
+                        <i class="fa-solid fa-chart-line"></i>
                         <span>Ventas</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="VentasDelDia" class="dropdown-item">
-                            <i class="fa-solid fa-coins me-2"></i>
+                            <i class="fa-solid fa-coins"></i>
                             <span>Ventas del día</span>
                         </a>
                         <a href="VentasAcredito" class="dropdown-item">
-                            <i class="fa-solid fa-credit-card me-2"></i>
+                            <i class="fa-solid fa-credit-card"></i>
                             <span>Ventas a crédito</span>
                         </a>
                     </div>
@@ -177,32 +177,32 @@
                 <!-- Menú Almacen -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-boxes-stacked me-2"></i>
+                        <i class="fa-solid fa-boxes-stacked"></i>
                         <span>Almacén</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="StockSucursal" class="dropdown-item">
-                            <i class="fa-solid fa-box me-2"></i>
+                            <i class="fa-solid fa-box"></i>
                             <span>Stock</span>
                         </a>
                         <a href="StockInsumos" class="dropdown-item">
-                            <i class="fa-solid fa-box-open me-2"></i>
+                            <i class="fa-solid fa-box-open"></i>
                             <span>Stock de insumos</span>
                         </a>
                         <a href="Pedidos" class="dropdown-item">
-                            <i class="fa-solid fa-truck me-2"></i>
+                            <i class="fa-solid fa-truck"></i>
                             <span>Pedidos</span>
                         </a>
                         <a href="ConteoDiario" class="dropdown-item">
-                            <i class="fa-solid fa-clipboard-list me-2"></i>
+                            <i class="fa-solid fa-clipboard-list"></i>
                             <span>Conteo diario</span>
                         </a>
                         <a href="Cotizaciones" class="dropdown-item">
-                            <i class="fa-solid fa-rotate-left me-2"></i>
+                            <i class="fa-solid fa-rotate-left"></i>
                             <span>Devoluciones</span>
                         </a>
                         <a href="Cotizaciones" class="dropdown-item">
-                            <i class="fa-solid fa-calendar-xmark me-2"></i>
+                            <i class="fa-solid fa-calendar-xmark"></i>
                             <span>Caducados</span>
                         </a>
                     </div>
@@ -211,20 +211,20 @@
                 <!-- Menú Pedidos -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-clipboard-check me-2"></i>
+                        <i class="fa-solid fa-clipboard-check"></i>
                         <span>Pedidos</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="Pedidos" class="dropdown-item">
-                            <i class="fa-solid fa-list-check me-2"></i>
+                            <i class="fa-solid fa-list-check"></i>
                             <span>Pedidos</span>
                         </a>
                         <a href="GeneracionDeEncargos" class="dropdown-item">
-                            <i class="fa-solid fa-file-circle-plus me-2"></i>
+                            <i class="fa-solid fa-file-circle-plus"></i>
                             <span>Generar encargo</span>
                         </a>
                         <a href="Cotizaciones" class="dropdown-item">
-                            <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
                             <span>Generar cotización</span>
                         </a>
                     </div>
@@ -233,27 +233,27 @@
                 <!-- Menú Traspasos -->
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fa-solid fa-right-left me-2"></i>
+                        <i class="fa-solid fa-right-left"></i>
                         <span>Traspasos</span>
                     </a>
-                    <div class="dropdown-menu bg-transparent border-0">
+                    <div class="dropdown-menu">
                         <a href="ListadoDeTraspasos" class="dropdown-item">
-                            <i class="fa-solid fa-list-ul me-2"></i>
+                            <i class="fa-solid fa-list-ul"></i>
                             <span>Listado de traspasos</span>
                         </a>
                         <a href="Ingresos" class="dropdown-item">
-                            <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
                             <span>Solicitar ingresos</span>
                         </a>
                         <a href="SolicitudPendientes" class="dropdown-item">
-                            <i class="fa-solid fa-clock me-2"></i>
+                            <i class="fa-solid fa-clock"></i>
                             <span>Solicitudes pendientes</span>
                         </a>
                     </div>
                 </div>
                 
                 <a href="index" class="nav-item nav-link">
-                    <i class="fa-solid fa-circle-play me-2"></i>
+                    <i class="fa-solid fa-circle-play"></i>
                     <span>Video tutoriales</span>
                 </a>
             </div>
@@ -268,10 +268,17 @@
                 <i class="fa fa-bars"></i>
             </button>
 
+            <!-- Buscador -->
+            <div class="search-box d-none d-md-block">
+                <input type="text" class="form-control" placeholder="Buscar...">
+                <i class="fa fa-search search-icon"></i>
+            </div>
+
             <!-- Navbar derecha -->
             <div class="navbar-nav">
-                <a href="#" class="nav-link">
+                <a href="#" class="nav-link position-relative">
                     <i class="fa fa-bell"></i>
+                    <span class="badge">3</span>
                 </a>
                 <a href="#" class="nav-link">
                     <i class="fa fa-user"></i>
@@ -282,6 +289,42 @@
 
     <!-- Contenido principal -->
     <div class="content">
-        <!-- Aquí va el contenido de la página -->
+        <div class="content-inner">
+            <!-- Aquí va el contenido de la página -->
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div>Doctor Pez &copy; <?php echo date('Y'); ?> - Todos los derechos reservados.</div>
+            <div>Diseñado por DevZero</div>
+        </footer>
     </div>
 </div>
+
+<!-- Script para toggle de sidebar -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggler = document.querySelector('.sidebar-toggler');
+        const sidebar = document.querySelector('.sidebar');
+        const content = document.querySelector('.content');
+        const navbarCustom = document.querySelector('.navbar-custom');
+        const footer = document.querySelector('.footer');
+        
+        sidebarToggler.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            if (window.innerWidth > 992) {
+                if (sidebar.classList.contains('active')) {
+                    content.style.marginLeft = '0';
+                    content.style.width = '100%';
+                    navbarCustom.style.left = '0';
+                    footer.style.left = '0';
+                } else {
+                    content.style.marginLeft = '280px';
+                    content.style.width = 'calc(100% - 280px)';
+                    navbarCustom.style.left = '280px';
+                    footer.style.left = '280px';
+                }
+            }
+        });
+    });
+</script>

@@ -28,8 +28,8 @@
 
     // Sidebar Toggler
     $('.sidebar-toggler').click(function () {
-        $('.sidebar, .content').toggleClass("open");
-        return false;
+        $('.sidebar').toggleClass('active');
+        $('.content').toggleClass('active');
     });
 
 
@@ -203,5 +203,89 @@
     });
 
     
+    // Menú dropdown en el sidebar
+    $('.sidebar .dropdown-toggle').click(function() {
+        if ($(this).hasClass('show')) {
+            $(this).removeClass('show');
+            $(this).siblings('.dropdown-menu').removeClass('show');
+        } else {
+            // Cierra los otros dropdown abiertos
+            $('.sidebar .dropdown-toggle.show').removeClass('show');
+            $('.sidebar .dropdown-menu.show').removeClass('show');
+            
+            // Abre el dropdown actual
+            $(this).addClass('show');
+            $(this).siblings('.dropdown-menu').addClass('show');
+        }
+    });
+
+    // Cierra los dropdown cuando se hace clic fuera de ellos
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.sidebar .dropdown').length) {
+            $('.sidebar .dropdown-toggle.show').removeClass('show');
+            $('.sidebar .dropdown-menu.show').removeClass('show');
+        }
+    });
+
+    // Agrega la clase active al elemento del menú actual
+    const currentLocation = location.pathname;
+    const pathParts = currentLocation.split('/');
+    const page = pathParts[pathParts.length - 1];
+    
+    $('.sidebar .navbar-nav a').each(function() {
+        const href = $(this).attr('href');
+        if (href === page || href + '.php' === page) {
+            $(this).addClass('active');
+            
+            // Si el elemento está dentro de un dropdown, abre el dropdown
+            if ($(this).hasClass('dropdown-item')) {
+                const dropdown = $(this).closest('.dropdown');
+                dropdown.find('.dropdown-toggle').addClass('show');
+                dropdown.find('.dropdown-menu').addClass('show');
+            }
+        }
+    });
+
+    // Efectos acuáticos decorativos
+    function createBubbles() {
+        const waterDecoration = $('<div class="water-decoration"></div>');
+        $('body').append(waterDecoration);
+        
+        for (let i = 0; i < 15; i++) {
+            const size = Math.random() * 30 + 10;
+            const bubble = $('<div class="bubble"></div>');
+            bubble.css({
+                width: size + 'px',
+                height: size + 'px',
+                left: Math.random() * 100 + '%',
+                top: Math.random() * 100 + '%',
+                animationDelay: Math.random() * 5 + 's'
+            });
+            waterDecoration.append(bubble);
+        }
+        
+        const wave = $('<div class="wave"></div>');
+        waterDecoration.append(wave);
+    }
+    
+    createBubbles();
+
+    // Comportamiento responsivo
+    function checkWindowSize() {
+        if (window.innerWidth <= 992) {
+            $('.sidebar').addClass('active');
+        } else {
+            $('.sidebar').removeClass('active');
+        }
+    }
+    
+    // Verificar tamaño al cargar
+    checkWindowSize();
+    
+    // Verificar tamaño al redimensionar
+    $(window).resize(function() {
+        checkWindowSize();
+    });
+
 })(jQuery);
 
