@@ -16,7 +16,7 @@
                 <div class="navbar-nav w-100">
                 <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
 
-
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -25,6 +25,8 @@
         <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
     </div>
 </div>
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -35,7 +37,8 @@
         <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
     </div>
 </div>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -44,6 +47,8 @@
        
     </div>
 </div>
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -52,6 +57,8 @@
         <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
     </div>
 </div>
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -60,9 +67,11 @@
 
     </div>
 </div>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -74,7 +83,8 @@
         <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-comments-dollar"></i>Tipos de gastos</a>
     </div>
 </div>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -83,7 +93,8 @@
        
     </div>
 </div>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -95,7 +106,8 @@
     </div>
 </div>
 
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice-dollar"></i>Ventas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -105,8 +117,9 @@
     </div>
 </div>
 
-
+<?php } ?>
 <!-- MENUS DE ALMACEN -->
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -123,8 +136,10 @@
        
     </div>
 </div>
+<?php } ?>
 <!-- MENUS DE ALMACEN -->
 
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left"></i>Traspasos</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -138,6 +153,8 @@
 
 
 
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Ingresos</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -148,7 +165,8 @@
         <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Realizar ingresos </a>
     </div>
 </div>
-
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -160,6 +178,8 @@
         <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
     </div>
 </div>
+<?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador') { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree"></i>Reportes</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -171,6 +191,8 @@
        
     </div>
 </div>
+
+<?php } ?>
 
             </nav>
         </div>

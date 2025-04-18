@@ -44,7 +44,7 @@ if($_SESSION["AdministradorRH"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/RecursosHumanos/");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
 
 }
 if($_SESSION["ResponsableDelCedis"])	//Condicion admin

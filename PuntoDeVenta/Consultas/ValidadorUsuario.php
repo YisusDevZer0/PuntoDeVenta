@@ -37,7 +37,7 @@ if(isset($_POST['login_button'])) {
                     echo "ok";
                     $_SESSION['ResponsableDeSupervision'] = $row['Id_PvUser'];
                     break;
-                    case $row['Password'] == $Password && $row['TipoUsuario'] == "Recursos Humanos" && $row['Estatus'] == "Activo":
+                    case $row['Password'] == $Password && $row['TipoUsuario'] == "Desarrollo Humano" && $row['Estatus'] == "Activo":
                         echo "ok";
                         $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
                         break;
