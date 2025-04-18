@@ -21,6 +21,8 @@ if(isset($_POST['login_button'])) {
 
     // Depuración: Mostrar la contraseña ingresada y la de la base de datos
     var_dump($Password, $row['Password']);
+    // Verificar el tipo de usuario y estatus
+    var_dump($row['TipoUsuario'], $row['Estatus']);
     exit;
 
     switch(true) {
