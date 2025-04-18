@@ -19,6 +19,24 @@ if(isset($_POST['login_button'])) {
     $resultset = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultset);
 
+    // --- Inicio de Código de Depuración Temporal ---
+    error_log("--- Inicio Intento Login ---");
+    error_log("Email ingresado: " . $Correo_electronico);
+    error_log("Password ingresado: " . $Password); // ¡Cuidado! No dejes esto en producción.
+    if ($row) {
+        error_log("Datos BD - Password: " . $row['Password']); // ¡Cuidado! No dejes esto en producción.
+        error_log("Datos BD - TipoUsuario: [" . $row['TipoUsuario'] . "]"); // Corchetes para ver espacios
+        error_log("Datos BD - Estatus: [" . $row['Estatus'] . "]"); // Corchetes para ver espacios
+        // Verificamos las comparaciones individualmente
+        error_log("Comparación Password: " . ($row['Password'] == $Password ? 'TRUE' : 'FALSE'));
+        error_log("Comparación TipoUsuario: " . ($row['TipoUsuario'] == "Desarrollo Humano" ? 'TRUE' : 'FALSE'));
+        error_log("Comparación Estatus: " . ($row['Estatus'] == "Activo" ? 'TRUE' : 'FALSE'));
+    } else {
+        error_log("Usuario no encontrado en la BD para el email: " . $Correo_electronico);
+    }
+     error_log("--- Fin Intento Login ---");
+    // --- Fin de Código de Depuración Temporal ---
+
     switch(true) {
         case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
             echo "ok";
