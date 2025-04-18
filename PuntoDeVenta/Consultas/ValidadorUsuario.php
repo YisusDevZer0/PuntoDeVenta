@@ -45,6 +45,8 @@ if(isset($_POST['login_button'])) {
                     break;
                     case $row['Password'] == $Password && $row['TipoUsuario'] == "Desarrollo Humano" && $row['Estatus'] == "Activo":
                         echo "ok";
+                        // Depuración: Confirmar que se está ejecutando el caso para Desarrollo Humano
+                        echo "Entró en el caso de Desarrollo Humano";
                         $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
                         break;
 
