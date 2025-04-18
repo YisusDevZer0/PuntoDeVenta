@@ -19,8 +19,8 @@ if(isset($_POST['login_button'])) {
     $resultset = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultset);
 
-    // Depuración: Mostrar los datos obtenidos de la base de datos
-    var_dump($row);
+    // Depuración: Mostrar la contraseña ingresada y la de la base de datos
+    var_dump($Password, $row['Password']);
     exit;
 
     switch(true) {
