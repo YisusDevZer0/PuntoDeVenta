@@ -19,12 +19,6 @@ if(isset($_POST['login_button'])) {
     $resultset = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultset);
 
-    // Depuración: Mostrar la contraseña ingresada y la de la base de datos
-    var_dump($Password, $row['Password']);
-    // Verificar el tipo de usuario y estatus
-    var_dump($row['TipoUsuario'], $row['Estatus']);
-    exit;
-
     switch(true) {
         case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
             echo "ok";
@@ -45,8 +39,6 @@ if(isset($_POST['login_button'])) {
                     break;
                     case $row['Password'] == $Password && $row['TipoUsuario'] == "Desarrollo Humano" && $row['Estatus'] == "Activo":
                         echo "ok";
-                        // Depuración: Confirmar que se está ejecutando el caso para Desarrollo Humano
-                        echo "Entró en el caso de Desarrollo Humano";
                         $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
                         break;
 
