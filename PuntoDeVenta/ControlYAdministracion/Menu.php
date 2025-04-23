@@ -62,8 +62,8 @@
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
     <div class="dropdown-menu bg-transparent border-0">
-        <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
-        <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-calendar"></i>Reporte General </a>
+        <a href="ChecadorDiario" class="dropdown-item"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
+        <a href="ChecadorGeneral" class="dropdown-item"><i class="fa-solid fa-calendar"></i>Reporte General </a>
 
     </div>
 </div>
