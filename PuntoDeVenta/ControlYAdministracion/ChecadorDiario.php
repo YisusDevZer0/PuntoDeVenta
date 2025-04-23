@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Clientes de  <?php echo $row['Licencia']?></title>
+    <title>Checador de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -38,7 +38,23 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Registro de entradas y salidas de <?php echo $row['Licencia']?></h6>
             
-            <div id="DataDeServicios"></div>
+            <div class="text-center">
+                <div class="table-responsive">
+                    <table id="Checador" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Empleado</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Tipo</th>
+                                <th>Sucursal</th>
+                                <th>Turno</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
             </div></div></div></div>
             
           
@@ -46,7 +62,9 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Footer Start -->
             <?php 
-            
+            include "Modales/NuevoFondoDeCaja.php";
+            include "Modales/Modales_Errores.php";
+            include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
 
 <script>
