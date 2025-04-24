@@ -29,34 +29,25 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
-    // Calcular si está por debajo del mínimo
-    $bajominimo = $fila['Existencias_R'] <= $fila['Min_Existencia'];
-    $cantidadSugerida = $bajominimo ? ($fila['Max_Existencia'] - $fila['Existencias_R']) : 0;
+    // Verificar si las existencias están por debajo del mínimo
+    $mostrarBotonOrden = ($fila['Existencias_R'] <= $fila['Min_Existencia']);
     
     // Construir el array de datos
     $data[] = [
-        'Cod_Barra' => $fila['Cod_Barra'],
-        'Nombre_Prod' => $fila['Nombre_Prod'],
-        'Precio_Venta' => $fila['Precio_Venta'],
-        'Nom_Serv' => $fila['Nom_Serv'],
-        'Tipo' => $fila['Tipo'],
-        'Proveedor1' => $fila['Proveedor1'],
-        'Sucursal' => $fila['Nombre_Sucursal'],
-        'Existencias_R' => $fila['Existencias_R'],
-        'Min_Existencia' => $fila['Min_Existencia'],
-        'Max_Existencia' => $fila['Max_Existencia'],
-        'Estatus_Stock' => $bajominimo ? 
-            "<button class='btn btn-warning btn-sm btn-orden-sugerida' data-id='" . $fila['Folio_Prod_Stock'] . "' 
-             data-nombre='" . htmlspecialchars($fila['Nombre_Prod'], ENT_QUOTES) . "'
-             data-codigo='" . htmlspecialchars($fila['Cod_Barra'], ENT_QUOTES) . "'
-             data-cantidad='" . $cantidadSugerida . "'
-             data-min='" . $fila['Min_Existencia'] . "'
-             data-max='" . $fila['Max_Existencia'] . "'
-             data-existencias='" . $fila['Existencias_R'] . "'
-             data-proveedor='" . htmlspecialchars($fila['Proveedor1'], ENT_QUOTES) . "'>
-             <i class='fas fa-shopping-cart'></i> Solicitar
-             </button>" : 
-            "<span class='badge bg-success'>Stock OK</span>",
+        "Cod_Barra" => $fila["Cod_Barra"],
+        "Clave_adicional" => $fila["Clave_adicional"],
+        "Clave_Levic" => $fila["Clave_Levic"],
+        "Nombre_Prod" => $fila["Nombre_Prod"],
+        "Precio_Venta" => $fila["Precio_Venta"],
+        "Nom_Serv" => $fila["Nom_Serv"],
+        "Tipo" => $fila["Tipo"],
+        "Proveedor1" => $fila["Proveedor1"],
+        "Proveedor2" => $fila["Proveedor2"],
+        "Sucursal" => $fila["Nombre_Sucursal"],
+        "UltimoMovimiento" => $fila["AgregadoEl"],
+        "Existencias_R" => $fila["Existencias_R"],
+        "Min_Existencia" => $fila["Min_Existencia"],
+        "Max_Existencia" => $fila["Max_Existencia"],
         'Editar' => "<div class='btn-group'>
             <button type='button' class='btn btn-info btn-sm dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
                 Selecciona por favor<i class='fa-solid fa-chevron-down'></i>
@@ -72,11 +63,27 @@ while ($fila = $result->fetch_assoc()) {
                         Editar datos del producto
                     </a>
                 </li>
-                 <li>
+                <li>
                     <a class='dropdown-item btn-AjustInvetario' data-id='$fila[Folio_Prod_Stock]'>
                         Ajuste de inventario
                     </a>
                 </li>
+                " . ($mostrarBotonOrden ? "
+                <li>
+                    <a class='dropdown-item btn-GenerarOrden' 
+                       data-id='$fila[Folio_Prod_Stock]'
+                       data-nombre='$fila[Nombre_Prod]'
+                       data-codigo='$fila[Cod_Barra]'
+                       data-existencias='$fila[Existencias_R]'
+                       data-minimo='$fila[Min_Existencia]'
+                       data-maximo='$fila[Max_Existencia]'
+                       data-sucursal='$fila[Fk_sucursal]'
+                       data-proveedor='$fila[Proveedor1]'
+                       data-hod='$fila[ID_H_O_D]'>
+                        Generar orden de compra
+                    </a>
+                </li>
+                " : "") . "
                 <li>
                     <a class='dropdown-item eliminarprod' data-id='$fila[Folio_Prod_Stock]'>
                         Eliminar producto
@@ -84,7 +91,7 @@ while ($fila = $result->fetch_assoc()) {
                 </li>
             </ul>
         </div>",
-        
+        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
     ];
 }
 
