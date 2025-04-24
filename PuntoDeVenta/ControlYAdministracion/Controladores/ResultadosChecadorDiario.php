@@ -28,7 +28,7 @@ $(document).ready( function () {
 				extend:    'excelHtml5',
 				text:      'Descargar excel  <i Descargar excel class="fas fa-file-excel"></i> ',
 				titleAttr: 'Descargar excel',
-        title: 'Totales de horas trabajadas de empleados Saluda Centro Medico Familiar, archivo descargado <?php echo $fcha; ?>',
+        title: 'Totales de horas trabajadas de empleados Doctor pez, archivo descargado <?php echo $fcha; ?>',
 				className: 'btn btn-success'
 			},
 		
