@@ -28,8 +28,11 @@ $result = $stmt->get_result();
 $data = [];
 
 // Procesar resultados
-// Procesar resultados
 while ($fila = $result->fetch_assoc()) {
+    // Calcular si está por debajo del mínimo
+    $bajominimo = $fila['Existencias_R'] <= $fila['Min_Existencia'];
+    $cantidadSugerida = $bajominimo ? ($fila['Max_Existencia'] - $fila['Existencias_R']) : 0;
+    
     // Construir el array de datos
     $data[] = [
         'Cod_Barra' => $fila['Cod_Barra'],
@@ -42,23 +45,35 @@ while ($fila = $result->fetch_assoc()) {
         'Existencias_R' => $fila['Existencias_R'],
         'Min_Existencia' => $fila['Min_Existencia'],
         'Max_Existencia' => $fila['Max_Existencia'],
+        'Estatus_Stock' => $bajominimo ? 
+            "<button class='btn btn-danger btn-sm btn-orden-sugerida' data-id='" . $fila['Folio_Prod_Stock'] . "' 
+             data-nombre='" . htmlspecialchars($fila['Nombre_Prod'], ENT_QUOTES) . "'
+             data-codigo='" . htmlspecialchars($fila['Cod_Barra'], ENT_QUOTES) . "'
+             data-cantidad='" . $cantidadSugerida . "'
+             data-min='" . $fila['Min_Existencia'] . "'
+             data-max='" . $fila['Max_Existencia'] . "'
+             data-existencias='" . $fila['Existencias_R'] . "'
+             data-proveedor='" . htmlspecialchars($fila['Proveedor1'], ENT_QUOTES) . "'>
+             <i class='fas fa-exclamation-triangle'></i> Stock Bajo
+             </button>" : 
+            "<span class='badge bg-success'>Stock OK</span>",
         'Editar' => "<div class='btn-group'>
             <button type='button' class='btn btn-info btn-sm dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
                 Selecciona por favor<i class='fa-solid fa-chevron-down'></i>
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item btn-minimomaximo' data-id='$fila[Folio_Prod_Stock] '>
+                    <a class='dropdown-item btn-minimomaximo' data-id='$fila[Folio_Prod_Stock]'>
                         Editar minimo y maximo
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item btn-editproducto' data-id='$fila[Folio_Prod_Stock] '>
+                    <a class='dropdown-item btn-editproducto' data-id='$fila[Folio_Prod_Stock]'>
                         Editar datos del producto
                     </a>
                 </li>
                  <li>
-                    <a class='dropdown-item btn-AjustInvetario' data-id='$fila[Folio_Prod_Stock] '>
+                    <a class='dropdown-item btn-AjustInvetario' data-id='$fila[Folio_Prod_Stock]'>
                         Ajuste de inventario
                     </a>
                 </li>
@@ -73,7 +88,7 @@ while ($fila = $result->fetch_assoc()) {
     ];
 }
 
-    // Cerrar la declaración
+// Cerrar la declaración
 $stmt->close();
 
 // Construir el array de resultados para la respuesta JSON

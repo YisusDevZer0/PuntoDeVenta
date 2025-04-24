@@ -29,21 +29,6 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
-    // Calcular la cantidad sugerida (diferencia entre el máximo y la existencia actual)
-    $cantidadSugerida = max(0, $fila["Max_Existencia"] - $fila["Existencias_R"]);
-    
-    // Determinar si se necesita mostrar el botón de sugerencia
-    $botonSugerencia = "";
-    if ($fila["Existencias_R"] <= $fila["Min_Existencia"]) {
-        $botonSugerencia = "<button type='button' class='btn btn-warning btn-sm btn-sugerencia' 
-            data-id='" . $fila["ID_Prod_POS"] . "'
-            data-nombre='" . htmlspecialchars($fila["Nombre_Prod"], ENT_QUOTES) . "'
-            data-codigo='" . htmlspecialchars($fila["Cod_Barra"], ENT_QUOTES) . "'
-            data-existencia='" . $fila["Existencias_R"] . "'
-            data-sugerida='" . $cantidadSugerida . "'
-            onclick='mostrarSugerencia(this)'><i class='fas fa-shopping-cart'></i> Sugerir Pedido</button>";
-    }
-
     // Construir el array de datos
     $data[] = [
         "Cod_Barra" => $fila["Cod_Barra"],
@@ -60,9 +45,9 @@ while ($fila = $result->fetch_assoc()) {
         "Existencias_R" => $fila["Existencias_R"],
         "Min_Existencia" => $fila["Min_Existencia"],
         "Max_Existencia" => $fila["Max_Existencia"],
-        "Sugerencia" => $botonSugerencia,
         "Editar" => "<a href='https://saludapos.com/AdminPOS/CoincidenciaSucursales?Disid=" . base64_encode($fila["ID_Prod_POS"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
         "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+       
     ];
 }
 
