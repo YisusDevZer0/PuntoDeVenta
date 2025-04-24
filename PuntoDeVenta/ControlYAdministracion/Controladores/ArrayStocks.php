@@ -46,7 +46,7 @@ while ($fila = $result->fetch_assoc()) {
         'Min_Existencia' => $fila['Min_Existencia'],
         'Max_Existencia' => $fila['Max_Existencia'],
         'Estatus_Stock' => $bajominimo ? 
-            "<button class='btn btn-danger btn-sm btn-orden-sugerida' data-id='" . $fila['Folio_Prod_Stock'] . "' 
+            "<button class='btn btn-warning btn-sm btn-orden-sugerida' data-id='" . $fila['Folio_Prod_Stock'] . "' 
              data-nombre='" . htmlspecialchars($fila['Nombre_Prod'], ENT_QUOTES) . "'
              data-codigo='" . htmlspecialchars($fila['Cod_Barra'], ENT_QUOTES) . "'
              data-cantidad='" . $cantidadSugerida . "'
@@ -54,7 +54,7 @@ while ($fila = $result->fetch_assoc()) {
              data-max='" . $fila['Max_Existencia'] . "'
              data-existencias='" . $fila['Existencias_R'] . "'
              data-proveedor='" . htmlspecialchars($fila['Proveedor1'], ENT_QUOTES) . "'>
-             <i class='fas fa-exclamation-triangle'></i> Stock Bajo
+             <i class='fas fa-shopping-cart'></i> Solicitar
              </button>" : 
             "<span class='badge bg-success'>Stock OK</span>",
         'Editar' => "<div class='btn-group'>
