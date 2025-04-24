@@ -70,7 +70,7 @@ while ($fila = $result->fetch_assoc()) {
                 </li>
                 " . ($mostrarBotonOrden ? "
                 <li>
-                    <a class='dropdown-item btn-GenerarOrden' 
+                    <a class='dropdown-item btn-GeneraOrdenCompra' 
                        data-id='$fila[Folio_Prod_Stock]'
                        data-nombre='$fila[Nombre_Prod]'
                        data-codigo='$fila[Cod_Barra]'
