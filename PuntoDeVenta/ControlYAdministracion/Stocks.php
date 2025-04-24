@@ -137,7 +137,7 @@ $(document).on("click", ".btn-GeneraOrdenCompra", function() {
         $('#ModalEdDele').modal('show');
     });
 
-});
+
 
 
 </script>
