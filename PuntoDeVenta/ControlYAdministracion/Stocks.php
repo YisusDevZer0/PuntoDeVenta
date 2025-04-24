@@ -129,9 +129,9 @@ $(document).on("click", ".btn-GeneraOrdenCompra", function() {
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraOrdenCompra.php", { id: id }, function(data) {
-          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#TitulosCajas").html("Generando orden de compra");  
           $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desglose de ticket");
+            $("#TitulosCajas").html("Generando orden de compra");
         });
         
         $('#ModalEdDele').modal('show');
