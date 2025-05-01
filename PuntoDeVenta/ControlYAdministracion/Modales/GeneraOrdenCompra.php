@@ -8,8 +8,11 @@ $id = isset($_POST["id"]) ? intval($_POST["id"]) : 0;
 
 // Consulta para obtener los datos de Existencias_R
 $sql1 = "SELECT 
-    Stock_POS.Folio_Prod_Stock, Stock_POS.Cod_Barra,Stock_POS.Existencias_R, Stock_POS.Max_Existencia, 
-    Stock_POS.Min_Existencia, Sucursales.Nombre_Sucursal 
+    Stock_POS.Folio_Prod_Stock, Stock_POS.Cod_Barra, Stock_POS.Nombre_Prod, Stock_POS.Existencias_R AS Existencias_Actuales, 
+    Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.Fecha_Sugerencia, Stock_POS.Estatus, 
+    Stock_POS.Fk_sucursal, Stock_POS.ID_H_O_D, Stock_POS.Proveedor1 AS Proveedor, 
+    (Stock_POS.Max_Existencia - Stock_POS.Existencias_R) AS Cantidad_Sugerida, 
+    Sucursales.Nombre_Sucursal 
 FROM Stock_POS
 INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
 WHERE Stock_POS.Folio_Prod_Stock = ?";
@@ -23,44 +26,110 @@ $Especialistas = $result->fetch_object();
 
 <?php if($Especialistas != null): ?>
 <form action="javascript:void(0)" method="post" id="AjusteInventarioManualForm">
-    <div class="form-group">
-        <label>Código de barras</label>
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Cod_Barra; ?>">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Folio de Producto</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Folio_Prod_Stock; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Código de barras</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Cod_Barra; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Nombre del Producto</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Nombre_Prod; ?>">
+                </div>
+            </div>
         </div>
     </div>
-
-  
-    <div class="form-group">
-    <label>Existencia Actual<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-        <input type="number" class="form-control" id="existencia_actual" 
-        value="<?php echo $Especialistas->Existencias_R; ?>"readonly>
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Valor de Ajuste<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-        <input type="number" class="form-control" id="ajuste" 
-               placeholder="Ej. +50 o -30">
-    </div>
-</div>
-
-<div class="form-group">
-    <label>Resultado del Ajuste<span class="text-danger">*</span></label>
-    <div class="input-group mb-3">
-        <input type="number" class="form-control" id="resultado_ajuste" name="resultado_ajuste" readonly>
-    </div>
-</div>
-
-        <label>Justificación<span class="text-danger">*</span></label>
-        <div class="input-group mb-3">
-            <textarea class="form-control" id="justificacion" name="justificacion" 
-                      maxlength="255"></textarea>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Existencias Actuales</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" disabled readonly value="<?php echo $Especialistas->Existencias_Actuales; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Min Existencia</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" disabled readonly value="<?php echo $Especialistas->Min_Existencia; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Max Existencia</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" disabled readonly value="<?php echo $Especialistas->Max_Existencia; ?>">
+                </div>
+            </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Cantidad Sugerida</label>
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" disabled readonly value="<?php echo $Especialistas->Cantidad_Sugerida; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Fecha Sugerencia</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Fecha_Sugerencia; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Estatus</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Estatus; ?>">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Sucursal (ID)</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Fk_sucursal; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>ID H_O_D</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->ID_H_O_D; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Proveedor</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" disabled readonly value="<?php echo $Especialistas->Proveedor; ?>">
+                </div>
+            </div>
+        </div>
+    </div>
     <input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->Folio_Prod_Stock; ?>">
     <input type="hidden" name="ActUsuarioCServ" id="ActUsuarioCServ" value="<?php echo $row['Nombre_Apellidos']?>">
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
