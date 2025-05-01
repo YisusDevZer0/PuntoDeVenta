@@ -9,7 +9,7 @@ $id = isset($_POST["id"]) ? intval($_POST["id"]) : 0;
 // Consulta para obtener los datos de Existencias_R
 $sql1 = "SELECT 
     Stock_POS.Folio_Prod_Stock, Stock_POS.Cod_Barra, Stock_POS.Nombre_Prod, Stock_POS.Existencias_R AS Existencias_Actuales, 
-    Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.Fecha_Sugerencia, Stock_POS.Estatus, 
+    Stock_POS.Max_Existencia, Stock_POS.Min_Existencia, Stock_POS.AgregadoEl AS Fecha_Sugerencia, Stock_POS.Estatus, 
     Stock_POS.Fk_sucursal, Stock_POS.ID_H_O_D, Stock_POS.Proveedor1 AS Proveedor, 
     (Stock_POS.Max_Existencia - Stock_POS.Existencias_R) AS Cantidad_Sugerida, 
     Sucursales.Nombre_Sucursal 
