@@ -505,6 +505,12 @@ function CapturaFormadePago() {
   var divTarjeta = document.getElementById("divTarjeta");
   var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
   var divCliente = document.getElementById("divCliente");
+  var formaPagoInputs = document.getElementsByName("FormaDePago[]");
+
+  // Actualizar todos los campos ocultos de forma de pago
+  for (var i = 0; i < formaPagoInputs.length; i++) {
+    formaPagoInputs[i].value = selectElement.value;
+  }
 
   // Mostrar el campo de tarjeta para las opciones específicas
   if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo Y Transferencia") {
@@ -1119,7 +1125,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td style="visibility:collapse; display:none;" class="N/A"><input hidden type="text" class="form-control " name="Estatus[]" readonly value="Pagado"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Empresa"><input hidden type="text" class="form-control " name="Empresa[]" readonly value="Doctor Pez"></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input hidden type="text" class="form-control " name="FechaDeVenta[]" readonly value="<?php echo $ValorCaja["Fecha_Apertura"]; ?>"></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value="Efectivo"></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="FormaPago"><input hidden type="text" class="form-control forma-pago-input" id="FormaPagoCliente" name="FormaDePago[]" value=""></td>';
         tr += '<td style="visibility:collapse; display:none;" class="Descuentosugerido"><input hidden type="text" class="form-control descuento-aplicado" id="descuentoaplicado_' + articulo.id + '" name="DescuentoAplicado[]" readonly></td>';
         tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container">' + inputId + inputCantidad + '</div><div class="btn-container"><a class="btn btn-info btn-sm" href="#" onclick="abrirSweetAlert(this); return false;"><i class="fas fa-percentage"></i></a></div></td>';
         tr += '</tr>';
