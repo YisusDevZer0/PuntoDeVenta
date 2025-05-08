@@ -763,12 +763,18 @@ function actualizarSumaTotal() {
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
     document.getElementById("cambiorecibidocliente").value = cambio.toFixed(2);
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
+    
+    // Actualizar el monto de efectivo que se guardará en la BD
+    document.getElementById("iptEfectivoOculto").value = iptEfectivo.toFixed(2);
+    document.getElementById("EfectivoEntregado").textContent = iptEfectivo.toFixed(2);
   } else if (metodoPago === "Credito") {
     document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
     document.getElementById("btnIniciarVenta").disabled = false;
     document.getElementById("Vuelto").textContent = "0.00";
     document.getElementById("cambiorecibidocliente").value = "0.00";
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
+    document.getElementById("iptEfectivoOculto").value = "0.00";
+    document.getElementById("EfectivoEntregado").textContent = "0.00";
   } else {
     // Otros métodos de pago (solo efectivo)
     if (iptEfectivo >= totalVenta) {
@@ -781,64 +787,24 @@ function actualizarSumaTotal() {
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
     document.getElementById("cambiorecibidocliente").value = cambio.toFixed(2);
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
-  }
-
-  // Actualizar el monto de efectivo mostrado
-  document.getElementById("EfectivoEntregado").textContent = iptEfectivo.toFixed(2);
-  document.getElementById("iptEfectivoOculto").value = iptEfectivo.toFixed(2);
-}
-
-function CapturaFormadePago() {
-  var selectElement = document.getElementById("selTipoPago");
-  var divTarjeta = document.getElementById("divTarjeta");
-  var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
-  var divCliente = document.getElementById("divCliente");
-
-  // Obtener todos los elementos con la clase forma-pago-input
-  var inputsFormaPago = document.querySelectorAll(".forma-pago-input");
-  
-  // Asignar el valor seleccionado a cada elemento de entrada
-  inputsFormaPago.forEach(function(input) {
-    input.value = selectElement.value;
-  });
-
-  // Mostrar el campo de tarjeta para las opciones específicas
-  if (selectElement.value === "Efectivo y Tarjeta" || 
-      selectElement.value === "Efectivo Y Credito" || 
-      selectElement.value === "Efectivo Y Transferencia") {
-    divTarjeta.style.display = "block";
-    // Limpiar los campos cuando se cambia el método de pago
-    document.getElementById("iptTarjeta").value = "";
-    document.getElementById("iptEfectivoRecibido").value = "";
-    document.getElementById("Vuelto").textContent = "0.00";
-    document.getElementById("btnIniciarVenta").disabled = true;
-  } else {
-    divTarjeta.style.display = "none";
-    document.getElementById("iptTarjeta").value = "0";
-  }
-
-  if (selectElement.value === "CreditoEnfermeria") {
-    divPersonalEnfermeria.style.display = "block";
-    divCliente.style.display = "none";
-  } else {
-    divPersonalEnfermeria.style.display = "none";
-    divCliente.style.display = "block";
+    document.getElementById("iptEfectivoOculto").value = iptEfectivo.toFixed(2);
+    document.getElementById("EfectivoEntregado").textContent = iptEfectivo.toFixed(2);
   }
 }
 
-// Agregar event listeners
-document.getElementById("selTipoPago").addEventListener("change", function() {
-  CapturaFormadePago();
+// Agregar event listeners para asegurar que los valores se actualicen correctamente
+document.getElementById("iptEfectivoRecibido").addEventListener("input", function() {
+  actualizarSumaTotal();
+  actualizarEfectivoEntregado();
+});
+
+document.getElementById("iptTarjeta").addEventListener("input", function() {
   actualizarSumaTotal();
 });
 
-document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
-
-// Inicializar al cargar la página
-document.addEventListener("DOMContentLoaded", function() {
-  CapturaFormadePago();
+document.getElementById("selTipoPago").addEventListener("change", function() {
   actualizarSumaTotal();
+  CapturaFormadePago();
 });
 </script>
 
