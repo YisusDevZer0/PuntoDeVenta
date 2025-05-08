@@ -203,19 +203,14 @@ $sql_totales = "SELECT
     END) AS complementoEfectivo,
 
     SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
         ELSE 0 
-    END) AS complementoCreditoEfectivo,
+    END) AS complementoEfectivoCredito,
 
     SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Pagos_tarjeta 
         ELSE 0 
-    END) AS totalCredito,
-
-    SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Transferencia' THEN Ventas_POS.Importe 
-        ELSE 0 
-    END) AS totalTransferencia,
+    END) AS complementoCredito,
 
     SUM(CASE 
         WHEN Ventas_POS.FormaDePago = 'Efectivo y Transferencia' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
@@ -227,6 +222,16 @@ $sql_totales = "SELECT
         ELSE 0 
     END) AS complementoTransferencia,
 
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Crédito' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalCredito,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Transferencia' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) AS totalTransferencia,
+
     (SUM(CASE 
         WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe 
         ELSE 0 
@@ -236,7 +241,7 @@ $sql_totales = "SELECT
         ELSE 0 
     END) +
     SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
         ELSE 0 
     END) +
     SUM(CASE 
@@ -259,7 +264,7 @@ $sql_totales = "SELECT
         ELSE 0 
     END) +
     SUM(CASE 
-        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Pagos_tarjeta 
         ELSE 0 
     END)) AS totalPagosEnCreditos,
 
@@ -287,6 +292,8 @@ if ($result_totales) {
             'totalesdepagotarjeta' => 0,
             'complementoTarjeta' => 0,
             'complementoEfectivo' => 0,
+            'complementoEfectivoCredito' => 0,
+            'complementoCredito' => 0,
             'complementoCreditoEfectivo' => 0,
             'totalCredito' => 0,
             'totalTransferencia' => 0,
@@ -308,6 +315,8 @@ $totalesdepagoEfectivo = $row_totales['totalesdepagoEfectivo'] ?? 0;
 $totalesdepagotarjeta = $row_totales['totalesdepagotarjeta'] ?? 0;
 $complementoTarjeta = $row_totales['complementoTarjeta'] ?? 0;
 $complementoEfectivo = $row_totales['complementoEfectivo'] ?? 0;
+$complementoEfectivoCredito = $row_totales['complementoEfectivoCredito'] ?? 0;
+$complementoCredito = $row_totales['complementoCredito'] ?? 0;
 $complementoCreditoEfectivo = $row_totales['complementoCreditoEfectivo'] ?? 0;
 $totalCredito = $row_totales['totalCredito'] ?? 0;
 $totalTransferencia = $row_totales['totalTransferencia'] ?? 0;
