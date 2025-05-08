@@ -484,8 +484,11 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <option value="0">Seleccione el Tipo de Pago</option>
 <option value="Efectivo" selected="true">Efectivo</option>
 <option value="Credito" >Credito</option>
+<option value="Efectivo" selected="true">Efectivo</option>
+<option value="Credito" >Credito</option>
 <option value="Efectivo y Tarjeta">Efectivo y tarjeta</option>
 <option value="Efectivo Y Credito">Efectivo y credito</option>
+<option value="Efectivo Y Transferencia">Efectivo y transferencia</option>
 <option value="Tarjeta">Tarjeta</option>
 <option value="Transferencia">Transferencia</option>
 <!-- <option value="CreditoEnfermeria">Crédito Enfermería</option>
@@ -498,35 +501,25 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
       <script>
 function CapturaFormadePago() {
-// Obtener el valor seleccionado del select
-var formaDePago = document.getElementById("selTipoPago").value;
+  var selectElement = document.getElementById("selTipoPago");
+  var divTarjeta = document.getElementById("divTarjeta");
+  var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
+  var divCliente = document.getElementById("divCliente");
 
-// Obtener todos los elementos de entrada con la clase "forma-pago-input"
-var inputsFormaPago = document.querySelectorAll(".forma-pago-input");
+  // Mostrar el campo de tarjeta para las opciones específicas
+  if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo y transferencia") {
+    divTarjeta.style.display = "block";
+  } else {
+    divTarjeta.style.display = "none";
+  }
 
-// Asignar el valor seleccionado a cada elemento de entrada
-inputsFormaPago.forEach(function (input) {
-input.value = formaDePago;
-});
-
-var selectElement = document.getElementById("selTipoPago");
-var divTarjeta = document.getElementById("divTarjeta");
-var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
-var divCliente = document.getElementById("divCliente");
-
-if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito") {
-divTarjeta.style.display = "block";
-} else {
-divTarjeta.style.display = "none";
-}
-
-if (selectElement.value === "CreditoEnfermeria") {
-divPersonalEnfermeria.style.display = "block";
-divCliente.style.display = "none"; // Ocultar el div del cliente
-} else {
-divPersonalEnfermeria.style.display = "none";
-divCliente.style.display = "block"; // Mostrar el div del cliente
-}
+  if (selectElement.value === "CreditoEnfermeria") {
+    divPersonalEnfermeria.style.display = "block";
+    divCliente.style.display = "none";
+  } else {
+    divPersonalEnfermeria.style.display = "none";
+    divCliente.style.display = "block";
+  }
 }
 
 
@@ -737,123 +730,67 @@ Efectivo Exacto
 <!-- function actualizarSumaTotal  -->
 <script>
 function actualizarSumaTotal() {
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
-  var metodoPago = document.getElementById("selTipoPago").value; // Método de pago seleccionado
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta (por defecto 0)
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo (por defecto 0)
-  var totalCubierto = 0; // Inicializamos el total cubierto
-  var cambio = 0; // Inicializamos el cambio
-  switch (metodoPago) {
-  case "Credito":
-    iptEfectivo = totalVenta;
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
-    $('#btnIniciarVenta').prop('disabled', false);
-    totalCubierto = iptEfectivo;
-    cambio = 0;
-    break;
+  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent) || 0;
+  var metodoPago = document.getElementById("selTipoPago").value;
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0;
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0;
+  var totalCubierto = 0;
+  var cambio = 0;
 
-  case "Efectivo y Tarjeta":
-    if (iptTarjeta >= totalVenta) {
-      iptEfectivo = 0;
-    } else {
-      iptEfectivo = totalVenta - iptTarjeta;
-    }
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
+  // Opciones que incluyen efectivo y otro método
+  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito" || metodoPago === "Efectivo y transferencia") {
     totalCubierto = iptTarjeta + iptEfectivo;
-    cambio = iptEfectivo - (totalVenta - iptTarjeta);
-    cambio = cambio > 0 ? cambio : 0;
-    break;
-
-    case "Efectivo Y Credito":
-   
-    if (iptTarjeta >= totalVenta) {
-      iptEfectivo = 0;
+    if (totalCubierto >= totalVenta) {
+      cambio = totalCubierto - totalVenta;
+      document.getElementById("btnIniciarVenta").disabled = false;
     } else {
-      iptEfectivo = totalVenta - iptTarjeta;
+      cambio = 0;
+      document.getElementById("btnIniciarVenta").disabled = true;
     }
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
-    totalCubierto = iptTarjeta + iptEfectivo;
-    cambio = iptEfectivo - (totalVenta - iptTarjeta);
-    cambio = cambio > 0 ? cambio : 0;
-    break;
-
-}
-
-  // Actualizar el cambio en el elemento <span>
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
-
-  // Actualizar el total que se muestra al cliente
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito") {
-    document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
+    document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
+  } else if (metodoPago === "Credito") {
+    document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
+    document.getElementById("btnIniciarVenta").disabled = false;
+    document.getElementById("Vuelto").textContent = "0.00";
+    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   } else {
+    // Otros métodos de pago
+    if (iptEfectivo >= totalVenta) {
+      cambio = iptEfectivo - totalVenta;
+      document.getElementById("btnIniciarVenta").disabled = false;
+    } else {
+      cambio = 0;
+      document.getElementById("btnIniciarVenta").disabled = true;
+    }
+    document.getElementById("Vuelto").textContent = cambio.toFixed(2);
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
 }
 
-// Detectar cambios en el método de pago
-document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+function CapturaFormadePago() {
+  var selectElement = document.getElementById("selTipoPago");
+  var divTarjeta = document.getElementById("divTarjeta");
+  var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
+  var divCliente = document.getElementById("divCliente");
 
-// Detectar cambios en los campos de tarjeta y efectivo
-document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
+  // Mostrar el campo de tarjeta para las opciones específicas
+  if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo y transferencia") {
+    divTarjeta.style.display = "block";
+  } else {
+    divTarjeta.style.display = "none";
+  }
 
-
-
-
-
+  if (selectElement.value === "CreditoEnfermeria") {
+    divPersonalEnfermeria.style.display = "block";
+    divCliente.style.display = "none";
+  } else {
+    divPersonalEnfermeria.style.display = "none";
+    divCliente.style.display = "block";
+  }
+}
 </script>
 
-
-<script>
- $(document).ready(function() {
-  // Bloquear el botón al cargar la página
-  $('#btnIniciarVenta').prop('disabled', true);
-
-  // Agregar un controlador de eventos al input
-  $('#iptEfectivoRecibido').on('input', function() {
-    var valorInput = $(this).val();
-    var miBoton = $('#btnIniciarVenta');
-
-    if (valorInput.length > 0) {
-      // Desbloquear el botón si el input contiene datos
-      miBoton.prop('disabled', false);
-    } else {
-      // Bloquear el botón si el input está vacío
-      miBoton.prop('disabled', true);
-    }
-  });
-});
-
-
-
-  $(document).ready(function() {
-    $("#chkEfectivoExacto").change(function() {
-      if ($(this).is(":checked")) {
-        var boletaTotal = parseFloat($("#boleta_total").text());
-        $("#Vuelto").text("0.00");
-        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
-      }
-    });
-
-    $("#iptEfectivoRecibido").change(function() {
-      var boletaTotal = parseFloat($("#boleta_total").text());
-      var efectivoRecibido = parseFloat($(this).val());
-
-      if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-        $("#Vuelto").text("0.00");
-        $("#boleta_total").text(efectivoRecibido.toFixed(2));
-      } else {
-        var vuelto = efectivoRecibido - boletaTotal;
-        $("#Vuelto").text(vuelto.toFixed(2));
-        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        
-      }
-    });
-  });
-</script>
 
 <script>
   $("#btnVaciarListado").click(function() {

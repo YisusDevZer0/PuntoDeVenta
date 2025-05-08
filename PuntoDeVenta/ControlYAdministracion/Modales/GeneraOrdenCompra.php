@@ -134,7 +134,7 @@ $Especialistas = $result->fetch_object();
     <button type="submit" id="submit" class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
 </form>
 
-<script>
+<!-- <script>
     // Definir la función que calcula el ajuste
     function calcularAjuste() {
         // Obtener referencias a los elementos
@@ -148,10 +148,10 @@ $Especialistas = $result->fetch_object();
 
     // Asignar la función al evento 'input' del campo de ajuste
     document.getElementById('ajuste').addEventListener('input', calcularAjuste);
-</script>
+</script> -->
 
 
-<script src="js/AjusteDeInventarioManual.js"></script>
+<script src="js/AgregaEnOrdenCompra.js"></script>
 
 <?php else: ?>
     <p class="alert alert-danger">404 No se encuentra</p>
