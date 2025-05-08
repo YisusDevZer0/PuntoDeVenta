@@ -507,10 +507,16 @@ function CapturaFormadePago() {
   var divCliente = document.getElementById("divCliente");
 
   // Mostrar el campo de tarjeta para las opciones específicas
-  if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo y transferencia") {
+  if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo Y Transferencia") {
     divTarjeta.style.display = "block";
+    // Limpiar los campos cuando se cambia el método de pago
+    document.getElementById("iptTarjeta").value = "";
+    document.getElementById("iptEfectivoRecibido").value = "";
+    document.getElementById("Vuelto").textContent = "0.00";
+    document.getElementById("btnIniciarVenta").disabled = true;
   } else {
     divTarjeta.style.display = "none";
+    document.getElementById("iptTarjeta").value = "0";
   }
 
   if (selectElement.value === "CreditoEnfermeria") {
@@ -738,24 +744,33 @@ function actualizarSumaTotal() {
   var cambio = 0;
 
   // Opciones que incluyen efectivo y otro método
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito" || metodoPago === "Efectivo y transferencia") {
-    totalCubierto = iptTarjeta + iptEfectivo;
-    if (totalCubierto >= totalVenta) {
-      cambio = totalCubierto - totalVenta;
+  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito" || metodoPago === "Efectivo Y Transferencia") {
+    if (iptTarjeta >= totalVenta) {
+      iptEfectivo = 0;
+      document.getElementById("iptEfectivoRecibido").value = "0.00";
       document.getElementById("btnIniciarVenta").disabled = false;
-    } else {
       cambio = 0;
-      document.getElementById("btnIniciarVenta").disabled = true;
+    } else {
+      var restante = totalVenta - iptTarjeta;
+      if (iptEfectivo >= restante) {
+        cambio = iptEfectivo - restante;
+        document.getElementById("btnIniciarVenta").disabled = false;
+      } else {
+        cambio = 0;
+        document.getElementById("btnIniciarVenta").disabled = true;
+      }
     }
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+    document.getElementById("cambiorecibidocliente").value = cambio.toFixed(2);
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   } else if (metodoPago === "Credito") {
     document.getElementById("iptEfectivoRecibido").value = totalVenta.toFixed(2);
     document.getElementById("btnIniciarVenta").disabled = false;
     document.getElementById("Vuelto").textContent = "0.00";
+    document.getElementById("cambiorecibidocliente").value = "0.00";
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   } else {
-    // Otros métodos de pago
+    // Otros métodos de pago (solo efectivo)
     if (iptEfectivo >= totalVenta) {
       cambio = iptEfectivo - totalVenta;
       document.getElementById("btnIniciarVenta").disabled = false;
@@ -764,8 +779,13 @@ function actualizarSumaTotal() {
       document.getElementById("btnIniciarVenta").disabled = true;
     }
     document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+    document.getElementById("cambiorecibidocliente").value = cambio.toFixed(2);
     document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
+
+  // Actualizar el monto de efectivo mostrado
+  document.getElementById("EfectivoEntregado").textContent = iptEfectivo.toFixed(2);
+  document.getElementById("iptEfectivoOculto").value = iptEfectivo.toFixed(2);
 }
 
 function CapturaFormadePago() {
@@ -774,11 +794,27 @@ function CapturaFormadePago() {
   var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
   var divCliente = document.getElementById("divCliente");
 
+  // Obtener todos los elementos con la clase forma-pago-input
+  var inputsFormaPago = document.querySelectorAll(".forma-pago-input");
+  
+  // Asignar el valor seleccionado a cada elemento de entrada
+  inputsFormaPago.forEach(function(input) {
+    input.value = selectElement.value;
+  });
+
   // Mostrar el campo de tarjeta para las opciones específicas
-  if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo y transferencia") {
+  if (selectElement.value === "Efectivo y Tarjeta" || 
+      selectElement.value === "Efectivo Y Credito" || 
+      selectElement.value === "Efectivo Y Transferencia") {
     divTarjeta.style.display = "block";
+    // Limpiar los campos cuando se cambia el método de pago
+    document.getElementById("iptTarjeta").value = "";
+    document.getElementById("iptEfectivoRecibido").value = "";
+    document.getElementById("Vuelto").textContent = "0.00";
+    document.getElementById("btnIniciarVenta").disabled = true;
   } else {
     divTarjeta.style.display = "none";
+    document.getElementById("iptTarjeta").value = "0";
   }
 
   if (selectElement.value === "CreditoEnfermeria") {
@@ -789,6 +825,21 @@ function CapturaFormadePago() {
     divCliente.style.display = "block";
   }
 }
+
+// Agregar event listeners
+document.getElementById("selTipoPago").addEventListener("change", function() {
+  CapturaFormadePago();
+  actualizarSumaTotal();
+});
+
+document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
+document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
+
+// Inicializar al cargar la página
+document.addEventListener("DOMContentLoaded", function() {
+  CapturaFormadePago();
+  actualizarSumaTotal();
+});
 </script>
 
 
