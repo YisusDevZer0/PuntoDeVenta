@@ -217,6 +217,16 @@ $sql_totales = "SELECT
         ELSE 0 
     END) AS totalTransferencia,
 
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Transferencia' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END) AS complementoEfectivoTransferencia,
+
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Transferencia' THEN Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END) AS complementoTransferencia,
+
     (SUM(CASE 
         WHEN Ventas_POS.FormaDePago = 'Efectivo' THEN Ventas_POS.Importe 
         ELSE 0 
@@ -228,7 +238,12 @@ $sql_totales = "SELECT
     SUM(CASE 
         WHEN Ventas_POS.FormaDePago = 'Efectivo y Crédito' THEN Ventas_POS.Importe 
         ELSE 0 
-    END)) AS totalPagosEnEfectivo,
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Transferencia' THEN Ventas_POS.Importe - Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END)
+    ) AS totalPagosEnEfectivo,
 
     (SUM(CASE 
         WHEN Ventas_POS.FormaDePago = 'Tarjeta' THEN Ventas_POS.Importe 
@@ -248,6 +263,15 @@ $sql_totales = "SELECT
         ELSE 0 
     END)) AS totalPagosEnCreditos,
 
+    (SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Transferencia' THEN Ventas_POS.Importe 
+        ELSE 0 
+    END) +
+    SUM(CASE 
+        WHEN Ventas_POS.FormaDePago = 'Efectivo y Transferencia' THEN Ventas_POS.Pagos_tarjeta 
+        ELSE 0 
+    END)) AS totalPagosEnTransferencia,
+
     SUM(Ventas_POS.Importe) AS TotalCantidad
 FROM Ventas_POS 
 WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'";
@@ -266,9 +290,12 @@ if ($result_totales) {
             'complementoCreditoEfectivo' => 0,
             'totalCredito' => 0,
             'totalTransferencia' => 0,
+            'complementoEfectivoTransferencia' => 0,
+            'complementoTransferencia' => 0,
             'totalPagosEnEfectivo' => 0,
             'totalPagosEnTarjeta' => 0,
             'totalPagosEnCreditos' => 0,
+            'totalPagosEnTransferencia' => 0,
             'TotalCantidad' => 0
         ];
     }
@@ -284,9 +311,12 @@ $complementoEfectivo = $row_totales['complementoEfectivo'] ?? 0;
 $complementoCreditoEfectivo = $row_totales['complementoCreditoEfectivo'] ?? 0;
 $totalCredito = $row_totales['totalCredito'] ?? 0;
 $totalTransferencia = $row_totales['totalTransferencia'] ?? 0;
+$complementoEfectivoTransferencia = $row_totales['complementoEfectivoTransferencia'] ?? 0;
+$complementoTransferencia = $row_totales['complementoTransferencia'] ?? 0;
 $totalPagosEnEfectivo = $row_totales['totalPagosEnEfectivo'] ?? 0;
 $totalPagosEnTarjeta = $row_totales['totalPagosEnTarjeta'] ?? 0;
 $totalPagosEnCreditos = $row_totales['totalPagosEnCreditos'] ?? 0;
+$totalPagosEnTransferencia = $row_totales['totalPagosEnTransferencia'] ?? 0;
 $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
 
 ?>
@@ -381,7 +411,7 @@ $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
                         </tr>
                         <tr>
                             <td><input type="text" class="form-control" readonly value="Transferencia"></td>
-                            <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?= $totalTransferencia ?>"></td>
+                            <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?= $totalPagosEnTransferencia ?>"></td>
                         </tr>
                     </tbody>
                 </table>
