@@ -84,34 +84,35 @@ if ($resultDetalles && $resultDetalles->num_rows > 0) {
     // Procesar gastos
     if (!empty($rowDetalles->Gastos)) {
         error_log("Iniciando procesamiento de gastos...");
-        $gastosArray = explode(", ", $rowDetalles->Gastos);
-        error_log("Gastos separados: " . print_r($gastosArray, true));
-        
-        foreach ($gastosArray as $gasto) {
-            error_log("Procesando gasto: " . $gasto);
-            
-            // Verificar si es el total de gastos
-            if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
-                error_log("Encontrado total de gastos: " . $gasto);
-                if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
-                    $totalGastos = floatval($matches[1]);
-                    error_log("Total de gastos extraído: " . $totalGastos);
-                }
-                continue;
-            }
+        // Primero separar por la última coma que precede a TOTAL GASTOS
+        $partes = explode(", TOTAL GASTOS:", $rowDetalles->Gastos);
+        if (count($partes) === 2) {
+            // Procesar el total
+            $totalGastos = floatval(trim(str_replace('$', '', $partes[1])));
+            error_log("Total de gastos extraído: " . $totalGastos);
 
-            // Procesar cada gasto individual
-            if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
-                error_log("Gasto procesado exitosamente: " . print_r($matches, true));
-                $gastos[] = [
-                    'concepto' => trim($matches[1]),
-                    'importe' => floatval($matches[2]),
-                    'recibe' => trim($matches[3]),
-                    'fecha' => trim($matches[4])
-                ];
-            } else {
-                error_log("No se pudo procesar el gasto con regex: " . $gasto);
+            // Procesar los gastos individuales
+            $gastosArray = explode(", ", $partes[0]);
+            error_log("Gastos separados: " . print_r($gastosArray, true));
+            
+            foreach ($gastosArray as $gasto) {
+                error_log("Procesando gasto: " . $gasto);
+                
+                // Ajustar la expresión regular para que coincida exactamente con el formato
+                if (preg_match('/^([^:]+): \$([\d.]+) \(Recibe: ([^,]+), Fecha: ([^)]+)\)$/', trim($gasto), $matches)) {
+                    error_log("Gasto procesado exitosamente: " . print_r($matches, true));
+                    $gastos[] = [
+                        'concepto' => trim($matches[1]),
+                        'importe' => floatval($matches[2]),
+                        'recibe' => trim($matches[3]),
+                        'fecha' => trim($matches[4])
+                    ];
+                } else {
+                    error_log("No se pudo procesar el gasto: " . $gasto);
+                }
             }
+        } else {
+            error_log("Formato de gastos no reconocido: " . $rowDetalles->Gastos);
         }
         
         error_log("Gastos finales procesados: " . print_r($gastos, true));
