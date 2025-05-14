@@ -328,6 +328,40 @@ $totalPagosEnCreditos = $row_totales['totalPagosEnCreditos'] ?? 0;
 $totalPagosEnTransferencia = $row_totales['totalPagosEnTransferencia'] ?? 0;
 $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
 
+// Nueva consulta para gastos
+$sql_gastos = "SELECT 
+    gp.ID_Gastos,
+    gp.Concepto_Categoria,
+    gp.Importe_Total,
+    gp.Fk_sucursal,
+    s.Nombre_Sucursal,
+    gp.Fk_Caja,
+    c.ID_Caja,
+    gp.Recibe,
+    gp.FechaConcepto
+FROM 
+    GastosPOS gp
+INNER JOIN 
+    Sucursales s ON gp.Fk_sucursal = s.ID_Sucursal
+INNER JOIN 
+    Cajas c ON gp.Fk_Caja = c.ID_Caja
+WHERE 
+    c.ID_Caja = '$fk_caja'";
+
+$query_gastos = $conn->query($sql_gastos);
+$gastos = [];
+if ($query_gastos && $query_gastos->num_rows > 0) {
+    while ($row = $query_gastos->fetch_assoc()) {
+        $gastos[] = $row;
+    }
+}
+
+// Calcular el total de gastos
+$total_gastos = 0;
+foreach ($gastos as $gasto) {
+    $total_gastos += $gasto['Importe_Total'];
+}
+
 ?>
 
 <!-- Mantener todo el HTML original -->
@@ -427,9 +461,47 @@ $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
             </div>
         </div>
 
+        <!-- Tabla de gastos -->
+        <div class="text-center mt-4">
+            <h5>Gastos del día</h5>
+            <div class="table-responsive">
+                <table id="TablaGastos" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Importe</th>
+                            <th>Recibe</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($gastos)): ?>
+                            <?php foreach ($gastos as $gasto): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($gasto['Concepto_Categoria']) ?></td>
+                                    <td>$<?= number_format($gasto['Importe_Total'], 2) ?></td>
+                                    <td><?= htmlspecialchars($gasto['Recibe']) ?></td>
+                                    <td><?= date('d/m/Y', strtotime($gasto['FechaConcepto'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <tr class="table-info">
+                                <td colspan="1"><strong>Total Gastos:</strong></td>
+                                <td colspan="3"><strong>$<?= number_format($total_gastos, 2) ?></strong></td>
+                            </tr>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4" class="text-center">No hay gastos registrados</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Campos ocultos y observaciones -->
         <input type="hidden" name="Sistema" value="Ventas">
         <input type="hidden" name="ID_H_O_D" value="DoctorPez">
+        <input type="hidden" name="total_gastos" value="<?= $total_gastos ?>">
         
         <label for="comentarios">Observaciones:</label>
         <textarea class="form-control" id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
