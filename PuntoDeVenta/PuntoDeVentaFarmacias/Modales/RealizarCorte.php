@@ -446,7 +446,7 @@ if (!empty($gastos)) {
 <!-- Campo oculto con el valor de servicios -->
 <input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
 <!-- Campo oculto con el valor de gastos -->
-<input type="" name="gastos" value='<?= json_encode($gastos_array) ?>'>
+<input type="hidden" name="gastos" value='<?= json_encode($gastos_array) ?>'>
 
         <!-- Tabla de totales -->
         <div class="text-center">

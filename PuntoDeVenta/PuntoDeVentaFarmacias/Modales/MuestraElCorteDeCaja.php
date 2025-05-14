@@ -12,10 +12,11 @@ if (!$fk_caja) {
     exit;
 }
 
-// CONSULTA 1: Obtener la información completa del corte, excepto los servicios
+// CONSULTA 1: Obtener la información completa del corte, excepto los servicios y gastos
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
                Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
-               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios 
+               TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios,
+               Servicios, Gastos 
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = '$fk_caja'";
 $query = $conn->query($sql);
@@ -29,28 +30,53 @@ if ($query && $query->num_rows > 0) {
     exit;
 }
 
-// CONSULTA 2: Obtener solo los servicios
-$sqlServicios = "SELECT Servicios FROM Cortes_Cajas_POS WHERE Fk_Caja = '$fk_caja'";
-$queryServicios = $conn->query($sqlServicios);
+// CONSULTA 2: Obtener servicios y gastos
+$sqlDetalles = "SELECT Servicios, Gastos FROM Cortes_Cajas_POS WHERE Fk_Caja = '$fk_caja'";
+$queryDetalles = $conn->query($sqlDetalles);
 
 $servicios = [];
+$gastos = [];
 
-if ($queryServicios && $queryServicios->num_rows > 0) {
-    $resultServicios = $queryServicios->fetch_object();
+if ($queryDetalles && $queryDetalles->num_rows > 0) {
+    $resultDetalles = $queryDetalles->fetch_object();
     
-  
-    // Procesar manualmente la cadena de servicios
-    if (!empty($resultServicios->Servicios)) {
-        // Dividir la cadena en partes separadas por comas
-        $serviciosArray = explode(", ", $resultServicios->Servicios);
-
-        // Recorrer cada parte y dividir en clave y valor
+    // Procesar servicios
+    if (!empty($resultDetalles->Servicios)) {
+        $serviciosArray = explode(", ", $resultDetalles->Servicios);
         foreach ($serviciosArray as $servicio) {
             $servicioPartes = explode(": ", $servicio);
             if (count($servicioPartes) === 2) {
                 $servicios[] = [
                     'nombre' => $servicioPartes[0],
                     'total' => $servicioPartes[1]
+                ];
+            }
+        }
+    }
+
+    // Procesar gastos
+    if (!empty($resultDetalles->Gastos)) {
+        // Dividir la cadena de gastos en partes
+        $gastosArray = explode(", ", $resultDetalles->Gastos);
+        $totalGastos = 0;
+
+        foreach ($gastosArray as $gasto) {
+            // Verificar si es el total de gastos
+            if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
+                $totalPartes = explode("TOTAL GASTOS: $", $gasto);
+                if (count($totalPartes) === 2) {
+                    $totalGastos = floatval($totalPartes[1]);
+                }
+                continue;
+            }
+
+            // Procesar cada gasto individual
+            if (preg_match('/^(.*?): \$(\d+\.?\d*) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
+                $gastos[] = [
+                    'concepto' => $matches[1],
+                    'importe' => floatval($matches[2]),
+                    'recibe' => $matches[3],
+                    'fecha' => $matches[4]
                 ];
             }
         }
@@ -65,9 +91,10 @@ if ($queryServicios && $queryServicios->num_rows > 0) {
         <h4>Mostrando el desglose del corte</h4>
         <p><strong>Sucursal:</strong> <?php echo $datosCorte->Sucursal; ?></p>
         <p><strong>Cajero:</strong> <?php echo $datosCorte->Empleado; ?></p>
-        <p><strong>Total de ventas:</strong> $<?php echo $datosCorte->Valor_Total_Caja; ?></p>
+        <p><strong>Total de ventas:</strong> $<?php echo number_format($datosCorte->Valor_Total_Caja, 2); ?></p>
         <p><strong>Total de tickets:</strong> <?php echo $datosCorte->TotalTickets; ?></p>
 
+        <!-- Tabla de formas de pago -->
         <div class="table-responsive">
             <table id="TotalesFormaPagoCortes" class="table table-hover">
                 <thead>
@@ -79,19 +106,19 @@ if ($queryServicios && $queryServicios->num_rows > 0) {
                 <tbody>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Efectivo"></td>
-                        <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?php echo $datosCorte->TotalEfectivo; ?>"></td>
+                        <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="$<?php echo number_format($datosCorte->TotalEfectivo, 2); ?>"></td>
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Tarjeta"></td>
-                        <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?php echo $datosCorte->TotalTarjeta; ?>"></td>
+                        <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="$<?php echo number_format($datosCorte->TotalTarjeta, 2); ?>"></td>
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Créditos"></td>
-                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?php echo $datosCorte->TotalCreditos; ?>"></td>
+                        <td><input type="text" class="form-control" name="CreditosTotales" readonly value="$<?php echo number_format($datosCorte->TotalCreditos, 2); ?>"></td>
                     </tr>
                     <tr>
                         <td><input type="text" class="form-control" readonly value="Transferencias"></td>
-                        <td><input type="text" class="form-control" name="TransferenciasTotales" readonly value="<?php echo $datosCorte->TotalTransferencias; ?>"></td>
+                        <td><input type="text" class="form-control" name="TransferenciasTotales" readonly value="$<?php echo number_format($datosCorte->TotalTransferencias, 2); ?>"></td>
                     </tr>
                 </tbody>
             </table>
@@ -110,8 +137,8 @@ if ($queryServicios && $queryServicios->num_rows > 0) {
                     <?php if (!empty($servicios)): ?>
                         <?php foreach ($servicios as $servicio): ?>
                             <tr>
-                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['nombre']; ?>"></td>
-                                <td><input type="text" class="form-control" readonly value="<?php echo $servicio['total']; ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($servicio['nombre']); ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($servicio['total']); ?>"></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -123,14 +150,48 @@ if ($queryServicios && $queryServicios->num_rows > 0) {
             </table>
         </div>
 
+        <!-- Desglose de gastos -->
+        <div class="table-responsive">
+            <table id="GastosCortes" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Importe</th>
+                        <th>Recibe</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($gastos)): ?>
+                        <?php foreach ($gastos as $gasto): ?>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['concepto']); ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="$<?php echo number_format($gasto['importe'], 2); ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['recibe']); ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['fecha']); ?>"></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr class="table-info">
+                            <td colspan="1"><strong>Total Gastos:</strong></td>
+                            <td colspan="3"><strong>$<?php echo number_format($totalGastos, 2); ?></strong></td>
+                        </tr>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4" class="text-center">No hay gastos registrados</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
     <label for="comentarios">Observaciones:</label>
-    <textarea class="form-control" id="comentarios" readonly name="comentarios" rows="4" cols="50"><?php echo $datosCorte->Comentarios; ?></textarea>
+    <textarea class="form-control" id="comentarios" readonly name="comentarios" rows="4" cols="50"><?php echo htmlspecialchars($datosCorte->Comentarios); ?></textarea>
     <br>
    
-    <input type="hidden" name="Sistema" value="<?php echo $datosCorte->Sistema; ?>">
-    <input type="hidden" name="ID_H_O_D" value="<?php echo $datosCorte->ID_H_O_D; ?>">
+    <input type="hidden" name="Sistema" value="<?php echo htmlspecialchars($datosCorte->Sistema); ?>">
+    <input type="hidden" name="ID_H_O_D" value="<?php echo htmlspecialchars($datosCorte->ID_H_O_D); ?>">
 <!-- 
     <button class="btn btn-primary" type="submit">Realizar corte</button> -->
 
