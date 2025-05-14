@@ -212,10 +212,10 @@ error_log("Verificación final - Total de gastos: " . $totalGastos);
                     <?php if (!empty($gastos)): ?>
                         <?php foreach ($gastos as $gasto): ?>
                             <tr>
-                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['concepto']); ?>"></td>
-                                <td><input type="text" class="form-control" readonly value="$<?php echo number_format($gasto['importe'], 2); ?>"></td>
-                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['recibe']); ?>"></td>
-                                <td><input type="text" class="form-control" readonly value="<?php echo htmlspecialchars($gasto['fecha']); ?>"></td>
+                                <td><?php echo htmlspecialchars($gasto['concepto']); ?></td>
+                                <td>$<?php echo number_format($gasto['importe'], 2); ?></td>
+                                <td><?php echo htmlspecialchars($gasto['recibe']); ?></td>
+                                <td><?php echo htmlspecialchars($gasto['fecha']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                         <tr class="table-info">
@@ -225,9 +225,19 @@ error_log("Verificación final - Total de gastos: " . $totalGastos);
                     <?php else: ?>
                         <tr>
                             <td colspan="4" class="text-center">
-                                No hay gastos registrados
                                 <?php if (!empty($rowDetalles->Gastos)): ?>
-                                    (Datos en BD: <?php echo htmlspecialchars($rowDetalles->Gastos); ?>)
+                                    <?php 
+                                    // Mostrar los gastos directamente de la BD si no se pudieron procesar
+                                    $gastosArray = explode(", ", $rowDetalles->Gastos);
+                                    foreach ($gastosArray as $gasto) {
+                                        if (strpos($gasto, 'TOTAL GASTOS:') === false) {
+                                            echo htmlspecialchars($gasto) . "<br>";
+                                        }
+                                    }
+                                    echo "<strong>Total Gastos: $" . number_format($totalGastos, 2) . "</strong>";
+                                    ?>
+                                <?php else: ?>
+                                    No hay gastos registrados
                                 <?php endif; ?>
                             </td>
                         </tr>
