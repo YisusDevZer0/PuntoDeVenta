@@ -363,10 +363,14 @@ foreach ($gastos as $gasto) {
 }
 
 // Preparar el array de gastos para el campo oculto
-$gastos_array = [];
+$gastos_array = [
+    'detalle' => [],
+    'total' => $total_gastos
+];
+
 if (!empty($gastos)) {
     foreach ($gastos as $gasto) {
-        $gastos_array[] = [
+        $gastos_array['detalle'][] = [
             'concepto' => $gasto['Concepto_Categoria'],
             'importe' => $gasto['Importe_Total'],
             'recibe' => $gasto['Recibe'],

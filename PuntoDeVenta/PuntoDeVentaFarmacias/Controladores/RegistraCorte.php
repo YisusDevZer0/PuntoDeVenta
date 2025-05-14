@@ -45,12 +45,17 @@ if (!empty($missingFields)) {
 
     // Concatenar gastos en un string
     $gastosString = '';
-    foreach ($gastos as $gasto) {
-        $concepto = mysqli_real_escape_string($conn, $gasto['concepto']);
-        $importe = mysqli_real_escape_string($conn, $gasto['importe']);
-        $recibe = mysqli_real_escape_string($conn, $gasto['recibe']);
-        $fecha = mysqli_real_escape_string($conn, $gasto['fecha']);
-        $gastosString .= "$concepto: $$importe (Recibe: $recibe, Fecha: $fecha), "; // Agregar al string
+    if (isset($gastos['detalle']) && is_array($gastos['detalle'])) {
+        foreach ($gastos['detalle'] as $gasto) {
+            $concepto = mysqli_real_escape_string($conn, $gasto['concepto']);
+            $importe = mysqli_real_escape_string($conn, $gasto['importe']);
+            $recibe = mysqli_real_escape_string($conn, $gasto['recibe']);
+            $fecha = mysqli_real_escape_string($conn, $gasto['fecha']);
+            $gastosString .= "$concepto: $$importe (Recibe: $recibe, Fecha: $fecha), ";
+        }
+        // Agregar el total al final del string
+        $totalGastos = isset($gastos['total']) ? mysqli_real_escape_string($conn, $gastos['total']) : 0;
+        $gastosString .= "TOTAL GASTOS: $$totalGastos";
     }
     $gastosString = rtrim($gastosString, ', '); // Eliminar la última coma y espacio
 
