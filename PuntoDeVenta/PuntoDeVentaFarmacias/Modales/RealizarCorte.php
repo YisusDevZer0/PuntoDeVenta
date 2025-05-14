@@ -362,6 +362,19 @@ foreach ($gastos as $gasto) {
     $total_gastos += $gasto['Importe_Total'];
 }
 
+// Preparar el array de gastos para el campo oculto
+$gastos_array = [];
+if (!empty($gastos)) {
+    foreach ($gastos as $gasto) {
+        $gastos_array[] = [
+            'concepto' => $gasto['Concepto_Categoria'],
+            'importe' => $gasto['Importe_Total'],
+            'recibe' => $gasto['Recibe'],
+            'fecha' => $gasto['FechaConcepto']
+        ];
+    }
+}
+
 ?>
 
 <!-- Mantener todo el HTML original -->
@@ -428,6 +441,8 @@ foreach ($gastos as $gasto) {
 
 <!-- Campo oculto con el valor de servicios -->
 <input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
+<!-- Campo oculto con el valor de gastos -->
+<input type="" name="gastos" value='<?= json_encode($gastos_array) ?>'>
 
         <!-- Tabla de totales -->
         <div class="text-center">

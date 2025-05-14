@@ -2,7 +2,7 @@
 include_once 'db_connect.php';
 
 // Verificar si se recibieron todos los datos necesarios
-$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D', 'servicios');
+$requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D', 'servicios', 'gastos');
 $missingFields = array();
 foreach ($requiredFields as $field) {
     if (!isset($_POST[$field])) {
@@ -31,6 +31,8 @@ if (!empty($missingFields)) {
 
     // Decodificar el JSON de servicios
     $servicios = isset($_POST['servicios']) ? json_decode($_POST['servicios'], true) : [];
+    // Decodificar el JSON de gastos
+    $gastos = isset($_POST['gastos']) ? json_decode($_POST['gastos'], true) : [];
 
     // Concatenar servicios en un string
     $serviciosString = '';
@@ -41,6 +43,17 @@ if (!empty($missingFields)) {
     }
     $serviciosString = rtrim($serviciosString, ', '); // Eliminar la última coma y espacio
 
+    // Concatenar gastos en un string
+    $gastosString = '';
+    foreach ($gastos as $gasto) {
+        $concepto = mysqli_real_escape_string($conn, $gasto['concepto']);
+        $importe = mysqli_real_escape_string($conn, $gasto['importe']);
+        $recibe = mysqli_real_escape_string($conn, $gasto['recibe']);
+        $fecha = mysqli_real_escape_string($conn, $gasto['fecha']);
+        $gastosString .= "$concepto: $$importe (Recibe: $recibe, Fecha: $fecha), "; // Agregar al string
+    }
+    $gastosString = rtrim($gastosString, ', '); // Eliminar la última coma y espacio
+
     // Consulta para verificar si ya existe un registro con los mismos valores
     $sql = "SELECT Fk_Caja, Turno FROM Cortes_Cajas_POS WHERE Fk_Caja='$FkCaja' AND Turno='$Turno'";
     $resultset = mysqli_query($conn, $sql);
@@ -49,8 +62,8 @@ if (!empty($missingFields)) {
         echo json_encode(array("statusCode" => 250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`) 
-                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', '$TotalTransferencias', NOW(), '$Sistema', '$ID_H_O_D', '$Comentarios', '$serviciosString')";
+        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`, `Gastos`) 
+                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', '$TotalTransferencias', NOW(), '$Sistema', '$ID_H_O_D', '$Comentarios', '$serviciosString', '$gastosString')";
 
         if (mysqli_query($conn, $sql_insert)) {
             echo json_encode(array("statusCode" => 200)); // Inserción exitosa
