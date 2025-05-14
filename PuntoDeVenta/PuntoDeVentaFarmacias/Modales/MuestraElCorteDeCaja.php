@@ -222,6 +222,12 @@ error_log("Verificación final - Total de gastos: " . $totalGastos);
                             <td colspan="1"><strong>Total Gastos:</strong></td>
                             <td colspan="3"><strong>$<?php echo number_format($totalGastos, 2); ?></strong></td>
                         </tr>
+                    <?php elseif (!empty($rowDetalles->Gastos)): ?>
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <?php echo nl2br(htmlspecialchars($rowDetalles->Gastos)); ?>
+                            </td>
+                        </tr>
                     <?php else: ?>
                         <tr>
                             <td colspan="4" class="text-center">
