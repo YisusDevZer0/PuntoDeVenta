@@ -12,78 +12,108 @@ if (!$fk_caja) {
     exit;
 }
 
-// CONSULTA 1: Obtener la información completa del corte, excepto los servicios y gastos
+// Agregar depuración
+error_log("ID de caja recibido: " . $fk_caja);
+
+// CONSULTA 1: Obtener la información completa del corte
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
                Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
                TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios,
                Servicios, Gastos 
         FROM Cortes_Cajas_POS 
-        WHERE Fk_Caja = '$fk_caja'";
-$query = $conn->query($sql);
+        WHERE Fk_Caja = ?";
+
+// Usar prepared statement para mayor seguridad
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    error_log("Error en la preparación de la consulta: " . $conn->error);
+    echo '<p class="alert alert-danger">Error en la preparación de la consulta.</p>';
+    exit;
+}
+
+$stmt->bind_param("s", $fk_caja);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $datosCorte = null;
-
-if ($query && $query->num_rows > 0) {
-    $datosCorte = $query->fetch_object();
+if ($result && $result->num_rows > 0) {
+    $datosCorte = $result->fetch_object();
+    error_log("Datos del corte encontrados: " . print_r($datosCorte, true));
 } else {
+    error_log("No se encontraron datos para la caja: " . $fk_caja);
     echo '<p class="alert alert-danger">No se encontraron datos para mostrar.</p>';
     exit;
 }
 
 // CONSULTA 2: Obtener servicios y gastos
-$sqlDetalles = "SELECT Servicios, Gastos FROM Cortes_Cajas_POS WHERE Fk_Caja = '$fk_caja'";
-$queryDetalles = $conn->query($sqlDetalles);
+$sqlDetalles = "SELECT Servicios, Gastos FROM Cortes_Cajas_POS WHERE Fk_Caja = ?";
+$stmtDetalles = $conn->prepare($sqlDetalles);
+if (!$stmtDetalles) {
+    error_log("Error en la preparación de la consulta de detalles: " . $conn->error);
+    echo '<p class="alert alert-danger">Error en la preparación de la consulta de detalles.</p>';
+    exit;
+}
+
+$stmtDetalles->bind_param("s", $fk_caja);
+$stmtDetalles->execute();
+$resultDetalles = $stmtDetalles->get_result();
 
 $servicios = [];
 $gastos = [];
+$totalGastos = 0;
 
-if ($queryDetalles && $queryDetalles->num_rows > 0) {
-    $resultDetalles = $queryDetalles->fetch_object();
+if ($resultDetalles && $resultDetalles->num_rows > 0) {
+    $rowDetalles = $resultDetalles->fetch_object();
+    error_log("Detalles encontrados - Servicios: " . $rowDetalles->Servicios);
+    error_log("Detalles encontrados - Gastos: " . $rowDetalles->Gastos);
     
     // Procesar servicios
-    if (!empty($resultDetalles->Servicios)) {
-        $serviciosArray = explode(", ", $resultDetalles->Servicios);
+    if (!empty($rowDetalles->Servicios)) {
+        $serviciosArray = explode(", ", $rowDetalles->Servicios);
         foreach ($serviciosArray as $servicio) {
             $servicioPartes = explode(": ", $servicio);
             if (count($servicioPartes) === 2) {
                 $servicios[] = [
-                    'nombre' => $servicioPartes[0],
-                    'total' => $servicioPartes[1]
+                    'nombre' => trim($servicioPartes[0]),
+                    'total' => trim($servicioPartes[1])
                 ];
             }
         }
+        error_log("Servicios procesados: " . print_r($servicios, true));
     }
 
     // Procesar gastos
-    if (!empty($resultDetalles->Gastos)) {
-        // Dividir la cadena de gastos en partes
-        $gastosArray = explode(", ", $resultDetalles->Gastos);
-        $totalGastos = 0;
-
+    if (!empty($rowDetalles->Gastos)) {
+        $gastosArray = explode(", ", $rowDetalles->Gastos);
         foreach ($gastosArray as $gasto) {
             // Verificar si es el total de gastos
             if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
-                $totalPartes = explode("TOTAL GASTOS: $", $gasto);
-                if (count($totalPartes) === 2) {
-                    $totalGastos = floatval($totalPartes[1]);
+                if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
+                    $totalGastos = floatval($matches[1]);
                 }
                 continue;
             }
 
             // Procesar cada gasto individual
-            if (preg_match('/^(.*?): \$(\d+\.?\d*) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
+            if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
                 $gastos[] = [
-                    'concepto' => $matches[1],
+                    'concepto' => trim($matches[1]),
                     'importe' => floatval($matches[2]),
-                    'recibe' => $matches[3],
-                    'fecha' => $matches[4]
+                    'recibe' => trim($matches[3]),
+                    'fecha' => trim($matches[4])
                 ];
             }
         }
+        error_log("Gastos procesados: " . print_r($gastos, true));
+        error_log("Total de gastos: " . $totalGastos);
     }
 } else {
-    echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
+    error_log("No se encontraron detalles para la caja: " . $fk_caja);
 }
+
+// Cerrar los statements
+$stmt->close();
+$stmtDetalles->close();
 ?>
 
 <?php if ($datosCorte): ?>
