@@ -64,8 +64,8 @@ $totalGastos = 0;
 
 if ($resultDetalles && $resultDetalles->num_rows > 0) {
     $rowDetalles = $resultDetalles->fetch_object();
-    error_log("Detalles encontrados - Servicios: " . $rowDetalles->Servicios);
-    error_log("Detalles encontrados - Gastos: " . $rowDetalles->Gastos);
+    error_log("ID de caja consultado: " . $fk_caja);
+    error_log("Gastos encontrados en BD: " . $rowDetalles->Gastos);
     
     // Procesar servicios
     if (!empty($rowDetalles->Servicios)) {
@@ -79,48 +79,45 @@ if ($resultDetalles && $resultDetalles->num_rows > 0) {
                 ];
             }
         }
-        error_log("Servicios procesados: " . print_r($servicios, true));
     }
 
     // Procesar gastos
     if (!empty($rowDetalles->Gastos)) {
-        try {
-            // Intentar decodificar el JSON directamente
-            $gastosData = json_decode($rowDetalles->Gastos, true);
-            error_log("Gastos JSON decodificado: " . print_r($gastosData, true));
-
-            if (json_last_error() === JSON_ERROR_NONE && isset($gastosData['detalle'])) {
-                // Si es un JSON válido con la estructura esperada
-                $gastos = $gastosData['detalle'];
-                $totalGastos = $gastosData['total'];
-            } else {
-                // Si no es un JSON válido, intentar procesar como string (formato antiguo)
-                $gastosArray = explode(", ", $rowDetalles->Gastos);
-                foreach ($gastosArray as $gasto) {
-                    if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
-                        if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
-                            $totalGastos = floatval($matches[1]);
-                        }
-                        continue;
-                    }
-
-                    if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
-                        $gastos[] = [
-                            'concepto' => trim($matches[1]),
-                            'importe' => floatval($matches[2]),
-                            'recibe' => trim($matches[3]),
-                            'fecha' => trim($matches[4])
-                        ];
-                    }
+        error_log("Iniciando procesamiento de gastos...");
+        $gastosArray = explode(", ", $rowDetalles->Gastos);
+        error_log("Gastos separados: " . print_r($gastosArray, true));
+        
+        foreach ($gastosArray as $gasto) {
+            error_log("Procesando gasto: " . $gasto);
+            
+            // Verificar si es el total de gastos
+            if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
+                error_log("Encontrado total de gastos: " . $gasto);
+                if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
+                    $totalGastos = floatval($matches[1]);
+                    error_log("Total de gastos extraído: " . $totalGastos);
                 }
+                continue;
             }
-            error_log("Gastos procesados: " . print_r($gastos, true));
-            error_log("Total de gastos: " . $totalGastos);
-        } catch (Exception $e) {
-            error_log("Error procesando gastos: " . $e->getMessage());
+
+            // Procesar cada gasto individual
+            if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
+                error_log("Gasto procesado exitosamente: " . print_r($matches, true));
+                $gastos[] = [
+                    'concepto' => trim($matches[1]),
+                    'importe' => floatval($matches[2]),
+                    'recibe' => trim($matches[3]),
+                    'fecha' => trim($matches[4])
+                ];
+            } else {
+                error_log("No se pudo procesar el gasto con regex: " . $gasto);
+            }
         }
+        
+        error_log("Gastos finales procesados: " . print_r($gastos, true));
+        error_log("Total de gastos final: " . $totalGastos);
     } else {
-        error_log("No hay gastos para procesar");
+        error_log("No hay gastos para procesar en la BD");
     }
 } else {
     error_log("No se encontraron detalles para la caja: " . $fk_caja);
@@ -129,6 +126,10 @@ if ($resultDetalles && $resultDetalles->num_rows > 0) {
 // Cerrar los statements
 $stmt->close();
 $stmtDetalles->close();
+
+// Verificación final antes de mostrar
+error_log("Verificación final - Número de gastos: " . count($gastos));
+error_log("Verificación final - Total de gastos: " . $totalGastos);
 ?>
 
 <?php if ($datosCorte): ?>
@@ -222,7 +223,12 @@ $stmtDetalles->close();
                         </tr>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No hay gastos registrados</td>
+                            <td colspan="4" class="text-center">
+                                No hay gastos registrados
+                                <?php if (!empty($rowDetalles->Gastos)): ?>
+                                    (Datos en BD: <?php echo htmlspecialchars($rowDetalles->Gastos); ?>)
+                                <?php endif; ?>
+                            </td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
