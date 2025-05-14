@@ -84,28 +84,43 @@ if ($resultDetalles && $resultDetalles->num_rows > 0) {
 
     // Procesar gastos
     if (!empty($rowDetalles->Gastos)) {
-        $gastosArray = explode(", ", $rowDetalles->Gastos);
-        foreach ($gastosArray as $gasto) {
-            // Verificar si es el total de gastos
-            if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
-                if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
-                    $totalGastos = floatval($matches[1]);
-                }
-                continue;
-            }
+        try {
+            // Intentar decodificar el JSON directamente
+            $gastosData = json_decode($rowDetalles->Gastos, true);
+            error_log("Gastos JSON decodificado: " . print_r($gastosData, true));
 
-            // Procesar cada gasto individual
-            if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
-                $gastos[] = [
-                    'concepto' => trim($matches[1]),
-                    'importe' => floatval($matches[2]),
-                    'recibe' => trim($matches[3]),
-                    'fecha' => trim($matches[4])
-                ];
+            if (json_last_error() === JSON_ERROR_NONE && isset($gastosData['detalle'])) {
+                // Si es un JSON válido con la estructura esperada
+                $gastos = $gastosData['detalle'];
+                $totalGastos = $gastosData['total'];
+            } else {
+                // Si no es un JSON válido, intentar procesar como string (formato antiguo)
+                $gastosArray = explode(", ", $rowDetalles->Gastos);
+                foreach ($gastosArray as $gasto) {
+                    if (strpos($gasto, 'TOTAL GASTOS:') !== false) {
+                        if (preg_match('/TOTAL GASTOS: \$([\d.]+)/', $gasto, $matches)) {
+                            $totalGastos = floatval($matches[1]);
+                        }
+                        continue;
+                    }
+
+                    if (preg_match('/^(.*?): \$([\d.]+) \(Recibe: (.*?), Fecha: (.*?)\)$/', $gasto, $matches)) {
+                        $gastos[] = [
+                            'concepto' => trim($matches[1]),
+                            'importe' => floatval($matches[2]),
+                            'recibe' => trim($matches[3]),
+                            'fecha' => trim($matches[4])
+                        ];
+                    }
+                }
             }
+            error_log("Gastos procesados: " . print_r($gastos, true));
+            error_log("Total de gastos: " . $totalGastos);
+        } catch (Exception $e) {
+            error_log("Error procesando gastos: " . $e->getMessage());
         }
-        error_log("Gastos procesados: " . print_r($gastos, true));
-        error_log("Total de gastos: " . $totalGastos);
+    } else {
+        error_log("No hay gastos para procesar");
     }
 } else {
     error_log("No se encontraron detalles para la caja: " . $fk_caja);
