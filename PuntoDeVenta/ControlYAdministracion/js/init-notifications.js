@@ -348,4 +348,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Iniciar sistema
     initNotificationSystem();
+
+    // Inicializar notificaciones locales (toasts)
+    inicializarSistemaNotificaciones();
+    
+    // Inicializar notificaciones push si el navegador lo soporta
+    if (typeof inicializarNotificacionesPush === 'function') {
+        // Verificar si es un dispositivo móvil
+        const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // Intentar inicializar notificaciones push para móviles
+        if (esMovil) {
+            console.log('Dispositivo móvil detectado, inicializando notificaciones push...');
+            
+            // Botón para solicitar permisos (puede ser agregado dinámicamente)
+            const botonSuscribir = document.getElementById('boton-suscribir-notificaciones');
+            
+            if (botonSuscribir) {
+                botonSuscribir.addEventListener('click', function() {
+                    inicializarNotificacionesPush()
+                        .then(subscription => {
+                            if (subscription) {
+                                mostrarNotificacion('Sistema', 'Notificaciones push habilitadas correctamente', 'success');
+                                botonSuscribir.style.display = 'none';
+                            } else {
+                                mostrarNotificacion('Sistema', 'No se pudieron habilitar las notificaciones push', 'error');
+                            }
+                        });
+                });
+            } else {
+                // Auto-inicializar si no hay botón específico
+                setTimeout(() => {
+                    inicializarNotificacionesPush()
+                        .then(subscription => {
+                            if (subscription) {
+                                mostrarNotificacion('Sistema', 'Notificaciones push habilitadas', 'success');
+                            }
+                        });
+                }, 5000); // Esperar 5 segundos antes de solicitar permisos
+            }
+        }
+    }
 }); 

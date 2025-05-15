@@ -6,7 +6,7 @@
                             &copy; <a href="#">Doctor Pez</a>Derechos Reservados. 
                         </div>
                         <div class="col-12 col-sm-6 text-center text-sm-end">
-                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                            <!--/*** This template is free as long as you keep the footer author's credit link/attribution link/backlink. If you'd like to use the template without the footer author's credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
                             Diseñado por Zero <a href=""></a>
                         
                         </div>
@@ -44,3 +44,27 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    
+    <!-- Notificaciones -->
+    <script src="js/notifications.js"></script>
+    <script src="js/db-notifications.js"></script>
+    <script src="js/push-notifications.js"></script>
+    <script src="js/init-notifications.js"></script>
+    
+    <!-- Botón para suscribir a notificaciones push en dispositivos móviles -->
+    <div id="contenedor-boton-push" style="display:none; position:fixed; bottom:70px; right:20px; z-index:9999;">
+        <button id="boton-suscribir-notificaciones" class="btn btn-primary rounded-circle shadow-sm" 
+                style="width: 50px; height: 50px;">
+            <i class="fa fa-bell"></i>
+        </button>
+    </div>
+    
+    <script>
+        // Mostrar botón de suscripción solo en dispositivos móviles
+        document.addEventListener('DOMContentLoaded', function() {
+            const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (esMovil) {
+                document.getElementById('contenedor-boton-push').style.display = 'block';
+            }
+        });
+    </script>
