@@ -8,7 +8,7 @@ header('Content-Type: application/json');
 
 try {
     // Intentar incluir la conexión a la base de datos
-    include "../database/db_connect.php";
+    include "../dbconect.php";
     
     // Verificar si la conexión existe
     if (!isset($conn) || $conn === null) {
