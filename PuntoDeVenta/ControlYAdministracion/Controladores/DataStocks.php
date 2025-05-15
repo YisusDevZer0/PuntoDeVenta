@@ -205,6 +205,11 @@
     return $tipoUsuario == 'MKT' ? 'disabled style="opacity: 0.5; pointer-events: none;"' : '';
   }
 
+  // Función para determinar si los botones deben estar ocultos
+  function isButtonHidden($tipoUsuario) {
+    return $tipoUsuario == 'MKT' ? 'style="display: none;"' : '';
+  }
+
   $(document).ready(function() {
     var tabla = $('#Clientes').DataTable({
       "bProcessing": true,
@@ -229,32 +234,32 @@
           "searchable": true,
           "orderable": true,
           "render": function (data, type, row) {
-            var disabledAttr = isActionButtonDisabled(row.Tipo);
+            var visibilityAttr = isButtonHidden(row.Tipo);
             if (row.Existencias_R < row.Min_Existencia) {
-              return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;" ' + disabledAttr + '>Solicitar</button>';
+              return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;" ' + visibilityAttr + '>Solicitar</button>';
             }
             else if (row.Existencias_R > row.Max_Existencia) {
-              return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important" ' + disabledAttr + '>SobreStock</button>';
+              return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important" ' + visibilityAttr + '>SobreStock</button>';
             }
             else {
-              return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important" ' + disabledAttr + '>Stock Completo</button>';
+              return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important" ' + visibilityAttr + '>Stock Completo</button>';
             }
           }
         },
         {
           mData: 'Editar',
           "render": function (data, type, row) {
-            var disabledAttr = isActionButtonDisabled(row.Tipo);
-            return '<div class="dropdown">' +
-              '<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" ' + disabledAttr + '>' +
+            var visibilityAttr = isButtonHidden(row.Tipo);
+            return '<div class="dropdown" ' + visibilityAttr + '>' +
+              '<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
               '<i class="fa-solid fa-gear"></i>' +
               '</button>' +
               '<ul class="dropdown-menu">' +
-              '<li><a class="dropdown-item btn-minimomaximo" href="#" data-id="' + row.Cod_Barra + '" ' + disabledAttr + '><i class="fa-solid fa-pen-to-square"></i> Editar Min/Max</a></li>' +
-              '<li><a class="dropdown-item btn-editproducto" href="#" data-id="' + row.Cod_Barra + '" ' + disabledAttr + '><i class="fa-solid fa-pen-to-square"></i> Editar Producto</a></li>' +
-              '<li><a class="dropdown-item btn-AjustInvetario" href="#" data-id="' + row.Cod_Barra + '" ' + disabledAttr + '><i class="fa-solid fa-pen-to-square"></i> Ajuste de Inventario</a></li>' +
-              '<li><a class="dropdown-item btn-eliminarprod" href="#" data-id="' + row.Cod_Barra + '" ' + disabledAttr + '><i class="fa-solid fa-trash"></i> Eliminar Producto</a></li>' +
-              '<li><a class="dropdown-item btn-GeneraOrdenCompra" href="#" data-id="' + row.Cod_Barra + '" ' + disabledAttr + '><i class="fa-solid fa-file-invoice"></i> Generar Orden de Compra</a></li>' +
+              '<li><a class="dropdown-item btn-minimomaximo" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Editar Min/Max</a></li>' +
+              '<li><a class="dropdown-item btn-editproducto" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Editar Producto</a></li>' +
+              '<li><a class="dropdown-item btn-AjustInvetario" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Ajuste de Inventario</a></li>' +
+              '<li><a class="dropdown-item btn-eliminarprod" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-trash"></i> Eliminar Producto</a></li>' +
+              '<li><a class="dropdown-item btn-GeneraOrdenCompra" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-file-invoice"></i> Generar Orden de Compra</a></li>' +
               '</ul>' +
               '</div>';
           }

@@ -1,13 +1,13 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-// Función para determinar si los botones deben estar deshabilitados
-function isActionButtonDisabled($tipoUsuario) {
-    return $tipoUsuario == 'MKT' ? 'disabled style="opacity: 0.5; pointer-events: none;"' : '';
+// Función para determinar si los botones deben estar ocultos
+function isButtonHidden($tipoUsuario) {
+    return $tipoUsuario == 'MKT' ? 'style="display: none;"' : '';
 }
 
-// Obtener el atributo de deshabilitado para los botones de acción
-$actionDisabledAttr = isActionButtonDisabled($row['TipoUsuario']);
+// Obtener el atributo de visibilidad para los botones
+$buttonVisibilityAttr = isButtonHidden($row['TipoUsuario']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -69,9 +69,6 @@ $actionDisabledAttr = isActionButtonDisabled($row['TipoUsuario']);
 
     // Función base para cargar modales
     function cargarModal(url, titulo, id) {
-        if (isUserMKT()) {
-            return false;
-        }
         $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success')
                     .addClass('modal-dialog modal-xl modal-notify modal-success');
         $.ajax({
@@ -90,74 +87,37 @@ $actionDisabledAttr = isActionButtonDisabled($row['TipoUsuario']);
         });
     }
 
-    // Delegación de eventos para el botón "btn-minimomaximo"
-    $(document).on("click", ".btn-minimomaximo", function(e) {
+    // Delegación de eventos para todos los botones
+    $(document).on("click", ".btn-minimomaximo, .btn-editproducto, .btn-AjustInvetario, .btn-eliminarprod, .btn-GeneraOrdenCompra", function(e) {
         e.preventDefault();
         var id = $(this).data("id");
-        cargarModal(
-            "Modales/EditaMinMaxStocks.php",
-            "Editar Mínimo y Máximo de Stock",
-            id
-        );
-    });
-
-    // Delegación de eventos para el botón "btn-editproducto"
-    $(document).on("click", ".btn-editproducto", function(e) {
-        e.preventDefault();
-        var id = $(this).data("id");
-        cargarModal(
-            "Modales/EditaProductoStocks.php",
-            "Editar Producto",
-            id
-        );
-    });
-
-    // Delegación de eventos para el botón "btn-AjustInvetario"
-    $(document).on("click", ".btn-AjustInvetario", function(e) {
-        e.preventDefault();
-        var id = $(this).data("id");
-        cargarModal(
-            "Modales/AjusteInventarioManual.php",
-            "Ajuste de Inventario",
-            id
-        );
-    });
-
-    // Delegación de eventos para el botón "btn-eliminarprod"
-    $(document).on("click", ".btn-eliminarprod", function(e) {
-        e.preventDefault();
-        var id = $(this).data("id");
-        cargarModal(
-            "Modales/EliminarProducto.php",
-            "Eliminar Producto",
-            id
-        );
-    });
-
-    // Delegación de eventos para el botón "btn-GeneraOrdenCompra"
-    $(document).on("click", ".btn-GeneraOrdenCompra", function(e) {
-        e.preventDefault();
-        var id = $(this).data("id");
-        cargarModal(
-            "Modales/GeneraOrdenCompra.php",
-            "Generar Orden de Compra",
-            id
-        );
+        var action = $(this).attr("class").split(" ")[1]; // Obtiene la clase específica del botón
+        
+        switch(action) {
+            case 'btn-minimomaximo':
+                cargarModal("Modales/EditaMinMaxStocks.php", "Editar Mínimo y Máximo de Stock", id);
+                break;
+            case 'btn-editproducto':
+                cargarModal("Modales/EditaProductoStocks.php", "Editar Producto", id);
+                break;
+            case 'btn-AjustInvetario':
+                cargarModal("Modales/AjusteInventarioManual.php", "Ajuste de Inventario", id);
+                break;
+            case 'btn-eliminarprod':
+                cargarModal("Modales/EliminarProducto.php", "Eliminar Producto", id);
+                break;
+            case 'btn-GeneraOrdenCompra':
+                cargarModal("Modales/GeneraOrdenCompra.php", "Generar Orden de Compra", id);
+                break;
+        }
     });
 });
 
 // Delegación de eventos para el botón "btn-Reimpresion"
 $(document).on("click", ".btn-Reimpresion", function(e) {
     e.preventDefault();
-    if (isUserMKT()) {
-        return false;
-    }
     var id = $(this).data("id");
-    cargarModal(
-        "Modales/ReimpresionTicket.php",
-        "Reimpresión de Ticket",
-        id
-    );
+    cargarModal("Modales/ReimpresionTicket.php", "Reimpresión de Ticket", id);
 });
 
 </script>
