@@ -50,9 +50,38 @@ document.addEventListener('DOMContentLoaded', function() {
             async loadNotifications() {
                 try {
                     const response = await fetch('api/get_notificaciones.php');
+                    
+                    // Verificar si la respuesta es exitosa
+                    if (!response.ok) {
+                        console.error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                        return;
+                    }
+                    
+                    // Verificar el tipo de contenido
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        console.error(`Tipo de contenido no válido: ${contentType}`);
+                        console.error('Respuesta:', await response.text());
+                        return;
+                    }
+
+                    // Analizar la respuesta JSON
                     const data = await response.json();
                     
-                    this.updateCounter(data.total);
+                    // Verificar si hay errores en la respuesta
+                    if (data.error) {
+                        console.error('Error en la respuesta del servidor:', data.message);
+                        return;
+                    }
+                    
+                    // Verificar que los datos son válidos
+                    if (!data.notificaciones || !Array.isArray(data.notificaciones)) {
+                        console.error('Formato de datos inválido:', data);
+                        return;
+                    }
+                    
+                    // Procesar notificaciones
+                    this.updateCounter(data.total || 0);
                     this.updateNotificationMenu(data.notificaciones);
                     this.showNewNotifications(data.notificaciones);
                     
