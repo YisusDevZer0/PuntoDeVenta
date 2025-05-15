@@ -1,0 +1,18 @@
+# Archivo de ejemplo para configurar los cronjobs
+# Copiar y pegar estas líneas en el crontab del servidor (crontab -e)
+
+# Generar notificaciones automáticas (cada 4 horas)
+0 */4 * * * php /ruta/a/tu/sitio/PuntoDeVenta/ControlYAdministracion/cron/generar_notificaciones.php
+
+# Verificar estado de notificaciones (cada 6 horas)
+0 */6 * * * php /ruta/a/tu/sitio/PuntoDeVenta/ControlYAdministracion/cron/verificar_notificaciones.php
+
+# Limpiar logs antiguos (una vez al día a las 3 AM)
+0 3 * * * find /ruta/a/tu/sitio/PuntoDeVenta/ControlYAdministracion/cron/logs -name "*.log" -mtime +30 -delete
+
+# Notas importantes:
+# 1. Reemplazar "/ruta/a/tu/sitio" con la ruta real a tu sitio web
+# 2. Asegurarse de que los archivos PHP tengan permisos de ejecución (chmod +x)
+# 3. Verificar que el usuario del cronjob tenga permisos para escribir en el directorio de logs
+# 4. Los logs se guardarán en /ruta/a/tu/sitio/PuntoDeVenta/ControlYAdministracion/cron/logs/
+# 5. Los logs se mantendrán por 30 días antes de ser eliminados automáticamente 
