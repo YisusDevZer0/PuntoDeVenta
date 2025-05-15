@@ -1,13 +1,6 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-// Función para determinar si los botones deben estar ocultos
-function isButtonHidden($tipoUsuario) {
-    return $tipoUsuario == 'MKT' ? 'style="display: none;"' : '';
-}
-
-// Obtener el atributo de visibilidad para los botones
-$buttonVisibilityAttr = isButtonHidden($row['TipoUsuario']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -62,63 +55,90 @@ $buttonVisibilityAttr = isButtonHidden($row['TipoUsuario']);
 
 <script>
   $(document).ready(function() {
-    // Función para verificar si el usuario es MKT
-    function isUserMKT() {
-        return '<?php echo $row['TipoUsuario'] ?>' === 'MKT';
-    }
-
-    // Función base para cargar modales
-    function cargarModal(url, titulo, id) {
-        $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success')
-                    .addClass('modal-dialog modal-xl modal-notify modal-success');
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: { id: id },
-            success: function(data) {
-                $("#FormCajas").html(data);
-                $("#TitulosCajas").html(titulo);
-                $('#ModalEdDele').modal('show');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al cargar el modal:', error);
-                alert('Error al cargar el contenido. Por favor, intente nuevamente.');
-            }
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+    $(document).on("click", ".btn-minimomaximo", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaMinMaxStocks.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
-    }
-
-    // Delegación de eventos para todos los botones
-    $(document).on("click", ".btn-minimomaximo, .btn-editproducto, .btn-AjustInvetario, .btn-eliminarprod, .btn-GeneraOrdenCompra", function(e) {
-        e.preventDefault();
-        var id = $(this).data("id");
-        var action = $(this).attr("class").split(" ")[1]; // Obtiene la clase específica del botón
         
-        switch(action) {
-            case 'btn-minimomaximo':
-                cargarModal("Modales/EditaMinMaxStocks.php", "Editar Mínimo y Máximo de Stock", id);
-                break;
-            case 'btn-editproducto':
-                cargarModal("Modales/EditaProductoStocks.php", "Editar Producto", id);
-                break;
-            case 'btn-AjustInvetario':
-                cargarModal("Modales/AjusteInventarioManual.php", "Ajuste de Inventario", id);
-                break;
-            case 'btn-eliminarprod':
-                cargarModal("Modales/EliminarProducto.php", "Eliminar Producto", id);
-                break;
-            case 'btn-GeneraOrdenCompra':
-                cargarModal("Modales/GeneraOrdenCompra.php", "Generar Orden de Compra", id);
-                break;
-        }
+        $('#ModalEdDele').modal('show');
     });
+
+
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+    $(document).on("click", ".btn-editproducto", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductoStocks.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desglose de ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
+
+ // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+ $(document).on("click", ".btn-AjustInvetario", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AjusteInventarioManual.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desglose de ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
+
+
+   
+    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+    $(document).on("click", ".btn-eliminarprod", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Desglose de ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Desglose de ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
+
 });
 
-// Delegación de eventos para el botón "btn-Reimpresion"
-$(document).on("click", ".btn-Reimpresion", function(e) {
-    e.preventDefault();
-    var id = $(this).data("id");
-    cargarModal("Modales/ReimpresionTicket.php", "Reimpresión de Ticket", id);
-});
+// Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
+$(document).on("click", ".btn-GeneraOrdenCompra", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraOrdenCompra.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Generando orden de compra");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Generando orden de compra");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
+
+
+
 
 </script>
 

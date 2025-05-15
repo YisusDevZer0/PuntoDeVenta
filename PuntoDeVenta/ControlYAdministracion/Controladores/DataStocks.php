@@ -200,112 +200,95 @@
     document.getElementById('loading-overlay').style.display = 'none';
   }
 
-  // Función para determinar si los botones deben estar deshabilitados
-  function isActionButtonDisabled($tipoUsuario) {
-    return $tipoUsuario == 'MKT' ? 'disabled style="opacity: 0.5; pointer-events: none;"' : '';
-  }
 
-  // Función para determinar si los botones deben estar ocultos
-  function isButtonHidden($tipoUsuario) {
-    return $tipoUsuario == 'MKT' ? 'style="display: none;"' : '';
-  }
+tabla = $('#Clientes').DataTable({
 
-  $(document).ready(function() {
-    var tabla = $('#Clientes').DataTable({
-      "bProcessing": true,
-      "ordering": true,
-      "stateSave": true,
-      "bAutoWidth": false,
-      "order": [[ 0, "desc" ]],
-      "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayStocks.php",
-      "aoColumns": [
-        { mData: 'Cod_Barra' },
-        { mData: 'Nombre_Prod' },
-        { mData: 'Precio_Venta' },
-        { mData: 'Nom_Serv' },
-        { mData: 'Tipo' },
-        { mData: 'Proveedor1' },
-        { mData: 'Sucursal' },
-        { mData: 'Existencias_R' },
-        { mData: 'Min_Existencia' },
-        { mData: 'Max_Existencia' },
-        {
-          mData: "Existencias_R",
-          "searchable": true,
-          "orderable": true,
-          "render": function (data, type, row) {
-            var visibilityAttr = isButtonHidden(row.Tipo);
-            if (row.Existencias_R < row.Min_Existencia) {
-              return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;" ' + visibilityAttr + '>Solicitar</button>';
-            }
-            else if (row.Existencias_R > row.Max_Existencia) {
-              return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important" ' + visibilityAttr + '>SobreStock</button>';
-            }
+ "bProcessing": true,
+ "ordering": true,
+ "stateSave":true,
+ "bAutoWidth": false,
+ "order": [[ 0, "desc" ]],
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayStocks.php",
+ "aoColumns": [
+    { mData: 'Cod_Barra' },
+      
+       { mData: 'Nombre_Prod' },
+       { mData: 'Precio_Venta' },
+       { mData: 'Nom_Serv' },
+       { mData: 'Tipo' },
+       { mData: 'Proveedor1' },
+   
+       { mData: 'Sucursal' },
+    
+       { mData: 'Existencias_R' },
+       { mData: 'Min_Existencia' },
+       { mData: 'Max_Existencia' },
+       {mData: "Existencias_R",
+        "searchable": true,
+        "orderable":true,
+        "render": function (data, type, row) {
+            if ( row.Existencias_R < row.Min_Existencia) {
+
+            return '<button class="btn btn-default btn-sm" style="background-color:#ff1800!important;color:white;">Solicitar</button>';
+        }
+        else if ( row.Existencias_R > row.Max_Existencia) {
+return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!important">SobreStock</button>'
+        }
             else {
-              return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important" ' + visibilityAttr + '>Stock Completo</button>';
-            }
-          }
-        },
-        {
-          mData: 'Editar',
-          "render": function (data, type, row) {
-            var visibilityAttr = isButtonHidden(row.Tipo);
-            return '<div class="dropdown" ' + visibilityAttr + '>' +
-              '<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-              '<i class="fa-solid fa-gear"></i>' +
-              '</button>' +
-              '<ul class="dropdown-menu">' +
-              '<li><a class="dropdown-item btn-minimomaximo" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Editar Min/Max</a></li>' +
-              '<li><a class="dropdown-item btn-editproducto" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Editar Producto</a></li>' +
-              '<li><a class="dropdown-item btn-AjustInvetario" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-pen-to-square"></i> Ajuste de Inventario</a></li>' +
-              '<li><a class="dropdown-item btn-eliminarprod" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-trash"></i> Eliminar Producto</a></li>' +
-              '<li><a class="dropdown-item btn-GeneraOrdenCompra" href="#" data-id="' + row.Cod_Barra + '"><i class="fa-solid fa-file-invoice"></i> Generar Orden de Compra</a></li>' +
-              '</ul>' +
-              '</div>';
-          }
+ 
+    return '<button class="btn btn-default btn-sm" style="background-color:#2bbb1d!important">Stock Completo</button>';
+ 
+}
         }
+ 
+    },
+       { mData: 'Editar' },
+     
+      
+  
       ],
+     
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
-      "language": {
-        "lengthMenu": "Mostrar _MENU_ registros",
-        "sPaginationType": "extStyle",
-        "zeroRecords": "No se encontraron resultados",
-        "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-        "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-        "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-        "sSearch": "Buscar:",
-        "paginate": {
-          "first": '<i class="fas fa-angle-double-left"></i>',
-          "last": '<i class="fas fa-angle-double-right"></i>',
-          "next": '<i class="fas fa-angle-right"></i>',
-          "previous": '<i class="fas fa-angle-left"></i>'
-        },
-        "processing": function () {
-          mostrarCargando();
-        }
-      },
-      "initComplete": function() {
-        // Al completar la inicialización de la tabla, ocultar el mensaje de carga
-        ocultarCargando();
-      },
-      // Para personalizar el estilo del botón de Excel
-      "buttons": [
-        {
-          extend: 'excelHtml5',
-          text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
-          titleAttr: 'Exportar a Excel',
-          title: 'Base de Clientes',
-          className: 'btn btn-success',
-          exportOptions: {
-            columns: ':visible' // Exportar solo las columnas visibles
-          }
-        }
-      ],
-      // Personalizar la posición de los elementos del encabezado
-      "dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
-      "responsive": true
-    });
-  });
+  
+  "language": {
+  "lengthMenu": "Mostrar _MENU_ registros",
+  "sPaginationType": "extStyle",
+  "zeroRecords": "No se encontraron resultados",
+  "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+  "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+  "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+  "sSearch": "Buscar:",
+  "paginate": {
+    "first": '<i class="fas fa-angle-double-left"></i>',
+    "last": '<i class="fas fa-angle-double-right"></i>',
+    "next": '<i class="fas fa-angle-right"></i>',
+    "previous": '<i class="fas fa-angle-left"></i>'
+  },
+  "processing": function () {
+    mostrarCargando();
+  }
+},
+"initComplete": function() {
+  // Al completar la inicialización de la tabla, ocultar el mensaje de carga
+  ocultarCargando();
+},
+// Para personalizar el estilo del botón de Excel
+"buttons": [
+  {
+    extend: 'excelHtml5',
+    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+    titleAttr: 'Exportar a Excel',
+    title: 'Base de Clientes',
+    className: 'btn btn-success',
+    exportOptions: {
+      columns: ':visible' // Exportar solo las columnas visibles
+    }
+  }
+],
+// Personalizar la posición de los elementos del encabezado
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
+"responsive": true
+});
 </script>
 <div class="text-center">
   <div class="table-responsive">
