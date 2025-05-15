@@ -55,11 +55,11 @@ if($_SESSION["ResponsableDelCedis"])	//Condicion admin
 
 }
 
-if($_SESSION["Inventarios"])	//Condicion admin
+if($_SESSION["Marketing"])	//Condicion MKT
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/Inventarios/");	
+	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
 
 }
 

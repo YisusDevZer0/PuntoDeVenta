@@ -54,6 +54,10 @@ if(isset($_POST['login_button'])) {
                                     echo "ok";
                                     $_SESSION['Enfermeria'] = $row['Id_PvUser'];
                                     break;
+                                case $row['Password'] == $Password && $row['TipoUsuario'] == "MKT" && $row['Estatus'] == "Activo":
+                                    echo "ok";
+                                    $_SESSION['Marketing'] = $row['Id_PvUser'];
+                                    break;
         // Agrega los demás casos según la lógica que necesites
         default:
             // Manejar otros casos o mostrar un mensaje de error
