@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 
 // Intentar incluir la conexión DB con manejo de errores
 try {
-    include "../database/db_connect.php";
+    include "../dbconect.php";
 } catch (Exception $e) {
     header('Content-Type: application/json');
     echo json_encode([
