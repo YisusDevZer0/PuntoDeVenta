@@ -67,106 +67,97 @@ $actionDisabledAttr = isActionButtonDisabled($row['TipoUsuario']);
         return '<?php echo $row['TipoUsuario'] ?>' === 'MKT';
     }
 
-    // Delegación de eventos para el botón "btn-minimomaximo"
-    $(document).on("click", ".btn-minimomaximo", function(e) {
+    // Función base para cargar modales
+    function cargarModal(url, titulo, id) {
         if (isUserMKT()) {
-            e.preventDefault();
             return false;
         }
-        var id = $(this).data("id");
-        $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaMinMaxStocks.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Generando archivo para reimpresion");
+        $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success')
+                    .addClass('modal-dialog modal-xl modal-notify modal-success');
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { id: id },
+            success: function(data) {
+                $("#FormCajas").html(data);
+                $("#TitulosCajas").html(titulo);
+                $('#ModalEdDele').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error al cargar el modal:', error);
+                alert('Error al cargar el contenido. Por favor, intente nuevamente.');
+            }
         });
-        
-        $('#ModalEdDele').modal('show');
+    }
+
+    // Delegación de eventos para el botón "btn-minimomaximo"
+    $(document).on("click", ".btn-minimomaximo", function(e) {
+        e.preventDefault();
+        var id = $(this).data("id");
+        cargarModal(
+            "Modales/EditaMinMaxStocks.php",
+            "Editar Mínimo y Máximo de Stock",
+            id
+        );
     });
 
     // Delegación de eventos para el botón "btn-editproducto"
     $(document).on("click", ".btn-editproducto", function(e) {
-        if (isUserMKT()) {
-            e.preventDefault();
-            return false;
-        }
+        e.preventDefault();
         var id = $(this).data("id");
-        $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductoStocks.php", { id: id }, function(data) {
-            $("#TitulosCajas").html("Desglose de ticket");  
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desglose de ticket");
-        });
-        
-        $('#ModalEdDele').modal('show');
+        cargarModal(
+            "Modales/EditaProductoStocks.php",
+            "Editar Producto",
+            id
+        );
     });
 
     // Delegación de eventos para el botón "btn-AjustInvetario"
     $(document).on("click", ".btn-AjustInvetario", function(e) {
-        if (isUserMKT()) {
-            e.preventDefault();
-            return false;
-        }
+        e.preventDefault();
         var id = $(this).data("id");
-        $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AjusteInventarioManual.php", { id: id }, function(data) {
-            $("#TitulosCajas").html("Desglose de ticket");  
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desglose de ticket");
-        });
-        
-        $('#ModalEdDele').modal('show');
+        cargarModal(
+            "Modales/AjusteInventarioManual.php",
+            "Ajuste de Inventario",
+            id
+        );
     });
 
     // Delegación de eventos para el botón "btn-eliminarprod"
     $(document).on("click", ".btn-eliminarprod", function(e) {
-        if (isUserMKT()) {
-            e.preventDefault();
-            return false;
-        }
+        e.preventDefault();
         var id = $(this).data("id");
-        $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
-            $("#TitulosCajas").html("Desglose de ticket");  
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desglose de ticket");
-        });
-        
-        $('#ModalEdDele').modal('show');
+        cargarModal(
+            "Modales/EliminarProducto.php",
+            "Eliminar Producto",
+            id
+        );
     });
 
     // Delegación de eventos para el botón "btn-GeneraOrdenCompra"
     $(document).on("click", ".btn-GeneraOrdenCompra", function(e) {
-        if (isUserMKT()) {
-            e.preventDefault();
-            return false;
-        }
+        e.preventDefault();
         var id = $(this).data("id");
-        $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraOrdenCompra.php", { id: id }, function(data) {
-            $("#TitulosCajas").html("Generando orden de compra");  
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Generando orden de compra");
-        });
-        
-        $('#ModalEdDele').modal('show');
+        cargarModal(
+            "Modales/GeneraOrdenCompra.php",
+            "Generar Orden de Compra",
+            id
+        );
     });
 });
 
 // Delegación de eventos para el botón "btn-Reimpresion"
 $(document).on("click", ".btn-Reimpresion", function(e) {
+    e.preventDefault();
     if (isUserMKT()) {
-        e.preventDefault();
         return false;
     }
     var id = $(this).data("id");
-    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
-      $("#TitulosCajas").html("Desglose de ticket");  
-      $("#FormCajas").html(data);
-        $("#TitulosCajas").html("Desglose de ticket");
-    });
-    
-    $('#ModalEdDele').modal('show');
+    cargarModal(
+        "Modales/ReimpresionTicket.php",
+        "Reimpresión de Ticket",
+        id
+    );
 });
 
 </script>
