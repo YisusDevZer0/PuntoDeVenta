@@ -116,8 +116,7 @@
 </script>
 
 <!-- Scripts de notificaciones -->
-<script type="module" src="js/notifications.js"></script>
-<script type="module" src="js/db-notifications.js"></script>
+<script src="js/init-notifications.js"></script>
 
 </body>
 </html>

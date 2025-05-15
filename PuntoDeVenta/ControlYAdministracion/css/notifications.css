@@ -1,0 +1,185 @@
+/* Estilos para notificaciones */
+
+/* Contenedor de toasts */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilo base para todos los toasts */
+.toast {
+    min-width: 300px;
+    max-width: 400px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Cabecera del toast */
+.toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+}
+
+/* Cuerpo del toast */
+.toast-body {
+    padding: 15px;
+    color: #212529;
+    word-break: break-word;
+}
+
+/* Botón de cierre */
+.btn-close {
+    background: transparent;
+    border: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.btn-close:hover {
+    opacity: 0.75;
+}
+
+.btn-close::before {
+    content: "×";
+}
+
+/* Variantes de color según tipo */
+.toast-success .toast-header {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.toast-error .toast-header {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.toast-warning .toast-header {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.toast-info .toast-header {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Estilos para ícono en el menú de notificaciones */
+.icon-circle {
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Colores de fondo para íconos */
+.bg-primary {
+    background-color: #4e73df !important;
+}
+
+.bg-success {
+    background-color: #1cc88a !important;
+}
+
+.bg-warning {
+    background-color: #f6c23e !important;
+}
+
+.bg-danger {
+    background-color: #e74a3b !important;
+}
+
+.bg-info {
+    background-color: #36b9cc !important;
+}
+
+/* Menú desplegable de notificaciones */
+#notification-dropdown {
+    min-width: 280px;
+    max-width: 350px;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    border: none;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+#notification-dropdown .dropdown-header {
+    background-color: #4e73df;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    font-weight: 800;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+}
+
+#notification-dropdown .dropdown-item {
+    padding: 0.5rem 1rem;
+    white-space: normal;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+#notification-dropdown .dropdown-item:active,
+#notification-dropdown .dropdown-item:focus,
+#notification-dropdown .dropdown-item:hover {
+    background-color: #f8f9fc;
+    color: #6e707e;
+}
+
+/* Badge para contador de notificaciones */
+.badge-counter {
+    position: absolute;
+    transform: scale(0.7);
+    transform-origin: top right;
+    right: 0.25rem;
+    top: 0;
+    margin-top: -0.25rem;
+}
+
+.badge-danger {
+    background-color: #e74a3b;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .toast-container {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        padding: 10px;
+    }
+    
+    .toast {
+        min-width: auto;
+        max-width: none;
+        width: 100%;
+    }
+} 
