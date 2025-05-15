@@ -32,7 +32,7 @@ function escribirLog($mensaje, $tipo = 'INFO') {
 
 // Función para enviar correo de error
 function enviarCorreoError($error) {
-    $to = "jesusemutul@gmail.com";
+    $to = "davidlopez@doctorpez.mx";
     $subject = "Error en generación de notificaciones - Hostinger";
     $message = "Se ha producido un error al generar las notificaciones automáticas:\n\n";
     $message .= "Error: " . $error . "\n";
