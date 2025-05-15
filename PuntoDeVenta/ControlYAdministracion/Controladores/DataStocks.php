@@ -200,6 +200,9 @@
     document.getElementById('loading-overlay').style.display = 'none';
   }
 
+  // Función para determinar si los botones deben estar deshabilitados
+  function isActionButtonDisabled($tipoUsuario) {
+    return $tipoUsuario == 'MKT' ? 'disabled style="opacity: 0.5; pointer-events: none;"' : '';
 
 tabla = $('#Clientes').DataTable({
 
