@@ -4,200 +4,191 @@ $tipoUsuario = $row['TipoUsuario'];
 ?>
 
 <div class="sidebar pe-4 pb-3">
-            <nav class="navbar bg-light navbar-light">
-                <a href="index.html" class="navbar-brand mx-4 mb-3">
-                    <h3 class="text-primary"><i style="color: #ef7980!important;" class="fa-solid fa-fish"></i><?php echo $row['Licencia']?></h3>
-                </a>
-                <div class="d-flex align-items-center ms-4 mb-4">
-                    <div class="position-relative">
-                        <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
-                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-                    </div>
-                    <div class="ms-3">
-                        <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
-                        <span><?php echo $row['TipoUsuario']?></span>
-                    </div>
-                </div>
-                <div class="navbar-nav w-100">
-                <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="AperturarCajaV2"><i class="fa-solid fa-cash-register"></i> Apertura de caja</a>
-        <a href="RealizarVentas"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
-        <a href="GeneracionDeEncargos"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="RegistrosdeEnergia"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
-        <a href="BitacoraLimpieza"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
-        <a href="TareasPorHacer"><i class="fa-solid fa-list"></i>Lista de tareas</a>
-        <a href="Mensajes"><i class="fa-solid fa-business-time"></i>Mensajes</a>
-        <a href="Recordatorios"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="AgendaRevaloraciones"><i class="fa-solid fa-person-walking-arrow-loop-left"></i>Revaloraciones</a>
-        <a href="AgendaEspecialista"><i class="fa-solid fa-hospital-user"></i>Especialistas </a>
-       
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="TiposUsuarios"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
-        <a href="PersonalActivo"><i class="fa-solid fa-user-check"></i>Personal activo </a>
-        <a href="Personaldebaja"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="ChecadorDiario"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
-        <a href="ChecadorGeneral"><i class="fa-solid fa-calendar"></i>Reporte General </a>
-
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="FondosDeCaja"><i class="fa-solid fa-coins"></i> Fondos de caja</a>
-        <a href="CajasActivas"><i class="fa-solid fa-money-bills"></i>Cajas activas </a>
-        <a href="HistorialDeCajas"><i class="fa-solid fa-vault"></i>Historial de cajas </a>
-        <a href="CortesDeCaja"><i class="fa-solid fa-file-invoice-dollar"></i>Cortes de caja</a>
-        <a href="RegistroDeGastos"><i class="fa-solid fa-comment-dollar"></i>Registro de gastos</a>
-        <a href="TiposDeGastos"><i class="fa-solid fa-comments-dollar"></i>Tipos de gastos</a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="DatosDeClientes"><i class="fa-solid fa-people-group"></i>Data de clientes</a>
-        <a href="CajasActivas"><i class="fa-regular fa-credit-card"></i>Creditos </a>
-       
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="Tickets"><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
-        <a href="AbonosEnCreditos"><i class="fa-solid fa-money-bills"></i>Desglose Tickets Creditos </a>
-        <a href="CancelacionDeTickets"><i class="fa-solid fa-ban"></i>Cancelacion de tickets </a>
-        <a href="EdicionDeTickets"><i class="fa-solid fa-file-pen"></i>Edicion de tickets</a>
-       
-    </div>
-</div>
-
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice-dollar"></i>Ventas</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="VentasDelDia"><i class="fa-solid fa-coins"></i>Ventas del dia</a>
-        <a href="VentasACredito"><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
-        <a href="TotalesDeVentaPorVendedor"><i class="fa-solid fa-users"></i>Ventas por personal </a>
-    </div>
-</div>
-
-<?php } ?>
-<!-- MENUS DE ALMACEN -->
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="ProductosGenerales"><i class="fa-solid fa-dolly"></i>Historico general </a>
-      
-        <a href="Stocks"><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
-        <a href="Proveedores"><i class="fa-solid fa-truck-field"></i>Proveedores </a> 
-        <a href="Servicios"><i class="fa-solid fa-staff-snake"></i>Servicios </a>
-        <a href="Marcas"><i class="fa-solid fa-staff-snake"></i>Marcas </a>
-        <a href="Presentaciones"><i class="fa-solid fa-staff-snake"></i>Presentaciones </a>
-        <a href="Componentes"><i class="fa-solid fa-staff-snake"></i>Componentes </a>
-        <a href="TiposProductos"><i class="fa-solid fa-staff-snake"></i>Tipos productos </a>
-        <a href="Categorias"><i class="fa-solid fa-staff-snake"></i>Categorias </a>
-       
-    </div>
-</div>
-<?php } ?>
-<!-- MENUS DE ALMACEN -->
-
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left"></i>Traspasos</a>
-    <div class="dropdown-menu bg-transparent border-0">
-    <a href="RealizarTraspasos"><i class="fa-solid fa-truck-ramp-box"></i>Realizar traspasos</a>
-        <a href="ListaDeTraspasos"><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
-      
-        <a href="TraspasosAceptados"><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
-      
-    </div>
-</div>
-
-
-
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Ingresos</a>
-    <div class="dropdown-menu bg-transparent border-0">
-       
-    
-        <!-- <a href="IngresosDeCedis" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Ingresos Cedis</a> -->
-        <a href="IngresosDeFarmacias"><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
-        <a href="Ingresos"><i class="fa-solid fa-file-invoice-dollar"></i>Realizar ingresos </a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <!-- <a href="InventarioCedis" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario de cedis</a> -->
-        <a href="InventarioSucursales"><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
-        <!-- <a href="AjusteInventarios" class="dropdown-item"><i class="fa-solid fa-plus-minus"></i>Ajuste de inventarios </a> -->
-        <a href="AjusteInsumos"><i class="fa-solid fa-money-bills"></i>Insumos </a>
-        <a href="ReportesCedisInventario"><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
-        <a href="ReportesInventarios"><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
-    </div>
-</div>
-<?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
-<div class="nav-item dropdown">
-    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree"></i>Reportes</a>
-    <div class="dropdown-menu bg-transparent border-0">
-        <a href="ReporteDeVentasTotales"><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
-        <a href="ReporteServicios"><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
-        <a href="ReporteMasVendidos"><i class="fa-regular fa-file-excel"></i>Reporte mas vendidos </a>
-        <a href="ReportePorProductoFormaPago"><i class="fa-regular fa-file-excel"></i>Reporte por productos </a>
-        <a href="ReportePorFormaDePago"><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
-       
-    </div>
-</div>
-
-<?php } ?>
-
-            </nav>
+    <nav class="navbar bg-light navbar-light">
+        <a href="index.html" class="navbar-brand mx-4 mb-3">
+            <h3 class="text-primary"><i style="color: #ef7980!important;" class="fa-solid fa-fish"></i><?php echo $row['Licencia']?></h3>
+        </a>
+        <div class="d-flex align-items-center ms-4 mb-4">
+            <div class="position-relative">
+                <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
+                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+            </div>
+            <div class="ms-3">
+                <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
+                <span><?php echo $row['TipoUsuario']?></span>
+            </div>
         </div>
+        <div class="navbar-nav w-100">
+            <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer me-2"></i>Punto de venta</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-cash-register me-2"></i>Apertura de caja</a>
+                    <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Realizar Ventas</a>
+                    <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice me-2"></i>Encargos</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical me-2"></i>Farmacia</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb me-2"></i>Registro de energia</a>
+                    <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom me-2"></i>Bitacora de limpieza</a>
+                    <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list me-2"></i>Lista de tareas</a>
+                    <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time me-2"></i>Mensajes</a>
+                    <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time me-2"></i>Crear recordatorios</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time me-2"></i>Agendas</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-person-walking-arrow-loop-left me-2"></i>Revaloraciones</a>
+                    <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-hospital-user me-2"></i>Especialistas</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear me-2"></i>Personal</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users me-2"></i>Tipos de usuarios</a>
+                    <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check me-2"></i>Personal activo</a>
+                    <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark me-2"></i>Personal inactivo</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock me-2"></i>Checador</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ChecadorDiario" class="dropdown-item"><i class="fa-solid fa-calendar-day me-2"></i>Reporte diario</a>
+                    <a href="ChecadorGeneral" class="dropdown-item"><i class="fa-solid fa-calendar me-2"></i>Reporte General</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical me-2"></i>Sucursales</a>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register me-2"></i>Cajas</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="FondosDeCaja" class="dropdown-item"><i class="fa-solid fa-coins me-2"></i>Fondos de caja</a>
+                    <a href="CajasActivas" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Cajas activas</a>
+                    <a href="HistorialDeCajas" class="dropdown-item"><i class="fa-solid fa-vault me-2"></i>Historial de cajas</a>
+                    <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Cortes de caja</a>
+                    <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-comment-dollar me-2"></i>Registro de gastos</a>
+                    <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-comments-dollar me-2"></i>Tipos de gastos</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users me-2"></i>Clientes</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-people-group me-2"></i>Data de clientes</a>
+                    <a href="CajasActivas" class="dropdown-item"><i class="fa-regular fa-credit-card me-2"></i>Creditos</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt me-2"></i>Tickets</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-coins me-2"></i>Desglose de tickets</a>
+                    <a href="AbonosEnCreditos" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Desglose Tickets Creditos</a>
+                    <a href="CancelacionDeTickets" class="dropdown-item"><i class="fa-solid fa-ban me-2"></i>Cancelacion de tickets</a>
+                    <a href="EdicionDeTickets" class="dropdown-item"><i class="fa-solid fa-file-pen me-2"></i>Edicion de tickets</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Ventas</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins me-2"></i>Ventas del dia</a>
+                    <a href="VentasACredito" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Ventas del dia de Credito</a>
+                    <a href="TotalesDeVentaPorVendedor" class="dropdown-item"><i class="fa-solid fa-users me-2"></i>Ventas por personal</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked me-2"></i>Almacen</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-dolly me-2"></i>Historico general</a>
+                    <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-house-medical-flag me-2"></i>Stocks</a>
+                    <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-truck-field me-2"></i>Proveedores</a>
+                    <a href="Servicios" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Servicios</a>
+                    <a href="Marcas" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Marcas</a>
+                    <a href="Presentaciones" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Presentaciones</a>
+                    <a href="Componentes" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Componentes</a>
+                    <a href="TiposProductos" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Tipos productos</a>
+                    <a href="Categorias" class="dropdown-item"><i class="fa-solid fa-staff-snake me-2"></i>Categorias</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-arrow-right-arrow-left me-2"></i>Traspasos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-truck-ramp-box me-2"></i>Realizar traspasos</a>
+                    <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-coins me-2"></i>Listado de traspasos</a>
+                    <a href="TraspasosAceptados" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Traspasos aceptados</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked me-2"></i>Ingresos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="IngresosDeFarmacias" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Ingresos Farmacias</a>
+                    <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Realizar ingresos</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-truck-ramp-box me-2"></i>Inventarios</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-boxes-stacked me-2"></i>inventario de sucursales</a>
+                    <a href="AjusteInsumos" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Insumos</a>
+                    <a href="ReportesCedisInventario" class="dropdown-item"><i class="fa-solid fa-money-bills me-2"></i>Reportes Cedis</a>
+                    <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-square-poll-vertical me-2"></i>Reportes inventarios</a>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-folder-tree me-2"></i>Reportes</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ReporteDeVentasTotales" class="dropdown-item"><i class="fa-solid fa-file-excel me-2"></i>Reporte de ventas</a>
+                    <a href="ReporteServicios" class="dropdown-item"><i class="fa-regular fa-file-excel me-2"></i>Reporte por tipo de servicios</a>
+                    <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-regular fa-file-excel me-2"></i>Reporte mas vendidos</a>
+                    <a href="ReportePorProductoFormaPago" class="dropdown-item"><i class="fa-regular fa-file-excel me-2"></i>Reporte por productos</a>
+                    <a href="ReportePorFormaDePago" class="dropdown-item"><i class="fa-regular fa-file-excel me-2"></i>Reporte por forma de pago</a>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    </nav>
+</div>
