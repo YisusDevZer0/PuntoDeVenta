@@ -19,7 +19,7 @@ if ($id <= 0) {
 }
 
 $query = "UPDATE Notificaciones SET Leido = 1 WHERE ID_Notificacion = ?";
-$stmt = $conn->prepare($query);
+$stmt = $con->prepare($query);
 $stmt->bind_param("i", $id);
 $result = $stmt->execute();
 

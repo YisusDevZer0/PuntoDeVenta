@@ -35,7 +35,7 @@ try {
 header('Content-Type: application/json');
 
 // Verificar que la conexión existe
-if (!isset($conn) || $conn === null) {
+if (!isset($con) || $con === null) {
     echo json_encode([
         'error' => true,
         'message' => 'No se pudo establecer conexión con la base de datos',
@@ -50,7 +50,7 @@ $sucursalID = isset($_SESSION["ID_Sucursal"]) ? $_SESSION["ID_Sucursal"] : 1;
 
 try {
     // Verificar si la tabla Notificaciones existe
-    $checkTable = $conn->query("SHOW TABLES LIKE 'Notificaciones'");
+    $checkTable = $con->query("SHOW TABLES LIKE 'Notificaciones'");
     if ($checkTable->num_rows === 0) {
         echo json_encode([
             'error' => true,
@@ -62,7 +62,7 @@ try {
     }
 
     // Obtener estructura de la tabla para verificar campos
-    $tableInfo = $conn->query("DESCRIBE Notificaciones");
+    $tableInfo = $con->query("DESCRIBE Notificaciones");
     $fields = [];
     while ($field = $tableInfo->fetch_assoc()) {
         $fields[] = $field['Field'];
@@ -82,9 +82,9 @@ try {
                 ORDER BY Fecha DESC 
                 LIMIT 20";
 
-        $stmt = $conn->prepare($query);
+        $stmt = $con->prepare($query);
         if (!$stmt) {
-            throw new Exception("Error al preparar la consulta: " . $conn->error);
+            throw new Exception("Error al preparar la consulta: " . $con->error);
         }
         
         $stmt->bind_param("i", $sucursalID);
@@ -113,7 +113,7 @@ try {
         $queryTotal = "SELECT COUNT(*) as total FROM Notificaciones 
                     WHERE Leido = 0 
                     AND (SucursalID = ? OR SucursalID = 0)";
-        $stmtTotal = $conn->prepare($queryTotal);
+        $stmtTotal = $con->prepare($queryTotal);
         $stmtTotal->bind_param("i", $sucursalID);
         $stmtTotal->execute();
         $total = $stmtTotal->get_result()->fetch_assoc()['total'];

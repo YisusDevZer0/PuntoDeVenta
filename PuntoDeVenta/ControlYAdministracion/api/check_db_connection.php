@@ -11,26 +11,26 @@ try {
     include "../dbconect.php";
     
     // Verificar si la conexión existe
-    if (!isset($conn) || $conn === null) {
-        throw new Exception('No se encontró la variable de conexión $conn');
+    if (!isset($con) || $con === null) {
+        throw new Exception('No se encontró la variable de conexión $con');
     }
     
     // Verificar si la conexión está activa
-    if ($conn->ping()) {
+    if ($con->ping()) {
         // Verificar si la tabla Notificaciones existe
-        $checkTable = $conn->query("SHOW TABLES LIKE 'Notificaciones'");
+        $checkTable = $con->query("SHOW TABLES LIKE 'Notificaciones'");
         $tableExists = $checkTable->num_rows > 0;
         
         if ($tableExists) {
             // Obtener información de la tabla
-            $tableInfo = $conn->query("DESCRIBE Notificaciones");
+            $tableInfo = $con->query("DESCRIBE Notificaciones");
             $fields = [];
             while ($field = $tableInfo->fetch_assoc()) {
                 $fields[] = $field['Field'];
             }
             
             // Obtener total de registros
-            $totalQuery = $conn->query("SELECT COUNT(*) as total FROM Notificaciones");
+            $totalQuery = $con->query("SELECT COUNT(*) as total FROM Notificaciones");
             $totalRecords = $totalQuery->fetch_assoc()['total'];
             
             echo json_encode([

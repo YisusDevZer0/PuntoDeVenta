@@ -22,7 +22,7 @@ if ($id <= 0) {
 
 // Cambiar estado
 $query = "UPDATE Notificaciones SET Leido = ? WHERE ID_Notificacion = ?";
-$stmt = $conn->prepare($query);
+$stmt = $con->prepare($query);
 $stmt->bind_param("ii", $estado, $id);
 $result = $stmt->execute();
 

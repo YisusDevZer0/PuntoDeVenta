@@ -15,7 +15,7 @@ $sucursalID = isset($_SESSION["ID_Sucursal"]) ? $_SESSION["ID_Sucursal"] : 1;
 
 // Marcar todas como leídas para esta sucursal
 $query = "UPDATE Notificaciones SET Leido = 1 WHERE (SucursalID = ? OR SucursalID = 0) AND Leido = 0";
-$stmt = $conn->prepare($query);
+$stmt = $con->prepare($query);
 $stmt->bind_param("i", $sucursalID);
 $result = $stmt->execute();
 

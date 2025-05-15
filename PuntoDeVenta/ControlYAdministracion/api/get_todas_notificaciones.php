@@ -16,7 +16,7 @@ $query = "SELECT n.ID_Notificacion, n.Tipo, n.Mensaje, n.Fecha, n.SucursalID, n.
           ORDER BY n.Fecha DESC 
           LIMIT 100";
 
-$stmt = $conn->prepare($query);
+$stmt = $con->prepare($query);
 $stmt->bind_param("i", $sucursalID);
 $stmt->execute();
 $result = $stmt->get_result();
