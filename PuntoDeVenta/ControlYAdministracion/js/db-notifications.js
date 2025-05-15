@@ -1,5 +1,5 @@
 // Integración del sistema de notificaciones con la base de datos
-import notificationSystem from './notifications.js';
+// Nota: Usa el objeto notificationSystem disponible globalmente
 
 class DatabaseNotifications {
     constructor() {
@@ -110,21 +110,26 @@ class DatabaseNotifications {
         
         // Mostrar notificaciones nuevas
         newNotifications.forEach(notif => {
-            // Mostrar toast
-            notificationSystem.showToast(
-                notif.Mensaje,
-                this.getNotificationTypeConfig(notif.Tipo).toastType
-            );
-            
-            // Mostrar notificación nativa si tenemos permiso
-            if (notificationSystem.hasPermission) {
-                notificationSystem.showSystemNotification(
-                    this.getNotificationTitle(notif.Tipo),
-                    { 
-                        body: notif.Mensaje,
-                        tag: `notif-${notif.ID_Notificacion}`
-                    }
+            // Mostrar toast usando la instancia global
+            if (window.notificationSystem) {
+                // Mostrar toast
+                window.notificationSystem.showToast(
+                    notif.Mensaje,
+                    this.getNotificationTypeConfig(notif.Tipo).toastType
                 );
+                
+                // Mostrar notificación nativa si tenemos permiso
+                if (window.notificationSystem.hasPermission) {
+                    window.notificationSystem.showSystemNotification(
+                        this.getNotificationTitle(notif.Tipo),
+                        { 
+                            body: notif.Mensaje,
+                            tag: `notif-${notif.ID_Notificacion}`
+                        }
+                    );
+                }
+            } else {
+                console.warn('Sistema de notificaciones no disponible');
             }
         });
     }
@@ -262,12 +267,15 @@ class DatabaseNotifications {
             </div>
         `;
         
-        // Insertar antes del último elemento (generalmente el perfil de usuario)
-        navbar.insertBefore(notifElement, navbar.lastElementChild);
+        navbar.appendChild(notifElement);
     }
 }
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', () => {
-    window.dbNotifications = new DatabaseNotifications();
-}); 
+// Inicializar y exponer instancia global
+window.dbNotifications = new DatabaseNotifications();
+
+// Función para inicializar sistema completo de notificaciones
+window.inicializarSistemaNotificaciones = function() {
+    // Ya está inicializado a través de window.notificationSystem y window.dbNotifications
+    console.log('Sistema de notificaciones inicializado');
+}; 

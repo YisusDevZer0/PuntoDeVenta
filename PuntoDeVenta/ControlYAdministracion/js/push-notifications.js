@@ -15,7 +15,8 @@ function verificarSoportePush() {
 // Registrar el Service Worker
 async function registrarServiceWorker() {
   try {
-    swRegistration = await navigator.serviceWorker.register('./js/service-worker.js');
+    // La ruta debe ser relativa a la raíz del sitio
+    swRegistration = await navigator.serviceWorker.register('./service-worker.js');
     console.log('Service Worker registrado correctamente', swRegistration);
     return swRegistration;
   } catch (error) {

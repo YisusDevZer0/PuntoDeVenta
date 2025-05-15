@@ -4,22 +4,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Cargar dependencias
-require '../../vendor/autoload.php';
+// Incluir conexión a base de datos
 include "../dbconect.php";
 session_start();
 
-use Minishlink\WebPush\WebPush;
-use Minishlink\WebPush\Subscription;
-
 header('Content-Type: application/json');
-
-// Verificar permisos (opcional: implementar según tus necesidades)
-// if (!tienePermiso('enviar_notificaciones')) {
-//     http_response_code(403);
-//     echo json_encode(['success' => false, 'message' => 'No tiene permisos para enviar notificaciones']);
-//     exit;
-// }
 
 // Verificar método
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -46,7 +35,7 @@ $url = isset($data['url']) ? $data['url'] : '';
 $sucursalID = isset($data['sucursalID']) ? intval($data['sucursalID']) : 0;
 $usuarioID = isset($data['usuarioID']) ? intval($data['usuarioID']) : 0;
 
-// Cargar claves VAPID
+// Verificar existencia de claves VAPID
 $configFile = '../config/vapid_keys.json';
 if (!file_exists($configFile)) {
     echo json_encode([
@@ -56,18 +45,8 @@ if (!file_exists($configFile)) {
     exit;
 }
 
+// Cargar claves VAPID
 $vapidKeys = json_decode(file_get_contents($configFile), true);
-
-// Configurar WebPush
-$auth = [
-    'VAPID' => [
-        'subject' => $vapidKeys['subject'],
-        'publicKey' => $vapidKeys['publicKey'],
-        'privateKey' => $vapidKeys['privateKey'],
-    ],
-];
-
-$webPush = new WebPush($auth);
 
 // Construir consulta para obtener suscripciones relevantes
 $query = "SELECT Datos_Suscripcion FROM Suscripciones_Push WHERE Activo = 1";
@@ -111,51 +90,33 @@ $total = 0;
 $enviadas = 0;
 $fallidas = 0;
 
-// Enviar notificaciones a todas las suscripciones
+// Preparar las suscripciones para un futuro envío externo
+$suscripciones = [];
+
+// Obtener suscripciones
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $total++;
         $subscriptionData = json_decode($row['Datos_Suscripcion'], true);
-        
-        try {
-            $subscription = Subscription::create($subscriptionData);
-            $webPush->queueNotification($subscription, $payload);
-        } catch (Exception $e) {
-            $fallidas++;
-            continue; // Continuar con la siguiente suscripción si esta falla
-        }
-    }
-    
-    // Enviar notificaciones en cola
-    foreach ($webPush->flush() as $report) {
-        $endpoint = $report->getRequest()->getUri()->__toString();
-        
-        if ($report->isSuccess()) {
-            $enviadas++;
-        } else {
-            $fallidas++;
-            
-            // Marcar suscripciones expiradas/inválidas
-            if ($report->getReason() === 'expired' || $report->getReason() === 'invalid') {
-                $updateQuery = "UPDATE Suscripciones_Push SET Activo = 0 
-                              WHERE JSON_EXTRACT(Datos_Suscripcion, '$.endpoint') = ?";
-                $stmt = $con->prepare($updateQuery);
-                $stmt->bind_param("s", $endpoint);
-                $stmt->execute();
-            }
-        }
+        $suscripciones[] = $subscriptionData;
     }
 }
 
 // Devolver resultados
+// En esta versión simplificada, no podemos enviar directamente las notificaciones push
+// pero almacenamos los datos en la base de datos y tenemos las suscripciones listas
 echo json_encode([
     'success' => true,
     'notificacionID' => $notificacionID,
     'estadisticas' => [
         'total' => $total,
-        'enviadas' => $enviadas,
-        'fallidas' => $fallidas
+        'enviadas' => 0, // No se pueden enviar sin la librería
+        'fallidas' => 0
     ],
-    'message' => "Notificación enviada a {$enviadas} dispositivos"
+    'message' => "Notificación almacenada. Se requiere un servicio externo para enviar notificaciones push."
 ]);
+
+// Nota: Para implementar completamente el envío de notificaciones push sin la librería WebPush,
+// necesitarías implementar el protocolo de cifrado ECDH-ES con AES-GCM manualmente,
+// lo cual está fuera del alcance de esta implementación básica.
 ?> 

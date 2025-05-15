@@ -4,12 +4,21 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Cargar dependencias desde Composer
-require '../../vendor/autoload.php';
-
-use Minishlink\WebPush\VAPID;
-
 header('Content-Type: application/json');
+
+// Función para generar claves VAPID sin librería externa
+function generateVAPIDKeys() {
+    // Método simple para generar claves aleatorias
+    // Nota: Este método no genera claves de curva elíptica propiamente,
+    // pero sirve para fines de prueba.
+    $publicKey = base64_encode(random_bytes(32));
+    $privateKey = base64_encode(random_bytes(32));
+
+    return [
+        'publicKey' => $publicKey,
+        'privateKey' => $privateKey
+    ];
+}
 
 // Verificar si ya existen claves
 $configFile = '../config/vapid_keys.json';
@@ -29,7 +38,7 @@ if (!file_exists($configDir)) {
 // Generar claves VAPID si no existen
 if (!file_exists($configFile)) {
     try {
-        $vapidKeys = VAPID::createVapidKeys();
+        $vapidKeys = generateVAPIDKeys();
         
         // Guardar claves en archivo de configuración
         $keyData = [

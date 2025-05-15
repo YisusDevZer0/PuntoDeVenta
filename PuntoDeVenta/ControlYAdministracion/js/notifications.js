@@ -89,8 +89,8 @@ class NotificationSystem {
         }
 
         const defaultOptions = {
-            icon: '/PuntoDeVenta/ControlYAdministracion/img/logo.png',
-            badge: '/PuntoDeVenta/ControlYAdministracion/img/logo.png',
+            icon: 'img/notification-icon.png',
+            badge: 'img/notification-badge.png',
             vibrate: [200, 100, 200],
             requireInteraction: false
         };
@@ -123,6 +123,14 @@ class NotificationSystem {
     }
 }
 
-// Exportar una instancia única del sistema de notificaciones
-const notificationSystem = new NotificationSystem();
-export default notificationSystem; 
+// Crear una instancia global del sistema de notificaciones
+window.notificationSystem = new NotificationSystem();
+
+// Función global para mostrar notificaciones
+window.mostrarNotificacion = function(titulo, mensaje, tipo = 'info') {
+    window.notificationSystem.showToast(mensaje, tipo);
+    
+    if (window.notificationSystem.hasPermission) {
+        window.notificationSystem.showSystemNotification(titulo, { body: mensaje });
+    }
+}; 
