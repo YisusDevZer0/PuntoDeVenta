@@ -6,24 +6,45 @@ const SW_VERSION = '1.0.0';
 // Caché name
 const CACHE_NAME = 'punto-venta-cache-v1';
 
-// Assets a cachear
+// Assets a cachear - Actualizados con rutas relativas correctas
 const urlsToCache = [
-  '/',
-  '/index.php',
-  '/css/style.css',
-  '/js/script.js',
-  '/img/logo.png'
+  './',
+  './index.php',
+  './css/style.css',
+  './js/script.js',
+  './img/notification-icon.png',
+  './img/notification-badge.png'
 ];
 
 // Evento de instalación
 self.addEventListener('install', function(event) {
   console.log('Service Worker instalado versión:', SW_VERSION);
   self.skipWaiting(); // Asegurar que se active inmediatamente
+  
+  // Crear carpetas necesarias si no existen
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
         console.log('Cache abierto');
-        return cache.addAll(urlsToCache);
+        
+        // Usar fetch individual para cada recurso para evitar que falle todo el grupo
+        const cachePromises = urlsToCache.map(url => {
+          // Intentar cachear cada recurso individualmente
+          return fetch(url)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`Error al cachear ${url}: ${response.status} ${response.statusText}`);
+              }
+              return cache.put(url, response);
+            })
+            .catch(error => {
+              console.warn(`No se pudo cachear el recurso ${url}:`, error.message);
+              // Continuar con el siguiente recurso, no interrumpir el proceso
+              return Promise.resolve();
+            });
+        });
+        
+        return Promise.all(cachePromises);
       })
       .catch(function(err) {
         console.error('Error en caché', err);
@@ -34,7 +55,8 @@ self.addEventListener('install', function(event) {
 // Evento de activación
 self.addEventListener('activate', function(event) {
   console.log('Service Worker activado versión:', SW_VERSION);
-  return self.clients.claim(); // Tomar el control de los clientes inmediatamente
+  
+  // Limpiar cachés antiguos
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
@@ -44,6 +66,8 @@ self.addEventListener('activate', function(event) {
           return caches.delete(cacheName);
         })
       );
+    }).then(() => {
+      return self.clients.claim(); // Tomar el control de los clientes inmediatamente
     })
   );
 });
@@ -69,8 +93,8 @@ self.addEventListener('push', function(event) {
   // Configurar la notificación
   const options = {
     body: data.mensaje,
-    icon: '/img/notification-icon.png',
-    badge: '/img/notification-badge.png',
+    icon: './img/notification-icon.png',
+    badge: './img/notification-badge.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || self.registration.scope,
@@ -93,24 +117,24 @@ self.addEventListener('push', function(event) {
   };
 
   // Personalizar título según el tipo
-  let title = 'Punto de Venta';
+  let title = data.titulo || 'Punto de Venta';
   
   switch (data.tipo) {
     case 'inventario':
-      title = 'Alerta de Inventario';
-      options.icon = '/img/inventory-icon.png';
+      title = data.titulo || 'Alerta de Inventario';
+      options.icon = './img/inventory-icon.png';
       break;
     case 'caducidad':
-      title = 'Alerta de Caducidad';
-      options.icon = '/img/expiry-icon.png';
+      title = data.titulo || 'Alerta de Caducidad';
+      options.icon = './img/expiry-icon.png';
       break;
     case 'caja':
-      title = 'Alerta de Caja';
-      options.icon = '/img/cash-icon.png';
+      title = data.titulo || 'Alerta de Caja';
+      options.icon = './img/cash-icon.png';
       break;
     case 'venta':
-      title = 'Alerta de Venta';
-      options.icon = '/img/sales-icon.png';
+      title = data.titulo || 'Alerta de Venta';
+      options.icon = './img/sales-icon.png';
       break;
   }
 

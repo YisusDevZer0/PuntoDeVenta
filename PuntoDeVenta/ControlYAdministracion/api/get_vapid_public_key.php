@@ -1,60 +1,46 @@
 <?php
-// Habilitar visualización de errores para debugging
+// Habilitar visualización de errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-// Verificar si existen las claves VAPID
-$configFile = '../config/vapid_keys.json';
+// Ruta del archivo de claves VAPID
+$configFile = __DIR__ . '/../config/vapid_keys.json';
 
+// Verificar si el archivo existe
 if (!file_exists($configFile)) {
-    // Archivo no existe, intentamos ejecutar generar_vapid_keys.php
-    try {
-        // Cargar el script de generación de claves (esto generará las claves si no existen)
-        include 'generar_vapid_keys.php';
-        
-        // Si llegamos aquí, las claves deberían existir ahora, verificamos de nuevo
-        if (!file_exists($configFile)) {
-            throw new Exception('No se pudieron generar automáticamente las claves VAPID');
-        }
-    } catch (Exception $e) {
-        // Falló la generación automática
-        echo json_encode([
-            'success' => false,
-            'message' => 'Error generando claves VAPID: ' . $e->getMessage(),
-            'help' => 'Ejecute manualmente generar_vapid_keys.php'
-        ]);
-        exit;
-    }
+    echo json_encode([
+        'success' => false,
+        'message' => 'Las claves VAPID no existen. Por favor, ejecute primero el script de generación de claves.'
+    ]);
+    exit;
 }
 
-// Leer la clave pública
 try {
-    $keyData = json_decode(file_get_contents($configFile), true);
-    
-    if (!$keyData) {
-        throw new Exception('Error decodificando el archivo JSON de claves VAPID: ' . json_last_error_msg());
+    // Leer el archivo de claves
+    $jsonData = file_get_contents($configFile);
+    if (!$jsonData) {
+        throw new Exception('No se pudieron leer las claves VAPID');
     }
     
-    if (!isset($keyData['publicKey'])) {
-        throw new Exception('El archivo de configuración no contiene la clave pública');
+    // Decodificar el JSON
+    $keys = json_decode($jsonData, true);
+    if (!$keys || !isset($keys['publicKey'])) {
+        throw new Exception('Formato de claves inválido');
     }
     
-    // Verificar que la clave pública no esté vacía
-    if (empty($keyData['publicKey'])) {
-        throw new Exception('La clave pública está vacía');
-    }
-    
+    // Devolver la clave pública
     echo json_encode([
         'success' => true,
-        'publicKey' => $keyData['publicKey']
+        'publicKey' => $keys['publicKey'],
+        'format' => 'base64url'
     ]);
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'Error al leer la clave pública: ' . $e->getMessage()
+        'message' => 'Error al leer las claves VAPID: ' . $e->getMessage()
     ]);
 }
 ?> 

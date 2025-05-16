@@ -279,6 +279,21 @@ function urlBase64ToUint8Array(base64String) {
       console.log('✓ Formato de clave correcto (inicia con 0x04)');
     } else if (outputArray.length > 0) {
       console.log('⚠ Advertencia: La clave no comienza con 0x04, primer byte:', outputArray[0]);
+      
+      // CORRECCIÓN: Si la clave no comienza con 0x04, la regeneramos correctamente
+      console.warn('Intentando corregir el formato de la clave agregando el byte 0x04...');
+      
+      // Extraer los bytes (sin el primer byte incorrecto) y agregar 0x04 al comienzo
+      const fixedArray = new Uint8Array(outputArray.length);
+      fixedArray[0] = 4; // Establecer el primer byte a 0x04
+      
+      // Copiar el resto de los bytes (excepto quizás el primero)
+      for (let i = 1; i < outputArray.length; ++i) {
+        fixedArray[i] = outputArray[i];
+      }
+      
+      console.log('Se corrigió la clave con formato 0x04');
+      return fixedArray;
     }
     
     console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);

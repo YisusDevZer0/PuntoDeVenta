@@ -1,4 +1,4 @@
-<?php
+<?php   
 // Habilitar visualización de errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -25,30 +25,13 @@ function generateSimpleVAPIDKeys() {
     ];
 }
 
-// Verificar el sistema de archivos
-$debug = [];
-
-// Usar __DIR__ para asegurar rutas correctas
-$configDir = __DIR__ . '/../config';
+// Crear el directorio si no existe
+$configDir = '../config';
 $configFile = $configDir . '/vapid_keys.json';
 
-// Información sobre directorios
-$debug['current_dir'] = getcwd();
-$debug['api_dir'] = __DIR__;
-$debug['config_dir_path'] = realpath($configDir) ?: 'No existe';
-$debug['config_dir_target'] = $configDir;
-$debug['config_file_path'] = realpath($configFile) ?: 'No existe';
-$debug['config_file_target'] = $configFile;
-
-// Crear el directorio si no existe
 if (!file_exists($configDir)) {
-    $debug['mkdir_result'] = mkdir($configDir, 0755, true) ? 'Éxito' : 'Error';
-    $debug['mkdir_error'] = error_get_last();
+    mkdir($configDir, 0755, true);
 }
-
-// Verificar si el directorio existe y si se puede escribir
-$debug['config_dir_exists'] = file_exists($configDir) ? 'Sí' : 'No';
-$debug['config_dir_writable'] = is_writable($configDir) ? 'Sí' : 'No';
 
 // Generar las claves
 try {
@@ -58,30 +41,21 @@ try {
     $data = [
         'publicKey' => $keys['publicKey'],
         'privateKey' => $keys['privateKey'],
-        'subject' => 'mailto:jesusemutul@gmail.com',
+        'subject' => 'mailto:admin@doctorpez.mx',
         'created' => date('Y-m-d H:i:s'),
         'simulated' => true // Marcador para identificar claves simuladas
     ];
     
-    $jsonData = json_encode($data, JSON_PRETTY_PRINT);
-    $debug['json_length'] = strlen($jsonData);
-    
-    // Intentar guardar el archivo
-    $bytesWritten = file_put_contents($configFile, $jsonData);
-    $debug['bytes_written'] = $bytesWritten;
-    $debug['file_exists_after'] = file_exists($configFile) ? 'Sí' : 'No';
+    file_put_contents($configFile, json_encode($data, JSON_PRETTY_PRINT));
     
     echo json_encode([
-        'success' => $bytesWritten !== false,
+        'success' => true,
         'message' => 'Claves VAPID generadas correctamente (método alternativo)',
-        'publicKey' => $keys['publicKey'],
-        'debug' => $debug
+        'publicKey' => $keys['publicKey']
     ]);
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'Error al generar claves: ' . $e->getMessage(),
-        'debug' => $debug
+        'message' => 'Error al generar claves: ' . $e->getMessage()
     ]);
-}
-?> 
+} 

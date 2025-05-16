@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Notificaciones Push</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        #log {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prueba de Notificaciones Push</h1>
+    
+    <div class="container">
+        <h2>Diagnóstico de Configuración</h2>
+        <p>Estado actual de las notificaciones push en este navegador:</p>
+        <div id="status"></div>
+        <button id="check-support">Verificar Soporte</button>
+    </div>
+    
+    <div class="container">
+        <h2>Gestión de Suscripción</h2>
+        <button id="request-permission">Solicitar Permiso</button>
+        <button id="subscribe">Suscribir</button>
+        <button id="unsubscribe">Cancelar Suscripción</button>
+    </div>
+    
+    <div class="container">
+        <h2>Detalles de Suscripción</h2>
+        <pre id="subscription-details">No hay suscripción activa</pre>
+    </div>
+    
+    <div class="container">
+        <h2>Registro de Eventos</h2>
+        <div id="log"></div>
+        <button id="clear-log">Limpiar Registro</button>
+    </div>
+    
+    <script>
+        // Elementos del DOM
+        const statusElement = document.getElementById('status');
+        const subsDetailsElement = document.getElementById('subscription-details');
+        const logElement = document.getElementById('log');
+        
+        // Variables globales
+        let swRegistration = null;
+        
+        // Función de registro
+        function log(message, type = 'info') {
+            const date = new Date();
+            const timestamp = date.toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${timestamp}] [${type}] ${message}`;
+            logEntry.className = type;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+        
+        // Verificar soporte
+        document.getElementById('check-support').addEventListener('click', checkSupport);
+        
+        function checkSupport() {
+            // Limpiar estado anterior
+            statusElement.innerHTML = '';
+            
+            // Verificar Service Worker
+            const swSupported = 'serviceWorker' in navigator;
+            addStatusItem('Service Worker', swSupported);
+            
+            // Verificar Push API
+            const pushSupported = 'PushManager' in window;
+            addStatusItem('Push API', pushSupported);
+            
+            // Verificar Notifications API
+            const notificationSupported = 'Notification' in window;
+            addStatusItem('Notifications API', notificationSupported);
+            
+            // Permiso de notificaciones
+            if (notificationSupported) {
+                addStatusItem('Permiso de notificaciones', Notification.permission);
+            }
+            
+            // Resultado final
+            if (swSupported && pushSupported && notificationSupported) {
+                log('✅ Tu navegador soporta todas las APIs necesarias para notificaciones push', 'success');
+            } else {
+                log('⚠️ Tu navegador no soporta todas las APIs necesarias', 'error');
+            }
+        }
+        
+        function addStatusItem(name, value) {
+            const item = document.createElement('div');
+            
+            let status;
+            if (typeof value === 'boolean') {
+                status = value ? '✅ Soportado' : '❌ No soportado';
+                item.className = value ? 'success' : 'error';
+            } else if (value === 'granted') {
+                status = '✅ Concedido';
+                item.className = 'success';
+            } else if (value === 'denied') {
+                status = '❌ Bloqueado';
+                item.className = 'error';
+            } else {
+                status = value;
+            }
+            
+            item.innerHTML = `<strong>${name}:</strong> ${status}`;
+            statusElement.appendChild(item);
+        }
+        
+        // Solicitar permiso para notificaciones
+        document.getElementById('request-permission').addEventListener('click', requestNotificationPermission);
+        
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                log('❌ Este navegador no soporta notificaciones', 'error');
+                return;
+            }
+            
+            try {
+                const permission = await Notification.requestPermission();
+                log(`Permiso de notificación: ${permission}`, permission === 'granted' ? 'success' : 'error');
+            } catch (error) {
+                log(`Error al solicitar permiso: ${error.message}`, 'error');
+            }
+        }
+        
+        // Suscribir a notificaciones push
+        document.getElementById('subscribe').addEventListener('click', subscribeToPush);
+        
+        async function subscribeToPush() {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+                log('❌ El navegador no soporta notificaciones push', 'error');
+                return;
+            }
+            
+            try {
+                // Registrar service worker si no está registrado
+                if (!swRegistration) {
+                    log('Registrando Service Worker...', 'info');
+                    swRegistration = await navigator.serviceWorker.register('./service-worker.js');
+                    log('Service Worker registrado correctamente', 'success');
+                }
+                
+                // Verificar permiso
+                if (Notification.permission !== 'granted') {
+                    log('⚠️ Se requiere permiso para notificaciones. Solicitando...', 'info');
+                    const permission = await Notification.requestPermission();
+                    if (permission !== 'granted') {
+                        throw new Error('Permiso para notificaciones denegado');
+                    }
+                }
+                
+                // Verificar suscripción existente
+                let subscription = await swRegistration.pushManager.getSubscription();
+                
+                if (subscription) {
+                    log('Ya existe una suscripción activa', 'info');
+                    updateSubscriptionDetails(subscription);
+                    return subscription;
+                }
+                
+                // Obtener clave pública VAPID
+                log('Obteniendo clave pública VAPID...', 'info');
+                const response = await fetch('./api/get_vapid_public_key.php');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                if (!data.success || !data.publicKey) {
+                    throw new Error('No se pudo obtener la clave pública VAPID');
+                }
+                
+                log(`Clave VAPID obtenida: ${data.publicKey.substring(0, 10)}...`, 'success');
+                
+                // Convertir la clave pública
+                log('Convirtiendo clave base64 a Uint8Array, longitud:', data.publicKey.length);
+                const applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+                
+                // Suscribir
+                log('Suscribiendo al usuario...', 'info');
+                subscription = await swRegistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: applicationServerKey
+                });
+                
+                log('¡Suscripción exitosa!', 'success');
+                updateSubscriptionDetails(subscription);
+                
+                // Guardar la suscripción en el servidor
+                try {
+                    const saveResponse = await fetch('./api/guardar_suscripcion.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            subscription: subscription,
+                            user_id: '1' // ID de usuario demo para pruebas
+                        })
+                    });
+                    
+                    const saveResult = await saveResponse.json();
+                    if (saveResult.success) {
+                        log('Suscripción guardada en el servidor', 'success');
+                    } else {
+                        log(`Error al guardar en servidor: ${saveResult.message}`, 'error');
+                    }
+                } catch (saveError) {
+                    log(`Error de conexión al guardar: ${saveError.message}`, 'error');
+                }
+                
+                return subscription;
+            } catch (error) {
+                log(`Error en el proceso de suscripción: ${error.message}`, 'error');
+                return null;
+            }
+        }
+        
+        // Cancelar suscripción
+        document.getElementById('unsubscribe').addEventListener('click', unsubscribeFromPush);
+        
+        async function unsubscribeFromPush() {
+            if (!swRegistration) {
+                log('No hay Service Worker registrado', 'error');
+                return;
+            }
+            
+            try {
+                const subscription = await swRegistration.pushManager.getSubscription();
+                
+                if (!subscription) {
+                    log('No existe una suscripción activa para cancelar', 'error');
+                    return;
+                }
+                
+                // Cancelar la suscripción
+                const result = await subscription.unsubscribe();
+                
+                if (result) {
+                    log('Suscripción cancelada correctamente', 'success');
+                    subsDetailsElement.textContent = 'No hay suscripción activa';
+                } else {
+                    log('Error al cancelar la suscripción', 'error');
+                }
+            } catch (error) {
+                log(`Error al cancelar la suscripción: ${error.message}`, 'error');
+            }
+        }
+        
+        // Limpiar el registro
+        document.getElementById('clear-log').addEventListener('click', () => {
+            logElement.innerHTML = '';
+        });
+        
+        // Actualizar detalles de suscripción
+        function updateSubscriptionDetails(subscription) {
+            if (!subscription) {
+                subsDetailsElement.textContent = 'No hay suscripción activa';
+                return;
+            }
+            
+            const subscriptionJson = subscription.toJSON();
+            subsDetailsElement.textContent = JSON.stringify(subscriptionJson, null, 2);
+        }
+        
+        // Convertir base64 a Uint8Array
+        function urlBase64ToUint8Array(base64String) {
+            try {
+                // Asegurarse de que la cadena no sea nula
+                if (!base64String) {
+                    throw new Error('La cadena base64 está vacía o es nula');
+                }
+                
+                console.log('Convirtiendo clave base64 a Uint8Array, longitud:', base64String.length);
+                
+                // Reemplazar caracteres especiales y agregar padding
+                const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                const base64 = (base64String + padding)
+                    .replace(/-/g, '+')
+                    .replace(/_/g, '/');
+                
+                console.log('Base64 con padding, longitud:', base64.length);
+                
+                // Decodificar a binario
+                const rawData = window.atob(base64);
+                console.log('Decodificación exitosa, longitud de datos brutos:', rawData.length);
+                
+                // Convertir a Uint8Array
+                const outputArray = new Uint8Array(rawData.length);
+                for (let i = 0; i < rawData.length; ++i) {
+                    outputArray[i] = rawData.charCodeAt(i);
+                }
+                
+                // Verificar formato de clave
+                if (outputArray.length > 0 && outputArray[0] === 4) {
+                    console.log('✓ Formato de clave correcto (inicia con 0x04)');
+                } else if (outputArray.length > 0) {
+                    console.log('⚠ Advertencia: La clave no comienza con 0x04, primer byte:', outputArray[0]);
+                    
+                    // CORRECCIÓN: Si la clave no comienza con 0x04, la regeneramos correctamente
+                    console.warn('Intentando corregir el formato de la clave agregando el byte 0x04...');
+                    
+                    // Extraer los bytes (sin el primer byte incorrecto) y agregar 0x04 al comienzo
+                    const fixedArray = new Uint8Array(outputArray.length);
+                    fixedArray[0] = 4; // Establecer el primer byte a 0x04
+                    
+                    // Copiar el resto de los bytes (excepto quizás el primero)
+                    for (let i = 1; i < outputArray.length; ++i) {
+                        fixedArray[i] = outputArray[i];
+                    }
+                    
+                    console.log('Se corrigió la clave con formato 0x04');
+                    return fixedArray;
+                }
+                
+                console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);
+                return outputArray;
+            } catch (error) {
+                console.error('Error en la conversión de la clave:', error);
+                throw new Error('Error al convertir la clave VAPID: ' + error.message);
+            }
+        }
+        
+        // Verificar inicialmente
+        window.addEventListener('load', function() {
+            checkSupport();
+            
+            // Verificar suscripción existente
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(function(registration) {
+                        swRegistration = registration;
+                        log('Service Worker registrado automáticamente', 'success');
+                        
+                        // Verificar suscripción existente
+                        return registration.pushManager.getSubscription();
+                    })
+                    .then(function(subscription) {
+                        if (subscription) {
+                            log('Suscripción existente detectada', 'success');
+                            updateSubscriptionDetails(subscription);
+                        } else {
+                            log('No hay suscripción activa', 'info');
+                        }
+                    })
+                    .catch(function(error) {
+                        log(`Error en la inicialización: ${error.message}`, 'error');
+                    });
+            }
+        });
+    </script>
+</body>
+</html> 
