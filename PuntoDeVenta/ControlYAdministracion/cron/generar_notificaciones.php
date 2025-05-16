@@ -55,16 +55,16 @@ try {
     }
 
     // Ejecutar el procedimiento almacenado
-    $sql = "CALL generar_notificaciones_automaticas()";
+    $sql = "CALL GenerarNotificaciones()";
     if ($conn->query($sql)) {
         // Obtener estadísticas de las notificaciones generadas
         $sql_stats = "SELECT 
             COUNT(*) as total_notificaciones,
-            SUM(CASE WHEN tipo = 'error' THEN 1 ELSE 0 END) as errores,
-            SUM(CASE WHEN tipo = 'warning' THEN 1 ELSE 0 END) as advertencias,
-            SUM(CASE WHEN tipo = 'info' THEN 1 ELSE 0 END) as informativas
-            FROM notificaciones 
-            WHERE fecha_creacion >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+            SUM(CASE WHEN Tipo = 'error' THEN 1 ELSE 0 END) as errores,
+            SUM(CASE WHEN Tipo = 'warning' THEN 1 ELSE 0 END) as advertencias,
+            SUM(CASE WHEN Tipo = 'inventario' THEN 1 ELSE 0 END) as informativas
+            FROM Notificaciones 
+            WHERE Fecha >= DATE_SUB(NOW(), INTERVAL 1 HOUR)";
         
         $result = $conn->query($sql_stats);
         if ($result && $row = $result->fetch_assoc()) {
