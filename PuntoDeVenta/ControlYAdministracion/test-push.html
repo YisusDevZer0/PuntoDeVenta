@@ -78,6 +78,7 @@
         <p>Estado actual de las notificaciones push en este navegador:</p>
         <div id="status"></div>
         <button id="check-support">Verificar Soporte</button>
+        <button id="check-push-service">Verificar Servicio Push</button>
     </div>
     
     <div class="container">
@@ -85,6 +86,7 @@
         <button id="request-permission">Solicitar Permiso</button>
         <button id="subscribe">Suscribir</button>
         <button id="unsubscribe">Cancelar Suscripción</button>
+        <button id="send-test">Enviar Notificación Prueba</button>
     </div>
     
     <div class="container">
@@ -337,7 +339,7 @@
                     throw new Error('La cadena base64 está vacía o es nula');
                 }
                 
-                console.log('Convirtiendo clave base64 a Uint8Array, longitud:', base64String.length);
+                log('Convirtiendo clave base64 a Uint8Array, longitud: ' + base64String.length, 'info');
                 
                 // Reemplazar caracteres especiales y agregar padding
                 const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -345,11 +347,11 @@
                     .replace(/-/g, '+')
                     .replace(/_/g, '/');
                 
-                console.log('Base64 con padding, longitud:', base64.length);
+                log('Base64 con padding, longitud: ' + base64.length, 'info');
                 
                 // Decodificar a binario
                 const rawData = window.atob(base64);
-                console.log('Decodificación exitosa, longitud de datos brutos:', rawData.length);
+                log('Decodificación exitosa, longitud de datos brutos: ' + rawData.length, 'info');
                 
                 // Convertir a Uint8Array
                 const outputArray = new Uint8Array(rawData.length);
@@ -359,30 +361,33 @@
                 
                 // Verificar formato de clave
                 if (outputArray.length > 0 && outputArray[0] === 4) {
-                    console.log('✓ Formato de clave correcto (inicia con 0x04)');
+                    log('✓ Formato de clave correcto (inicia con 0x04)', 'success');
+                    
+                    // Verificar la longitud esperada (65 bytes para claves P-256)
+                    if (outputArray.length !== 65) {
+                        log(`⚠ Advertencia: La longitud de la clave (${outputArray.length}) no es la estándar (65)`, 'error');
+                    }
+                    
                 } else if (outputArray.length > 0) {
-                    console.log('⚠ Advertencia: La clave no comienza con 0x04, primer byte:', outputArray[0]);
+                    log(`⚠ Advertencia: La clave no comienza con 0x04, primer byte: ${outputArray[0]}`, 'error');
                     
-                    // CORRECCIÓN: Si la clave no comienza con 0x04, la regeneramos correctamente
-                    console.warn('Intentando corregir el formato de la clave agregando el byte 0x04...');
-                    
-                    // Extraer los bytes (sin el primer byte incorrecto) y agregar 0x04 al comienzo
+                    // CORRECCIÓN: Crear una nueva clave con el formato correcto
                     const fixedArray = new Uint8Array(outputArray.length);
                     fixedArray[0] = 4; // Establecer el primer byte a 0x04
                     
-                    // Copiar el resto de los bytes (excepto quizás el primero)
+                    // Copiar el resto de los bytes
                     for (let i = 1; i < outputArray.length; ++i) {
                         fixedArray[i] = outputArray[i];
                     }
                     
-                    console.log('Se corrigió la clave con formato 0x04');
+                    log('Se corrigió el formato de la clave agregando el byte 0x04', 'success');
                     return fixedArray;
                 }
                 
-                console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);
+                log('Array Uint8 creado correctamente, longitud: ' + outputArray.length, 'success');
                 return outputArray;
             } catch (error) {
-                console.error('Error en la conversión de la clave:', error);
+                log('Error en la conversión de la clave: ' + error.message, 'error');
                 throw new Error('Error al convertir la clave VAPID: ' + error.message);
             }
         }
@@ -414,6 +419,100 @@
                     });
             }
         });
+        
+        // Verificar servicio push
+        document.getElementById('check-push-service').addEventListener('click', checkPushService);
+        
+        async function checkPushService() {
+            log('Verificando conectividad con servicios push...', 'info');
+            
+            try {
+                const response = await fetch('./api/verificar_push_service.php');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                log('Información del sistema:', 'info');
+                for (const [key, value] of Object.entries(data.info_sistema)) {
+                    log(`- ${key}: ${value}`, 'info');
+                }
+                
+                log('Resultados de conectividad:', 'info');
+                let todoAccesible = true;
+                
+                for (const [servicio, resultado] of Object.entries(data.resultados_push)) {
+                    const estado = resultado.accesible ? '✅ Accesible' : '❌ No accesible';
+                    const tiempo = resultado.tiempo || 'N/A';
+                    const error = resultado.error ? ` (Error: ${resultado.error})` : '';
+                    
+                    log(`- ${servicio}: ${estado} - Tiempo: ${tiempo}${error}`, 
+                        resultado.accesible ? 'success' : 'error');
+                    
+                    if (!resultado.accesible) {
+                        todoAccesible = false;
+                    }
+                }
+                
+                if (todoAccesible) {
+                    log('✅ Todos los servicios push están accesibles desde el servidor', 'success');
+                } else {
+                    log('⚠️ Algunos servicios push no están accesibles, esto puede causar problemas', 'error');
+                    
+                    // Mostrar recomendaciones
+                    log('Recomendaciones:', 'info');
+                    data.recomendaciones.forEach(rec => log(`- ${rec}`, 'info'));
+                }
+            } catch (error) {
+                log(`Error al verificar servicios push: ${error.message}`, 'error');
+            }
+        }
+
+        // Enviar notificación de prueba
+        document.getElementById('send-test').addEventListener('click', sendTestNotification);
+        
+        async function sendTestNotification() {
+            log('Enviando notificación de prueba...', 'info');
+            
+            try {
+                const subscription = await swRegistration?.pushManager.getSubscription();
+                
+                if (!subscription) {
+                    log('No hay una suscripción activa. Suscríbase primero.', 'error');
+                    return;
+                }
+                
+                const response = await fetch('./api/enviar_notificacion_prueba.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: '1' // ID de usuario de prueba
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Solicitud de notificación enviada correctamente', 'success');
+                    log(`Detalles: ${data.message}`, 'info');
+                    
+                    if (data.nota) {
+                        log(`Nota: ${data.nota}`, 'info');
+                    }
+                } else {
+                    log(`❌ Error al enviar notificación: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`Error al enviar notificación de prueba: ${error.message}`, 'error');
+            }
+        }
     </script>
 </body>
 </html> 
