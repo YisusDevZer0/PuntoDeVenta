@@ -70,7 +70,7 @@ function mostrarMensajeNoSoportado(mensaje) {
 async function registrarServiceWorker() {
   try {
     // Usar una ruta relativa que sea más probable que funcione en diferentes configuraciones de servidor
-    const swPath = './service-worker.js'; 
+    const swPath = '../service-worker.js';
     console.log('Intentando registrar Service Worker en:', swPath);
     
     swRegistration = await navigator.serviceWorker.register(swPath);
@@ -130,7 +130,7 @@ async function suscribirUsuario() {
     
     // Obtener la clave pública desde el servidor
     console.log('Obteniendo clave pública desde el servidor...');
-    const response = await fetch('./api/get_vapid_public_key.php');
+    const response = await fetch('../api/get_vapid_public_key.php');
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
     }
@@ -146,6 +146,9 @@ async function suscribirUsuario() {
     
     // Convertir la clave pública a formato Uint8Array
     try {
+      // Ejecutar diagnóstico en la clave antes de convertir
+      console.log('Longitud de la clave:', data.publicKey.length);
+      
       const applicationServerKey = urlBase64ToUint8Array(data.publicKey);
       console.log('Clave convertida con éxito a Uint8Array');
       
@@ -217,7 +220,7 @@ function mostrarMensajeExito(mensaje) {
 // Guardar la suscripción en el servidor
 async function guardarSuscripcion(subscription) {
   try {
-    const response = await fetch('./api/guardar_suscripcion.php', {
+    const response = await fetch('../api/guardar_suscripcion.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -243,7 +246,7 @@ async function guardarSuscripcion(subscription) {
   }
 }
 
-// Utilidad para convertir una clave base64 a Uint8Array
+// Utilidad para convertir una clave base64 a Uint8Array - VERSIÓN MEJORADA
 function urlBase64ToUint8Array(base64String) {
   try {
     // Asegurarse de que la cadena no sea nula
@@ -253,6 +256,7 @@ function urlBase64ToUint8Array(base64String) {
     
     console.log('Convirtiendo clave base64 a Uint8Array, longitud:', base64String.length);
     
+    // Método 1: Usar la implementación original mejorada
     // Reemplazar caracteres especiales y agregar padding
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding)
@@ -268,7 +272,38 @@ function urlBase64ToUint8Array(base64String) {
       console.log('Decodificación atob exitosa, longitud:', rawData.length);
     } catch (e) {
       console.error('Error en atob:', e);
-      throw new Error('Error al decodificar base64: ' + e.message);
+      
+      // Método alternativo: Si falla la conversión estándar, intentar una alternativa
+      console.log('Intentando método alternativo de conversión...');
+      
+      // Eliminar posibles encabezados y espacios
+      let cleanKey = base64String.trim();
+      
+      // Asegurarse de que sea una cadena de longitud correcta
+      if (cleanKey.length < 20) {
+        throw new Error('La clave es demasiado corta para ser válida');
+      }
+      
+      // Intentar solo con los primeros N caracteres si es muy larga
+      if (cleanKey.length > 100) {
+        cleanKey = cleanKey.substring(0, 100);
+        console.log('Clave recortada a 100 caracteres');
+      }
+      
+      // Agregar padding si falta
+      while (cleanKey.length % 4 !== 0) {
+        cleanKey += '=';
+      }
+      
+      // Reemplazar caracteres de nuevo
+      cleanKey = cleanKey.replace(/-/g, '+').replace(/_/g, '/');
+      
+      try {
+        rawData = window.atob(cleanKey);
+        console.log('Decodificación alternativa exitosa');
+      } catch (e2) {
+        throw new Error('Error en ambos métodos de decodificación: ' + e2.message);
+      }
     }
     
     // Convertir a Uint8Array
@@ -278,10 +313,17 @@ function urlBase64ToUint8Array(base64String) {
     }
     
     console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);
+    
+    // Verificar que la longitud del array sea apropiada
+    if (outputArray.length < 8) {
+      console.warn('La clave convertida es demasiado corta, podría no ser válida');
+    }
+    
     return outputArray;
   } catch (error) {
     console.error('Error en urlBase64ToUint8Array:', error);
-    throw error;
+    // Devolver un error más descriptivo
+    throw new Error('Error al convertir clave VAPID: ' + error.message);
   }
 }
 
