@@ -6,17 +6,36 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-// Función para generar claves VAPID sin librería externa
+// Función para generar claves VAPID usando OpenSSL (recomendado)
 function generateVAPIDKeys() {
-    // Método simple para generar claves aleatorias
-    // Nota: Este método no genera claves de curva elíptica propiamente,
-    // pero sirve para fines de prueba.
-    $publicKey = base64_encode(random_bytes(32));
-    $privateKey = base64_encode(random_bytes(32));
-
+    // Generar clave privada ECC usando OpenSSL
+    $privateKey = openssl_pkey_new([
+        'curve_name' => 'prime256v1',
+        'private_key_type' => OPENSSL_KEYTYPE_EC,
+    ]);
+    
+    if (!$privateKey) {
+        throw new Exception('Error al generar clave privada: ' . openssl_error_string());
+    }
+    
+    // Extraer detalles de la clave
+    $keyDetails = openssl_pkey_get_details($privateKey);
+    $privateKeyPEM = $keyDetails['key'];
+    
+    // Extraer la clave pública
+    $publicKey = $keyDetails['ec']['x'] . $keyDetails['ec']['y'];
+    
+    // Convertir a formato URL-safe base64 según especificación VAPID
+    $publicKeyBase64 = base64_encode($publicKey);
+    $privateKeyBase64 = base64_encode($privateKeyPEM);
+    
+    // Convertir a URL-safe base64
+    $publicKeyUrlSafe = str_replace(['+', '/'], ['-', '_'], $publicKeyBase64);
+    $privateKeyUrlSafe = str_replace(['+', '/'], ['-', '_'], $privateKeyBase64);
+    
     return [
-        'publicKey' => $publicKey,
-        'privateKey' => $privateKey
+        'publicKey' => $publicKeyUrlSafe,
+        'privateKey' => $privateKeyUrlSafe
     ];
 }
 
@@ -38,13 +57,17 @@ if (!file_exists($configDir)) {
 // Generar claves VAPID si no existen
 if (!file_exists($configFile)) {
     try {
+        if (!function_exists('openssl_pkey_new')) {
+            throw new Exception('OpenSSL no está instalado o habilitado en este servidor');
+        }
+        
         $vapidKeys = generateVAPIDKeys();
         
         // Guardar claves en archivo de configuración
         $keyData = [
             'publicKey' => $vapidKeys['publicKey'],
             'privateKey' => $vapidKeys['privateKey'],
-            'subject' => 'mailto:admin@puntodeventa.com' // Cambiar por tu email
+            'subject' => 'mailto:admin@doctorpez.mx' // Cambiar por tu email
         ];
         
         file_put_contents($configFile, json_encode($keyData, JSON_PRETTY_PRINT));

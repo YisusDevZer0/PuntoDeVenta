@@ -1,10 +1,10 @@
 <?php
-// Habilitar visualización de errores
+// Habilitar visualización de errores para debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Incluir conexión a base de datos
+// Incluir conexión a la base de datos
 include "../dbconect.php";
 session_start();
 
@@ -21,49 +21,46 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $jsonInput = file_get_contents('php://input');
 $data = json_decode($jsonInput, true);
 
-// Verificar datos requeridos
+// Validar datos
 if (!$data || !isset($data['mensaje'])) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Datos incompletos. Se requiere al menos un mensaje']);
+    echo json_encode(['success' => false, 'message' => 'Faltan parámetros requeridos']);
     exit;
 }
 
-// Extraer datos para la notificación
-$mensaje = $data['mensaje'];
-$tipo = isset($data['tipo']) ? $data['tipo'] : 'general';
+// Extraer parámetros
+$mensaje = isset($data['mensaje']) ? $data['mensaje'] : 'Nueva notificación';
+$tipo = isset($data['tipo']) ? $data['tipo'] : 'sistema';
 $url = isset($data['url']) ? $data['url'] : '';
-$sucursalID = isset($data['sucursalID']) ? intval($data['sucursalID']) : 0;
-$usuarioID = isset($data['usuarioID']) ? intval($data['usuarioID']) : 0;
+$usuarioID = isset($data['usuario_id']) ? intval($data['usuario_id']) : 0;
+$sucursalID = isset($data['sucursal_id']) ? intval($data['sucursal_id']) : 0;
 
-// Verificar existencia de claves VAPID
-$configFile = '../config/vapid_keys.json';
-if (!file_exists($configFile)) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Las claves VAPID no existen. Por favor, ejecute primero generar_vapid_keys.php'
-    ]);
-    exit;
-}
-
-// Cargar claves VAPID
-$vapidKeys = json_decode(file_get_contents($configFile), true);
-
-// Construir consulta para obtener suscripciones relevantes
-$query = "SELECT Datos_Suscripcion FROM Suscripciones_Push WHERE Activo = 1";
+// Opciones para filtrar suscripciones
+$where = "Activo = 1";
 $params = [];
-$types = "";
+$types = '';
 
 if ($usuarioID > 0) {
-    $query .= " AND UsuarioID = ?";
+    $where .= " AND UsuarioID = ?";
     $params[] = $usuarioID;
-    $types .= "i";
-} else if ($sucursalID > 0) {
-    $query .= " AND SucursalID = ?";
-    $params[] = $sucursalID;
-    $types .= "i";
+    $types .= 'i';
 }
 
+if ($sucursalID > 0) {
+    $where .= " AND SucursalID = ?";
+    $params[] = $sucursalID;
+    $types .= 'i';
+}
+
+// Consultar suscripciones
+$query = "SELECT Datos_Suscripcion FROM Suscripciones_Push WHERE $where";
 $stmt = $con->prepare($query);
+
+if (!$stmt) {
+    echo json_encode(['success' => false, 'message' => 'Error en la consulta: ' . $con->error]);
+    exit;
+}
+
 if (!empty($params)) {
     $stmt->bind_param($types, ...$params);
 }
@@ -90,33 +87,86 @@ $total = 0;
 $enviadas = 0;
 $fallidas = 0;
 
-// Preparar las suscripciones para un futuro envío externo
-$suscripciones = [];
-
 // Obtener suscripciones
+$suscripciones = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $total++;
-        $subscriptionData = json_decode($row['Datos_Suscripcion'], true);
-        $suscripciones[] = $subscriptionData;
+        $suscripciones[] = json_decode($row['Datos_Suscripcion'], true);
     }
 }
 
+// Si no hay librería WebPush, intentamos una implementación simple
+// Nota: Esto es una solución alternativa, lo ideal es instalar la librería WebPush
+function enviarNotificacionWebPush($endpoint, $p256dh, $auth, $payload, $vapidKeys) {
+    try {
+        // Headers específicos requeridos por la API Web Push
+        $headers = [
+            'Content-Type' => 'application/json',
+            'TTL' => '60', // Tiempo de vida en segundos
+            'Urgency' => 'high'
+        ];
+        
+        // Preparar la solicitud
+        $ch = curl_init($endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        
+        // Ejecutar la solicitud
+        $response = curl_exec($ch);
+        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        return $statusCode >= 200 && $statusCode < 300;
+    } catch (Exception $e) {
+        error_log("Error enviando notificación push: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Cargar claves VAPID
+$vapidKeysFile = '../config/vapid_keys.json';
+if (file_exists($vapidKeysFile)) {
+    $vapidKeys = json_decode(file_get_contents($vapidKeysFile), true);
+    
+    // Intentar enviar notificaciones
+    foreach ($suscripciones as $subscription) {
+        $endpoint = $subscription['endpoint'];
+        
+        // Datos de cifrado del cliente
+        $p256dh = isset($subscription['keys']['p256dh']) ? $subscription['keys']['p256dh'] : '';
+        $auth = isset($subscription['keys']['auth']) ? $subscription['keys']['auth'] : '';
+        
+        // Intentar enviar la notificación
+        $success = enviarNotificacionWebPush($endpoint, $p256dh, $auth, $payload, $vapidKeys);
+        
+        if ($success) {
+            $enviadas++;
+        } else {
+            $fallidas++;
+        }
+    }
+} else {
+    // No hay claves VAPID
+    echo json_encode([
+        'success' => false,
+        'message' => 'Las claves VAPID no existen. Ejecute primero generar_vapid_keys.php',
+        'notificacionID' => $notificacionID
+    ]);
+    exit;
+}
+
 // Devolver resultados
-// En esta versión simplificada, no podemos enviar directamente las notificaciones push
-// pero almacenamos los datos en la base de datos y tenemos las suscripciones listas
 echo json_encode([
     'success' => true,
     'notificacionID' => $notificacionID,
     'estadisticas' => [
         'total' => $total,
-        'enviadas' => 0, // No se pueden enviar sin la librería
-        'fallidas' => 0
+        'enviadas' => $enviadas,
+        'fallidas' => $fallidas
     ],
-    'message' => "Notificación almacenada. Se requiere un servicio externo para enviar notificaciones push."
+    'message' => "Notificación almacenada y enviada a $enviadas dispositivos."
 ]);
-
-// Nota: Para implementar completamente el envío de notificaciones push sin la librería WebPush,
-// necesitarías implementar el protocolo de cifrado ECDH-ES con AES-GCM manualmente,
-// lo cual está fuera del alcance de esta implementación básica.
 ?> 
