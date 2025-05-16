@@ -69,24 +69,22 @@ function mostrarMensajeNoSoportado(mensaje) {
 // Registrar el Service Worker
 async function registrarServiceWorker() {
   try {
-    // La ruta debe ser relativa a la raíz del sitio - ajustada para asegurar que funcione
-    const scope = '/'; 
-    swRegistration = await navigator.serviceWorker.register('/service-worker.js', { scope });
+    // Usar una ruta relativa que sea más probable que funcione en diferentes configuraciones de servidor
+    const swPath = './service-worker.js'; 
+    console.log('Intentando registrar Service Worker en:', swPath);
+    
+    swRegistration = await navigator.serviceWorker.register(swPath);
     console.log('Service Worker registrado correctamente', swRegistration);
     return swRegistration;
   } catch (error) {
     console.error('Error al registrar el Service Worker:', error);
     
-    // Intentar con una ruta alternativa
-    try {
-      swRegistration = await navigator.serviceWorker.register('./service-worker.js');
-      console.log('Service Worker registrado en ruta alternativa', swRegistration);
-      return swRegistration;
-    } catch (secondError) {
-      console.error('Error al registrar el Service Worker (segundo intento):', secondError);
-      mostrarMensajeNoSoportado('No se pudo registrar el servicio de notificaciones. Intenta actualizar la página.');
-      return null;
-    }
+    // Mostrar mensaje específico basado en el error
+    const errorMsg = 'Error registrando Service Worker: ' + (error.message || 'Error desconocido');
+    console.error(errorMsg);
+    mostrarMensajeNoSoportado(errorMsg);
+    
+    return null;
   }
 }
 
@@ -131,32 +129,51 @@ async function suscribirUsuario() {
     }
     
     // Obtener la clave pública desde el servidor
+    console.log('Obteniendo clave pública desde el servidor...');
     const response = await fetch('./api/get_vapid_public_key.php');
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+    }
+    
     const data = await response.json();
+    console.log('Respuesta recibida:', data);
     
     if (!data.success || !data.publicKey) {
       throw new Error('No se pudo obtener la clave pública: ' + (data.message || 'Error desconocido'));
     }
     
-    const applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+    console.log('Clave pública obtenida:', data.publicKey);
     
-    // Intentar suscribir al usuario
-    const newSubscription = await swRegistration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: applicationServerKey
-    });
-    
-    console.log('Usuario suscrito:', newSubscription);
-    
-    // Enviar la suscripción al servidor
-    await guardarSuscripcion(newSubscription);
-    
-    // Mostrar mensaje de éxito
-    mostrarMensajeExito('Te has suscrito correctamente a las notificaciones.');
-    
-    return newSubscription;
+    // Convertir la clave pública a formato Uint8Array
+    try {
+      const applicationServerKey = urlBase64ToUint8Array(data.publicKey);
+      console.log('Clave convertida con éxito a Uint8Array');
+      
+      // Intentar suscribir al usuario
+      console.log('Intentando suscribir al usuario...');
+      const newSubscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: applicationServerKey
+      });
+      
+      console.log('Usuario suscrito correctamente:', newSubscription);
+      
+      // Enviar la suscripción al servidor
+      const saveResult = await guardarSuscripcion(newSubscription);
+      if (!saveResult) {
+        throw new Error('Error al guardar la suscripción en el servidor.');
+      }
+      
+      // Mostrar mensaje de éxito
+      mostrarMensajeExito('Te has suscrito correctamente a las notificaciones.');
+      
+      return newSubscription;
+    } catch (conversionError) {
+      console.error('Error al convertir la clave o suscribir:', conversionError);
+      throw new Error('Error al procesar la clave pública: ' + conversionError.message);
+    }
   } catch (error) {
-    console.error('Error al suscribir al usuario:', error);
+    console.error('Error en el proceso de suscripción:', error);
     mostrarMensajeNoSoportado('Error al suscribir a notificaciones: ' + error.message);
     return null;
   }
