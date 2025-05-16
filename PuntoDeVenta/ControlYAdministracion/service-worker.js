@@ -1,16 +1,51 @@
 // Versión del service worker
 const SW_VERSION = '1.0.0';
 
+// Service Worker para manejar notificaciones push
+
+// Caché name
+const CACHE_NAME = 'punto-venta-cache-v1';
+
+// Assets a cachear
+const urlsToCache = [
+  '/',
+  '/index.php',
+  '/css/style.css',
+  '/js/script.js',
+  '/img/logo.png'
+];
+
 // Evento de instalación
 self.addEventListener('install', function(event) {
   console.log('Service Worker instalado versión:', SW_VERSION);
   self.skipWaiting(); // Asegurar que se active inmediatamente
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('Cache abierto');
+        return cache.addAll(urlsToCache);
+      })
+      .catch(function(err) {
+        console.error('Error en caché', err);
+      })
+  );
 });
 
 // Evento de activación
 self.addEventListener('activate', function(event) {
   console.log('Service Worker activado versión:', SW_VERSION);
   return self.clients.claim(); // Tomar el control de los clientes inmediatamente
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+          return cacheName !== CACHE_NAME;
+        }).map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
+    })
+  );
 });
 
 // Manejar eventos push
@@ -87,46 +122,39 @@ self.addEventListener('push', function(event) {
 
 // Manejar clics en notificaciones
 self.addEventListener('notificationclick', function(event) {
-  console.log('Clic en notificación:', event);
+  console.log('Se hizo clic en notificación', event);
   
   // Cerrar la notificación
   event.notification.close();
   
-  // Manejar acciones diferentes
-  let url = event.notification.data.url || self.registration.scope;
-  
-  if (event.action === 'close') {
-    // Si la acción es cerrar, solo cerramos la notificación
-    return;
-  }
-  
-  // Si es cualquier otra acción o clic directo en la notificación
-  event.waitUntil(
-    // Buscar ventanas ya abiertas
-    clients.matchAll({type: 'window', includeUncontrolled: true})
-      .then(function(clientList) {
-        // Verificar si ya hay una ventana/pestaña abierta
+  // Manejar acción
+  if (event.action === 'open') {
+    // Abrir la URL asociada a la notificación
+    const urlToOpen = event.notification.data?.url || self.registration.scope;
+    
+    event.waitUntil(
+      clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+      }).then(function(clientList) {
+        // Verificar si ya hay una ventana abierta y enfocarla
         for (let i = 0; i < clientList.length; i++) {
           const client = clientList[i];
-          // Si hay una ventana ya abierta, navegar a la URL
-          if ('focus' in client) {
-            client.focus();
-            if ('navigate' in client) {
-              return client.navigate(url);
-            }
-            return;
+          if (client.url === urlToOpen && 'focus' in client) {
+            return client.focus();
           }
         }
         
-        // Si no hay ventanas abiertas, abrir una nueva
+        // Si no hay ventana abierta, abrir una nueva
         if (clients.openWindow) {
-          return clients.openWindow(url);
+          return clients.openWindow(urlToOpen);
         }
       })
-  );
+    );
+  }
 });
 
 // Manejar el cierre de notificaciones
 self.addEventListener('notificationclose', function(event) {
-  console.log('Notificación cerrada sin interacción del usuario');
+  console.log('Notificación cerrada', event);
 }); 
