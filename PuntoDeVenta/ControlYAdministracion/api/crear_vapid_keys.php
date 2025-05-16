@@ -6,7 +6,44 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-// Método simple para crear claves VAPID - no usa OpenSSL directamente
+// Función para generar claves VAPID usando OpenSSL (más confiable)
+function generateVapidKeysOpenSSL() {
+    try {
+        // Generar clave privada EC
+        $privateKey = openssl_pkey_new([
+            'curve_name' => 'prime256v1',
+            'private_key_type' => OPENSSL_KEYTYPE_EC,
+        ]);
+        
+        if (!$privateKey) {
+            throw new Exception('Error generando clave EC: ' . openssl_error_string());
+        }
+        
+        // Exportar la clave privada
+        $keyDetails = openssl_pkey_get_details($privateKey);
+        if (!$keyDetails) {
+            throw new Exception('Error al obtener detalles de la clave: ' . openssl_error_string());
+        }
+        
+        // Obtener los datos de la clave
+        $privateKeyDer = $keyDetails['ec']['d'];
+        $publicKeyUncompressed = "\x04" . $keyDetails['ec']['x'] . $keyDetails['ec']['y'];
+        
+        // Convertir a base64url
+        $publicKey = rtrim(strtr(base64_encode($publicKeyUncompressed), '+/', '-_'), '=');
+        $privateKey = rtrim(strtr(base64_encode($privateKeyDer), '+/', '-_'), '=');
+        
+        return [
+            'publicKey' => $publicKey,
+            'privateKey' => $privateKey
+        ];
+    } catch (Exception $e) {
+        error_log('Error en generateVapidKeysOpenSSL: ' . $e->getMessage());
+        return null;
+    }
+}
+
+// Método alternativo simple para crear claves VAPID si OpenSSL falla
 function generateSimpleVAPIDKeys() {
     // Clave privada: 32 bytes aleatorios
     $privateBytes = random_bytes(32);
@@ -27,8 +64,6 @@ function generateSimpleVAPIDKeys() {
 
 // Verificar el sistema de archivos
 $debug = [];
-
-// Usar __DIR__ para asegurar rutas correctas
 $configDir = __DIR__ . '/../config';
 $configFile = $configDir . '/vapid_keys.json';
 
@@ -52,7 +87,16 @@ $debug['config_dir_writable'] = is_writable($configDir) ? 'Sí' : 'No';
 
 // Generar las claves
 try {
-    $keys = generateSimpleVAPIDKeys();
+    // Intentar primero con OpenSSL
+    $keys = generateVapidKeysOpenSSL();
+    
+    // Si OpenSSL falla, usar el método alternativo
+    if (!$keys) {
+        $debug['openssl_fallback'] = 'Usando método alternativo debido a error en OpenSSL';
+        $keys = generateSimpleVAPIDKeys();
+    } else {
+        $debug['openssl_success'] = 'Claves generadas correctamente con OpenSSL';
+    }
     
     // Guardar las claves
     $data = [
@@ -60,7 +104,7 @@ try {
         'privateKey' => $keys['privateKey'],
         'subject' => 'mailto:jesusemutul@gmail.com',
         'created' => date('Y-m-d H:i:s'),
-        'simulated' => true // Marcador para identificar claves simuladas
+        'simulated' => !isset($debug['openssl_success']) // Marca como simulada si no es de OpenSSL
     ];
     
     $jsonData = json_encode($data, JSON_PRETTY_PRINT);
@@ -73,7 +117,7 @@ try {
     
     echo json_encode([
         'success' => $bytesWritten !== false,
-        'message' => 'Claves VAPID generadas correctamente (método alternativo)',
+        'message' => 'Claves VAPID generadas correctamente' . (isset($debug['openssl_success']) ? ' (OpenSSL)' : ' (método alternativo)'),
         'publicKey' => $keys['publicKey'],
         'debug' => $debug
     ]);
