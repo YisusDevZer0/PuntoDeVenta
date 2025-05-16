@@ -446,18 +446,45 @@ header('Pragma: no-cache');
                     
                     // Convertir clave pública
                     function urlBase64ToUint8Array(base64String) {
-                        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-                        const base64 = (base64String + padding)
-                            .replace(/-/g, '+')
-                            .replace(/_/g, '/');
-                        
-                        const rawData = window.atob(base64);
-                        const outputArray = new Uint8Array(rawData.length);
-                        
-                        for (let i = 0; i < rawData.length; ++i) {
-                            outputArray[i] = rawData.charCodeAt(i);
+                        // Asegurarse de que la cadena no sea nula
+                        if (!base64String) {
+                            throw new Error('La cadena base64 está vacía o es nula');
                         }
-                        return outputArray;
+                        
+                        console.log('Convirtiendo clave base64 a Uint8Array, longitud:', base64String.length);
+                        
+                        try {
+                            // Reemplazar caracteres especiales y agregar padding
+                            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                            const base64 = (base64String + padding)
+                                .replace(/-/g, '+')
+                                .replace(/_/g, '/');
+                            
+                            console.log('Base64 con padding, longitud:', base64.length);
+                            
+                            // Decodificar a binario
+                            const rawData = window.atob(base64);
+                            console.log('Decodificación exitosa, longitud de datos brutos:', rawData.length);
+                            
+                            // Convertir a Uint8Array
+                            const outputArray = new Uint8Array(rawData.length);
+                            for (let i = 0; i < rawData.length; ++i) {
+                                outputArray[i] = rawData.charCodeAt(i);
+                            }
+                            
+                            // Verificar formato de clave
+                            if (outputArray.length > 0 && outputArray[0] === 4) {
+                                console.log('✓ Formato de clave correcto (inicia con 0x04)');
+                            } else if (outputArray.length > 0) {
+                                console.log('⚠ Advertencia: La clave no comienza con 0x04, primer byte:', outputArray[0]);
+                            }
+                            
+                            console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);
+                            return outputArray;
+                        } catch (error) {
+                            console.error('Error en la conversión de la clave:', error);
+                            throw new Error('Error al convertir la clave VAPID: ' + error.message);
+                        }
                     }
                     
                     // Suscribir
