@@ -245,18 +245,44 @@ async function guardarSuscripcion(subscription) {
 
 // Utilidad para convertir una clave base64 a Uint8Array
 function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+  try {
+    // Asegurarse de que la cadena no sea nula
+    if (!base64String) {
+      throw new Error('La cadena base64 está vacía o es nula');
+    }
+    
+    console.log('Convirtiendo clave base64 a Uint8Array, longitud:', base64String.length);
+    
+    // Reemplazar caracteres especiales y agregar padding
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    
+    console.log('Base64 con padding, longitud:', base64.length);
+    
+    // Decodificar a binario
+    let rawData;
+    try {
+      rawData = window.atob(base64);
+      console.log('Decodificación atob exitosa, longitud:', rawData.length);
+    } catch (e) {
+      console.error('Error en atob:', e);
+      throw new Error('Error al decodificar base64: ' + e.message);
+    }
+    
+    // Convertir a Uint8Array
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    
+    console.log('Array Uint8 creado correctamente, longitud:', outputArray.length);
+    return outputArray;
+  } catch (error) {
+    console.error('Error en urlBase64ToUint8Array:', error);
+    throw error;
   }
-  return outputArray;
 }
 
 // Función para obtener el ID del usuario actual
