@@ -271,11 +271,11 @@ class DatabaseNotifications {
     }
 }
 
-// Inicializar y exponer instancia global
+// Crear una instancia global
 window.dbNotifications = new DatabaseNotifications();
 
-// Función para inicializar sistema completo de notificaciones
-window.inicializarSistemaNotificaciones = function() {
-    // Ya está inicializado a través de window.notificationSystem y window.dbNotifications
-    console.log('Sistema de notificaciones inicializado');
-}; 
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    // La instancia ya está creada, pero podemos hacer setup adicional aquí
+    console.log('Sistema de notificaciones de base de datos inicializado');
+}); 

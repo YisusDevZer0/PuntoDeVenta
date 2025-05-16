@@ -21,6 +21,16 @@ class NotificationSystem {
             this.hasPermission = permission === "granted";
         }
 
+        // Registrar service worker para notificaciones push
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('Service Worker registrado:', registration);
+            } catch (error) {
+                console.error('Error al registrar Service Worker:', error);
+            }
+        }
+
         // Cargar estilos CSS si no están cargados
         this.loadCSS();
     }
@@ -102,6 +112,27 @@ class NotificationSystem {
             window.focus();
             notification.close();
         };
+    }
+
+    // Solicitar permiso para mostrar notificaciones
+    async requestPermission() {
+        if (!("Notification" in window)) {
+            console.log("Este navegador no soporta notificaciones");
+            return false;
+        }
+        
+        if (Notification.permission === "granted") {
+            this.hasPermission = true;
+            return true;
+        }
+        
+        if (Notification.permission !== "denied") {
+            const permission = await Notification.requestPermission();
+            this.hasPermission = permission === "granted";
+            return this.hasPermission;
+        }
+        
+        return false;
     }
 
     // Utilidades privadas
