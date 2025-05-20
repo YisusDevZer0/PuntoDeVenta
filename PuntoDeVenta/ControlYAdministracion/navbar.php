@@ -49,18 +49,22 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown" id="notification-nav-item">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" id="notification-bell">
+                        <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell me-lg-2"></i>
                             <span class="d-none d-lg-inline-flex">Notificaciones</span>
                             <span class="badge badge-danger badge-counter" id="notification-counter">0</span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" id="notification-dropdown">
-                            <h6 class="dropdown-header">Centro de Notificaciones</h6>
-                            <div id="notification-list">
-                                <a href="#" class="dropdown-item text-center">Cargando...</a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="notification-dropdown" aria-labelledby="notification-bell">
+                            <h6 class="dropdown-header bg-primary text-white">
+                                Centro de Notificaciones
+                            </h6>
+                            <div id="notification-list" class="notification-list">
+                                <div class="dropdown-item text-center">Cargando notificaciones...</div>
                             </div>
-                            <hr class="dropdown-divider">
-                            <a href="GestionNotificaciones.php" class="dropdown-item text-center">Ver todas las notificaciones</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="GestionNotificaciones.php" class="dropdown-item text-center small text-gray-500">
+                                Ver todas las notificaciones
+                            </a>
                         </div>
                     </div>
                     <div class="nav-item dropdown">
@@ -106,8 +110,13 @@
     });
 </script>
 
-<!-- Estilos para el contador de notificaciones -->
+<!-- Estilos para el sistema de notificaciones -->
 <style>
+    #notification-bell {
+        position: relative;
+        display: inline-block;
+    }
+    
     .badge-counter {
         position: absolute;
         transform: scale(0.7);
@@ -129,10 +138,65 @@
         background-color: #e74a3b;
     }
     
-    /* Posicionamiento relativo para el contenedor del icono */
-    #notification-bell {
-        position: relative;
-        display: inline-block;
+    #notification-dropdown {
+        min-width: 280px;
+        max-width: 350px;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    
+    #notification-dropdown .dropdown-header {
+        background-color: #4e73df;
+        color: #fff;
+        padding: 0.75rem 1rem;
+        font-weight: 800;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+    }
+    
+    .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .notification-item {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .notification-item:hover {
+        background-color: #f8f9fc;
+    }
+    
+    .notification-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .notification-content {
+        flex: 1;
+    }
+    
+    .notification-time {
+        font-size: 0.75rem;
+        color: #858796;
+    }
+    
+    .notification-message {
+        font-weight: 600;
+        color: #3a3b45;
+        margin: 0;
     }
 </style>
 
