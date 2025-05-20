@@ -1,8 +1,34 @@
 <?php
-include "header.php";
-include "navbar.php";
-?>
+include_once "Controladores/ControladorUsuario.php";
 
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Categorias de <?php echo $row['Licencia']?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   
+
+    <?php
+   include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
+<body>
+    
+        <!-- Spinner End -->
+
+
+        <?php include_once "Menu.php" ?>
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+        <?php include "navbar.php";?>
+            <!-- Navbar End -->
 <div class="container-fluid">
     <h1 class="h3 mb-4 text-gray-800">Gestión de Notificaciones</h1>
     
