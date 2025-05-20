@@ -1,167 +1,170 @@
 // Sistema de Notificaciones
 class NotificationSystem {
     constructor() {
-        this.hasPermission = false;
+        this.notificationList = document.getElementById('notification-list');
+        this.notificationCounter = document.getElementById('notification-counter');
+        this.notificationBell = document.getElementById('notification-bell');
+        this.notificationDropdown = document.getElementById('notification-dropdown');
+        
         this.init();
     }
-
-    async init() {
-        // Verificar si el navegador soporta notificaciones
-        if (!("Notification" in window)) {
-            console.log("Este navegador no soporta notificaciones del sistema");
-            return;
-        }
-
-        // Verificar permisos existentes
-        if (Notification.permission === "granted") {
-            this.hasPermission = true;
-        } else if (Notification.permission !== "denied") {
-            // Solicitar permisos si no están denegados
-            const permission = await Notification.requestPermission();
-            this.hasPermission = permission === "granted";
-        }
-
-        // Registrar service worker para notificaciones push
-        if ('serviceWorker' in navigator) {
-            try {
-                const registration = await navigator.serviceWorker.register('/sw.js');
-                console.log('Service Worker registrado:', registration);
-            } catch (error) {
-                console.error('Error al registrar Service Worker:', error);
-            }
-        }
-
-        // Cargar estilos CSS si no están cargados
-        this.loadCSS();
+    
+    init() {
+        // Cargar notificaciones iniciales
+        this.loadNotifications();
+        
+        // Configurar actualización periódica
+        setInterval(() => this.loadNotifications(), 60000); // Actualizar cada minuto
+        
+        // Configurar eventos
+        this.setupEventListeners();
     }
-
-    // Cargar CSS de notificaciones
-    loadCSS() {
-        if (!document.getElementById('notifications-styles')) {
-            const link = document.createElement('link');
-            link.id = 'notifications-styles';
-            link.rel = 'stylesheet';
-            link.href = 'css/notifications.css';
-            document.head.appendChild(link);
-        }
-    }
-
-    // Mostrar notificación toast
-    showToast(message, type = 'info', duration = 3000) {
-        // Crear contenedor de toasts si no existe
-        const container = document.querySelector('.toast-container') || this.createToastContainer();
-        
-        // Crear elemento toast
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.innerHTML = `
-            <div class="toast-header">
-                <strong class="me-auto">${this.getTypeTitle(type)}</strong>
-                <button type="button" class="btn-close"></button>
-            </div>
-            <div class="toast-body">
-                ${message}
-            </div>
-        `;
-        
-        // Agregar al contenedor
-        container.appendChild(toast);
-        
-        // Mostrar toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-        
-        // Configurar cierre automático
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, duration);
-        
-        // Manejar botón de cierre
-        const closeBtn = toast.querySelector('.btn-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
+    
+    setupEventListeners() {
+        // Manejar clic en el botón de notificaciones
+        if (this.notificationBell) {
+            this.notificationBell.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggleDropdown();
             });
         }
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!this.notificationBell?.contains(e.target) && 
+                !this.notificationDropdown?.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
     }
-
-    // Mostrar notificación nativa del sistema
-    showSystemNotification(title, options = {}) {
-        if (!this.hasPermission) {
+    
+    toggleDropdown() {
+        if (this.notificationDropdown) {
+            this.notificationDropdown.classList.toggle('show');
+        }
+    }
+    
+    closeDropdown() {
+        if (this.notificationDropdown) {
+            this.notificationDropdown.classList.remove('show');
+        }
+    }
+    
+    async loadNotifications() {
+        try {
+            const response = await fetch('api/get_notifications.php');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.updateNotificationList(data.notifications);
+                this.updateNotificationCounter(data.unread_count);
+            } else {
+                console.error('Error al cargar notificaciones:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar notificaciones:', error);
+        }
+    }
+    
+    updateNotificationList(notifications) {
+        if (!this.notificationList) return;
+        
+        this.notificationList.innerHTML = '';
+        
+        if (!notifications || notifications.length === 0) {
+            this.notificationList.innerHTML = `
+                <div class="dropdown-item text-center">
+                    No hay notificaciones
+                </div>
+            `;
             return;
         }
-
-        const defaultOptions = {
-            icon: 'img/notification-icon.png',
-            badge: 'img/notification-badge.png',
-            vibrate: [200, 100, 200],
-            requireInteraction: false
-        };
-
-        const notification = new Notification(title, { ...defaultOptions, ...options });
         
-        // Manejar clic en la notificación
-        notification.onclick = function() {
-            window.focus();
-            notification.close();
-        };
+        notifications.forEach(notif => {
+            const config = this.getNotificationConfig(notif.tipo);
+            const item = document.createElement('div');
+            item.className = 'notification-item';
+            item.dataset.id = notif.id;
+            
+            item.innerHTML = `
+                <div class="notification-icon bg-${config.color}">
+                    <i class="fas fa-${config.icon}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-time">${notif.tiempo_transcurrido}</div>
+                    <p class="notification-message">${notif.mensaje}</p>
+                </div>
+            `;
+            
+            // Marcar como leída al hacer clic
+            item.addEventListener('click', () => this.markAsRead(notif.id));
+            
+            this.notificationList.appendChild(item);
+        });
     }
-
-    // Solicitar permiso para mostrar notificaciones
-    async requestPermission() {
-        if (!("Notification" in window)) {
-            console.log("Este navegador no soporta notificaciones");
-            return false;
+    
+    updateNotificationCounter(count) {
+        if (this.notificationCounter) {
+            this.notificationCounter.textContent = count;
+            this.notificationCounter.style.display = count > 0 ? 'block' : 'none';
         }
-        
-        if (Notification.permission === "granted") {
-            this.hasPermission = true;
-            return true;
-        }
-        
-        if (Notification.permission !== "denied") {
-            const permission = await Notification.requestPermission();
-            this.hasPermission = permission === "granted";
-            return this.hasPermission;
-        }
-        
-        return false;
     }
-
-    // Utilidades privadas
-    createToastContainer() {
-        const container = document.createElement('div');
-        container.className = 'toast-container';
-        document.body.appendChild(container);
-        return container;
+    
+    async markAsRead(notificationId) {
+        try {
+            const response = await fetch('api/mark_notification_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ notification_id: notificationId })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Actualizar la lista y el contador
+                this.loadNotifications();
+            } else {
+                console.error('Error al marcar notificación como leída:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al marcar notificación como leída:', error);
+        }
     }
-
-    getTypeTitle(type) {
-        const titles = {
-            'success': '¡Éxito!',
-            'error': 'Error',
-            'warning': 'Advertencia',
-            'info': 'Información'
+    
+    getNotificationConfig(type) {
+        const configs = {
+            'inventario': { 
+                icon: 'box', 
+                color: 'warning'
+            },
+            'caducidad': { 
+                icon: 'calendar', 
+                color: 'danger'
+            },
+            'caja': { 
+                icon: 'cash-register', 
+                color: 'info'
+            },
+            'venta': { 
+                icon: 'tags', 
+                color: 'success'
+            },
+            'sistema': { 
+                icon: 'cog', 
+                color: 'primary'
+            }
         };
-        return titles[type] || 'Notificación';
+        
+        return configs[type?.toLowerCase()] || { 
+            icon: 'bell', 
+            color: 'primary'
+        };
     }
 }
 
-// Crear una instancia global del sistema de notificaciones
-window.notificationSystem = new NotificationSystem();
-
-// Función global para mostrar notificaciones
-window.mostrarNotificacion = function(titulo, mensaje, tipo = 'info') {
-    window.notificationSystem.showToast(mensaje, tipo);
-    
-    if (window.notificationSystem.hasPermission) {
-        window.notificationSystem.showSystemNotification(titulo, { body: mensaje });
-    }
-}; 
+// Inicializar el sistema de notificaciones cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    window.notificationSystem = new NotificationSystem();
+}); 
