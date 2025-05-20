@@ -3,8 +3,6 @@ $(document).ready(function(){
 	$(document).on('click', '.btn-Notification', function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		var ContainerNoty = $('.container-notifications');
-		var NotificationArea = $('.NotificationArea');
 		
 		// Verificar si estamos usando la nueva implementación
 		if ($('#notification-bell').length > 0) {
@@ -14,22 +12,40 @@ $(document).ready(function(){
 		}
 		
 		// Usar la implementación antigua
-		if(NotificationArea.hasClass('NotificationArea-show') && ContainerNoty.hasClass('container-notifications-show')){
-			NotificationArea.removeClass('NotificationArea-show');
-			ContainerNoty.removeClass('container-notifications-show');
+		var ContainerNoty = $('.container-notifications');
+		var NotificationArea = $('.NotificationArea');
+		
+		// Toggle classes
+		ContainerNoty.toggleClass('container-notifications-show');
+		NotificationArea.toggleClass('NotificationArea-show');
+		
+		// Asegurar que el fondo tenga pointer-events cuando está visible
+		if (ContainerNoty.hasClass('container-notifications-show')) {
+			$('.container-notifications-bg').css('pointer-events', 'auto');
 		} else {
-			NotificationArea.addClass('NotificationArea-show');
-			ContainerNoty.addClass('container-notifications-show');
+			$('.container-notifications-bg').css('pointer-events', 'none');
 		}
 	});
 	
 	// Cerrar notificaciones al hacer clic fuera
 	$(document).on('click', function(e) {
-		if (!$(e.target).closest('.btn-Notification, .NotificationArea, #notification-bell, #notification-dropdown').length) {
-			$('.NotificationArea').removeClass('NotificationArea-show');
-			$('.container-notifications').removeClass('container-notifications-show');
-			$('#notification-dropdown').removeClass('show');
+		// Si el clic fue en el botón de notificaciones o dentro del área de notificaciones, no hacer nada
+		if ($(e.target).closest('.btn-Notification, .NotificationArea, #notification-bell, #notification-dropdown').length) {
+			return;
 		}
+		
+		// Cerrar panel de notificaciones antiguo
+		$('.NotificationArea').removeClass('NotificationArea-show');
+		$('.container-notifications').removeClass('container-notifications-show');
+		$('.container-notifications-bg').css('pointer-events', 'none');
+		
+		// Cerrar dropdown de notificaciones nuevo
+		$('#notification-dropdown').removeClass('show');
+	});
+	
+	// Prevenir que los clics dentro del área de notificaciones cierren el panel
+	$('.NotificationArea').on('click', function(e) {
+		e.stopPropagation();
 	});
 	
 	/*Mostrar ocultar menu principal*/

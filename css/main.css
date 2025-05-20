@@ -140,34 +140,38 @@ html, body{
 /*====== Area de notificacion*/
 .container-notifications{
     position: fixed;
-	height: 100%;
-	top: 0;
-	left: 0;
-	pointer-events: none;
-	opacity: 0;
-    z-index: 997;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 9999;
+    width: 100%;
 }
 .container-notifications-bg{
-	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	background-color: rgba(0,0,0,.5);
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.5);
+    width: 100%;
+    pointer-events: auto;
 }
 .container-notifications-show{
-	pointer-events: auto;
-	opacity: 1;
+    pointer-events: auto;
+    opacity: 1;
 }
 .NotificationArea{
-	box-sizing: border-box;
+    box-sizing: border-box;
     background-color: #fff;
     height: 100%;
     width: 300px;
     top: 0;
-    z-index: 999;
+    z-index: 10000;
     right: -300px;
     transition: all .3s ease-in-out;
-    position: absolute;
+    position: fixed;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
 }
 .NotificationArea-title{
 	font-size: 21px;
