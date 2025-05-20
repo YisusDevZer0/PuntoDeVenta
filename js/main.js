@@ -1,34 +1,55 @@
 $(document).ready(function(){
 	/*Mostrar ocultar area de notificaciones*/
-	$('.btn-Notification').on('click', function(){
-        var ContainerNoty=$('.container-notifications');
-        var NotificationArea=$('.NotificationArea');
-        if(NotificationArea.hasClass('NotificationArea-show')&&ContainerNoty.hasClass('container-notifications-show')){
-            NotificationArea.removeClass('NotificationArea-show');
-            ContainerNoty.removeClass('container-notifications-show');
-        }else{
-            NotificationArea.addClass('NotificationArea-show');
-            ContainerNoty.addClass('container-notifications-show');
-        }
-    });
-    /*Mostrar ocultar menu principal*/
-    $('.btn-menu').on('click', function(){
-    	var navLateral=$('.navLateral');
-    	var pageContent=$('.pageContent');
-    	var navOption=$('.navBar-options');
-    	if(navLateral.hasClass('navLateral-change')&&pageContent.hasClass('pageContent-change')){
-    		navLateral.removeClass('navLateral-change');
-    		pageContent.removeClass('pageContent-change');
-    		navOption.removeClass('navBar-options-change');
-    	}else{
-    		navLateral.addClass('navLateral-change');
-    		pageContent.addClass('pageContent-change');
-    		navOption.addClass('navBar-options-change');
-    	}
-    });
-    /*Salir del sistema*/
-    $('.btn-exit').on('click', function(){
-    	swal({
+	$(document).on('click', '.btn-Notification', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		var ContainerNoty = $('.container-notifications');
+		var NotificationArea = $('.NotificationArea');
+		
+		// Verificar si estamos usando la nueva implementación
+		if ($('#notification-bell').length > 0) {
+			// Usar la nueva implementación de Bootstrap
+			$('#notification-dropdown').toggleClass('show');
+			return;
+		}
+		
+		// Usar la implementación antigua
+		if(NotificationArea.hasClass('NotificationArea-show') && ContainerNoty.hasClass('container-notifications-show')){
+			NotificationArea.removeClass('NotificationArea-show');
+			ContainerNoty.removeClass('container-notifications-show');
+		} else {
+			NotificationArea.addClass('NotificationArea-show');
+			ContainerNoty.addClass('container-notifications-show');
+		}
+	});
+	
+	// Cerrar notificaciones al hacer clic fuera
+	$(document).on('click', function(e) {
+		if (!$(e.target).closest('.btn-Notification, .NotificationArea, #notification-bell, #notification-dropdown').length) {
+			$('.NotificationArea').removeClass('NotificationArea-show');
+			$('.container-notifications').removeClass('container-notifications-show');
+			$('#notification-dropdown').removeClass('show');
+		}
+	});
+	
+	/*Mostrar ocultar menu principal*/
+	$('.btn-menu').on('click', function(){
+		var navLateral=$('.navLateral');
+		var pageContent=$('.pageContent');
+		var navOption=$('.navBar-options');
+		if(navLateral.hasClass('navLateral-change')&&pageContent.hasClass('pageContent-change')){
+			navLateral.removeClass('navLateral-change');
+			pageContent.removeClass('pageContent-change');
+			navOption.removeClass('navBar-options-change');
+		}else{
+			navLateral.addClass('navLateral-change');
+			pageContent.addClass('pageContent-change');
+			navOption.addClass('navBar-options-change');
+		}
+	});
+	/*Salir del sistema*/
+	$('.btn-exit').on('click', function(){
+		swal({
 		  	title: 'You want out of the system?',
 		 	text: "The current session will be closed and will leave the system",
 		  	type: 'warning',
@@ -41,19 +62,19 @@ $(document).ready(function(){
 		    	window.location='index.html'; 
 		  	}
 		});
-    });
-    /*Mostrar y ocultar submenus*/
-    $('.btn-subMenu').on('click', function(){
-    	var subMenu=$(this).next('ul');
-    	var icon=$(this).children("span");
-    	if(subMenu.hasClass('sub-menu-options-show')){
-    		subMenu.removeClass('sub-menu-options-show');
-    		icon.addClass('zmdi-chevron-left').removeClass('zmdi-chevron-down');
-    	}else{
-    		subMenu.addClass('sub-menu-options-show');
-    		icon.addClass('zmdi-chevron-down').removeClass('zmdi-chevron-left');
-    	}
-    });
+	});
+	/*Mostrar y ocultar submenus*/
+	$('.btn-subMenu').on('click', function(){
+		var subMenu=$(this).next('ul');
+		var icon=$(this).children("span");
+		if(subMenu.hasClass('sub-menu-options-show')){
+			subMenu.removeClass('sub-menu-options-show');
+			icon.addClass('zmdi-chevron-left').removeClass('zmdi-chevron-down');
+		}else{
+			subMenu.addClass('sub-menu-options-show');
+			icon.addClass('zmdi-chevron-down').removeClass('zmdi-chevron-left');
+		}
+	});
 });
 (function($){
     $(window).load(function(){
