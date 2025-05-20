@@ -35,6 +35,24 @@ $url = isset($data['url']) ? $data['url'] : '';
 $usuarioID = isset($data['usuario_id']) ? intval($data['usuario_id']) : 0;
 $sucursalID = isset($data['sucursal_id']) ? intval($data['sucursal_id']) : 0;
 
+// Obtener nombre de la sucursal
+$nombreSucursal = '';
+if ($sucursalID > 0) {
+    $stmtSucursal = $con->prepare("SELECT Nombre_Sucursal FROM sucursales WHERE ID_Sucursal = ?");
+    $stmtSucursal->bind_param("i", $sucursalID);
+    $stmtSucursal->execute();
+    $resultSucursal = $stmtSucursal->get_result();
+    if ($rowSucursal = $resultSucursal->fetch_assoc()) {
+        $nombreSucursal = $rowSucursal['Nombre_Sucursal'];
+    }
+    $stmtSucursal->close();
+}
+
+// Agregar nombre de sucursal al mensaje si existe
+if (!empty($nombreSucursal)) {
+    $mensaje = "[{$nombreSucursal}] " . $mensaje;
+}
+
 // Opciones para filtrar suscripciones
 $where = "Activo = 1";
 $params = [];
@@ -72,13 +90,14 @@ $payload = json_encode([
     'tipo' => $tipo,
     'mensaje' => $mensaje,
     'url' => $url,
-    'timestamp' => time()
+    'timestamp' => time(),
+    'sucursal' => $nombreSucursal
 ]);
 
 // Almacenar la notificación en la base de datos
-$insertQuery = "INSERT INTO Notificaciones (Tipo, Mensaje, SucursalID) VALUES (?, ?, ?)";
+$insertQuery = "INSERT INTO Notificaciones (Tipo, Mensaje, ID_Sucursal, ID_Usuario) VALUES (?, ?, ?, ?)";
 $stmtInsert = $con->prepare($insertQuery);
-$stmtInsert->bind_param("ssi", $tipo, $mensaje, $sucursalID);
+$stmtInsert->bind_param("ssii", $tipo, $mensaje, $sucursalID, $usuarioID);
 $stmtInsert->execute();
 $notificacionID = $stmtInsert->insert_id;
 
