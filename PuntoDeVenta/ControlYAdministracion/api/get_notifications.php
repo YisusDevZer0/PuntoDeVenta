@@ -1,5 +1,5 @@
 <?php
-require_once '../config/dbconect.php';
+require_once 'Controladores/db_connect.php';
 session_start();
 
 header('Content-Type: application/json');
