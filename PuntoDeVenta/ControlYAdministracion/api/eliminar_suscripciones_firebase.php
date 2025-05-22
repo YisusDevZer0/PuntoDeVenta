@@ -23,14 +23,14 @@ try {
         // Verificar si es una suscripción de Firebase
         if (isset($datos['endpoint']) && strpos($datos['endpoint'], 'fcm.googleapis.com') !== false) {
             // Eliminar la suscripción
-            $delete_query = "DELETE FROM Suscripciones_Push WHERE id_suscripcion = ?";
+            $delete_query = "DELETE FROM Suscripciones_Push WHERE ID_Suscripcion = ?";
             $stmt = $con->prepare($delete_query);
-            $stmt->bind_param("i", $row['id_suscripcion']);
+            $stmt->bind_param("i", $row['ID_Suscripcion']);
             
             if ($stmt->execute()) {
                 $eliminadas++;
             } else {
-                $errores[] = "Error al eliminar suscripción ID {$row['id_suscripcion']}: " . $stmt->error;
+                $errores[] = "Error al eliminar suscripción ID {$row['ID_Suscripcion']}: " . $stmt->error;
             }
         }
     }

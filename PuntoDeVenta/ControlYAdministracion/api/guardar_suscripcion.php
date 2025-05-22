@@ -6,62 +6,44 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 
-// Verificar que sea una solicitud POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Se requiere método POST'
-    ]);
-    exit;
-}
+// Incluir conexión a la base de datos
+include "../dbconect.php";
 
-// Obtener los datos enviados
-$input = file_get_contents('php://input');
-$data = json_decode($input, true);
-
-// Verificar los datos
-if (!$data || !isset($data['subscription'])) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Datos de suscripción inválidos'
-    ]);
-    exit;
-}
-
-// Obtener el ID de usuario
-$userId = isset($data['user_id']) ? $data['user_id'] : 0;
-
-// Directorio y archivo para guardar suscripciones
-$subscriptionsDir = __DIR__ . '/../config/subscriptions';
-$subscriptionFile = $subscriptionsDir . '/subscription_' . $userId . '.json';
-
-// Crear directorio si no existe
-if (!file_exists($subscriptionsDir)) {
-    mkdir($subscriptionsDir, 0755, true);
-}
-
-// Guardar la suscripción
 try {
-    // Datos adicionales
-    $subscriptionData = [
-        'subscription' => $data['subscription'],
-        'user_id' => $userId,
-        'created' => date('Y-m-d H:i:s'),
-        'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown',
-        'ip' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'Unknown'
-    ];
+    // Obtener datos de la petición
+    $data = json_decode(file_get_contents('php://input'), true);
     
-    // Guardar en archivo
-    file_put_contents($subscriptionFile, json_encode($subscriptionData, JSON_PRETTY_PRINT));
+    if (!isset($data['subscription']) || !isset($data['user_id'])) {
+        throw new Exception("Datos de suscripción o ID de usuario no proporcionados");
+    }
+
+    // Detectar dispositivo
+    $dispositivo = $_SERVER['HTTP_USER_AGENT'] ?? 'Desconocido';
     
-    echo json_encode([
-        'success' => true,
-        'message' => 'Suscripción guardada correctamente'
-    ]);
+    // Preparar la consulta
+    $query = "INSERT INTO Suscripciones_Push (UsuarioID, SucursalID, Dispositivo, Datos_Suscripcion, Activo, Fecha_Creacion) 
+              VALUES (?, 1, ?, ?, 1, NOW())";
+    
+    $stmt = $con->prepare($query);
+    $datos_json = json_encode($data['subscription']);
+    
+    $stmt->bind_param("iss", $data['user_id'], $dispositivo, $datos_json);
+    
+    if ($stmt->execute()) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Suscripción guardada correctamente',
+            'id_suscripcion' => $stmt->insert_id
+        ]);
+    } else {
+        throw new Exception("Error al guardar la suscripción: " . $stmt->error);
+    }
+
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error al guardar la suscripción: ' . $e->getMessage()
+        'message' => $e->getMessage()
     ]);
 }
 ?> 

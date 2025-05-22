@@ -18,13 +18,15 @@ try {
     while ($row = $result->fetch_assoc()) {
         $datos = json_decode($row['Datos_Suscripcion'], true);
         $suscripciones[] = [
-            'id_suscripcion' => $row['id_suscripcion'] ?? null,
-            'id_usuario' => $row['id_usuario'] ?? null,
+            'id_suscripcion' => $row['ID_Suscripcion'],
+            'usuario_id' => $row['UsuarioID'],
+            'sucursal_id' => $row['SucursalID'],
+            'dispositivo' => $row['Dispositivo'],
             'activo' => $row['Activo'],
             'fecha_creacion' => $row['Fecha_Creacion'],
             'endpoint' => $datos['endpoint'] ?? 'No disponible',
             'tipo' => isset($datos['endpoint']) && strpos($datos['endpoint'], 'fcm.googleapis.com') !== false ? 'Firebase' : 'Web Push',
-            'datos_completos' => $datos // Incluir todos los datos para depuración
+            'datos_completos' => $datos
         ];
     }
 
