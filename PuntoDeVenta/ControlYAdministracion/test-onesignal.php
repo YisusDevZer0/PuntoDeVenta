@@ -100,7 +100,22 @@ $config = require_once 'api/onesignal_config.php';
                 notifyButton: {
                     enable: false // Deshabilitamos el botón flotante de OneSignal
                 },
-                allowLocalhostAsSecureOrigin: true
+                allowLocalhostAsSecureOrigin: true,
+                promptOptions: {
+                    slidedown: {
+                        prompts: [
+                            {
+                                type: "push",
+                                autoPrompt: false,
+                                text: {
+                                    actionMessage: "¿Quieres recibir notificaciones?",
+                                    acceptButton: "Sí, permitir",
+                                    cancelButton: "No, gracias"
+                                }
+                            }
+                        ]
+                    }
+                }
             });
 
             // Verificar estado de suscripción
@@ -144,14 +159,22 @@ $config = require_once 'api/onesignal_config.php';
             try {
                 log('Solicitando suscripción...', 'info');
                 
-                // Solicitar permisos
-                const permission = await OneSignal.Notifications.requestPermission();
+                // Solicitar permisos usando la API correcta
+                const isSubscribed = await OneSignal.isPushNotificationsEnabled();
                 
-                if (permission) {
-                    log('Permisos concedidos', 'success');
-                    updateStatus(true);
+                if (!isSubscribed) {
+                    await OneSignal.showSlidedownPrompt();
+                    const newSubscriptionState = await OneSignal.isPushNotificationsEnabled();
+                    
+                    if (newSubscriptionState) {
+                        log('Permisos concedidos', 'success');
+                        updateStatus(true);
+                    } else {
+                        throw new Error('Permiso denegado para notificaciones');
+                    }
                 } else {
-                    throw new Error('Permiso denegado para notificaciones');
+                    log('Ya estás suscrito a las notificaciones', 'info');
+                    updateStatus(true);
                 }
             } catch (error) {
                 log(`Error en suscripción: ${error.message}`, 'error');
