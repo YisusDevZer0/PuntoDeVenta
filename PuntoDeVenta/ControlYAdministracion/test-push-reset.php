@@ -92,16 +92,32 @@ error_reporting(E_ALL);
                 const registration = await navigator.serviceWorker.getRegistration();
                 if (registration) {
                     swRegistration = registration;
-                    html += '<li class="text-success">✓ Service Worker registrado</li>';
+                    html += `
+                        <li class="text-success">✓ Service Worker registrado</li>
+                        <li class="text-info">Scope: ${registration.scope}</li>
+                        <li class="text-info">Estado: ${registration.active ? 'Activo' : 'Inactivo'}</li>
+                    `;
                     
                     // Verificar suscripción
                     const subscription = await registration.pushManager.getSubscription();
                     if (subscription) {
                         const endpoint = subscription.endpoint;
                         const isFirebase = endpoint.includes('fcm.googleapis.com');
-                        html += `<li class="${isFirebase ? 'text-warning' : 'text-success'}">
-                            ${isFirebase ? '⚠️' : '✓'} Suscripción activa (${isFirebase ? 'Firebase' : 'Web Push'})
-                        </li>`;
+                        html += `
+                            <li class="${isFirebase ? 'text-warning' : 'text-success'}">
+                                ${isFirebase ? '⚠️' : '✓'} Suscripción activa (${isFirebase ? 'Firebase' : 'Web Push'})
+                            </li>
+                            <li class="text-info">Endpoint: ${endpoint.substring(0, 50)}...</li>
+                            <li class="text-info">Claves: ${subscription.keys ? 'Presentes' : 'No disponibles'}</li>
+                        `;
+                        
+                        // Mostrar detalles de las claves si están disponibles
+                        if (subscription.keys) {
+                            html += `
+                                <li class="text-info">p256dh: ${subscription.keys.p256dh.substring(0, 20)}...</li>
+                                <li class="text-info">auth: ${subscription.keys.auth.substring(0, 20)}...</li>
+                            `;
+                        }
                     } else {
                         html += '<li class="text-warning">⚠️ No hay suscripción activa</li>';
                     }
@@ -110,16 +126,26 @@ error_reporting(E_ALL);
                 }
             } catch (error) {
                 html += `<li class="text-danger">✗ Error: ${error.message}</li>`;
+                console.error('Error detallado:', error);
             }
 
             // Verificar permisos
             if ('Notification' in window) {
                 const permission = Notification.permission;
-                html += `<li class="${permission === 'granted' ? 'text-success' : 'text-warning'}">
-                    ${permission === 'granted' ? '✓' : '⚠️'} Permisos: ${permission}
-                </li>`;
+                html += `
+                    <li class="${permission === 'granted' ? 'text-success' : 'text-warning'}">
+                        ${permission === 'granted' ? '✓' : '⚠️'} Permisos: ${permission}
+                    </li>
+                `;
             } else {
                 html += '<li class="text-danger">✗ Notificaciones no soportadas</li>';
+            }
+
+            // Verificar soporte de Push API
+            if ('PushManager' in window) {
+                html += '<li class="text-success">✓ Push API soportada</li>';
+            } else {
+                html += '<li class="text-danger">✗ Push API no soportada</li>';
             }
 
             html += '</ul>';
