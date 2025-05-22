@@ -18,18 +18,25 @@ try {
     while ($row = $result->fetch_assoc()) {
         $datos = json_decode($row['Datos_Suscripcion'], true);
         $suscripciones[] = [
-            'id' => $row['ID'],
-            'user_id' => $row['User_ID'],
+            'id_suscripcion' => $row['id_suscripcion'] ?? null,
+            'id_usuario' => $row['id_usuario'] ?? null,
             'activo' => $row['Activo'],
             'fecha_creacion' => $row['Fecha_Creacion'],
             'endpoint' => $datos['endpoint'] ?? 'No disponible',
-            'tipo' => isset($datos['endpoint']) && strpos($datos['endpoint'], 'fcm.googleapis.com') !== false ? 'Firebase' : 'Web Push'
+            'tipo' => isset($datos['endpoint']) && strpos($datos['endpoint'], 'fcm.googleapis.com') !== false ? 'Firebase' : 'Web Push',
+            'datos_completos' => $datos // Incluir todos los datos para depuración
         ];
     }
+
+    // Obtener el total de suscripciones activas
+    $query_activas = "SELECT COUNT(*) as total FROM Suscripciones_Push WHERE Activo = 1";
+    $result_activas = $con->query($query_activas);
+    $total_activas = $result_activas->fetch_assoc()['total'];
 
     echo json_encode([
         'success' => true,
         'total_suscripciones' => count($suscripciones),
+        'total_activas' => $total_activas,
         'suscripciones' => $suscripciones
     ], JSON_PRETTY_PRINT);
 
