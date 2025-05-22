@@ -9,62 +9,78 @@ error_reporting(E_ALL);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resetear Suscripción Push</title>
+    <title>Test Notificaciones Push</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        .status-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
         .log-container {
             max-height: 300px;
             overflow-y: auto;
-            background: #f8f9fa;
-            padding: 10px;
+            background-color: #f8f9fa;
+            padding: 15px;
             border-radius: 5px;
             margin-top: 20px;
         }
         .log-entry {
-            margin: 5px 0;
+            margin-bottom: 5px;
             padding: 5px;
-            border-bottom: 1px solid #dee2e6;
+            border-radius: 3px;
         }
+        .log-info { color: #0d6efd; }
         .log-success { color: #198754; }
-        .log-error { color: #dc3545; }
-        .log-info { color: #0dcaf0; }
         .log-warning { color: #ffc107; }
+        .log-error { color: #dc3545; }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .subscription-status {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Resetear Suscripción Push</h1>
-        <p class="lead">Esta página te ayudará a resetear tu suscripción actual y crear una nueva usando Web Push nativo.</p>
-
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Estado Actual</h5>
-                        <div id="status-container">
-                            <p><i class="fas fa-spinner fa-spin"></i> Verificando estado...</p>
-                        </div>
+    <div class="container py-5">
+        <h1 class="mb-4">Test Notificaciones Push</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Estado del Sistema</h5>
+                <div id="status" class="status-container">
+                    <div class="subscription-status text-center">
+                        <i class="fas fa-spinner fa-spin"></i> Verificando estado...
                     </div>
                 </div>
-
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Acciones</h5>
-                        <button id="btn-check" class="btn btn-info mb-2">Verificar Estado</button>
-                        <button id="btn-reset" class="btn btn-warning mb-2">Resetear Suscripción</button>
-                        <button id="btn-subscribe" class="btn btn-primary mb-2">Crear Nueva Suscripción</button>
-                    </div>
+                
+                <div class="action-buttons justify-content-center">
+                    <button id="btn-subscribe" class="btn btn-primary btn-lg">
+                        <i class="fas fa-bell"></i> Suscribirse a Notificaciones
+                    </button>
+                    <button id="btn-reset" class="btn btn-warning btn-lg">
+                        <i class="fas fa-sync"></i> Resetear Suscripción
+                    </button>
+                    <button id="btn-test" class="btn btn-success btn-lg">
+                        <i class="fas fa-paper-plane"></i> Enviar Notificación de Prueba
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Registro de Eventos</h5>
-                        <div id="log-container" class="log-container"></div>
-                        <button id="btn-clear-log" class="btn btn-secondary mt-2">Limpiar Registro</button>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Registro de Eventos</h5>
+                <div id="log" class="log-container"></div>
             </div>
         </div>
     </div>
@@ -72,20 +88,37 @@ error_reporting(E_ALL);
     <script>
         let swRegistration = null;
 
-        // Función para registrar en el log
+        // Función para registrar mensajes en el log
         function log(message, type = 'info') {
-            const logContainer = document.getElementById('log-container');
+            const logContainer = document.getElementById('log');
             const entry = document.createElement('div');
             entry.className = `log-entry log-${type}`;
-            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            entry.innerHTML = `<i class="fas fa-${getIcon(type)}"></i> ${message}`;
             logContainer.appendChild(entry);
             logContainer.scrollTop = logContainer.scrollHeight;
         }
 
+        // Función para obtener el icono según el tipo de mensaje
+        function getIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'error': return 'times-circle';
+                default: return 'info-circle';
+            }
+        }
+
         // Función para actualizar el estado
         async function updateStatus() {
-            const statusContainer = document.getElementById('status-container');
+            const statusContainer = document.getElementById('status');
             let html = '<ul class="list-unstyled">';
+            
+            // Verificar soporte de Service Worker
+            if ('serviceWorker' in navigator) {
+                html += '<li class="text-success">✓ Service Worker soportado</li>';
+            } else {
+                html += '<li class="text-danger">✗ Service Worker no soportado</li>';
+            }
 
             // Verificar Service Worker
             try {
@@ -150,6 +183,21 @@ error_reporting(E_ALL);
 
             html += '</ul>';
             statusContainer.innerHTML = html;
+
+            // Actualizar estado de los botones
+            const btnSubscribe = document.getElementById('btn-subscribe');
+            const btnReset = document.getElementById('btn-reset');
+            const btnTest = document.getElementById('btn-test');
+
+            if (Notification.permission === 'granted') {
+                btnSubscribe.style.display = 'none';
+                btnReset.style.display = 'inline-block';
+                btnTest.style.display = 'inline-block';
+            } else {
+                btnSubscribe.style.display = 'inline-block';
+                btnReset.style.display = 'none';
+                btnTest.style.display = 'none';
+            }
         }
 
         // Función para resetear la suscripción
@@ -261,6 +309,34 @@ error_reporting(E_ALL);
             }
         }
 
+        // Función para enviar notificación de prueba
+        async function sendTestNotification() {
+            try {
+                log('Enviando notificación de prueba...', 'info');
+                
+                const response = await fetch('api/enviar_notificacion.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        titulo: 'Notificación de Prueba',
+                        mensaje: 'Esta es una notificación de prueba enviada el ' + new Date().toLocaleString(),
+                        tipo: 'sistema'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    log(`Notificación enviada: ${result.message}`, 'success');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                log(`Error al enviar notificación: ${error.message}`, 'error');
+            }
+        }
+
         // Función auxiliar para convertir clave base64 a Uint8Array
         function urlBase64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -278,17 +354,14 @@ error_reporting(E_ALL);
         }
 
         // Inicializar
-        document.addEventListener('DOMContentLoaded', () => {
-            // Botones
-            document.getElementById('btn-check').addEventListener('click', updateStatus);
-            document.getElementById('btn-reset').addEventListener('click', resetSubscription);
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Registrar eventos de botones
             document.getElementById('btn-subscribe').addEventListener('click', createNewSubscription);
-            document.getElementById('btn-clear-log').addEventListener('click', () => {
-                document.getElementById('log-container').innerHTML = '';
-            });
+            document.getElementById('btn-reset').addEventListener('click', resetSubscription);
+            document.getElementById('btn-test').addEventListener('click', sendTestNotification);
 
-            // Estado inicial
-            updateStatus();
+            // Actualizar estado inicial
+            await updateStatus();
         });
     </script>
 </body>
