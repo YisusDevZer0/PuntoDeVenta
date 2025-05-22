@@ -38,9 +38,19 @@ try {
     $result = $con->query($query);
     $subscription = json_decode($result->fetch_assoc()['Datos_Suscripcion'], true);
 
-    // 4. Verificar que la suscripción es válida
-    if (!isset($subscription['endpoint']) || !isset($subscription['keys']['p256dh']) || !isset($subscription['keys']['auth'])) {
-        throw new Exception("Suscripción inválida o incompleta");
+    // 4. Verificar que la suscripción es válida y es un endpoint de Web Push
+    if (!isset($subscription['endpoint'])) {
+        throw new Exception("Suscripción inválida: no se encontró el endpoint");
+    }
+
+    // Verificar si es un endpoint de Firebase
+    if (strpos($subscription['endpoint'], 'fcm.googleapis.com') !== false) {
+        throw new Exception("La suscripción actual es de Firebase. Por favor, actualiza la suscripción usando Web Push nativo.");
+    }
+
+    // Verificar que es un endpoint de Web Push válido
+    if (!isset($subscription['keys']['p256dh']) || !isset($subscription['keys']['auth'])) {
+        throw new Exception("Suscripción inválida: faltan las claves de encriptación");
     }
 
     // 5. Preparar los datos de la notificación
@@ -58,6 +68,10 @@ try {
 
     // 7. Preparar los headers de autenticación VAPID
     $audience = parse_url($endpoint, PHP_URL_SCHEME) . '://' . parse_url($endpoint, PHP_URL_HOST);
+    if (!$audience) {
+        throw new Exception("URL de endpoint inválida");
+    }
+
     $expiration = time() + 43200; // 12 horas
 
     $header = [
