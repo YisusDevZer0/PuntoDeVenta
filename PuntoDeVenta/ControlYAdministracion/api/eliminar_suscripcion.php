@@ -17,18 +17,20 @@ try {
         throw new Exception("ID de usuario no proporcionado");
     }
 
-    // Eliminar suscripción
-    $query = "DELETE FROM Suscripciones_Push WHERE User_ID = ?";
+    // Eliminar suscripciones del usuario
+    $query = "DELETE FROM Suscripciones_Push WHERE UsuarioID = ?";
     $stmt = $con->prepare($query);
     $stmt->bind_param("i", $data['user_id']);
     
     if ($stmt->execute()) {
+        $eliminadas = $stmt->affected_rows;
         echo json_encode([
             'success' => true,
-            'message' => 'Suscripción eliminada correctamente'
+            'message' => "Se eliminaron $eliminadas suscripciones",
+            'eliminadas' => $eliminadas
         ]);
     } else {
-        throw new Exception("Error al eliminar la suscripción: " . $stmt->error);
+        throw new Exception("Error al eliminar suscripciones: " . $stmt->error);
     }
 
 } catch (Exception $e) {
