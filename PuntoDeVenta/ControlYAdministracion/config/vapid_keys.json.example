@@ -1,0 +1,7 @@
+{
+    "publicKey": "TU_CLAVE_PUBLICA_AQUI",
+    "privateKey": "TU_CLAVE_PRIVADA_AQUI",
+    "subject": "mailto:tu@email.com",
+    "created": "YYYY-MM-DD HH:mm:ss",
+    "simulated": false
+} 

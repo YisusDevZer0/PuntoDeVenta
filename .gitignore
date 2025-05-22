@@ -1,2 +1,6 @@
-
 PuntoDeVenta/ControlYAdministracion/Controladores/e6b949c888cfc840.pdf
+
+# Archivos de configuración sensibles
+PuntoDeVenta/ControlYAdministracion/config/vapid_keys.json
+PuntoDeVenta/ControlYAdministracion/config/vapid_keys.json.*
+!PuntoDeVenta/ControlYAdministracion/config/vapid_keys.json.example
