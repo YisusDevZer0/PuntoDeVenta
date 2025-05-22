@@ -101,7 +101,7 @@ $config = require_once 'api/onesignal_config.php';
                     enable: false // Deshabilitamos el botón flotante de OneSignal
                 },
                 allowLocalhostAsSecureOrigin: true,
-                serviceWorkerPath: "/PuntoDeVenta/ControlYAdministracion/OneSignalSDKWorker.js",
+                serviceWorkerPath: "OneSignalSDKWorker.js",
                 serviceWorkerParam: { scope: "/PuntoDeVenta/ControlYAdministracion/" },
                 promptOptions: {
                     slidedown: {
