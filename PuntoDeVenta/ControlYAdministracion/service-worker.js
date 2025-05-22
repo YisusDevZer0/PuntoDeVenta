@@ -74,108 +74,78 @@ self.addEventListener('activate', function(event) {
 
 // Manejar eventos push
 self.addEventListener('push', function(event) {
-  console.log('Notificación push recibida:', event);
-  
-  let data = { 
-    mensaje: 'Nueva notificación', 
-    tipo: 'sistema',
-    url: self.registration.scope
-  };
-  
-  try {
-    if (event.data) {
-      data = event.data.json();
+    if (!event.data) {
+        console.log('Push event sin datos');
+        return;
     }
-  } catch (error) {
-    console.error('Error al procesar datos de la notificación:', error);
-  }
-  
-  // Configurar la notificación
-  const options = {
-    body: data.mensaje,
-    icon: './img/notification-icon.png',
-    badge: './img/notification-badge.png',
-    vibrate: [100, 50, 100],
-    data: {
-      url: data.url || self.registration.scope,
-      timestamp: new Date().getTime(),
-      tipo: data.tipo
-    },
-    actions: [
-      {
-        action: 'open',
-        title: 'Ver detalles'
-      },
-      {
-        action: 'close',
-        title: 'Cerrar'
-      }
-    ],
-    // Cerrar automáticamente después de 30 segundos
-    requireInteraction: false,
-    silent: false
-  };
 
-  // Personalizar título según el tipo
-  let title = data.titulo || 'Punto de Venta';
-  
-  switch (data.tipo) {
-    case 'inventario':
-      title = data.titulo || 'Alerta de Inventario';
-      options.icon = './img/inventory-icon.png';
-      break;
-    case 'caducidad':
-      title = data.titulo || 'Alerta de Caducidad';
-      options.icon = './img/expiry-icon.png';
-      break;
-    case 'caja':
-      title = data.titulo || 'Alerta de Caja';
-      options.icon = './img/cash-icon.png';
-      break;
-    case 'venta':
-      title = data.titulo || 'Alerta de Venta';
-      options.icon = './img/sales-icon.png';
-      break;
-  }
+    try {
+        const data = event.data.json();
+        console.log('Datos recibidos:', data);
 
-  // Mostrar la notificación
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
+        const options = {
+            body: data.mensaje || 'Nueva notificación',
+            icon: data.icon || '/ControlYAdministracion/assets/img/logo.png',
+            badge: data.badge || '/ControlYAdministracion/assets/img/logo.png',
+            data: {
+                url: data.url || '/ControlYAdministracion/',
+                tipo: data.tipo || 'sistema',
+                timestamp: data.timestamp || Date.now()
+            },
+            actions: data.actions || [
+                {
+                    action: 'abrir',
+                    title: 'Abrir'
+                },
+                {
+                    action: 'cerrar',
+                    title: 'Cerrar'
+                }
+            ],
+            requireInteraction: true,
+            vibrate: [200, 100, 200]
+        };
+
+        event.waitUntil(
+            self.registration.showNotification(data.titulo || 'Notificación', options)
+        );
+    } catch (error) {
+        console.error('Error al procesar notificación:', error);
+    }
 });
 
-// Manejar clics en notificaciones
+// Manejar clic en la notificación
 self.addEventListener('notificationclick', function(event) {
-  console.log('Se hizo clic en notificación', event);
-  
-  // Cerrar la notificación
-  event.notification.close();
-  
-  // Manejar acción
-  if (event.action === 'open') {
-    // Abrir la URL asociada a la notificación
-    const urlToOpen = event.notification.data?.url || self.registration.scope;
-    
+    console.log('Notificación clickeada:', event);
+
+    event.notification.close();
+
+    if (event.action === 'cerrar') {
+        return;
+    }
+
+    // Por defecto, abrir la URL de la notificación
+    const urlToOpen = event.notification.data.url || '/ControlYAdministracion/';
+
     event.waitUntil(
-      clients.matchAll({
-        type: 'window',
-        includeUncontrolled: true
-      }).then(function(clientList) {
-        // Verificar si ya hay una ventana abierta y enfocarla
-        for (let i = 0; i < clientList.length; i++) {
-          const client = clientList[i];
-          if (client.url === urlToOpen && 'focus' in client) {
-            return client.focus();
-          }
-        }
-        
-        // Si no hay ventana abierta, abrir una nueva
-        if (clients.openWindow) {
-          return clients.openWindow(urlToOpen);
-        }
-      })
+        clients.matchAll({
+            type: 'window',
+            includeUncontrolled: true
+        })
+        .then(function(clientList) {
+            // Si hay una ventana abierta, enfocarla
+            for (let i = 0; i < clientList.length; i++) {
+                const client = clientList[i];
+                if (client.url === urlToOpen && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            // Si no hay ventana abierta, abrir una nueva
+            if (clients.openWindow) {
+                return clients.openWindow(urlToOpen);
+            }
+        })
     );
-  }
 });
 
 // Manejar el cierre de notificaciones
