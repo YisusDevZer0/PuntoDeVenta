@@ -9,8 +9,14 @@ header('Content-Type: application/json');
 // Incluir conexión a la base de datos
 include "../dbconect.php";
 
-// Clave del servidor de FCM (debes reemplazar esto con tu clave real)
-define('FCM_SERVER_KEY', 'AAAAFIFHVQ-86nPXgmXsdITjKhUDny8NTRcOA5lE0DysTruddWLoXV3q0i9OXfPwCCrZDQoDogwB8H3vQunxduZb5C9Qv6CqcGnA5hTROTUBnKYEKfc5YpQtbEpXywXh3Vhy-XVaV_');
+// Cargar claves VAPID
+$vapidKeysFile = '../config/vapid_keys.json';
+if (!file_exists($vapidKeysFile)) {
+    // Si no existen las claves, generarlas
+    require_once 'generar_vapid_keys.php';
+}
+
+$vapidKeys = json_decode(file_get_contents($vapidKeysFile), true);
 
 try {
     // 1. Verificar conexión a la base de datos
@@ -33,29 +39,50 @@ try {
     $subscription = json_decode($result->fetch_assoc()['Datos_Suscripcion'], true);
 
     // 4. Verificar que la suscripción es válida
-    if (!isset($subscription['endpoint'])) {
-        throw new Exception("Suscripción inválida");
+    if (!isset($subscription['endpoint']) || !isset($subscription['keys']['p256dh']) || !isset($subscription['keys']['auth'])) {
+        throw new Exception("Suscripción inválida o incompleta");
     }
 
-    // 5. Intentar enviar una notificación simple
-    $ch = curl_init('https://fcm.googleapis.com/fcm/send');
+    // 5. Preparar los datos de la notificación
+    $payload = json_encode([
+        'title' => 'Prueba Simple',
+        'body' => 'Esta es una notificación de prueba',
+        'icon' => '/assets/img/logo.png',
+        'url' => 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/'
+    ]);
+
+    // 6. Obtener el endpoint y las claves de la suscripción
+    $endpoint = $subscription['endpoint'];
+    $p256dh = $subscription['keys']['p256dh'];
+    $auth = $subscription['keys']['auth'];
+
+    // 7. Preparar los headers de autenticación VAPID
+    $audience = parse_url($endpoint, PHP_URL_SCHEME) . '://' . parse_url($endpoint, PHP_URL_HOST);
+    $expiration = time() + 43200; // 12 horas
+
+    $header = [
+        'typ' => 'JWT',
+        'alg' => 'ES256'
+    ];
+
+    $payload_jwt = [
+        'aud' => $audience,
+        'exp' => $expiration,
+        'sub' => $vapidKeys['subject']
+    ];
+
+    // 8. Intentar enviar la notificación
+    $ch = curl_init($endpoint);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
-        'to' => $subscription['endpoint'],
-        'notification' => [
-            'title' => 'Prueba Simple',
-            'body' => 'Esta es una notificación de prueba',
-            'icon' => '/assets/img/logo.png',
-            'click_action' => 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/'
-        ],
-        'data' => [
-            'url' => 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/'
-        ]
-    ]));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
-        'Authorization: key=' . FCM_SERVER_KEY
+        'TTL: 86400',
+        'Authorization: Bearer ' . base64_encode(json_encode($header)) . '.' . 
+                      base64_encode(json_encode($payload_jwt)) . '.' . 
+                      base64_encode($vapidKeys['privateKey']),
+        'Crypto-Key: p256ecdsa=' . $vapidKeys['publicKey']
     ]);
 
     $response = curl_exec($ch);
@@ -63,7 +90,7 @@ try {
     $error = curl_error($ch);
     curl_close($ch);
 
-    // 6. Devolver resultado
+    // 9. Devolver resultado
     echo json_encode([
         'success' => true,
         'message' => 'Prueba completada',
@@ -71,7 +98,8 @@ try {
             'http_code' => $httpCode,
             'response' => $response,
             'error' => $error,
-            'endpoint' => $subscription['endpoint']
+            'endpoint' => $endpoint,
+            'vapid_public_key' => $vapidKeys['publicKey']
         ]
     ]);
 
