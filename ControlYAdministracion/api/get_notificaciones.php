@@ -116,7 +116,7 @@ try {
 
         $row['TiempoTranscurrido'] = $tiempo;
         $row['Mensaje'] = $mensaje;
-        $row['NombreSucursal'] = $row['Nombre_Sucursal'];
+        $row['Nombre_Sucursal'] = $row['Nombre_Sucursal'];
         unset($row['Nombre_Sucursal']);
         $notificaciones[] = $row;
     }
