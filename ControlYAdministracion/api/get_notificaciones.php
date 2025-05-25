@@ -95,14 +95,12 @@ try {
 
         // Reemplazo forzado del nombre de la sucursal en el mensaje (patrón más flexible)
         $mensaje = $row['Mensaje'];
-        if ($row['SucursalID'] > 0 && $row['Nombre_Sucursal']) {
-            // Reemplaza cualquier "en sucursal ..." por el nombre real de la sucursal
+        if ($row['SucursalID'] > 0 && isset($row['Nombre_Sucursal']) && $row['Nombre_Sucursal']) {
             $mensaje = preg_replace(
                 '/en sucursal\s*[^\s)]+/i',
                 'en sucursal ' . $row['Nombre_Sucursal'],
                 $mensaje
             );
-            // Si el mensaje no contiene el nombre de la sucursal, lo agrega al final
             if (stripos($mensaje, $row['Nombre_Sucursal']) === false) {
                 $mensaje .= " (Sucursal: " . $row['Nombre_Sucursal'] . ")";
             }
@@ -116,7 +114,7 @@ try {
 
         $row['TiempoTranscurrido'] = $tiempo;
         $row['Mensaje'] = $mensaje;
-        $row['Nombre_Sucursal'] = $row['Nombre_Sucursal'];
+        $row['NombreSucursal'] = $row['Nombre_Sucursal'];
         unset($row['Nombre_Sucursal']);
         $notificaciones[] = $row;
     }
