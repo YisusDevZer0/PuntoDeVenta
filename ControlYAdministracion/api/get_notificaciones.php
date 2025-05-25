@@ -64,7 +64,12 @@ try {
     // Obtener notificaciones no leídas para esta sucursal
     $query = "SELECT n.ID_Notificacion, n.Tipo, n.Mensaje, n.Fecha, n.SucursalID, 
             TIMESTAMPDIFF(MINUTE, n.Fecha, NOW()) as MinutosTranscurridos,
-            s.Nombre_Sucursal as NombreSucursal
+            s.Nombre_Sucursal as NombreSucursal,
+            CASE 
+                WHEN n.SucursalID = 0 THEN 'Todas las sucursales'
+                WHEN s.Nombre_Sucursal IS NULL THEN 'Sucursal no especificada'
+                ELSE s.Nombre_Sucursal 
+            END as NombreSucursalFormateado
             FROM Notificaciones n
             LEFT JOIN Sucursales s ON n.SucursalID = s.ID_Sucursal
             WHERE n.Leido = 0 
@@ -95,8 +100,18 @@ try {
             $tiempo = floor($minutos / 1440) . " días";
         }
         
+        // Procesar el mensaje para asegurar que incluya el nombre de la sucursal
+        $mensaje = $row['Mensaje'];
+        if ($row['SucursalID'] > 0 && strpos($mensaje, $row['NombreSucursalFormateado']) === false) {
+            // Si el mensaje no incluye el nombre de la sucursal y es una notificación específica de sucursal,
+            // agregar el nombre de la sucursal al final del mensaje
+            $mensaje .= " (Sucursal: " . $row['NombreSucursalFormateado'] . ")";
+        }
+        
         $row['TiempoTranscurrido'] = $tiempo;
-        $row['NombreSucursal'] = $row['NombreSucursal'] ? $row['NombreSucursal'] : 'Todas las sucursales';
+        $row['Mensaje'] = $mensaje;
+        $row['NombreSucursal'] = $row['NombreSucursalFormateado'];
+        unset($row['NombreSucursalFormateado']); // Eliminar el campo temporal
         $notificaciones[] = $row;
     }
 
