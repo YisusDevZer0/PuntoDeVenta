@@ -39,8 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clase simplificada para navegadores sin soporte de ES6 modules
         class SimpleNotificationSystem {
             constructor() {
-                this.hasPermission = hasPermission;
                 this.notificationsCache = [];
+                this.hasPermission = false;
+                this.maxVisibleToasts = 5; // Límite de toasts visibles
+                this.visibleToasts = []; // Array para mantener registro de toasts visibles
                 this.loadNotifications();
                 
                 // Actualizar cada minuto
@@ -159,12 +161,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (newOnes.length === 0) return;
                 
-                newOnes.forEach(notif => {
+                // Limitar a mostrar solo las 5 notificaciones más recientes
+                const toShow = newOnes.slice(0, this.maxVisibleToasts);
+                
+                // Limpiar toasts existentes si vamos a mostrar nuevos
+                if (toShow.length > 0) {
+                    this.visibleToasts.forEach(toast => {
+                        toast.classList.remove('show');
+                        setTimeout(() => toast.remove(), 300);
+                    });
+                    this.visibleToasts = [];
+                }
+                
+                toShow.forEach(notif => {
                     // Toast en pantalla
                     this.showToast(notif.Mensaje, this.getNotificationConfig(notif.Tipo).toastType);
                     
-                    // Notificación nativa si hay permiso
-                    if (this.hasPermission) {
+                    // Notificación nativa si hay permiso (solo para la más reciente)
+                    if (this.hasPermission && notif === toShow[0]) {
                         const title = this.getNotificationTitle(notif.Tipo);
                         const options = { 
                             body: notif.Mensaje,
@@ -199,6 +213,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Crear contenedor de toasts si no existe
                 const container = document.querySelector('.toast-container') || this.createToastContainer();
                 
+                // Verificar si ya tenemos el máximo de toasts visibles
+                if (this.visibleToasts.length >= this.maxVisibleToasts) {
+                    // Remover el toast más antiguo
+                    const oldestToast = this.visibleToasts.shift();
+                    if (oldestToast) {
+                        oldestToast.classList.remove('show');
+                        setTimeout(() => oldestToast.remove(), 300);
+                    }
+                }
+                
                 // Crear elemento toast
                 const toast = document.createElement('div');
                 toast.className = `toast toast-${type}`;
@@ -213,24 +237,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 
                 container.appendChild(toast);
+                this.visibleToasts.push(toast); // Agregar a la lista de toasts visibles
                 
                 // Mostrar toast
                 setTimeout(() => {
                     toast.classList.add('show');
                 }, 100);
                 
-                setTimeout(() => {
+                // Configurar eliminación del toast
+                const removeToast = () => {
+                    const index = this.visibleToasts.indexOf(toast);
+                    if (index > -1) {
+                        this.visibleToasts.splice(index, 1);
+                    }
                     toast.classList.remove('show');
                     setTimeout(() => toast.remove(), 300);
-                }, duration);
+                };
+                
+                // Eliminar después de la duración especificada
+                setTimeout(removeToast, duration);
                 
                 // Cerrar al hacer clic
                 const closeBtn = toast.querySelector('.btn-close');
                 if (closeBtn) {
-                    closeBtn.addEventListener('click', () => {
-                        toast.classList.remove('show');
-                        setTimeout(() => toast.remove(), 300);
-                    });
+                    closeBtn.addEventListener('click', removeToast);
                 }
             }
             
