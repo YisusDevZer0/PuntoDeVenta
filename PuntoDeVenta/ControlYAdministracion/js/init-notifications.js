@@ -12,13 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(link);
     }
 
-    // Cargar scripts de manera segura
-    function loadScript(src, callback) {
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = src;
-        script.onload = callback;
-        document.body.appendChild(script);
+    // Verificar si ya existe una instancia del sistema de notificaciones
+    if (window.notificationSystem) {
+        console.log('Sistema de notificaciones ya inicializado');
+        return;
     }
 
     // Inicializar sistema de notificaciones sin depender de módulos ES6
@@ -376,13 +373,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Iniciar sistema
+    // Iniciar sistema una sola vez
     initNotificationSystem();
 
-    // Inicializar notificaciones locales (toasts)
-    inicializarSistemaNotificaciones();
+    // Eliminar la inicialización duplicada
+    // inicializarSistemaNotificaciones(); // Comentado para evitar duplicación
     
-    // Inicializar notificaciones push si el navegador lo soporta
+    // Inicializar notificaciones push solo si el navegador lo soporta
     if (typeof inicializarNotificacionesPush === 'function') {
         // Verificar si es un dispositivo móvil
         const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
