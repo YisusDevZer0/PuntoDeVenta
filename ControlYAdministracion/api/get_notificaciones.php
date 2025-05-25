@@ -93,20 +93,22 @@ try {
             $tiempo = floor($minutos / 1440) . " días";
         }
 
-        // Reemplazo forzado del nombre de la sucursal en el mensaje
+        // Reemplazo forzado del nombre de la sucursal en el mensaje (patrón más flexible)
         $mensaje = $row['Mensaje'];
         if ($row['SucursalID'] > 0 && $row['Nombre_Sucursal']) {
+            // Reemplaza cualquier "en sucursal ..." por el nombre real de la sucursal
             $mensaje = preg_replace(
-                '/en sucursal ?[0-9]+/i',
+                '/en sucursal\s*[^\s)]+/i',
                 'en sucursal ' . $row['Nombre_Sucursal'],
                 $mensaje
             );
-            if (strpos($mensaje, $row['Nombre_Sucursal']) === false) {
+            // Si el mensaje no contiene el nombre de la sucursal, lo agrega al final
+            if (stripos($mensaje, $row['Nombre_Sucursal']) === false) {
                 $mensaje .= " (Sucursal: " . $row['Nombre_Sucursal'] . ")";
             }
         } elseif ($row['SucursalID'] == 0) {
             $mensaje = preg_replace(
-                '/en sucursal ?[0-9]+/i',
+                '/en sucursal\s*[^\s)]+/i',
                 'en todas las sucursales',
                 $mensaje
             );
