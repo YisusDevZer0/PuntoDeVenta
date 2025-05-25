@@ -83,8 +83,8 @@ try {
 
     $notificaciones = [];
     while ($row = $result->fetch_assoc()) {
-        // DEBUG: Verificar el contenido de $row
-        // error_log(print_r($row, true));
+        // DEBUG: Ver mensaje original
+        error_log('MENSAJE ORIGINAL: ' . $row['Mensaje']);
 
         // Formatear tiempo transcurrido
         $tiempo = "";
@@ -97,11 +97,11 @@ try {
             $tiempo = floor($minutos / 1440) . " días";
         }
 
-        // Reemplazo forzado del nombre de la sucursal en el mensaje (patrón más flexible)
         $mensaje = $row['Mensaje'];
         if ($row['SucursalID'] > 0 && isset($row['Nombre_Sucursal']) && $row['Nombre_Sucursal']) {
+            // Reemplaza cualquier "en sucursal X" (con o sin espacios) por el nombre real de la sucursal
             $mensaje = preg_replace(
-                '/en sucursal\s*[^\s)]+/i',
+                '/en\s+sucursal\s+\d+/i',
                 'en sucursal ' . $row['Nombre_Sucursal'],
                 $mensaje
             );
@@ -110,7 +110,7 @@ try {
             }
         } elseif ($row['SucursalID'] == 0) {
             $mensaje = preg_replace(
-                '/en sucursal\s*[^\s)]+/i',
+                '/en\s+sucursal\s+\d+/i',
                 'en todas las sucursales',
                 $mensaje
             );
