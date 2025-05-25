@@ -100,12 +100,19 @@ try {
             $tiempo = floor($minutos / 1440) . " días";
         }
         
-        // Procesar el mensaje para asegurar que incluya el nombre de la sucursal
+        // Procesar el mensaje para asegurar que incluya el nombre de la sucursal correctamente
         $mensaje = $row['Mensaje'];
-        if ($row['SucursalID'] > 0 && strpos($mensaje, $row['NombreSucursalFormateado']) === false) {
-            // Si el mensaje no incluye el nombre de la sucursal y es una notificación específica de sucursal,
-            // agregar el nombre de la sucursal al final del mensaje
-            $mensaje .= " (Sucursal: " . $row['NombreSucursalFormateado'] . ")";
+        if ($row['SucursalID'] > 0 && $row['NombreSucursal']) {
+            // Reemplaza "en sucursal X" por "en sucursal [Nombre_Sucursal]"
+            $mensaje = preg_replace(
+                '/en sucursal ?' . preg_quote($row['SucursalID'], '/') . '\b/i',
+                'en sucursal ' . $row['NombreSucursal'],
+                $mensaje
+            );
+            // Si el mensaje no contiene el nombre de la sucursal, lo agrega al final
+            if (strpos($mensaje, $row['NombreSucursal']) === false) {
+                $mensaje .= " (Sucursal: " . $row['NombreSucursal'] . ")";
+            }
         }
         
         $row['TiempoTranscurrido'] = $tiempo;
