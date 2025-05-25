@@ -62,20 +62,14 @@ try {
     }
 
     // Obtener notificaciones no leídas para esta sucursal
-    $query = "SELECT n.ID_Notificacion, n.Tipo, n.Mensaje, n.Fecha, n.SucursalID, 
-            TIMESTAMPDIFF(MINUTE, n.Fecha, NOW()) as MinutosTranscurridos,
-            s.Nombre_Sucursal as NombreSucursal,
-            CASE 
-                WHEN n.SucursalID = 0 THEN 'Todas las sucursales'
-                WHEN s.Nombre_Sucursal IS NULL THEN 'Sucursal no especificada'
-                ELSE s.Nombre_Sucursal 
-            END as NombreSucursalFormateado
-            FROM Notificaciones n
-            LEFT JOIN Sucursales s ON n.SucursalID = s.ID_Sucursal
-            WHERE n.Leido = 0 
-            AND (n.SucursalID = ? OR n.SucursalID = 0)
-            ORDER BY n.Fecha DESC 
-            LIMIT 20";
+    $query = "SELECT n.ID_Notificacion, n.Tipo, n.Mensaje, n.Fecha, n.SucursalID, n.Leido,
+        COALESCE(s.Nombre_Sucursal, 'Todas las sucursales') AS Nombre_Sucursal
+        FROM Notificaciones n
+        LEFT JOIN Sucursales s ON n.SucursalID = s.ID_Sucursal
+        WHERE n.Leido = 0 
+        AND (n.SucursalID = ? OR n.SucursalID = 0)
+        ORDER BY n.Fecha DESC 
+        LIMIT 20";
 
     $stmt = $con->prepare($query);
     if (!$stmt) {
@@ -90,8 +84,7 @@ try {
     while ($row = $result->fetch_assoc()) {
         // Formatear tiempo transcurrido
         $tiempo = "";
-        $minutos = $row['MinutosTranscurridos'];
-        
+        $minutos = isset($row['MinutosTranscurridos']) ? $row['MinutosTranscurridos'] : 0;
         if ($minutos < 60) {
             $tiempo = $minutos . " minutos";
         } else if ($minutos < 1440) {
@@ -99,26 +92,30 @@ try {
         } else {
             $tiempo = floor($minutos / 1440) . " días";
         }
-        
-        // Procesar el mensaje para asegurar que incluya el nombre de la sucursal correctamente
+
+        // Reemplazo forzado del nombre de la sucursal en el mensaje
         $mensaje = $row['Mensaje'];
-        if ($row['SucursalID'] > 0 && $row['NombreSucursal']) {
-            // Reemplaza "en sucursal X" por "en sucursal [Nombre_Sucursal]"
+        if ($row['SucursalID'] > 0 && $row['Nombre_Sucursal']) {
             $mensaje = preg_replace(
-                '/en sucursal ?' . preg_quote($row['SucursalID'], '/') . '\b/i',
-                'en sucursal ' . $row['NombreSucursal'],
+                '/en sucursal ?[0-9]+/i',
+                'en sucursal ' . $row['Nombre_Sucursal'],
                 $mensaje
             );
-            // Si el mensaje no contiene el nombre de la sucursal, lo agrega al final
-            if (strpos($mensaje, $row['NombreSucursal']) === false) {
-                $mensaje .= " (Sucursal: " . $row['NombreSucursal'] . ")";
+            if (strpos($mensaje, $row['Nombre_Sucursal']) === false) {
+                $mensaje .= " (Sucursal: " . $row['Nombre_Sucursal'] . ")";
             }
+        } elseif ($row['SucursalID'] == 0) {
+            $mensaje = preg_replace(
+                '/en sucursal ?[0-9]+/i',
+                'en todas las sucursales',
+                $mensaje
+            );
         }
-        
+
         $row['TiempoTranscurrido'] = $tiempo;
         $row['Mensaje'] = $mensaje;
-        $row['NombreSucursal'] = $row['NombreSucursalFormateado'];
-        unset($row['NombreSucursalFormateado']); // Eliminar el campo temporal
+        $row['NombreSucursal'] = $row['Nombre_Sucursal'];
+        unset($row['Nombre_Sucursal']);
         $notificaciones[] = $row;
     }
 
