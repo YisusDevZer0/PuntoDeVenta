@@ -63,7 +63,8 @@ try {
 
     // Obtener notificaciones no leídas para esta sucursal
     $query = "SELECT n.ID_Notificacion, n.Tipo, n.Mensaje, n.Fecha, n.SucursalID, n.Leido,
-        COALESCE(s.Nombre_Sucursal, 'Todas las sucursales') AS Nombre_Sucursal
+        COALESCE(s.Nombre_Sucursal, 'Todas las sucursales') AS Nombre_Sucursal,
+        TIMESTAMPDIFF(MINUTE, n.Fecha, NOW()) as MinutosTranscurridos
         FROM Notificaciones n
         LEFT JOIN Sucursales s ON n.SucursalID = s.ID_Sucursal
         WHERE n.Leido = 0 
@@ -82,6 +83,9 @@ try {
 
     $notificaciones = [];
     while ($row = $result->fetch_assoc()) {
+        // DEBUG: Verificar el contenido de $row
+        // error_log(print_r($row, true));
+
         // Formatear tiempo transcurrido
         $tiempo = "";
         $minutos = isset($row['MinutosTranscurridos']) ? $row['MinutosTranscurridos'] : 0;
@@ -112,9 +116,9 @@ try {
             );
         }
 
-        $row['TiempoTranscurrido'] = $tiempo;
         $row['Mensaje'] = $mensaje;
         $row['NombreSucursal'] = $row['Nombre_Sucursal'];
+        $row['TiempoTranscurrido'] = $tiempo;
         unset($row['Nombre_Sucursal']);
         $notificaciones[] = $row;
     }
