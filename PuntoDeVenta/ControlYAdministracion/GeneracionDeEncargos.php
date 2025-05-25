@@ -52,7 +52,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             </div>
         </div>
     </div>
-    <script src="js/Cajas.js"></script>
+    <script src="js/Encargos.js"></script>
 
     <!-- Footer Start -->
     <?php
