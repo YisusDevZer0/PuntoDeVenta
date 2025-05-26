@@ -8,9 +8,7 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
-<!-- Agregar las dependencias de jQuery UI -->
-<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
