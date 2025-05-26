@@ -8,7 +8,10 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
-
+<!-- Agregar las dependencias de jQuery UI en el head -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
@@ -79,10 +82,10 @@ $Especialistas = $query->fetch_object();
     <script src="js/RegistrarEncargo.js"></script>
 
     <script>
-    // Asegurarse de que jQuery UI esté cargado antes de usar autocomplete
     $(document).ready(function() {
+        // Verificar que jQuery UI esté cargado
         if (typeof $.fn.autocomplete === 'undefined') {
-            console.error('jQuery UI no está cargado correctamente');
+            console.error('jQuery UI no está cargado');
             return;
         }
 
@@ -95,13 +98,17 @@ $Especialistas = $query->fetch_object();
                         term: request.term
                     },
                     success: function(data) {
-                        response($.map(data, function(item) {
+                        // Decodificar las entidades HTML en los nombres
+                        var items = $.map(data, function(item) {
                             return {
-                                label: item.Nombre_Paciente,
-                                value: item.Nombre_Paciente,
-                                id: item.ID_Data_Paciente
+                                label: $('<div>').html(item.Nombre_Paciente).text(), // Decodifica HTML entities
+                                value: $('<div>').html(item.Nombre_Paciente).text(), // Decodifica HTML entities
+                                id: item.id,
+                                telefono: item.telefono,
+                                edad: $('<div>').html(item.edad).text()
                             };
-                        }));
+                        });
+                        response(items);
                     },
                     error: function(xhr, status, error) {
                         console.error('Error en la búsqueda:', error);
@@ -110,21 +117,67 @@ $Especialistas = $query->fetch_object();
             },
             minLength: 2,
             select: function(event, ui) {
+                event.preventDefault();
                 $("#clienteInput").val(ui.item.value);
                 $("#id_paciente").val(ui.item.id);
                 return false;
-            },
-            focus: function(event, ui) {
-                event.preventDefault();
-                $("#clienteInput").val(ui.item.label);
             }
         }).autocomplete("instance")._renderItem = function(ul, item) {
+            // Personalizar la visualización de cada item en el dropdown
             return $("<li>")
-                .append("<div>" + item.label + "</div>")
+                .append("<div>" + 
+                    "<strong>" + item.label + "</strong><br>" +
+                    "<small>Tel: " + item.telefono + " | Edad: " + item.edad + "</small>" +
+                    "</div>")
                 .appendTo(ul);
         };
     });
     </script>
+
+    <style>
+    /* Estilos para el autocomplete */
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        z-index: 1000;
+    }
+
+    .ui-autocomplete .ui-menu-item {
+        padding: 8px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+
+    .ui-autocomplete .ui-menu-item:last-child {
+        border-bottom: none;
+    }
+
+    .ui-autocomplete .ui-menu-item div {
+        padding: 2px 0;
+    }
+
+    .ui-autocomplete .ui-menu-item strong {
+        color: #333;
+        display: block;
+    }
+
+    .ui-autocomplete .ui-menu-item small {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .ui-autocomplete .ui-menu-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .ui-helper-hidden-accessible {
+        display: none;
+    }
+    </style>
 
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra</p>
