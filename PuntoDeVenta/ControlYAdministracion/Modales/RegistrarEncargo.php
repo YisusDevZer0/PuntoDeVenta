@@ -17,16 +17,23 @@ $Especialistas = $query->fetch_object();
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
-                    <select class="form-control select2-pacientes" name="nombre_paciente" id="nombre_paciente" required>
-                        <option value="">Buscar paciente...</option>
+                    <input type="text" 
+                           class="form-control" 
+                           list="lista-pacientes" 
+                           name="nombre_paciente" 
+                           id="nombre_paciente" 
+                           autocomplete="off"
+                           required>
+                    <datalist id="lista-pacientes">
                         <?php
                         $query = $conn->query("SELECT ID_Paciente, Nombre, Apellido_Paterno, Apellido_Materno FROM Pacientes ORDER BY Nombre ASC");
                         while ($paciente = mysqli_fetch_array($query)) {
                             $nombre_completo = $paciente['Nombre'] . ' ' . $paciente['Apellido_Paterno'] . ' ' . $paciente['Apellido_Materno'];
-                            echo '<option value="' . $paciente['ID_Paciente'] . '">' . $nombre_completo . '</option>';
+                            echo '<option value="' . $nombre_completo . '" data-id="' . $paciente['ID_Paciente'] . '">';
                         }
                         ?>
-                    </select>
+                    </datalist>
+                    <input type="hidden" name="id_paciente" id="id_paciente">
                 </div>
 
                 <div class="mb-3">
@@ -85,41 +92,18 @@ $Especialistas = $query->fetch_object();
     <script src="js/RegistrarEncargo.js"></script>
 
     <script>
-    $(document).ready(function() {
-        $('.select2-pacientes').select2({
-            placeholder: "Buscar paciente...",
-            allowClear: true,
-            language: {
-                noResults: function() {
-                    return "No se encontraron pacientes";
-                },
-                searching: function() {
-                    return "Buscando...";
-                }
-            },
-            ajax: {
-                url: '../Controladores/buscar_pacientes.php',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term,
-                        page: params.page || 1
-                    };
-                },
-                processResults: function(data, params) {
-                    params.page = params.page || 1;
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: data.more
-                        }
-                    };
-                },
-                cache: true
-            },
-            minimumInputLength: 2
-        });
+    document.getElementById('nombre_paciente').addEventListener('change', function() {
+        // Obtener el ID del paciente seleccionado
+        const datalist = document.getElementById('lista-pacientes');
+        const options = datalist.getElementsByTagName('option');
+        const selectedValue = this.value;
+        
+        for(let option of options) {
+            if(option.value === selectedValue) {
+                document.getElementById('id_paciente').value = option.getAttribute('data-id');
+                break;
+            }
+        }
     });
     </script>
 
