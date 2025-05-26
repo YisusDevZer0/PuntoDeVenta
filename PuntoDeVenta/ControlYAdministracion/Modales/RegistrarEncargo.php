@@ -8,8 +8,6 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
-
-
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
         <div class="row">
@@ -17,23 +15,7 @@ $Especialistas = $query->fetch_object();
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
-                    <input type="text" 
-                           class="form-control" 
-                           list="lista-pacientes" 
-                           name="nombre_paciente" 
-                           id="nombre_paciente" 
-                           autocomplete="off"
-                           required>
-                    <datalist id="lista-pacientes">
-                        <?php
-                        $query = $conn->query("SELECT ID_Paciente, Nombre, Apellido_Paterno, Apellido_Materno FROM Pacientes ORDER BY Nombre ASC");
-                        while ($paciente = mysqli_fetch_array($query)) {
-                            $nombre_completo = $paciente['Nombre'] . ' ' . $paciente['Apellido_Paterno'] . ' ' . $paciente['Apellido_Materno'];
-                            echo '<option value="' . $nombre_completo . '" data-id="' . $paciente['ID_Paciente'] . '">';
-                        }
-                        ?>
-                    </datalist>
-                    <input type="hidden" name="id_paciente" id="id_paciente">
+                    <input type="text" name="nombre_paciente" id="nombre_paciente" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
@@ -90,22 +72,6 @@ $Especialistas = $query->fetch_object();
     </form>
 
     <script src="js/RegistrarEncargo.js"></script>
-
-    <script>
-    document.getElementById('nombre_paciente').addEventListener('change', function() {
-        // Obtener el ID del paciente seleccionado
-        const datalist = document.getElementById('lista-pacientes');
-        const options = datalist.getElementsByTagName('option');
-        const selectedValue = this.value;
-        
-        for(let option of options) {
-            if(option.value === selectedValue) {
-                document.getElementById('id_paciente').value = option.getAttribute('data-id');
-                break;
-            }
-        }
-    });
-    </script>
 
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra</p>
