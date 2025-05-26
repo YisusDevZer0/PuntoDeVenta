@@ -1,17 +1,14 @@
 <?php
 include "../Controladores/db_connect.php.php";
 include "../Controladores/ControladorUsuario.php";
-?>
-<!-- Select2 CSS y JS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 $user_id = null;
 $sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
 $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
+
+<!-- Select2 CSS y JS -->
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
