@@ -202,6 +202,10 @@ class NotificationSystem {
             setTimeout(() => toast.remove(), 1000);
         }, duration);
     }
+
+    showSystemNotification() {
+        // Método vacío para evitar errores si es llamado desde otros scripts
+    }
 }
 
 // Inicializar el sistema de notificaciones cuando el DOM esté listo

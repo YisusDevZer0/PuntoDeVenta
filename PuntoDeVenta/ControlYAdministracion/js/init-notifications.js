@@ -377,7 +377,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initNotificationSystem();
 
     // Eliminar la inicialización duplicada
-    // inicializarSistemaNotificaciones(); // Comentado para evitar duplicación
+    // Comentado para evitar error de referencia:
+    // inicializarSistemaNotificaciones();
     
     // Inicializar notificaciones push solo si el navegador lo soporta
     if (typeof inicializarNotificacionesPush === 'function') {
