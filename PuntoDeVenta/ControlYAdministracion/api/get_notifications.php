@@ -9,8 +9,12 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Verificar si el usuario está autenticado
-if (!isset($_SESSION['user_id'])) {
+// Determinar el ID de usuario según la sesión activa
+$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] :
+         (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] :
+         (isset($_SESSION['Marketing']) ? $_SESSION['Marketing'] : null));
+
+if (!$userId) {
     echo json_encode([
         'success' => false,
         'message' => 'No autorizado'
@@ -38,7 +42,7 @@ try {
         LIMIT 10
     ");
     
-    $stmt->execute(['user_id' => $_SESSION['user_id']]);
+    $stmt->execute(['user_id' => $userId]);
     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Obtener contador de no leídas
@@ -48,7 +52,7 @@ try {
         WHERE ID_Usuario = :user_id AND Leida = 0
     ");
     
-    $stmt->execute(['user_id' => $_SESSION['user_id']]);
+    $stmt->execute(['user_id' => $userId]);
     $unread = $stmt->fetch(PDO::FETCH_ASSOC);
     
     // Formatear tiempo transcurrido
