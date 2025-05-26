@@ -17,6 +17,7 @@ $Especialistas = $query->fetch_object();
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" id="clienteInput" name="nombre_paciente" required>
+                        <input type="hidden" id="id_paciente" name="id_paciente">
                     </div>
                 </div>
 
@@ -80,18 +81,37 @@ $Especialistas = $query->fetch_object();
         $("#clienteInput").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../Controladores/clientes.php",
+                    url: "../PuntoDeVentaFarmacias/Controladores/BusquedaClientes.php",
                     dataType: "json",
                     data: {
                         term: request.term
                     },
                     success: function(data) {
-                        response(data);
+                        response($.map(data, function(item) {
+                            return {
+                                label: item.Nombre_Paciente,
+                                value: item.Nombre_Paciente,
+                                id: item.ID_Data_Paciente
+                            };
+                        }));
                     }
                 });
             },
-            minLength: 0
-        });
+            minLength: 2,
+            select: function(event, ui) {
+                $("#clienteInput").val(ui.item.value);
+                $("#id_paciente").val(ui.item.id);
+                return false;
+            },
+            focus: function(event, ui) {
+                event.preventDefault();
+                $("#clienteInput").val(ui.item.label);
+            }
+        }).autocomplete("instance")._renderItem = function(ul, item) {
+            return $("<li>")
+                .append("<div>" + item.label + "</div>")
+                .appendTo(ul);
+        };
     });
     </script>
 
