@@ -162,6 +162,39 @@ class NotificationSystem {
             color: 'primary'
         };
     }
+    
+    // Toast minimalista para avisos flotantes
+    showToast(message, type = 'info', duration = 3000) {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.style.position = 'fixed';
+            container.style.bottom = '30px';
+            container.style.right = '30px';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.background = '#222';
+        toast.style.color = '#fff';
+        toast.style.padding = '10px 18px';
+        toast.style.marginTop = '10px';
+        toast.style.borderRadius = '6px';
+        toast.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+        toast.style.opacity = '0.95';
+        toast.style.fontSize = '1em';
+        toast.style.transition = 'opacity 0.3s';
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
 }
 
 // Inicializar el sistema de notificaciones cuando el DOM esté listo
