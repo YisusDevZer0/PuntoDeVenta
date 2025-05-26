@@ -36,7 +36,7 @@ try {
             n.ID_Sucursal as sucursal_id,
             n.Leida as leida,
             TIMESTAMPDIFF(MINUTE, n.Fecha_Creacion, NOW()) as minutos_transcurridos
-        FROM Notificaciones
+        FROM Notificaciones n
         WHERE n.ID_Usuario = :user_id
         ORDER BY n.Fecha_Creacion DESC
         LIMIT 10
