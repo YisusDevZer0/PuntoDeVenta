@@ -68,37 +68,37 @@ class NotificationSystem {
     
     updateNotificationList(notifications) {
         if (!this.notificationList) return;
-        
         this.notificationList.innerHTML = '';
-        
+
         if (!notifications || notifications.length === 0) {
             this.notificationList.innerHTML = `
-                <div class="dropdown-item text-center">
-                    No hay notificaciones
-                </div>
+                <div class="dropdown-item text-center text-muted" style="font-size:0.95em;">No hay notificaciones</div>
             `;
             return;
         }
-        
+
         notifications.forEach(notif => {
-            const config = this.getNotificationConfig(notif.tipo);
+            // Diseño minimalista: solo sucursal y mensaje
             const item = document.createElement('div');
             item.className = 'notification-item';
-            item.dataset.id = notif.id;
-            
+            item.style.padding = '0.7em 1em';
+            item.style.borderBottom = '1px solid #f0f0f0';
+            item.style.background = 'none';
+            item.style.cursor = 'pointer';
+            item.style.transition = 'background 0.2s';
+            item.onmouseover = () => item.style.background = '#f7f7fa';
+            item.onmouseout = () => item.style.background = 'none';
+
             item.innerHTML = `
-                <div class="notification-icon bg-${config.color}">
-                    <i class="fas fa-${config.icon}"></i>
-                </div>
-                <div class="notification-content">
-                    <div class="notification-time">${notif.tiempo_transcurrido}</div>
-                    <p class="notification-message">${notif.mensaje}</p>
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 0.85em; color: #6c757d; font-weight: 500; letter-spacing: 0.5px;">${notif.sucursal || notif.Sucursal || ''}</span>
+                    <span style="font-size: 1em; color: #222; font-weight: 500;">${notif.mensaje || notif.Mensaje || ''}</span>
                 </div>
             `;
-            
+
             // Marcar como leída al hacer clic
-            item.addEventListener('click', () => this.markAsRead(notif.id));
-            
+            item.addEventListener('click', () => this.markAsRead(notif.id || notif.ID_Notificacion));
+
             this.notificationList.appendChild(item);
         });
     }
