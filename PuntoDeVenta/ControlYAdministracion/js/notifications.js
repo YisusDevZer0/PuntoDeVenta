@@ -178,6 +178,11 @@ class NotificationSystem {
             document.body.appendChild(container);
         }
 
+        // Limitar a 3 toasts visibles
+        while (container.children.length >= 3) {
+            container.removeChild(container.firstChild);
+        }
+
         const toast = document.createElement('div');
         toast.textContent = message;
         toast.style.background = '#222';
