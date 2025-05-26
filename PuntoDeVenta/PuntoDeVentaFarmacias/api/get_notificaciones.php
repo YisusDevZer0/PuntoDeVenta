@@ -23,6 +23,10 @@ if (!isset($_SESSION['VentasPos'])) {
 $idPvUser = $_SESSION['VentasPos'];
 $sql = "SELECT Fk_Sucursal FROM Usuarios_PV WHERE Id_PvUser = ?";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode(['error' => true, 'message' => 'Error al preparar la consulta: ' . $conn->error]);
+    exit;
+}
 $stmt->bind_param('s', $idPvUser);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -42,6 +46,10 @@ $sql = "SELECT n.ID_Notificacion, n.Mensaje, n.Leida, n.Fecha, s.Nombre AS Nombr
         ORDER BY n.Fecha DESC
         LIMIT 10";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode(['error' => true, 'message' => 'Error al preparar la consulta de notificaciones: ' . $conn->error]);
+    exit;
+}
 $stmt->bind_param('i', $idSucursal);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -54,6 +62,10 @@ $stmt->close();
 // Cuenta no leídas
 $sqlCount = "SELECT COUNT(*) as total FROM notificaciones WHERE ID_Sucursal = ? AND Leida = 0";
 $stmt = $conn->prepare($sqlCount);
+if (!$stmt) {
+    echo json_encode(['error' => true, 'message' => 'Error al preparar la consulta de conteo: ' . $conn->error]);
+    exit;
+}
 $stmt->bind_param('i', $idSucursal);
 $stmt->execute();
 $resCount = $stmt->get_result();
@@ -66,4 +78,12 @@ echo json_encode([
     'success' => true,
     'notificaciones' => $notificaciones,
     'total' => $total
-]); 
+]);
+
+// Agregar un bloque try-catch para capturar excepciones (por ejemplo, si la ejecución de la consulta falla)
+try {
+    // (El código de consulta ya se ejecuta arriba, por lo que no se repite aquí.)
+} catch (Exception $e) {
+    echo json_encode(['error' => true, 'message' => 'Error interno: ' . $e->getMessage()]);
+    exit;
+} 
