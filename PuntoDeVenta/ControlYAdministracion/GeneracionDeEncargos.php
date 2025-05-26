@@ -65,7 +65,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             id = $(this).data("id");
             $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", "id=" + id, function(data) {
                 $("#form-edit").html(data);
-                $("#Titulo").html("Apertura de caja");
+                $("#Titulo").html("Registrar encargo");
                 $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
             });
             $('#editModal').modal('show');

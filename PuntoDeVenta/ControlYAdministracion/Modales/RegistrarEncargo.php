@@ -8,6 +8,10 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
         <div class="row">
@@ -15,7 +19,16 @@ $Especialistas = $query->fetch_object();
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
-                    <input type="text" name="nombre_paciente" id="nombre_paciente" class="form-control" required>
+                    <select class="form-control select2-pacientes" name="nombre_paciente" id="nombre_paciente" required>
+                        <option value="">Buscar paciente...</option>
+                        <?php
+                        $query = $conn->query("SELECT ID_Paciente, Nombre, Apellido_Paterno, Apellido_Materno FROM Pacientes ORDER BY Nombre ASC");
+                        while ($paciente = mysqli_fetch_array($query)) {
+                            $nombre_completo = $paciente['Nombre'] . ' ' . $paciente['Apellido_Paterno'] . ' ' . $paciente['Apellido_Materno'];
+                            echo '<option value="' . $paciente['ID_Paciente'] . '">' . $nombre_completo . '</option>';
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">
@@ -47,7 +60,7 @@ $Especialistas = $query->fetch_object();
                 </div>
 
                 <div class="mb-3">
-                    <label for="abono_parcial" class="form-label">Abono Parcial:</label>
+                    <label for="abono_parcial" class="form-label">Abono realizado:</label>
                     <input type="number" step="0.01" name="abono_parcial" id="abono_parcial" class="form-control" required>
                 </div>
 
@@ -72,6 +85,45 @@ $Especialistas = $query->fetch_object();
     </form>
 
     <script src="js/RegistrarEncargo.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        $('.select2-pacientes').select2({
+            placeholder: "Buscar paciente...",
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "No se encontraron pacientes";
+                },
+                searching: function() {
+                    return "Buscando...";
+                }
+            },
+            ajax: {
+                url: '../Controladores/buscar_pacientes.php',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.items,
+                        pagination: {
+                            more: data.more
+                        }
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 2
+        });
+    });
+    </script>
 
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra</p>
