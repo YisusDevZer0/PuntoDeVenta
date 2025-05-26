@@ -52,7 +52,7 @@ try {
     $stmt = $conn->prepare("
         SELECT n.ID_Notificacion, n.Mensaje, n.Leida, n.Fecha, s.Nombre AS NombreSucursal
         FROM Notificaciones n
-        LEFT JOIN sucursales s ON n.ID_Sucursal = s.ID_Sucursal
+        LEFT JOIN Sucursales s ON n.ID_Sucursal = s.ID_Sucursal
         WHERE n.ID_Sucursal = ?
         ORDER BY n.Fecha DESC
         LIMIT 10
@@ -75,7 +75,7 @@ try {
     $stmt->close();
 
     // Contar notificaciones no leídas
-    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM notificaciones WHERE ID_Sucursal = ? AND Leida = 0");
+    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM Notificaciones WHERE ID_Sucursal = ? AND Leida = 0");
     if (!$stmt) {
         throw new Exception('Error al preparar consulta de conteo: ' . $conn->error);
     }
