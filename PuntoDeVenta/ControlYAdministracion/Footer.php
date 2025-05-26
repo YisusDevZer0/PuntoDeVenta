@@ -46,7 +46,6 @@
     <script src="js/main.js"></script>
     
     <!-- Notificaciones -->
-    <script src="js/notifications.js"></script>
     <script src="js/db-notifications.js"></script>
     <script src="js/push-notifications.js"></script>
     <script src="js/init-notifications.js"></script>

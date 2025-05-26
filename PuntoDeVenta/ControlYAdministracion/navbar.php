@@ -201,8 +201,5 @@
     }
 </style>
 
-<!-- Scripts de notificaciones -->
-<script src="js/notifications.js"></script>
-
 </body>
 </html>
