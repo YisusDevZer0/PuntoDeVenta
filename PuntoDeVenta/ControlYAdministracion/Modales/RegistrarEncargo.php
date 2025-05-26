@@ -87,7 +87,7 @@ $Especialistas = $query->fetch_object();
             placeholder: 'Buscar paciente...',
             allowClear: true,
             ajax: {
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php',
+                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/BusquedaClientes.php',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
