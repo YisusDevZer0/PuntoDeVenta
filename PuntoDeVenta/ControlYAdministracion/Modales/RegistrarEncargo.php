@@ -89,7 +89,7 @@ $Especialistas = $query->fetch_object();
         $("#clienteInput").autocomplete({
             source: function(request, response) {
                 $.ajax({
-                    url: "../PuntoDeVentaFarmacias/Controladores/BusquedaClientes.php",
+                    url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php",
                     dataType: "json",
                     data: {
                         term: request.term
