@@ -1,5 +1,10 @@
 <?php
-require_once '../Controladores/db_connect.php';
+// Conexión directa a la base de datos
+$host = 'localhost';
+$user = 'u858848268_devpezer0';
+$pass = 'F9+nIIOuCh8yI6wu4!08';
+$db = 'u858848268_doctorpez';
+
 session_start();
 
 header('Content-Type: application/json');
@@ -14,7 +19,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
-    $db = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+    $db = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Obtener notificaciones no leídas
