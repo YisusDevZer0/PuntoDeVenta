@@ -51,7 +51,7 @@ try {
     // Consultar notificaciones
     $stmt = $conn->prepare("
         SELECT n.ID_Notificacion, n.Mensaje, n.Leida, n.Fecha, s.Nombre AS NombreSucursal
-        FROM notificaciones n
+        FROM Notificaciones n
         LEFT JOIN sucursales s ON n.ID_Sucursal = s.ID_Sucursal
         WHERE n.ID_Sucursal = ?
         ORDER BY n.Fecha DESC
