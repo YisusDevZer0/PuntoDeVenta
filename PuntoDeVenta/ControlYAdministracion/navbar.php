@@ -49,7 +49,7 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown" id="notification-nav-item">
-                        <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" aria-expanded="false">
                             <i class="fa fa-bell me-lg-2"></i>
                             <span class="d-none d-lg-inline-flex">Notificaciones</span>
                             <span class="badge badge-danger badge-counter" id="notification-counter">0</span>

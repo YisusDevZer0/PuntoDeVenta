@@ -59,9 +59,11 @@ class NotificationSystem {
                 this.updateNotificationList(data.notifications);
                 this.updateNotificationCounter(data.unread_count);
             } else {
+                this.showToast('No autorizado para ver notificaciones', 'error');
                 console.error('Error al cargar notificaciones:', data.message);
             }
         } catch (error) {
+            this.showToast('No autorizado para ver notificaciones', 'error');
             console.error('Error al cargar notificaciones:', error);
         }
     }
