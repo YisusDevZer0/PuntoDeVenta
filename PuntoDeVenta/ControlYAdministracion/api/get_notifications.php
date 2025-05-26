@@ -26,7 +26,7 @@ try {
     $db = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Obtener notificaciones no leídas
+    // Obtener Notificacioneso leídas
     $stmt = $db->prepare("
         SELECT 
             n.ID_Notificacion as id,
@@ -36,7 +36,7 @@ try {
             n.ID_Sucursal as sucursal_id,
             n.Leida as leida,
             TIMESTAMPDIFF(MINUTE, n.Fecha_Creacion, NOW()) as minutos_transcurridos
-        FROM notificaciones n
+        FROM Notificaciones
         WHERE n.ID_Usuario = :user_id
         ORDER BY n.Fecha_Creacion DESC
         LIMIT 10
