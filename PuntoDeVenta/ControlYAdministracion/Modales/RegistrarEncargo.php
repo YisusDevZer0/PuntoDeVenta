@@ -15,7 +15,9 @@ $Especialistas = $query->fetch_object();
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
-                    <input type="text" name="nombre_paciente" id="nombre_paciente" class="form-control" required>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="clienteInput" name="nombre_paciente" required>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -72,6 +74,26 @@ $Especialistas = $query->fetch_object();
     </form>
 
     <script src="js/RegistrarEncargo.js"></script>
+
+    <script>
+    $(function() {
+        $("#clienteInput").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../Controladores/clientes.php",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    success: function(data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 0
+        });
+    });
+    </script>
 
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra</p>
