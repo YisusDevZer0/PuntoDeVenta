@@ -8,6 +8,10 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
+<!-- Agregar las dependencias de jQuery UI -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
         <div class="row">
@@ -77,7 +81,13 @@ $Especialistas = $query->fetch_object();
     <script src="js/RegistrarEncargo.js"></script>
 
     <script>
-    $(function() {
+    // Asegurarse de que jQuery UI esté cargado antes de usar autocomplete
+    $(document).ready(function() {
+        if (typeof $.fn.autocomplete === 'undefined') {
+            console.error('jQuery UI no está cargado correctamente');
+            return;
+        }
+
         $("#clienteInput").autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -94,6 +104,9 @@ $Especialistas = $query->fetch_object();
                                 id: item.ID_Data_Paciente
                             };
                         }));
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en la búsqueda:', error);
                     }
                 });
             },
