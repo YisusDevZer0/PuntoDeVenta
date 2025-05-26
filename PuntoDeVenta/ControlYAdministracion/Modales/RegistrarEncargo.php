@@ -82,8 +82,8 @@ $Especialistas = $query->fetch_object();
 
     <script>
     $(document).ready(function() {
-        $('.select2-pacientes').select2({
-            theme: 'bootstrap-5',
+        $('#clienteInput').select2({
+            theme: 'bootstrap4',
             placeholder: 'Buscar paciente...',
             allowClear: true,
             ajax: {
@@ -92,30 +92,28 @@ $Especialistas = $query->fetch_object();
                 delay: 250,
                 data: function(params) {
                     return {
-                        term: params.term || '',
-                        page: params.page || 1
+                        term: params.term || ''
                     };
                 },
-                processResults: function(data, params) {
-                    // Decodificar entidades HTML en los nombres
-                    var items = $.map(data, function(item) {
-                        return {
-                            id: item.id,
-                            text: $('<div>').html(item.Nombre_Paciente).text(),
-                            telefono: item.telefono,
-                            edad: $('<div>').html(item.edad).text(),
-                            sexo: item.sexo
-                        };
-                    });
-
+                processResults: function(data) {
                     return {
-                        results: items
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: $('<div>').html(item.label || item.Nombre_Paciente).text(),
+                                telefono: item.telefono,
+                                edad: $('<div>').html(item.edad).text(),
+                                sexo: item.sexo
+                            };
+                        })
                     };
                 },
                 cache: true
             },
             templateResult: formatPaciente,
-            templateSelection: formatPacienteSeleccion,
+            templateSelection: function(paciente) {
+                return paciente.text || paciente.id || '';
+            },
             minimumInputLength: 2,
             language: {
                 inputTooShort: function() {
@@ -141,11 +139,9 @@ $Especialistas = $query->fetch_object();
         if (paciente.loading) {
             return paciente.text;
         }
-
         if (!paciente.id) {
             return paciente.text;
         }
-
         var $container = $(
             "<div class='select2-result-paciente'>" +
                 "<div class='select2-result-paciente__nombre'>" + paciente.text + "</div>" +
@@ -156,12 +152,7 @@ $Especialistas = $query->fetch_object();
                 "</div>" +
             "</div>"
         );
-
         return $container;
-    }
-
-    function formatPacienteSeleccion(paciente) {
-        return paciente.text || paciente.id;
     }
     </script>
 
