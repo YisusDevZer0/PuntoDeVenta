@@ -34,23 +34,23 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
                         <a href="#" class="dropdown-item py-2 text-center">Ver todos los mensajes</a>
                     </div>
                 </div>
-                <div class="nav-item dropdown border-end px-3" style="border-color: rgba(0,188,212,0.1) !important;">
-                    <a href="#" class="nav-link dropdown-toggle py-3" data-bs-toggle="dropdown">
-                        <i class="fa fa-bell me-2 text-primary"></i>
+                <div class="nav-item dropdown" id="notification-nav-item">
+                    <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" aria-expanded="false">
+                        <i class="fa fa-bell me-lg-2"></i>
                         <span class="d-none d-lg-inline-flex">Notificaciones</span>
+                        <span class="badge badge-danger badge-counter" id="notification-counter">0</span>
                     </a>
-                    <div class="dropdown-menu border" style="margin-top: 0; border-radius: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-color: rgba(0,188,212,0.1) !important;">
-                        <a href="#" class="dropdown-item py-2">
-                            <h6 class="fw-normal mb-0">Inventario actualizado</h6>
-                            <small>Hace 15 minutos</small>
+                    <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="notification-dropdown" aria-labelledby="notification-bell">
+                        <h6 class="dropdown-header bg-primary text-white">
+                            Centro de Notificaciones
+                        </h6>
+                        <div id="notification-list" class="notification-list">
+                            <div class="dropdown-item text-center">Cargando notificaciones...</div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="GestionNotificaciones.php" class="dropdown-item text-center small text-gray-500">
+                            Ver todas las notificaciones
                         </a>
-                        <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
-                        <a href="#" class="dropdown-item py-2">
-                            <h6 class="fw-normal mb-0">Nuevos productos agregados</h6>
-                            <small>Hace 30 minutos</small>
-                        </a>
-                        <hr class="dropdown-divider my-0" style="border-color: rgba(0,188,212,0.1) !important;">
-                        <a href="#" class="dropdown-item py-2 text-center">Ver todas las notificaciones</a>
                     </div>
                 </div>
             </div>
