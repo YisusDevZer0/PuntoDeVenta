@@ -15,13 +15,24 @@ if ($conn->connect_error) {
 }
 
 // Verifica la sesión y obtiene la sucursal y usuario
-if (!isset($_SESSION['ID_Sucursal']) || !isset($_SESSION['ID_Usuario'])) {
+if (!isset($_SESSION['VentasPos'])) {
     echo json_encode(['error' => true, 'message' => 'No autorizado']);
     exit;
 }
 
-$idSucursal = intval($_SESSION['ID_Sucursal']);
-$idUsuario = intval($_SESSION['ID_Usuario']);
+$idPvUser = $_SESSION['VentasPos'];
+$sql = "SELECT Fk_Sucursal FROM Usuarios_PV WHERE Id_PvUser = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('s', $idPvUser);
+$stmt->execute();
+$res = $stmt->get_result();
+if ($res->num_rows === 0) {
+    echo json_encode(['error' => true, 'message' => 'Usuario no encontrado']);
+    exit;
+}
+$row = $res->fetch_assoc();
+$idSucursal = intval($row['Fk_Sucursal']);
+$stmt->close();
 
 // Consulta notificaciones de la sucursal
 $sql = "SELECT n.ID_Notificacion, n.Mensaje, n.Leida, n.Fecha, s.Nombre AS NombreSucursal
