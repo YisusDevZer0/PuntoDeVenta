@@ -199,7 +199,7 @@ class NotificationSystem {
 
         setTimeout(() => {
             toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
+            setTimeout(() => toast.remove(), 1000);
         }, duration);
     }
 }

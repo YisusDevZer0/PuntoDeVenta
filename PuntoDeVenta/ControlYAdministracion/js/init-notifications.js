@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Inicializar y guardar en window para acceso global
-        window.notificationSystem = new SimpleNotificationSystem();
+        // window.notificationSystem = new SimpleNotificationSystem();
         
         // Configurar toggles de menús
         document.addEventListener('click', function(e) {
