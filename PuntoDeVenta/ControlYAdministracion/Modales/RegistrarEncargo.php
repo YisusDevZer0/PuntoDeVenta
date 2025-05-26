@@ -8,10 +8,10 @@ $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 ?>
 
-<!-- Agregar las dependencias de jQuery UI en el head -->
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<!-- Select2 CSS y JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
@@ -21,7 +21,9 @@ $Especialistas = $query->fetch_object();
                 <div class="mb-3">
                     <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="clienteInput" name="nombre_paciente" required>
+                        <select class="form-control select2-pacientes" id="clienteInput" name="nombre_paciente" style="width: 100%;" required>
+                            <option value="">Buscar paciente...</option>
+                        </select>
                         <input type="hidden" id="id_paciente" name="id_paciente">
                     </div>
                 </div>
@@ -83,99 +85,148 @@ $Especialistas = $query->fetch_object();
 
     <script>
     $(document).ready(function() {
-        // Verificar que jQuery UI esté cargado
-        if (typeof $.fn.autocomplete === 'undefined') {
-            console.error('jQuery UI no está cargado');
-            return;
+        $('.select2-pacientes').select2({
+            theme: 'bootstrap-5',
+            placeholder: 'Buscar paciente...',
+            allowClear: true,
+            ajax: {
+                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        term: params.term || '',
+                        page: params.page || 1
+                    };
+                },
+                processResults: function(data, params) {
+                    // Decodificar entidades HTML en los nombres
+                    var items = $.map(data, function(item) {
+                        return {
+                            id: item.id,
+                            text: $('<div>').html(item.Nombre_Paciente).text(),
+                            telefono: item.telefono,
+                            edad: $('<div>').html(item.edad).text(),
+                            sexo: item.sexo
+                        };
+                    });
+
+                    return {
+                        results: items
+                    };
+                },
+                cache: true
+            },
+            templateResult: formatPaciente,
+            templateSelection: formatPacienteSeleccion,
+            minimumInputLength: 2,
+            language: {
+                inputTooShort: function() {
+                    return 'Por favor ingrese 2 o más caracteres...';
+                },
+                searching: function() {
+                    return 'Buscando...';
+                },
+                noResults: function() {
+                    return 'No se encontraron resultados';
+                },
+                errorLoading: function() {
+                    return 'Error al cargar los resultados';
+                }
+            }
+        }).on('select2:select', function(e) {
+            var data = e.params.data;
+            $("#id_paciente").val(data.id);
+        });
+    });
+
+    function formatPaciente(paciente) {
+        if (paciente.loading) {
+            return paciente.text;
         }
 
-        $("#clienteInput").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function(data) {
-                        // Decodificar las entidades HTML en los nombres
-                        var items = $.map(data, function(item) {
-                            return {
-                                label: $('<div>').html(item.Nombre_Paciente).text(), // Decodifica HTML entities
-                                value: $('<div>').html(item.Nombre_Paciente).text(), // Decodifica HTML entities
-                                id: item.id,
-                                telefono: item.telefono,
-                                edad: $('<div>').html(item.edad).text()
-                            };
-                        });
-                        response(items);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error en la búsqueda:', error);
-                    }
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-                event.preventDefault();
-                $("#clienteInput").val(ui.item.value);
-                $("#id_paciente").val(ui.item.id);
-                return false;
-            }
-        }).autocomplete("instance")._renderItem = function(ul, item) {
-            // Personalizar la visualización de cada item en el dropdown
-            return $("<li>")
-                .append("<div>" + 
-                    "<strong>" + item.label + "</strong><br>" +
-                    "<small>Tel: " + item.telefono + " | Edad: " + item.edad + "</small>" +
-                    "</div>")
-                .appendTo(ul);
-        };
-    });
+        if (!paciente.id) {
+            return paciente.text;
+        }
+
+        var $container = $(
+            "<div class='select2-result-paciente'>" +
+                "<div class='select2-result-paciente__nombre'>" + paciente.text + "</div>" +
+                "<div class='select2-result-paciente__info'>" +
+                    "<small>Tel: " + (paciente.telefono || 'N/A') + " | " +
+                    "Edad: " + (paciente.edad || 'N/A') + " | " +
+                    "Sexo: " + (paciente.sexo || 'N/A') + "</small>" +
+                "</div>" +
+            "</div>"
+        );
+
+        return $container;
+    }
+
+    function formatPacienteSeleccion(paciente) {
+        return paciente.text || paciente.id;
+    }
     </script>
 
     <style>
-    /* Estilos para el autocomplete */
-    .ui-autocomplete {
-        max-height: 200px;
-        overflow-y: auto;
-        overflow-x: hidden;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        z-index: 1000;
+    /* Estilos para Select2 */
+    .select2-container--bootstrap-5 .select2-selection {
+        min-height: 38px;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
     }
 
-    .ui-autocomplete .ui-menu-item {
-        padding: 8px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
+    .select2-container--bootstrap-5 .select2-selection--single {
+        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
     }
 
-    .ui-autocomplete .ui-menu-item:last-child {
-        border-bottom: none;
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+        padding: 0;
+        line-height: 1.5;
     }
 
-    .ui-autocomplete .ui-menu-item div {
-        padding: 2px 0;
+    .select2-container--bootstrap-5 .select2-results__option {
+        padding: 8px 12px;
     }
 
-    .ui-autocomplete .ui-menu-item strong {
-        color: #333;
-        display: block;
+    .select2-result-paciente {
+        padding: 4px 0;
     }
 
-    .ui-autocomplete .ui-menu-item small {
+    .select2-result-paciente__nombre {
+        font-weight: bold;
+        margin-bottom: 2px;
+    }
+
+    .select2-result-paciente__info {
         color: #666;
         font-size: 0.9em;
     }
 
-    .ui-autocomplete .ui-menu-item:hover {
-        background-color: #f5f5f5;
+    .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] {
+        background-color: #0d6efd;
+        color: white;
     }
 
-    .ui-helper-hidden-accessible {
-        display: none;
+    .select2-container--bootstrap-5 .select2-results__option--highlighted[aria-selected] .select2-result-paciente__info {
+        color: #e6e6e6;
+    }
+
+    .select2-container--bootstrap-5 .select2-dropdown {
+        border-color: #ced4da;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .select2-container--bootstrap-5 .select2-search--dropdown .select2-search__field {
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
+        height: 36px;
     }
     </style>
 
