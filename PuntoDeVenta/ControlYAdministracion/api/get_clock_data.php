@@ -11,7 +11,7 @@ session_start();
 header('Content-Type: application/json');
 
 // Verificar que la conexión existe
-if (!isset($con) || $con === null) {
+if (!isset($conn) || $conn === null) {
     echo json_encode([
         'error' => true,
         'message' => 'No se pudo establecer conexión con la base de datos',
@@ -39,9 +39,9 @@ try {
     ORDER BY fecha_notificacion DESC
     LIMIT 20";
 
-    $stmt = $con->prepare($query);
+    $stmt = $conn->prepare($query);
     if (!$stmt) {
-        throw new Exception("Error al preparar la consulta: " . $con->error);
+        throw new Exception("Error al preparar la consulta: " . $conn->error);
     }
     
     $stmt->execute();
