@@ -248,6 +248,15 @@
         color: #3a3b45;
         margin: 0;
     }
+
+    .asistencia-ingreso {
+        background-color: #e6f9ed !important;
+        border-left: 5px solid #28a745 !important;
+    }
+    .asistencia-salida {
+        background-color: #e6f0fa !important;
+        border-left: 5px solid #007bff !important;
+    }
 </style>
 
 <script>
@@ -396,9 +405,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             registros.forEach(reg => {
-                const iconConfig = this.getIconConfig(reg.tipo);
+                // Extrae el tipo de evento del mensaje (asume formato: NOMBRE - TIPO_EVENTO)
+                const tipoEvento = reg.mensaje.split(' - ')[1];
+                const iconConfig = this.getIconConfig(tipoEvento);
                 const item = document.createElement('div');
-                item.className = `alert alert-${iconConfig.color} d-flex align-items-center mb-2 py-2 px-3`;
+                item.className = `alert alert-${iconConfig.color} d-flex align-items-center mb-2 py-2 px-3 ${iconConfig.customClass}`;
                 item.style.borderLeft = `5px solid var(--bs-${iconConfig.color})`;
                 item.innerHTML = `
                     <i class="fas fa-${iconConfig.icon} me-3 fs-4"></i>
@@ -411,17 +422,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        getIconConfig(tipo) {
-            const configs = {
-                'entrada': { icon: 'sign-in-alt', color: 'success' },
-                'salida': { icon: 'sign-out-alt', color: 'info' },
-                'warning': { icon: 'exclamation-triangle', color: 'warning' },
-                'success': { icon: 'check-circle', color: 'success' },
-                'sistema': { icon: 'clock', color: 'primary' },
-                'default': { icon: 'clock', color: 'primary' }
-            };
-            
-            return configs[tipo] || configs.default;
+        getIconConfig(tipoEvento) {
+            // Normaliza el texto a minúsculas para evitar errores por mayúsculas/minúsculas
+            const tipo = (tipoEvento || '').toLowerCase();
+            if (tipo === 'ingreso') {
+                return { icon: 'sign-in-alt', color: 'success', customClass: 'asistencia-ingreso' };
+            }
+            if (tipo === 'salida') {
+                return { icon: 'sign-out-alt', color: 'primary', customClass: 'asistencia-salida' };
+            }
+            // Por defecto
+            return { icon: 'clock', color: 'secondary', customClass: '' };
         }
     }
 
