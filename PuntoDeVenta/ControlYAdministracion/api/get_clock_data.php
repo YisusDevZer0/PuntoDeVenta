@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Incluir conexión a la base de datos
-include "../db_connection_Huellas";
+include "../../db_connection_Huellas.php";
 session_start();
 
 header('Content-Type: application/json');
