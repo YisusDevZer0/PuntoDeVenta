@@ -51,14 +51,34 @@ try {
     $total = 0;
 
     while ($row = $result->fetch_assoc()) {
+        // Calcular tiempo transcurrido
+        $horaRegistro = $row['hora_registro'];
+        $fechaNotificacion = $row['fecha_notificacion'];
+        $fechaHoraRegistro = $fechaNotificacion . ' ' . $horaRegistro;
+        $fechaHoraRegistroDT = new DateTime($fechaHoraRegistro);
+        $ahora = new DateTime();
+        $intervalo = $fechaHoraRegistroDT->diff($ahora);
+        if ($intervalo->y > 0) {
+            $tiempoTranscurrido = $intervalo->y . ' año(s)';
+        } elseif ($intervalo->m > 0) {
+            $tiempoTranscurrido = $intervalo->m . ' mes(es)';
+        } elseif ($intervalo->d > 0) {
+            $tiempoTranscurrido = $intervalo->d . ' día(s)';
+        } elseif ($intervalo->h > 0) {
+            $tiempoTranscurrido = $intervalo->h . ' hora(s)';
+        } elseif ($intervalo->i > 0) {
+            $tiempoTranscurrido = $intervalo->i . ' minuto(s)';
+        } else {
+            $tiempoTranscurrido = 'hace segundos';
+        }
         // Crear mensaje simple
         $mensaje = "{$row['nombre_completo']} - {$row['tipo_evento']}";
         
         // Determinar el tipo de notificación para el ícono
         $tipo = 'sistema';
-        if ($row['estado_notificacion'] == 'pendiente') {
+        if (strtolower($row['estado_notificacion']) == 'pendiente') {
             $tipo = 'warning';
-        } elseif ($row['estado_notificacion'] == 'atendida') {
+        } elseif (strtolower($row['estado_notificacion']) == 'atendida') {
             $tipo = 'success';
         }
         
@@ -68,7 +88,8 @@ try {
             'mensaje' => $mensaje,
             'nombre_completo' => $row['nombre_completo'],
             'hora_registro' => $row['hora_registro'],
-            'estado' => $row['estado_notificacion']
+            'estado' => $row['estado_notificacion'],
+            'tiempo_transcurrido' => $tiempoTranscurrido
         ];
         
         $total++;
