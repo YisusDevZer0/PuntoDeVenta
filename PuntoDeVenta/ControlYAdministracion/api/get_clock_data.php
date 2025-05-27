@@ -52,9 +52,7 @@ try {
 
     while ($row = $result->fetch_assoc()) {
         // Calcular tiempo transcurrido
-        $horaRegistro = $row['hora_registro'];
-        $fechaNotificacion = $row['fecha_notificacion'];
-        $fechaHoraRegistro = $fechaNotificacion . ' ' . $horaRegistro;
+        $fechaHoraRegistro = $row['fecha_notificacion'];
         $fechaHoraRegistroDT = new DateTime($fechaHoraRegistro);
         $ahora = new DateTime();
         $intervalo = $fechaHoraRegistroDT->diff($ahora);
