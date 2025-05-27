@@ -25,7 +25,7 @@ if (!isset($con) || $con === null) {
 $sucursalID = isset($_SESSION["ID_Sucursal"]) ? $_SESSION["ID_Sucursal"] : 1;
 
 try {
-    // Consulta simplificada con solo los campos necesarios
+    // Consulta simplificada sin restricción de tiempo
     $query = "SELECT 
         id_notificacion,
         nombre_completo,
@@ -34,10 +34,8 @@ try {
         hora_registro,
         tipo_evento,
         fecha_notificacion,
-        estado_notificacion,
-        TIMESTAMPDIFF(MINUTE, fecha_notificacion, NOW()) as minutos_transcurridos
+        estado_notificacion
     FROM notificaciones_asistencia
-    WHERE fecha_notificacion >= DATE_SUB(NOW(), INTERVAL 1 HORA)
     ORDER BY fecha_notificacion DESC
     LIMIT 20";
 
@@ -53,30 +51,8 @@ try {
     $total = 0;
 
     while ($row = $result->fetch_assoc()) {
-        // Formatear tiempo transcurrido
-        $tiempo = "";
-        $minutos = $row['minutos_transcurridos'];
-        
-        if ($minutos < 60) {
-            $tiempo = $minutos . " minutos";
-        } else if ($minutos < 1440) {
-            $tiempo = floor($minutos / 60) . " horas";
-        } else {
-            $tiempo = floor($minutos / 1440) . " días";
-        }
-        
-        // Crear mensaje personalizado según el tipo de evento
-        $mensaje = "";
-        switch($row['tipo_evento']) {
-            case 'entrada':
-                $mensaje = "Entrada: {$row['nombre_completo']} - {$row['hora_registro']}";
-                break;
-            case 'salida':
-                $mensaje = "Salida: {$row['nombre_completo']} - {$row['hora_registro']}";
-                break;
-            default:
-                $mensaje = "{$row['tipo_evento']}: {$row['nombre_completo']} - {$row['hora_registro']}";
-        }
+        // Crear mensaje simple
+        $mensaje = "{$row['nombre_completo']} - {$row['tipo_evento']}";
         
         // Determinar el tipo de notificación para el ícono
         $tipo = 'sistema';
@@ -90,13 +66,9 @@ try {
             'id' => $row['id_notificacion'],
             'tipo' => $tipo,
             'mensaje' => $mensaje,
-            'tiempo_transcurrido' => $tiempo,
-            'fecha' => $row['fecha_notificacion'],
-            'estado' => $row['estado_notificacion'],
             'nombre_completo' => $row['nombre_completo'],
             'hora_registro' => $row['hora_registro'],
-            'domicilio' => $row['domicilio'],
-            'nombre_dia' => $row['nombre_dia']
+            'estado' => $row['estado_notificacion']
         ];
         
         $total++;
