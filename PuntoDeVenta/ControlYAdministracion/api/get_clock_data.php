@@ -25,20 +25,20 @@ if (!isset($con) || $con === null) {
 $sucursalID = isset($_SESSION["ID_Sucursal"]) ? $_SESSION["ID_Sucursal"] : 1;
 
 try {
-    // Consulta para obtener las notificaciones de asistencia más recientes
+    // Consulta simplificada con solo los campos necesarios
     $query = "SELECT 
-        na.id_notificacion as id,
-        na.id_personal,
-        na.nombre_completo,
-        na.nombre_dia,
-        na.hora_registro,
-        na.tipo_evento,
-        na.fecha_notificacion,
-        na.estado_notificacion,
-        TIMESTAMPDIFF(MINUTE, na.fecha_notificacion, NOW()) as minutos_transcurridos
-    FROM notificaciones_asistencia na
-    WHERE na.fecha_notificacion >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
-    ORDER BY na.fecha_notificacion DESC
+        id_notificacion,
+        nombre_completo,
+        domicilio,
+        nombre_dia,
+        hora_registro,
+        tipo_evento,
+        fecha_notificacion,
+        estado_notificacion,
+        TIMESTAMPDIFF(MINUTE, fecha_notificacion, NOW()) as minutos_transcurridos
+    FROM notificaciones_asistencia
+    WHERE fecha_notificacion >= DATE_SUB(NOW(), INTERVAL 1 HORA)
+    ORDER BY fecha_notificacion DESC
     LIMIT 20";
 
     $stmt = $con->prepare($query);
@@ -69,13 +69,13 @@ try {
         $mensaje = "";
         switch($row['tipo_evento']) {
             case 'entrada':
-                $mensaje = "Entrada registrada para {$row['nombre_completo']} a las {$row['hora_registro']}";
+                $mensaje = "Entrada: {$row['nombre_completo']} - {$row['hora_registro']}";
                 break;
             case 'salida':
-                $mensaje = "Salida registrada para {$row['nombre_completo']} a las {$row['hora_registro']}";
+                $mensaje = "Salida: {$row['nombre_completo']} - {$row['hora_registro']}";
                 break;
             default:
-                $mensaje = "{$row['tipo_evento']} registrado para {$row['nombre_completo']} a las {$row['hora_registro']}";
+                $mensaje = "{$row['tipo_evento']}: {$row['nombre_completo']} - {$row['hora_registro']}";
         }
         
         // Determinar el tipo de notificación para el ícono
@@ -87,14 +87,16 @@ try {
         }
         
         $registros[] = [
-            'id' => $row['id'],
+            'id' => $row['id_notificacion'],
             'tipo' => $tipo,
             'mensaje' => $mensaje,
             'tiempo_transcurrido' => $tiempo,
             'fecha' => $row['fecha_notificacion'],
             'estado' => $row['estado_notificacion'],
             'nombre_completo' => $row['nombre_completo'],
-            'hora_registro' => $row['hora_registro']
+            'hora_registro' => $row['hora_registro'],
+            'domicilio' => $row['domicilio'],
+            'nombre_dia' => $row['nombre_dia']
         ];
         
         $total++;
