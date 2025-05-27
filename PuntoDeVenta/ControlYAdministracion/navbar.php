@@ -9,61 +9,41 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form> -->
                 <div class="navbar-nav align-items-center ms-auto">
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-envelope me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Mensajes</span>
+                    <div class="nav-item dropdown" id="notification-nav-item">
+                        <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" aria-expanded="false">
+                            <i class="fa fa-bell me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Notificaciones</span>
+                            <span class="badge badge-danger badge-counter" id="notification-counter">0</span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="notification-dropdown" aria-labelledby="notification-bell">
+                            <h6 class="dropdown-header bg-primary text-white">
+                                Centro de Notificaciones
+                            </h6>
+                            <div id="notification-list" class="notification-list">
+                                <div class="dropdown-item text-center">Cargando notificaciones...</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="GestionNotificaciones.php" class="dropdown-item text-center small text-gray-500">
+                                Ver todas las notificaciones
                             </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all message</a>
                         </div>
                     </div>
                     <div class="nav-item dropdown" id="clock-nav-item">
                         <a href="#" class="nav-link dropdown-toggle" id="clock-bell" role="button" aria-expanded="false">
                             <i class="fa fa-clock me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Reloj</span>
+                            <span class="d-none d-lg-inline-flex">Asistencias</span>
                             <span class="badge badge-primary badge-counter" id="clock-counter">0</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="clock-dropdown" aria-labelledby="clock-bell">
                             <h6 class="dropdown-header bg-primary text-white">
-                                Información en Tiempo Real
+                                Registro de Asistencias
                             </h6>
                             <div id="clock-list" class="clock-list">
-                                <div class="dropdown-item text-center">Cargando información...</div>
+                                <div class="dropdown-item text-center">Cargando registros...</div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="GestionReloj.php" class="dropdown-item text-center small text-gray-500">
-                                Ver historial completo
+                            <a href="GestionAsistencias.php" class="dropdown-item text-center small text-gray-500">
+                                Ver historial de asistencias
                             </a>
                         </div>
                     </div>
@@ -110,9 +90,10 @@
     });
 </script>
 
-<!-- Estilos para el sistema de reloj -->
+<!-- Estilos para ambos sistemas -->
 <style>
-    #clock-bell {
+    /* Estilos comunes */
+    .nav-link {
         position: relative;
         display: inline-block;
     }
@@ -134,10 +115,78 @@
         border-radius: 0.35rem;
     }
     
+    .badge-danger {
+        background-color: #e74a3b;
+    }
+    
     .badge-primary {
         background-color: #4e73df;
     }
     
+    /* Estilos para el dropdown de notificaciones */
+    #notification-dropdown {
+        min-width: 280px;
+        max-width: 350px;
+        padding: 0;
+        margin: 0;
+        font-size: 0.85rem;
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    
+    #notification-dropdown .dropdown-header {
+        background-color: #4e73df;
+        color: #fff;
+        padding: 0.75rem 1rem;
+        font-weight: 800;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+    }
+    
+    .notification-list {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .notification-item {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid #e3e6f0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+    }
+    
+    .notification-item:hover {
+        background-color: #f8f9fc;
+    }
+    
+    .notification-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .notification-content {
+        flex: 1;
+    }
+    
+    .notification-time {
+        font-size: 0.75rem;
+        color: #858796;
+    }
+    
+    .notification-message {
+        font-weight: 600;
+        color: #3a3b45;
+        margin: 0;
+    }
+
+    /* Estilos para el dropdown del reloj */
     #clock-dropdown {
         min-width: 280px;
         max-width: 350px;
@@ -203,6 +252,114 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Sistema de notificaciones original
+    class NotificationSystem {
+        constructor() {
+            this.notificationsCache = [];
+            this.updateInterval = 60000; // 1 minuto
+            this.init();
+        }
+
+        init() {
+            this.loadNotifications();
+            setInterval(() => this.loadNotifications(), this.updateInterval);
+        }
+
+        async loadNotifications() {
+            try {
+                const response = await fetch('api/get_notificaciones.php');
+                const data = await response.json();
+                
+                this.updateCounter(data.total);
+                this.updateNotificationMenu(data.notificaciones);
+                
+                this.notificationsCache = data.notificaciones;
+            } catch (error) {
+                console.error('Error al cargar notificaciones:', error);
+            }
+        }
+
+        updateCounter(total) {
+            const counter = document.getElementById('notification-counter');
+            if (counter) {
+                counter.textContent = total;
+            }
+        }
+
+        updateNotificationMenu(notifications) {
+            const container = document.getElementById('notification-list');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (notifications.length === 0) {
+                container.innerHTML = '<div class="dropdown-item text-center">No hay notificaciones</div>';
+                return;
+            }
+
+            notifications.forEach(notif => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'dropdown-item d-flex align-items-center';
+                item.dataset.id = notif.ID_Notificacion;
+                
+                const iconConfig = this.getNotificationTypeConfig(notif.Tipo);
+                
+                item.innerHTML = `
+                    <div class="mr-3">
+                        <div class="icon-circle bg-${iconConfig.color}">
+                            <i class="fas fa-${iconConfig.icon} text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="small text-gray-500">hace ${notif.TiempoTranscurrido}</div>
+                        <span class="font-weight-bold">${notif.Mensaje}</span>
+                    </div>
+                `;
+                
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.markAsRead(notif.ID_Notificacion);
+                });
+                
+                container.appendChild(item);
+            });
+        }
+
+        getNotificationTypeConfig(tipo) {
+            const configs = {
+                'venta': { icon: 'shopping-cart', color: 'success' },
+                'inventario': { icon: 'box', color: 'warning' },
+                'sistema': { icon: 'cog', color: 'info' },
+                'error': { icon: 'exclamation-triangle', color: 'danger' },
+                'default': { icon: 'bell', color: 'primary' }
+            };
+            
+            return configs[tipo] || configs.default;
+        }
+
+        async markAsRead(id) {
+            try {
+                const formData = new FormData();
+                formData.append('id', id);
+                
+                const response = await fetch('api/marcar_notificacion_leida.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    this.loadNotifications();
+                }
+            } catch (error) {
+                console.error('Error al marcar como leída:', error);
+            }
+        }
+    }
+
+    // Sistema de reloj para asistencias
     class ClockSystem {
         constructor() {
             this.clockCache = [];
@@ -223,7 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.updateCounter(data.total);
                 this.updateClockMenu(data.registros);
                 
-                // Actualizar caché
                 this.clockCache = data.registros;
             } catch (error) {
                 console.error('Error al cargar datos del reloj:', error);
@@ -282,7 +438,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Crear una instancia global
+    // Inicializar ambos sistemas
+    window.notificationSystem = new NotificationSystem();
     window.clockSystem = new ClockSystem();
 });
 </script>
