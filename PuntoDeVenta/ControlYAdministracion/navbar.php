@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="nav-item dropdown" id="clock-nav-item">
-                        <a href="#" class="nav-link dropdown-toggle" id="clock-bell" role="button" aria-expanded="false">
+                        <a href="#" class="nav-link dropdown-toggle" id="clock-bell" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-clock me-lg-2"></i>
                             <span class="d-none d-lg-inline-flex">Asistencias</span>
                             <span class="badge badge-primary badge-counter" id="clock-counter">0</span>
