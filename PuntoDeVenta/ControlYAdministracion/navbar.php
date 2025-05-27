@@ -298,30 +298,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             notifications.forEach(notif => {
-                const item = document.createElement('a');
-                item.href = '#';
-                item.className = 'dropdown-item d-flex align-items-center';
-                item.dataset.id = notif.ID_Notificacion;
-                
                 const iconConfig = this.getNotificationTypeConfig(notif.Tipo);
-                
+                const item = document.createElement('div');
+                item.className = `alert alert-${iconConfig.color} d-flex align-items-center mb-2 py-2 px-3`;
+                item.style.borderLeft = `5px solid var(--bs-${iconConfig.color})`;
                 item.innerHTML = `
-                    <div class="mr-3">
-                        <div class="icon-circle bg-${iconConfig.color}">
-                            <i class="fas fa-${iconConfig.icon} text-white"></i>
-                        </div>
-                    </div>
+                    <i class="fas fa-${iconConfig.icon} me-3 fs-4"></i>
                     <div>
-                        <div class="small text-gray-500">hace ${notif.TiempoTranscurrido}</div>
-                        <span class="font-weight-bold">${notif.Mensaje}</span>
+                        <div class="fw-bold">${notif.Mensaje}</div>
+                        <div class="small text-muted">hace ${notif.TiempoTranscurrido}</div>
                     </div>
                 `;
-                
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     this.markAsRead(notif.ID_Notificacion);
                 });
-                
                 container.appendChild(item);
             });
         }
@@ -405,21 +396,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             registros.forEach(reg => {
-                const item = document.createElement('div');
-                item.className = 'clock-item';
-                
                 const iconConfig = this.getIconConfig(reg.tipo);
-                
+                const item = document.createElement('div');
+                item.className = `alert alert-${iconConfig.color} d-flex align-items-center mb-2 py-2 px-3`;
+                item.style.borderLeft = `5px solid var(--bs-${iconConfig.color})`;
                 item.innerHTML = `
-                    <div class="clock-icon bg-${iconConfig.color}">
-                        <i class="fas fa-${iconConfig.icon} text-white"></i>
-                    </div>
-                    <div class="clock-content">
-                        <div class="clock-time">${reg.tiempo_transcurrido}</div>
-                        <div class="clock-message">${reg.mensaje}</div>
+                    <i class="fas fa-${iconConfig.icon} me-3 fs-4"></i>
+                    <div>
+                        <div class="fw-bold">${reg.mensaje}</div>
+                        <div class="small text-muted">${reg.tiempo_transcurrido} (${reg.hora_registro})</div>
                     </div>
                 `;
-                
                 container.appendChild(item);
             });
         }
