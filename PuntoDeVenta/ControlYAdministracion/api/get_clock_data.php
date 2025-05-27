@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Incluir conexión a la base de datos
-include "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/db_connection_Huellas.php";
+include "../Controladores/db_connection_Huellas.php";  // Ruta relativa desde api/ a Controladores/
 session_start();
 
 header('Content-Type: application/json');
