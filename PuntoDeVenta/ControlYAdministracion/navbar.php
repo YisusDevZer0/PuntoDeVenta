@@ -48,22 +48,22 @@
                             <a href="#" class="dropdown-item text-center">See all message</a>
                         </div>
                     </div>
-                    <div class="nav-item dropdown" id="notification-nav-item">
-                        <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" aria-expanded="false">
-                            <i class="fa fa-bell me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Notificaciones</span>
-                            <span class="badge badge-danger badge-counter" id="notification-counter">0</span>
+                    <div class="nav-item dropdown" id="clock-nav-item">
+                        <a href="#" class="nav-link dropdown-toggle" id="clock-bell" role="button" aria-expanded="false">
+                            <i class="fa fa-clock me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Reloj</span>
+                            <span class="badge badge-primary badge-counter" id="clock-counter">0</span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="notification-dropdown" aria-labelledby="notification-bell">
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--grow-in" id="clock-dropdown" aria-labelledby="clock-bell">
                             <h6 class="dropdown-header bg-primary text-white">
-                                Centro de Notificaciones
+                                Información en Tiempo Real
                             </h6>
-                            <div id="notification-list" class="notification-list">
-                                <div class="dropdown-item text-center">Cargando notificaciones...</div>
+                            <div id="clock-list" class="clock-list">
+                                <div class="dropdown-item text-center">Cargando información...</div>
                             </div>
                             <div class="dropdown-divider"></div>
-                            <a href="GestionNotificaciones.php" class="dropdown-item text-center small text-gray-500">
-                                Ver todas las notificaciones
+                            <a href="GestionReloj.php" class="dropdown-item text-center small text-gray-500">
+                                Ver historial completo
                             </a>
                         </div>
                     </div>
@@ -110,9 +110,9 @@
     });
 </script>
 
-<!-- Estilos para el sistema de notificaciones -->
+<!-- Estilos para el sistema de reloj -->
 <style>
-    #notification-bell {
+    #clock-bell {
         position: relative;
         display: inline-block;
     }
@@ -134,11 +134,11 @@
         border-radius: 0.35rem;
     }
     
-    .badge-danger {
-        background-color: #e74a3b;
+    .badge-primary {
+        background-color: #4e73df;
     }
     
-    #notification-dropdown {
+    #clock-dropdown {
         min-width: 280px;
         max-width: 350px;
         padding: 0;
@@ -148,7 +148,7 @@
         box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
     }
     
-    #notification-dropdown .dropdown-header {
+    #clock-dropdown .dropdown-header {
         background-color: #4e73df;
         color: #fff;
         padding: 0.75rem 1rem;
@@ -157,12 +157,12 @@
         text-transform: uppercase;
     }
     
-    .notification-list {
+    .clock-list {
         max-height: 400px;
         overflow-y: auto;
     }
     
-    .notification-item {
+    .clock-item {
         padding: 0.5rem 1rem;
         border-bottom: 1px solid #e3e6f0;
         display: flex;
@@ -171,11 +171,11 @@
         cursor: pointer;
     }
     
-    .notification-item:hover {
+    .clock-item:hover {
         background-color: #f8f9fc;
     }
     
-    .notification-icon {
+    .clock-icon {
         width: 2.5rem;
         height: 2.5rem;
         border-radius: 100%;
@@ -185,21 +185,107 @@
         color: white;
     }
     
-    .notification-content {
+    .clock-content {
         flex: 1;
     }
     
-    .notification-time {
+    .clock-time {
         font-size: 0.75rem;
         color: #858796;
     }
     
-    .notification-message {
+    .clock-message {
         font-weight: 600;
         color: #3a3b45;
         margin: 0;
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    class ClockSystem {
+        constructor() {
+            this.clockCache = [];
+            this.updateInterval = 30000; // 30 segundos
+            this.init();
+        }
+
+        init() {
+            this.loadClockData();
+            setInterval(() => this.loadClockData(), this.updateInterval);
+        }
+
+        async loadClockData() {
+            try {
+                const response = await fetch('api/get_clock_data.php');
+                const data = await response.json();
+                
+                this.updateCounter(data.total);
+                this.updateClockMenu(data.registros);
+                
+                // Actualizar caché
+                this.clockCache = data.registros;
+            } catch (error) {
+                console.error('Error al cargar datos del reloj:', error);
+            }
+        }
+
+        updateCounter(total) {
+            const counter = document.getElementById('clock-counter');
+            if (counter) {
+                counter.textContent = total;
+            }
+        }
+
+        updateClockMenu(registros) {
+            const container = document.getElementById('clock-list');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (registros.length === 0) {
+                container.innerHTML = '<div class="dropdown-item text-center">No hay registros nuevos</div>';
+                return;
+            }
+
+            registros.forEach(reg => {
+                const item = document.createElement('div');
+                item.className = 'clock-item';
+                
+                const iconConfig = this.getIconConfig(reg.tipo);
+                
+                item.innerHTML = `
+                    <div class="clock-icon bg-${iconConfig.color}">
+                        <i class="fas fa-${iconConfig.icon} text-white"></i>
+                    </div>
+                    <div class="clock-content">
+                        <div class="clock-time">${reg.tiempo_transcurrido}</div>
+                        <div class="clock-message">${reg.mensaje}</div>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        getIconConfig(tipo) {
+            const configs = {
+                'entrada': { icon: 'sign-in-alt', color: 'success' },
+                'salida': { icon: 'sign-out-alt', color: 'info' },
+                'warning': { icon: 'exclamation-triangle', color: 'warning' },
+                'success': { icon: 'check-circle', color: 'success' },
+                'sistema': { icon: 'clock', color: 'primary' },
+                'default': { icon: 'clock', color: 'primary' }
+            };
+            
+            return configs[tipo] || configs.default;
+        }
+    }
+
+    // Crear una instancia global
+    window.clockSystem = new ClockSystem();
+});
+</script>
 
 </body>
 </html>
