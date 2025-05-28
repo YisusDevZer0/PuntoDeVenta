@@ -9,6 +9,12 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form> -->
                 <div class="navbar-nav align-items-center ms-auto">
+                    <div class="nav-item">
+                        <a href="Mensajes" class="nav-link">
+                            <i class="fa fa-envelope me-lg-2"></i>
+                            <span class="d-none d-lg-inline-flex">Mensajes</span>
+                        </a>
+                    </div>
                     <div class="nav-item dropdown" id="notification-nav-item">
                         <a href="#" class="nav-link dropdown-toggle" id="notification-bell" role="button" aria-expanded="false">
                             <i class="fa fa-bell me-lg-2"></i>

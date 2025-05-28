@@ -197,6 +197,9 @@ $tipoUsuario = $row['TipoUsuario'];
 </div>
 
 <?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<a href="Mensajes" class="nav-item nav-link"><i class="fa fa-envelope me-2"></i>Mensajes</a>
+<?php } ?>
 
             </nav>
         </div>
