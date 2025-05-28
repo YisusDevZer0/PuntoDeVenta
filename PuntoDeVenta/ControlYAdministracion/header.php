@@ -47,7 +47,7 @@
 </head>
 <style>
     .nav-link {
-    /* position: relative; */
+        position: static !important;
     display: inline-block;
 }
 </style>
