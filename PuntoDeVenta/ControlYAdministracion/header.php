@@ -45,4 +45,9 @@
 <script src="js/notifications.js"></script>
 
 </head>
-
+<style>
+    .nav-link {
+    /* position: relative; */
+    display: inline-block;
+}
+</style>
