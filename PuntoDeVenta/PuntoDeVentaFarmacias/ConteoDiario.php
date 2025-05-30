@@ -33,27 +33,59 @@ $query = $stmt->get_result();
 
     <?php
    include "header.php";?>
-   <div id="loading-overlay">
-  <div class="loader"></div>
-  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-</div>
+   <style>
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        #loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
 <body>
-    
-        <!-- Spinner End -->
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text">Cargando datos...</div>
+    </div>
+
+    <?php include_once "Menu.php" ?>
+
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+    <?php include "navbar.php";?>
+        <!-- Navbar End -->
 
 
-        <?php include_once "Menu.php" ?>
-
-        <!-- Content Start -->
-        <div class="content">
-            <!-- Navbar Start -->
-        <?php include "navbar.php";?>
-            <!-- Navbar End -->
-
-
-            <!-- Table Start -->
-          
-            <div class="container-fluid pt-4 px-4">
+        <!-- Table Start -->
+      
+        <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Conteo Diario - <?php echo htmlspecialchars($row['Licencia']); ?></h6>
@@ -119,7 +151,7 @@ $user_id=null;
 
 
 
-<th>Stock Fisico</th>
+<th>Existencias</th>
 
 
    
@@ -173,6 +205,74 @@ $user_id=null;
             <?php 
             
             include "Footer.php";?>
+
+    <script>
+    $(document).ready(function() {
+        // Función para mostrar el loading
+        function showLoading(message = 'Cargando datos...') {
+            $('#loading-text').text(message);
+            $('#loading-overlay').css('display', 'flex');
+        }
+
+        // Función para ocultar el loading
+        function hideLoading() {
+            $('#loading-overlay').css('display', 'none');
+        }
+
+        // Mostrar loading al cargar la página
+        showLoading('Inicializando tabla...');
+
+        // Inicializar DataTable con loading
+        var table = $('#StockSucursalesDistribucion').DataTable({
+            "order": [[0, "desc"]],
+            "lengthMenu": [[30], [30]],
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "processing": "Procesando..."
+            },
+            "responsive": true,
+            "initComplete": function() {
+                hideLoading();
+            }
+        });
+
+        // Mostrar loading al enviar el formulario
+        $('#RegistraConteoDelDia').on('submit', function() {
+            showLoading('Guardando datos...');
+        });
+
+        // Mostrar loading al buscar
+        table.on('search.dt', function() {
+            showLoading('Buscando...');
+        });
+
+        // Ocultar loading cuando termina la búsqueda
+        table.on('search.dt', function() {
+            setTimeout(hideLoading, 500);
+        });
+
+        // Mostrar loading al cambiar de página
+        table.on('page.dt', function() {
+            showLoading('Cargando página...');
+        });
+
+        // Ocultar loading cuando termina de cargar la página
+        table.on('page.dt', function() {
+            setTimeout(hideLoading, 500);
+        });
+    });
+    </script>
 </body>
 
 </html>
