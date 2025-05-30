@@ -14,41 +14,6 @@
             </div>
         </div>
         <div class="navbar-nav w-100">
-            <style>
-                .sidebar .nav-link {
-                    color: #222;
-                    border-radius: 18px;
-                    font-weight: 500;
-                    margin-bottom: 2px;
-                    transition: all 0.2s;
-                }
-                .sidebar .nav-link.active, .sidebar .nav-link:hover {
-                    background: #e3f2fd;
-                    color: #0172b6;
-                    font-weight: bold;
-                    box-shadow: 0 2px 8px rgba(0,123,255,0.07);
-                }
-                .sidebar .nav-link i {
-                    transition: color 0.2s;
-                }
-                .sidebar .nav-link.active i, .sidebar .nav-link:hover i {
-                    color: #0172b6 !important;
-                }
-                .sidebar .dropdown-menu {
-                    border-radius: 14px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-                    background: #f8fafc;
-                }
-                .sidebar .dropdown-item {
-                    border-radius: 12px;
-                    margin-bottom: 2px;
-                    transition: background 0.2s, color 0.2s;
-                }
-                .sidebar .dropdown-item:hover, .sidebar .dropdown-item:focus {
-                    background: #e3f2fd;
-                    color: #0172b6;
-                }
-            </style>
             <a href="index" class="nav-item nav-link py-2 px-4 border-start border-4 border-transparent rounded-pill mb-1" style="transition: all 0.2s; font-weight: 500;">
                 <i class="fa fa-tachometer-alt me-2 text-primary"></i>Inicio
             </a>
