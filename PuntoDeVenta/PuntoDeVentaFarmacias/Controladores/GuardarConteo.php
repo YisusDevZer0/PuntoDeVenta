@@ -37,6 +37,16 @@ if (!$sucursal || !$agregadoPor) {
     exit;
 }
 
+// Si no está en pausa, validar que todos los campos de stock físico estén llenos
+if (!$enPausa) {
+    foreach ($stockFisico as $stock) {
+        if ($stock === '' || $stock === null) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos de Stock Físico deben estar llenos para finalizar el conteo']);
+            exit;
+        }
+    }
+}
+
 try {
     // Iniciar transacción
     $conn->begin_transaction();
@@ -57,13 +67,18 @@ try {
 
     // Insertar cada registro
     for ($i = 0; $i < count($codigos); $i++) {
+        // Si está en pausa y el stock está vacío, guardar NULL
+        $stockFisicoValue = ($enPausa && ($stockFisico[$i] === '' || $stockFisico[$i] === null)) ? 
+            null : 
+            $stockFisico[$i];
+
         $stmt->bind_param(
             "sssdisi",
             $codigos[$i],
             $nombres[$i],
             $sucursal,
             $existenciasR[$i],
-            $stockFisico[$i],
+            $stockFisicoValue,
             $agregadoPor,
             $enPausa
         );
@@ -80,7 +95,7 @@ try {
     echo json_encode([
         'success' => true,
         'message' => $enPausa ? 
-            'Conteo guardado y pausado correctamente' : 
+            'Conteo guardado y pausado correctamente. Podrás completar los campos vacíos más tarde.' : 
             'Conteo guardado correctamente',
         'registros' => count($codigos)
     ]);
