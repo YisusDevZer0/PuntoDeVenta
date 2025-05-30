@@ -8,11 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['VentasPos'])) {
-    echo json_encode(['success' => false, 'message' => 'Sesión no iniciada']);
-    exit;
-}
+
 
 // Obtener y validar datos
 $codigos = $_POST['CodBarra'] ?? [];
