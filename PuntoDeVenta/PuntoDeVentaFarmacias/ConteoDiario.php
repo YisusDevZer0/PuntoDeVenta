@@ -11,6 +11,8 @@ $sql1 = "SELECT Cod_Barra, Nombre_Prod, Existencias_R
          FROM `Stock_POS` 
          WHERE Fk_sucursal = ? 
          AND Tipo_Servicio = 5
+         AND Cod_Barra IS NOT NULL 
+         AND Cod_Barra != ''
          ORDER BY Cod_Barra 
          LIMIT 50";
 
