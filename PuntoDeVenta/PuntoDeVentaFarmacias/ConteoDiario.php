@@ -212,12 +212,12 @@ $user_id=null;
         // Función para mostrar el loading
         function showLoading(message = 'Cargando datos...') {
             $('#loading-text').text(message);
-            $('#loading-overlay').fadeIn(200);
+            $('#loading-overlay').show();
         }
 
         // Función para ocultar el loading
         function hideLoading() {
-            $('#loading-overlay').fadeOut(200);
+            $('#loading-overlay').hide();
         }
 
         // Destruir la tabla si ya existe
@@ -225,7 +225,7 @@ $user_id=null;
             $('#StockSucursalesDistribucion').DataTable().destroy();
         }
 
-        // Inicializar DataTable con loading
+        // Inicializar DataTable
         var table = $('#StockSucursalesDistribucion').DataTable({
             "destroy": true,
             "retrieve": true,
@@ -247,22 +247,10 @@ $user_id=null;
                 "processing": "Procesando..."
             },
             "responsive": true,
-            "drawCallback": function() {
+            "processing": true,
+            "initComplete": function() {
                 hideLoading();
             }
-        });
-
-        // Eventos de la tabla
-        table.on('preInit.dt', function() {
-            showLoading('Inicializando tabla...');
-        });
-
-        table.on('search.dt', function() {
-            showLoading('Buscando...');
-        });
-
-        table.on('page.dt', function() {
-            showLoading('Cargando página...');
         });
 
         // Evento del formulario
@@ -270,13 +258,8 @@ $user_id=null;
             showLoading('Guardando datos...');
         });
 
-        // Asegurarnos de que el loading se oculte si hay algún error
-        $(window).on('error', function() {
-            hideLoading();
-        });
-
         // Ocultar loading después de un tiempo máximo por si algo falla
-        setTimeout(hideLoading, 5000);
+        setTimeout(hideLoading, 3000);
     });
     </script>
 </body>
