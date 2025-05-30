@@ -146,7 +146,7 @@ $stmtCheck->close();
             "destroy": true,
             "retrieve": true,
             "order": [[0, "desc"]],
-            "lengthMenu": [[30], [30]],
+            "lengthMenu": [[50], [50]],
             "language": {
                 "lengthMenu": "Mostrar _MENU_ registros",
                 "zeroRecords": "No se encontraron resultados",
