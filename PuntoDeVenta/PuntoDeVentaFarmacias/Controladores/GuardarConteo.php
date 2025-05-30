@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once "../Conexion.php";
+include_once "config.php";
 
 // Verificar si es una petición POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verificar si el usuario está logueado
-if (!isset($_SESSION['usuario'])) {
+if (!isset($_SESSION['VentasPos'])) {
     echo json_encode(['success' => false, 'message' => 'Sesión no iniciada']);
     exit;
 }
