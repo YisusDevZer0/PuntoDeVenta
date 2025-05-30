@@ -13,7 +13,7 @@ $sql1 = "SELECT Cod_Barra, Nombre_Prod, Existencias_R
          AND Tipo_Servicio = 5
          AND Cod_Barra IS NOT NULL 
          AND Cod_Barra != ''
-         ORDER BY Cod_Barra 
+         ORDER BY RAND()
          LIMIT 50";
 
 // Preparar la consulta para prevenir SQL injection
@@ -225,9 +225,6 @@ $user_id=null;
             $('#StockSucursalesDistribucion').DataTable().destroy();
         }
 
-        // Mostrar loading inmediatamente
-        showLoading('Inicializando tabla...');
-
         // Inicializar DataTable con loading
         var table = $('#StockSucursalesDistribucion').DataTable({
             "destroy": true,
@@ -250,8 +247,8 @@ $user_id=null;
                 "processing": "Procesando..."
             },
             "responsive": true,
-            "initComplete": function() {
-                setTimeout(hideLoading, 500); // Dar un pequeño retraso para asegurar que todo esté cargado
+            "drawCallback": function() {
+                hideLoading();
             }
         });
 
@@ -262,12 +259,10 @@ $user_id=null;
 
         table.on('search.dt', function() {
             showLoading('Buscando...');
-            setTimeout(hideLoading, 500);
         });
 
         table.on('page.dt', function() {
             showLoading('Cargando página...');
-            setTimeout(hideLoading, 500);
         });
 
         // Evento del formulario
@@ -279,6 +274,9 @@ $user_id=null;
         $(window).on('error', function() {
             hideLoading();
         });
+
+        // Ocultar loading después de un tiempo máximo por si algo falla
+        setTimeout(hideLoading, 5000);
     });
     </script>
 </body>
