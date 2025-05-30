@@ -219,11 +219,18 @@ $user_id=null;
             $('#loading-overlay').css('display', 'none');
         }
 
+        // Destruir la tabla si ya existe
+        if ($.fn.DataTable.isDataTable('#StockSucursalesDistribucion')) {
+            $('#StockSucursalesDistribucion').DataTable().destroy();
+        }
+
         // Mostrar loading al cargar la página
         showLoading('Inicializando tabla...');
 
         // Inicializar DataTable con loading
         var table = $('#StockSucursalesDistribucion').DataTable({
+            "destroy": true, // Permite reinicializar la tabla
+            "retrieve": true, // Recupera la instancia existente si existe
             "order": [[0, "desc"]],
             "lengthMenu": [[30], [30]],
             "language": {
