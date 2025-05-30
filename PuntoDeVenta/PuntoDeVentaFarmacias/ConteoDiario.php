@@ -61,26 +61,45 @@ $query = $stmt->get_result();
                             <div class="table-responsive">
                                 <table id="StockSucursalesDistribucion" class="table table-hover">
                                     <thead>
-                                        <th>Codigo</th>
-                                        <th>Nombre</th>
-                                        <th>Existencias</th>
-                                    </thead>
-                                    <?php while ($producto = $query->fetch_assoc()):?>
                                         <tr>
-                                            <td><input type="text" class="form-control" name="CodBarra[]" value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly></td>
-                                            <td><input type="text" class="form-control" name="NombreProd[]" value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly></td>
-                                            <td style="display: none;"><input type="text" name="StockEnEseMomento[]"class="form-control" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>" readonly></td>
-                                            <td style="display: none;"><input type="text" name="Agrego[]"class="form-control" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>" readonly></td>
-                                            <td style="display: none;"><input type="text" name="Sucursal[]"class="form-control" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>" readonly></td>
-                                            <td><input type="number" class="form-control" name="StockFisico[]" min="0" step="1" required></td>
+                                            <th>Código</th>
+                                            <th>Nombre</th>
+                                            <th>Existencias R.</th>
+                                            <th>Stock Físico</th>
                                         </tr>
-                                    <?php endwhile;?>
+                                    </thead>
+                                    <tbody>
+                                        <?php while ($producto = $query->fetch_assoc()): ?>
+                                            <tr>
+                                                <td>
+                                                    <input type="text" class="form-control" name="CodBarra[]" 
+                                                           value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" name="NombreProd[]" 
+                                                           value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="Existencias_R[]" 
+                                                           value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" name="StockFisico[]" 
+                                                           min="0" step="1" required>
+                                                </td>
+                                                <input type="hidden" name="Agrego[]" 
+                                                       value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
+                                                <input type="hidden" name="Sucursal[]" 
+                                                       value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
                                 </table>
                             </div>
                         </form>
-                    <?php else:?>
-                        <p class="alert alert-warning">No se encontraron coincidencias</p>
-                    <?php endif;?>
+                    <?php else: ?>
+                        <div class="alert alert-warning">No se encontraron productos para realizar el conteo</div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -144,7 +163,32 @@ $query = $stmt->get_result();
         });
 
         // Evento del formulario
-        $('#RegistraConteoDelDia').on('submit', function() {
+        $('#RegistraConteoDelDia').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar que todos los campos de Stock Físico estén llenos
+            let stockFisicoInputs = $('input[name="StockFisico[]"]');
+            let todosLlenos = true;
+            
+            stockFisicoInputs.each(function() {
+                if (!$(this).val()) {
+                    todosLlenos = false;
+                    return false;
+                }
+            });
+
+            if (!todosLlenos) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor, complete todos los campos de Stock Físico',
+                    icon: 'error',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#0172b6'
+                });
+                return;
+            }
+
+            // Mostrar mensaje de carga
             Swal.fire({
                 title: 'Guardando Conteo',
                 text: 'Por favor espere mientras se guarda el conteo...',
@@ -154,6 +198,46 @@ $query = $stmt->get_result();
                 showConfirmButton: false,
                 didOpen: () => {
                     Swal.showLoading();
+                }
+            });
+
+            // Enviar datos mediante AJAX
+            $.ajax({
+                url: 'Controladores/GuardarConteo.php',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: '¡Éxito!',
+                            text: 'El conteo se ha guardado correctamente',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#0172b6'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'Hubo un error al guardar el conteo',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#0172b6'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error al comunicarse con el servidor',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#0172b6'
+                    });
                 }
             });
         });
