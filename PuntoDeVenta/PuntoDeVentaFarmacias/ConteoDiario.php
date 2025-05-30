@@ -21,6 +21,21 @@ $stmt = $conn->prepare($sql1);
 $stmt->bind_param("s", $row['Fk_Sucursal']);
 $stmt->execute();
 $query = $stmt->get_result();
+
+// Consulta para verificar si hay un conteo en pausa
+$usuarioActual = $row['Nombre_Apellidos'];
+$sucursalActual = $row['Fk_Sucursal'];
+$conteoPausado = false;
+
+$sqlCheck = "SELECT 1 FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 LIMIT 1";
+$stmtCheck = $conn->prepare($sqlCheck);
+$stmtCheck->bind_param("ss", $usuarioActual, $sucursalActual);
+$stmtCheck->execute();
+$stmtCheck->store_result();
+if ($stmtCheck->num_rows > 0) {
+    $conteoPausado = true;
+}
+$stmtCheck->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,7 +63,21 @@ $query = $stmt->get_result();
                 <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4" style="color:#0172b6;">Conteo Diario - <?php echo htmlspecialchars($row['Licencia']); ?></h6>
                     
-                    <?php if($query->num_rows > 0): ?>
+                    <?php if ($conteoPausado): ?>
+                        <div class="alert alert-danger text-center">
+                            Ya tienes un conteo diario en pausa. Debes finalizarlo antes de iniciar uno nuevo.
+                        </div>
+                        <script>
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '¡Atención!',
+                            html: 'Ya tienes un conteo diario en pausa.<br>Debes finalizarlo antes de iniciar uno nuevo.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#0172b6',
+                            allowOutsideClick: false
+                        });
+                        </script>
+                    <?php elseif($query->num_rows > 0): ?>
                         <form id="RegistraConteoDelDia" action="javascript:void(0)" method="post">
                             <div class="text-center mb-3">
                                 <button type="button" id="btnPausar" class="btn btn-warning me-2">
