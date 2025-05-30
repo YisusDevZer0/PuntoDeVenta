@@ -151,7 +151,7 @@ $query = $stmt->get_result();
             allowOutsideClick: false
         });
 
-        // Función para validar el formulario
+        // Función para validar el formulario (solo para guardar, no para pausar)
         function validarFormulario() {
             let stockFisicoInputs = $('input[name="StockFisico[]"]');
             let todosLlenos = true;
@@ -179,11 +179,15 @@ $query = $stmt->get_result();
         // Función para enviar datos
         function enviarDatos(enPausa = 0) {
             // Agregar el estado de pausa al formulario
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'EnPausa',
-                value: enPausa
-            }).appendTo('#RegistraConteoDelDia');
+            if ($('input[name="EnPausa"]').length) {
+                $('input[name="EnPausa"]').val(enPausa);
+            } else {
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'EnPausa',
+                    value: enPausa
+                }).appendTo('#RegistraConteoDelDia');
+            }
 
             // Mostrar mensaje de carga
             Swal.fire({
@@ -247,27 +251,25 @@ $query = $stmt->get_result();
             });
         }
 
-        // Evento del botón pausar
+        // Evento del botón pausar (NO valida campos vacíos)
         $('#btnPausar').on('click', function() {
-            if (validarFormulario()) {
-                Swal.fire({
-                    title: '¿Pausar el conteo?',
-                    text: '¿Estás seguro de que deseas pausar el conteo? Podrás continuarlo más tarde.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, pausar',
-                    cancelButtonText: 'No, continuar',
-                    confirmButtonColor: '#0172b6',
-                    cancelButtonColor: '#dc3545'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        enviarDatos(1); // 1 = en pausa
-                    }
-                });
-            }
+            Swal.fire({
+                title: '¿Pausar el conteo?',
+                text: '¿Estás seguro de que deseas pausar el conteo? Podrás continuarlo más tarde.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, pausar',
+                cancelButtonText: 'No, continuar',
+                confirmButtonColor: '#0172b6',
+                cancelButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarDatos(1); // 1 = en pausa
+                }
+            });
         });
 
-        // Evento del formulario (guardar final)
+        // Evento del formulario (guardar final, SÍ valida campos vacíos)
         $('#RegistraConteoDelDia').on('submit', function(e) {
             e.preventDefault();
             if (validarFormulario()) {
