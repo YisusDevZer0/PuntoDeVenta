@@ -10,7 +10,7 @@ if (!isset($row['Fk_Sucursal']) || !isset($row['Licencia'])) {
 $sql1 = "SELECT Cod_Barra, Nombre_Prod, Existencias_R 
          FROM `Stock_POS` 
          WHERE Fk_sucursal = ? 
-         AND Tipo_Servicio NOT IN (3, 6, 7, 8, 10, 11, 12) 
+         AND Tipo_Servicio = 5
          ORDER BY Cod_Barra 
          LIMIT 50";
 
