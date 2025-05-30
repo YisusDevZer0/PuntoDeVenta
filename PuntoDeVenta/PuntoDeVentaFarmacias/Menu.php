@@ -1,197 +1,109 @@
-<div class="sidebar pe-4 pb-3" style="background: #f8fafc; min-height: 100vh; box-shadow: 2px 0 8px rgba(0,0,0,0.04); border-radius: 0 18px 18px 0;">
-    <nav class="navbar bg-light navbar-light" style="border-radius: 0 18px 18px 0;">
-        <a href="index.html" class="navbar-brand mx-4 mb-3 d-flex align-items-center">
-            <h3 class="text-primary mb-0" style="font-weight: bold;"><i style="color: #ef7980!important; margin-right: 8px;" class="fa-solid fa-fish"></i><?php echo $row['Licencia']?></h3>
-        </a>
-        <div class="d-flex align-items-center ms-4 mb-4">
-            <div class="position-relative shadow" style="box-shadow: 0 2px 8px rgba(0,0,0,0.10);">
-                <img class="rounded-circle border border-3 border-white" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 60px; height: 60px; object-fit: cover;">
-                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
-            </div>
-            <div class="ms-3">
-                <h6 class="mb-0" style="font-weight: 600; color: #222; font-size: 1.1rem;"><?php echo $row['Nombre_Apellidos']?></h6>
-                <span style="color: #888; font-size: 0.95rem;"> <?php echo $row['TipoUsuario']?></span>
-            </div>
+<div class="sidebar-custom">
+    <nav>
+        <a href="index" class="menu-link active"><i class="fa fa-clock"></i> Inicio</a>
+        <a href="#PuntoVentaMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-money-bill-transfer"></i> Punto de venta <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="PuntoVentaMenu">
+            <a href="AperturarCajaV2" class="menu-link submenu"><i class="fa-solid fa-cash-register"></i> Apertura de caja</a>
+            <a href="RealizarVentas" class="menu-link submenu"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
+            <a href="GeneracionDeEncargos" class="menu-link submenu"><i class="fa-solid fa-file-invoice"></i> Encargos</a>
         </div>
-        <div class="navbar-nav w-100">
-            <style>
-                .sidebar .nav-link {
-                    color: #222;
-                    border-radius: 18px;
-                    font-weight: 500;
-                    margin-bottom: 2px;
-                    transition: all 0.2s;
-                }
-                .sidebar .nav-link.active, .sidebar .nav-link:hover {
-                    background: #e3f2fd;
-                    color: #0172b6;
-                    font-weight: bold;
-                    box-shadow: 0 2px 8px rgba(0,123,255,0.07);
-                }
-                .sidebar .nav-link i {
-                    transition: color 0.2s;
-                }
-                .sidebar .nav-link.active i, .sidebar .nav-link:hover i {
-                    color: #0172b6 !important;
-                }
-                .sidebar .dropdown-menu {
-                    border-radius: 14px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-                    background: #f8fafc;
-                }
-                .sidebar .dropdown-item {
-                    border-radius: 12px;
-                    margin-bottom: 2px;
-                    transition: background 0.2s, color 0.2s;
-                }
-                .sidebar .dropdown-item:hover, .sidebar .dropdown-item:focus {
-                    background: #e3f2fd;
-                    color: #0172b6;
-                }
-            </style>
-            <a href="index" class="nav-item nav-link py-2 px-4 border-start border-4 border-transparent rounded-pill mb-1" style="transition: all 0.2s; font-weight: 500;">
-                <i class="fa fa-tachometer-alt me-2 text-primary"></i>Inicio
-            </a>
-
-            <div class="nav-item">
-                <a href="#PuntoVentaMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-money-bill-transfer me-2 text-primary"></i>Punto de venta<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="PuntoVentaMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="AperturarCajaV2" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-cash-register me-2 text-primary"></i>Apertura de caja</a>
-                        <a href="RealizarVentas" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-hand-holding-dollar me-2 text-primary"></i>Realizar Ventas</a>
-                        <a href="GeneracionDeEncargos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice me-2 text-primary"></i>Encargos</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-item">
-                <a href="#FarmaciaMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-house-medical me-2 text-primary"></i>Farmacia<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="FarmaciaMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="RegistrosdeEnergia" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-lightbulb me-2 text-primary"></i>Registro de energía</a>
-                        <a href="BitacoraLimpieza" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-broom me-2 text-primary"></i>Bitácora de limpieza</a>
-                        <a href="TareasPorHacer" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-list me-2 text-primary"></i>Lista de tareas</a>
-                        <a href="Mensajes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-message me-2 text-primary"></i>Mensajes</a>
-                        <a href="Recordatorios" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-bell me-2 text-primary"></i>Crear recordatorios</a>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="nav-item">
-                <a href="#AgendasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-calendar me-2 text-primary"></i>Agendas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="AgendasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="AgendaRevaloraciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-person-walking-arrow-loop-left me-2 text-primary"></i>Revaloraciones</a>
-                        <a href="AgendaEspecialista" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-hospital-user me-2 text-primary"></i>Especialistas</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-item">
-                <a href="#CajasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-cash-register me-2 text-primary"></i>Cajas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="CajasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="CortesDeCaja" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice-dollar me-2 text-primary"></i>Cortes de caja</a>
-                        <a href="RegistroDeGastos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-comment-dollar me-2 text-primary"></i>Registro de gastos</a>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="nav-item">
-                <a href="#ClientesMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-users me-2 text-primary"></i>Clientes<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="ClientesMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="DatosDeClientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-people-group me-2 text-primary"></i>Lista de clientes</a>
-                        <a href="Creditos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-regular fa-credit-card me-2 text-primary"></i>Créditos</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-item">
-                <a href="#TicketsMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-receipt me-2 text-primary"></i>Tickets<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="TicketsMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="Tickets" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-ticket-simple me-2 text-primary"></i>Desglose de tickets</a>
-                        <a href="AbonosEnCreditos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-money-bills me-2 text-primary"></i>Tickets de crédito</a>
-                        <a href="EncargosPendientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice-dollar me-2 text-primary"></i>Encargos</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-item">
-                <a href="#VentasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-chart-line me-2 text-primary"></i>Ventas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="VentasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="VentasDelDia" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-coins me-2 text-primary"></i>Ventas del día</a>
-                        <a href="VentasAcredito" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Ventas a crédito</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-item">
-                <a href="#AlmacenMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Almacén<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="AlmacenMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="StockSucursal" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-dolly me-2 text-primary"></i>Stock</a>
-                        <a href="StockInsumos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-box me-2 text-primary"></i>Stock de insumos</a>
-                        <a href="Pedidos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-truck me-2 text-primary"></i>Pedidos</a>
-                        <a href="ConteoDiario" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clipboard-list me-2 text-primary"></i>Conteo diario</a>
-                        <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice me-2 text-primary"></i>Devoluciones</a>
-                        <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-calendar-xmark me-2 text-primary"></i>Caducados</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-item">
-                <a href="#TraspasosMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-arrow-right-arrow-left me-2 text-primary"></i>Traspasos<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="TraspasosMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="ListadoDeTraspasos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-list-check me-2 text-primary"></i>Listado de traspasos</a>
-                        <a href="Ingresos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-inbox me-2 text-primary"></i>Solicitar ingresos</a>
-                        <a href="SolicitudPendientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Solicitudes pendientes</a>
-                    </div>
-                </div>
-            </div>
-
-            <a href="videos" class="nav-item nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-circle-play me-2 text-primary"></i>Video tutoriales</a>
+        <a href="#FarmaciaMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-house-medical"></i> Farmacia <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="FarmaciaMenu">
+            <a href="RegistrosdeEnergia" class="menu-link submenu"><i class="fa-solid fa-lightbulb"></i> Registro de energía</a>
+            <a href="BitacoraLimpieza" class="menu-link submenu"><i class="fa-solid fa-broom"></i> Bitácora de limpieza</a>
+            <a href="TareasPorHacer" class="menu-link submenu"><i class="fa-solid fa-list"></i> Lista de tareas</a>
+            <a href="Mensajes" class="menu-link submenu"><i class="fa-solid fa-message"></i> Mensajes</a>
+            <a href="Recordatorios" class="menu-link submenu"><i class="fa-solid fa-bell"></i> Crear recordatorios</a>
         </div>
-
+        <a href="#AgendasMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-calendar"></i> Agendas <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="AgendasMenu">
+            <a href="AgendaRevaloraciones" class="menu-link submenu"><i class="fa-solid fa-person-walking-arrow-loop-left"></i> Revaloraciones</a>
+            <a href="AgendaEspecialista" class="menu-link submenu"><i class="fa-solid fa-hospital-user"></i> Especialistas</a>
+        </div>
+        <a href="#CajasMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-cash-register"></i> Cajas <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="CajasMenu">
+            <a href="CortesDeCaja" class="menu-link submenu"><i class="fa-solid fa-file-invoice-dollar"></i> Cortes de caja</a>
+            <a href="RegistroDeGastos" class="menu-link submenu"><i class="fa-solid fa-comment-dollar"></i> Registro de gastos</a>
+        </div>
+        <a href="#ClientesMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-users"></i> Clientes <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="ClientesMenu">
+            <a href="DatosDeClientes" class="menu-link submenu"><i class="fa-solid fa-people-group"></i> Lista de clientes</a>
+            <a href="Creditos" class="menu-link submenu"><i class="fa-regular fa-credit-card"></i> Créditos</a>
+        </div>
+        <a href="#TicketsMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-receipt"></i> Tickets <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="TicketsMenu">
+            <a href="Tickets" class="menu-link submenu"><i class="fa-solid fa-ticket-simple"></i> Desglose de tickets</a>
+            <a href="AbonosEnCreditos" class="menu-link submenu"><i class="fa-solid fa-money-bills"></i> Tickets de crédito</a>
+            <a href="EncargosPendientes" class="menu-link submenu"><i class="fa-solid fa-file-invoice-dollar"></i> Encargos</a>
+        </div>
+        <a href="#VentasMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-chart-line"></i> Ventas <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="VentasMenu">
+            <a href="VentasDelDia" class="menu-link submenu"><i class="fa-solid fa-coins"></i> Ventas del día</a>
+            <a href="VentasAcredito" class="menu-link submenu"><i class="fa-solid fa-credit-card"></i> Ventas a crédito</a>
+        </div>
+        <a href="#AlmacenMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-boxes-stacked"></i> Almacén <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="AlmacenMenu">
+            <a href="StockSucursal" class="menu-link submenu"><i class="fa-solid fa-dolly"></i> Stock</a>
+            <a href="StockInsumos" class="menu-link submenu"><i class="fa-solid fa-box"></i> Stock de insumos</a>
+            <a href="Pedidos" class="menu-link submenu"><i class="fa-solid fa-truck"></i> Pedidos</a>
+            <a href="ConteoDiario" class="menu-link submenu"><i class="fa-solid fa-clipboard-list"></i> Conteo diario</a>
+            <a href="Cotizaciones" class="menu-link submenu"><i class="fa-solid fa-file-invoice"></i> Devoluciones</a>
+            <a href="Cotizaciones" class="menu-link submenu"><i class="fa-solid fa-calendar-xmark"></i> Caducados</a>
+        </div>
+        <a href="#TraspasosMenu" class="menu-link" data-bs-toggle="collapse"><i class="fa-solid fa-arrow-right-arrow-left"></i> Traspasos <i class="fa fa-angle-down ms-auto"></i></a>
+        <div class="collapse" id="TraspasosMenu">
+            <a href="ListadoDeTraspasos" class="menu-link submenu"><i class="fa-solid fa-list-check"></i> Listado de traspasos</a>
+            <a href="Ingresos" class="menu-link submenu"><i class="fa-solid fa-inbox"></i> Solicitar ingresos</a>
+            <a href="SolicitudPendientes" class="menu-link submenu"><i class="fa-solid fa-clock-rotate-left"></i> Solicitudes pendientes</a>
+        </div>
+        <a href="videos" class="menu-link"><i class="fa-solid fa-circle-play"></i> Video tutoriales</a>
     </nav>
 </div>
 
 <style>
-    .sidebar .nav-link {
-        color: #222;
-        border-radius: 18px;
-    }
-    .sidebar .nav-link.active, .sidebar .nav-link:hover {
-        background: #e3f2fd;
-        color: #0172b6;
-        font-weight: bold;
-        box-shadow: 0 2px 8px rgba(0,123,255,0.07);
-    }
-    .sidebar .nav-link i {
-        transition: color 0.2s;
-    }
-    .sidebar .nav-link.active i, .sidebar .nav-link:hover i {
-        color: #0172b6 !important;
-    }
+.sidebar-custom {
+    background: #f8fafc;
+    min-height: 100vh;
+    width: 220px;
+    padding: 24px 0 0 0;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.04);
+    border-radius: 0 18px 18px 0;
+}
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    color: #222;
+    font-weight: 500;
+    font-size: 1rem;
+    border-radius: 12px;
+    margin: 2px 12px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+.menu-link i {
+    margin-right: 12px;
+    font-size: 1.2em;
+    color: #0172b6;
+    min-width: 22px;
+    text-align: center;
+}
+.menu-link.active, .menu-link:hover {
+    background: #e3f2fd;
+    color: #0172b6;
+}
+.menu-link.submenu {
+    padding-left: 48px;
+    font-size: 0.97em;
+    color: #444;
+    background: none;
+    box-shadow: none;
+}
+.menu-link.submenu:hover {
+    color: #0172b6;
+    background: #e3f2fd;
+}
+.collapse {
+    margin-bottom: 4px;
+}
 </style>
