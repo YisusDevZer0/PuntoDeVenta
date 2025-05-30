@@ -44,15 +44,15 @@ $query = $stmt->get_result();
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
             flex-direction: column;
         }
         .loader {
+            width: 50px;
+            height: 50px;
             border: 5px solid #f3f3f3;
             border-top: 5px solid #3498db;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
             animation: spin 1s linear infinite;
             margin-bottom: 15px;
         }
@@ -69,7 +69,8 @@ $query = $stmt->get_result();
     </style>
 </head>
 <body>
-    <div id="loading-overlay">
+    <!-- Asegurarnos de que el overlay esté al principio del body -->
+    <div id="loading-overlay" style="display: flex;">
         <div class="loader"></div>
         <div id="loading-text">Cargando datos...</div>
     </div>
@@ -211,12 +212,12 @@ $user_id=null;
         // Función para mostrar el loading
         function showLoading(message = 'Cargando datos...') {
             $('#loading-text').text(message);
-            $('#loading-overlay').css('display', 'flex');
+            $('#loading-overlay').fadeIn(200);
         }
 
         // Función para ocultar el loading
         function hideLoading() {
-            $('#loading-overlay').css('display', 'none');
+            $('#loading-overlay').fadeOut(200);
         }
 
         // Destruir la tabla si ya existe
@@ -224,13 +225,13 @@ $user_id=null;
             $('#StockSucursalesDistribucion').DataTable().destroy();
         }
 
-        // Mostrar loading al cargar la página
+        // Mostrar loading inmediatamente
         showLoading('Inicializando tabla...');
 
         // Inicializar DataTable con loading
         var table = $('#StockSucursalesDistribucion').DataTable({
-            "destroy": true, // Permite reinicializar la tabla
-            "retrieve": true, // Recupera la instancia existente si existe
+            "destroy": true,
+            "retrieve": true,
             "order": [[0, "desc"]],
             "lengthMenu": [[30], [30]],
             "language": {
@@ -250,33 +251,33 @@ $user_id=null;
             },
             "responsive": true,
             "initComplete": function() {
-                hideLoading();
+                setTimeout(hideLoading, 500); // Dar un pequeño retraso para asegurar que todo esté cargado
             }
         });
 
-        // Mostrar loading al enviar el formulario
+        // Eventos de la tabla
+        table.on('preInit.dt', function() {
+            showLoading('Inicializando tabla...');
+        });
+
+        table.on('search.dt', function() {
+            showLoading('Buscando...');
+            setTimeout(hideLoading, 500);
+        });
+
+        table.on('page.dt', function() {
+            showLoading('Cargando página...');
+            setTimeout(hideLoading, 500);
+        });
+
+        // Evento del formulario
         $('#RegistraConteoDelDia').on('submit', function() {
             showLoading('Guardando datos...');
         });
 
-        // Mostrar loading al buscar
-        table.on('search.dt', function() {
-            showLoading('Buscando...');
-        });
-
-        // Ocultar loading cuando termina la búsqueda
-        table.on('search.dt', function() {
-            setTimeout(hideLoading, 500);
-        });
-
-        // Mostrar loading al cambiar de página
-        table.on('page.dt', function() {
-            showLoading('Cargando página...');
-        });
-
-        // Ocultar loading cuando termina de cargar la página
-        table.on('page.dt', function() {
-            setTimeout(hideLoading, 500);
+        // Asegurarnos de que el loading se oculte si hay algún error
+        $(window).on('error', function() {
+            hideLoading();
         });
     });
     </script>
