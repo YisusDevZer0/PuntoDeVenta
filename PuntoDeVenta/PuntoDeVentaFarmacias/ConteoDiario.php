@@ -151,22 +151,8 @@ $query = $stmt->get_result();
             allowOutsideClick: false
         });
 
-        // Evento del botón pausar
-        $('#btnPausar').on('click', function() {
-            Swal.fire({
-                title: 'Conteo Pausado',
-                text: 'El conteo ha sido pausado. Puedes continuar más tarde.',
-                icon: 'warning',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: '#0172b6'
-            });
-        });
-
-        // Evento del formulario
-        $('#RegistraConteoDelDia').on('submit', function(e) {
-            e.preventDefault();
-            
-            // Validar que todos los campos de Stock Físico estén llenos
+        // Función para validar el formulario
+        function validarFormulario() {
             let stockFisicoInputs = $('input[name="StockFisico[]"]');
             let todosLlenos = true;
             
@@ -185,13 +171,24 @@ $query = $stmt->get_result();
                     confirmButtonText: 'Entendido',
                     confirmButtonColor: '#0172b6'
                 });
-                return;
+                return false;
             }
+            return true;
+        }
+
+        // Función para enviar datos
+        function enviarDatos(enPausa = 0) {
+            // Agregar el estado de pausa al formulario
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'EnPausa',
+                value: enPausa
+            }).appendTo('#RegistraConteoDelDia');
 
             // Mostrar mensaje de carga
             Swal.fire({
-                title: 'Guardando Conteo',
-                text: 'Por favor espere mientras se guarda el conteo...',
+                title: enPausa ? 'Guardando y Pausando' : 'Guardando Conteo',
+                text: 'Por favor espere...',
                 icon: 'info',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -205,19 +202,27 @@ $query = $stmt->get_result();
             $.ajax({
                 url: 'Controladores/GuardarConteo.php',
                 type: 'POST',
-                data: $(this).serialize(),
+                data: $('#RegistraConteoDelDia').serialize(),
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         Swal.fire({
-                            title: '¡Éxito!',
-                            text: 'El conteo se ha guardado correctamente',
+                            title: enPausa ? 'Conteo Pausado' : '¡Éxito!',
+                            text: enPausa ? 
+                                'El conteo se ha guardado y pausado correctamente. Podrás continuarlo más tarde.' : 
+                                'El conteo se ha guardado correctamente',
                             icon: 'success',
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#0172b6'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.reload();
+                                if (enPausa) {
+                                    // Redirigir a la página de conteos pausados
+                                    window.location.href = 'ConteosPausados.php';
+                                } else {
+                                    // Recargar la página para nuevo conteo
+                                    window.location.reload();
+                                }
                             }
                         });
                     } else {
@@ -240,6 +245,47 @@ $query = $stmt->get_result();
                     });
                 }
             });
+        }
+
+        // Evento del botón pausar
+        $('#btnPausar').on('click', function() {
+            if (validarFormulario()) {
+                Swal.fire({
+                    title: '¿Pausar el conteo?',
+                    text: '¿Estás seguro de que deseas pausar el conteo? Podrás continuarlo más tarde.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, pausar',
+                    cancelButtonText: 'No, continuar',
+                    confirmButtonColor: '#0172b6',
+                    cancelButtonColor: '#dc3545'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        enviarDatos(1); // 1 = en pausa
+                    }
+                });
+            }
+        });
+
+        // Evento del formulario (guardar final)
+        $('#RegistraConteoDelDia').on('submit', function(e) {
+            e.preventDefault();
+            if (validarFormulario()) {
+                Swal.fire({
+                    title: '¿Finalizar el conteo?',
+                    text: '¿Estás seguro de que deseas finalizar y guardar el conteo?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'No, revisar',
+                    confirmButtonColor: '#0172b6',
+                    cancelButtonColor: '#dc3545'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        enviarDatos(0); // 0 = finalizado
+                    }
+                });
+            }
         });
     });
     </script>
