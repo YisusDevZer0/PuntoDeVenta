@@ -1,6 +1,9 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
-include_once "db_connect";
+include_once "db_connect.php";
 
 // Verificar si es una petición POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -8,7 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-
+// Verificar si el usuario está logueado
+if (!isset($_SESSION['VentasPos'])) {
+    echo json_encode(['success' => false, 'message' => 'Sesión no iniciada']);
+    exit;
+}
 
 // Obtener y validar datos
 $codigos = $_POST['CodBarra'] ?? [];
