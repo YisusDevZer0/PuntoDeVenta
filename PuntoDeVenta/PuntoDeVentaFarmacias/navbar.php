@@ -8,7 +8,7 @@ $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>
         <a href="#" class="sidebar-toggler d-inline-block d-lg-none p-2 me-3">
             <i class="fa fa-bars"></i>
         </a>
-        <a href="index.html" class="navbar-brand d-flex d-lg-none me-0">
+        <a href="index" class="navbar-brand d-flex d-lg-none me-0">
             <h2 class="text-primary mb-0"><i class="fa-solid fa-fish" style="color: #00BCD4;"></i></h2>
         </a>
     </div>
