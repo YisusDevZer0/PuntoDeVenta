@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once "config.php";
+include_once "db_connect";
 
 // Verificar si es una petición POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
