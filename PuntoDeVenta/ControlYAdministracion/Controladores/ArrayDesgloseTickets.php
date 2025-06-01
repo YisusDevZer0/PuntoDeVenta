@@ -3,6 +3,11 @@ header('Content-Type: application/json');
 include("db_connection.php");
 include_once "ControladorUsuario.php";
 
+// Iniciar la sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
     $fecha = substr($fecha, 0, 10);
@@ -18,8 +23,8 @@ function fechaCastellano($fecha) {
     $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
-// Obtener el valor de Fk_Sucursal desde la solicitud
-$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+// Obtener el valor de Fk_Sucursal desde la sesión
+$fk_sucursal = isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : '';
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
