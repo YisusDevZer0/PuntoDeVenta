@@ -145,7 +145,7 @@ while ($r=$query->fetch_object()){
 </div>
     <input type="text" class="form-control " hidden  readonly id="actusuariocserv" name="Actualiza" readonly value="<?php echo $row['Nombre_Apellidos']?>">
 
-<input type="hidden" name="Id_Serv" id="id" value="<?php echo $Especialistas->ID_User; ?>">
+<input type="" name="Id_Serv" id="id" value="<?php echo $Especialistas->ID_User; ?>">
 <button type="submit"  id="submit"  class="btn btn-info">Aplicar cambios <i class="fas fa-check"></i></button>
                           
 </form>
