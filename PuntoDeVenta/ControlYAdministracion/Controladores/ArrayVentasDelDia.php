@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
 // Iniciar la sesión si no está iniciada
@@ -8,15 +8,15 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Obtener el valor de Fk_Sucursal desde la variable $row que se establece en ControladorUsuario.php
-$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+// Obtener el valor de Fk_Sucursal desde la sesión
+$fk_sucursal = isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : '';
 
 // Depuración: Verificar el valor de Fk_Sucursal
-error_log("Fk_Sucursal: " . $fk_sucursal);
+error_log("Fk_Sucursal desde sesión: " . $fk_sucursal);
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
-    echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
+    echo json_encode(["error" => "El valor de Fk_Sucursal está vacío en la sesión"]);
     exit;
 }
 
