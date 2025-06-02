@@ -8,10 +8,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Código de depuración
-error_log("Estado de la sesión: " . print_r($_SESSION, true));
-error_log("Fk_Sucursal en sesión: " . (isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : 'no definido'));
-
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
     $fecha = substr($fecha, 0, 10);
@@ -43,8 +39,7 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
         Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Ventas_POS 
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
+        WHERE YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
         AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
         ORDER BY Ventas_POS.AgregadoEl DESC;";

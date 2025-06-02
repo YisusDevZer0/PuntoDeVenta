@@ -36,12 +36,6 @@ INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal WHERE
 Usuarios_PV.Id_PvUser='".$userId."'";
 $resultset = mysqli_query($conn, $sql) or die("database error:". mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
-
-// Guardar Fk_Sucursal en la sesión
-if ($row && isset($row['Fk_Sucursal'])) {
-    $_SESSION['Fk_Sucursal'] = $row['Fk_Sucursal'];
-}
-
 // if ($row['Nombre_Apellidos'] != 'DevZero') {
 //   header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
 //   exit();
