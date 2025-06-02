@@ -8,6 +8,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Código de depuración
+error_log("Estado de la sesión: " . print_r($_SESSION, true));
+error_log("Fk_Sucursal en sesión: " . (isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : 'no definido'));
+
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
     $fecha = substr($fecha, 0, 10);
