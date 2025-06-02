@@ -67,7 +67,7 @@ LEFT JOIN
 Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
 YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) 
-AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE())
+
 AND Ventas_POS.Fk_sucursal = ?";
 
 // Depuración: Verificar la consulta SQL
