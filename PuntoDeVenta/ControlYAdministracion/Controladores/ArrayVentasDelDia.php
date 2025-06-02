@@ -11,6 +11,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Obtener el valor de Fk_Sucursal desde la variable $row que se establece en ControladorUsuario.php
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
+// Depuración: Verificar el valor de Fk_Sucursal
+error_log("Fk_Sucursal: " . $fk_sucursal);
+
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
     echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
@@ -67,11 +70,15 @@ YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE())
 AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE())
 AND Ventas_POS.Fk_sucursal = ?";
 
+// Depuración: Verificar la consulta SQL
+error_log("SQL Query: " . $sql);
+
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
 // Verificar si la consulta fue preparada correctamente
 if (!$stmt) {
+    error_log("Error al preparar la consulta: " . $conn->error);
     echo json_encode(["error" => "Error al preparar la consulta: " . $conn->error]);
     exit;
 }
@@ -79,13 +86,21 @@ if (!$stmt) {
 // Enlazar el parámetro Fk_Sucursal
 $stmt->bind_param("s", $fk_sucursal);
 
+// Depuración: Verificar el tipo y valor del parámetro
+error_log("Tipo de Fk_Sucursal: " . gettype($fk_sucursal));
+error_log("Valor de Fk_Sucursal en bind_param: " . $fk_sucursal);
+
 // Ejecutar y verificar la consulta
 if (!$stmt->execute()) {
+    error_log("Error en la ejecución de la consulta: " . $stmt->error);
     echo json_encode(["error" => "Error en la ejecución de la consulta: " . $stmt->error]);
     exit;
 }
 
 $result = $stmt->get_result();
+
+// Depuración: Verificar el número de resultados
+error_log("Número de resultados: " . $result->num_rows);
 
 // Verificar si hay resultados
 if ($result->num_rows === 0) {
@@ -118,6 +133,9 @@ while ($fila = $result->fetch_assoc()) {
         "AgregadoPor" => $fila["AgregadoPor"]
     ];
 }
+
+// Depuración: Verificar el número de registros en el array
+error_log("Número de registros en el array data: " . count($data));
 
 // Cerrar la declaración
 $stmt->close();
