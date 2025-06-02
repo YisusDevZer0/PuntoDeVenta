@@ -1,7 +1,21 @@
 <?php
 header('Content-Type: application/json');
-include("db_connect.php");
-include "ControladorUsuario.php";
+include("db_connection.php");
+include_once "ControladorUsuario.php";
+
+// Iniciar la sesión si no está iniciada
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Obtener el valor de Fk_Sucursal desde la sesión
+$fk_sucursal = isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : '';
+
+// Verificar si la sucursal tiene un valor válido
+if (empty($fk_sucursal)) {
+    echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
+    exit;
+}
 
 $sql = "SELECT DISTINCT
 Ventas_POS.Venta_POS_ID,
@@ -50,41 +64,73 @@ LEFT JOIN
 Stock_POS ON Stock_POS.ID_Prod_POS = Ventas_POS.ID_Prod_POS
 WHERE 
 YEAR(Ventas_POS.Fecha_venta) = YEAR(CURDATE()) 
-AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE());
+AND MONTH(Ventas_POS.Fecha_venta) = MONTH(CURDATE())
+AND Ventas_POS.Fk_sucursal = ?";
 
-";
+// Preparar la declaración
+$stmt = $conn->prepare($sql);
 
-$result = mysqli_query($conn, $sql);
-
-$c = 0;
-
-while ($fila = $result->fetch_assoc()) {
-    $data[$c]["Cod_Barra"] = $fila["Cod_Barra"];
-    $data[$c]["Nombre_Prod"] = $fila["Nombre_Prod"];
-    $data[$c]["PrecioCompra"] = $fila["Precio_C"];
-    $data[$c]["PrecioVenta"] = $fila["Precio_Venta"];
-    $data[$c]["FolioTicket"] = $fila["FolioSucursal"] . '' . $fila["Folio_Ticket"];
-    $data[$c]["Sucursal"] = $fila["Nombre_Sucursal"];
-    $data[$c]["Turno"] = $fila["Turno"];
-    $data[$c]["Cantidad_Venta"] = $fila["Cantidad_Venta"];
-    $data[$c]["Importe"] = $fila["Importe"];
-    $data[$c]["Total_Venta"] = $fila["Total_Venta"];
-    $data[$c]["Descuento"] = $fila["DescuentoAplicado"];
-    $data[$c]["FormaPago"] = $fila["FormaDePago"];
-    $data[$c]["Cliente"] = $fila["Cliente"];
-    $data[$c]["FolioSignoVital"] = $fila["FolioSignoVital"];
-    $data[$c]["NomServ"] = $fila["Nom_Serv"];
-    $data[$c]["AgregadoEl"] = date("d/m/Y", strtotime($fila["Fecha_venta"]));
-    $data[$c]["AgregadoEnMomento"] = $fila["AgregadoEl"];
-    $data[$c]["AgregadoPor"] = $fila["AgregadoPor"];
-
-    $c++; 
+// Verificar si la consulta fue preparada correctamente
+if (!$stmt) {
+    echo json_encode(["error" => "Error al preparar la consulta: " . $conn->error]);
+    exit;
 }
 
-$results = ["sEcho" => 1,
-            "iTotalRecords" => count($data),
-            "iTotalDisplayRecords" => count($data),
-            "aaData" => $data ];
+// Enlazar el parámetro Fk_Sucursal
+$stmt->bind_param("s", $fk_sucursal);
+
+// Ejecutar y verificar la consulta
+if (!$stmt->execute()) {
+    echo json_encode(["error" => "Error en la ejecución de la consulta: " . $stmt->error]);
+    exit;
+}
+
+$result = $stmt->get_result();
+
+// Verificar si hay resultados
+if ($result->num_rows === 0) {
+    echo json_encode(["error" => "No se encontraron resultados para la sucursal: " . $fk_sucursal]);
+    exit;
+}
+
+// Inicializar array para almacenar los resultados
+$data = [];
+
+while ($fila = $result->fetch_assoc()) {
+    $data[] = [
+        "Cod_Barra" => $fila["Cod_Barra"],
+        "Nombre_Prod" => $fila["Nombre_Prod"],
+        "PrecioCompra" => $fila["Precio_C"],
+        "PrecioVenta" => $fila["Precio_Venta"],
+        "FolioTicket" => $fila["FolioSucursal"] . '' . $fila["Folio_Ticket"],
+        "Sucursal" => $fila["Nombre_Sucursal"],
+        "Turno" => $fila["Turno"],
+        "Cantidad_Venta" => $fila["Cantidad_Venta"],
+        "Importe" => $fila["Importe"],
+        "Total_Venta" => $fila["Total_Venta"],
+        "Descuento" => $fila["DescuentoAplicado"],
+        "FormaPago" => $fila["FormaDePago"],
+        "Cliente" => $fila["Cliente"],
+        "FolioSignoVital" => $fila["FolioSignoVital"],
+        "NomServ" => $fila["Nom_Serv"],
+        "AgregadoEl" => date("d/m/Y", strtotime($fila["Fecha_venta"])),
+        "AgregadoEnMomento" => $fila["AgregadoEl"],
+        "AgregadoPor" => $fila["AgregadoPor"]
+    ];
+}
+
+// Cerrar la declaración
+$stmt->close();
+
+$results = [
+    "sEcho" => 1,
+    "iTotalRecords" => count($data),
+    "iTotalDisplayRecords" => count($data),
+    "aaData" => $data
+];
 
 echo json_encode($results);
+
+// Cerrar conexión
+$conn->close();
 ?>
