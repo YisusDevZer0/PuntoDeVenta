@@ -53,8 +53,3 @@
     display: inline-block;
 }
 </style>
-<script>
-    var el = document.querySelector('.nav-link.dropdown-toggle');
-    var dd = new bootstrap.Dropdown(el);
-    dd.toggle();
-</script>
