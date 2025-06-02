@@ -8,8 +8,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Obtener el valor de Fk_Sucursal desde la sesión
-$fk_sucursal = isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : '';
+// Obtener el valor de Fk_Sucursal desde la variable $row que se establece en ControladorUsuario.php
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
