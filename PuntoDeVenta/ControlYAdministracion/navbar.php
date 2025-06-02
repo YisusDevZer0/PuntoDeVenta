@@ -448,5 +448,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var clockBell = document.getElementById('clock-bell');
+    if (clockBell) {
+        clockBell.addEventListener('click', function(e) {
+            var dropdown = new bootstrap.Dropdown(clockBell);
+            dropdown.toggle();
+        });
+    }
+});
+</script>
+
 </body>
 </html>
