@@ -1,7 +1,7 @@
 <?php
 include "db_connect.php"; // Conexión a la base de datos
 
-file_put_contents('debug_update.txt', print_r($_POST, true));
+// file_put_contents('debug_update.txt', print_r($_POST, true));
 
 // Validación y limpieza de datos del formulario
 $Id_PvUser = isset($_POST['Id_Serv']) ? intval($_POST['Id_Serv']) : 0;
