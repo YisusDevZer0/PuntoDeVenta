@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 include_once("db_connect.php");
 
@@ -18,6 +21,11 @@ if(isset($_POST['login_button'])) {
 
     $resultset = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultset);
+
+    if (!$row) {
+        echo "Error: Usuario no encontrado";
+        exit;
+    }
 
     switch(true) {
         case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
