@@ -448,29 +448,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var clockBell = document.getElementById('clock-bell');
-    if (clockBell) {
-        clockBell.addEventListener('click', function(e) {
-            var dropdown = new bootstrap.Dropdown(clockBell);
-            dropdown.toggle();
-        });
-    }
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var userBell = document.querySelector('.nav-link.dropdown-toggle img')?.parentElement;
-    if (userBell) {
-        userBell.addEventListener('click', function(e) {
-            var dropdown = new bootstrap.Dropdown(userBell);
-            dropdown.toggle();
-        });
-    }
-});
-</script>
-
 </body>
 </html>
