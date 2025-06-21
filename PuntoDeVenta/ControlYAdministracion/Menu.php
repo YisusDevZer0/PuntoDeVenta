@@ -203,12 +203,3 @@ $tipoUsuario = $row['TipoUsuario'];
 
             </nav>
         </div>
-<script>
-document.querySelectorAll('.dropdown-toggle').forEach(function(el) {
-    el.addEventListener('click', function(e) {
-        e.preventDefault();
-        var dropdown = new bootstrap.Dropdown(el);
-        dropdown.toggle();
-    });
-});
-</script>
