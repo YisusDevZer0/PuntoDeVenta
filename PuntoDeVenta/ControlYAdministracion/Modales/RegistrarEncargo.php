@@ -11,10 +11,10 @@ if (!isset($_POST["id"]) || empty($_POST["id"])) {
 $user_id = null;
 $caja_id = intval($_POST["id"]);
 
-// Consulta simplificada para evitar errores
-$sql1 = "SELECT c.ID_Caja, c.Fk_Sucursal, s.Nombre_Sucursal 
+// Consulta corregida usando los nombres correctos de las columnas
+$sql1 = "SELECT c.ID_Caja, c.Sucursal, s.Nombre_Sucursal 
          FROM Cajas c 
-         INNER JOIN Sucursales s ON c.Fk_Sucursal = s.ID_Sucursal 
+         INNER JOIN Sucursales s ON c.Sucursal = s.ID_Sucursal 
          WHERE c.ID_Caja = ?";
 
 $stmt = $conn->prepare($sql1);
@@ -118,8 +118,8 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
 
         <!-- Manten el input oculto con el ID_Caja -->
         <input type="hidden" name="Fk_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
-        <input type="hidden" name="Empleado" id="empleado" value="<?php echo isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Usuario'; ?>">
-        <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $Especialistas->Fk_Sucursal; ?>">fixe
+        <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']; ?>">
+        <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $Especialistas->Sucursal; ?>">
         <input type="hidden" name="estado" id="estado" value="Pendiente">
 
         <div class="text-center mt-3">
