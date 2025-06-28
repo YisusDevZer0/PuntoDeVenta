@@ -88,16 +88,27 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
         $('#RegistrarEncargoForm').on('submit', function(e) {
             e.preventDefault();
             
+            // Mostrar indicador de carga
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalText = submitBtn.text();
+            submitBtn.text('Guardando...').prop('disabled', true);
+            
             var formData = $(this).serialize();
+            
+            // Debug: mostrar datos que se envían
+            console.log('Datos a enviar:', formData);
             
             $.ajax({
                 url: '../Controladores/RegistrarEncargoController.php',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
+                timeout: 10000, // 10 segundos de timeout
                 success: function(response) {
+                    console.log('Respuesta recibida:', response);
+                    
                     if (response.success) {
-                        alert('Encargo registrado exitosamente');
+                        alert('Encargo registrado exitosamente\nTicket: ' + response.NumTicket);
                         $('#editModal').modal('hide');
                         // Recargar la página o actualizar la lista
                         location.reload();
@@ -105,8 +116,32 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
                         alert('Error: ' + response.message);
                     }
                 },
-                error: function() {
-                    alert('Error al procesar la solicitud');
+                error: function(xhr, status, error) {
+                    console.log('Error AJAX:', {xhr: xhr, status: status, error: error});
+                    
+                    var errorMessage = 'Error al procesar la solicitud';
+                    
+                    if (xhr.responseText) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                        } catch (e) {
+                            // Si no es JSON válido, mostrar el texto de respuesta
+                            errorMessage = 'Error del servidor: ' + xhr.responseText.substring(0, 200);
+                        }
+                    } else if (status === 'timeout') {
+                        errorMessage = 'Tiempo de espera agotado. Intente nuevamente.';
+                    } else if (status === 'error') {
+                        errorMessage = 'Error de conexión: ' + error;
+                    }
+                    
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    // Restaurar el botón
+                    submitBtn.text(originalText).prop('disabled', false);
                 }
             });
         });

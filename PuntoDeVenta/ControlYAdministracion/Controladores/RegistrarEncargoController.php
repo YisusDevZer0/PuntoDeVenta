@@ -1,6 +1,12 @@
 <?php
 header('Content-Type: application/json');
-include_once "db_connect.php";
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Verificar que sea una petición POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -9,6 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
+    // Incluir conexión a la base de datos
+    include_once "db_connect.php";
+    
+    // Verificar conexión
+    if (!isset($conn) || !$conn) {
+        echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos']);
+        exit;
+    }
+
+    // Debug: Mostrar datos recibidos
+    error_log("Datos POST recibidos: " . print_r($_POST, true));
+
     // Obtener los datos del formulario
     $nombre_paciente = isset($_POST['nombre_paciente']) ? trim($_POST['nombre_paciente']) : '';
     $medicamento = isset($_POST['medicamento']) ? trim($_POST['medicamento']) : '';
@@ -25,6 +43,9 @@ try {
     $Sistema = isset($_POST['Sistema']) ? trim($_POST['Sistema']) : '';
     $Licencia = isset($_POST['Licencia']) ? trim($_POST['Licencia']) : '';
     $estado = isset($_POST['estado']) ? trim($_POST['estado']) : 'Pendiente';
+
+    // Debug: Mostrar valores procesados
+    error_log("Valores procesados: nombre_paciente=$nombre_paciente, medicamento=$medicamento, cantidad=$cantidad, precioventa=$precioventa");
 
     // Validar campos requeridos
     if (empty($nombre_paciente) || empty($medicamento) || $cantidad <= 0 || $precioventa <= 0) {
@@ -50,6 +71,8 @@ try {
                 Sistema, 
                 Licencia
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    error_log("SQL preparado: $sql");
 
     $stmt = $conn->prepare($sql);
     if ($stmt) {
@@ -82,10 +105,13 @@ try {
                 'NumTicket' => $NumTicket
             ]);
         } else {
+            $error_msg = $stmt->error;
             $stmt->close();
-            echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+            error_log("Error en execute: $error_msg");
+            echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $error_msg]);
         }
     } else {
+        error_log("Error en prepare: " . $conn->error);
         // Fallback si la preparación falla
         $sql_fallback = "INSERT INTO encargos (
                             nombre_paciente, 
@@ -121,6 +147,8 @@ try {
                             '$Licencia'
                         )";
 
+        error_log("SQL fallback: $sql_fallback");
+
         if (mysqli_query($conn, $sql_fallback)) {
             $encargo_id = mysqli_insert_id($conn);
             echo json_encode([
@@ -130,11 +158,14 @@ try {
                 'NumTicket' => $NumTicket
             ]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Error al registrar el encargo: ' . mysqli_error($conn)]);
+            $error_msg = mysqli_error($conn);
+            error_log("Error en fallback: $error_msg");
+            echo json_encode(['success' => false, 'message' => 'Error al registrar el encargo: ' . $error_msg]);
         }
     }
 
 } catch (Exception $e) {
+    error_log("Excepción capturada: " . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()]);
 }
 ?> 
