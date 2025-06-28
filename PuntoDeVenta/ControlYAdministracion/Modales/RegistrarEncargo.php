@@ -1,11 +1,19 @@
 <?php
-include "../Controladores/db_connect.php.php";
+include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
 $user_id = null;
 $sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
 $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
+
+// Generar número de ticket automáticamente
+$fecha_actual = date('Y-m-d');
+$sql_ticket = "SELECT COUNT(*) as total FROM Encargos WHERE DATE(Fecha_Encargo) = '$fecha_actual'";
+$result_ticket = $conn->query($sql_ticket);
+$row_ticket = $result_ticket->fetch_assoc();
+$numero_ticket = $row_ticket['total'] + 1;
+$ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
 ?>
 
 <!-- Select2 CSS y JS -->
@@ -45,7 +53,7 @@ $Especialistas = $query->fetch_object();
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="fecha_encargo" class="form-label">Fecha de Encargo:</label>
-                    <input type="date" name="fecha_encargo" id="fecha_encargo" class="form-control" required>
+                    <input type="date" name="fecha_encargo" id="fecha_encargo" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                 </div>
 
                 <div class="mb-3">
@@ -55,12 +63,12 @@ $Especialistas = $query->fetch_object();
 
                 <div class="mb-3">
                     <label for="abono_parcial" class="form-label">Abono realizado:</label>
-                    <input type="number" step="0.01" name="abono_parcial" id="abono_parcial" class="form-control" required>
+                    <input type="number" step="0.01" name="abono_parcial" id="abono_parcial" class="form-control" value="0.00" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="NumTicket" class="form-label">Número de Ticket:</label>
-                    <input type="text" name="NumTicket" id="NumTicket" class="form-control" required>
+                    <input type="text" name="NumTicket" id="NumTicket" class="form-control" value="<?php echo $ticket_formato; ?>" readonly required>
                 </div>
             </div>
         </div>
@@ -87,7 +95,7 @@ $Especialistas = $query->fetch_object();
             placeholder: 'Buscar paciente...',
             allowClear: true,
             ajax: {
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/BusquedaClientes.php',
+                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {

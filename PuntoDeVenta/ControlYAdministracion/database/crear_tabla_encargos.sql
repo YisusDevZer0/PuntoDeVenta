@@ -1,0 +1,28 @@
+-- Script para crear la tabla Encargos
+CREATE TABLE IF NOT EXISTS `Encargos` (
+  `ID_Encargo` int(11) NOT NULL AUTO_INCREMENT,
+  `Nombre_Paciente` varchar(255) NOT NULL,
+  `Medicamento` varchar(255) NOT NULL,
+  `Cantidad` decimal(10,2) NOT NULL,
+  `Precio_Venta` decimal(10,2) NOT NULL,
+  `Fecha_Encargo` date NOT NULL,
+  `Costo` decimal(10,2) NOT NULL,
+  `Abono_Parcial` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `Saldo_Pendiente` decimal(10,2) NOT NULL,
+  `Num_Ticket` varchar(50) NOT NULL,
+  `Fk_Caja` int(11) NOT NULL,
+  `Empleado` varchar(255) NOT NULL,
+  `Agregado_Por` varchar(255) NOT NULL,
+  `Fk_Sucursal` int(11) NOT NULL,
+  `Sistema` varchar(100) NOT NULL,
+  `Licencia` varchar(100) NOT NULL,
+  `Estatus` enum('Pendiente','Pagado','Cancelado') NOT NULL DEFAULT 'Pendiente',
+  `Fecha_Registro` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Fecha_Actualizacion` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID_Encargo`),
+  KEY `idx_fk_caja` (`Fk_Caja`),
+  KEY `idx_fk_sucursal` (`Fk_Sucursal`),
+  KEY `idx_estatus` (`Estatus`),
+  KEY `idx_fecha_encargo` (`Fecha_Encargo`),
+  KEY `idx_num_ticket` (`Num_Ticket`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
