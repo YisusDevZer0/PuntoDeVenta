@@ -71,10 +71,7 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
         <!-- Manten el input oculto con el ID_Caja -->
         <input type="hidden" name="Fk_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
         <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>">
-        <input type="hidden" name="AgregadoPor" id="AgregadoPor" value="<?php echo $row['Nombre_Apellidos']?>">
         <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
-        <input type="hidden" name="Sistema" id="sistema" value="Administrador">
-        <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
         <input type="hidden" name="estado" id="estado" value="Pendiente">
 
         <div class="text-center mt-3">
