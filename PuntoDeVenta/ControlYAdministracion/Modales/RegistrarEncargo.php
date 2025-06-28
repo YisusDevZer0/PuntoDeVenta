@@ -3,19 +3,25 @@ include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 
 $user_id = null;
-$sql1 = "SELECT * FROM Cajas WHERE ID_Caja= " . $_POST["id"];
+$sql1 = "SELECT c.*, s.Nombre_Sucursal FROM Cajas c 
+         INNER JOIN Sucursales s ON c.Fk_Sucursal = s.ID_Sucursal 
+         WHERE c.ID_Caja = " . $_POST["id"];
 $query = $conn->query($sql1);
 $Especialistas = $query->fetch_object();
 
-// Generar número de ticket automáticamente
+// Obtener las 3 primeras letras de la sucursal
+$primeras_tres_letras = substr($Especialistas->Nombre_Sucursal, 0, 3);
+$primeras_tres_letras = strtoupper($primeras_tres_letras);
+
+// Generar número de ticket automáticamente con formato mejorado
 $fecha_actual = date('Y-m-d');
-$sql_ticket = "SELECT MAX(CAST(SUBSTRING(NumTicket, 9) AS UNSIGNED)) as ultimo_numero 
+$sql_ticket = "SELECT MAX(CAST(SUBSTRING(NumTicket, " . (strlen($primeras_tres_letras) + 4) . ") AS UNSIGNED)) as ultimo_numero 
                FROM encargos 
-               WHERE NumTicket LIKE 'ENC-" . date('Ymd') . "-%'";
+               WHERE NumTicket LIKE '" . $primeras_tres_letras . "ENC-%'";
 $result_ticket = $conn->query($sql_ticket);
 $row_ticket = $result_ticket->fetch_assoc();
 $siguiente_numero = ($row_ticket['ultimo_numero'] ?? 0) + 1;
-$NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
+$NumTicket = $primeras_tres_letras . 'ENC-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
 ?>
 
 <?php if ($Especialistas) : ?>
@@ -71,7 +77,7 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
         <!-- Manten el input oculto con el ID_Caja -->
         <input type="hidden" name="Fk_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
         <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']?>">
-        <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
+        <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $Especialistas->Fk_Sucursal; ?>">
         <input type="hidden" name="estado" id="estado" value="Pendiente">
 
         <div class="text-center mt-3">
@@ -85,10 +91,17 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
         $('#RegistrarEncargoForm').on('submit', function(e) {
             e.preventDefault();
             
-            // Mostrar indicador de carga
-            var submitBtn = $(this).find('button[type="submit"]');
-            var originalText = submitBtn.text();
-            submitBtn.text('Guardando...').prop('disabled', true);
+            // Mostrar indicador de carga con SweetAlert
+            Swal.fire({
+                title: 'Guardando encargo...',
+                text: 'Por favor espere',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             
             var formData = $(this).serialize();
             
@@ -105,12 +118,25 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
                     console.log('Respuesta recibida:', response);
                     
                     if (response.success) {
-                        alert('Encargo registrado exitosamente\nTicket: ' + response.NumTicket);
-                        $('#editModal').modal('hide');
-                        // Recargar la página o actualizar la lista
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Encargo registrado exitosamente!',
+                            text: 'Ticket: ' + response.NumTicket,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#28a745'
+                        }).then((result) => {
+                            $('#editModal').modal('hide');
+                            // Recargar la página o actualizar la lista
+                            location.reload();
+                        });
                     } else {
-                        alert('Error: ' + response.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al registrar encargo',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#dc3545'
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
@@ -134,11 +160,13 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
                         errorMessage = 'Error de conexión: ' + error;
                     }
                     
-                    alert(errorMessage);
-                },
-                complete: function() {
-                    // Restaurar el botón
-                    submitBtn.text(originalText).prop('disabled', false);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#dc3545'
+                    });
                 }
             });
         });
