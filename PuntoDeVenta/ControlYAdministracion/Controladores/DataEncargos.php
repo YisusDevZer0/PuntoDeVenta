@@ -114,7 +114,7 @@
 <script>
   // Definir una lista de mensajes para el mensaje de carga
   var mensajesCarga = [
-    "Consultando ventas...",
+    "Consultando encargos...",
     "Estamos realizando la búsqueda...",
     "Cargando datos...",
     "Procesando la información...",
@@ -210,16 +210,17 @@ tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDataEncargos.php",
  "aoColumns": [
-  { mData: 'Idpersonal' },
-                { mData: 'NombreApellidos' },
-                { mData: 'Foto' },
-                { mData: 'Tipousuario' },
-                { mData: 'Sucursal' },
-                { mData: 'CreadoEl' },
-                { mData: 'Estatus' },
-                { mData: 'CreadoPor' },
-                /* { mData: 'Editar' },
-                { mData: 'Eliminar' } */
+  { mData: 'NumTicket' },
+  { mData: 'NombrePaciente' },
+  { mData: 'Medicamento' },
+  { mData: 'Cantidad' },
+  { mData: 'PrecioVenta' },
+  { mData: 'SaldoPendiente' },
+  { mData: 'FechaEncargo' },
+  { mData: 'Estado' },
+  { mData: 'Sucursal' },
+  { mData: 'Empleado' },
+  { mData: 'Acciones' }
       
   
       ],
@@ -254,7 +255,7 @@ tabla = $('#Clientes').DataTable({
     extend: 'excelHtml5',
     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
     titleAttr: 'Exportar a Excel',
-    title: 'Base de Clientes',
+    title: 'Lista de Encargos',
     className: 'btn btn-success',
     exportOptions: {
       columns: ':visible' // Exportar solo las columnas visibles
@@ -270,16 +271,17 @@ tabla = $('#Clientes').DataTable({
   <div class="table-responsive">
   <table  id="Clientes"  class="order-column">
 <thead>
-<th>ID Empleado</th>
-                <th>Nombre</th>
-                <th>Fotografia</th>
-                <th>Tipo de usuario</th>
-                <th>Sucursal</th>
-                <th>Fecha|Hora de creacion</th>
-                <th>Estado</th>
-                <th>Creado por</th>
-                <!-- <th>Editar</th>
-                <th>Eliminar</th> -->
+<th>Número de Ticket</th>
+<th>Nombre del Paciente</th>
+<th>Medicamento</th>
+<th>Cantidad</th>
+<th>Precio de Venta</th>
+<th>Saldo Pendiente</th>
+<th>Fecha de Encargo</th>
+<th>Estado</th>
+<th>Sucursal</th>
+<th>Empleado</th>
+<th>Acciones</th>
 </thead>
 
 </div>
