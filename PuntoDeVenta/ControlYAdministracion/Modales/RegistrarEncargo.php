@@ -99,7 +99,7 @@ $NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR
             console.log('Datos a enviar:', formData);
             
             $.ajax({
-                url: '../Controladores/RegistrarEncargoController.php',
+                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistrarEncargoController.php',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
