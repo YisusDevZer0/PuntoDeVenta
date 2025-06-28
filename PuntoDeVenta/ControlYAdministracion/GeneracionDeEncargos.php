@@ -1,6 +1,46 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
+// Obtener el valor de Fk_Sucursal y Nombre_Apellidos
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+$nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
+
+// Consulta segura utilizando una sentencia preparada
+$sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+       Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+       Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+FROM Cajas
+INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
+WHERE Cajas.Sucursal = ? 
+  AND Cajas.Empleado = ? 
+  AND Cajas.Estatus = 'Abierta';";
+
+// Preparar y ejecutar la consulta
+$stmt = $conn->prepare($sql);
+if ($stmt) {
+    $stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $ValorCaja = $result->fetch_assoc();
+    $stmt->close();
+} else {
+    // Si hay error en la preparación, usar consulta directa como fallback
+    $sql_fallback = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+           Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+           Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+    FROM Cajas
+    INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
+    WHERE Cajas.Sucursal = '$fk_sucursal' 
+      AND Cajas.Empleado = '$nombre_apellidos' 
+      AND Cajas.Estatus = 'Abierta'";
+    $result = mysqli_query($conn, $sql_fallback);
+    $ValorCaja = mysqli_fetch_assoc($result);
+}
+
+// Si no hay caja activa, crear un array vacío para evitar errores
+if (!$ValorCaja) {
+    $ValorCaja = array('ID_Caja' => '0');
+}
 
 ?>
 <!DOCTYPE html>
@@ -40,8 +80,15 @@ include_once "Controladores/ControladorUsuario.php";
                 <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4">Administracion de cajas de <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
                     <div class="text-center">
-                        <button data-id="<?php echo $ValorFondoCaja["ID_Caja"]; ?>" class="btn-editcaja btn btn-success">
-                            Nuevo encargo </button> <br>
+                        <?php if ($ValorCaja['ID_Caja'] != '0'): ?>
+                            <button data-id="<?php echo $ValorCaja["ID_Caja"]; ?>" class="btn-editcaja btn btn-success">
+                                Nuevo encargo </button>
+                        <?php else: ?>
+                            <button class="btn btn-secondary" disabled>
+                                No hay caja activa </button>
+                            <br><small class="text-muted">Debe abrir una caja antes de registrar encargos</small>
+                        <?php endif; ?>
+                        <br>
                         <div id="Cajas"></div>
                     </div>
                 </div>
@@ -59,12 +106,18 @@ include_once "Controladores/ControladorUsuario.php";
     <script>
         $(".btn-editcaja").click(function() {
             id = $(this).data("id");
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", "id=" + id, function(data) {
-                $("#form-edit").html(data);
-                $("#Titulo").html("Registrar encargo");
-                $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
-            });
-            $('#editModal').modal('show');
+            
+            // Validar que el ID sea válido
+            if (id && id != '0') {
+                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", "id=" + id, function(data) {
+                    $("#form-edit").html(data);
+                    $("#Titulo").html("Registrar encargo");
+                    $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
+                });
+                $('#editModal').modal('show');
+            } else {
+                alert("No hay caja activa para registrar encargos. Debe abrir una caja primero.");
+            }
         });
     </script>
 
