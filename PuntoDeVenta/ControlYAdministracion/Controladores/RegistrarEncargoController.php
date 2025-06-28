@@ -39,7 +39,7 @@ try {
     $Fk_Caja = isset($_POST['Fk_Caja']) ? (int)$_POST['Fk_Caja'] : 0;
     $Empleado = isset($_POST['Empleado']) ? trim($_POST['Empleado']) : '';
     $AgregadoPor = isset($_POST['AgregadoPor']) ? trim($_POST['AgregadoPor']) : '';
-    $Fk_sucursal = isset($_POST['Fk_sucursal']) ? (int)$_POST['Fk_sucursal'] : 0;
+    $Fk_Sucursal = isset($_POST['Fk_Sucursal']) ? (int)$_POST['Fk_Sucursal'] : 0;
     $Sistema = isset($_POST['Sistema']) ? trim($_POST['Sistema']) : '';
     $Licencia = isset($_POST['Licencia']) ? trim($_POST['Licencia']) : '';
     $estado = isset($_POST['estado']) ? trim($_POST['estado']) : 'Pendiente';
@@ -89,7 +89,7 @@ try {
             $Fk_Caja,
             $Empleado,
             $AgregadoPor,
-            $Fk_sucursal,
+            $Fk_Sucursal,
             $Sistema,
             $Licencia
         );
@@ -142,7 +142,7 @@ try {
                             $Fk_Caja,
                             '$Empleado',
                             '$AgregadoPor',
-                            $Fk_sucursal,
+                            $Fk_Sucursal,
                             '$Sistema',
                             '$Licencia'
                         )";
