@@ -89,7 +89,7 @@ if (!$ValorCaja) {
                             <br><small class="text-muted">Debe abrir una caja antes de registrar encargos</small>
                         <?php endif; ?>
                         <br>
-                        <div id="Cajas"></div>
+                        <div id="DataDeServicios"></div>
                     </div>
                 </div>
             </div>
