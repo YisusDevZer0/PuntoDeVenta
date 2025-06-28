@@ -1,12 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-$sql = "SELECT Fondos_Cajas.ID_Fon_Caja,Fondos_Cajas.Fk_Sucursal,Fondos_Cajas.Fondo_Caja, 
-Fondos_Cajas.Estatus, 
-Sucursales.ID_Sucursal,Sucursales.Nombre_Sucursal FROM 
-Fondos_Cajas,Sucursales where Fondos_Cajas.Fk_Sucursal = Sucursales.ID_Sucursal
- AND Fondos_Cajas.Fk_Sucursal='" . $row['Fk_Sucursal'] . "' AND Fondos_Cajas.Estatus ='Activo' ";
-$resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
-$ValorFondoCaja = mysqli_fetch_assoc($resultset);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,7 +41,7 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
                     <h6 class="mb-4">Administracion de cajas de <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
                     <div class="text-center">
                         <button data-id="<?php echo $ValorFondoCaja["ID_Fon_Caja"]; ?>" class="btn-editcaja btn btn-success">
-                            Aperturar nueva caja </button> <br>
+                            Nuevo encargo </button> <br>
                         <div id="Cajas"></div>
                     </div>
                 </div>
