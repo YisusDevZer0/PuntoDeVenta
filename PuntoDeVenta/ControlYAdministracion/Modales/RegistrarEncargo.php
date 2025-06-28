@@ -9,14 +9,19 @@ $Especialistas = $query->fetch_object();
 
 // Generar número de ticket automáticamente
 $fecha_actual = date('Y-m-d');
-$sql_ticket = "SELECT COUNT(*) as total FROM Encargos WHERE DATE(Fecha_Encargo) = '$fecha_actual'";
+$sql_ticket = "SELECT MAX(CAST(SUBSTRING(NumTicket, 9) AS UNSIGNED)) as ultimo_numero 
+               FROM encargos 
+               WHERE NumTicket LIKE 'ENC-" . date('Ymd') . "-%'";
 $result_ticket = $conn->query($sql_ticket);
 $row_ticket = $result_ticket->fetch_assoc();
-$numero_ticket = $row_ticket['total'] + 1;
-$ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
+$siguiente_numero = ($row_ticket['ultimo_numero'] ?? 0) + 1;
+$NumTicket = 'ENC-' . date('Ymd') . '-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
 ?>
 
 <!-- Select2 CSS y JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <?php if ($Especialistas) : ?>
     <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
@@ -53,7 +58,7 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="fecha_encargo" class="form-label">Fecha de Encargo:</label>
-                    <input type="date" name="fecha_encargo" id="fecha_encargo" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                    <input type="date" name="fecha_encargo" id="fecha_encargo" class="form-control" value="<?php echo $fecha_actual; ?>" required>
                 </div>
 
                 <div class="mb-3">
@@ -68,7 +73,7 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
 
                 <div class="mb-3">
                     <label for="NumTicket" class="form-label">Número de Ticket:</label>
-                    <input type="text" name="NumTicket" id="NumTicket" class="form-control" value="<?php echo $ticket_formato; ?>" readonly required>
+                    <input type="text" name="NumTicket" id="NumTicket" class="form-control" value="<?php echo $NumTicket; ?>" readonly required>
                 </div>
             </div>
         </div>
@@ -80,27 +85,28 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
         <input type="hidden" name="Fk_sucursal" id="sucursal" value="<?php echo $row['Fk_Sucursal']?>">
         <input type="hidden" name="Sistema" id="sistema" value="Administrador">
         <input type="hidden" name="Licencia" id="licencia" value="<?php echo $row['Licencia']?>">
+        <input type="hidden" name="estado" id="estado" value="Pendiente">
 
         <div class="text-center mt-3">
             <button type="submit" class="btn btn-primary">Registrar Encargo</button>
         </div>
     </form>
 
-    <script src="js/RegistrarEncargo.js"></script>
-
     <script>
     $(document).ready(function() {
+        // Inicializar Select2 para el selector de pacientes
         $('#clienteInput').select2({
-            theme: 'bootstrap4',
+            theme: 'bootstrap-5',
             placeholder: 'Buscar paciente...',
             allowClear: true,
             ajax: {
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaClientes.php',
+                url: '../Controladores/BuscarPacientes.php',
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
                     return {
-                        term: params.term || ''
+                        term: params.term || '',
+                        sucursal: '<?php echo $row['Fk_Sucursal']; ?>'
                     };
                 },
                 processResults: function(data) {
@@ -108,10 +114,10 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
                         results: $.map(data, function(item) {
                             return {
                                 id: item.id,
-                                text: $('<div>').html(item.label || item.Nombre_Paciente).text(),
-                                telefono: item.telefono,
-                                edad: $('<div>').html(item.edad).text(),
-                                sexo: item.sexo
+                                text: item.nombre_paciente,
+                                telefono: item.telefono || 'N/A',
+                                edad: item.edad || 'N/A',
+                                sexo: item.sexo || 'N/A'
                             };
                         })
                     };
@@ -140,6 +146,33 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
         }).on('select2:select', function(e) {
             var data = e.params.data;
             $("#id_paciente").val(data.id);
+        });
+
+        // Manejar el envío del formulario
+        $('#RegistrarEncargoForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            var formData = $(this).serialize();
+            
+            $.ajax({
+                url: '../Controladores/RegistrarEncargoController.php',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        alert('Encargo registrado exitosamente');
+                        $('#editModal').modal('hide');
+                        // Recargar la página o actualizar la lista
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Error al procesar la solicitud');
+                }
+            });
         });
     });
 
@@ -227,5 +260,5 @@ $ticket_formato = date('Ymd') . str_pad($numero_ticket, 4, '0', STR_PAD_LEFT);
     </style>
 
 <?php else : ?>
-    <p class="alert alert-danger">404 No se encuentra</p>
+    <p class="alert alert-danger">404 No se encuentra la caja especificada</p>
 <?php endif; ?>
