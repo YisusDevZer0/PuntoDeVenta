@@ -25,6 +25,7 @@ $stockFisico = $_POST['StockFisico'] ?? [];
 $sucursal = $_POST['Sucursal'][0] ?? null;
 $agregadoPor = $_POST['Agrego'][0] ?? null;
 $enPausa = isset($_POST['EnPausa']) ? (int)$_POST['EnPausa'] : 0;
+$id_conteo = isset($_POST['id_conteo']) ? (int)$_POST['id_conteo'] : null;
 
 // Validar que todos los arrays tengan la misma longitud
 if (count($codigos) !== count($nombres) || 
@@ -54,40 +55,108 @@ try {
     // Iniciar transacción
     $conn->begin_transaction();
 
-    // Preparar la consulta
-    $stmt = $conn->prepare("
-        INSERT INTO ConteosDiarios (
-            Cod_Barra, 
-            Nombre_Producto, 
-            Fk_sucursal, 
-            Existencias_R, 
-            ExistenciaFisica, 
-            AgregadoPor, 
-            AgregadoEl, 
-            EnPausa
-        ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
-    ");
+    if ($id_conteo) {
+        // Continuar un conteo existente
+        // Verificar que el conteo existe y pertenece al usuario
+        $sql_verificar = "SELECT id, EnPausa FROM ConteosDiarios 
+                          WHERE id = ? AND AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 
+                          LIMIT 1";
+        $stmt_verificar = $conn->prepare($sql_verificar);
+        $stmt_verificar->bind_param("iss", $id_conteo, $agregadoPor, $sucursal);
+        $stmt_verificar->execute();
+        $result_verificar = $stmt_verificar->get_result();
+        
+        if ($result_verificar->num_rows === 0) {
+            throw new Exception("Conteo no encontrado o no tienes permisos para continuarlo");
+        }
+        
+        // Insertar los nuevos productos contados
+        $stmt_insertar = $conn->prepare("
+            INSERT INTO ConteosDiarios (
+                Cod_Barra, 
+                Nombre_Producto, 
+                Fk_sucursal, 
+                Existencias_R, 
+                ExistenciaFisica, 
+                AgregadoPor, 
+                AgregadoEl, 
+                EnPausa
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
+        ");
+        
+        $productos_contados = 0;
+        for ($i = 0; $i < count($codigos); $i++) {
+            // Solo insertar si el stock físico no está vacío
+            if ($stockFisico[$i] !== '' && $stockFisico[$i] !== null) {
+                $stmt_insertar->bind_param(
+                    "sssdisi",
+                    $codigos[$i],
+                    $nombres[$i],
+                    $sucursal,
+                    $existenciasR[$i],
+                    $stockFisico[$i],
+                    $agregadoPor,
+                    $enPausa
+                );
+                
+                if (!$stmt_insertar->execute()) {
+                    throw new Exception("Error al guardar el producto: " . $stmt_insertar->error);
+                }
+                $productos_contados++;
+            }
+        }
+        
+        // Si se está finalizando el conteo, actualizar el inventario
+        if (!$enPausa && $productos_contados > 0) {
+            for ($i = 0; $i < count($codigos); $i++) {
+                if ($stockFisico[$i] !== '' && $stockFisico[$i] !== null) {
+                    $sql_inventario = "UPDATE Stock_POS 
+                                      SET Existencias_R = ? 
+                                      WHERE Cod_Barra = ? AND Fk_sucursal = ?";
+                    $stmt_inventario = $conn->prepare($sql_inventario);
+                    $stmt_inventario->bind_param("iss", $stockFisico[$i], $codigos[$i], $sucursal);
+                    $stmt_inventario->execute();
+                }
+            }
+        }
+        
+    } else {
+        // Crear un nuevo conteo
+        // Preparar la consulta
+        $stmt = $conn->prepare("
+            INSERT INTO ConteosDiarios (
+                Cod_Barra, 
+                Nombre_Producto, 
+                Fk_sucursal, 
+                Existencias_R, 
+                ExistenciaFisica, 
+                AgregadoPor, 
+                AgregadoEl, 
+                EnPausa
+            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
+        ");
 
-    // Insertar cada registro
-    for ($i = 0; $i < count($codigos); $i++) {
-        // Si está en pausa y el stock está vacío, guardar NULL
-        $stockFisicoValue = ($enPausa && ($stockFisico[$i] === '' || $stockFisico[$i] === null)) ? 
-            null : 
-            $stockFisico[$i];
+        // Insertar cada registro
+        for ($i = 0; $i < count($codigos); $i++) {
+            // Si está en pausa y el stock está vacío, guardar NULL
+            $stockFisicoValue = ($enPausa && ($stockFisico[$i] === '' || $stockFisico[$i] === null)) ? 
+                null : 
+                $stockFisico[$i];
 
-        $stmt->bind_param(
-            "sssdisi",
-            $codigos[$i],
-            $nombres[$i],
-            $sucursal,
-            $existenciasR[$i],
-            $stockFisicoValue,
-            $agregadoPor,
-            $enPausa
-        );
+            $stmt->bind_param(
+                "sssdisi",
+                $codigos[$i],
+                $nombres[$i],
+                $sucursal,
+                $existenciasR[$i],
+                $stockFisicoValue,
+                $agregadoPor,
+                $enPausa
+            );
 
-        if (!$stmt->execute()) {
-            throw new Exception("Error al guardar el registro: " . $stmt->error);
+            if (!$stmt->execute()) {
+                throw new Exception("Error al guardar el registro: " . $stmt->error);
+            }
         }
     }
 
@@ -118,6 +187,8 @@ try {
 }
 
 // Cerrar conexión
-$stmt->close();
+if (isset($stmt)) $stmt->close();
+if (isset($stmt_insertar)) $stmt_insertar->close();
+if (isset($stmt_verificar)) $stmt_verificar->close();
 $conn->close();
 ?> 

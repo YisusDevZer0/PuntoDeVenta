@@ -28,10 +28,13 @@ $sucursalActual = $row['Fk_Sucursal'];
 $conteoPausado = false;
 $infoConteoPausado = null;
 
-$sqlCheck = "SELECT id, Fecha_Creacion, Fecha_Pausa, Total_Productos, Productos_Contados 
+$sqlCheck = "SELECT 
+                MIN(AgregadoEl) as Fecha_Creacion,
+                MAX(AgregadoEl) as Fecha_Pausa,
+                COUNT(*) as Total_Productos,
+                COUNT(CASE WHEN ExistenciaFisica IS NOT NULL THEN 1 END) as Productos_Contados
              FROM ConteosDiarios 
-             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 
-             ORDER BY Fecha_Pausa DESC LIMIT 1";
+             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
 $stmtCheck = $conn->prepare($sqlCheck);
 $stmtCheck->bind_param("ss", $usuarioActual, $sucursalActual);
 $stmtCheck->execute();
@@ -405,7 +408,7 @@ $stmtCheck->close();
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Redirigir a la página de continuar conteo
-                    window.location.href = 'ContinuarConteo.php?id=<?php echo $infoConteoPausado['id']; ?>';
+                    window.location.href = 'ContinuarConteo.php';
                 }
             });
         });
@@ -441,7 +444,7 @@ $stmtCheck->close();
                         url: 'Controladores/FinalizarConteo.php',
                         type: 'POST',
                         data: {
-                            id_conteo: <?php echo $infoConteoPausado['id']; ?>,
+                            id_conteo: 1, // Valor dummy, el controlador usa usuario y sucursal
                             accion: 'finalizar'
                         },
                         dataType: 'json',
@@ -491,8 +494,8 @@ $stmtCheck->close();
                     <div class="text-start">
                         <div class="row">
                             <div class="col-md-6">
-                                <p><strong>ID del Conteo:</strong><br>
-                                #<?php echo $infoConteoPausado['id']; ?></p>
+                                <p><strong>Usuario:</strong><br>
+                                <?php echo htmlspecialchars($usuarioActual); ?></p>
                                 <p><strong>Fecha de Creación:</strong><br>
                                 <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Creacion'])); ?></p>
                                 <p><strong>Fecha de Pausa:</strong><br>
