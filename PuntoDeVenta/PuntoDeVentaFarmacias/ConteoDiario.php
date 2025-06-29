@@ -41,8 +41,15 @@ $stmtCheck->execute();
 $resultCheck = $stmtCheck->get_result();
 
 if ($resultCheck->num_rows > 0) {
-    $conteoPausado = true;
     $infoConteoPausado = $resultCheck->fetch_assoc();
+    // Solo mostrar si hay productos en pausa
+    if ($infoConteoPausado['Total_Productos'] > 0) {
+        $conteoPausado = true;
+    } else {
+        $conteoPausado = false;
+    }
+} else {
+    $conteoPausado = false;
 }
 $stmtCheck->close();
 ?>
