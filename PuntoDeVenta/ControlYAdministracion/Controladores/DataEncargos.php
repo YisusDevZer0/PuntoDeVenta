@@ -329,12 +329,25 @@ function agregarEventosAcciones() {
     var encargoId = $(this).data('id');
     console.log('Desglosar encargo ID:', encargoId);
     
+    // Mostrar indicador de carga
+    Swal.fire({
+      title: 'Cargando detalles...',
+      text: 'Por favor espere',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
     // Mostrar modal con detalles del encargo
     $.ajax({
       url: 'Modales/DesglosarEncargo.php',
       type: 'POST',
       data: { id: encargoId },
       success: function(response) {
+        Swal.close();
         $('#modalContent').html(response);
         $('#editModal').modal('show');
       },
@@ -366,8 +379,17 @@ function agregarEventosAcciones() {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Aquí iría la lógica para cobrar el encargo
-        console.log('Procediendo a cobrar encargo ID:', encargoId);
+        // Mostrar indicador de carga
+        Swal.fire({
+          title: 'Procesando cobro...',
+          text: 'Por favor espere',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
         
         // Mostrar modal de cobro
         $.ajax({
@@ -375,6 +397,7 @@ function agregarEventosAcciones() {
           type: 'POST',
           data: { id: encargoId },
           success: function(response) {
+            Swal.close();
             $('#modalContent').html(response);
             $('#editModal').modal('show');
           },
@@ -397,12 +420,25 @@ function agregarEventosAcciones() {
     var encargoId = $(this).data('id');
     console.log('Abonar encargo ID:', encargoId);
     
+    // Mostrar indicador de carga
+    Swal.fire({
+      title: 'Cargando formulario...',
+      text: 'Por favor espere',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
     // Mostrar modal de abono
     $.ajax({
       url: 'Modales/AbonarEncargo.php',
       type: 'POST',
       data: { id: encargoId },
       success: function(response) {
+        Swal.close();
         $('#modalContent').html(response);
         $('#editModal').modal('show');
       },
