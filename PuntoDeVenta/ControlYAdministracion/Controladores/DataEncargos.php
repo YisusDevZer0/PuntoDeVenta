@@ -248,6 +248,9 @@ tabla = $('#Clientes').DataTable({
 "initComplete": function() {
   // Al completar la inicialización de la tabla, ocultar el mensaje de carga
   ocultarCargando();
+  
+  // Agregar eventos para los botones de acciones
+  agregarEventosAcciones();
 },
 // Para personalizar el estilo del botón de Excel
 "buttons": [
@@ -265,6 +268,108 @@ tabla = $('#Clientes').DataTable({
 // Personalizar la posición de los elementos del encabezado
 "dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
+});
+
+// Función para agregar eventos a los botones de acciones
+function agregarEventosAcciones() {
+  // Evento para desglosar encargo
+  $(document).on('click', '.btn-DesglosarEncargo', function() {
+    var encargoId = $(this).data('id');
+    console.log('Desglosar encargo ID:', encargoId);
+    
+    // Mostrar modal con detalles del encargo
+    $.ajax({
+      url: 'Modales/DesglosarEncargo.php',
+      type: 'POST',
+      data: { id: encargoId },
+      success: function(response) {
+        $('#modalContent').html(response);
+        $('#editModal').modal('show');
+      },
+      error: function(xhr, status, error) {
+        console.error('Error al cargar detalles del encargo:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los detalles del encargo',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  });
+
+  // Evento para cobrar encargo
+  $(document).on('click', '.btn-CobrarEncargo', function() {
+    var encargoId = $(this).data('id');
+    console.log('Cobrar encargo ID:', encargoId);
+    
+    Swal.fire({
+      title: '¿Cobrar encargo completo?',
+      text: '¿Está seguro de que desea cobrar el encargo completo?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#dc3545',
+      confirmButtonText: 'Sí, cobrar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Aquí iría la lógica para cobrar el encargo
+        console.log('Procediendo a cobrar encargo ID:', encargoId);
+        
+        // Mostrar modal de cobro
+        $.ajax({
+          url: 'Modales/CobrarEncargo.php',
+          type: 'POST',
+          data: { id: encargoId },
+          success: function(response) {
+            $('#modalContent').html(response);
+            $('#editModal').modal('show');
+          },
+          error: function(xhr, status, error) {
+            console.error('Error al cargar modal de cobro:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo cargar el modal de cobro',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
+      }
+    });
+  });
+
+  // Evento para abonar saldo
+  $(document).on('click', '.btn-AbonarEncargo', function() {
+    var encargoId = $(this).data('id');
+    console.log('Abonar encargo ID:', encargoId);
+    
+    // Mostrar modal de abono
+    $.ajax({
+      url: 'Modales/AbonarEncargo.php',
+      type: 'POST',
+      data: { id: encargoId },
+      success: function(response) {
+        $('#modalContent').html(response);
+        $('#editModal').modal('show');
+      },
+      error: function(xhr, status, error) {
+        console.error('Error al cargar modal de abono:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo cargar el modal de abono',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  });
+}
+
+// Agregar eventos cuando se redibuja la tabla
+$('#Clientes').on('draw.dt', function() {
+  agregarEventosAcciones();
 });
 </script>
 <div class="text-center">
@@ -285,6 +390,22 @@ tabla = $('#Clientes').DataTable({
 </thead>
 
 </div>
+</div>
+
+<!-- Modal para acciones -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Acción de Encargo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- El contenido se cargará aquí -->
+        <p>Cargando...</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 
