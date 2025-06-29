@@ -540,6 +540,11 @@ $stmtCheck->close();
         });
 
         <?php endif; ?>
+
+        // Evita el salto de hash en todos los enlaces del menú con href="#" o href que empiece con #idmenu
+        $('a[href="#"], a[href^="#idmenu"]').on('click', function(e) {
+            e.preventDefault();
+        });
     });
     </script>
 </body>
