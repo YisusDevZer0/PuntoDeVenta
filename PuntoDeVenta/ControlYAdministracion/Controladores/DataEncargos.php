@@ -76,7 +76,59 @@
     background-color: #fff; /* Cambiar el color de fondo a blanco */
   }
 
- 
+  /* Estilos para los botones de acciones */
+  .btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .btn-group-vertical .btn {
+    margin: 1px 0;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    min-width: 60px;
+  }
+
+  .btn-group-vertical .btn i {
+    margin-right: 3px;
+  }
+
+  /* Estilos específicos para cada tipo de botón */
+  .btn-DesglosarEncargo {
+    background-color: #17a2b8 !important;
+    border-color: #17a2b8 !important;
+    color: white !important;
+  }
+
+  .btn-DesglosarEncargo:hover {
+    background-color: #138496 !important;
+    border-color: #117a8b !important;
+  }
+
+  .btn-CobrarEncargo {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+  }
+
+  .btn-CobrarEncargo:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+  }
+
+  .btn-AbonarEncargo {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #212529 !important;
+  }
+
+  .btn-AbonarEncargo:hover {
+    background-color: #e0a800 !important;
+    border-color: #d39e00 !important;
+  }
 </style>
 
 <style>
