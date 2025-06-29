@@ -22,18 +22,24 @@ $stmt->bind_param("s", $row['Fk_Sucursal']);
 $stmt->execute();
 $query = $stmt->get_result();
 
-// Consulta para verificar si hay un conteo en pausa
+// Consulta para verificar si hay un conteo en pausa y obtener información
 $usuarioActual = $row['Nombre_Apellidos'];
 $sucursalActual = $row['Fk_Sucursal'];
 $conteoPausado = false;
+$infoConteoPausado = null;
 
-$sqlCheck = "SELECT 1 FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 LIMIT 1";
+$sqlCheck = "SELECT id, Fecha_Creacion, Fecha_Pausa, Total_Productos, Productos_Contados 
+             FROM ConteosDiarios 
+             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 
+             ORDER BY Fecha_Pausa DESC LIMIT 1";
 $stmtCheck = $conn->prepare($sqlCheck);
 $stmtCheck->bind_param("ss", $usuarioActual, $sucursalActual);
 $stmtCheck->execute();
-$stmtCheck->store_result();
-if ($stmtCheck->num_rows > 0) {
+$resultCheck = $stmtCheck->get_result();
+
+if ($resultCheck->num_rows > 0) {
     $conteoPausado = true;
+    $infoConteoPausado = $resultCheck->fetch_assoc();
 }
 $stmtCheck->close();
 ?>
@@ -64,14 +70,77 @@ $stmtCheck->close();
                     <h6 class="mb-4" style="color:#0172b6;">Conteo Diario - <?php echo htmlspecialchars($row['Licencia']); ?></h6>
                     
                     <?php if ($conteoPausado): ?>
-                        <div class="alert alert-danger text-center">
-                            Ya tienes un conteo diario en pausa. Debes finalizarlo antes de iniciar uno nuevo.
+                        <div class="alert alert-warning text-center">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Conteo Diario en Pausa</h5>
+                            <p class="mb-3">Ya tienes un conteo diario en pausa. Debes finalizarlo antes de iniciar uno nuevo.</p>
+                            
+                            <?php if ($infoConteoPausado): ?>
+                                <div class="row justify-content-center">
+                                    <div class="col-md-8">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning text-dark">
+                                                <h6 class="mb-0"><i class="fas fa-info-circle"></i> Información del Conteo Pausado</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <p><strong>Fecha de Creación:</strong><br>
+                                                        <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Creacion'])); ?></p>
+                                                        <p><strong>Fecha de Pausa:</strong><br>
+                                                        <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Pausa'])); ?></p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <p><strong>Productos Contados:</strong><br>
+                                                        <?php echo $infoConteoPausado['Productos_Contados']; ?> de <?php echo $infoConteoPausado['Total_Productos']; ?></p>
+                                                        <p><strong>Progreso:</strong><br>
+                                                        <?php 
+                                                        $porcentaje = ($infoConteoPausado['Total_Productos'] > 0) ? 
+                                                            round(($infoConteoPausado['Productos_Contados'] / $infoConteoPausado['Total_Productos']) * 100, 1) : 0;
+                                                        echo $porcentaje . '%';
+                                                        ?></p>
+                                                    </div>
+                                                </div>
+                                                <div class="progress mb-3">
+                                                    <div class="progress-bar bg-warning" role="progressbar" 
+                                                         style="width: <?php echo $porcentaje; ?>%" 
+                                                         aria-valuenow="<?php echo $porcentaje; ?>" 
+                                                         aria-valuemin="0" aria-valuemax="100">
+                                                        <?php echo $porcentaje; ?>%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="mt-4">
+                                <button type="button" id="btnContinuarConteo" class="btn btn-primary me-2">
+                                    <i class="fas fa-play"></i> Continuar Conteo
+                                </button>
+                                <button type="button" id="btnFinalizarConteo" class="btn btn-danger me-2">
+                                    <i class="fas fa-stop"></i> Finalizar Conteo
+                                </button>
+                                <button type="button" id="btnVerDetalles" class="btn btn-info">
+                                    <i class="fas fa-eye"></i> Ver Detalles
+                                </button>
+                            </div>
                         </div>
                         <script>
                         Swal.fire({
                             icon: 'warning',
-                            title: '¡Atención!',
-                            html: 'Ya tienes un conteo diario en pausa.<br>Debes finalizarlo antes de iniciar uno nuevo.',
+                            title: '¡Conteo Diario en Pausa!',
+                            html: `
+                                <div class="text-start">
+                                    <p>Ya tienes un conteo diario en pausa que debe ser finalizado antes de iniciar uno nuevo.</p>
+                                    <p><strong>Opciones disponibles:</strong></p>
+                                    <ul class="text-start">
+                                        <li><strong>Continuar:</strong> Reanudar el conteo desde donde lo dejaste</li>
+                                        <li><strong>Finalizar:</strong> Terminar el conteo actual y guardar los datos</li>
+                                        <li><strong>Ver Detalles:</strong> Revisar la información del conteo pausado</li>
+                                    </ul>
+                                </div>
+                            `,
                             confirmButtonText: 'Entendido',
                             confirmButtonColor: '#0172b6',
                             allowOutsideClick: false
@@ -318,6 +387,148 @@ $stmtCheck->close();
                 });
             }
         });
+
+        // Funciones para manejar el conteo pausado
+        <?php if ($conteoPausado): ?>
+        
+        // Botón para continuar el conteo
+        $('#btnContinuarConteo').on('click', function() {
+            Swal.fire({
+                title: '¿Continuar el conteo?',
+                text: '¿Deseas reanudar el conteo desde donde lo dejaste?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'No, cancelar',
+                confirmButtonColor: '#0172b6',
+                cancelButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirigir a la página de continuar conteo
+                    window.location.href = 'ContinuarConteo.php?id=<?php echo $infoConteoPausado['id']; ?>';
+                }
+            });
+        });
+
+        // Botón para finalizar el conteo
+        $('#btnFinalizarConteo').on('click', function() {
+            Swal.fire({
+                title: '¿Finalizar el conteo?',
+                text: '¿Estás seguro de que deseas finalizar el conteo pausado? Esta acción no se puede deshacer.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, finalizar',
+                cancelButtonText: 'No, cancelar',
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Mostrar carga
+                    Swal.fire({
+                        title: 'Finalizando conteo...',
+                        text: 'Por favor espere...',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Enviar solicitud para finalizar el conteo
+                    $.ajax({
+                        url: 'Controladores/FinalizarConteo.php',
+                        type: 'POST',
+                        data: {
+                            id_conteo: <?php echo $infoConteoPausado['id']; ?>,
+                            accion: 'finalizar'
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: '¡Conteo Finalizado!',
+                                    text: 'El conteo se ha finalizado correctamente.',
+                                    icon: 'success',
+                                    confirmButtonText: 'Aceptar',
+                                    confirmButtonColor: '#0172b6'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload();
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: response.message || 'Hubo un error al finalizar el conteo',
+                                    icon: 'error',
+                                    confirmButtonText: 'Entendido',
+                                    confirmButtonColor: '#0172b6'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Hubo un error al comunicarse con el servidor',
+                                icon: 'error',
+                                confirmButtonText: 'Entendido',
+                                confirmButtonColor: '#0172b6'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Botón para ver detalles del conteo
+        $('#btnVerDetalles').on('click', function() {
+            // Mostrar modal con detalles del conteo
+            Swal.fire({
+                title: 'Detalles del Conteo Pausado',
+                html: `
+                    <div class="text-start">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>ID del Conteo:</strong><br>
+                                #<?php echo $infoConteoPausado['id']; ?></p>
+                                <p><strong>Fecha de Creación:</strong><br>
+                                <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Creacion'])); ?></p>
+                                <p><strong>Fecha de Pausa:</strong><br>
+                                <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Pausa'])); ?></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Productos Contados:</strong><br>
+                                <?php echo $infoConteoPausado['Productos_Contados']; ?> de <?php echo $infoConteoPausado['Total_Productos']; ?></p>
+                                <p><strong>Progreso:</strong><br>
+                                <?php 
+                                $porcentaje = ($infoConteoPausado['Total_Productos'] > 0) ? 
+                                    round(($infoConteoPausado['Productos_Contados'] / $infoConteoPausado['Total_Productos']) * 100, 1) : 0;
+                                echo $porcentaje . '%';
+                                ?></p>
+                                <p><strong>Estado:</strong><br>
+                                <span class="badge bg-warning">En Pausa</span></p>
+                            </div>
+                        </div>
+                        <div class="progress mt-3">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: <?php echo $porcentaje; ?>%" 
+                                 aria-valuenow="<?php echo $porcentaje; ?>" 
+                                 aria-valuemin="0" aria-valuemax="100">
+                                <?php echo $porcentaje; ?>%
+                            </div>
+                        </div>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#0172b6',
+                width: '600px'
+            });
+        });
+
+        <?php endif; ?>
     });
     </script>
 </body>
