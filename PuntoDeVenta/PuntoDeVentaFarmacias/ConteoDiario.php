@@ -215,22 +215,24 @@ $stmtCheck->close();
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.body.addEventListener('click', function(e) {
-            var target = e.target;
-            // Si el click es en un <a> o dentro de un <a>
-            while (target && target !== document.body) {
-                if (target.tagName === 'A') {
-                    var href = target.getAttribute('href');
-                    if (href === '#' || (href && href.indexOf('#idmenu') === 0)) {
-                        e.preventDefault();
-                        return false;
+    document.addEventListener('click', function(e) {
+        let el = e.target;
+        // Busca hacia arriba hasta encontrar un <a>
+        while (el && el !== document.body) {
+            if (el.tagName === 'A') {
+                var href = el.getAttribute('href');
+                if (href === '#' || (href && href.indexOf('#idmenu') === 0)) {
+                    e.preventDefault();
+                    // Opcional: quitar el hash de la URL si ya se puso
+                    if (window.location.hash === href) {
+                        history.replaceState(null, '', window.location.pathname + window.location.search);
                     }
+                    return false;
                 }
-                target = target.parentElement;
             }
-        }, false);
-    });
+            el = el.parentElement;
+        }
+    }, true); // true = fase de captura
     </script>
 </body>
 
