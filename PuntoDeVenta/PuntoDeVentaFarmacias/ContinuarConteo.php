@@ -145,7 +145,6 @@ $stmt_verificar->close();
                                     <tr>
                                         <th>Código</th>
                                         <th>Nombre</th>
-                                        <th>Existencias R.</th>
                                         <th>Stock Físico</th>
                                     </tr>
                                 </thead>
@@ -154,7 +153,6 @@ $stmt_verificar->close();
                                     <tr class="producto-contado">
                                         <td><?php echo htmlspecialchars($producto['Cod_Barra']); ?></td>
                                         <td><?php echo htmlspecialchars($producto['Nombre_Producto']); ?></td>
-                                        <td><?php echo htmlspecialchars($producto['Existencias_R']); ?></td>
                                         <td><strong><?php echo htmlspecialchars($producto['ExistenciaFisica']); ?></strong></td>
                                     </tr>
                                     <?php endwhile; ?>
@@ -186,7 +184,6 @@ $stmt_verificar->close();
                                     <tr>
                                         <th>Código</th>
                                         <th>Nombre</th>
-                                        <th>Existencias R.</th>
                                         <th>Stock Físico</th>
                                     </tr>
                                 </thead>
@@ -202,13 +199,12 @@ $stmt_verificar->close();
                                                    value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="form-control" name="Existencias_R[]" 
-                                                   value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>" readonly>
-                                        </td>
-                                        <td>
                                             <input type="number" class="form-control" name="StockFisico[]" 
                                                    min="0" step="1" required>
                                         </td>
+                                        <!-- Campos ocultos para mantener los datos -->
+                                        <input type="hidden" name="Existencias_R[]" 
+                                               value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
                                         <input type="hidden" name="Agrego[]" 
                                                value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
                                         <input type="hidden" name="Sucursal[]" 

@@ -59,6 +59,9 @@ $stmtCheck->close();
    include "header.php";?>
    <style>
         /* Eliminamos los estilos del loader que ya no usaremos */
+        #btnFinalizarConteo {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -165,7 +168,6 @@ $stmtCheck->close();
                                         <tr>
                                             <th>Código</th>
                                             <th>Nombre</th>
-                                            <th>Existencias R.</th>
                                             <th>Stock Físico</th>
                                         </tr>
                                     </thead>
@@ -181,13 +183,12 @@ $stmtCheck->close();
                                                            value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly>
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control" name="Existencias_R[]" 
-                                                           value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>" readonly>
-                                                </td>
-                                                <td>
                                                     <input type="number" class="form-control" name="StockFisico[]" 
                                                            min="0" step="1" required>
                                                 </td>
+                                                <!-- Campos ocultos para mantener los datos -->
+                                                <input type="hidden" name="Existencias_R[]" 
+                                                       value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
                                                 <input type="hidden" name="Agrego[]" 
                                                        value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
                                                 <input type="hidden" name="Sucursal[]" 
