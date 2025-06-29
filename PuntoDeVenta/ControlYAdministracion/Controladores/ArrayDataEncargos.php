@@ -89,15 +89,16 @@ while ($fila = $result->fetch_assoc()) {
         "Sucursal" => $fila["Nombre_Sucursal"],
         "Empleado" => $fila["Empleado"],
         "Caja" => $fila["ID_Caja"],
-        "Acciones" => '<div class="btn-group">
-            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-th-list fa-1x"></i>
+        "Acciones" => '<div class="btn-group-vertical">
+            <button type="button" class="btn btn-info btn-sm btn-DesglosarEncargo" data-id="' . $fila["id"] . '" title="Ver detalles">
+                <i class="fas fa-eye"></i> Ver
             </button>
-            <div class="dropdown-menu">
-                <a data-id="' . $fila["id"] . '" class="btn-DesglosarEncargo dropdown-item">Desglosar Encargo <i class="fas fa-receipt"></i></a>
-                <a data-id="' . $fila["id"] . '" class="btn-CobrarEncargo dropdown-item">Cobrar Encargo <i class="fas fa-money-bill"></i></a>
-                <a data-id="' . $fila["id"] . '" class="btn-AbonarEncargo dropdown-item">Abonar Saldo <i class="fas fa-plus-circle"></i></a>
-            </div>
+            <button type="button" class="btn btn-success btn-sm btn-CobrarEncargo" data-id="' . $fila["id"] . '" title="Cobrar encargo">
+                <i class="fas fa-money-bill"></i> Cobrar
+            </button>
+            <button type="button" class="btn btn-warning btn-sm btn-AbonarEncargo" data-id="' . $fila["id"] . '" title="Abonar saldo">
+                <i class="fas fa-plus-circle"></i> Abonar
+            </button>
         </div>'
     ];
 }
