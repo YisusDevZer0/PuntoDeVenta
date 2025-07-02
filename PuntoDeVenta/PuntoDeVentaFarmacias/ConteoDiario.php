@@ -234,6 +234,99 @@ $stmtCheck->close();
         }
     }, true); // true = fase de captura
     </script>
+
+    <script>
+    $(document).ready(function() {
+        // Botón Guardar (submit del formulario)
+        $('#RegistraConteoDelDia').on('submit', function(e) {
+            e.preventDefault();
+            let form = $(this);
+            let formData = form.serializeArray();
+            formData.push({name: 'EnPausa', value: 0}); // No está en pausa
+
+            $.ajax({
+                url: 'Controladores/GuardarConteo.php',
+                type: 'POST',
+                data: $.param(formData),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: '¡Conteo Guardado!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#0172b6'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'Hubo un error al guardar el conteo',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#0172b6'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo comunicar con el servidor',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#0172b6'
+                    });
+                }
+            });
+        });
+
+        // Botón Pausar
+        $('#btnPausar').on('click', function() {
+            let form = $('#RegistraConteoDelDia');
+            let formData = form.serializeArray();
+            formData.push({name: 'EnPausa', value: 1}); // Marcar como en pausa
+
+            $.ajax({
+                url: 'Controladores/GuardarConteo.php',
+                type: 'POST',
+                data: $.param(formData),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Conteo Pausado',
+                            text: response.message,
+                            icon: 'info',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#0172b6'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'Hubo un error al pausar el conteo',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#0172b6'
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo comunicar con el servidor',
+                        icon: 'error',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#0172b6'
+                    });
+                }
+            });
+        });
+    });
+    </script>
 </body>
 
 </html>
