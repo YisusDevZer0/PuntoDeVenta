@@ -175,6 +175,13 @@ try {
             }
         } else {
             // GUARDAR DIRECTO EN FINAL
+            // Antes de guardar, si existen productos en pausa, finalízalos todos
+            $sql_finaliza_pausa = "UPDATE ConteosDiarios_Pausados SET EnPausa = 0 WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
+            $stmt_finaliza_pausa = $conn->prepare($sql_finaliza_pausa);
+            $stmt_finaliza_pausa->bind_param("ss", $agregadoPor, $sucursal);
+            $stmt_finaliza_pausa->execute();
+            $stmt_finaliza_pausa->close();
+            // Luego guarda los productos nuevos (si aplica)
             for ($i = 0; $i < count($codigos); $i++) {
                 $stmt = $conn->prepare("
                     INSERT INTO ConteosDiarios (
@@ -202,6 +209,7 @@ try {
                 if (!$stmt->execute()) {
                     throw new Exception("Error al guardar definitivo: " . $stmt->error);
                 }
+                $stmt->close();
             }
         }
     }
