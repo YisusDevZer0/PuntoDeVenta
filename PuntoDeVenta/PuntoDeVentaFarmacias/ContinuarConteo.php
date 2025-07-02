@@ -48,45 +48,15 @@ if ($row_fecha = $result_fecha->fetch_assoc()) {
 }
 $stmt_fecha->close();
 
-// Obtener los productos ya contados SOLO del conteo más reciente
-$sql_productos_contados = "SELECT Cod_Barra, ExistenciaFisica, Nombre_Producto, Existencias_R
-                           FROM ConteosDiarios_Pausados
-                           WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
-                           AND ExistenciaFisica IS NOT NULL
-                           AND AgregadoEl = ?
-                           ORDER BY AgregadoEl";
-$stmt_productos = $conn->prepare($sql_productos_contados);
-$stmt_productos->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
-$stmt_productos->execute();
-$productos_contados = $stmt_productos->get_result();
-
-// Obtener productos pendientes (del mismo conteo pausado, ExistenciaFisica IS NULL)
-$sql_productos_pendientes = "SELECT Cod_Barra, Nombre_Producto, Existencias_R
-                            FROM ConteosDiarios_Pausados
-                            WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
-                            AND ExistenciaFisica IS NULL
-                            AND AgregadoEl = ?
-                            ORDER BY AgregadoEl";
-$stmt_pendientes = $conn->prepare($sql_productos_pendientes);
-$stmt_pendientes->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
-$stmt_pendientes->execute();
-$productos_restantes = $stmt_pendientes->get_result();
-
-echo '<div style="color:red;">DEBUG: Antes de obtener IDs pendientes</div>';
-// Obtener todos los IDs de productos pendientes en un array asociativo antes del ciclo
-$ids_pendientes = [];
-$sql_ids = "SELECT Folio_Ingreso, Cod_Barra FROM ConteosDiarios_Pausados WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
-$stmt_ids = $conn->prepare($sql_ids);
-if (!$stmt_ids) { die('<div style="color:red;">Error en prepare: ' . htmlspecialchars($conn->error) . '</div>'); }
-$stmt_ids->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
-if (!$stmt_ids->execute()) { die('<div style="color:red;">Error en execute: ' . htmlspecialchars($stmt_ids->error) . '</div>'); }
-$result_ids = $stmt_ids->get_result();
-if (!$result_ids) { die('<div style="color:red;">Error en get_result: ' . htmlspecialchars($stmt_ids->error) . '</div>'); }
-while ($row_id = $result_ids->fetch_assoc()) {
-    $ids_pendientes[$row_id['Cod_Barra']] = $row_id['Folio_Ingreso'];
-}
-$stmt_ids->close();
-echo '<div style="color:green;">DEBUG: IDs pendientes obtenidos: ' . count($ids_pendientes) . '</div>';
+// Obtener todos los productos del conteo pausado más reciente (contados y pendientes)
+$sql_todos = "SELECT Folio_Ingreso, Cod_Barra, Nombre_Producto, Existencias_R, ExistenciaFisica
+              FROM ConteosDiarios_Pausados
+              WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ?
+              ORDER BY Cod_Barra";
+$stmt_todos = $conn->prepare($sql_todos);
+$stmt_todos->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
+$stmt_todos->execute();
+$productos_todos = $stmt_todos->get_result();
 
 $stmt_verificar->close();
 ?>
@@ -167,12 +137,22 @@ $stmt_verificar->close();
                     </div>
 
                     <!-- Productos ya contados -->
-                    <?php if ($productos_contados->num_rows > 0): ?>
-                    <div class="mb-4">
-                        <h6 class="text-success"><i class="fas fa-check-circle"></i> Productos Ya Contados (<?php echo $productos_contados->num_rows; ?>)</h6>
+                    <?php if ($productos_todos->num_rows > 0): ?>
+                    <div class="alert alert-info">Productos en el conteo pausado: <?php echo $productos_todos->num_rows; ?></div>
+                    <form id="ContinuarConteoForm" action="javascript:void(0)" method="post">
+                        <input type="hidden" name="EnPausa" value="0">
+                        <h6 class="text-warning"><i class="fas fa-edit"></i> Productos del Conteo Pausado (<?php echo $productos_todos->num_rows; ?>)</h6>
+                        <div class="text-center mb-3">
+                            <button type="button" id="btnPausarContinuacion" class="btn btn-warning me-2">
+                                <i class="fas fa-pause"></i> Pausar Nuevamente
+                            </button>
+                            <button type="submit" id="btnFinalizarContinuacion" class="btn btn-success">
+                                <i class="fas fa-save"></i> Finalizar Conteo
+                            </button>
+                        </div>
                         <div class="table-responsive">
-                            <table class="table table-sm table-bordered">
-                                <thead class="table-success">
+                            <table id="ProductosRestantes" class="table table-hover">
+                                <thead>
                                     <tr>
                                         <th>Código</th>
                                         <th>Nombre</th>
@@ -180,71 +160,30 @@ $stmt_verificar->close();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php while ($producto = $productos_contados->fetch_assoc()): ?>
-                                    <tr class="producto-contado">
-                                        <td><?php echo htmlspecialchars($producto['Cod_Barra']); ?></td>
-                                        <td><?php echo htmlspecialchars($producto['Nombre_Producto']); ?></td>
-                                        <td><strong><?php echo htmlspecialchars($producto['ExistenciaFisica']); ?></strong></td>
+                                    <?php while ($producto = $productos_todos->fetch_assoc()): ?>
+                                    <tr class="producto-pendiente">
+                                        <td>
+                                            <input type="text" class="form-control" name="CodBarra[]" 
+                                                   value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="NombreProd[]" 
+                                                   value="<?php echo htmlspecialchars($producto['Nombre_Producto']); ?>" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="StockFisico[]" 
+                                                   min="0" step="1" value="<?php echo htmlspecialchars($producto['ExistenciaFisica'] ?? ''); ?>">
+                                        </td>
+                                        <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($producto['Folio_Ingreso']); ?>">
+                                        <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
+                                        <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
+                                        <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
                                     </tr>
                                     <?php endwhile; ?>
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <!-- Formulario para productos restantes -->
-                    <?php if ($productos_restantes->num_rows > 0): ?>
-                        <div class="alert alert-info">Productos pendientes encontrados: <?php echo $productos_restantes->num_rows; ?></div>
-                        <form id="ContinuarConteoForm" action="javascript:void(0)" method="post">
-                            <input type="hidden" name="EnPausa" value="0">
-                            
-                            <h6 class="text-warning"><i class="fas fa-edit"></i> Productos Pendientes por Contar (<?php echo $productos_restantes->num_rows; ?>)</h6>
-                            
-                            <div class="text-center mb-3">
-                                <button type="button" id="btnPausarContinuacion" class="btn btn-warning me-2">
-                                    <i class="fas fa-pause"></i> Pausar Nuevamente
-                                </button>
-                                <button type="submit" id="btnFinalizarContinuacion" class="btn btn-success">
-                                    <i class="fas fa-save"></i> Finalizar Conteo
-                                </button>
-                            </div>
-                            
-                            <div class="table-responsive">
-                                <table id="ProductosRestantes" class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Código</th>
-                                            <th>Nombre</th>
-                                            <th>Stock Físico</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php while ($producto = $productos_restantes->fetch_assoc()): ?>
-                                        <tr class="producto-pendiente">
-                                            <td>
-                                                <input type="text" class="form-control" name="CodBarra[]" 
-                                                       value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control" name="NombreProd[]" 
-                                                       value="<?php echo htmlspecialchars($producto['Nombre_Producto']); ?>" readonly>
-                                            </td>
-                                            <td>
-                                                <input type="number" class="form-control" name="StockFisico[]" 
-                                                       min="0" step="1">
-                                            </td>
-                                            <!-- Campo oculto para el ID del registro de ConteosDiarios -->
-                                            <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($ids_pendientes[$producto['Cod_Barra']] ?? ''); ?>">
-                                            <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
-                                            <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
-                                            <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
-                                        </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                    </form>
                     <?php else: ?>
                     <div class="alert alert-success text-center">
                         <h5><i class="fas fa-check-circle"></i> ¡Todos los productos han sido contados!</h5>
