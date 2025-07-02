@@ -175,65 +175,66 @@ $stmt_verificar->close();
 
                     <!-- Formulario para productos restantes -->
                     <?php if ($productos_restantes->num_rows > 0): ?>
-                    <form id="ContinuarConteoForm" action="javascript:void(0)" method="post">
-                        <input type="hidden" name="EnPausa" value="0">
-                        
-                        <h6 class="text-warning"><i class="fas fa-edit"></i> Productos Pendientes por Contar (<?php echo $productos_restantes->num_rows; ?>)</h6>
-                        
-                        <div class="text-center mb-3">
-                            <button type="button" id="btnPausarContinuacion" class="btn btn-warning me-2">
-                                <i class="fas fa-pause"></i> Pausar Nuevamente
-                            </button>
-                            <button type="submit" id="btnFinalizarContinuacion" class="btn btn-success">
-                                <i class="fas fa-save"></i> Finalizar Conteo
-                            </button>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table id="ProductosRestantes" class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Nombre</th>
-                                        <th>Stock Físico</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($producto = $productos_restantes->fetch_assoc()): ?>
-                                    <tr class="producto-pendiente">
-                                        <td>
-                                            <input type="text" class="form-control" name="CodBarra[]" 
-                                                   value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" name="NombreProd[]" 
-                                                   value="<?php echo htmlspecialchars($producto['Nombre_Producto']); ?>" readonly>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" name="StockFisico[]" 
-                                                   min="0" step="1">
-                                        </td>
-                                        <!-- Campo oculto para el ID del registro de ConteosDiarios -->
-                                        <?php
-                                        // Obtener el ID del registro para este producto
-                                        $sql_id = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL LIMIT 1";
-                                        $stmt_id = $conn->prepare($sql_id);
-                                        $stmt_id->bind_param("ssss", $producto['Cod_Barra'], $sucursalActual, $usuarioActual, $fechaUltimoConteo);
-                                        $stmt_id->execute();
-                                        $result_id = $stmt_id->get_result();
-                                        $id_registro = ($row_id = $result_id->fetch_assoc()) ? $row_id['id'] : '';
-                                        $stmt_id->close();
-                                        ?>
-                                        <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($id_registro); ?>">
-                                        <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
-                                        <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
-                                        <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
-                                    </tr>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </form>
+                        <div class="alert alert-info">Productos pendientes encontrados: <?php echo $productos_restantes->num_rows; ?></div>
+                        <form id="ContinuarConteoForm" action="javascript:void(0)" method="post">
+                            <input type="hidden" name="EnPausa" value="0">
+                            
+                            <h6 class="text-warning"><i class="fas fa-edit"></i> Productos Pendientes por Contar (<?php echo $productos_restantes->num_rows; ?>)</h6>
+                            
+                            <div class="text-center mb-3">
+                                <button type="button" id="btnPausarContinuacion" class="btn btn-warning me-2">
+                                    <i class="fas fa-pause"></i> Pausar Nuevamente
+                                </button>
+                                <button type="submit" id="btnFinalizarContinuacion" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Finalizar Conteo
+                                </button>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table id="ProductosRestantes" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Nombre</th>
+                                            <th>Stock Físico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php while ($producto = $productos_restantes->fetch_assoc()): ?>
+                                        <tr class="producto-pendiente">
+                                            <td>
+                                                <input type="text" class="form-control" name="CodBarra[]" 
+                                                       value="<?php echo htmlspecialchars($producto['Cod_Barra']); ?>" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control" name="NombreProd[]" 
+                                                       value="<?php echo htmlspecialchars($producto['Nombre_Producto']); ?>" readonly>
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control" name="StockFisico[]" 
+                                                       min="0" step="1">
+                                            </td>
+                                            <!-- Campo oculto para el ID del registro de ConteosDiarios -->
+                                            <?php
+                                            // Obtener el ID del registro para este producto
+                                            $sql_id = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL LIMIT 1";
+                                            $stmt_id = $conn->prepare($sql_id);
+                                            $stmt_id->bind_param("ssss", $producto['Cod_Barra'], $sucursalActual, $usuarioActual, $fechaUltimoConteo);
+                                            $stmt_id->execute();
+                                            $result_id = $stmt_id->get_result();
+                                            $id_registro = ($row_id = $result_id->fetch_assoc()) ? $row_id['id'] : '';
+                                            $stmt_id->close();
+                                            ?>
+                                            <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($id_registro); ?>">
+                                            <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
+                                            <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
+                                            <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
+                                        </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
                     <?php else: ?>
                     <div class="alert alert-success text-center">
                         <h5><i class="fas fa-check-circle"></i> ¡Todos los productos han sido contados!</h5>
