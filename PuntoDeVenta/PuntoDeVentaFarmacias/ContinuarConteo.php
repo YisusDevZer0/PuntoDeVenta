@@ -32,18 +32,31 @@ if ($result_verificar->num_rows === 0) {
 
 $conteo = $result_verificar->fetch_assoc();
 
-// Obtener los productos ya contados
+// Obtener la fecha del conteo en pausa más reciente
+$sql_fecha = "SELECT MAX(AgregadoEl) as FechaUltimoConteo FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
+$stmt_fecha = $conn->prepare($sql_fecha);
+$stmt_fecha->bind_param("ss", $usuarioActual, $sucursalActual);
+$stmt_fecha->execute();
+$result_fecha = $stmt_fecha->get_result();
+$fechaUltimoConteo = null;
+if ($row_fecha = $result_fecha->fetch_assoc()) {
+    $fechaUltimoConteo = $row_fecha['FechaUltimoConteo'];
+}
+$stmt_fecha->close();
+
+// Obtener los productos ya contados SOLO del conteo más reciente
 $sql_productos_contados = "SELECT Cod_Barra, ExistenciaFisica, Nombre_Producto, Existencias_R
                            FROM ConteosDiarios
                            WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
                            AND ExistenciaFisica IS NOT NULL
+                           AND AgregadoEl = ?
                            ORDER BY AgregadoEl";
 $stmt_productos = $conn->prepare($sql_productos_contados);
-$stmt_productos->bind_param("ss", $usuarioActual, $sucursalActual);
+$stmt_productos->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
 $stmt_productos->execute();
 $productos_contados = $stmt_productos->get_result();
 
-// Obtener productos restantes para contar
+// Obtener productos restantes para contar SOLO del conteo más reciente
 $sql_productos_restantes = "SELECT Cod_Barra, Nombre_Prod, Existencias_R 
                             FROM Stock_POS 
                             WHERE Fk_sucursal = ? 
@@ -52,12 +65,12 @@ $sql_productos_restantes = "SELECT Cod_Barra, Nombre_Prod, Existencias_R
                             AND Cod_Barra != ''
                             AND Cod_Barra NOT IN (
                                 SELECT Cod_Barra FROM ConteosDiarios 
-                                WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+                                WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ?
                             )
                             ORDER BY RAND()
                             LIMIT 50";
 $stmt_restantes = $conn->prepare($sql_productos_restantes);
-$stmt_restantes->bind_param("sss", $sucursalActual, $usuarioActual, $sucursalActual);
+$stmt_restantes->bind_param("ssss", $sucursalActual, $usuarioActual, $sucursalActual, $fechaUltimoConteo);
 $stmt_restantes->execute();
 $productos_restantes = $stmt_restantes->get_result();
 
