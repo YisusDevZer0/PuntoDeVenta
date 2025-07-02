@@ -325,6 +325,29 @@ $stmtCheck->close();
                 }
             });
         });
+
+        // Botón Continuar Conteo
+        $('#btnContinuarConteo').on('click', function() {
+            window.location.href = 'ContinuarConteo.php';
+        });
+
+        // Botón Ver Detalles
+        $('#btnVerDetalles').on('click', function() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Detalles del Conteo Pausado',
+                html: `
+                    <div class="text-start">
+                        <p><strong>Fecha de Creación:</strong> <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Creacion'])); ?></p>
+                        <p><strong>Fecha de Pausa:</strong> <?php echo date('d/m/Y H:i', strtotime($infoConteoPausado['Fecha_Pausa'])); ?></p>
+                        <p><strong>Productos Contados:</strong> <?php echo $infoConteoPausado['Productos_Contados']; ?> de <?php echo $infoConteoPausado['Total_Productos']; ?></p>
+                        <p><strong>Progreso:</strong> <?php echo $porcentaje; ?>%</p>
+                    </div>
+                `,
+                confirmButtonText: 'Cerrar',
+                confirmButtonColor: '#0172b6'
+            });
+        });
     });
     </script>
 </body>
