@@ -16,9 +16,13 @@ $sql_verificar = "SELECT
                     COUNT(*) as Total_Productos,
                     COUNT(CASE WHEN ExistenciaFisica IS NOT NULL THEN 1 END) as Productos_Contados
                   FROM ConteosDiarios 
-                  WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
+                  WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+                  AND AgregadoEl = (
+                    SELECT MAX(AgregadoEl) FROM ConteosDiarios 
+                    WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+                  )";
 $stmt_verificar = $conn->prepare($sql_verificar);
-$stmt_verificar->bind_param("ss", $usuarioActual, $sucursalActual);
+$stmt_verificar->bind_param("ssss", $usuarioActual, $sucursalActual, $usuarioActual, $sucursalActual);
 $stmt_verificar->execute();
 $result_verificar = $stmt_verificar->get_result();
 

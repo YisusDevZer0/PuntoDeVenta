@@ -28,15 +28,20 @@ $sucursalActual = $row['Fk_Sucursal'];
 $conteoPausado = false;
 $infoConteoPausado = null;
 
+// Mejorar: solo considerar el conteo en pausa más reciente
 $sqlCheck = "SELECT 
                 MIN(AgregadoEl) as Fecha_Creacion,
                 MAX(AgregadoEl) as Fecha_Pausa,
                 COUNT(*) as Total_Productos,
                 COUNT(CASE WHEN ExistenciaFisica IS NOT NULL THEN 1 END) as Productos_Contados
              FROM ConteosDiarios 
-             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
+             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+             AND AgregadoEl = (
+                SELECT MAX(AgregadoEl) FROM ConteosDiarios 
+                WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+             )";
 $stmtCheck = $conn->prepare($sqlCheck);
-$stmtCheck->bind_param("ss", $usuarioActual, $sucursalActual);
+$stmtCheck->bind_param("ssss", $usuarioActual, $sucursalActual, $usuarioActual, $sucursalActual);
 $stmtCheck->execute();
 $resultCheck = $stmtCheck->get_result();
 
