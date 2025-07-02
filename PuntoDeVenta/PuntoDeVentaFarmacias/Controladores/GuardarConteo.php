@@ -74,22 +74,25 @@ try {
         
         $productos_contados = 0;
         $ids_conteo = $_POST['IdConteo'] ?? [];
-        for ($i = 0; $i < count($codigos); $i++) {
-            $id_registro = isset($ids_conteo[$i]) ? $ids_conteo[$i] : '';
+        for ($i = 0; $i < count($ids_conteo); $i++) {
+            $id_registro = $ids_conteo[$i];
+            $codigo = $_POST['CodBarra'][$i] ?? '';
+            $nombre = $_POST['NombreProd'][$i] ?? '';
+            $existenciaR = $_POST['Existencias_R'][$i] ?? '';
+            $stock = isset($_POST['StockFisico'][$i]) ? $_POST['StockFisico'][$i] : null;
             if ($id_registro) {
                 // UPDATE directo por ID
-                // Solo actualizar ExistenciaFisica si el usuario llenó el campo
-                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
+                $valorStock = ($stock === '' || $stock === null) ? null : $stock;
                 if ($valorStock === null) {
                     // Solo actualizar EnPausa, Nombre_Producto y Existencias_R, NO ExistenciaFisica
                     $sql_update = "UPDATE ConteosDiarios SET Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
                     $stmt_update = $conn->prepare($sql_update);
-                    $stmt_update->bind_param("siii", $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
+                    $stmt_update->bind_param("siii", $nombre, $existenciaR, $enPausa, $id_registro);
                 } else {
                     // Actualizar todo
                     $sql_update = "UPDATE ConteosDiarios SET ExistenciaFisica = ?, Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
                     $stmt_update = $conn->prepare($sql_update);
-                    $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
+                    $stmt_update->bind_param("isiii", $valorStock, $nombre, $existenciaR, $enPausa, $id_registro);
                 }
                 if (!$stmt_update->execute()) {
                     throw new Exception("Error al actualizar el producto: " . $stmt_update->error);
@@ -110,13 +113,13 @@ try {
                         EnPausa
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ");
-                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
+                $valorStock = ($stock === '' || $stock === null) ? null : $stock;
                 $stmt_insertar->bind_param(
                     "sssdisis",
-                    $codigos[$i],
-                    $nombres[$i],
+                    $codigo,
+                    $nombre,
                     $sucursal,
-                    $existenciasR[$i],
+                    $existenciaR,
                     $valorStock,
                     $agregadoPor,
                     $fechaConteo,
