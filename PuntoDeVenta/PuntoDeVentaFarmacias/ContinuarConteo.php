@@ -252,6 +252,7 @@ $stmt_verificar->close();
     <script>
     $(document).ready(function() {
         // Inicializar DataTable para productos restantes
+        /*
         if ($.fn.DataTable.isDataTable('#ProductosRestantes')) {
             $('#ProductosRestantes').DataTable().destroy();
         }
@@ -278,6 +279,7 @@ $stmt_verificar->close();
             },
             "responsive": true
         });
+        */
 
         // Función para validar el formulario
         function validarFormulario() {
