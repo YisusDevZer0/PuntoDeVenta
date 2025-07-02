@@ -78,10 +78,19 @@ try {
             $id_registro = isset($ids_conteo[$i]) ? $ids_conteo[$i] : '';
             if ($id_registro) {
                 // UPDATE directo por ID
-                $sql_update = "UPDATE ConteosDiarios SET ExistenciaFisica = ?, Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
-                $stmt_update = $conn->prepare($sql_update);
+                // Solo actualizar ExistenciaFisica si el usuario llenó el campo
                 $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
-                $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
+                if ($valorStock === null) {
+                    // Solo actualizar EnPausa, Nombre_Producto y Existencias_R, NO ExistenciaFisica
+                    $sql_update = "UPDATE ConteosDiarios SET Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
+                    $stmt_update = $conn->prepare($sql_update);
+                    $stmt_update->bind_param("siii", $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
+                } else {
+                    // Actualizar todo
+                    $sql_update = "UPDATE ConteosDiarios SET ExistenciaFisica = ?, Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
+                    $stmt_update = $conn->prepare($sql_update);
+                    $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
+                }
                 if (!$stmt_update->execute()) {
                     throw new Exception("Error al actualizar el producto: " . $stmt_update->error);
                 }
