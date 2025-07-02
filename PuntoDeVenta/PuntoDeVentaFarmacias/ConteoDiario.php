@@ -195,7 +195,7 @@ $stmtCheck->close();
                                                            value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly>
                                                 </td>
                                                 <td>
-f                                                    <input type="number" class="form-control" name="StockFisico[]" 
+                                                    <input type="number" class="form-control" name="StockFisico[]" 
                                                            min="0" step="1" required>
                                                 </td>
                                                 <!-- Campos ocultos para mantener los datos -->
