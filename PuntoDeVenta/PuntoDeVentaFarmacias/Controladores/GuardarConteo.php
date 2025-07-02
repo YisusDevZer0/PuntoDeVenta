@@ -160,6 +160,7 @@ try {
                     )
                 ");
                 $folio = isset($_POST['IdConteo'][$i]) ? $_POST['IdConteo'][$i] : null;
+                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
                 $stmt->bind_param(
                     "issiiis",
                     $folio,
@@ -167,7 +168,7 @@ try {
                     $nombres[$i],
                     $sucursal,
                     $existenciasR[$i],
-                    ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i],
+                    $valorStock,
                     $agregadoPor
                 );
                 if (!$stmt->execute()) {
@@ -191,13 +192,14 @@ try {
                         AgregadoEl = VALUES(AgregadoEl),
                         EnPausa = 0
                 ");
+                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
                 $stmt->bind_param(
                     "ssiiis",
                     $codigos[$i],
                     $nombres[$i],
                     $sucursal,
                     $existenciasR[$i],
-                    ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i],
+                    $valorStock,
                     $agregadoPor
                 );
                 if (!$stmt->execute()) {
