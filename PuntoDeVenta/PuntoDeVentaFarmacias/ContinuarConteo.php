@@ -1,6 +1,10 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Verificar que $row esté definido
 if (!isset($row['Fk_Sucursal']) || !isset($row['Licencia'])) {
     die("Error: No se ha iniciado sesión correctamente");
@@ -68,17 +72,21 @@ $stmt_pendientes->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltim
 $stmt_pendientes->execute();
 $productos_restantes = $stmt_pendientes->get_result();
 
+echo '<div style="color:red;">DEBUG: Antes de obtener IDs pendientes</div>';
 // Obtener todos los IDs de productos pendientes en un array asociativo antes del ciclo
 $ids_pendientes = [];
 $sql_ids = "SELECT id, Cod_Barra FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
 $stmt_ids = $conn->prepare($sql_ids);
+if (!$stmt_ids) { die('<div style="color:red;">Error en prepare: ' . htmlspecialchars($conn->error) . '</div>'); }
 $stmt_ids->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
-$stmt_ids->execute();
+if (!$stmt_ids->execute()) { die('<div style="color:red;">Error en execute: ' . htmlspecialchars($stmt_ids->error) . '</div>'); }
 $result_ids = $stmt_ids->get_result();
+if (!$result_ids) { die('<div style="color:red;">Error en get_result: ' . htmlspecialchars($stmt_ids->error) . '</div>'); }
 while ($row_id = $result_ids->fetch_assoc()) {
     $ids_pendientes[$row_id['Cod_Barra']] = $row_id['id'];
 }
 $stmt_ids->close();
+echo '<div style="color:green;">DEBUG: IDs pendientes obtenidos: ' . count($ids_pendientes) . '</div>';
 
 $stmt_verificar->close();
 ?>
