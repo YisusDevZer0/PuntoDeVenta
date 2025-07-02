@@ -211,15 +211,23 @@ $stmt_verificar->close();
                                         </td>
                                         <td>
                                             <input type="number" class="form-control" name="StockFisico[]" 
-                                                   min="0" step="1" required>
+                                                   min="0" step="1">
                                         </td>
-                                        <!-- Campos ocultos para mantener los datos -->
-                                        <input type="hidden" name="Existencias_R[]" 
-                                               value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
-                                        <input type="hidden" name="Agrego[]" 
-                                               value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
-                                        <input type="hidden" name="Sucursal[]" 
-                                               value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
+                                        <!-- Campo oculto para el ID del registro de ConteosDiarios -->
+                                        <?php
+                                        // Obtener el ID del registro para este producto
+                                        $sql_id = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL LIMIT 1";
+                                        $stmt_id = $conn->prepare($sql_id);
+                                        $stmt_id->bind_param("ssss", $producto['Cod_Barra'], $sucursalActual, $usuarioActual, $fechaUltimoConteo);
+                                        $stmt_id->execute();
+                                        $result_id = $stmt_id->get_result();
+                                        $id_registro = ($row_id = $result_id->fetch_assoc()) ? $row_id['id'] : '';
+                                        $stmt_id->close();
+                                        ?>
+                                        <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($id_registro); ?>">
+                                        <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
+                                        <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
+                                        <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
                                     </tr>
                                     <?php endwhile; ?>
                                 </tbody>

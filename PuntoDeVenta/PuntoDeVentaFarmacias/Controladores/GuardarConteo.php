@@ -73,27 +73,22 @@ try {
         $fechaConteo = $row_conteo['AgregadoEl'];
         
         $productos_contados = 0;
+        $ids_conteo = $_POST['IdConteo'] ?? [];
         for ($i = 0; $i < count($codigos); $i++) {
-            // Verificar si ya existe el producto en el conteo en pausa más reciente
-            $sql_existe = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? LIMIT 1";
-            $stmt_existe = $conn->prepare($sql_existe);
-            $stmt_existe->bind_param("ssss", $codigos[$i], $sucursal, $agregadoPor, $fechaConteo);
-            $stmt_existe->execute();
-            $result_existe = $stmt_existe->get_result();
-            if ($result_existe->num_rows > 0) {
-                // UPDATE
-                $row_existente = $result_existe->fetch_assoc();
+            $id_registro = isset($ids_conteo[$i]) ? $ids_conteo[$i] : '';
+            if ($id_registro) {
+                // UPDATE directo por ID
                 $sql_update = "UPDATE ConteosDiarios SET ExistenciaFisica = ?, Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
                 $stmt_update = $conn->prepare($sql_update);
                 $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
-                $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $row_existente['id']);
+                $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $id_registro);
                 if (!$stmt_update->execute()) {
                     throw new Exception("Error al actualizar el producto: " . $stmt_update->error);
                 }
                 $productos_contados++;
                 $stmt_update->close();
             } else {
-                // INSERT
+                // INSERT (caso raro)
                 $stmt_insertar = $conn->prepare("
                     INSERT INTO ConteosDiarios (
                         Cod_Barra, 
@@ -124,7 +119,6 @@ try {
                 $productos_contados++;
                 $stmt_insertar->close();
             }
-            $stmt_existe->close();
         }
         
         // Si se está finalizando el conteo, actualizar el inventario
