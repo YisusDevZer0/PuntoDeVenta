@@ -34,10 +34,10 @@ $sqlCheck = "SELECT
                 MAX(AgregadoEl) as Fecha_Pausa,
                 COUNT(*) as Total_Productos,
                 COUNT(CASE WHEN ExistenciaFisica IS NOT NULL THEN 1 END) as Productos_Contados
-             FROM ConteosDiarios 
+             FROM ConteosDiarios_Pausados 
              WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
              AND AgregadoEl = (
-                SELECT MAX(AgregadoEl) FROM ConteosDiarios 
+                SELECT MAX(AgregadoEl) FROM ConteosDiarios_Pausados 
                 WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
              )";
 $stmtCheck = $conn->prepare($sqlCheck);

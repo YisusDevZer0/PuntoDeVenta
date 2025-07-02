@@ -19,10 +19,10 @@ $sql_verificar = "SELECT
                     MAX(AgregadoEl) as Fecha_Pausa,
                     COUNT(*) as Total_Productos,
                     COUNT(CASE WHEN ExistenciaFisica IS NOT NULL THEN 1 END) as Productos_Contados
-                  FROM ConteosDiarios 
+                  FROM ConteosDiarios_Pausados 
                   WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
                   AND AgregadoEl = (
-                    SELECT MAX(AgregadoEl) FROM ConteosDiarios 
+                    SELECT MAX(AgregadoEl) FROM ConteosDiarios_Pausados 
                     WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
                   )";
 $stmt_verificar = $conn->prepare($sql_verificar);
@@ -37,7 +37,7 @@ if ($result_verificar->num_rows === 0) {
 $conteo = $result_verificar->fetch_assoc();
 
 // Obtener la fecha del conteo en pausa más reciente
-$sql_fecha = "SELECT MAX(AgregadoEl) as FechaUltimoConteo FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
+$sql_fecha = "SELECT MAX(AgregadoEl) as FechaUltimoConteo FROM ConteosDiarios_Pausados WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1";
 $stmt_fecha = $conn->prepare($sql_fecha);
 $stmt_fecha->bind_param("ss", $usuarioActual, $sucursalActual);
 $stmt_fecha->execute();
@@ -50,7 +50,7 @@ $stmt_fecha->close();
 
 // Obtener los productos ya contados SOLO del conteo más reciente
 $sql_productos_contados = "SELECT Cod_Barra, ExistenciaFisica, Nombre_Producto, Existencias_R
-                           FROM ConteosDiarios
+                           FROM ConteosDiarios_Pausados
                            WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
                            AND ExistenciaFisica IS NOT NULL
                            AND AgregadoEl = ?
@@ -62,7 +62,7 @@ $productos_contados = $stmt_productos->get_result();
 
 // Obtener productos pendientes (del mismo conteo pausado, ExistenciaFisica IS NULL)
 $sql_productos_pendientes = "SELECT Cod_Barra, Nombre_Producto, Existencias_R
-                            FROM ConteosDiarios
+                            FROM ConteosDiarios_Pausados
                             WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
                             AND ExistenciaFisica IS NULL
                             AND AgregadoEl = ?
@@ -75,7 +75,7 @@ $productos_restantes = $stmt_pendientes->get_result();
 echo '<div style="color:red;">DEBUG: Antes de obtener IDs pendientes</div>';
 // Obtener todos los IDs de productos pendientes en un array asociativo antes del ciclo
 $ids_pendientes = [];
-$sql_ids = "SELECT Folio_Ingreso, Cod_Barra FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
+$sql_ids = "SELECT Folio_Ingreso, Cod_Barra FROM ConteosDiarios_Pausados WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
 $stmt_ids = $conn->prepare($sql_ids);
 if (!$stmt_ids) { die('<div style="color:red;">Error en prepare: ' . htmlspecialchars($conn->error) . '</div>'); }
 $stmt_ids->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
