@@ -58,7 +58,7 @@ try {
     if ($id_conteo) {
         // Continuar un conteo existente
         // Verificar que el conteo existe y pertenece al usuario
-        $sql_verificar = "SELECT id, EnPausa FROM ConteosDiarios 
+        $sql_verificar = "SELECT id, EnPausa, AgregadoEl FROM ConteosDiarios 
                           WHERE id = ? AND AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 
                           LIMIT 1";
         $stmt_verificar = $conn->prepare($sql_verificar);
@@ -69,41 +69,62 @@ try {
         if ($result_verificar->num_rows === 0) {
             throw new Exception("Conteo no encontrado o no tienes permisos para continuarlo");
         }
-        
-        // Insertar los nuevos productos contados
-        $stmt_insertar = $conn->prepare("
-            INSERT INTO ConteosDiarios (
-                Cod_Barra, 
-                Nombre_Producto, 
-                Fk_sucursal, 
-                Existencias_R, 
-                ExistenciaFisica, 
-                AgregadoPor, 
-                AgregadoEl, 
-                EnPausa
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
-        ");
+        $row_conteo = $result_verificar->fetch_assoc();
+        $fechaConteo = $row_conteo['AgregadoEl'];
         
         $productos_contados = 0;
         for ($i = 0; $i < count($codigos); $i++) {
-            // Solo insertar si el stock físico no está vacío
-            if ($stockFisico[$i] !== '' && $stockFisico[$i] !== null) {
+            // Verificar si ya existe el producto en el conteo en pausa más reciente
+            $sql_existe = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? LIMIT 1";
+            $stmt_existe = $conn->prepare($sql_existe);
+            $stmt_existe->bind_param("ssss", $codigos[$i], $sucursal, $agregadoPor, $fechaConteo);
+            $stmt_existe->execute();
+            $result_existe = $stmt_existe->get_result();
+            if ($result_existe->num_rows > 0) {
+                // UPDATE
+                $row_existente = $result_existe->fetch_assoc();
+                $sql_update = "UPDATE ConteosDiarios SET ExistenciaFisica = ?, Nombre_Producto = ?, Existencias_R = ?, EnPausa = ? WHERE id = ?";
+                $stmt_update = $conn->prepare($sql_update);
+                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
+                $stmt_update->bind_param("isiii", $valorStock, $nombres[$i], $existenciasR[$i], $enPausa, $row_existente['id']);
+                if (!$stmt_update->execute()) {
+                    throw new Exception("Error al actualizar el producto: " . $stmt_update->error);
+                }
+                $productos_contados++;
+                $stmt_update->close();
+            } else {
+                // INSERT
+                $stmt_insertar = $conn->prepare("
+                    INSERT INTO ConteosDiarios (
+                        Cod_Barra, 
+                        Nombre_Producto, 
+                        Fk_sucursal, 
+                        Existencias_R, 
+                        ExistenciaFisica, 
+                        AgregadoPor, 
+                        AgregadoEl, 
+                        EnPausa
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ");
+                $valorStock = ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i];
                 $stmt_insertar->bind_param(
-                    "sssdisi",
+                    "sssdisis",
                     $codigos[$i],
                     $nombres[$i],
                     $sucursal,
                     $existenciasR[$i],
-                    $stockFisico[$i],
+                    $valorStock,
                     $agregadoPor,
+                    $fechaConteo,
                     $enPausa
                 );
-                
                 if (!$stmt_insertar->execute()) {
                     throw new Exception("Error al guardar el producto: " . $stmt_insertar->error);
                 }
                 $productos_contados++;
+                $stmt_insertar->close();
             }
+            $stmt_existe->close();
         }
         
         // Si se está finalizando el conteo, actualizar el inventario
@@ -116,6 +137,7 @@ try {
                     $stmt_inventario = $conn->prepare($sql_inventario);
                     $stmt_inventario->bind_param("iss", $stockFisico[$i], $codigos[$i], $sucursal);
                     $stmt_inventario->execute();
+                    $stmt_inventario->close();
                 }
             }
         }
