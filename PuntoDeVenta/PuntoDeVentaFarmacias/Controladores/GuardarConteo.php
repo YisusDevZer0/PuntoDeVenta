@@ -149,41 +149,61 @@ try {
         }
         
     } else {
-        // Crear un nuevo conteo
-        // Preparar la consulta
-        $stmt = $conn->prepare("
-            INSERT INTO ConteosDiarios (
-                Cod_Barra, 
-                Nombre_Producto, 
-                Fk_sucursal, 
-                Existencias_R, 
-                ExistenciaFisica, 
-                AgregadoPor, 
-                AgregadoEl, 
-                EnPausa
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
-        ");
-
-        // Insertar cada registro
-        for ($i = 0; $i < count($codigos); $i++) {
-            // Si está en pausa y el stock está vacío, guardar NULL
-            $stockFisicoValue = ($enPausa && ($stockFisico[$i] === '' || $stockFisico[$i] === null)) ? 
-                null : 
-                $stockFisico[$i];
-
-            $stmt->bind_param(
-                "sssdisi",
-                $codigos[$i],
-                $nombres[$i],
-                $sucursal,
-                $existenciasR[$i],
-                $stockFisicoValue,
-                $agregadoPor,
-                $enPausa
-            );
-
-            if (!$stmt->execute()) {
-                throw new Exception("Error al guardar el registro: " . $stmt->error);
+        if ($enPausa) {
+            // GUARDAR/ACTUALIZAR EN PAUSA
+            for ($i = 0; $i < count($codigos); $i++) {
+                $stmt = $conn->prepare("
+                    REPLACE INTO ConteosDiarios_Pausados (
+                        Folio_Ingreso, Cod_Barra, Nombre_Producto, Fk_sucursal, Existencias_R, ExistenciaFisica, AgregadoPor, AgregadoEl, EnPausa
+                    ) VALUES (
+                        ?, ?, ?, ?, ?, ?, ?, NOW(), 1
+                    )
+                ");
+                $folio = isset($_POST['IdConteo'][$i]) ? $_POST['IdConteo'][$i] : null;
+                $stmt->bind_param(
+                    "issiiis",
+                    $folio,
+                    $codigos[$i],
+                    $nombres[$i],
+                    $sucursal,
+                    $existenciasR[$i],
+                    ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i],
+                    $agregadoPor
+                );
+                if (!$stmt->execute()) {
+                    throw new Exception("Error al guardar en pausa: " . $stmt->error);
+                }
+                $stmt->close();
+            }
+        } else {
+            // GUARDAR DIRECTO EN FINAL
+            for ($i = 0; $i < count($codigos); $i++) {
+                $stmt = $conn->prepare("
+                    INSERT INTO ConteosDiarios (
+                        Cod_Barra, Nombre_Producto, Fk_sucursal, Existencias_R, ExistenciaFisica, AgregadoPor, AgregadoEl, EnPausa
+                    ) VALUES (
+                        ?, ?, ?, ?, ?, ?, NOW(), 0
+                    )
+                    ON DUPLICATE KEY UPDATE
+                        ExistenciaFisica = VALUES(ExistenciaFisica),
+                        Existencias_R = VALUES(Existencias_R),
+                        Nombre_Producto = VALUES(Nombre_Producto),
+                        AgregadoEl = VALUES(AgregadoEl),
+                        EnPausa = 0
+                ");
+                $stmt->bind_param(
+                    "ssiiis",
+                    $codigos[$i],
+                    $nombres[$i],
+                    $sucursal,
+                    $existenciasR[$i],
+                    ($stockFisico[$i] === '' || $stockFisico[$i] === null) ? null : $stockFisico[$i],
+                    $agregadoPor
+                );
+                if (!$stmt->execute()) {
+                    throw new Exception("Error al guardar definitivo: " . $stmt->error);
+                }
+                $stmt->close();
             }
         }
     }
