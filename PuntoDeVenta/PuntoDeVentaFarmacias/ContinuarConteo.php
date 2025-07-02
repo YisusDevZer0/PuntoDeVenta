@@ -56,23 +56,17 @@ $stmt_productos->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimo
 $stmt_productos->execute();
 $productos_contados = $stmt_productos->get_result();
 
-// Obtener productos restantes para contar SOLO del conteo más reciente
-$sql_productos_restantes = "SELECT Cod_Barra, Nombre_Prod, Existencias_R 
-                            FROM Stock_POS 
-                            WHERE Fk_sucursal = ? 
-                            AND Tipo_Servicio = 5
-                            AND Cod_Barra IS NOT NULL 
-                            AND Cod_Barra != ''
-                            AND Cod_Barra NOT IN (
-                                SELECT Cod_Barra FROM ConteosDiarios 
-                                WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ?
-                            )
-                            ORDER BY RAND()
-                            LIMIT 50";
-$stmt_restantes = $conn->prepare($sql_productos_restantes);
-$stmt_restantes->bind_param("ssss", $sucursalActual, $usuarioActual, $sucursalActual, $fechaUltimoConteo);
-$stmt_restantes->execute();
-$productos_restantes = $stmt_restantes->get_result();
+// Obtener productos pendientes (del mismo conteo pausado, ExistenciaFisica IS NULL)
+$sql_productos_pendientes = "SELECT Cod_Barra, Nombre_Producto, Existencias_R
+                            FROM ConteosDiarios
+                            WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1
+                            AND ExistenciaFisica IS NULL
+                            AND AgregadoEl = ?
+                            ORDER BY AgregadoEl";
+$stmt_pendientes = $conn->prepare($sql_productos_pendientes);
+$stmt_pendientes->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
+$stmt_pendientes->execute();
+$productos_restantes = $stmt_pendientes->get_result();
 
 $stmt_verificar->close();
 ?>
@@ -213,7 +207,7 @@ $stmt_verificar->close();
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" name="NombreProd[]" 
-                                                   value="<?php echo htmlspecialchars($producto['Nombre_Prod']); ?>" readonly>
+                                                   value="<?php echo htmlspecialchars($producto['Nombre_Producto']); ?>" readonly>
                                         </td>
                                         <td>
                                             <input type="number" class="form-control" name="StockFisico[]" 
