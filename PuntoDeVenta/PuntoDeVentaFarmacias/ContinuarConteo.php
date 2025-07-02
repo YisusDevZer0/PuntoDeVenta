@@ -68,6 +68,18 @@ $stmt_pendientes->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltim
 $stmt_pendientes->execute();
 $productos_restantes = $stmt_pendientes->get_result();
 
+// Obtener todos los IDs de productos pendientes en un array asociativo antes del ciclo
+$ids_pendientes = [];
+$sql_ids = "SELECT id, Cod_Barra FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
+$stmt_ids = $conn->prepare($sql_ids);
+$stmt_ids->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
+$stmt_ids->execute();
+$result_ids = $stmt_ids->get_result();
+while ($row_id = $result_ids->fetch_assoc()) {
+    $ids_pendientes[$row_id['Cod_Barra']] = $row_id['id'];
+}
+$stmt_ids->close();
+
 $stmt_verificar->close();
 ?>
 <!DOCTYPE html>
@@ -215,17 +227,7 @@ $stmt_verificar->close();
                                                        min="0" step="1">
                                             </td>
                                             <!-- Campo oculto para el ID del registro de ConteosDiarios -->
-                                            <?php
-                                            // Obtener el ID del registro para este producto
-                                            $sql_id = "SELECT id FROM ConteosDiarios WHERE Cod_Barra = ? AND Fk_sucursal = ? AND AgregadoPor = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL LIMIT 1";
-                                            $stmt_id = $conn->prepare($sql_id);
-                                            $stmt_id->bind_param("ssss", $producto['Cod_Barra'], $sucursalActual, $usuarioActual, $fechaUltimoConteo);
-                                            $stmt_id->execute();
-                                            $result_id = $stmt_id->get_result();
-                                            $id_registro = ($row_id = $result_id->fetch_assoc()) ? $row_id['id'] : '';
-                                            $stmt_id->close();
-                                            ?>
-                                            <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($id_registro); ?>">
+                                            <input type="hidden" name="IdConteo[]" value="<?php echo htmlspecialchars($ids_pendientes[$producto['Cod_Barra']] ?? ''); ?>">
                                             <input type="hidden" name="Existencias_R[]" value="<?php echo htmlspecialchars($producto['Existencias_R']); ?>">
                                             <input type="hidden" name="Agrego[]" value="<?php echo htmlspecialchars($row['Nombre_Apellidos']); ?>">
                                             <input type="hidden" name="Sucursal[]" value="<?php echo htmlspecialchars($row['Fk_Sucursal']); ?>">
