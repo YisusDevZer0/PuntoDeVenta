@@ -317,6 +317,13 @@ $stmt_verificar->close();
                 }).appendTo('#ContinuarConteoForm');
             }
 
+            // DEBUG: Mostrar cuántos productos se envían
+            var codigos = $('input[name="CodBarra[]"]').map(function(){ return $(this).val(); }).get();
+            var stocks = $('input[name="StockFisico[]"]').map(function(){ return $(this).val(); }).get();
+            console.log('Productos a enviar:', codigos.length);
+            console.log('CodBarra[]:', codigos);
+            console.log('StockFisico[]:', stocks);
+
             // Mostrar mensaje de carga
             Swal.fire({
                 title: enPausa ? 'Guardando y Pausando' : 'Finalizando Conteo',
