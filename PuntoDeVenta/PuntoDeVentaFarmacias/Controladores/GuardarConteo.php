@@ -98,7 +98,6 @@ try {
                     throw new Exception("Error al actualizar el producto: " . $stmt_update->error);
                 }
                 $productos_contados++;
-                $stmt_update->close();
             } else {
                 // INSERT (caso raro)
                 $stmt_insertar = $conn->prepare("
@@ -129,7 +128,6 @@ try {
                     throw new Exception("Error al guardar el producto: " . $stmt_insertar->error);
                 }
                 $productos_contados++;
-                $stmt_insertar->close();
             }
         }
         
@@ -174,7 +172,6 @@ try {
                 if (!$stmt->execute()) {
                     throw new Exception("Error al guardar en pausa: " . $stmt->error);
                 }
-                $stmt->close();
             }
         } else {
             // GUARDAR DIRECTO EN FINAL
@@ -205,7 +202,6 @@ try {
                 if (!$stmt->execute()) {
                     throw new Exception("Error al guardar definitivo: " . $stmt->error);
                 }
-                $stmt->close();
             }
         }
     }
@@ -237,8 +233,6 @@ try {
 }
 
 // Cerrar conexión
-if (isset($stmt)) $stmt->close();
-if (isset($stmt_insertar)) $stmt_insertar->close();
 if (isset($stmt_verificar)) $stmt_verificar->close();
 $conn->close();
 ?> 
