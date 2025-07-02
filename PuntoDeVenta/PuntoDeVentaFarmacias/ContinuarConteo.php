@@ -75,7 +75,7 @@ $productos_restantes = $stmt_pendientes->get_result();
 echo '<div style="color:red;">DEBUG: Antes de obtener IDs pendientes</div>';
 // Obtener todos los IDs de productos pendientes en un array asociativo antes del ciclo
 $ids_pendientes = [];
-$sql_ids = "SELECT id, Cod_Barra FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
+$sql_ids = "SELECT Folio_Ingreso, Cod_Barra FROM ConteosDiarios WHERE AgregadoPor = ? AND Fk_sucursal = ? AND EnPausa = 1 AND AgregadoEl = ? AND ExistenciaFisica IS NULL";
 $stmt_ids = $conn->prepare($sql_ids);
 if (!$stmt_ids) { die('<div style="color:red;">Error en prepare: ' . htmlspecialchars($conn->error) . '</div>'); }
 $stmt_ids->bind_param("sss", $usuarioActual, $sucursalActual, $fechaUltimoConteo);
@@ -83,7 +83,7 @@ if (!$stmt_ids->execute()) { die('<div style="color:red;">Error en execute: ' . 
 $result_ids = $stmt_ids->get_result();
 if (!$result_ids) { die('<div style="color:red;">Error en get_result: ' . htmlspecialchars($stmt_ids->error) . '</div>'); }
 while ($row_id = $result_ids->fetch_assoc()) {
-    $ids_pendientes[$row_id['Cod_Barra']] = $row_id['id'];
+    $ids_pendientes[$row_id['Cod_Barra']] = $row_id['Folio_Ingreso'];
 }
 $stmt_ids->close();
 echo '<div style="color:green;">DEBUG: IDs pendientes obtenidos: ' . count($ids_pendientes) . '</div>';
