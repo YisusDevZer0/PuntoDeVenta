@@ -151,7 +151,7 @@ try {
             $estatus_venta = 'Pagado';
             $agregado_por = $encargo->Empleado;
             
-            $stmt_venta->bind_param("ssiddssssssss", 
+            $stmt_venta->bind_param("ssiddsssssssss", 
                 $folio_ticket, $encargo->medicamento, $encargo->cantidad, 
                 $encargo->precioventa, $encargo->precioventa, $forma_pago_abono, 
                 $encargo->nombre_paciente, $fecha_abono, $encargo->ID_Caja, 
