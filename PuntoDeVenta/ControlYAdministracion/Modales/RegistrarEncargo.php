@@ -109,10 +109,12 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                     <input type="number" step="0.01" name="abono_parcial" id="abono_parcial" class="form-control" value="0.00" required>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3" style="display: none;">
                     <label for="NumTicket" class="form-label">Número de Ticket:</label>
                     <input type="text" name="NumTicket" id="NumTicket" class="form-control" value="<?php echo $NumTicket; ?>" readonly required>
                 </div>
+                <!-- Campo oculto para mantener el valor del ticket -->
+                <input type="hidden" name="NumTicket" value="<?php echo $NumTicket; ?>">
 
                 <!-- Select de forma de pago -->
                 <div class="mb-3">
