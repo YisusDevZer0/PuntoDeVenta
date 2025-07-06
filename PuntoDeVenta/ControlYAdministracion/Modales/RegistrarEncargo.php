@@ -113,6 +113,22 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                     <label for="NumTicket" class="form-label">Número de Ticket:</label>
                     <input type="text" name="NumTicket" id="NumTicket" class="form-control" value="<?php echo $NumTicket; ?>" readonly required>
                 </div>
+
+                <!-- Select de forma de pago -->
+                <div class="mb-3">
+                    <label for="forma_pago" class="form-label">Forma de pago:</label>
+                    <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPagoEncargo" required>
+                        <option value="0">Seleccione el Tipo de Pago</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Credito">Credito</option>
+                        <option value="Efectivo y Tarjeta">Efectivo y tarjeta</option>
+                        <option value="Efectivo Y Credito">Efectivo y credito</option>
+                        <option value="Efectivo Y Transferencia">Efectivo y transferencia</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                    <input type="hidden" name="FormaDePago" id="FormaDePagoEncargo" value="">
+                </div>
             </div>
         </div>
 
@@ -129,6 +145,13 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
 
     <script>
     $(document).ready(function() {
+        // Actualizar el input oculto con el valor del select
+        $('#selTipoPagoEncargo').on('change', function() {
+            $('#FormaDePagoEncargo').val($(this).val());
+        });
+        // Inicializar el valor por defecto
+        $('#FormaDePagoEncargo').val($('#selTipoPagoEncargo').val());
+
         // Manejar el envío del formulario
         $('#RegistrarEncargoForm').on('submit', function(e) {
             e.preventDefault();
