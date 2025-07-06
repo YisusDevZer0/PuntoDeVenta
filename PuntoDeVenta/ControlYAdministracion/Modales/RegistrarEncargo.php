@@ -38,21 +38,32 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
     // Generar número de ticket automáticamente con formato mejorado
     $fecha_actual = date('Y-m-d');
     
-    // Consulta mejorada para el ticket - obtener el último número secuencial
-    $sql_ticket = "SELECT MAX(CAST(SUBSTRING(NumTicket, ?) AS UNSIGNED)) as ultimo_numero 
+    // Consulta simplificada para obtener el último número de ticket de esta sucursal
+    $sql_ticket = "SELECT NumTicket 
                    FROM encargos 
-                   WHERE NumTicket LIKE ? 
-                   AND Fk_Sucursal = ?";
+                   WHERE Fk_Sucursal = ? 
+                   AND NumTicket LIKE ? 
+                   ORDER BY CAST(SUBSTRING(NumTicket, ?) AS UNSIGNED) DESC 
+                   LIMIT 1";
     
     $stmt_ticket = $conn->prepare($sql_ticket);
     if ($stmt_ticket) {
-        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEAENC-"
         $patron = $primeras_tres_letras . 'ENC-%';
-        $stmt_ticket->bind_param("isi", $posicion, $patron, $Especialistas->Sucursal);
+        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEAENC-"
+        $stmt_ticket->bind_param("isi", $Especialistas->Sucursal, $patron, $posicion);
         $stmt_ticket->execute();
         $result_ticket = $stmt_ticket->get_result();
         $row_ticket = $result_ticket->fetch_assoc();
-        $siguiente_numero = ($row_ticket['ultimo_numero'] ?? 0) + 1;
+        
+        if ($row_ticket) {
+            // Extraer el número del último ticket
+            $ultimo_ticket = $row_ticket['NumTicket'];
+            $numero_actual = (int)substr($ultimo_ticket, $posicion);
+            $siguiente_numero = $numero_actual + 1;
+        } else {
+            // Si no hay tickets previos, empezar con 1
+            $siguiente_numero = 1;
+        }
         $stmt_ticket->close();
     } else {
         // Si hay error en la consulta del ticket, usar número 1
