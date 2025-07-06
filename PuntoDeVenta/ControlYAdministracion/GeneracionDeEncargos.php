@@ -104,47 +104,24 @@ if (!$ValorCaja) {
     include "Modales/Modales_Referencias.php";
     include "Footer.php"; ?>
     <script>
-        $(".btn-editcaja").click(function() {
-            id = $(this).data("id");
-            
-            // Validar que el ID sea válido
-            if (id && id != '0') {
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", "id=" + id, function(data) {
-                    $("#form-edit").html(data);
-                    $("#Titulo").html("Registrar encargo");
-                    $("#Di").addClass("modal-dialog modal-lg modal-notify modal-success");
-                });
-                $('#editModal').modal('show');
-            } else {
-                alert("No hay caja activa para registrar encargos. Debe abrir una caja primero.");
-            }
-        });
-    </script>
-
-
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div id="Di" class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="Titulo" style="color:white;">Apertura de caja</h5>
-
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info alert-dismissible fade show" role="alert">
-                        <strong><?php echo $row['Nombre_Apellidos']; ?></strong> Verifique los campos antes de realizar alguna acción.
-
-                    </div>
-                    <div id="form-edit">
-                        <!-- Contenido del formulario -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
         $(document).ready(function() {
-           
-           
+            $(document).on("click", ".btn-editcaja", function() {
+                var id = $(this).data("id");
+                // Validar que el ID sea válido
+                if (id && id != '0') {
+                    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", {
+                        id: id
+                    }, function(data) {
+                        $("#FormCajas").html(data);
+                        $("#TitulosCajas").html("Registrar encargo");
+                    });
+                    $('#ModalEdDele').modal('show');
+                } else {
+                    alert("No hay caja activa para registrar encargos. Debe abrir una caja primero.");
+                }
+            });
+
+            // El flujo de btn-registraGasto se mantiene igual
             $(document).on("click", ".btn-registraGasto", function() {
                 var id = $(this).data("id");
                 $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", {
@@ -152,14 +129,10 @@ if (!$ValorCaja) {
                 }, function(data) {
                     $("#FormCajas").html(data);
                     $("#TitulosCajas").html("Registrar nuevo gasto");
-
                 });
                 $('#ModalEdDele').modal('show');
             });
-
         });
-
-       
     </script>
 
 
