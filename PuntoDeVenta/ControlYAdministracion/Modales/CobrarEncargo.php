@@ -189,7 +189,7 @@ $(document).ready(function() {
                 
                 // Enviar datos del cobro
                 $.ajax({
-                    url: '../Controladores/CobrarEncargoController.php',
+                    url: 'Controladores/CobrarEncargoController.php',
                     type: 'POST',
                     data: $(this).serialize(),
                     dataType: 'json',

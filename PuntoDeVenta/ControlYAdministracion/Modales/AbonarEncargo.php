@@ -227,7 +227,7 @@ $(document).ready(function() {
                 
                 // Enviar datos del abono
                 $.ajax({
-                    url: '../Controladores/AbonarEncargoController.php',
+                    url: 'Controladores/AbonarEncargoController.php',
                     type: 'POST',
                     data: $(this).serialize(),
                     dataType: 'json',
