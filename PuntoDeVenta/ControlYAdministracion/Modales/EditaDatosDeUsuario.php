@@ -80,9 +80,9 @@ while ($r=$query->fetch_object()){
         <!-- Segunda columna -->
         <div class="col-md-4">
             <div class="form-group">
-                <label for="exampleFormControlInput1">Contraseña <span class="text-danger">*</span></label>
+                <label for="exampleFormControlInput1">Contraseña <small class="text-muted">(dejar vacío para no cambiar)</small></label>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="contra" name="Contra" value="<?php echo $Especialistas->Nombre_Apellidos; ?>" aria-describedby="basic-addon1" maxlength="60">            
+                    <input type="password" class="form-control" id="contra" name="Contra" placeholder="Nueva contraseña (opcional)" aria-describedby="basic-addon1" maxlength="60">            
                 </div>
             </div>
         </div>

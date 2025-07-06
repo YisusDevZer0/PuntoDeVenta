@@ -16,28 +16,55 @@ $Estatus = isset($_POST['Estado']) ? trim($_POST['Estado']) : '';
 $ActualizadoPor = isset($_POST['Actualiza']) ? trim($_POST['Actualiza']) : '';
 
 // Verificar si todos los datos requeridos están presentes
-if ($Id_PvUser && $Nombre_Apellidos && $Password && $Correo_Electronico && $Telefono && $Estatus) {
-    // Consulta preparada para actualizar los datos del usuario
-    $sql = "UPDATE `Usuarios_PV` 
-            SET `Nombre_Apellidos`=?, `Password`=?, `Fk_Usuario`=?, `Fk_Sucursal`=?, `Fecha_Nacimiento`=?, `Correo_Electronico`=?, `Telefono`=?, `Estatus`=?, `AgregadoPor`=? 
-            WHERE `Id_PvUser`=?";
+if ($Id_PvUser && $Nombre_Apellidos && $Correo_Electronico && $Telefono && $Estatus) {
     
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        // Enlazar parámetros
-        $stmt->bind_param("ssiiissssi", $Nombre_Apellidos, $Password, $Fk_Usuario, $Fk_Sucursal, $Fecha_Nacimiento, $Correo_Electronico, $Telefono, $Estatus, $ActualizadoPor, $Id_PvUser);
+    // Determinar si se debe actualizar la contraseña
+    if (!empty($Password)) {
+        // Si se proporciona una nueva contraseña, actualizar todo incluyendo la contraseña
+        $sql = "UPDATE `Usuarios_PV` 
+                SET `Nombre_Apellidos`=?, `Password`=?, `Fk_Usuario`=?, `Fk_Sucursal`=?, `Fecha_Nacimiento`=?, `Correo_Electronico`=?, `Telefono`=?, `Estatus`=?, `AgregadoPor`=? 
+                WHERE `Id_PvUser`=?";
         
-        // Ejecutar la consulta
-        if ($stmt->execute()) {
-            echo json_encode(array("statusCode" => 200, "message" => "Actualización exitosa."));
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            // Enlazar parámetros incluyendo la contraseña
+            $stmt->bind_param("ssiiissssi", $Nombre_Apellidos, $Password, $Fk_Usuario, $Fk_Sucursal, $Fecha_Nacimiento, $Correo_Electronico, $Telefono, $Estatus, $ActualizadoPor, $Id_PvUser);
+            
+            // Ejecutar la consulta
+            if ($stmt->execute()) {
+                echo json_encode(array("statusCode" => 200, "message" => "Actualización exitosa."));
+            } else {
+                echo json_encode(array("statusCode" => 201, "error" => "Error al ejecutar la consulta: " . $stmt->error));
+            }
+            
+            // Cerrar declaración
+            $stmt->close();
         } else {
-            echo json_encode(array("statusCode" => 201, "error" => "Error al ejecutar la consulta: " . $stmt->error));
+            echo json_encode(array("statusCode" => 201, "error" => "Error en la preparación de la consulta: " . $conn->error));
         }
-        
-        // Cerrar declaración
-        $stmt->close();
     } else {
-        echo json_encode(array("statusCode" => 201, "error" => "Error en la preparación de la consulta: " . $conn->error));
+        // Si no se proporciona contraseña, actualizar todo excepto la contraseña
+        $sql = "UPDATE `Usuarios_PV` 
+                SET `Nombre_Apellidos`=?, `Fk_Usuario`=?, `Fk_Sucursal`=?, `Fecha_Nacimiento`=?, `Correo_Electronico`=?, `Telefono`=?, `Estatus`=?, `AgregadoPor`=? 
+                WHERE `Id_PvUser`=?";
+        
+        $stmt = $conn->prepare($sql);
+        if ($stmt) {
+            // Enlazar parámetros sin la contraseña
+            $stmt->bind_param("siisssssi", $Nombre_Apellidos, $Fk_Usuario, $Fk_Sucursal, $Fecha_Nacimiento, $Correo_Electronico, $Telefono, $Estatus, $ActualizadoPor, $Id_PvUser);
+            
+            // Ejecutar la consulta
+            if ($stmt->execute()) {
+                echo json_encode(array("statusCode" => 200, "message" => "Actualización exitosa."));
+            } else {
+                echo json_encode(array("statusCode" => 201, "error" => "Error al ejecutar la consulta: " . $stmt->error));
+            }
+            
+            // Cerrar declaración
+            $stmt->close();
+        } else {
+            echo json_encode(array("statusCode" => 201, "error" => "Error en la preparación de la consulta: " . $conn->error));
+        }
     }
 } else {
     echo json_encode(array("statusCode" => 201, "error" => "Faltan datos requeridos."));

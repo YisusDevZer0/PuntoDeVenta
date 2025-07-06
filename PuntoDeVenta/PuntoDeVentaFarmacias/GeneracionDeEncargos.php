@@ -398,6 +398,43 @@ window.addEventListener('load', function() {
 
             </div>
 
+            <!-- Tabla de Encargos -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">
+                      <i class="fas fa-list"></i> Lista de Encargos
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table id="tablaEncargos" class="table table-striped table-bordered">
+                        <thead>
+                          <tr>
+                            <th>Número de Ticket</th>
+                            <th>Nombre del Paciente</th>
+                            <th>Medicamento</th>
+                            <th>Cantidad</th>
+                            <th>Precio de Venta</th>
+                            <th>Saldo Pendiente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Estado</th>
+                            <th>Sucursal</th>
+                            <th>Empleado</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div> <!-- ./ end card-body -->
         </div>
 
@@ -1525,6 +1562,23 @@ $(document).ready(function()
 }
 
 ?>
+<!-- Modal principal para encargos -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Detalles del Encargo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modalContent">
+        <!-- El contenido se cargará dinámicamente -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal para agregar artículo -->
 <div class="modal" id="modalAgregarArticulo">
   <div class="modal-dialog">
@@ -1587,6 +1641,172 @@ include("footer.php") ?>
   
   <script src="js/BuscaDataPacientes.js"></script>
   <script src="js/BusquedaProductos.js"></script>
+  
+  <!-- Script para la tabla de encargos -->
+  <script>
+  $(document).ready(function() {
+    // Inicializar DataTable para la tabla de encargos
+    var tablaEncargos = $('#tablaEncargos').DataTable({
+      "processing": true,
+      "serverSide": false,
+      "ajax": {
+        "url": "Controladores/ArrayDataEncargos.php",
+        "type": "POST"
+      },
+      "columns": [
+        { "data": "NumTicket" },
+        { "data": "nombre_paciente" },
+        { "data": "medicamento" },
+        { "data": "cantidad" },
+        { "data": "precioventa" },
+        { "data": "saldo_pendiente" },
+        { "data": "fecha_encargo" },
+        { "data": "estado" },
+        { "data": "Nombre_Sucursal" },
+        { "data": "Empleado" },
+        { "data": "acciones" }
+      ],
+      "language": {
+        "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+      },
+      "order": [[6, "desc"]], // Ordenar por fecha de encargo descendente
+      "pageLength": 10,
+      "responsive": true
+    });
+
+    // Evento para desglosar encargo
+    $(document).on('click', '.btn-DesglosarEncargo', function() {
+      var encargoId = $(this).data('id');
+      
+      // Mostrar indicador de carga
+      Swal.fire({
+        title: 'Cargando detalles...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      
+      // Cargar modal de detalles
+      $.ajax({
+        url: 'Modales/DesglosarEncargo.php',
+        type: 'POST',
+        data: { id: encargoId },
+        success: function(response) {
+          Swal.close();
+          $('#modalContent').html(response);
+          $('#editModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error al cargar detalles:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudieron cargar los detalles del encargo',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+    });
+
+    // Evento para cobrar encargo
+    $(document).on('click', '.btn-CobrarEncargo', function() {
+      var encargoId = $(this).data('id');
+      
+      Swal.fire({
+        title: '¿Cobrar encargo completo?',
+        text: '¿Está seguro de que desea cobrar el encargo completo?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545',
+        confirmButtonText: 'Sí, cobrar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Mostrar indicador de carga
+          Swal.fire({
+            title: 'Procesando cobro...',
+            text: 'Por favor espere',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+          
+          // Mostrar modal de cobro
+          $.ajax({
+            url: 'Modales/CobrarEncargo.php',
+            type: 'POST',
+            data: { id: encargoId },
+            success: function(response) {
+              Swal.close();
+              $('#modalContent').html(response);
+              $('#editModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+              console.error('Error al cargar modal de cobro:', error);
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo cargar el modal de cobro',
+                confirmButtonText: 'Aceptar'
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // Evento para abonar encargo
+    $(document).on('click', '.btn-AbonarEncargo', function() {
+      var encargoId = $(this).data('id');
+      
+      // Mostrar indicador de carga
+      Swal.fire({
+        title: 'Cargando formulario...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+      
+      // Mostrar modal de abono
+      $.ajax({
+        url: 'Modales/AbonarEncargo.php',
+        type: 'POST',
+        data: { id: encargoId },
+        success: function(response) {
+          Swal.close();
+          $('#modalContent').html(response);
+          $('#editModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+          console.error('Error al cargar modal de abono:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cargar el modal de abono',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      });
+    });
+
+    // Función para recargar la tabla después de una operación
+    window.recargarTablaEncargos = function() {
+      tablaEncargos.ajax.reload();
+    };
+  });
+  </script>
   <!-- Bootstrap -->
 
 
