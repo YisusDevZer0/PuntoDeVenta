@@ -40,9 +40,10 @@ try {
     $Empleado = isset($_POST['Empleado']) ? trim($_POST['Empleado']) : '';
     $Fk_Sucursal = isset($_POST['Fk_Sucursal']) ? (int)$_POST['Fk_Sucursal'] : 0;
     $estado = isset($_POST['estado']) ? trim($_POST['estado']) : 'Pendiente';
+    $FormaDePago = isset($_POST['FormaDePago']) ? trim($_POST['FormaDePago']) : 'Efectivo';
 
     // Debug: Mostrar valores procesados
-    error_log("Valores procesados: nombre_paciente=$nombre_paciente, medicamento=$medicamento, cantidad=$cantidad, precioventa=$precioventa, Fk_Caja=$Fk_Caja, Fk_Sucursal=$Fk_Sucursal");
+    error_log("Valores procesados: nombre_paciente=$nombre_paciente, medicamento=$medicamento, cantidad=$cantidad, precioventa=$precioventa, Fk_Caja=$Fk_Caja, Fk_Sucursal=$Fk_Sucursal, FormaDePago=$FormaDePago");
 
     // Validar campos requeridos
     if (empty($nombre_paciente) || empty($medicamento) || $cantidad <= 0 || $precioventa <= 0) {
@@ -50,7 +51,7 @@ try {
         exit;
     }
 
-    // Preparar la consulta SQL solo con las columnas que existen en la tabla
+    // Preparar la consulta SQL con todos los campos incluyendo FormaDePago
     $sql = "INSERT INTO encargos (
                 nombre_paciente, 
                 medicamento, 
@@ -63,14 +64,15 @@ try {
                 NumTicket, 
                 Fk_Caja, 
                 Empleado, 
-                Fk_Sucursal
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                Fk_Sucursal,
+                FormaDePago
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     error_log("SQL preparado: $sql");
 
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("ssidssddssss", 
+        $stmt->bind_param("ssidssddsssss", 
             $nombre_paciente,
             $medicamento,
             $cantidad,
@@ -82,7 +84,8 @@ try {
             $NumTicket,
             $Fk_Caja,
             $Empleado,
-            $Fk_Sucursal
+            $Fk_Sucursal,
+            $FormaDePago
         );
 
         if ($stmt->execute()) {
@@ -116,7 +119,8 @@ try {
                             NumTicket, 
                             Fk_Caja, 
                             Empleado, 
-                            Fk_Sucursal
+                            Fk_Sucursal,
+                            FormaDePago
                         ) VALUES (
                             '$nombre_paciente',
                             '$medicamento',
@@ -129,7 +133,8 @@ try {
                             '$NumTicket',
                             $Fk_Caja,
                             '$Empleado',
-                            $Fk_Sucursal
+                            $Fk_Sucursal,
+                            '$FormaDePago'
                         )";
 
         error_log("SQL fallback: $sql_fallback");

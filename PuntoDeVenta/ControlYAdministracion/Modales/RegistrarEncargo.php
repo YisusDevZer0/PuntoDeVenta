@@ -38,16 +38,17 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
     // Generar número de ticket automáticamente con formato mejorado
     $fecha_actual = date('Y-m-d');
     
-    // Consulta simplificada para el ticket
+    // Consulta mejorada para el ticket - obtener el último número secuencial
     $sql_ticket = "SELECT MAX(CAST(SUBSTRING(NumTicket, ?) AS UNSIGNED)) as ultimo_numero 
                    FROM encargos 
-                   WHERE NumTicket LIKE ?";
+                   WHERE NumTicket LIKE ? 
+                   AND Fk_Sucursal = ?";
     
     $stmt_ticket = $conn->prepare($sql_ticket);
     if ($stmt_ticket) {
-        $posicion = strlen($primeras_tres_letras) + 4;
+        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEAENC-"
         $patron = $primeras_tres_letras . 'ENC-%';
-        $stmt_ticket->bind_param("is", $posicion, $patron);
+        $stmt_ticket->bind_param("isi", $posicion, $patron, $Especialistas->Sucursal);
         $stmt_ticket->execute();
         $result_ticket = $stmt_ticket->get_result();
         $row_ticket = $result_ticket->fetch_assoc();
@@ -58,6 +59,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
         $siguiente_numero = 1;
     }
     
+    // Formato correcto: TEAENC-0001 (4 dígitos con ceros a la izquierda)
     $NumTicket = $primeras_tres_letras . 'ENC-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
 } else {
     // Si no se encuentra la caja, mostrar error
