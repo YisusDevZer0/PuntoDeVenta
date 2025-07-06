@@ -103,14 +103,14 @@ try {
             $folio_ticket = 'VEN-' . date('Ymd') . '-' . str_pad($encargo_id, 4, '0', STR_PAD_LEFT);
             
             $sql_venta = "INSERT INTO Ventas_POS (
-                            Folio_Ticket, NombreDelProducto, CantidadVendida, PrecioVentaProd, 
-                            ImporteGenerado, FormaDePago, Cliente, Fecha_venta, Fk_Caja, 
-                            Empleado, Sucursal, Sistema, Estatus, AgregadoPor
+                            Folio_Ticket, Nombre_Prod, Cantidad_Venta, Total_Venta, 
+                            Importe, FormaDePago, Cliente, Fecha_venta, Fk_Caja, 
+                            Fk_sucursal, Sistema, Estatus, AgregadoPor, AgregadoEl
                           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt_venta = $conn->prepare($sql_venta);
             if (!$stmt_venta) {
-                throw new Exception('Error al preparar inserción de venta');
+                throw new Exception('Error al preparar inserción de venta: ' . $conn->error);
             }
 
             $sistema = 'POSVENTAS';
@@ -121,11 +121,11 @@ try {
                 $folio_ticket, $encargo->medicamento, $encargo->cantidad, 
                 $encargo->precioventa, $encargo->precioventa, $forma_pago_cobro, 
                 $encargo->nombre_paciente, $fecha_actual, $encargo->ID_Caja, 
-                $encargo->Empleado, $encargo->Sucursal, $sistema, $estatus_venta, $agregado_por
+                $encargo->Fk_Sucursal, $sistema, $estatus_venta, $agregado_por, $fecha_actual
             );
             
             if (!$stmt_venta->execute()) {
-                throw new Exception('Error al registrar la venta');
+                throw new Exception('Error al registrar la venta: ' . $stmt_venta->error);
             }
             $stmt_venta->close();
         }
