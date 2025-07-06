@@ -58,7 +58,13 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
         if ($row_ticket) {
             // Extraer el número del último ticket
             $ultimo_ticket = $row_ticket['NumTicket'];
-            $numero_actual = (int)substr($ultimo_ticket, $posicion);
+            // Buscar la posición del guión y extraer todo lo que viene después
+            $pos_guion = strpos($ultimo_ticket, '-');
+            if ($pos_guion !== false) {
+                $numero_actual = (int)substr($ultimo_ticket, $pos_guion + 1);
+            } else {
+                $numero_actual = 0;
+            }
             $siguiente_numero = $numero_actual + 1;
         } else {
             // Si no hay tickets previos, empezar con 1
