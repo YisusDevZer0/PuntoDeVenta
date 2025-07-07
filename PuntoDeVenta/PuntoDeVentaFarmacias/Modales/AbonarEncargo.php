@@ -58,7 +58,7 @@ $saldo_pendiente = $encargo->precioventa - $encargo->abono_parcial;
                         <div class="col-md-6">
                             <p><strong>Precio Total:</strong> $<?php echo number_format($encargo->precioventa, 2); ?></p>
                             <p><strong>Abono Realizado:</strong> $<?php echo number_format($encargo->abono_parcial, 2); ?></p>
-                            <p><strong>Saldo Pendiente:</strong> <span class="text-warning fw-bold">$<?php echo number_format($saldo_pendiente, 2); ?></span></p>
+                            <p><strong>Saldo Pendiente:</strong> <span class="text-danger fw-bold">$<?php echo number_format($saldo_pendiente, 2); ?></span></p>
                             <p><strong>Sucursal:</strong> <?php echo $encargo->Nombre_Sucursal; ?></p>
                         </div>
                     </div>
