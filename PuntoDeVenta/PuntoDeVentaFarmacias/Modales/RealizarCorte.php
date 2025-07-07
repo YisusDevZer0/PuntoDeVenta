@@ -398,6 +398,22 @@ if ($stmt_abonos = $conn->prepare($sql_abonos)) {
     $stmt_abonos->close();
 }
 
+// ================= TABLA DE ENCARGOS DEL DÍA ===================
+$encargos_dia = [];
+$sql_encargos = "SELECT id, nombre_paciente, medicamento, cantidad, precioventa, abono_parcial, fecha_encargo, estado
+FROM encargos
+WHERE DATE(fecha_encargo) = ? AND Fk_Sucursal = ? AND Fk_Caja = ?
+ORDER BY fecha_encargo DESC";
+if ($stmt_encargos = $conn->prepare($sql_encargos)) {
+    $stmt_encargos->bind_param("sss", $fecha_hoy, $fk_sucursal, $fk_caja);
+    $stmt_encargos->execute();
+    $result_encargos = $stmt_encargos->get_result();
+    while ($encargo = $result_encargos->fetch_assoc()) {
+        $encargos_dia[] = $encargo;
+    }
+    $stmt_encargos->close();
+}
+
 ?>
 
 <!-- Mantener todo el HTML original -->
@@ -569,6 +585,43 @@ if ($stmt_abonos = $conn->prepare($sql_abonos)) {
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr><td colspan="8" class="text-center">No hay abonos registrados hoy.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tabla de encargos hechos hoy -->
+        <div class="text-center mt-4">
+            <h5>Encargos realizados hoy</h5>
+            <div class="table-responsive">
+                <table id="TablaEncargosDia" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Medicamento</th>
+                            <th>Cantidad</th>
+                            <th>Precio venta</th>
+                            <th>Abono realizado</th>
+                            <th>Estado</th>
+                            <th>Fecha y hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($encargos_dia)): ?>
+                            <?php foreach ($encargos_dia as $encargo): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($encargo['nombre_paciente']) ?></td>
+                                    <td><?= htmlspecialchars($encargo['medicamento']) ?></td>
+                                    <td><?= htmlspecialchars($encargo['cantidad']) ?></td>
+                                    <td>$<?= number_format($encargo['precioventa'], 2) ?></td>
+                                    <td>$<?= number_format($encargo['abono_parcial'], 2) ?></td>
+                                    <td><?= htmlspecialchars($encargo['estado']) ?></td>
+                                    <td><?= date('d/m/Y H:i', strtotime($encargo['fecha_encargo'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr><td colspan="7" class="text-center">No hay encargos registrados hoy.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
