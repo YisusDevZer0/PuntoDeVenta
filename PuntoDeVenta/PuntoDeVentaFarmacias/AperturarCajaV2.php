@@ -45,7 +45,6 @@ $ValorFondoCaja = mysqli_fetch_assoc($resultset);
             <div class="text-center">
             <button data-id="<?php echo $ValorFondoCaja["ID_Fon_Caja"];?>" class="btn-editcaja btn btn-success">
   Aperturar nueva caja </button> <br>
-<div id="Cajas"></div>
             </div></div></div></div>
             </div>
             <script src="js/Cajas.js"></script>
