@@ -37,13 +37,7 @@ WHERE Usuarios_PV.Id_PvUser = '".$_SESSION['VentasPos']."'";
 $resultset = mysqli_query($conn, $sql) or die("database error: " . mysqli_error($conn));
 $row = mysqli_fetch_assoc($resultset);
 
-// Setear variables de sesión necesarias para el resto del sistema
-if ($row) {
-    $_SESSION['Fk_Sucursal'] = $row['Fk_Sucursal'];
-    $_SESSION['Nombre_Apellidos'] = $row['Nombre_Apellidos'];
-    $_SESSION['Licencia'] = $row['Licencia'];
-    $_SESSION['ID_H_O_D'] = isset($row['ID_H_O_D']) ? $row['ID_H_O_D'] : null;
-}
+
 
 // if ($row['Nombre_Apellidos'] != 'DevZero') {
 //     header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
