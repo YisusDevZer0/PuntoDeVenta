@@ -51,32 +51,32 @@ if (!$ValorCaja) {
     <title>Administracion de encargos de <?php echo $row['Licencia'] ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
     <?php
     include "header.php"; ?>
 
 
 <body>
+    
+        <!-- Spinner End -->
 
-    <!-- Spinner End -->
 
+        <?php include_once "Menu.php" ?>
 
-    <?php include_once "Menu.php" ?>
-
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
         <?php include "navbar.php"; ?>
-        <!-- Navbar End -->
+            <!-- Navbar End -->
 
 
         <!-- Table Start -->
 
         <div class="container-fluid pt-4 px-8">
-            <div class="col-12">
+              <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4">Encargos  de <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
                     <div class="text-center">
@@ -90,21 +90,21 @@ if (!$ValorCaja) {
                         <?php endif; ?>
                         <br>
                         <div id="DataDeServicios"></div>
+                  </div>
                     </div>
+                  </div>
                 </div>
-            </div>
-        </div>
-    </div>
+              </div>
     <script src="js/Encargos.js"></script>
 
     <!-- Footer Start -->
-    <?php
+        <?php
 
     include "Modales/Modales_Errores.php";
     include "Modales/Modales_Referencias.php";
     include "Footer.php"; ?>
-    <script>
-        $(document).ready(function() {
+<script>
+ $(document).ready(function() {
             $(document).on("click", ".btn-editcaja", function() {
                 var id = $(this).data("id");
                 // Validar que el ID sea válido
@@ -116,7 +116,7 @@ if (!$ValorCaja) {
                         $("#TitulosCajas").html("Registrar encargo");
                     });
                     $('#ModalEdDele').modal('show');
-                } else {
+      } else {
                     alert("No hay caja activa para registrar encargos. Debe abrir una caja primero.");
                 }
             });
@@ -131,9 +131,9 @@ if (!$ValorCaja) {
                     $("#TitulosCajas").html("Registrar nuevo gasto");
                 });
                 $('#ModalEdDele').modal('show');
-            });
-        });
-    </script>
+    });
+  });
+</script>
 
 
 
@@ -147,13 +147,13 @@ if (!$ValorCaja) {
                         <p class="heading lead" id="TitulosCajas" style="color:white;"></p>
 
 
-                    </div>
+</div>
 
-                    <div class="modal-body">
+      <div class="modal-body">
                         <div class="text-center">
                             <div id="FormCajas"></div>
 
-                        </div>
+</div>
 
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->

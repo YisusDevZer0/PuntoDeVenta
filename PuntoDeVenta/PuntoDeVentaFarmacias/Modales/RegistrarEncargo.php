@@ -154,7 +154,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
             });
             var formData = $(this).serialize();
             $.ajax({
-                url: '../Controladores/RegistrarEncargoController.php',
+                url: 'Controladores/RegistrarEncargoController.php',
                 type: 'POST',
                 data: formData,
                 success: function(response) {
