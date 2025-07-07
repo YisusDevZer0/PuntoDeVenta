@@ -403,7 +403,7 @@ $encargos_dia = [];
 $sql_encargos = "SELECT id, nombre_paciente, medicamento, cantidad, precioventa, abono_parcial, fecha_encargo, estado
 FROM encargos
 WHERE DATE(fecha_encargo) = ? AND Fk_Sucursal = ? AND Fk_Caja = ?
-ORDER BY fecha_encargo DESC";
+ORDER BY fecha_encargo DESC LIMIT 3";
 if ($stmt_encargos = $conn->prepare($sql_encargos)) {
     $stmt_encargos->bind_param("sss", $fecha_hoy, $fk_sucursal, $fk_caja);
     $stmt_encargos->execute();
@@ -515,117 +515,98 @@ if ($stmt_encargos = $conn->prepare($sql_encargos)) {
             </div>
         </div>
 
-        <!-- Tabla de gastos -->
-        <div class="text-center mt-4">
-            <h5>Gastos del día</h5>
-            <div class="table-responsive">
-                <table id="TablaGastos" class="table table-hover">
+        <!-- Acordeón Bootstrap para gastos y encargos -->
+        <div class="accordion mt-4" id="acordeonCorte">
+          <!-- Sección de Gastos -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingGastos">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGastos" aria-expanded="true" aria-controls="collapseGastos">
+                Gastos del día
+              </button>
+            </h2>
+            <div id="collapseGastos" class="accordion-collapse collapse show" aria-labelledby="headingGastos" data-bs-parent="#acordeonCorte">
+              <div class="accordion-body">
+                <div class="alert alert-info">Haz clic en el título para mostrar u ocultar el desglose de gastos.</div>
+                <div class="table-responsive">
+                  <table id="TablaGastos" class="table table-hover">
                     <thead>
-                        <tr>
-                            <th>Concepto</th>
-                            <th>Importe</th>
-                            <th>Recibe</th>
-                            <th>Fecha</th>
-                        </tr>
+                      <tr>
+                        <th>Concepto</th>
+                        <th>Importe</th>
+                        <th>Recibe</th>
+                        <th>Fecha</th>
+                      </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($gastos)): ?>
-                            <?php foreach ($gastos as $gasto): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($gasto['Concepto_Categoria']) ?></td>
-                                    <td>$<?= number_format($gasto['Importe_Total'], 2) ?></td>
-                                    <td><?= htmlspecialchars($gasto['Recibe']) ?></td>
-                                    <td><?= date('d/m/Y', strtotime($gasto['FechaConcepto'])) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                            <tr class="table-info">
-                                <td colspan="1"><strong>Total Gastos:</strong></td>
-                                <td colspan="3"><strong>$<?= number_format($total_gastos, 2) ?></strong></td>
-                            </tr>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="4" class="text-center">No hay gastos registrados</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Tabla de abonos de encargos del día -->
-        <div class="text-center mt-4">
-            <h5>Abonos a encargos realizados hoy</h5>
-            <div class="table-responsive">
-                <table id="TablaAbonosEncargos" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Paciente</th>
-                            <th>Medicamento</th>
-                            <th>Cantidad</th>
-                            <th>Monto abonado</th>
-                            <th>Forma de pago</th>
-                            <th>Empleado</th>
-                            <th>Fecha y hora</th>
-                            <th>Observaciones</th>
+                      <?php if (!empty($gastos)): ?>
+                        <?php foreach ($gastos as $gasto): ?>
+                          <tr>
+                            <td><?= htmlspecialchars($gasto['Concepto_Categoria']) ?></td>
+                            <td>$<?= number_format($gasto['Importe_Total'], 2) ?></td>
+                            <td><?= htmlspecialchars($gasto['Recibe']) ?></td>
+                            <td><?= date('d/m/Y', strtotime($gasto['FechaConcepto'])) ?></td>
+                          </tr>
+                        <?php endforeach; ?>
+                        <tr class="table-info">
+                          <td colspan="1"><strong>Total Gastos:</strong></td>
+                          <td colspan="3"><strong>$<?= number_format($total_gastos, 2) ?></strong></td>
                         </tr>
+                      <?php else: ?>
+                        <tr>
+                          <td colspan="4" class="text-center">No hay gastos registrados</td>
+                        </tr>
+                      <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Sección de Encargos del día (últimos 3) -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingEncargos">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEncargos" aria-expanded="false" aria-controls="collapseEncargos">
+                Últimos 3 encargos realizados hoy
+              </button>
+            </h2>
+            <div id="collapseEncargos" class="accordion-collapse collapse" aria-labelledby="headingEncargos" data-bs-parent="#acordeonCorte">
+              <div class="accordion-body">
+                <div class="alert alert-info">Haz clic en el título para mostrar u ocultar el desglose de encargos.</div>
+                <div class="table-responsive">
+                  <table id="TablaEncargosDia" class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Paciente</th>
+                        <th>Medicamento</th>
+                        <th>Cantidad</th>
+                        <th>Precio venta</th>
+                        <th>Abono realizado</th>
+                        <th>Estado</th>
+                        <th>Fecha y hora</th>
+                      </tr>
                     </thead>
                     <tbody>
-                        <?php if (!empty($abonos_dia)): ?>
-                            <?php foreach ($abonos_dia as $abono): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($abono['nombre_paciente']) ?></td>
-                                    <td><?= htmlspecialchars($abono['medicamento']) ?></td>
-                                    <td><?= htmlspecialchars($abono['cantidad']) ?></td>
-                                    <td>$<?= number_format($abono['monto_abonado'], 2) ?></td>
-                                    <td><?= htmlspecialchars($abono['forma_pago']) ?></td>
-                                    <td><?= htmlspecialchars($abono['empleado']) ?></td>
-                                    <td><?= date('d/m/Y H:i', strtotime($abono['fecha_abono'])) ?></td>
-                                    <td><?= htmlspecialchars($abono['observaciones']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr><td colspan="8" class="text-center">No hay abonos registrados hoy.</td></tr>
-                        <?php endif; ?>
+                      <?php if (!empty($encargos_dia)): ?>
+                        <?php foreach ($encargos_dia as $encargo): ?>
+                          <tr>
+                            <td><?= htmlspecialchars($encargo['nombre_paciente']) ?></td>
+                            <td><?= htmlspecialchars($encargo['medicamento']) ?></td>
+                            <td><?= htmlspecialchars($encargo['cantidad']) ?></td>
+                            <td>$<?= number_format($encargo['precioventa'], 2) ?></td>
+                            <td>$<?= number_format($encargo['abono_parcial'], 2) ?></td>
+                            <td><?= htmlspecialchars($encargo['estado']) ?></td>
+                            <td><?= date('d/m/Y H:i', strtotime($encargo['fecha_encargo'])) ?></td>
+                          </tr>
+                        <?php endforeach; ?>
+                      <?php else: ?>
+                        <tr><td colspan="7" class="text-center">No hay encargos registrados hoy.</td></tr>
+                      <?php endif; ?>
                     </tbody>
-                </table>
+                  </table>
+                </div>
+              </div>
             </div>
-        </div>
-
-        <!-- Tabla de encargos hechos hoy -->
-        <div class="text-center mt-4">
-            <h5>Encargos realizados hoy</h5>
-            <div class="table-responsive">
-                <table id="TablaEncargosDia" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Paciente</th>
-                            <th>Medicamento</th>
-                            <th>Cantidad</th>
-                            <th>Precio venta</th>
-                            <th>Abono realizado</th>
-                            <th>Estado</th>
-                            <th>Fecha y hora</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (!empty($encargos_dia)): ?>
-                            <?php foreach ($encargos_dia as $encargo): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($encargo['nombre_paciente']) ?></td>
-                                    <td><?= htmlspecialchars($encargo['medicamento']) ?></td>
-                                    <td><?= htmlspecialchars($encargo['cantidad']) ?></td>
-                                    <td>$<?= number_format($encargo['precioventa'], 2) ?></td>
-                                    <td>$<?= number_format($encargo['abono_parcial'], 2) ?></td>
-                                    <td><?= htmlspecialchars($encargo['estado']) ?></td>
-                                    <td><?= date('d/m/Y H:i', strtotime($encargo['fecha_encargo'])) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr><td colspan="7" class="text-center">No hay encargos registrados hoy.</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+          </div>
         </div>
 
         <!-- Campos ocultos y observaciones -->
