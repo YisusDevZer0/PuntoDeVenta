@@ -109,7 +109,7 @@ if (!$ValorCaja) {
                 var id = $(this).data("id");
                 // Validar que el ID sea válido
                 if (id && id != '0') {
-                    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", {
+                    $.post("Modales/RegistrarEncargo.php", {
                         id: id
                     }, function(data) {
                         $("#FormCajas").html(data);
@@ -124,7 +124,7 @@ if (!$ValorCaja) {
             // El flujo de btn-registraGasto se mantiene igual
             $(document).on("click", ".btn-registraGasto", function() {
                 var id = $(this).data("id");
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", {
+                $.post("Modales/RegistrarEncargo.php", {
                     id: id
                 }, function(data) {
                     $("#FormCajas").html(data);
