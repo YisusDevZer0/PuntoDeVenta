@@ -482,6 +482,10 @@ if ($stmt_encargos = $conn->prepare($sql_encargos)) {
 <input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
 <!-- Campo oculto con el valor de gastos -->
 <input type="hidden" name="gastos" value='<?= json_encode($gastos_array) ?>'>
+<!-- Campo oculto con el valor de abonos -->
+<input type="hidden" name="abonos" value='<?= json_encode($abonos_dia) ?>'>
+<!-- Campo oculto con el valor de encargos -->
+<input type="hidden" name="encargos" value='<?= json_encode($encargos_dia) ?>'>
 
         <!-- Tabla de totales -->
         <div class="text-center">
