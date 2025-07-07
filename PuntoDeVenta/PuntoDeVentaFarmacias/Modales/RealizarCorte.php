@@ -379,6 +379,25 @@ if (!empty($gastos)) {
     }
 }
 
+// ================= TABLA DE ABONOS DE ENCARGOS DEL DÍA ===================
+// Consulta de abonos de encargos del día
+$abonos_dia = [];
+$fecha_hoy = date('Y-m-d');
+$sql_abonos = "SELECT h.encargo_id, h.monto_abonado, h.forma_pago, h.efectivo_recibido, h.observaciones, h.fecha_abono, h.empleado, h.sucursal, e.nombre_paciente, e.medicamento, e.cantidad, e.precioventa
+FROM historial_abonos_encargos h
+LEFT JOIN encargos e ON h.encargo_id = e.id
+WHERE DATE(h.fecha_abono) = ? AND h.sucursal = ? AND e.Fk_Caja = ?
+ORDER BY h.fecha_abono DESC";
+if ($stmt_abonos = $conn->prepare($sql_abonos)) {
+    $stmt_abonos->bind_param("sss", $fecha_hoy, $fk_sucursal, $fk_caja);
+    $stmt_abonos->execute();
+    $result_abonos = $stmt_abonos->get_result();
+    while ($abono = $result_abonos->fetch_assoc()) {
+        $abonos_dia[] = $abono;
+    }
+    $stmt_abonos->close();
+}
+
 ?>
 
 <!-- Mantener todo el HTML original -->
@@ -511,6 +530,45 @@ if (!empty($gastos)) {
                             <tr>
                                 <td colspan="4" class="text-center">No hay gastos registrados</td>
                             </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tabla de abonos de encargos del día -->
+        <div class="text-center mt-4">
+            <h5>Abonos a encargos realizados hoy</h5>
+            <div class="table-responsive">
+                <table id="TablaAbonosEncargos" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Medicamento</th>
+                            <th>Cantidad</th>
+                            <th>Monto abonado</th>
+                            <th>Forma de pago</th>
+                            <th>Empleado</th>
+                            <th>Fecha y hora</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($abonos_dia)): ?>
+                            <?php foreach ($abonos_dia as $abono): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($abono['nombre_paciente']) ?></td>
+                                    <td><?= htmlspecialchars($abono['medicamento']) ?></td>
+                                    <td><?= htmlspecialchars($abono['cantidad']) ?></td>
+                                    <td>$<?= number_format($abono['monto_abonado'], 2) ?></td>
+                                    <td><?= htmlspecialchars($abono['forma_pago']) ?></td>
+                                    <td><?= htmlspecialchars($abono['empleado']) ?></td>
+                                    <td><?= date('d/m/Y H:i', strtotime($abono['fecha_abono'])) ?></td>
+                                    <td><?= htmlspecialchars($abono['observaciones']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr><td colspan="8" class="text-center">No hay abonos registrados hoy.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
