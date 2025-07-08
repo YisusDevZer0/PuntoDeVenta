@@ -1,5 +1,5 @@
 <?php
-// include_once "Controladores/ControladorUsuario.php";
+ include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/db_connection_Huellas.php";
 ?>
 <!DOCTYPE html>
