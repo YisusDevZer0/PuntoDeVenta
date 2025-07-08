@@ -9,14 +9,6 @@ include_once "Controladores/db_connection_Huellas.php";
     <title>Gestión de Asistencias</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
-    <body>
-    
-
-        <?php include_once "Menu.php" ?>
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
     <style>
         #tablaAsistencias th {
             font-size: 14px;
@@ -90,6 +82,10 @@ include_once "Controladores/db_connection_Huellas.php";
         </div>
     </div>
     <?php include "Footer.php"; ?>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
     <script>
     $(document).ready(function() {
         var mensajesCarga = [
