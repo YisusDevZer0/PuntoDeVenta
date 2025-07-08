@@ -60,19 +60,19 @@
                 // Al completar la inicialización de la tabla, ocultar el mensaje de carga
                 $('#loading-overlay').hide();
             },
-            "buttons": [
-                {
-                    extend: 'excelHtml5',
-                    text: 'Exportar a Excel <i class="fas fa-file-excel"></i>',
-                    titleAttr: 'Exportar a Excel',
-                    title: 'Base de productos',
-                    className: 'btn btn-success',
-                    exportOptions: {
-                        columns: ':visible' // Exportar solo las columnas visibles
-                    }
-                }
-            ],
-            "dom": '<"d-flex justify-content-between"lBf>rtip',
+            // "buttons": [
+            //     {
+            //         extend: 'excelHtml5',
+            //         text: 'Exportar a Excel <i class="fas fa-file-excel"></i>',
+            //         titleAttr: 'Exportar a Excel',
+            //         title: 'Base de productos',
+            //         className: 'btn btn-success',
+            //         exportOptions: {
+            //             columns: ':visible' // Exportar solo las columnas visibles
+            //         }
+            //     }
+            // ],
+            "dom": '<"d-flex justify-content-between"lf>rtip',
             "responsive": true
         });
         
