@@ -180,6 +180,8 @@ $tipoUsuario = $row['TipoUsuario'];
         <a href="AjusteInsumos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Insumos </a>
         <a href="ReportesCedisInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
         <a href="ReportesInventarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
+        <a href="ConteosPausados" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
+        <a href="ConteosDiarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
     </div>
 </div>
 <?php } ?>
