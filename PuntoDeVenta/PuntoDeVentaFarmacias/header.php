@@ -1,8 +1,7 @@
 <!-- Favicon -->
 <link href="img/favicon.ico" rel="icon">
 
-<!-- Google Web Fonts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Google Web Fonts --><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -20,10 +19,6 @@
 
 <!-- Template Stylesheet -->
 <link href="css/style.css" rel="stylesheet">
-
-<!-- Notifications Stylesheet -->
-<link href="css/notifications.css" rel="stylesheet">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
@@ -33,24 +28,17 @@
 <script type="text/javascript" src="js/validation.min.js"></script>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 <script src="https://cdn.jsdelivr.net/npm/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
 
-<!-- Notifications System -->
+<link rel="stylesheet" href="css/notifications.css">
+
 <script src="js/notifications.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
-<style>
-    .nav-link {
-        position: static !important;
-    display: inline-block;
-}
-</style>
 
