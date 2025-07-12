@@ -12,6 +12,10 @@
       <div class="modal-body">
         <form id="formNuevoPedido">
           <div class="mb-3">
+            <label for="codigoEscaneado" class="form-label">Escanear o escribir producto</label>
+            <input type="text" class="form-control" id="codigoEscaneado" placeholder="Escanea o escribe el producto">
+          </div>
+          <div class="mb-3">
             <label for="busquedaProductoPedido" class="form-label">Buscar producto</label>
             <input type="text" class="form-control" id="busquedaProductoPedido" name="busquedaProductoPedido" placeholder="Nombre o código de producto">
           </div>
