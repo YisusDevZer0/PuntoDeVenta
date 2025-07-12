@@ -16,17 +16,14 @@
             <input type="text" class="form-control" id="codigoEscaneado" placeholder="Escanea o escribe el producto">
           </div>
           <div class="mb-3">
-            <label for="busquedaProductoPedido" class="form-label">Buscar producto</label>
-            <input type="text" class="form-control" id="busquedaProductoPedido" name="busquedaProductoPedido" placeholder="Nombre o código de producto">
-          </div>
-          <div class="mb-3">
-            <table class="table" id="tablaProductosPedido">
+            <table class="table table-striped" id="tablaAgregarArticulos">
               <thead>
                 <tr>
-                  <th>Código</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
+                  <th>Codigo</th>
+                  <th style="width:30%">Producto</th>
+                  <th style="width:6%">Cantidad</th>
                   <th>Precio</th>
+                  <th>Importe</th>
                   <th>Acciones</th>
                 </tr>
               </thead>

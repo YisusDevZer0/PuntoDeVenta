@@ -108,90 +108,11 @@ $(document).ready(function() {
     });
 });
 
-// --- INICIO AUTOCOMPLETE Y AGREGADO DE PRODUCTOS AL MODAL DE NUEVO PEDIDO ---
-$(document).ready(function() {
-  // Autocompletado para el input de productos en el modal
-  $('#busquedaProductoPedido').autocomplete({
-    minLength: 3,
-    source: function(request, response) {
-      $.ajax({
-        url: 'Controladores/autocompletado.php',
-        type: 'GET',
-        dataType: 'json',
-        data: {
-          term: request.term
-        },
-        success: function(data) {
-          response(data);
-        },
-        error: function(xhr, status, error) {
-          response([]);
-        }
-      });
-    },
-    select: function(event, ui) {
-      if (ui.item.value) {
-        // Buscar el producto completo usando el código o nombre
-        buscarProductoCompleto(ui.item.value);
-      }
-      $('#busquedaProductoPedido').val('');
-      return false;
-    }
-  });
-
-  // Función para buscar el producto completo y agregarlo
-  function buscarProductoCompleto(codigoONombre) {
-    $.ajax({
-      url: 'Controladores/escaner_articulo.php',
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        codigoEscaneado: codigoONombre
-      },
-      success: function(data) {
-        if (data && data.id) {
-          agregarProductoAPedido(data);
-        } else {
-          alert('Producto no encontrado');
-        }
-      },
-      error: function() {
-        alert('Error al buscar el producto');
-      }
-    });
-  }
-
-  // Función para agregar producto a la tabla del pedido
-  window.agregarProductoAPedido = function(producto) {
-    // Verifica si ya está en la tabla
-    if ($(`#tablaProductosPedido tbody tr[data-id='${producto.id}']`).length) {
-      alert('El producto ya está en la lista.');
-      return;
-    }
-    var fila = `
-      <tr data-id="${producto.id}">
-        <td>${producto.codigo || ''}</td>
-        <td>${producto.descripcion || ''}</td>
-        <td><input type="number" name="cantidad[]" class="form-control" value="1" min="1"></td>
-        <td>${producto.precio || ''}</td>
-        <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFilaPedido(this)">Eliminar</button></td>
-        <input type="hidden" name="producto_id[]" value="${producto.id}">
-      </tr>
-    `;
-    $('#tablaProductosPedido tbody').append(fila);
-  };
-
-  window.eliminarFilaPedido = function(btn) {
-    $(btn).closest('tr').remove();
-  };
-});
-// --- FIN AUTOCOMPLETE Y AGREGADO DE PRODUCTOS AL MODAL DE NUEVO PEDIDO --- 
-
-// --- INICIO ESCANEO Y AUTOCOMPLETADO IGUAL QUE VENTAS ---
+// --- INICIO LÓGICA DE VENTAS PARA PEDIDOS ---
 var isScannerInput = false;
 
 $('#codigoEscaneado').keyup(function (event) {
-  if (event.which === 13) { // Enter
+  if (event.which === 13) {
     if (!isScannerInput) {
       var codigoEscaneado = $('#codigoEscaneado').val();
       buscarArticuloPedido(codigoEscaneado);
@@ -235,7 +156,7 @@ function buscarArticuloPedido(codigoEscaneado) {
       if ($.isEmptyObject(data)) {
         alert('Producto no encontrado');
       } else if (data.codigo || data.descripcion) {
-        agregarProductoAPedido(data);
+        agregarArticulo(data);
       }
       $('#codigoEscaneado').val('');
       $('#codigoEscaneado').focus();
@@ -245,4 +166,27 @@ function buscarArticuloPedido(codigoEscaneado) {
     }
   });
 }
-// --- FIN ESCANEO Y AUTOCOMPLETADO IGUAL QUE VENTAS --- 
+
+function agregarArticulo(articulo) {
+  if (!articulo || (!articulo.id && !articulo.descripcion)) {
+    alert('El artículo no es válido');
+    return;
+  } else if ($(`#tablaAgregarArticulos tbody tr[data-id='${articulo.id}']`).length) {
+    alert('El artículo ya se encuentra incluido');
+    return;
+  }
+
+  var tr = '';
+  tr += `<tr data-id="${articulo.id}">`;
+  tr += `<td>${articulo.codigo || ''}</td>`;
+  tr += `<td>${articulo.descripcion || ''}</td>`;
+  tr += `<td><input class="form-control" type="number" name="cantidad[]" value="1" min="1"></td>`;
+  tr += `<td>${articulo.precio || ''}</td>`;
+  tr += `<td></td>`;
+  tr += `<td><button type="button" class="btn btn-danger btn-sm" onclick="$(this).closest('tr').remove();">Eliminar</button></td>`;
+  tr += `<input type="hidden" name="producto_id[]" value="${articulo.id}">`;
+  tr += `</tr>`;
+
+  $('#tablaAgregarArticulos tbody').append(tr);
+}
+// --- FIN LÓGICA DE VENTAS PARA PEDIDOS --- 
