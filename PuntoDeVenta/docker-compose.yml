@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      - TZ=America/Mexico_City
+      - DB_HOST=srv1264.hstgr.io
+      - DB_USER=u858848268_devpezer0
+      - DB_PASS=F9+nIIOuCh8yI6wu4!08
+      - DB_NAME=u858848268_doctorpez
