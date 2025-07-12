@@ -141,6 +141,14 @@ $tipoUsuario = $row['TipoUsuario'];
     </div>
 </div>
 <?php } ?>
+<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<div class="nav-item dropdown">
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Órdenes de pedidos</a>
+    <div class="dropdown-menu bg-transparent border-0">
+        <a href="Pedidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Gestionar pedidos</a>
+    </div>
+</div>
+<?php } ?>
 <!-- MENUS DE ALMACEN -->
 
 <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>

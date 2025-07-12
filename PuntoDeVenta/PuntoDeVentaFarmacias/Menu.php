@@ -115,7 +115,7 @@
                     <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
                         <a href="StockSucursal" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-dolly me-2 text-primary"></i>Stock</a>
                         <a href="StockInsumos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-box me-2 text-primary"></i>Stock de insumos</a>
-                        <a href="Pedidos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-truck me-2 text-primary"></i>Pedidos</a>
+                        <a href="Pedidos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-truck me-2 text-primary"></i>Órdenes de pedidos</a>
                         <a href="ConteoDiario" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clipboard-list me-2 text-primary"></i>Conteo diario</a>
                         <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice me-2 text-primary"></i>Devoluciones</a>
                         <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-calendar-xmark me-2 text-primary"></i>Caducados</a>
