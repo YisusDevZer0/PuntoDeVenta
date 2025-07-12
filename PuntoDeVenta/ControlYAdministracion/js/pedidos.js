@@ -115,27 +115,14 @@ $(document).ready(function() {
     minLength: 3,
     source: function(request, response) {
       $.ajax({
-        url: 'Controladores/PedidosController.php',
-        type: 'POST',
+        url: 'Controladores/autocompletado.php',
+        type: 'GET',
         dataType: 'json',
         data: {
-          accion: 'buscar_producto',
-          q: request.term
+          term: request.term
         },
-        success: function(resp) {
-          if (resp.data && resp.data.length > 0) {
-            response($.map(resp.data, function(item) {
-              return {
-                label: item.Nombre_Prod,
-                value: item.Nombre_Prod,
-                id: item.ID_Prod_POS,
-                codigo: item.Cod_Barra ? item.Cod_Barra : '',
-                precio: item.Precio_Venta ? item.Precio_Venta : ''
-              };
-            }));
-          } else {
-            response([{ label: 'No se encontraron productos', value: '', id: '' }]);
-          }
+        success: function(data) {
+          response(data);
         },
         error: function(xhr, status, error) {
           response([]);
@@ -143,13 +130,36 @@ $(document).ready(function() {
       });
     },
     select: function(event, ui) {
-      if (ui.item.id) {
-        agregarProductoAPedido(ui.item);
+      if (ui.item.value) {
+        // Buscar el producto completo usando el código o nombre
+        buscarProductoCompleto(ui.item.value);
       }
       $('#busquedaProductoPedido').val('');
       return false;
     }
   });
+
+  // Función para buscar el producto completo y agregarlo
+  function buscarProductoCompleto(codigoONombre) {
+    $.ajax({
+      url: 'Controladores/escaner_articulo.php',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        codigoEscaneado: codigoONombre
+      },
+      success: function(data) {
+        if (data && data.id) {
+          agregarProductoAPedido(data);
+        } else {
+          alert('Producto no encontrado');
+        }
+      },
+      error: function() {
+        alert('Error al buscar el producto');
+      }
+    });
+  }
 
   // Función para agregar producto a la tabla del pedido
   window.agregarProductoAPedido = function(producto) {
@@ -160,10 +170,10 @@ $(document).ready(function() {
     }
     var fila = `
       <tr data-id="${producto.id}">
-        <td>${producto.codigo}</td>
-        <td>${producto.label}</td>
+        <td>${producto.codigo || ''}</td>
+        <td>${producto.descripcion || ''}</td>
         <td><input type="number" name="cantidad[]" class="form-control" value="1" min="1"></td>
-        <td>${producto.precio}</td>
+        <td>${producto.precio || ''}</td>
         <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFilaPedido(this)">Eliminar</button></td>
         <input type="hidden" name="producto_id[]" value="${producto.id}">
       </tr>
