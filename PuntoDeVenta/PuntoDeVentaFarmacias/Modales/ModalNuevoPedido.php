@@ -12,13 +12,24 @@
       <div class="modal-body">
         <form id="formNuevoPedido">
           <div class="mb-3">
-            <label for="producto_autocomplete" class="form-label">Producto</label>
-            <input type="text" class="form-control" id="producto_autocomplete" name="producto_autocomplete" required placeholder="Buscar producto...">
-            <input type="hidden" id="producto_id" name="producto_id">
+            <label for="busquedaProductoPedido" class="form-label">Buscar producto</label>
+            <input type="text" class="form-control" id="busquedaProductoPedido" name="busquedaProductoPedido" placeholder="Nombre o código de producto">
           </div>
           <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            <table class="table" id="tablaProductosPedido">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Aquí se agregan los productos -->
+              </tbody>
+            </table>
           </div>
           <div class="mb-3">
             <label for="observaciones" class="form-label">Observaciones</label>

@@ -106,4 +106,73 @@ $(document).ready(function() {
             $('#modalDetallePedido').modal('show');
         }, 'json');
     });
-}); 
+});
+
+// --- INICIO AUTOCOMPLETE Y AGREGADO DE PRODUCTOS AL MODAL DE NUEVO PEDIDO ---
+$(document).ready(function() {
+  // Autocompletado para el input de productos en el modal
+  $('#busquedaProductoPedido').autocomplete({
+    minLength: 3,
+    source: function(request, response) {
+      $.ajax({
+        url: 'Controladores/PedidosController.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          accion: 'buscar_producto',
+          q: request.term
+        },
+        success: function(resp) {
+          if (resp.data && resp.data.length > 0) {
+            response($.map(resp.data, function(item) {
+              return {
+                label: item.Nombre_Prod,
+                value: item.Nombre_Prod,
+                id: item.ID_Prod_POS,
+                codigo: item.Cod_Barra ? item.Cod_Barra : '',
+                precio: item.Precio_Venta ? item.Precio_Venta : ''
+              };
+            }));
+          } else {
+            response([{ label: 'No se encontraron productos', value: '', id: '' }]);
+          }
+        },
+        error: function(xhr, status, error) {
+          response([]);
+        }
+      });
+    },
+    select: function(event, ui) {
+      if (ui.item.id) {
+        agregarProductoAPedido(ui.item);
+      }
+      $('#busquedaProductoPedido').val('');
+      return false;
+    }
+  });
+
+  // Función para agregar producto a la tabla del pedido
+  window.agregarProductoAPedido = function(producto) {
+    // Verifica si ya está en la tabla
+    if ($(`#tablaProductosPedido tbody tr[data-id='${producto.id}']`).length) {
+      alert('El producto ya está en la lista.');
+      return;
+    }
+    var fila = `
+      <tr data-id="${producto.id}">
+        <td>${producto.codigo}</td>
+        <td>${producto.label}</td>
+        <td><input type="number" name="cantidad[]" class="form-control" value="1" min="1"></td>
+        <td>${producto.precio}</td>
+        <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFilaPedido(this)">Eliminar</button></td>
+        <input type="hidden" name="producto_id[]" value="${producto.id}">
+      </tr>
+    `;
+    $('#tablaProductosPedido tbody').append(fila);
+  };
+
+  window.eliminarFilaPedido = function(btn) {
+    $(btn).closest('tr').remove();
+  };
+});
+// --- FIN AUTOCOMPLETE Y AGREGADO DE PRODUCTOS AL MODAL DE NUEVO PEDIDO --- 
