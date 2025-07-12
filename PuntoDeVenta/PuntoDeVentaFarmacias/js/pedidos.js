@@ -13,6 +13,14 @@ $(document).ready(function() {
             });
             select += '</select>';
             $('#producto').replaceWith(select);
+            // Inicializar Select2
+            setTimeout(function() {
+                $('#producto_id').select2({
+                    dropdownParent: $('#modalNuevoPedido'),
+                    width: '100%',
+                    placeholder: 'Buscar producto...'
+                });
+            }, 100);
         });
         $('#modalNuevoPedido').modal('show');
     });
