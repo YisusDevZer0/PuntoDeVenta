@@ -22,18 +22,36 @@ $(document).ready(function() {
                         q: request.term
                     },
                     success: function(data) {
-                        response($.map(data.data, function(item) {
-                            return {
-                                label: item.Nombre_Prod,
-                                value: item.Nombre_Prod,
-                                id: item.ID_Prod_POS
-                            };
-                        }));
+                        console.log('Respuesta productos:', data);
+                        if (data.data && data.data.length > 0) {
+                            response($.map(data.data, function(item) {
+                                return {
+                                    label: item.Nombre_Prod,
+                                    value: item.Nombre_Prod,
+                                    id: item.ID_Prod_POS
+                                };
+                            }));
+                        } else {
+                            response([{ label: 'No se encontraron productos', value: '', id: '' }]);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error en AJAX:', error);
+                        response([]);
                     }
                 });
             },
             select: function(event, ui) {
-                $('#producto_id').val(ui.item.id);
+                if (ui.item.id) {
+                    $('#producto_id').val(ui.item.id);
+                } else {
+                    $('#producto_id').val('');
+                }
+            },
+            focus: function(event, ui) {
+                if (!ui.item.id) {
+                    event.preventDefault();
+                }
             }
         });
     });

@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         while($prod = $res->fetch_assoc()) {
             $productos[] = $prod;
         }
+        error_log('Busqueda producto: '.json_encode(['q'=>$q,'sql'=>$sql,'result'=>$productos]));
         echo json_encode(['status' => 'ok', 'data' => $productos]);
         exit;
     }
