@@ -1,6 +1,9 @@
 // Lógica básica para pedidos administrativos
 $(document).ready(function() {
-    // Cargar productos al abrir el modal
+    // Cargar tabla de pedidos al iniciar
+    cargarPedidos();
+
+    // Botón para nuevo pedido
     $('#btnNuevoPedido').on('click', function() {
         $.post('Controladores/PedidosController.php', {accion: 'productos'}, function(resp) {
             let data = JSON.parse(resp);
@@ -13,7 +16,8 @@ $(document).ready(function() {
         });
         $('#modalNuevoPedido').modal('show');
     });
-    // Enviar formulario con producto_id
+
+    // Enviar formulario de nuevo pedido
     $('#formNuevoPedido').on('submit', function(e) {
         e.preventDefault();
         $.post('Controladores/PedidosController.php', {
@@ -31,18 +35,25 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Función para cargar la tabla de pedidos
     function cargarPedidos() {
         $.post('Controladores/PedidosController.php', {accion: 'listar'}, function(resp) {
             let data = JSON.parse(resp);
-            let html = '<table class="table"><thead><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>';
-            data.data.forEach(function(pedido) {
-                html += `<tr><td>${pedido.id}</td><td>${pedido.Nombre_Prod}</td><td>${pedido.cantidad}</td><td><button class='btn btn-info btn-sm verDetalle' data-id='${pedido.id}'>Ver</button></td></tr>`;
-            });
-            html += '</tbody></table>';
-            $('#tablaPedidos').html(html);
+            let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead class="table-primary"><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>';
+            if(data.data.length === 0) {
+                html += '<tr><td colspan="4" class="text-center">No hay pedidos registrados</td></tr>';
+            } else {
+                data.data.forEach(function(pedido) {
+                    html += `<tr><td>${pedido.id}</td><td>${pedido.Nombre_Prod}</td><td>${pedido.cantidad}</td><td><button class='btn btn-info btn-sm verDetalle' data-id='${pedido.id}'>Ver</button></td></tr>`;
+                });
+            }
+            html += '</tbody></table></div>';
+            $('#DataDePedidos').html(html);
         });
     }
-    cargarPedidos();
+
+    // Acción para ver detalle
     $(document).on('click', '.verDetalle', function() {
         let id = $(this).data('id');
         $.post('Controladores/PedidosController.php', {accion: 'detalle', id: id}, function(resp) {
