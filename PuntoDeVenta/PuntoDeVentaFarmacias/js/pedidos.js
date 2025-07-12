@@ -5,41 +5,46 @@ $(document).ready(function() {
 
     // Botón para nuevo pedido
     $('#btnNuevoPedido').on('click', function() {
-        // Reemplaza el campo producto por un select vacío
-        $('#producto').replaceWith('<select class="form-control" id="producto_id" name="producto_id" required></select>');
-        // Inicializa Select2 con AJAX
-        $('#producto_id').select2({
-            dropdownParent: $('#modalNuevoPedido'),
-            width: '100%',
-            placeholder: 'Buscar producto...',
-            minimumInputLength: 2,
-            ajax: {
-                url: 'Controladores/PedidosController.php',
-                type: 'POST',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
+        // Reinicializa el campo autocomplete
+        $('#producto_autocomplete').val('');
+        $('#producto_id').val('');
+        $('#modalNuevoPedido').modal('show');
+        // Inicializa autocomplete
+        $('#producto_autocomplete').autocomplete({
+            minLength: 2,
+            source: function(request, response) {
+                $.ajax({
+                    url: 'Controladores/PedidosController.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
                         accion: 'buscar_producto',
-                        q: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: data.data.map(function(prod) {
-                            return { id: prod.ID_Prod_POS, text: prod.Nombre_Prod };
-                        })
-                    };
-                },
-                cache: true
+                        q: request.term
+                    },
+                    success: function(data) {
+                        response($.map(data.data, function(item) {
+                            return {
+                                label: item.Nombre_Prod,
+                                value: item.Nombre_Prod,
+                                id: item.ID_Prod_POS
+                            };
+                        }));
+                    }
+                });
+            },
+            select: function(event, ui) {
+                $('#producto_id').val(ui.item.id);
             }
         });
-        $('#modalNuevoPedido').modal('show');
     });
 
     // Enviar formulario de nuevo pedido
     $('#formNuevoPedido').on('submit', function(e) {
         e.preventDefault();
+        if (!$('#producto_id').val()) {
+            alert('Debes seleccionar un producto válido.');
+            return;
+        }
         $.post('Controladores/PedidosController.php', {
             accion: 'crear',
             producto_id: $('#producto_id').val(),
