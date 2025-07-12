@@ -5,22 +5,34 @@ $(document).ready(function() {
 
     // Botón para nuevo pedido
     $('#btnNuevoPedido').on('click', function() {
-        $.post('Controladores/PedidosController.php', {accion: 'productos'}, function(resp) {
-            let data = JSON.parse(resp);
-            let select = '<select class="form-control" id="producto_id" name="producto_id" required>';
-            data.data.forEach(function(prod) {
-                select += `<option value="${prod.ID_Prod_POS}">${prod.Nombre_Prod}</option>`;
-            });
-            select += '</select>';
-            $('#producto').replaceWith(select);
-            // Inicializar Select2
-            setTimeout(function() {
-                $('#producto_id').select2({
-                    dropdownParent: $('#modalNuevoPedido'),
-                    width: '100%',
-                    placeholder: 'Buscar producto...'
-                });
-            }, 100);
+        // Reemplaza el campo producto por un select vacío
+        $('#producto').replaceWith('<select class="form-control" id="producto_id" name="producto_id" required></select>');
+        // Inicializa Select2 con AJAX
+        $('#producto_id').select2({
+            dropdownParent: $('#modalNuevoPedido'),
+            width: '100%',
+            placeholder: 'Buscar producto...',
+            minimumInputLength: 2,
+            ajax: {
+                url: 'Controladores/PedidosController.php',
+                type: 'POST',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        accion: 'buscar_producto',
+                        q: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.data.map(function(prod) {
+                            return { id: prod.ID_Prod_POS, text: prod.Nombre_Prod };
+                        })
+                    };
+                },
+                cache: true
+            }
         });
         $('#modalNuevoPedido').modal('show');
     });

@@ -5,6 +5,22 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'];
+    if ($accion === 'buscar_producto') {
+        $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+        $q = isset($_POST['q']) ? $_POST['q'] : '';
+        $sql = "SELECT ID_Prod_POS, Nombre_Prod FROM Stock_POS WHERE Fk_sucursal = ? AND Nombre_Prod LIKE ? AND Existencias_R > 0 ORDER BY Nombre_Prod ASC LIMIT 20";
+        $stmt = $conn->prepare($sql);
+        $like = "%$q%";
+        $stmt->bind_param("ss", $fk_sucursal, $like);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $productos = [];
+        while($prod = $res->fetch_assoc()) {
+            $productos[] = $prod;
+        }
+        echo json_encode(['status' => 'ok', 'data' => $productos]);
+        exit;
+    }
     if ($accion === 'productos') {
         $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
         $sql = "SELECT ID_Prod_POS, Nombre_Prod FROM Stock_POS WHERE Fk_sucursal = ? AND Existencias_R > 0 ORDER BY Nombre_Prod ASC LIMIT 100";
