@@ -21,10 +21,10 @@ $(document).ready(function() {
                         accion: 'buscar_producto',
                         q: request.term
                     },
-                    success: function(data) {
-                        console.log('Respuesta productos:', data);
-                        if (data.data && data.data.length > 0) {
-                            response($.map(data.data, function(item) {
+                    success: function(resp) {
+                        console.log('Respuesta productos:', resp);
+                        if (resp.data && resp.data.length > 0) {
+                            response($.map(resp.data, function(item) {
                                 return {
                                     label: item.Nombre_Prod,
                                     value: item.Nombre_Prod,
@@ -69,41 +69,41 @@ $(document).ready(function() {
             cantidad: $('#cantidad').val(),
             observaciones: $('#observaciones').val()
         }, function(resp) {
-            let data = JSON.parse(resp);
-            if(data.status === 'ok') {
+            console.log('Respuesta crear pedido:', resp);
+            if(resp.status === 'ok') {
                 $('#modalNuevoPedido').modal('hide');
                 cargarPedidos();
             } else {
                 alert('Error al crear pedido');
             }
-        });
+        }, 'json');
     });
 
     // Función para cargar la tabla de pedidos
     function cargarPedidos() {
         $.post('Controladores/PedidosController.php', {accion: 'listar'}, function(resp) {
-            let data = JSON.parse(resp);
+            console.log('Respuesta listar pedidos:', resp);
             let html = '<div class="table-responsive"><table class="table table-striped table-hover"><thead class="table-primary"><tr><th>ID</th><th>Producto</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>';
-            if(data.data.length === 0) {
+            if(resp.data.length === 0) {
                 html += '<tr><td colspan="4" class="text-center">No hay pedidos registrados</td></tr>';
             } else {
-                data.data.forEach(function(pedido) {
-                    html += `<tr><td>${pedido.id}</td><td>${pedido.Nombre_Prod}</td><td>${pedido.cantidad}</td><td><button class='btn btn-info btn-sm verDetalle' data-id='${pedido.id}'>Ver</button></td></tr>`;
+                resp.data.forEach(function(pedido) {
+                    html += `<tr><td>${pedido.id}</td><td>${pedido.Nombre_Prod ? pedido.Nombre_Prod : 'Sin nombre'}</td><td>${pedido.cantidad}</td><td><button class='btn btn-info btn-sm verDetalle' data-id='${pedido.id}'>Ver</button></td></tr>`;
                 });
             }
             html += '</tbody></table></div>';
             $('#DataDePedidos').html(html);
-        });
+        }, 'json');
     }
 
     // Acción para ver detalle
     $(document).on('click', '.verDetalle', function() {
         let id = $(this).data('id');
         $.post('Controladores/PedidosController.php', {accion: 'detalle', id: id}, function(resp) {
-            let data = JSON.parse(resp);
-            let html = `<b>Producto:</b> ${data.data.Nombre_Prod}<br><b>Cantidad:</b> ${data.data.cantidad}`;
+            console.log('Respuesta detalle pedido:', resp);
+            let html = `<b>Producto:</b> ${resp.data.Nombre_Prod ? resp.data.Nombre_Prod : 'Sin nombre'}<br><b>Cantidad:</b> ${resp.data.cantidad}`;
             $('#detallePedidoBody').html(html);
             $('#modalDetallePedido').modal('show');
-        });
+        }, 'json');
     });
 }); 
