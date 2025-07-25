@@ -197,11 +197,11 @@ $tipoUsuario = $row['TipoUsuario'];
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-folder-tree"></i>Reportes</a>
     <div class="dropdown-menu bg-transparent border-0">
-        <a href="ReporteDeVentasTotales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
-        <a href="ReporteServicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
-        <a href="ReporteMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte mas vendidos </a>
-        <a href="ReportePorProductoFormaPago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por productos </a>
-        <a href="ReportePorFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
+        <a href="ReportePorProducto" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-excel"></i>Reporte de ventas</a>
+        <a href="ReportesPorServicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
+        <a href="ReportesAnuales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por personal </a>
+        <a href="ReportesMasInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
+        >
        
     </div>
 </div>
