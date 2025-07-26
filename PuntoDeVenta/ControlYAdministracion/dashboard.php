@@ -1,11 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-// Verificar sesión
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    header("Location: Expiro.php");
-    exit();
-}
+
 
 // Asegurar que $row esté disponible
 if (!isset($row)) {
