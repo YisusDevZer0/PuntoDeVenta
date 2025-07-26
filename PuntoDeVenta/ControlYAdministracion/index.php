@@ -1,5 +1,12 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
+
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
+    exit();
+}
+
 include_once "Controladores/ConsultaDashboard.php";
 
 // Definir variable para atributos disabled (por ahora vacía para habilitar todo)
@@ -17,6 +24,8 @@ $disabledAttr = '';
     <?php
    include "header.php";?>
 <body>
+    <style>
+
        /* Estilos personalizados para el dashboard */
        .dashboard-card {
            transition: transform 0.2s ease-in-out;
