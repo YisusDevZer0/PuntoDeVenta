@@ -94,13 +94,14 @@ class SistemaPedidos {
 
     setupEventListeners() {
         // Botones principales
-        $('#btnNuevoPedido').on('click', () => this.abrirModalSimple());
+        $('#btnNuevoPedido').on('click', () => this.abrirModalNuevoPedido());
         $('#btnRefresh').on('click', () => this.cargarPedidos());
         $('#btnStockBajo').on('click', () => this.mostrarProductosStockBajo());
-        $('#btnFiltrar').on('click', () => this.aplicarFiltros());
-        $('#btnLimpiar').on('click', () => this.limpiarFiltros());
-        $('#btnCrearPrimerPedido').on('click', () => this.abrirModalSimple());
-        $('#btnContinuarPedido').on('click', () => this.abrirModalSimple());
+        $('#btnListadoPedidos').on('click', () => this.abrirModalListadoPedidos());
+        $('#btnAplicarFiltros').on('click', () => this.aplicarFiltros());
+        $('#btnLimpiarFiltros').on('click', () => this.limpiarFiltros());
+        $('#btnCrearPrimerPedido').on('click', () => this.abrirModalNuevoPedido());
+        $('#btnContinuarPedido').on('click', () => this.abrirModalNuevoPedido());
 
         // Búsqueda en tiempo real
         let timeoutBusqueda;
@@ -111,26 +112,26 @@ class SistemaPedidos {
             }, 500);
         });
 
-        // Eventos del modal simple
-        $('#btnBuscarProductoSimple').on('click', () => this.buscarProductosSimple());
-        $('#btnBuscarEncargosSimple').on('click', () => this.buscarEncargosSimple());
-        $('#btnGuardarPedidoSimple').on('click', () => this.confirmarGuardarPedido());
-        $('#btnLimpiarPedidoSimple').on('click', () => this.confirmarLimpiarPedido());
+        // Eventos del modal nuevo pedido
+        $('#btnBuscarProductoNuevo').on('click', () => this.buscarProductosNuevo());
+        $('#btnBuscarEncargosNuevo').on('click', () => this.buscarEncargosNuevo());
+        $('#btnGuardarPedidoNuevo').on('click', () => this.confirmarGuardarPedidoNuevo());
+        $('#btnLimpiarPedidoNuevo').on('click', () => this.confirmarLimpiarPedidoNuevo());
         
-        $('#busqueda-producto-simple').on('keypress', (e) => {
-            if (e.which === 13) this.buscarProductosSimple();
+        $('#busqueda-producto-nuevo').on('keypress', (e) => {
+            if (e.which === 13) this.buscarProductosNuevo();
         });
 
-        // Eventos del modal simple
-        $('#modalCrearPedido').on('shown.bs.modal', () => {
+        // Eventos del modal nuevo pedido
+        $('#modalNuevoPedido').on('shown.bs.modal', () => {
             this.modalAbierto = true;
             this.pedidoEnProceso = true;
             this.cargarDatosGuardados();
-            this.actualizarVistaProductosSimple();
-            this.actualizarResumenSimple();
+            this.actualizarVistaProductosNuevo();
+            this.actualizarResumenNuevo();
         });
 
-        $('#modalCrearPedido').on('hidden.bs.modal', () => {
+        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
             this.modalAbierto = false;
             // No limpiar datos al cerrar, mantener persistencia
         });
@@ -168,6 +169,21 @@ class SistemaPedidos {
             dragClass: 'sortable-drag',
             onEnd: () => {
                 this.actualizarResumenSimple();
+                this.guardarDatos();
+            },
+            onStart: () => {
+                $('.sortable-ghost').addClass('shadow-lg');
+            }
+        });
+
+        // Configurar drag & drop para productos del pedido nuevo
+        this.sortableNuevo = new Sortable(document.getElementById('productos-pedido-nuevo'), {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            onEnd: () => {
+                this.actualizarResumenNuevo();
                 this.guardarDatos();
             },
             onStart: () => {
@@ -495,10 +511,64 @@ class SistemaPedidos {
         }
     }
 
-    // Funciones del modal simple
-    abrirModalSimple() {
-        $('#modalCrearPedido').modal('show');
+    // Funciones del modal nuevo pedido
+    abrirModalNuevoPedido() {
+        $('#modalNuevoPedido').modal('show');
         this.pedidoEnProceso = true;
+    }
+
+    abrirModalListadoPedidos() {
+        $('#modalListadoPedidos').modal('show');
+        this.cargarPedidosEnModal();
+    }
+
+    async cargarPedidosEnModal() {
+        try {
+            this.mostrarLoading(true);
+            
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'listar_pedidos',
+                busqueda: $('#busqueda').val(),
+                filtro_estado: $('#filtro-estado').val(),
+                filtro_fecha_inicio: $('#filtro-fecha-inicio').val(),
+                filtro_fecha_fin: $('#filtro-fecha-fin').val()
+            });
+
+            if (response.status === 'ok') {
+                this.renderizarPedidosEnModal(response.data || []);
+            } else {
+                this.mostrarError('Error al cargar pedidos: ' + (response.msg || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error en cargarPedidosEnModal:', error);
+            this.mostrarError('Error de conexión al cargar pedidos');
+        } finally {
+            this.mostrarLoading(false);
+        }
+    }
+
+    renderizarPedidosEnModal(pedidos) {
+        const container = $('#lista-pedidos-modal');
+        
+        if (!pedidos || pedidos.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <h4>No hay pedidos</h4>
+                    <p>No se encontraron pedidos con los filtros aplicados</p>
+                </div>
+            `);
+            return;
+        }
+
+        let html = '<div class="row">';
+        pedidos.forEach(pedido => {
+            html += this.crearHTMLPedido(pedido);
+        });
+        html += '</div>';
+        
+        container.html(html);
+        this.setupPedidoEventListeners();
     }
 
     async buscarProductosSimple() {
@@ -526,6 +596,31 @@ class SistemaPedidos {
         }
     }
 
+    async buscarProductosNuevo() {
+        const query = $('#busqueda-producto-nuevo').val().trim();
+        
+        if (query.length < 3) {
+            this.mostrarError('Ingresa al menos 3 caracteres para buscar');
+            return;
+        }
+
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'buscar_producto',
+                q: query
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarResultadosBusquedaNuevo(response.data);
+            } else {
+                this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error en buscarProductosNuevo:', error);
+            this.mostrarError('Error de conexión');
+        }
+    }
+
     async buscarEncargosSimple() {
         const query = $('#busqueda-producto-simple').val().trim();
         
@@ -547,6 +642,31 @@ class SistemaPedidos {
             }
         } catch (error) {
             console.error('Error en buscarEncargosSimple:', error);
+            this.mostrarError('Error de conexión');
+        }
+    }
+
+    async buscarEncargosNuevo() {
+        const query = $('#busqueda-producto-nuevo').val().trim();
+        
+        if (query.length < 2) {
+            this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
+            return;
+        }
+
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'obtener_encargos',
+                busqueda: query
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarResultadosEncargosNuevo(response.data);
+            } else {
+                this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error en buscarEncargosNuevo:', error);
             this.mostrarError('Error de conexión');
         }
     }
@@ -701,6 +821,37 @@ class SistemaPedidos {
         this.mostrarExito('Producto agregado al pedido');
     }
 
+    agregarProductoAPedidoNuevo(producto) {
+        console.log('Agregando producto al nuevo modal:', producto);
+        
+        // Verificar si ya está agregado
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
+            this.mostrarError('Este producto ya está en el pedido');
+            return;
+        }
+
+        // Agregar al array
+        this.productosSeleccionados.push({
+            id: producto.ID_Prod_POS,
+            nombre: producto.Nombre_Prod,
+            codigo: producto.Cod_Barra,
+            precio: parseFloat(producto.Precio_Venta || 0),
+            cantidad: 1,
+            stock: producto.Existencias_R,
+            min_stock: producto.Min_Existencia
+        });
+
+        console.log('Productos seleccionados después de agregar:', this.productosSeleccionados);
+
+        // Actualizar la vista
+        this.actualizarVistaProductosNuevo();
+        this.actualizarResumenNuevo();
+        this.guardarDatos();
+        
+        // Mostrar notificación
+        this.mostrarExito('Producto agregado al pedido');
+    }
+
     actualizarVistaProductosSimple() {
         const container = $('#productos-pedido-simple');
         
@@ -746,6 +897,51 @@ class SistemaPedidos {
         container.html(html);
     }
 
+    actualizarVistaProductosNuevo() {
+        const container = $('#productos-pedido-nuevo');
+        
+        if (this.productosSeleccionados.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                    <p>Arrastra productos aquí o busca productos para agregar</p>
+                </div>
+            `);
+            return;
+        }
+
+        let html = '';
+        this.productosSeleccionados.forEach((producto, index) => {
+            const stockClass = producto.stock < producto.min_stock ? 'text-danger' : 'text-success';
+            
+            html += `
+                <div class="producto-card" data-index="${index}">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-grip-vertical drag-handle me-2"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${producto.nombre}</h6>
+                            <p class="mb-1 small text-muted">
+                                Código: ${producto.codigo || 'N/A'} | 
+                                Stock: <span class="${stockClass}">${producto.stock}</span>
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <input type="number" class="form-control form-control-sm me-2" 
+                                   style="width: 80px;" min="1" value="${producto.cantidad}"
+                                   onchange="sistemaPedidos.actualizarCantidadNuevo(${index}, this.value)">
+                            <span class="me-2">$${producto.precio.toFixed(2)}</span>
+                            <button class="btn btn-danger btn-sm" onclick="sistemaPedidos.eliminarProductoNuevo(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.html(html);
+    }
+
     actualizarCantidadSimple(index, cantidad) {
         if (this.productosSeleccionados[index]) {
             this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
@@ -761,6 +957,21 @@ class SistemaPedidos {
         this.guardarDatos();
     }
 
+    actualizarCantidadNuevo(index, cantidad) {
+        if (this.productosSeleccionados[index]) {
+            this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
+            this.actualizarResumenNuevo();
+            this.guardarDatos();
+        }
+    }
+
+    eliminarProductoNuevo(index) {
+        this.productosSeleccionados.splice(index, 1);
+        this.actualizarVistaProductosNuevo();
+        this.actualizarResumenNuevo();
+        this.guardarDatos();
+    }
+
     actualizarResumenSimple() {
         const totalProductos = this.productosSeleccionados.length;
         const totalCantidad = this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0);
@@ -769,6 +980,16 @@ class SistemaPedidos {
         $('#total-productos-simple').text(totalProductos);
         $('#total-cantidad-simple').text(totalCantidad);
         $('#total-precio-simple').text(`$${totalPrecio.toFixed(2)}`);
+    }
+
+    actualizarResumenNuevo() {
+        const totalProductos = this.productosSeleccionados.length;
+        const totalCantidad = this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0);
+        const totalPrecio = this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+
+        $('#total-productos-nuevo').text(totalProductos);
+        $('#total-cantidad-nuevo').text(totalCantidad);
+        $('#total-precio-nuevo').text(`$${totalPrecio.toFixed(2)}`);
     }
 
     // Confirmación para guardar pedido
@@ -872,6 +1093,106 @@ class SistemaPedidos {
         this.mostrarExito('Pedido limpiado correctamente');
     }
 
+    // Funciones para el modal nuevo pedido
+    async confirmarGuardarPedidoNuevo() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('Debes agregar al menos un producto al pedido');
+            return;
+        }
+
+        const observaciones = $('#observaciones-pedido-nuevo').val().trim();
+        const prioridad = $('#prioridad-pedido-nuevo').val();
+
+        const result = await Swal.fire({
+            title: '¿Confirmar pedido?',
+            html: `
+                <div class="text-left">
+                    <p><strong>Productos:</strong> ${this.productosSeleccionados.length}</p>
+                    <p><strong>Cantidad total:</strong> ${this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0)}</p>
+                    <p><strong>Total estimado:</strong> $${this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</p>
+                    <p><strong>Prioridad:</strong> ${prioridad}</p>
+                    ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar pedido',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.guardarPedidoNuevo(observaciones, prioridad);
+        }
+    }
+
+    async guardarPedidoNuevo(observaciones, prioridad) {
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'crear_pedido',
+                productos: JSON.stringify(this.productosSeleccionados),
+                observaciones: observaciones,
+                prioridad: prioridad
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarExito('Pedido creado exitosamente');
+                $('#modalNuevoPedido').modal('hide');
+                this.limpiarPedidoNuevo();
+                this.cargarPedidos();
+            } else {
+                this.mostrarError('Error al crear pedido: ' + response.msg);
+            }
+        } catch (error) {
+            console.error('Error en guardarPedidoNuevo:', error);
+            this.mostrarError('Error de conexión');
+        }
+    }
+
+    async confirmarLimpiarPedidoNuevo() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('No hay productos para limpiar');
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: '¿Limpiar pedido?',
+            text: 'Se eliminarán todos los productos del pedido actual. ¿Estás seguro?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, limpiar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            this.limpiarPedidoNuevo();
+        }
+    }
+
+    limpiarPedidoNuevo() {
+        $('#busqueda-producto-nuevo').val('');
+        $('#resultados-busqueda-nuevo').html(`
+            <p class="text-muted text-center">
+                <i class="fas fa-search fa-2x mb-2"></i><br>
+                Busca productos para agregar al pedido
+            </p>
+        `);
+        $('#observaciones-pedido-nuevo').val('');
+        $('#prioridad-pedido-nuevo').val('normal');
+        this.productosSeleccionados = [];
+        this.actualizarVistaProductosNuevo();
+        this.actualizarResumenNuevo();
+        this.limpiarDatosGuardados();
+        this.mostrarExito('Pedido limpiado correctamente');
+    }
+
     // Funciones para agregar desde stock bajo
     async mostrarProductosStockBajo() {
         try {
@@ -964,14 +1285,14 @@ class SistemaPedidos {
 
         console.log('Productos seleccionados después de agregar desde stock bajo:', this.productosSeleccionados);
 
-        // Si el modal simple no está abierto, abrirlo
+        // Si el modal nuevo no está abierto, abrirlo
         if (!this.modalAbierto) {
-            $('#modalCrearPedido').modal('show');
+            $('#modalNuevoPedido').modal('show');
         }
 
-        // Actualizar la vista del modal simple
-        this.actualizarVistaProductosSimple();
-        this.actualizarResumenSimple();
+        // Actualizar la vista del modal nuevo
+        this.actualizarVistaProductosNuevo();
+        this.actualizarResumenNuevo();
         this.guardarDatos();
         
         // Mostrar notificación

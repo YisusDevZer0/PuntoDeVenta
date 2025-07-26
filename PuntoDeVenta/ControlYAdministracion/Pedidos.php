@@ -554,6 +554,9 @@ include "Controladores/db_connect.php";
                             <button class="btn btn-warning" id="btnStockBajo">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Stock Bajo
                             </button>
+                            <button class="btn btn-info" id="btnListadoPedidos">
+                                <i class="fas fa-list me-2"></i>Listado
+                            </button>
                             <button class="btn btn-secondary" id="btnRefresh">
                                 <i class="fas fa-sync-alt me-2"></i>Actualizar
                             </button>
@@ -568,15 +571,6 @@ include "Controladores/db_connect.php";
                                 </span>
                                 <button class="btn btn-sm btn-outline-success ms-2" id="btnContinuarPedido">
                                     <i class="fas fa-edit me-1"></i>Continuar Pedido
-                                </button>
-                            </div>
-                            
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-outline-primary" id="btnFiltrar">
-                                    <i class="fas fa-filter me-2"></i>Filtrar
-                                </button>
-                                <button class="btn btn-outline-secondary" id="btnLimpiar">
-                                    <i class="fas fa-times me-2"></i>Limpiar
                                 </button>
                             </div>
                         </div>
@@ -615,11 +609,11 @@ include "Controladores/db_connect.php";
                                 <div class="col-md-3">
                                     <label class="form-label">Acciones</label>
                                     <div class="action-buttons">
-                                        <button class="btn btn-primary btn-modern" id="btnFiltrar">
-                                            <i class="fas fa-filter me-2"></i>Filtrar
+                                        <button class="btn btn-primary btn-modern" id="btnAplicarFiltros">
+                                            <i class="fas fa-filter me-2"></i>Aplicar Filtros
                                         </button>
-                                        <button class="btn btn-secondary btn-modern" id="btnLimpiar">
-                                            <i class="fas fa-times me-2"></i>Limpiar
+                                        <button class="btn btn-secondary btn-modern" id="btnLimpiarFiltros">
+                                            <i class="fas fa-times me-2"></i>Limpiar Filtros
                                         </button>
                                     </div>
                                 </div>
@@ -636,14 +630,6 @@ include "Controladores/db_connect.php";
                                 <h5 class="mb-0">
                                     <i class="fas fa-list me-2"></i>Lista de Pedidos
                                 </h5>
-                                <div class="action-buttons">
-                                    <button class="btn btn-outline-primary btn-sm" id="btnRefresh">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                    <button class="btn btn-outline-success btn-sm" id="btnStockBajo">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>Stock Bajo
-                                    </button>
-                                </div>
                             </div>
                             
                             <div id="loading-spinner" class="loading-spinner">
@@ -760,8 +746,8 @@ include "Controladores/db_connect.php";
         </div>
     </div>
 
-    <!-- Modal Simple para Crear Pedido -->
-    <div class="modal fade" id="modalCrearPedido" tabindex="-1">
+    <!-- Modal para Nuevo Pedido -->
+    <div class="modal fade" id="modalNuevoPedido" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -784,17 +770,17 @@ include "Controladores/db_connect.php";
                                 </div>
                                 <div class="card-body">
                                     <div class="input-group mb-3">
-                                        <input type="text" class="form-control" id="busqueda-producto-simple" 
+                                        <input type="text" class="form-control" id="busqueda-producto-nuevo" 
                                                placeholder="Buscar productos...">
-                                        <button class="btn btn-primary" type="button" id="btnBuscarProductoSimple">
+                                        <button class="btn btn-primary" type="button" id="btnBuscarProductoNuevo">
                                             <i class="fas fa-search"></i>
                                         </button>
-                                        <button class="btn btn-info" type="button" id="btnBuscarEncargosSimple">
+                                        <button class="btn btn-info" type="button" id="btnBuscarEncargosNuevo">
                                             <i class="fas fa-history"></i>
                                         </button>
                                     </div>
                                     
-                                    <div id="resultados-busqueda-simple">
+                                    <div id="resultados-busqueda-nuevo">
                                         <p class="text-muted text-center">
                                             <i class="fas fa-search fa-2x mb-2"></i><br>
                                             Busca productos para agregar al pedido
@@ -814,7 +800,7 @@ include "Controladores/db_connect.php";
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <div id="productos-pedido-simple" class="productos-container">
+                                    <div id="productos-pedido-nuevo" class="productos-container">
                                         <div class="text-center text-muted py-4">
                                             <i class="fas fa-shopping-cart fa-2x mb-2"></i>
                                             <p>Arrastra productos aquí o busca productos para agregar</p>
@@ -827,18 +813,18 @@ include "Controladores/db_connect.php";
                                         <div class="row">
                                             <div class="col-6">
                                                 <small class="text-muted">Productos:</small><br>
-                                                <strong id="total-productos-simple">0</strong>
+                                                <strong id="total-productos-nuevo">0</strong>
                                             </div>
                                             <div class="col-6">
                                                 <small class="text-muted">Cantidad total:</small><br>
-                                                <strong id="total-cantidad-simple">0</strong>
+                                                <strong id="total-cantidad-nuevo">0</strong>
                                             </div>
                                         </div>
                                         <hr>
                                         <div class="row">
                                             <div class="col-12">
                                                 <small class="text-muted">Total estimado:</small><br>
-                                                <strong id="total-precio-simple">$0.00</strong>
+                                                <strong id="total-precio-nuevo">$0.00</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -850,13 +836,13 @@ include "Controladores/db_connect.php";
                     <!-- Observaciones y prioridad -->
                     <div class="row mt-3">
                         <div class="col-md-8">
-                            <label for="observaciones-pedido-simple" class="form-label">Observaciones</label>
-                            <textarea class="form-control" id="observaciones-pedido-simple" rows="3" 
+                            <label for="observaciones-pedido-nuevo" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones-pedido-nuevo" rows="3" 
                                       placeholder="Observaciones del pedido..."></textarea>
                         </div>
                         <div class="col-md-4">
-                            <label for="prioridad-pedido-simple" class="form-label">Prioridad</label>
-                            <select class="form-select" id="prioridad-pedido-simple">
+                            <label for="prioridad-pedido-nuevo" class="form-label">Prioridad</label>
+                            <select class="form-select" id="prioridad-pedido-nuevo">
                                 <option value="baja">Baja</option>
                                 <option value="normal" selected>Normal</option>
                                 <option value="alta">Alta</option>
@@ -866,12 +852,35 @@ include "Controladores/db_connect.php";
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnLimpiarPedidoSimple">
+                    <button type="button" class="btn btn-secondary" id="btnLimpiarPedidoNuevo">
                         <i class="fas fa-trash me-2"></i>Limpiar
                     </button>
-                    <button type="button" class="btn btn-success" id="btnGuardarPedidoSimple">
+                    <button type="button" class="btn btn-success" id="btnGuardarPedidoNuevo">
                         <i class="fas fa-save me-2"></i>Guardar Pedido
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Listado de Pedidos -->
+    <div class="modal fade" id="modalListadoPedidos" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-list me-2"></i>
+                        Listado de Pedidos
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="lista-pedidos-modal">
+                        <!-- Los pedidos se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
