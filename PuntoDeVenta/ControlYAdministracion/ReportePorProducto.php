@@ -213,7 +213,7 @@ include_once "Controladores/ControladorUsuario.php";
                                     <i class="fas fa-search me-1"></i> Filtrar
                                 </button>
                                 <button type="button" class="btn btn-success" onclick="exportarExcel()">
-                                    <i class="fas fa-file-excel me-1"></i> Excel
+                                    <i class="fas fa-file-excel me-1"></i> Exportar aExcel
                                 </button>
                             </div>
                         </div>

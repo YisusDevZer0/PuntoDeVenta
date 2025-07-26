@@ -1,7 +1,13 @@
 <?php
+// Configurar headers para Excel más compatible
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment; filename="Reporte_Ventas_Producto_' . date('Y-m-d_H-i-s') . '.xls"');
 header('Cache-Control: max-age=0');
+header('Cache-Control: max-age=1');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+header('Cache-Control: cache, must-revalidate');
+header('Pragma: public');
 
 include("db_connect.php");
 include("ControladorUsuario.php");
@@ -59,27 +65,35 @@ if (!empty($sucursal)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Crear el archivo Excel
+// Crear el archivo Excel con formato mejorado
 echo '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
 echo '<head>';
 echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
 echo '<style>';
-echo 'table { border-collapse: collapse; }';
-echo 'th, td { border: 1px solid #000; padding: 5px; }';
-echo 'th { background-color: #f0f0f0; font-weight: bold; }';
+echo 'table { border-collapse: collapse; width: 100%; }';
+echo 'th, td { border: 1px solid #000; padding: 8px; text-align: center; }';
+echo 'th { background-color: #ef7980; color: white; font-weight: bold; font-size: 12px; }';
+echo 'tr:nth-child(even) { background-color: #f8f9fa; }';
+echo 'tr:hover { background-color: #ffe6e7; }';
+echo '.header-row { background-color: #ef7980; color: white; font-weight: bold; }';
+echo '.title { font-size: 16px; font-weight: bold; color: #ef7980; margin-bottom: 10px; }';
+echo '.subtitle { font-size: 12px; color: #666; margin-bottom: 5px; }';
+echo '.summary { background-color: #f0f0f0; font-weight: bold; }';
+echo '.currency { mso-number-format:"$#,##0.00"; }';
+echo '.number { mso-number-format:"#,##0"; }';
 echo '</style>';
 echo '</head>';
 echo '<body>';
 
 // Título del reporte
-echo '<h2>Reporte de Ventas por Producto</h2>';
-echo '<p><strong>Período:</strong> ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin)) . '</p>';
-echo '<p><strong>Generado:</strong> ' . date('d/m/Y H:i:s') . '</p>';
+echo '<div class="title">Reporte de Ventas por Producto</div>';
+echo '<div class="subtitle">Período: ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin)) . '</div>';
+echo '<div class="subtitle">Generado: ' . date('d/m/Y H:i:s') . '</div>';
 
 // Tabla de datos
 echo '<table>';
 echo '<thead>';
-echo '<tr>';
+echo '<tr class="header-row">';
 echo '<th>ID Producto</th>';
 echo '<th>Código de Barras</th>';
 echo '<th>Nombre del Producto</th>';
@@ -108,18 +122,18 @@ while ($row = $result->fetch_assoc()) {
     echo '<tr>';
     echo '<td>' . $row['ID_Prod_POS'] . '</td>';
     echo '<td>' . ($row['Cod_Barra'] ?: '') . '</td>';
-    echo '<td>' . ($row['Nombre_Prod'] ?: 'Sin nombre') . '</td>';
-    echo '<td>' . ($row['Tipo'] ?: '') . '</td>';
-    echo '<td>' . ($row['Nombre_Sucursal'] ?: 'Sucursal no encontrada') . '</td>';
-    echo '<td>' . ($row['Precio_Venta'] ? '$' . number_format($row['Precio_Venta'], 2) : '') . '</td>';
-    echo '<td>' . ($row['Precio_C'] ? '$' . number_format($row['Precio_C'], 2) : '') . '</td>';
-    echo '<td>' . ($row['Existencias_R'] ? number_format($row['Existencias_R']) : '0') . '</td>';
-    echo '<td>' . number_format($row['Total_Vendido']) . '</td>';
-    echo '<td>$' . number_format($row['Total_Importe'], 2) . '</td>';
-    echo '<td>$' . number_format($row['Total_Venta'], 2) . '</td>';
-    echo '<td>$' . number_format($row['Total_Descuento'], 2) . '</td>';
-    echo '<td>' . number_format($row['Numero_Ventas']) . '</td>';
-    echo '<td>' . ($row['AgregadoPor'] ?: '') . '</td>';
+    echo '<td>' . htmlspecialchars($row['Nombre_Prod'] ?: 'Sin nombre') . '</td>';
+    echo '<td>' . htmlspecialchars($row['Tipo'] ?: '') . '</td>';
+    echo '<td>' . htmlspecialchars($row['Nombre_Sucursal'] ?: 'Sucursal no encontrada') . '</td>';
+    echo '<td class="currency">' . ($row['Precio_Venta'] ?: 0) . '</td>';
+    echo '<td class="currency">' . ($row['Precio_C'] ?: 0) . '</td>';
+    echo '<td class="number">' . ($row['Existencias_R'] ?: 0) . '</td>';
+    echo '<td class="number">' . $row['Total_Vendido'] . '</td>';
+    echo '<td class="currency">' . $row['Total_Importe'] . '</td>';
+    echo '<td class="currency">' . $row['Total_Venta'] . '</td>';
+    echo '<td class="currency">' . $row['Total_Descuento'] . '</td>';
+    echo '<td class="number">' . $row['Numero_Ventas'] . '</td>';
+    echo '<td>' . htmlspecialchars($row['AgregadoPor'] ?: '') . '</td>';
     echo '<td>' . ($row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '') . '</td>';
     echo '<td>' . ($row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : '') . '</td>';
     echo '</tr>';
@@ -132,14 +146,28 @@ while ($row = $result->fetch_assoc()) {
 echo '</tbody>';
 echo '</table>';
 
-// Totales
+// Resumen
 echo '<br><br>';
-echo '<h3>Resumen</h3>';
-echo '<table>';
-echo '<tr><td><strong>Total Productos:</strong></td><td>' . $result->num_rows . '</td></tr>';
-echo '<tr><td><strong>Total Unidades Vendidas:</strong></td><td>' . number_format($total_unidades) . '</td></tr>';
-echo '<tr><td><strong>Total Importe:</strong></td><td>$' . number_format($total_importe, 2) . '</td></tr>';
-echo '<tr><td><strong>Total Ventas:</strong></td><td>$' . number_format($total_ventas, 2) . '</td></tr>';
+echo '<table style="width: 50%;">';
+echo '<tr class="summary">';
+echo '<td colspan="2" style="background-color: #ef7980; color: white; font-weight: bold; text-align: center;">RESUMEN</td>';
+echo '</tr>';
+echo '<tr class="summary">';
+echo '<td>Total Productos:</td>';
+echo '<td class="number">' . $result->num_rows . '</td>';
+echo '</tr>';
+echo '<tr class="summary">';
+echo '<td>Total Unidades Vendidas:</td>';
+echo '<td class="number">' . $total_unidades . '</td>';
+echo '</tr>';
+echo '<tr class="summary">';
+echo '<td>Total Importe:</td>';
+echo '<td class="currency">' . $total_importe . '</td>';
+echo '</tr>';
+echo '<tr class="summary">';
+echo '<td>Total Ventas:</td>';
+echo '<td class="currency">' . $total_ventas . '</td>';
+echo '</tr>';
 echo '</table>';
 
 echo '</body>';
