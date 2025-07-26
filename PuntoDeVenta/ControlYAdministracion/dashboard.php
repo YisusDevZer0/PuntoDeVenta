@@ -1,21 +1,12 @@
 <?php
-
-
-
-
-
-include_once "Controladores/ConsultaDashboard.php";
-
-// Definir variable para atributos disabled (por ahora vacía para habilitar todo)
-$disabledAttr = '';
-
-// Variable para identificar la página actual
-$currentPage = 'dashboard';
-
-// Variable específica para el dashboard (no depende de permisos)
-$showDashboard = true;
-
+include_once "Controladores/ControladorUsuario.php";
 ?>
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -97,7 +88,19 @@ $showDashboard = true;
         <!-- Navbar Start -->
         <?php include "navbar.php";?>
         <!-- Navbar End -->
+<?php include_once "Controladores/ConsultaDashboard.php";
 
+
+// Definir variable para atributos disabled (por ahora vacía para habilitar todo)
+$disabledAttr = '';
+
+// Variable para identificar la página actual
+$currentPage = 'dashboard';
+
+// Variable específica para el dashboard (no depende de permisos)
+$showDashboard = true;
+
+?>
         <!-- Sale & Revenue Start -->
         <div class="container-fluid pt-4 px-4">
             <div class="row g-4">
