@@ -48,7 +48,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             <?php if ($showDashboard): ?>
             <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
             <?php endif; ?>
-
+            <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard2</a>
             <?php if ($isAdmin): ?>
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
