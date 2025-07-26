@@ -1,17 +1,45 @@
 <?php
 include_once "db_connect.php";
-include_once "ControladorUsuario.php";
 header('Content-Type: application/json');
 
-// Verificar que el usuario esté autenticado
-if (!isset($_SESSION['Id_PvUser'])) {
+// Iniciar sesión si no está iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Verificar que el usuario esté autenticado usando el sistema existente
+if (!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])) {
     echo json_encode(['status' => 'error', 'msg' => 'Usuario no autenticado']);
     exit;
 }
 
+// Determinar el ID de usuario según la sesión activa
+$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+
 // Obtener datos del usuario
-$usuario_id = $_SESSION['Id_PvUser'];
-$sucursal_id = $_SESSION['Fk_Sucursal'] ?? '';
+$sql = "SELECT
+    Usuarios_PV.Id_PvUser,
+    Usuarios_PV.Nombre_Apellidos,
+    Usuarios_PV.Fk_Sucursal,
+    Sucursales.Nombre_Sucursal
+FROM
+    Usuarios_PV
+INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal 
+WHERE Usuarios_PV.Id_PvUser = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if (!$row) {
+    echo json_encode(['status' => 'error', 'msg' => 'Error al obtener datos del usuario']);
+    exit;
+}
+
+$usuario_id = $row['Id_PvUser'];
+$sucursal_id = $row['Fk_Sucursal'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
@@ -235,13 +263,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Búsqueda general
         if (!empty($busqueda)) {
-            $where_conditions[] = "(p.folio LIKE ? OR s.Nombre_Prod LIKE ? OR u.Nombre LIKE ? OR u.Apellido LIKE ?)";
+            $where_conditions[] = "(p.folio LIKE ? OR s.Nombre_Prod LIKE ? OR u.Nombre_Apellidos LIKE ?)";
             $busqueda_like = "%$busqueda%";
             $params[] = $busqueda_like;
             $params[] = $busqueda_like;
             $params[] = $busqueda_like;
-            $params[] = $busqueda_like;
-            $types .= 'ssss';
+            $types .= 'sss';
         }
         
         $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
@@ -257,12 +284,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     p.fecha_completado,
                     p.total_estimado,
                     s.Nombre_Sucursal,
-                    CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre,
+                    CONCAT(u.Nombre_Apellidos) as usuario_nombre,
                     COUNT(pd.id) as total_productos,
                     SUM(pd.cantidad_solicitada) as total_cantidad
                 FROM pedidos p
                 LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
-                LEFT JOIN usuarios u ON p.usuario_id = u.Id_PvUser
+                LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
                 LEFT JOIN pedido_detalles pd ON p.id = pd.pedido_id
                 $where_clause
                 GROUP BY p.id
@@ -292,10 +319,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "SELECT 
                     p.*,
                     s.Nombre_Sucursal,
-                    CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre
+                    CONCAT(u.Nombre_Apellidos) as usuario_nombre
                 FROM pedidos p
                 LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
-                LEFT JOIN usuarios u ON p.usuario_id = u.Id_PvUser
+                LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
                 WHERE p.id = ?";
         
         $stmt = $conn->prepare($sql);
@@ -325,9 +352,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Obtener historial del pedido
         $sql_hist = "SELECT 
                         ph.*,
-                        CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre
+                        CONCAT(u.Nombre_Apellidos) as usuario_nombre
                     FROM pedido_historial ph
-                    LEFT JOIN usuarios u ON ph.usuario_id = u.Id_PvUser
+                    LEFT JOIN Usuarios_PV u ON ph.usuario_id = u.Id_PvUser
                     WHERE ph.pedido_id = ?
                     ORDER BY ph.fecha_cambio DESC";
         
