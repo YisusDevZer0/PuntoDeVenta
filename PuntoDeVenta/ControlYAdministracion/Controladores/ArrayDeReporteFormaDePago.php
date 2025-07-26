@@ -35,9 +35,9 @@ try {
     $sql .= " GROUP BY v.FormaDePago ORDER BY Total_Importe DESC";
     
     // Preparar la consulta
-    $stmt = $con->prepare($sql);
+    $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $con->error);
+        throw new Exception('Error al preparar la consulta: ' . $conn->error);
     }
     
     if (!empty($sucursal)) {
@@ -94,7 +94,7 @@ try {
     
     // Cerrar conexión
     $stmt->close();
-    $con->close();
+    $conn->close();
     
 } catch (Exception $e) {
     error_log('Error en ArrayDeReporteFormaDePago.php: ' . $e->getMessage());

@@ -30,9 +30,9 @@ try {
     ORDER BY Total_Importe DESC";
     
     // Preparar la consulta
-    $stmt = $con->prepare($sql);
+    $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $con->error);
+        throw new Exception('Error al preparar la consulta: ' . $conn->error);
     }
     
     $stmt->bind_param("ss", $fecha_inicio, $fecha_fin);
@@ -76,7 +76,7 @@ try {
     
     // Cerrar conexión
     $stmt->close();
-    $con->close();
+    $conn->close();
     
 } catch (Exception $e) {
     error_log('Error en ArrayDeReporteSucursales.php: ' . $e->getMessage());
