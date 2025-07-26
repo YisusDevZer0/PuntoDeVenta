@@ -201,7 +201,9 @@ $tipoUsuario = $row['TipoUsuario'];
         <a href="ReporteServicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por tipo de servicios </a>
         <a href="ReportesAnuales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reportes anuales </a>
         <a href="TotalesDeVentaPorVendedor" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reportes por vendedor</a>
-        <a href="ReportesMasInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
+        <a href="ReporteFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Reporte por forma de pago</a>
+        <a href="ReporteProductosMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Productos más vendidos</a>
+        <a href="ReporteSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-regular fa-file-excel"></i>Rendimiento por sucursal</a>
         
        
     </div>
