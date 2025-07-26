@@ -17,7 +17,7 @@ try {
         v.ID_Prod_POS,
         v.Cod_Barra,
         v.Nombre_Prod,
-        c.Nombre_Categoria AS Categoria,
+        c.Nom_Cat AS Categoria,
         SUM(v.Cantidad_Venta) AS Total_Vendido,
         SUM(v.Importe) AS Total_Importe,
         AVG(v.Total_Venta) AS Promedio_Venta,
@@ -25,7 +25,7 @@ try {
         MAX(v.Fecha_venta) AS Ultima_Venta
     FROM Ventas_POS v
     LEFT JOIN Productos_POS p ON v.ID_Prod_POS = p.ID_Prod_POS
-    LEFT JOIN Categorias c ON p.Fk_Categoria = c.ID_Categoria
+    LEFT JOIN Categorias_POS c ON p.FkCategoria = c.Cat_ID
     LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
     WHERE v.Fecha_venta BETWEEN ? AND ?
     AND v.Estatus = 'Pagado'
@@ -36,7 +36,7 @@ try {
         $sql .= " AND v.Fk_sucursal = ?";
     }
     
-    $sql .= " GROUP BY v.ID_Prod_POS, v.Cod_Barra, v.Nombre_Prod, c.Nombre_Categoria
+    $sql .= " GROUP BY v.ID_Prod_POS, v.Cod_Barra, v.Nombre_Prod, c.Nom_Cat
     ORDER BY Total_Vendido DESC
     LIMIT ?";
     

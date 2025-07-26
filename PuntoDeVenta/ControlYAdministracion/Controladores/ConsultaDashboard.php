@@ -42,7 +42,7 @@ if ($resultBajoStock && $resultBajoStock->num_rows > 0) {
 }
 
 // Consulta para traspasos pendientes
-$sqlTraspasos = "SELECT COUNT(*) AS TraspasosPendientes FROM Traspasos WHERE Estatus = 'Pendiente'";
+$sqlTraspasos = "SELECT COUNT(*) AS TraspasosPendientes FROM Traspasos_generados WHERE Estatus = 'Pendiente'";
 $resultTraspasos = $conn->query($sqlTraspasos);
 $traspasosPendientes = 0;
 
