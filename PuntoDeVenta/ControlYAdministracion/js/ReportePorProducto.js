@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    console.log("Inicializando DataTable...");
+    
     // Inicializar DataTable
     var table = $('#tablaReporte').DataTable({
         "processing": true,
@@ -7,9 +9,12 @@ $(document).ready(function() {
             "url": "Controladores/ArrayDeReportePorProducto.php",
             "type": "GET",
             "data": function(d) {
+                console.log("Enviando parámetros:", d);
                 d.fecha_inicio = $('#fecha_inicio').val();
                 d.fecha_fin = $('#fecha_fin').val();
                 d.sucursal = $('#sucursal').val();
+                console.log("Parámetros finales:", d);
+                return d;
             },
             "dataSrc": function(json) {
                 console.log("Respuesta del servidor:", json);
@@ -29,6 +34,15 @@ $(document).ready(function() {
                 actualizarEstadisticas(json.data);
                 
                 return json.data || [];
+            },
+            "error": function(xhr, status, error) {
+                console.error("Error AJAX:", xhr, status, error);
+                console.error("URL llamada:", "Controladores/ArrayDeReportePorProducto.php");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de conexión',
+                    text: 'No se pudo cargar los datos. Error: ' + error
+                });
             }
         },
         "columns": [
@@ -61,6 +75,9 @@ $(document).ready(function() {
                 title: 'Error',
                 text: 'Error al cargar los datos. Por favor, verifica la conexión.'
             });
+        },
+        "initComplete": function() {
+            console.log("DataTable inicializado completamente");
         }
     });
 
@@ -90,6 +107,7 @@ $(document).ready(function() {
 
     // Función para filtrar datos
     window.filtrarDatos = function() {
+        console.log("Ejecutando filtro...");
         table.ajax.reload();
     };
 
