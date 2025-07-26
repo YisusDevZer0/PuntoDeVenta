@@ -298,6 +298,26 @@ include "Controladores/db_connect.php";
             to { opacity: 1; transform: translateY(0); }
         }
         
+        /* Animación del carrito */
+        .pulse-animation {
+            animation: pulse 0.6s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Mejoras en el indicador del carrito */
+        #carrito-indicador {
+            transition: all 0.3s ease;
+        }
+        
+        #carrito-indicador .badge {
+            transition: all 0.3s ease;
+        }
+        
         /* Mejoras para los botones de acción */
         .btn-group .btn {
             border-radius: 8px;
@@ -409,6 +429,74 @@ include "Controladores/db_connect.php";
             background-color: #007bff;
             border-color: #007bff;
         }
+
+        /* Efectos hover mejorados */
+        .pedido-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .producto-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Mejoras en botones */
+        .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        /* Indicador de carga mejorado */
+        #loading-overlay {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Mejoras en modales */
+        .modal-content {
+            border: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        /* Mejoras en el drag & drop */
+        .sortable-ghost {
+            opacity: 0.5;
+            background: #f8f9fa;
+        }
+        
+        .sortable-chosen {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .sortable-drag {
+            transform: rotate(5deg);
+        }
+        
+        /* Mejoras en las notificaciones */
+        .swal2-popup {
+            border-radius: 12px;
+        }
+        
+        /* Responsive mejorado */
+        @media (max-width: 768px) {
+            .action-buttons .d-flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            #carrito-indicador {
+                margin-top: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -453,6 +541,45 @@ include "Controladores/db_connect.php";
                         <i class="fas fa-dollar-sign fa-2x mb-2"></i>
                         <h4 id="stats-total">$0</h4>
                         <p class="mb-0">Total Estimado</p>
+                    </div>
+                </div>
+                
+                <!-- Barra de acciones -->
+                <div class="action-buttons mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" id="btnNuevoPedido">
+                                <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                            </button>
+                            <button class="btn btn-warning" id="btnStockBajo">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Stock Bajo
+                            </button>
+                            <button class="btn btn-secondary" id="btnRefresh">
+                                <i class="fas fa-sync-alt me-2"></i>Actualizar
+                            </button>
+                        </div>
+                        
+                        <!-- Indicador del carrito de pedidos -->
+                        <div class="d-flex align-items-center">
+                            <div id="carrito-indicador" class="me-3" style="display: none;">
+                                <span class="badge bg-success fs-6">
+                                    <i class="fas fa-shopping-cart me-1"></i>
+                                    <span id="carrito-cantidad">0</span> productos
+                                </span>
+                                <button class="btn btn-sm btn-outline-success ms-2" id="btnContinuarPedido">
+                                    <i class="fas fa-edit me-1"></i>Continuar Pedido
+                                </button>
+                            </div>
+                            
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-primary" id="btnFiltrar">
+                                    <i class="fas fa-filter me-2"></i>Filtrar
+                                </button>
+                                <button class="btn btn-outline-secondary" id="btnLimpiar">
+                                    <i class="fas fa-times me-2"></i>Limpiar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 

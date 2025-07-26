@@ -5,6 +5,7 @@ class SistemaPedidos {
         this.productosSeleccionados = [];
         this.sortable = null;
         this.modalAbierto = false;
+        this.pedidoEnProceso = false;
         this.init();
     }
 
@@ -23,13 +24,12 @@ class SistemaPedidos {
             const datosGuardados = localStorage.getItem('pedidos_productos_seleccionados');
             if (datosGuardados) {
                 this.productosSeleccionados = JSON.parse(datosGuardados);
-                if (this.modalAbierto) {
-                    this.actualizarVistaProductosSimple();
-                    this.actualizarResumenSimple();
-                }
+                console.log('Datos cargados desde localStorage:', this.productosSeleccionados);
+                this.actualizarIndicadorCarrito();
             }
         } catch (error) {
-            console.log('No hay datos guardados o error al cargar');
+            console.log('No hay datos guardados o error al cargar:', error);
+            this.productosSeleccionados = [];
         }
     }
 
@@ -37,8 +37,44 @@ class SistemaPedidos {
     guardarDatos() {
         try {
             localStorage.setItem('pedidos_productos_seleccionados', JSON.stringify(this.productosSeleccionados));
+            console.log('Datos guardados en localStorage:', this.productosSeleccionados);
+            this.actualizarIndicadorCarrito();
         } catch (error) {
-            console.log('Error al guardar datos');
+            console.log('Error al guardar datos:', error);
+        }
+    }
+
+    // Limpiar datos guardados
+    limpiarDatosGuardados() {
+        try {
+            localStorage.removeItem('pedidos_productos_seleccionados');
+            this.productosSeleccionados = [];
+            console.log('Datos guardados limpiados');
+            this.actualizarIndicadorCarrito();
+        } catch (error) {
+            console.log('Error al limpiar datos:', error);
+        }
+    }
+
+    // Actualizar indicador del carrito
+    actualizarIndicadorCarrito() {
+        const cantidad = this.productosSeleccionados.length;
+        const indicador = $('#carrito-indicador');
+        const cantidadSpan = $('#carrito-cantidad');
+        
+        if (cantidad > 0) {
+            cantidadSpan.text(cantidad);
+            indicador.show();
+            
+            // Agregar animación de pulso si es nuevo
+            if (!indicador.hasClass('pulse-animation')) {
+                indicador.addClass('pulse-animation');
+                setTimeout(() => {
+                    indicador.removeClass('pulse-animation');
+                }, 2000);
+            }
+        } else {
+            indicador.hide();
         }
     }
 
@@ -64,6 +100,7 @@ class SistemaPedidos {
         $('#btnFiltrar').on('click', () => this.aplicarFiltros());
         $('#btnLimpiar').on('click', () => this.limpiarFiltros());
         $('#btnCrearPrimerPedido').on('click', () => this.abrirModalSimple());
+        $('#btnContinuarPedido').on('click', () => this.abrirModalSimple());
 
         // Búsqueda en tiempo real
         let timeoutBusqueda;
@@ -77,8 +114,8 @@ class SistemaPedidos {
         // Eventos del modal simple
         $('#btnBuscarProductoSimple').on('click', () => this.buscarProductosSimple());
         $('#btnBuscarEncargosSimple').on('click', () => this.buscarEncargosSimple());
-        $('#btnGuardarPedidoSimple').on('click', () => this.guardarPedidoSimple());
-        $('#btnLimpiarPedidoSimple').on('click', () => this.limpiarPedidoSimple());
+        $('#btnGuardarPedidoSimple').on('click', () => this.confirmarGuardarPedido());
+        $('#btnLimpiarPedidoSimple').on('click', () => this.confirmarLimpiarPedido());
         
         $('#busqueda-producto-simple').on('keypress', (e) => {
             if (e.which === 13) this.buscarProductosSimple();
@@ -87,11 +124,15 @@ class SistemaPedidos {
         // Eventos del modal simple
         $('#modalCrearPedido').on('shown.bs.modal', () => {
             this.modalAbierto = true;
+            this.pedidoEnProceso = true;
             this.cargarDatosGuardados();
+            this.actualizarVistaProductosSimple();
+            this.actualizarResumenSimple();
         });
 
         $('#modalCrearPedido').on('hidden.bs.modal', () => {
             this.modalAbierto = false;
+            // No limpiar datos al cerrar, mantener persistencia
         });
 
         // Filtros
@@ -275,19 +316,19 @@ class SistemaPedidos {
         // Aprobar pedido
         $('.aprobar-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.cambiarEstadoPedido(pedidoId, 'aprobado');
+            this.confirmarCambiarEstado(pedidoId, 'aprobado');
         });
 
         // Rechazar pedido
         $('.rechazar-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.cambiarEstadoPedido(pedidoId, 'rechazado');
+            this.confirmarCambiarEstado(pedidoId, 'rechazado');
         });
 
         // Eliminar pedido
         $('.eliminar-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.eliminarPedido(pedidoId);
+            this.confirmarEliminarPedido(pedidoId);
         });
     }
 
@@ -355,24 +396,48 @@ class SistemaPedidos {
         $('#modalDetallePedido').modal('show');
     }
 
-    async cambiarEstadoPedido(pedidoId, nuevoEstado) {
+    // Confirmación mejorada para cambiar estado
+    async confirmarCambiarEstado(pedidoId, nuevoEstado) {
         const estados = {
-            'aprobado': '¿Estás seguro de que quieres aprobar este pedido?',
-            'rechazado': '¿Estás seguro de que quieres rechazar este pedido?',
-            'completado': '¿Estás seguro de que quieres marcar como completado este pedido?'
+            'aprobado': {
+                title: '¿Aprobar pedido?',
+                text: '¿Estás seguro de que quieres aprobar este pedido?',
+                icon: 'question',
+                confirmButtonColor: '#28a745'
+            },
+            'rechazado': {
+                title: '¿Rechazar pedido?',
+                text: '¿Estás seguro de que quieres rechazar este pedido?',
+                icon: 'warning',
+                confirmButtonColor: '#dc3545'
+            }
         };
 
-        const confirmacion = await Swal.fire({
-            title: 'Confirmar acción',
-            text: estados[nuevoEstado] || '¿Estás seguro?',
-            icon: 'question',
+        const config = estados[nuevoEstado] || {
+            title: '¿Confirmar cambio?',
+            text: '¿Estás seguro de que quieres cambiar el estado?',
+            icon: 'question'
+        };
+
+        const result = await Swal.fire({
+            title: config.title,
+            text: config.text,
+            icon: config.icon,
             showCancelButton: true,
-            confirmButtonText: 'Sí, continuar',
-            cancelButtonText: 'Cancelar'
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: config.confirmButtonColor,
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
         });
 
-        if (!confirmacion.isConfirmed) return;
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.cambiarEstadoPedido(pedidoId, nuevoEstado);
+        }
+    }
 
+    async cambiarEstadoPedido(pedidoId, nuevoEstado) {
         try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'cambiar_estado',
@@ -392,19 +457,27 @@ class SistemaPedidos {
         }
     }
 
-    async eliminarPedido(pedidoId) {
-        const confirmacion = await Swal.fire({
+    // Confirmación mejorada para eliminar pedido
+    async confirmarEliminarPedido(pedidoId) {
+        const result = await Swal.fire({
             title: '¿Eliminar pedido?',
-            text: 'Esta acción no se puede deshacer',
+            text: 'Esta acción no se puede deshacer. ¿Estás seguro?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#d33'
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
         });
 
-        if (!confirmacion.isConfirmed) return;
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.eliminarPedido(pedidoId);
+        }
+    }
 
+    async eliminarPedido(pedidoId) {
         try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'eliminar_pedido',
@@ -425,7 +498,7 @@ class SistemaPedidos {
     // Funciones del modal simple
     abrirModalSimple() {
         $('#modalCrearPedido').modal('show');
-        this.cargarDatosGuardados();
+        this.pedidoEnProceso = true;
     }
 
     async buscarProductosSimple() {
@@ -698,7 +771,8 @@ class SistemaPedidos {
         $('#total-precio-simple').text(`$${totalPrecio.toFixed(2)}`);
     }
 
-    async guardarPedidoSimple() {
+    // Confirmación para guardar pedido
+    async confirmarGuardarPedido() {
         if (this.productosSeleccionados.length === 0) {
             this.mostrarError('Debes agregar al menos un producto al pedido');
             return;
@@ -707,6 +781,33 @@ class SistemaPedidos {
         const observaciones = $('#observaciones-pedido-simple').val().trim();
         const prioridad = $('#prioridad-pedido-simple').val();
 
+        const result = await Swal.fire({
+            title: '¿Confirmar pedido?',
+            html: `
+                <div class="text-left">
+                    <p><strong>Productos:</strong> ${this.productosSeleccionados.length}</p>
+                    <p><strong>Cantidad total:</strong> ${this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0)}</p>
+                    <p><strong>Total estimado:</strong> $${this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</p>
+                    <p><strong>Prioridad:</strong> ${prioridad}</p>
+                    ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar pedido',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.guardarPedidoSimple(observaciones, prioridad);
+        }
+    }
+
+    async guardarPedidoSimple(observaciones, prioridad) {
         try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'crear_pedido',
@@ -729,6 +830,31 @@ class SistemaPedidos {
         }
     }
 
+    // Confirmación para limpiar pedido
+    async confirmarLimpiarPedido() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('No hay productos para limpiar');
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: '¿Limpiar pedido?',
+            text: 'Se eliminarán todos los productos del pedido actual. ¿Estás seguro?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, limpiar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            this.limpiarPedidoSimple();
+        }
+    }
+
     limpiarPedidoSimple() {
         $('#busqueda-producto-simple').val('');
         $('#resultados-busqueda-simple').html(`
@@ -742,7 +868,8 @@ class SistemaPedidos {
         this.productosSeleccionados = [];
         this.actualizarVistaProductosSimple();
         this.actualizarResumenSimple();
-        this.guardarDatos();
+        this.limpiarDatosGuardados();
+        this.mostrarExito('Pedido limpiado correctamente');
     }
 
     // Funciones para agregar desde stock bajo
