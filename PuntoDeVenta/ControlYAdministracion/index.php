@@ -2,7 +2,8 @@
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/ConsultaDashboard.php";
 
-
+// Definir variable para atributos disabled (por ahora vacía para habilitar todo)
+$disabledAttr = '';
 
 ?>
 <!DOCTYPE html>
@@ -10,7 +11,7 @@ include_once "Controladores/ConsultaDashboard.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Pantalla de inicio administrativa <?php echo $row['Licencia']?> </title>
+    <title>Pantalla de inicio administrativa</title>
     <!-- <style>
         * {
             margin: 0;
@@ -85,6 +86,13 @@ include_once "Controladores/ConsultaDashboard.php";
    
    <?php
    include "header.php";?>
+   
+   <script>
+       // Actualizar el título dinámicamente después de cargar los datos
+       document.addEventListener('DOMContentLoaded', function() {
+           document.title = 'Pantalla de inicio administrativa <?php echo isset($row['Licencia']) ? $row['Licencia'] : ''; ?>';
+       });
+   </script>
    
    <style>
        /* Estilos personalizados para el dashboard */
@@ -188,7 +196,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-chart-line fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Venta del día</p>
-                                <h6 class="mb-0 stats-number"><?php echo "MX$ " . $formattedTotal; ?></h6>
+                                <h6 class="mb-0 stats-number"><?php echo "MX$ " . (isset($formattedTotal) ? $formattedTotal : '0.00'); ?></h6>
                             </div>
                         </div>
                     </div>
@@ -198,7 +206,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-chart-area fa-3x text-success"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Venta del mes</p>
-                                <h6 class="mb-0 stats-number"><?php echo "MX$ " . $ventasMes; ?></h6>
+                                <h6 class="mb-0 stats-number"><?php echo "MX$ " . (isset($ventasMes) ? $ventasMes : '0.00'); ?></h6>
                             </div>
                         </div>
                     </div>
@@ -208,7 +216,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-cash-register fa-3x text-warning"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Cajas abiertas</p>
-                                <h6 class="mb-0 stats-number"><?php echo $CajasAbiertas; ?></h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($CajasAbiertas) ? $CajasAbiertas : '0'; ?></h6>
                             </div>
                         </div>
                     </div>
@@ -218,7 +226,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-box fa-3x text-info"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Total productos</p>
-                                <h6 class="mb-0 stats-number"><?php echo $totalProductos; ?></h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($totalProductos) ? $totalProductos : '0'; ?></h6>
                             </div>
                         </div>
                     </div>
@@ -234,7 +242,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-exclamation-triangle fa-3x text-warning"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Bajo stock</p>
-                                <h6 class="mb-0 stats-number"><?php echo $productosBajoStock; ?> productos</h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($productosBajoStock) ? $productosBajoStock : '0'; ?> productos</h6>
                             </div>
                         </div>
                     </div>
@@ -244,7 +252,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-times-circle fa-3x text-danger"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Sin stock</p>
-                                <h6 class="mb-0 stats-number"><?php echo $productosSinStock; ?> productos</h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($productosSinStock) ? $productosSinStock : '0'; ?> productos</h6>
                             </div>
                         </div>
                     </div>
@@ -254,7 +262,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-truck fa-3x text-info"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Traspasos pendientes</p>
-                                <h6 class="mb-0 stats-number"><?php echo $traspasosPendientes; ?></h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($traspasosPendientes) ? $traspasosPendientes : '0'; ?></h6>
                             </div>
                         </div>
                     </div>
@@ -264,7 +272,7 @@ include_once "Controladores/ConsultaDashboard.php";
                             <i class="fa fa-credit-card fa-3x text-primary"></i>
                             <div class="ms-3">
                                 <p class="mb-2 stats-label">Formas de pago hoy</p>
-                                <h6 class="mb-0 stats-number"><?php echo count($ventasPorFormaPago); ?> tipos</h6>
+                                <h6 class="mb-0 stats-number"><?php echo isset($ventasPorFormaPago) ? count($ventasPorFormaPago) : '0'; ?> tipos</h6>
                             </div>
                         </div>
                     </div>
@@ -317,15 +325,21 @@ include_once "Controladores/ConsultaDashboard.php";
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($ultimasVentas as $venta): ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($venta['Folio_Ticket']); ?></td>
-                                    <td><?php echo htmlspecialchars($venta['Nombre_Prod']); ?></td>
-                                    <td><?php echo htmlspecialchars($venta['Nombre_Sucursal']); ?></td>
-                                    <td>MX$ <?php echo number_format($venta['Total_Venta'], 2); ?></td>
-                                    <td><?php echo date('d/m/Y H:i', strtotime($venta['Fecha_venta'])); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
+                                <?php if (isset($ultimasVentas) && is_array($ultimasVentas)): ?>
+                                    <?php foreach ($ultimasVentas as $venta): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($venta['Folio_Ticket']); ?></td>
+                                        <td><?php echo htmlspecialchars($venta['Nombre_Prod']); ?></td>
+                                        <td><?php echo htmlspecialchars($venta['Nombre_Sucursal']); ?></td>
+                                        <td>MX$ <?php echo number_format($venta['Total_Venta'], 2); ?></td>
+                                        <td><?php echo date('d/m/Y H:i', strtotime($venta['Fecha_venta'])); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No hay datos disponibles</td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -351,12 +365,18 @@ include_once "Controladores/ConsultaDashboard.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($productosMenosVendidos as $producto): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($producto['Nombre_Prod']); ?></td>
-                                            <td><?php echo number_format($producto['Total_Vendido']); ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
+                                        <?php if (isset($productosMenosVendidos) && is_array($productosMenosVendidos)): ?>
+                                            <?php foreach ($productosMenosVendidos as $producto): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($producto['Nombre_Prod']); ?></td>
+                                                <td><?php echo number_format($producto['Total_Vendido']); ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="2" class="text-center">No hay datos disponibles</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -378,13 +398,19 @@ include_once "Controladores/ConsultaDashboard.php";
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($ventasPorFormaPago as $forma): ?>
-                                        <tr>
-                                            <td><?php echo htmlspecialchars($forma['FormaDePago']); ?></td>
-                                            <td><?php echo number_format($forma['Cantidad']); ?></td>
-                                            <td>MX$ <?php echo number_format($forma['Total'], 2); ?></td>
-                                        </tr>
-                                        <?php endforeach; ?>
+                                        <?php if (isset($ventasPorFormaPago) && is_array($ventasPorFormaPago)): ?>
+                                            <?php foreach ($ventasPorFormaPago as $forma): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($forma['FormaDePago']); ?></td>
+                                                <td><?php echo number_format($forma['Cantidad']); ?></td>
+                                                <td>MX$ <?php echo number_format($forma['Total'], 2); ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="3" class="text-center">No hay datos disponibles</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -601,12 +627,12 @@ include_once "Controladores/ConsultaDashboard.php";
 
     document.addEventListener('DOMContentLoaded', function() {
         // Datos de productos más vendidos del mes (desde PHP)
-        const productosMasVendidos = <?php echo json_encode(array_column($productosMasVendidos, 'Nombre_Prod')); ?>;
-        const cantidadesVendidas = <?php echo json_encode(array_column($productosMasVendidos, 'Total_Vendido')); ?>;
+        const productosMasVendidos = <?php echo isset($productosMasVendidos) ? json_encode(array_column($productosMasVendidos, 'Nombre_Prod')) : '[]'; ?>;
+        const cantidadesVendidas = <?php echo isset($productosMasVendidos) ? json_encode(array_column($productosMasVendidos, 'Total_Vendido')) : '[]'; ?>;
         
         // Datos de formas de pago del día (desde PHP)
-        const formasPago = <?php echo json_encode(array_column($ventasPorFormaPago, 'FormaDePago')); ?>;
-        const totalesFormaPago = <?php echo json_encode(array_column($ventasPorFormaPago, 'Total')); ?>;
+        const formasPago = <?php echo isset($ventasPorFormaPago) ? json_encode(array_column($ventasPorFormaPago, 'FormaDePago')) : '[]'; ?>;
+        const totalesFormaPago = <?php echo isset($ventasPorFormaPago) ? json_encode(array_column($ventasPorFormaPago, 'Total')) : '[]'; ?>;
 
         // Configuración del gráfico de productos más vendidos
         const ctx1 = document.getElementById('vendidos').getContext('2d');
