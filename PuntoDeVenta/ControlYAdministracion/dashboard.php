@@ -12,6 +12,9 @@ include_once "Controladores/ConsultaDashboard.php";
 // Definir variable para atributos disabled (por ahora vacía para habilitar todo)
 $disabledAttr = '';
 
+// Variable para identificar la página actual
+$currentPage = 'dashboard';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

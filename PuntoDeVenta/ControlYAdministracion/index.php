@@ -10,6 +10,9 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 // Definir variable para atributos disabled (por ahora vacía para habilitar todo)
 $disabledAttr = '';
 
+// Variable para identificar la página actual
+$currentPage = 'index';
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

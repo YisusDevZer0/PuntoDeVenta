@@ -19,8 +19,8 @@ $tipoUsuario = $row['TipoUsuario'];
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                <a href="index" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-                <a href="dashboard" class="nav-item nav-link"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
+                <a href="index" class="nav-item nav-link <?php echo (!isset($currentPage) || $currentPage == 'index') ? 'active' : ''; ?>"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
+                <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
 
 <?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
 <div class="nav-item dropdown">
