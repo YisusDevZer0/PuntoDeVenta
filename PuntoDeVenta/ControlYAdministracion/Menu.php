@@ -1,6 +1,14 @@
 <?php 
+// Verificar si $row está disponible, si no, obtener los datos del usuario
+if (!isset($row) || !isset($row['TipoUsuario'])) {
+    // Incluir el controlador de usuario si no está ya incluido
+    if (!function_exists('getUserData')) {
+        include_once "Controladores/ControladorUsuario.php";
+    }
+}
+
 // Obtener el tipo de usuario actual
-$tipoUsuario = $row['TipoUsuario'];
+$tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 ?>
 
 <div class="sidebar pe-4 pb-3">
