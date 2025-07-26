@@ -63,15 +63,34 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
 
         <!-- Welcome Section Start -->
         <div class="container-fluid pt-4 px-4">
+            <!-- Animación de burbujas -->
+            <div class="bubbles-container">
+                <div class="bubble bubble-1"></div>
+                <div class="bubble bubble-2"></div>
+                <div class="bubble bubble-3"></div>
+                <div class="bubble bubble-4"></div>
+                <div class="bubble bubble-5"></div>
+                <div class="bubble bubble-6"></div>
+                <div class="bubble bubble-7"></div>
+                <div class="bubble bubble-8"></div>
+            </div>
+            
             <div class="row g-4">
                 <div class="col-12">
-                    <div class="bg-light rounded p-4">
+                    <div class="bg-light rounded p-4 position-relative">
                         <div class="text-center">
                             <h1 class="mb-4 text-primary">
                                 <i class="fa-solid fa-fish me-3" style="color: #ef7980!important;"></i>
-                                Bienvenido a <?php echo $row['Licencia']; ?>
+                                Bienvenido, <?php echo $row['Nombre_Apellidos']; ?>
                             </h1>
-                            <p class="lead mb-4">Sistema de Control y Administración</p>
+                            <p class="lead mb-4">
+                                <i class="fa-solid fa-user-tag me-2 text-info"></i>
+                                <?php echo $tipoUsuario; ?> - <?php echo $row['Licencia']; ?>
+                            </p>
+                            <p class="text-muted mb-4">
+                                <i class="fa-solid fa-building me-2"></i>
+                                Sucursal: <?php echo isset($row['Nombre_Sucursal']) ? $row['Nombre_Sucursal'] : 'N/A'; ?>
+                            </p>
                             
                             <!-- Dashboard Section - Visible para todos -->
                             <div class="row mb-4">
@@ -242,6 +261,157 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
         </div>
         <!-- Welcome Section End -->
 
+        <!-- Estilos para la animación de burbujas -->
+        <style>
+            .bubbles-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 1;
+                overflow: hidden;
+            }
+            
+            .bubble {
+                position: absolute;
+                background: linear-gradient(45deg, #ef7980, #ff6b6b, #4ecdc4, #45b7d1);
+                border-radius: 50%;
+                opacity: 0.3;
+                animation: float 6s ease-in-out infinite;
+            }
+            
+            .bubble-1 {
+                width: 40px;
+                height: 40px;
+                left: 10%;
+                animation-delay: 0s;
+            }
+            
+            .bubble-2 {
+                width: 60px;
+                height: 60px;
+                left: 20%;
+                animation-delay: 1s;
+            }
+            
+            .bubble-3 {
+                width: 30px;
+                height: 30px;
+                left: 30%;
+                animation-delay: 2s;
+            }
+            
+            .bubble-4 {
+                width: 50px;
+                height: 50px;
+                left: 40%;
+                animation-delay: 3s;
+            }
+            
+            .bubble-5 {
+                width: 35px;
+                height: 35px;
+                left: 50%;
+                animation-delay: 4s;
+            }
+            
+            .bubble-6 {
+                width: 45px;
+                height: 45px;
+                left: 60%;
+                animation-delay: 5s;
+            }
+            
+            .bubble-7 {
+                width: 25px;
+                height: 25px;
+                left: 70%;
+                animation-delay: 6s;
+            }
+            
+            .bubble-8 {
+                width: 55px;
+                height: 55px;
+                left: 80%;
+                animation-delay: 7s;
+            }
+            
+            @keyframes float {
+                0%, 100% {
+                    transform: translateY(100vh) scale(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.3;
+                }
+                90% {
+                    opacity: 0.3;
+                }
+                100% {
+                    transform: translateY(-100px) scale(1);
+                    opacity: 0;
+                }
+            }
+            
+            /* Efecto de ondas en el fondo */
+            .bg-light {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .bg-light::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(239, 121, 128, 0.05) 0%, transparent 70%);
+                animation: wave 8s ease-in-out infinite;
+                pointer-events: none;
+            }
+            
+            @keyframes wave {
+                0%, 100% {
+                    transform: rotate(0deg);
+                }
+                50% {
+                    transform: rotate(180deg);
+                }
+            }
+            
+            /* Mejoras en las tarjetas */
+            .card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                backdrop-filter: blur(10px);
+                background: rgba(255, 255, 255, 0.95);
+            }
+            
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+            
+            /* Efecto especial para el título */
+            .text-primary {
+                background: linear-gradient(45deg, #ef7980, #ff6b6b);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: shimmer 2s ease-in-out infinite;
+            }
+            
+            @keyframes shimmer {
+                0%, 100% {
+                    filter: brightness(1);
+                }
+                50% {
+                    filter: brightness(1.2);
+                }
+            }
+        </style>
         <!-- Footer Start -->
         <?php 
             include "Modales/NuevoFondoDeCaja.php";
