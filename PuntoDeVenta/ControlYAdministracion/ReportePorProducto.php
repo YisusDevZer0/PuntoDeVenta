@@ -24,7 +24,7 @@ include_once "Controladores/ControladorUsuario.php";
         }
         
         #tablaReporte thead th {
-            background-color: #0172b6 !important;
+            background-color: #ef7980 !important;
             color: white !important;
             font-weight: bold;
             padding: 12px 8px;
@@ -37,7 +37,7 @@ include_once "Controladores/ControladorUsuario.php";
         }
         
         #tablaReporte tbody tr:hover {
-            background-color: #e3f2fd !important;
+            background-color: #ffe6e7 !important;
         }
         
         #tablaReporte tbody td {
@@ -48,18 +48,18 @@ include_once "Controladores/ControladorUsuario.php";
         
         /* Estilos para los botones de paginación */
         .dataTables_wrapper .dataTables_paginate .paginate_button {
-            background: #0172b6 !important;
+            background: #ef7980 !important;
             color: white !important;
-            border: 1px solid #0172b6 !important;
+            border: 1px solid #ef7980 !important;
         }
         
         .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: #015a8f !important;
+            background: #d65a62 !important;
             color: white !important;
         }
         
         .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: #015a8f !important;
+            background: #d65a62 !important;
             color: white !important;
         }
         
@@ -80,7 +80,7 @@ include_once "Controladores/ControladorUsuario.php";
         
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #0172b6;
+            border-top: 4px solid #ef7980;
             border-radius: 50%;
             width: 50px;
             height: 50px;
@@ -92,14 +92,45 @@ include_once "Controladores/ControladorUsuario.php";
             100% { transform: rotate(360deg); }
         }
         
-        /* Estilos para las estadísticas */
-        .stats-card {
-            background: linear-gradient(135deg, #0172b6 0%, #015a8f 100%);
+        /* Estilos para las estadísticas con colores por importancia */
+        .stats-card-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
             color: white;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stats-card-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stats-card-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stats-card-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
         .stats-number {
@@ -111,6 +142,12 @@ include_once "Controladores/ControladorUsuario.php";
         .stats-label {
             font-size: 0.9rem;
             opacity: 0.9;
+        }
+        
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -185,25 +222,37 @@ include_once "Controladores/ControladorUsuario.php";
                     <!-- Estadísticas Rápidas -->
                     <div class="row mb-4" id="statsRow" style="display: none;">
                         <div class="col-md-3">
-                            <div class="stats-card">
+                            <div class="stats-card-primary">
+                                <div class="stats-icon">
+                                    <i class="fas fa-boxes"></i>
+                                </div>
                                 <div class="stats-number" id="totalProductos">0</div>
                                 <div class="stats-label">Productos Vendidos</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stats-card">
+                            <div class="stats-card-success">
+                                <div class="stats-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
                                 <div class="stats-number" id="totalVentas">$0</div>
                                 <div class="stats-label">Total Ventas</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stats-card">
+                            <div class="stats-card-info">
+                                <div class="stats-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
                                 <div class="stats-number" id="totalUnidades">0</div>
                                 <div class="stats-label">Unidades Vendidas</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="stats-card">
+                            <div class="stats-card-warning">
+                                <div class="stats-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
                                 <div class="stats-number" id="promedioVenta">$0</div>
                                 <div class="stats-label">Promedio por Venta</div>
                             </div>
@@ -215,22 +264,22 @@ include_once "Controladores/ControladorUsuario.php";
                         <table id="tablaReporte" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID Producto</th>
-                                    <th>Código de Barras</th>
-                                    <th>Nombre del Producto</th>
-                                    <th>Tipo</th>
-                                    <th>Sucursal</th>
-                                    <th>Precio Venta</th>
-                                    <th>Precio Compra</th>
-                                    <th>Existencias</th>
-                                    <th>Total Vendido</th>
-                                    <th>Total Importe</th>
-                                    <th>Total Venta</th>
-                                    <th>Total Descuento</th>
-                                    <th>Número Ventas</th>
-                                    <th>Vendedor</th>
-                                    <th>Primera Venta</th>
-                                    <th>Última Venta</th>
+                                    <th><i class="fas fa-hashtag me-1"></i>ID Producto</th>
+                                    <th><i class="fas fa-barcode me-1"></i>Código de Barras</th>
+                                    <th><i class="fas fa-box me-1"></i>Nombre del Producto</th>
+                                    <th><i class="fas fa-tag me-1"></i>Tipo</th>
+                                    <th><i class="fas fa-store me-1"></i>Sucursal</th>
+                                    <th><i class="fas fa-dollar-sign me-1"></i>Precio Venta</th>
+                                    <th><i class="fas fa-shopping-bag me-1"></i>Precio Compra</th>
+                                    <th><i class="fas fa-warehouse me-1"></i>Existencias</th>
+                                    <th><i class="fas fa-sort-amount-up me-1"></i>Total Vendido</th>
+                                    <th><i class="fas fa-money-bill-wave me-1"></i>Total Importe</th>
+                                    <th><i class="fas fa-cash-register me-1"></i>Total Venta</th>
+                                    <th><i class="fas fa-percentage me-1"></i>Total Descuento</th>
+                                    <th><i class="fas fa-chart-bar me-1"></i>Número Ventas</th>
+                                    <th><i class="fas fa-user me-1"></i>Vendedor</th>
+                                    <th><i class="fas fa-calendar-plus me-1"></i>Primera Venta</th>
+                                    <th><i class="fas fa-calendar-check me-1"></i>Última Venta</th>
                                 </tr>
                             </thead>
                             <tbody>
