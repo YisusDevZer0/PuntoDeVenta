@@ -1,11 +1,11 @@
 <?php
 session_start();
 include("db_connect.php");
-include("ControladorUsuario.php");
+include_once "Controladores/ControladorUsuario.php";
 
-// Verificar si el usuario está logueado
-if (!isset($_SESSION['usuario'])) {
-    header("Location: signin.html");
+// Verificar si el usuario está logueado usando el mismo patrón del sistema
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
     exit();
 }
 ?>
