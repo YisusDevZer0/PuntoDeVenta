@@ -12,6 +12,21 @@ class SistemaPedidos {
         this.setupEventListeners();
         this.setupSortable();
         this.cargarEstadisticas();
+        this.setupAnimations();
+    }
+
+    setupAnimations() {
+        // Agregar animaciones de entrada
+        $('.stats-card').addClass('fade-in');
+        
+        // Animación para los pedidos al cargar
+        $(document).on('pedidosLoaded', () => {
+            $('.pedido-item').each((index, element) => {
+                setTimeout(() => {
+                    $(element).addClass('fade-in');
+                }, index * 100);
+            });
+        });
     }
 
     setupEventListeners() {
@@ -45,6 +60,24 @@ class SistemaPedidos {
         $('#filtro-estado, #filtro-fecha-inicio, #filtro-fecha-fin').on('change', () => {
             this.aplicarFiltros();
         });
+
+        // Eventos adicionales para mejor UX
+        $(document).on('keydown', (e) => {
+            // Ctrl/Cmd + N para nuevo pedido
+            if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                e.preventDefault();
+                this.abrirModalNuevoPedido();
+            }
+            
+            // Ctrl/Cmd + R para refrescar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                this.cargarPedidos();
+            }
+        });
+
+        // Tooltips para mejor UX
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
     setupSortable() {
@@ -54,7 +87,10 @@ class SistemaPedidos {
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
-            onEnd: () => this.actualizarResumen()
+            onEnd: () => this.actualizarResumen(),
+            onStart: () => {
+                $('.sortable-ghost').addClass('shadow-lg');
+            }
         });
     }
 
@@ -74,6 +110,9 @@ class SistemaPedidos {
                 this.pedidos = response.data;
                 this.renderizarPedidos();
                 this.cargarEstadisticas();
+                
+                // Disparar evento para animaciones
+                $(document).trigger('pedidosLoaded');
             } else {
                 this.mostrarError('Error al cargar pedidos: ' + response.msg);
             }
@@ -112,6 +151,9 @@ class SistemaPedidos {
         const estadoClass = `estado-${pedido.estado}`;
         const prioridadClass = `prioridad-${pedido.prioridad}`;
         
+        // Calcular tiempo transcurrido
+        const tiempoTranscurrido = this.calcularTiempoTranscurrido(pedido.fecha_creacion);
+        
         return `
             <div class="pedido-item" data-pedido-id="${pedido.id}">
                 <div class="row align-items-center">
@@ -119,6 +161,8 @@ class SistemaPedidos {
                         <strong>${pedido.folio}</strong>
                         <br>
                         <small class="text-muted">${fecha}</small>
+                        <br>
+                        <small class="text-info">${tiempoTranscurrido}</small>
                     </div>
                     <div class="col-md-3">
                         <div class="d-flex align-items-center">
@@ -140,17 +184,21 @@ class SistemaPedidos {
                     </div>
                     <div class="col-md-3">
                         <div class="btn-group" role="group">
-                            <button class="btn btn-outline-primary btn-sm ver-detalle" data-pedido-id="${pedido.id}">
+                            <button class="btn btn-outline-primary btn-sm ver-detalle" data-pedido-id="${pedido.id}" 
+                                    data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
                             ${pedido.estado === 'pendiente' ? `
-                                <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}">
+                                <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Aprobar pedido">
                                     <i class="fas fa-check"></i>
                                 </button>
-                                <button class="btn btn-outline-danger btn-sm rechazar-pedido" data-pedido-id="${pedido.id}">
+                                <button class="btn btn-outline-danger btn-sm rechazar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Rechazar pedido">
                                     <i class="fas fa-times"></i>
                                 </button>
-                                <button class="btn btn-outline-warning btn-sm eliminar-pedido" data-pedido-id="${pedido.id}">
+                                <button class="btn btn-outline-warning btn-sm eliminar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Eliminar pedido">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             ` : ''}
@@ -159,6 +207,22 @@ class SistemaPedidos {
                 </div>
             </div>
         `;
+    }
+
+    calcularTiempoTranscurrido(fechaCreacion) {
+        const ahora = new Date();
+        const fecha = new Date(fechaCreacion);
+        const diffMs = ahora - fecha;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        if (diffDays > 0) {
+            return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+        } else if (diffHours > 0) {
+            return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+        } else {
+            return 'Hace menos de 1 hora';
+        }
     }
 
     setupPedidoEventListeners() {
@@ -184,6 +248,13 @@ class SistemaPedidos {
         $('.eliminar-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.eliminarPedido(pedidoId);
+        });
+
+        // Hover effects
+        $('.pedido-item').on('mouseenter', function() {
+            $(this).addClass('shadow-lg');
+        }).on('mouseleave', function() {
+            $(this).removeClass('shadow-lg');
         });
     }
 
@@ -308,7 +379,12 @@ class SistemaPedidos {
                 inputPlaceholder: 'Escribe un comentario sobre este cambio...',
                 showCancelButton: true,
                 confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (value && value.length > 500) {
+                        return 'El comentario no puede tener más de 500 caracteres';
+                    }
+                }
             });
 
             const response = await $.post('Controladores/PedidosController.php', {
@@ -363,6 +439,11 @@ class SistemaPedidos {
     abrirModalNuevoPedido() {
         this.limpiarFormularioNuevoPedido();
         $('#modalNuevoPedido').modal('show');
+        
+        // Enfocar en el campo de búsqueda
+        setTimeout(() => {
+            $('#busqueda-producto').focus();
+        }, 500);
     }
 
     limpiarFormularioNuevoPedido() {
@@ -482,6 +563,9 @@ class SistemaPedidos {
         // Actualizar la vista
         this.actualizarVistaProductos();
         this.actualizarResumen();
+        
+        // Mostrar notificación
+        this.mostrarExito('Producto agregado al pedido');
     }
 
     actualizarVistaProductos() {
@@ -692,6 +776,8 @@ class SistemaPedidos {
 
         this.actualizarVistaProductos();
         this.actualizarResumen();
+        
+        this.mostrarExito('Producto agregado con cantidad sugerida');
     }
 
     aplicarFiltros() {
@@ -757,7 +843,9 @@ class SistemaPedidos {
             title: '¡Éxito!',
             text: mensaje,
             timer: 3000,
-            showConfirmButton: false
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
         });
     }
 

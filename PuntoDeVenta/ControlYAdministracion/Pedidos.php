@@ -43,6 +43,11 @@ include "Controladores/db_connect.php";
             padding: 20px;
             margin-bottom: 20px;
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-3px);
         }
         
         .pedido-item {
@@ -53,11 +58,13 @@ include "Controladores/db_connect.php";
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             cursor: pointer;
+            border-left: 4px solid #667eea;
         }
         
         .pedido-item:hover {
             transform: translateX(5px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border-left-color: #764ba2;
         }
         
         .estado-badge {
@@ -66,6 +73,7 @@ include "Controladores/db_connect.php";
             font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .estado-pendiente { background: #ffc107; color: #000; }
@@ -80,6 +88,7 @@ include "Controladores/db_connect.php";
             border-radius: 12px;
             font-size: 10px;
             font-weight: bold;
+            text-transform: uppercase;
         }
         
         .prioridad-baja { background: #28a745; color: white; }
@@ -92,6 +101,7 @@ include "Controladores/db_connect.php";
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
+            backdrop-filter: blur(10px);
         }
         
         .btn-modern {
@@ -100,6 +110,8 @@ include "Controladores/db_connect.php";
             font-weight: 600;
             transition: all 0.3s ease;
             border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .btn-modern:hover {
@@ -125,6 +137,12 @@ include "Controladores/db_connect.php";
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+        
         .producto-card {
             background: white;
             border-radius: 10px;
@@ -132,11 +150,17 @@ include "Controladores/db_connect.php";
             margin: 10px 0;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            border-left: 3px solid #667eea;
         }
         
         .producto-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .producto-card.border-success {
+            border-left-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
         }
         
         .drag-handle {
@@ -161,6 +185,120 @@ include "Controladores/db_connect.php";
             font-size: 4rem;
             margin-bottom: 20px;
             color: #dee2e6;
+        }
+        
+        /* Estilos adicionales para mejorar la experiencia */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: -35px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+        
+        .timeline-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #667eea;
+        }
+        
+        /* Animaciones suaves */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mejoras para los botones de acción */
+        .btn-group .btn {
+            border-radius: 20px;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-group .btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Estilos para el resumen del pedido */
+        .card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border: none;
+        }
+        
+        /* Mejoras para las tablas */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .pedidos-container {
+                padding: 10px;
+            }
+            
+            .stats-card {
+                margin-bottom: 15px;
+                padding: 15px;
+            }
+            
+            .btn-modern {
+                padding: 8px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
         }
     </style>
 </head>
