@@ -3,13 +3,22 @@ include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 header('Content-Type: application/json');
 
+// Verificar que el usuario esté autenticado
+if (!isset($_SESSION['Id_PvUser'])) {
+    echo json_encode(['status' => 'error', 'msg' => 'Usuario no autenticado']);
+    exit;
+}
+
+// Obtener datos del usuario
+$usuario_id = $_SESSION['Id_PvUser'];
+$sucursal_id = $_SESSION['Fk_Sucursal'] ?? '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accion = $_POST['accion'] ?? '';
     
     // Buscar productos para autocompletado
     if ($accion === 'buscar_producto') {
         $q = $_POST['q'] ?? '';
-        $sucursal_id = $row['Fk_Sucursal'] ?? '';
         
         $sql = "SELECT 
                     s.ID_Prod_POS, 
@@ -45,8 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Obtener productos con stock bajo
     if ($accion === 'productos_stock_bajo') {
-        $sucursal_id = $row['Fk_Sucursal'] ?? '';
-        
         $sql = "SELECT 
                     s.ID_Prod_POS, 
                     s.Nombre_Prod, 
@@ -78,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Obtener encargos realizados para reutilizar productos
     if ($accion === 'obtener_encargos') {
-        $sucursal_id = $row['Fk_Sucursal'] ?? '';
         $busqueda = $_POST['busqueda'] ?? '';
         
         $sql = "SELECT DISTINCT

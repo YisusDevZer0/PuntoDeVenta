@@ -4,7 +4,7 @@ class SistemaPedidos {
         this.pedidos = [];
         this.productosSeleccionados = [];
         this.sortable = null;
-        this.modalAbierto = false;
+        this.modalPersistenteAbierto = false;
         this.init();
     }
 
@@ -23,9 +23,9 @@ class SistemaPedidos {
             const datosGuardados = localStorage.getItem('pedidos_productos_seleccionados');
             if (datosGuardados) {
                 this.productosSeleccionados = JSON.parse(datosGuardados);
-                if (this.modalAbierto) {
-                    this.actualizarVistaProductos();
-                    this.actualizarResumen();
+                if (this.modalPersistenteAbierto) {
+                    this.actualizarVistaProductosPersistente();
+                    this.actualizarResumenPersistente();
                 }
             }
         } catch (error) {
@@ -58,12 +58,12 @@ class SistemaPedidos {
 
     setupEventListeners() {
         // Botones principales
-        $('#btnNuevoPedido').on('click', () => this.abrirModalNuevoPedido());
+        $('#btnNuevoPedido').on('click', () => this.abrirModalPersistente());
         $('#btnRefresh').on('click', () => this.cargarPedidos());
         $('#btnStockBajo').on('click', () => this.mostrarProductosStockBajo());
         $('#btnFiltrar').on('click', () => this.aplicarFiltros());
         $('#btnLimpiar').on('click', () => this.limpiarFiltros());
-        $('#btnCrearPrimerPedido').on('click', () => this.abrirModalNuevoPedido());
+        $('#btnCrearPrimerPedido').on('click', () => this.abrirModalPersistente());
 
         // Búsqueda en tiempo real
         let timeoutBusqueda;
@@ -74,31 +74,29 @@ class SistemaPedidos {
             }, 500);
         });
 
-        // Búsqueda de productos
-        $('#btnBuscarProducto').on('click', () => this.buscarProductos());
-        $('#busqueda-producto').on('keypress', (e) => {
-            if (e.which === 13) this.buscarProductos();
+        // Eventos del modal persistente
+        $('#btnBuscarProductoPersistente').on('click', () => this.buscarProductosPersistente());
+        $('#btnBuscarEncargosPersistente').on('click', () => this.buscarEncargosPersistente());
+        $('#btnGuardarPedidoPersistente').on('click', () => this.guardarPedidoPersistente());
+        $('#btnLimpiarPedido').on('click', () => this.limpiarPedidoPersistente());
+        
+        $('#busqueda-producto-persistente').on('keypress', (e) => {
+            if (e.which === 13) this.buscarProductosPersistente();
         });
 
-        // Búsqueda de encargos
-        $('#btnBuscarEncargos').on('click', () => this.buscarEncargos());
+        // Eventos del modal persistente
+        $('#modalPedidoPersistente').on('shown.bs.modal', () => {
+            this.modalPersistenteAbierto = true;
+            this.cargarDatosGuardados();
+        });
 
-        // Guardar pedido
-        $('#btnGuardarPedido').on('click', () => this.guardarPedido());
+        $('#modalPedidoPersistente').on('hidden.bs.modal', () => {
+            this.modalPersistenteAbierto = false;
+        });
 
         // Filtros
         $('#filtro-estado, #filtro-fecha-inicio, #filtro-fecha-fin').on('change', () => {
             this.aplicarFiltros();
-        });
-
-        // Eventos del modal
-        $('#modalNuevoPedido').on('shown.bs.modal', () => {
-            this.modalAbierto = true;
-            this.cargarDatosGuardados();
-        });
-
-        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
-            this.modalAbierto = false;
         });
 
         // Eventos adicionales para mejor UX
@@ -106,7 +104,7 @@ class SistemaPedidos {
             // Ctrl/Cmd + N para nuevo pedido
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                 e.preventDefault();
-                this.abrirModalNuevoPedido();
+                this.abrirModalPersistente();
             }
             
             // Ctrl/Cmd + R para refrescar
@@ -121,14 +119,14 @@ class SistemaPedidos {
     }
 
     setupSortable() {
-        // Configurar drag & drop para productos del pedido
-        this.sortable = new Sortable(document.getElementById('productos-pedido'), {
+        // Configurar drag & drop para productos del pedido persistente
+        this.sortable = new Sortable(document.getElementById('productos-pedido-persistente'), {
             animation: 150,
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
             onEnd: () => {
-                this.actualizarResumen();
+                this.actualizarResumenPersistente();
                 this.guardarDatos();
             },
             onStart: () => {
@@ -424,23 +422,14 @@ class SistemaPedidos {
         }
     }
 
-    abrirModalNuevoPedido() {
-        $('#modalNuevoPedido').modal('show');
+    // Funciones del modal persistente
+    abrirModalPersistente() {
+        $('#modalPedidoPersistente').modal('show');
         this.cargarDatosGuardados();
     }
 
-    limpiarFormularioNuevoPedido() {
-        $('#busqueda-producto').val('');
-        $('#resultados-busqueda').html('');
-        $('#observaciones-pedido').val('');
-        this.productosSeleccionados = [];
-        this.actualizarVistaProductos();
-        this.actualizarResumen();
-        this.guardarDatos();
-    }
-
-    async buscarProductos() {
-        const query = $('#busqueda-producto').val().trim();
+    async buscarProductosPersistente() {
+        const query = $('#busqueda-producto-persistente').val().trim();
         
         if (query.length < 3) {
             this.mostrarError('Ingresa al menos 3 caracteres para buscar');
@@ -454,18 +443,18 @@ class SistemaPedidos {
             });
 
             if (response.status === 'ok') {
-                this.mostrarResultadosBusqueda(response.data);
+                this.mostrarResultadosBusquedaPersistente(response.data);
             } else {
                 this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
-            console.error('Error en buscarProductos:', error);
+            console.error('Error en buscarProductosPersistente:', error);
             this.mostrarError('Error de conexión');
         }
     }
 
-    async buscarEncargos() {
-        const query = $('#busqueda-producto').val().trim();
+    async buscarEncargosPersistente() {
+        const query = $('#busqueda-producto-persistente').val().trim();
         
         if (query.length < 2) {
             this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
@@ -479,18 +468,18 @@ class SistemaPedidos {
             });
 
             if (response.status === 'ok') {
-                this.mostrarResultadosEncargos(response.data);
+                this.mostrarResultadosEncargosPersistente(response.data);
             } else {
                 this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
-            console.error('Error en buscarEncargos:', error);
+            console.error('Error en buscarEncargosPersistente:', error);
             this.mostrarError('Error de conexión');
         }
     }
 
-    mostrarResultadosBusqueda(productos) {
-        const container = $('#resultados-busqueda');
+    mostrarResultadosBusquedaPersistente(productos) {
+        const container = $('#resultados-busqueda-persistente');
         
         if (!productos || productos.length === 0) {
             container.html('<p class="text-muted">No se encontraron productos</p>');
@@ -526,7 +515,7 @@ class SistemaPedidos {
                             <div class="ms-2">
                                 ${yaSeleccionado ? 
                                     '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-primary btn-sm agregar-producto">Agregar</button>'
+                                    '<button class="btn btn-primary btn-sm agregar-producto-persistente">Agregar</button>'
                                 }
                             </div>
                         </div>
@@ -539,15 +528,15 @@ class SistemaPedidos {
         container.html(html);
 
         // Event listeners para agregar productos
-        $('.agregar-producto').on('click', (e) => {
+        $('.agregar-producto-persistente').on('click', (e) => {
             const card = $(e.currentTarget).closest('.producto-card');
             const producto = JSON.parse(card.data('producto'));
-            this.agregarProductoAPedido(producto);
+            this.agregarProductoAPedidoPersistente(producto);
         });
     }
 
-    mostrarResultadosEncargos(encargos) {
-        const container = $('#resultados-busqueda');
+    mostrarResultadosEncargosPersistente(encargos) {
+        const container = $('#resultados-busqueda-persistente');
         
         if (!encargos || encargos.length === 0) {
             container.html('<p class="text-muted">No se encontraron encargos previos</p>');
@@ -588,7 +577,7 @@ class SistemaPedidos {
                             <div class="ms-2">
                                 ${yaSeleccionado ? 
                                     '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-info btn-sm agregar-producto">Agregar</button>'
+                                    '<button class="btn btn-info btn-sm agregar-producto-persistente">Agregar</button>'
                                 }
                             </div>
                         </div>
@@ -601,14 +590,14 @@ class SistemaPedidos {
         container.html(html);
 
         // Event listeners para agregar productos
-        $('.agregar-producto').on('click', (e) => {
+        $('.agregar-producto-persistente').on('click', (e) => {
             const card = $(e.currentTarget).closest('.producto-card');
             const producto = JSON.parse(card.data('producto'));
-            this.agregarProductoAPedido(producto);
+            this.agregarProductoAPedidoPersistente(producto);
         });
     }
 
-    agregarProductoAPedido(producto) {
+    agregarProductoAPedidoPersistente(producto) {
         // Verificar si ya está agregado
         if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
             this.mostrarError('Este producto ya está en el pedido');
@@ -627,16 +616,16 @@ class SistemaPedidos {
         });
 
         // Actualizar la vista
-        this.actualizarVistaProductos();
-        this.actualizarResumen();
+        this.actualizarVistaProductosPersistente();
+        this.actualizarResumenPersistente();
         this.guardarDatos();
         
         // Mostrar notificación
         this.mostrarExito('Producto agregado al pedido');
     }
 
-    actualizarVistaProductos() {
-        const container = $('#productos-pedido');
+    actualizarVistaProductosPersistente() {
+        const container = $('#productos-pedido-persistente');
         
         if (this.productosSeleccionados.length === 0) {
             container.html(`
@@ -666,9 +655,9 @@ class SistemaPedidos {
                         <div class="d-flex align-items-center">
                             <input type="number" class="form-control form-control-sm me-2" 
                                    style="width: 80px;" min="1" value="${producto.cantidad}"
-                                   onchange="sistemaPedidos.actualizarCantidad(${index}, this.value)">
+                                   onchange="sistemaPedidos.actualizarCantidadPersistente(${index}, this.value)">
                             <span class="me-2">$${producto.precio.toFixed(2)}</span>
-                            <button class="btn btn-danger btn-sm" onclick="sistemaPedidos.eliminarProducto(${index})">
+                            <button class="btn btn-danger btn-sm" onclick="sistemaPedidos.eliminarProductoPersistente(${index})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -680,40 +669,39 @@ class SistemaPedidos {
         container.html(html);
     }
 
-    actualizarCantidad(index, cantidad) {
+    actualizarCantidadPersistente(index, cantidad) {
         if (this.productosSeleccionados[index]) {
             this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
-            this.actualizarResumen();
+            this.actualizarResumenPersistente();
             this.guardarDatos();
         }
     }
 
-    eliminarProducto(index) {
+    eliminarProductoPersistente(index) {
         this.productosSeleccionados.splice(index, 1);
-        this.actualizarVistaProductos();
-        this.actualizarResumen();
+        this.actualizarVistaProductosPersistente();
+        this.actualizarResumenPersistente();
         this.guardarDatos();
     }
 
-    actualizarResumen() {
+    actualizarResumenPersistente() {
         const totalProductos = this.productosSeleccionados.length;
         const totalCantidad = this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0);
         const totalPrecio = this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
 
-        $('#total-productos').text(totalProductos);
-        $('#total-cantidad').text(totalCantidad);
-        $('#total-precio').text(`$${totalPrecio.toFixed(2)}`);
-        $('#total-final').text(`$${totalPrecio.toFixed(2)}`);
+        $('#total-productos-persistente').text(totalProductos);
+        $('#total-cantidad-persistente').text(totalCantidad);
+        $('#total-precio-persistente').text(`$${totalPrecio.toFixed(2)}`);
     }
 
-    async guardarPedido() {
+    async guardarPedidoPersistente() {
         if (this.productosSeleccionados.length === 0) {
             this.mostrarError('Debes agregar al menos un producto al pedido');
             return;
         }
 
-        const observaciones = $('#observaciones-pedido').val().trim();
-        const prioridad = $('#prioridad-pedido').val();
+        const observaciones = $('#observaciones-pedido-persistente').val().trim();
+        const prioridad = $('#prioridad-pedido-persistente').val();
 
         try {
             const response = await $.post('Controladores/PedidosController.php', {
@@ -725,18 +713,35 @@ class SistemaPedidos {
 
             if (response.status === 'ok') {
                 this.mostrarExito('Pedido creado exitosamente');
-                $('#modalNuevoPedido').modal('hide');
-                this.limpiarFormularioNuevoPedido();
+                $('#modalPedidoPersistente').modal('hide');
+                this.limpiarPedidoPersistente();
                 this.cargarPedidos();
             } else {
                 this.mostrarError('Error al crear pedido: ' + response.msg);
             }
         } catch (error) {
-            console.error('Error en guardarPedido:', error);
+            console.error('Error en guardarPedidoPersistente:', error);
             this.mostrarError('Error de conexión');
         }
     }
 
+    limpiarPedidoPersistente() {
+        $('#busqueda-producto-persistente').val('');
+        $('#resultados-busqueda-persistente').html(`
+            <p class="text-muted text-center">
+                <i class="fas fa-search fa-2x mb-2"></i><br>
+                Busca productos para agregar al pedido
+            </p>
+        `);
+        $('#observaciones-pedido-persistente').val('');
+        $('#prioridad-pedido-persistente').val('normal');
+        this.productosSeleccionados = [];
+        this.actualizarVistaProductosPersistente();
+        this.actualizarResumenPersistente();
+        this.guardarDatos();
+    }
+
+    // Funciones para agregar desde stock bajo
     async mostrarProductosStockBajo() {
         try {
             const response = await $.post('Controladores/PedidosController.php', {
@@ -824,9 +829,11 @@ class SistemaPedidos {
             min_stock: producto.Min_Existencia
         });
 
-        // Actualizar la vista
-        this.actualizarVistaProductos();
-        this.actualizarResumen();
+        // Actualizar la vista del modal persistente si está abierto
+        if (this.modalPersistenteAbierto) {
+            this.actualizarVistaProductosPersistente();
+            this.actualizarResumenPersistente();
+        }
         this.guardarDatos();
         
         // Mostrar notificación

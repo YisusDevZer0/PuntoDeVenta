@@ -724,6 +724,123 @@ include "Controladores/db_connect.php";
             </div>
         </div>
     </div>
+
+    <!-- Modal Persistente de Pedido -->
+    <div class="modal fade" id="modalPedidoPersistente" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Crear Nuevo Pedido
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Columna izquierda: Búsqueda y resultados -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-search me-2"></i>
+                                        Buscar Productos
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="busqueda-producto-persistente" 
+                                               placeholder="Buscar productos...">
+                                        <button class="btn btn-primary" type="button" id="btnBuscarProductoPersistente">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <button class="btn btn-info" type="button" id="btnBuscarEncargosPersistente">
+                                            <i class="fas fa-history"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="resultados-busqueda-persistente">
+                                        <p class="text-muted text-center">
+                                            <i class="fas fa-search fa-2x mb-2"></i><br>
+                                            Busca productos para agregar al pedido
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna derecha: Productos seleccionados -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>
+                                        Productos del Pedido
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="productos-pedido-persistente" class="productos-container">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                            <p>Arrastra productos aquí o busca productos para agregar</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Resumen del pedido -->
+                                    <div class="mt-3 p-3 bg-light rounded">
+                                        <h6>Resumen del Pedido</h6>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <small class="text-muted">Productos:</small><br>
+                                                <strong id="total-productos-persistente">0</strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <small class="text-muted">Cantidad total:</small><br>
+                                                <strong id="total-cantidad-persistente">0</strong>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <small class="text-muted">Total estimado:</small><br>
+                                                <strong id="total-precio-persistente">$0.00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Observaciones y prioridad -->
+                    <div class="row mt-3">
+                        <div class="col-md-8">
+                            <label for="observaciones-pedido-persistente" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones-pedido-persistente" rows="3" 
+                                      placeholder="Observaciones del pedido..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="prioridad-pedido-persistente" class="form-label">Prioridad</label>
+                            <select class="form-select" id="prioridad-pedido-persistente">
+                                <option value="baja">Baja</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnLimpiarPedido">
+                        <i class="fas fa-trash me-2"></i>Limpiar
+                    </button>
+                    <button type="button" class="btn btn-success" id="btnGuardarPedidoPersistente">
+                        <i class="fas fa-save me-2"></i>Guardar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <?php include "Footer.php"; ?>
     
