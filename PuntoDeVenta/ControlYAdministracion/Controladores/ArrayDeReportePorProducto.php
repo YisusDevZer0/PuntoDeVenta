@@ -57,13 +57,20 @@ try {
     // Preparar la consulta
     $stmt = $conn->prepare($sql);
     
+    if (!$stmt) {
+        throw new Exception("Error al preparar la consulta: " . $conn->error);
+    }
+    
     if (!empty($sucursal)) {
         $stmt->bind_param("sss", $fecha_inicio, $fecha_fin, $sucursal);
     } else {
         $stmt->bind_param("ss", $fecha_inicio, $fecha_fin);
     }
 
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+    }
+
     $result = $stmt->get_result();
     
     if (!$result) {
@@ -96,19 +103,33 @@ try {
         );
     }
 
-    echo json_encode(array(
-        "data" => $data,
+    // Formato correcto para DataTables
+    $response = array(
+        "draw" => isset($_GET['draw']) ? intval($_GET['draw']) : 1,
         "recordsTotal" => count($data),
-        "recordsFiltered" => count($data)
-    ));
+        "recordsFiltered" => count($data),
+        "data" => $data
+    );
+
+    echo json_encode($response);
 
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(array(
-        "error" => $e->getMessage(),
-        "data" => array(),
+    $response = array(
+        "draw" => isset($_GET['draw']) ? intval($_GET['draw']) : 1,
         "recordsTotal" => 0,
-        "recordsFiltered" => 0
-    ));
+        "recordsFiltered" => 0,
+        "data" => array(),
+        "error" => $e->getMessage()
+    );
+    echo json_encode($response);
+}
+
+// Cerrar conexión
+if (isset($stmt)) {
+    $stmt->close();
+}
+if (isset($conn)) {
+    $conn->close();
 }
 ?>

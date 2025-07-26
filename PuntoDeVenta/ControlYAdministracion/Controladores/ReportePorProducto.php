@@ -128,6 +128,15 @@ $(document).ready(function() {
                 d.fecha_inicio = $('#fecha_inicio').val();
                 d.fecha_fin = $('#fecha_fin').val();
                 d.sucursal = $('#sucursal').val();
+            },
+            "dataSrc": function(json) {
+                // Verificar si hay error en la respuesta
+                if (json.error) {
+                    console.error("Error del servidor:", json.error);
+                    alert("Error al cargar los datos: " + json.error);
+                    return [];
+                }
+                return json.data || [];
             }
         },
         "columns": [
@@ -152,6 +161,10 @@ $(document).ready(function() {
         "pageLength": 25,
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        },
+        "error": function(xhr, error, thrown) {
+            console.error("Error en DataTables:", error);
+            alert("Error al cargar los datos. Por favor, verifica la conexión.");
         }
     });
 
