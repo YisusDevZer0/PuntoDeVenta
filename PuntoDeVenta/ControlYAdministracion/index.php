@@ -1,9 +1,5 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
-
-// Verificar sesión
-
-// Incluir consultas del dashboard después de verificar sesión
 include_once "Controladores/ConsultaDashboard.php";
 
 // Definir variable para atributos disabled (por ahora vacía para habilitar todo)
@@ -21,8 +17,6 @@ $disabledAttr = '';
     <?php
    include "header.php";?>
 <body>
-   
-   <style>
        /* Estilos personalizados para el dashboard */
        .dashboard-card {
            transition: transform 0.2s ease-in-out;
@@ -74,9 +68,6 @@ $disabledAttr = '';
            color: #6c757d;
        }
    </style>
-
-
-<body>
 <!-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             let animacion = Math.floor(Math.random() * 3);
