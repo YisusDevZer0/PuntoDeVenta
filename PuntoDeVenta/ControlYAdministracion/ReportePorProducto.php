@@ -151,6 +151,6 @@ include_once "Controladores/ControladorUsuario.php";
     include "Modales/Modales_Referencias.php";
     include "Footer.php";?>
     
-    <script src="js/ReportePorProducto.js"></script>
+    <script src="js/ReportePorProductos.js"></script>
 </body>
 </html>
