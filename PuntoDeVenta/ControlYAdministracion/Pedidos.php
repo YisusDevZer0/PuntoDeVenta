@@ -36,7 +36,6 @@ include "Controladores/db_connect.php";
         }
         
         .stats-card {
-            background: var(--primary);
             color: white;
             border-radius: 8px;
             padding: 20px;
@@ -48,6 +47,23 @@ include "Controladores/db_connect.php";
         .stats-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        /* Colores específicos para cada estadística */
+        .stats-pendientes {
+            background: #ffc107; /* Amarillo para pendientes */
+        }
+        
+        .stats-aprobados {
+            background: #28a745; /* Verde para aprobados */
+        }
+        
+        .stats-proceso {
+            background: #17a2b8; /* Azul para en proceso */
+        }
+        
+        .stats-total {
+            background: #6f42c1; /* Morado para total */
         }
         
         .pedido-item {
@@ -396,22 +412,22 @@ include "Controladores/db_connect.php";
                 
                 <!-- Tarjetas de estadísticas -->
                 <div class="stats-grid">
-                    <div class="stats-card">
+                    <div class="stats-card stats-pendientes">
                         <i class="fas fa-clock fa-2x mb-2"></i>
                         <h4 id="stats-pendientes">0</h4>
                         <p class="mb-0">Pendientes</p>
                     </div>
-                    <div class="stats-card">
+                    <div class="stats-card stats-aprobados">
                         <i class="fas fa-check-circle fa-2x mb-2"></i>
                         <h4 id="stats-aprobados">0</h4>
                         <p class="mb-0">Aprobados</p>
                     </div>
-                    <div class="stats-card">
+                    <div class="stats-card stats-proceso">
                         <i class="fas fa-truck fa-2x mb-2"></i>
                         <h4 id="stats-proceso">0</h4>
                         <p class="mb-0">En Proceso</p>
                     </div>
-                    <div class="stats-card">
+                    <div class="stats-card stats-total">
                         <i class="fas fa-dollar-sign fa-2x mb-2"></i>
                         <h4 id="stats-total">$0</h4>
                         <p class="mb-0">Total Estimado</p>

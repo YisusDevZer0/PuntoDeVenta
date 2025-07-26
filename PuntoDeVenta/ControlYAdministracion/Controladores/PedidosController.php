@@ -248,21 +248,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     p.observaciones,
                     p.fecha_creacion,
                     p.fecha_aprobacion,
+                    p.fecha_completado,
                     p.total_estimado,
                     s.Nombre_Sucursal,
                     CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre,
-                    CONCAT(aprobador.Nombre, ' ', aprobador.Apellido) as aprobador_nombre,
                     COUNT(pd.id) as total_productos,
                     SUM(pd.cantidad_solicitada) as total_cantidad
                 FROM pedidos p
                 LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
-                LEFT JOIN usuarios u ON p.usuario_id = u.ID_Usuario
-                LEFT JOIN usuarios aprobador ON p.aprobado_por = aprobador.ID_Usuario
+                LEFT JOIN usuarios u ON p.usuario_id = u.Id_PvUser
                 LEFT JOIN pedido_detalles pd ON p.id = pd.pedido_id
                 $where_clause
                 GROUP BY p.id
-                ORDER BY p.fecha_creacion DESC
-                LIMIT 100";
+                ORDER BY p.fecha_creacion DESC";
         
         $stmt = $conn->prepare($sql);
         if (!empty($params)) {
@@ -280,20 +278,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Obtener detalle de pedido
+    // Obtener detalle de un pedido específico
     if ($accion === 'detalle_pedido') {
-        $pedido_id = intval($_POST['pedido_id']);
+        $pedido_id = $_POST['pedido_id'] ?? 0;
         
-        // Información del pedido
+        // Obtener información del pedido
         $sql = "SELECT 
                     p.*,
                     s.Nombre_Sucursal,
-                    CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre,
-                    CONCAT(aprobador.Nombre, ' ', aprobador.Apellido) as aprobador_nombre
+                    CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre
                 FROM pedidos p
                 LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
-                LEFT JOIN usuarios u ON p.usuario_id = u.ID_Usuario
-                LEFT JOIN usuarios aprobador ON p.aprobado_por = aprobador.ID_Usuario
+                LEFT JOIN usuarios u ON p.usuario_id = u.Id_PvUser
                 WHERE p.id = ?";
         
         $stmt = $conn->prepare($sql);
@@ -301,40 +297,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $pedido = $stmt->get_result()->fetch_assoc();
         
-        // Detalles del pedido
+        // Obtener detalles del pedido
         $sql_det = "SELECT 
                         pd.*,
-                        s.Nombre_Prod,
-                        s.Cod_Barra,
-                        s.Existencias_R,
-                        p.Precio_Venta,
-                        p.Precio_C
+                        p.Nombre_Prod,
+                        p.Cod_Barra
                     FROM pedido_detalles pd
-                    LEFT JOIN Stock_POS s ON pd.producto_id = s.ID_Prod_POS
-                    LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+                    LEFT JOIN Productos_POS p ON pd.producto_id = p.ID_Prod_POS
                     WHERE pd.pedido_id = ?";
         
         $stmt2 = $conn->prepare($sql_det);
         $stmt2->bind_param("i", $pedido_id);
         $stmt2->execute();
-        $detalles = $stmt2->get_result()->fetch_all(MYSQLI_ASSOC);
+        $detalles = [];
+        $res_det = $stmt2->get_result();
         
-        // Historial del pedido
+        while($detalle = $res_det->fetch_assoc()) {
+            $detalles[] = $detalle;
+        }
+        
+        // Obtener historial del pedido
         $sql_hist = "SELECT 
                         ph.*,
                         CONCAT(u.Nombre, ' ', u.Apellido) as usuario_nombre
                     FROM pedido_historial ph
-                    LEFT JOIN usuarios u ON ph.usuario_id = u.ID_Usuario
+                    LEFT JOIN usuarios u ON ph.usuario_id = u.Id_PvUser
                     WHERE ph.pedido_id = ?
                     ORDER BY ph.fecha_cambio DESC";
         
         $stmt3 = $conn->prepare($sql_hist);
         $stmt3->bind_param("i", $pedido_id);
         $stmt3->execute();
-        $historial = $stmt3->get_result()->fetch_all(MYSQLI_ASSOC);
+        $historial = [];
+        $res_hist = $stmt3->get_result();
+        
+        while($hist = $res_hist->fetch_assoc()) {
+            $historial[] = $hist;
+        }
         
         echo json_encode([
-            'status' => 'ok', 
+            'status' => 'ok',
             'pedido' => $pedido,
             'detalles' => $detalles,
             'historial' => $historial
@@ -342,10 +344,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Cambiar estado del pedido
+    // Cambiar estado de un pedido
     if ($accion === 'cambiar_estado') {
-        $pedido_id = intval($_POST['pedido_id']);
-        $nuevo_estado = $_POST['nuevo_estado'];
+        $pedido_id = $_POST['pedido_id'] ?? 0;
+        $nuevo_estado = $_POST['nuevo_estado'] ?? '';
         $comentario = $_POST['comentario'] ?? '';
         $usuario_id = $row['Id_PvUser'];
         
@@ -353,8 +355,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->begin_transaction();
             
             // Obtener estado actual
-            $sql_estado = "SELECT estado FROM pedidos WHERE id = ?";
-            $stmt = $conn->prepare($sql_estado);
+            $sql_actual = "SELECT estado FROM pedidos WHERE id = ?";
+            $stmt = $conn->prepare($sql_actual);
             $stmt->bind_param("i", $pedido_id);
             $stmt->execute();
             $estado_actual = $stmt->get_result()->fetch_assoc()['estado'];
@@ -364,6 +366,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $params = [$nuevo_estado];
             $types = 's';
             
+            // Actualizar fechas según el estado
             if ($nuevo_estado === 'aprobado') {
                 $sql_update .= ", fecha_aprobacion = NOW(), aprobado_por = ?";
                 $params[] = $usuario_id;
@@ -399,20 +402,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Eliminar pedido
     if ($accion === 'eliminar_pedido') {
-        $pedido_id = intval($_POST['pedido_id']);
+        $pedido_id = $_POST['pedido_id'] ?? 0;
         
         try {
-            $sql = "DELETE FROM pedidos WHERE id = ? AND estado = 'pendiente'";
-            $stmt = $conn->prepare($sql);
+            $conn->begin_transaction();
+            
+            // Verificar que el pedido esté pendiente
+            $sql_check = "SELECT estado FROM pedidos WHERE id = ?";
+            $stmt = $conn->prepare($sql_check);
             $stmt->bind_param("i", $pedido_id);
             $stmt->execute();
+            $estado = $stmt->get_result()->fetch_assoc()['estado'];
             
-            if ($stmt->affected_rows > 0) {
-                echo json_encode(['status' => 'ok', 'msg' => 'Pedido eliminado correctamente']);
-            } else {
-                echo json_encode(['status' => 'error', 'msg' => 'No se puede eliminar el pedido']);
+            if ($estado !== 'pendiente') {
+                echo json_encode(['status' => 'error', 'msg' => 'Solo se pueden eliminar pedidos pendientes']);
+                exit;
             }
+            
+            // Eliminar detalles del pedido
+            $sql_del_det = "DELETE FROM pedido_detalles WHERE pedido_id = ?";
+            $stmt2 = $conn->prepare($sql_del_det);
+            $stmt2->bind_param("i", $pedido_id);
+            $stmt2->execute();
+            
+            // Eliminar historial del pedido
+            $sql_del_hist = "DELETE FROM pedido_historial WHERE pedido_id = ?";
+            $stmt3 = $conn->prepare($sql_del_hist);
+            $stmt3->bind_param("i", $pedido_id);
+            $stmt3->execute();
+            
+            // Eliminar pedido
+            $sql_del_ped = "DELETE FROM pedidos WHERE id = ?";
+            $stmt4 = $conn->prepare($sql_del_ped);
+            $stmt4->bind_param("i", $pedido_id);
+            $stmt4->execute();
+            
+            $conn->commit();
+            echo json_encode(['status' => 'ok', 'msg' => 'Pedido eliminado correctamente']);
+            
         } catch (Exception $e) {
+            $conn->rollback();
             echo json_encode(['status' => 'error', 'msg' => 'Error al eliminar pedido: ' . $e->getMessage()]);
         }
         exit;
@@ -433,9 +462,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $sucursal_id);
         $stmt->execute();
-        $estadisticas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $res = $stmt->get_result();
+        $stats = [];
         
-        echo json_encode(['status' => 'ok', 'data' => $estadisticas]);
+        while($stat = $res->fetch_assoc()) {
+            $stats[] = $stat;
+        }
+        
+        echo json_encode(['status' => 'ok', 'data' => $stats]);
         exit;
     }
     
