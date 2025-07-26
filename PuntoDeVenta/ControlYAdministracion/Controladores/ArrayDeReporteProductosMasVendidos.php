@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    include("db_connect.php");
+    include("../dbconect.php");
     include("ControladorUsuario.php");
     
     // Obtener parámetros de filtro
@@ -41,9 +41,9 @@ try {
     LIMIT ?";
     
     // Preparar la consulta
-    $stmt = $conn->prepare($sql);
+    $stmt = $con->prepare($sql);
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $conn->error);
+        throw new Exception('Error al preparar la consulta: ' . $con->error);
     }
     
     if (!empty($sucursal)) {
@@ -63,13 +63,11 @@ try {
     
     // Procesar resultados
     $data = [];
-    $ranking = 1;
     while ($row = $result->fetch_assoc()) {
         $data[] = [
-            "Ranking" => $ranking++,
             "ID_Prod_POS" => $row['ID_Prod_POS'],
-            "Nombre_Prod" => $row['Nombre_Prod'] ?: 'Sin nombre',
             "Cod_Barra" => $row['Cod_Barra'] ?: '',
+            "Nombre_Prod" => $row['Nombre_Prod'] ?: 'Sin nombre',
             "Categoria" => $row['Categoria'] ?: 'Sin categoría',
             "Total_Vendido" => number_format($row['Total_Vendido']),
             "Total_Importe" => '$' . number_format($row['Total_Importe'], 2),
@@ -93,7 +91,7 @@ try {
     
     // Cerrar conexión
     $stmt->close();
-    $conn->close();
+    $con->close();
     
 } catch (Exception $e) {
     error_log('Error en ArrayDeReporteProductosMasVendidos.php: ' . $e->getMessage());

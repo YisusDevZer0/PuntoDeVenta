@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    include("db_connect.php");
+    include("../dbconect.php");
     include("ControladorUsuario.php");
     
     // Obtener parámetros de filtro
@@ -72,9 +72,9 @@ try {
     $sql .= " GROUP BY Periodo ORDER BY Periodo ASC";
     
     // Preparar la consulta
-    $stmt = $conn->prepare($sql);
+    $stmt = $con->prepare($sql);
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $conn->error);
+        throw new Exception('Error al preparar la consulta: ' . $con->error);
     }
     
     if (!empty($sucursal)) {
@@ -95,27 +95,8 @@ try {
     // Procesar resultados
     $data = [];
     while ($row = $result->fetch_assoc()) {
-        // Formatear el período según el tipo
-        $periodo_formateado = $row['Periodo'];
-        if ($tipo_periodo == 'mes') {
-            $meses = [
-                '01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo',
-                '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio',
-                '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre',
-                '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'
-            ];
-            $partes = explode('-', $row['Periodo']);
-            $periodo_formateado = $meses[$partes[1]] . ' ' . $partes[0];
-        } elseif ($tipo_periodo == 'trimestre') {
-            $partes = explode('-Q', $row['Periodo']);
-            $periodo_formateado = 'Trimestre ' . $partes[1] . ' - ' . $partes[0];
-        } elseif ($tipo_periodo == 'semana') {
-            $partes = explode('-W', $row['Periodo']);
-            $periodo_formateado = 'Semana ' . $partes[1] . ' - ' . $partes[0];
-        }
-        
         $data[] = [
-            "Periodo" => $periodo_formateado,
+            "Periodo" => $row['Periodo'],
             "Total_Ventas" => '$' . number_format($row['Total_Ventas'], 2),
             "Total_Importe" => '$' . number_format($row['Total_Importe'], 2),
             "Total_Descuento" => '$' . number_format($row['Total_Descuento'], 2),
@@ -140,7 +121,7 @@ try {
     
     // Cerrar conexión
     $stmt->close();
-    $conn->close();
+    $con->close();
     
 } catch (Exception $e) {
     error_log('Error en ArrayDeReportesAnuales.php: ' . $e->getMessage());
