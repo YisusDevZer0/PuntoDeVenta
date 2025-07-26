@@ -1,31 +1,4 @@
 $(document).ready(function() {
-    // Función de prueba para diagnosticar
-    function probarConexion() {
-        $.ajax({
-            url: "Controladores/TestReporte.php",
-            type: "GET",
-            success: function(response) {
-                console.log("Respuesta de prueba:", response);
-                if (response.success) {
-                    alert("Diagnóstico:\n" +
-                          "Total ventas: " + response.total_ventas + "\n" +
-                          "Fecha mínima: " + response.fecha_min + "\n" +
-                          "Fecha máxima: " + response.fecha_max + "\n" +
-                          "Datos encontrados: " + response.count_datos_prueba);
-                } else {
-                    alert("Error: " + response.error);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error AJAX:", error);
-                alert("Error de conexión: " + error);
-            }
-        });
-    }
-    
-    // Ejecutar prueba al cargar
-    probarConexion();
-    
     // Inicializar DataTable
     var table = $('#tablaReporte').DataTable({
         "processing": true,

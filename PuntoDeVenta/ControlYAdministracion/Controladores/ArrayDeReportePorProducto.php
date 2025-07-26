@@ -44,7 +44,7 @@ try {
     LEFT JOIN Stock_POS st ON v.ID_Prod_POS = st.ID_Prod_POS AND v.Fk_sucursal = st.Fk_sucursal
     LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
     WHERE v.Fecha_venta BETWEEN ? AND ?
-    AND v.Estatus = 'vendido'";
+    AND v.Estatus = 'Pagado'";
 
     // Agregar filtro de sucursal si se especifica
     if (!empty($sucursal)) {

@@ -13,7 +13,7 @@ try {
     }
 
     // Consulta simple para verificar si hay datos
-    $sql = "SELECT COUNT(*) as total FROM Ventas_POS WHERE Estatus = 'vendido'";
+    $sql = "SELECT COUNT(*) as total FROM Ventas_POS WHERE Estatus = 'Pagado'";
     $result = $conn->query($sql);
     
     if (!$result) {
@@ -24,7 +24,7 @@ try {
     $total_ventas = $row['total'];
     
     // Consulta para verificar fechas disponibles
-    $sql_fechas = "SELECT MIN(Fecha_venta) as fecha_min, MAX(Fecha_venta) as fecha_max FROM Ventas_POS WHERE Estatus = 'vendido'";
+    $sql_fechas = "SELECT MIN(Fecha_venta) as fecha_min, MAX(Fecha_venta) as fecha_max FROM Ventas_POS WHERE Estatus = 'Pagado'";
     $result_fechas = $conn->query($sql_fechas);
     
     if (!$result_fechas) {
@@ -44,7 +44,7 @@ try {
         COUNT(*) as ventas_count
     FROM Ventas_POS v
     WHERE v.Fecha_venta BETWEEN ? AND ?
-    AND v.Estatus = 'vendido'
+    AND v.Estatus = 'Pagado'
     GROUP BY v.ID_Prod_POS, v.Cod_Barra, v.Nombre_Prod
     LIMIT 10";
     
