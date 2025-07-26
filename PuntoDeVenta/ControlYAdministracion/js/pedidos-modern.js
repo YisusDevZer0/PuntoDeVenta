@@ -598,6 +598,8 @@ class SistemaPedidos {
     }
 
     agregarProductoAPedidoPersistente(producto) {
+        console.log('Agregando producto:', producto);
+        
         // Verificar si ya está agregado
         if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
             this.mostrarError('Este producto ya está en el pedido');
@@ -614,6 +616,8 @@ class SistemaPedidos {
             stock: producto.Existencias_R,
             min_stock: producto.Min_Existencia
         });
+
+        console.log('Productos seleccionados después de agregar:', this.productosSeleccionados);
 
         // Actualizar la vista
         this.actualizarVistaProductosPersistente();
@@ -812,6 +816,8 @@ class SistemaPedidos {
     }
 
     agregarProductoStockBajo(producto) {
+        console.log('Agregando producto desde stock bajo:', producto);
+        
         // Verificar si ya está agregado
         if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
             this.mostrarError('Este producto ya está en el pedido');
@@ -829,15 +835,23 @@ class SistemaPedidos {
             min_stock: producto.Min_Existencia
         });
 
-        // Actualizar la vista del modal persistente si está abierto
-        if (this.modalPersistenteAbierto) {
-            this.actualizarVistaProductosPersistente();
-            this.actualizarResumenPersistente();
+        console.log('Productos seleccionados después de agregar desde stock bajo:', this.productosSeleccionados);
+
+        // Si el modal persistente no está abierto, abrirlo
+        if (!this.modalPersistenteAbierto) {
+            $('#modalPedidoPersistente').modal('show');
         }
+
+        // Actualizar la vista del modal persistente
+        this.actualizarVistaProductosPersistente();
+        this.actualizarResumenPersistente();
         this.guardarDatos();
         
         // Mostrar notificación
         this.mostrarExito('Producto agregado al pedido');
+        
+        // Cerrar el modal de stock bajo
+        $('#modalStockBajo').modal('hide');
     }
 
     aplicarFiltros() {
