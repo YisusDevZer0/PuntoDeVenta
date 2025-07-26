@@ -196,7 +196,7 @@ include_once "Controladores/ControladorUsuario.php";
                                 <?php
                                 // Cargar sucursales dinámicamente usando la conexión correcta
                                 include_once "db_connect.php";
-                                $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 1 ORDER BY Nombre_Sucursal";
+                                $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal";
                                 $result_sucursales = $conn->query($sql_sucursales);
                                 if ($result_sucursales && $result_sucursales->num_rows > 0) {
                                     while ($sucursal = $result_sucursales->fetch_assoc()) {
