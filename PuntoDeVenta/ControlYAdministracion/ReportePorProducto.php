@@ -264,22 +264,22 @@ include_once "Controladores/ControladorUsuario.php";
                         <table id="tablaReporte" class="table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-hashtag me-1"></i>ID Producto</th>
-                                    <th><i class="fas fa-barcode me-1"></i>Código de Barras</th>
-                                    <th><i class="fas fa-box me-1"></i>Nombre del Producto</th>
-                                    <th><i class="fas fa-tag me-1"></i>Tipo</th>
-                                    <th><i class="fas fa-store me-1"></i>Sucursal</th>
-                                    <th><i class="fas fa-dollar-sign me-1"></i>Precio Venta</th>
-                                    <th><i class="fas fa-shopping-bag me-1"></i>Precio Compra</th>
-                                    <th><i class="fas fa-warehouse me-1"></i>Existencias</th>
-                                    <th><i class="fas fa-sort-amount-up me-1"></i>Total Vendido</th>
-                                    <th><i class="fas fa-money-bill-wave me-1"></i>Total Importe</th>
-                                    <th><i class="fas fa-cash-register me-1"></i>Total Venta</th>
-                                    <th><i class="fas fa-percentage me-1"></i>Total Descuento</th>
-                                    <th><i class="fas fa-chart-bar me-1"></i>Número Ventas</th>
-                                    <th><i class="fas fa-user me-1"></i>Vendedor</th>
-                                    <th><i class="fas fa-calendar-plus me-1"></i>Primera Venta</th>
-                                    <th><i class="fas fa-calendar-check me-1"></i>Última Venta</th>
+                                    <th>ID Producto</th>
+                                    <th>Código de Barras</th>
+                                    <th>Nombre del Producto</th>
+                                    <th>Tipo</th>
+                                    <th>Sucursal</th>
+                                    <th>Precio Venta</th>
+                                    <th>Precio Compra</th>
+                                    <th>Existencias</th>
+                                    <th>Total Vendido</th>
+                                    <th>Total Importe</th>
+                                    <th>Total Venta</th>
+                                    <th>Total Descuento</th>
+                                    <th>Número Ventas</th>
+                                    <th>Vendedor</th>
+                                    <th>Primera Venta</th>
+                                    <th>Última Venta</th>
                                 </tr>
                             </thead>
                             <tbody>
