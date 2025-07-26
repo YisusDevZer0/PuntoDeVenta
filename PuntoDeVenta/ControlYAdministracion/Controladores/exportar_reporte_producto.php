@@ -3,31 +3,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Verificar si existe el archivo autoload.php
-$autoloadPath = '../../vendor/autoload.php';
-if (!file_exists($autoloadPath)) {
-    header('Content-Type: application/json');
-    echo json_encode([
-        'error' => true,
-        'message' => 'No se encontró la librería PhpSpreadsheet. Verifica que esté instalada.'
-    ]);
-    exit;
-}
-
-// Usar PhpSpreadsheet para generar un archivo Excel real
-require_once $autoloadPath;
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Font;
+include("db_connect.php");
+include("ControladorUsuario.php");
 
 try {
-    include("db_connect.php");
-    include("ControladorUsuario.php");
-    
     // Obtener parámetros de filtro
     $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
     $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
@@ -90,151 +69,9 @@ try {
         throw new Exception('Error al obtener resultados: ' . $stmt->error);
     }
     
-    // Crear nuevo documento Excel
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
-    
-    // Configurar el título del reporte
-    $sheet->setCellValue('A1', 'Reporte de Ventas por Producto');
-    $sheet->mergeCells('A1:P1');
-    $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
-    $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-    
-    // Información del período
-    $sheet->setCellValue('A2', 'Período: ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin)));
-    $sheet->mergeCells('A2:P2');
-    
-    $sheet->setCellValue('A3', 'Generado: ' . date('d/m/Y H:i:s'));
-    $sheet->mergeCells('A3:P3');
-    
-    // Headers de la tabla
-    $headers = array(
-        'ID Producto', 'Código de Barras', 'Nombre del Producto', 'Tipo', 'Sucursal',
-        'Precio Venta', 'Precio Compra', 'Existencias', 'Total Vendido', 'Total Importe',
-        'Total Venta', 'Total Descuento', 'Número Ventas', 'Vendedor', 'Primera Venta', 'Última Venta'
-    );
-    
-    $col = 'A';
-    foreach ($headers as $header) {
-        $sheet->setCellValue($col . '5', $header);
-        $col++;
-    }
-    
-    // Estilo para los headers
-    $headerStyle = [
-        'font' => [
-            'bold' => true,
-            'color' => ['rgb' => 'FFFFFF'],
-        ],
-        'fill' => [
-            'fillType' => Fill::FILL_SOLID,
-            'startColor' => ['rgb' => 'EF7980'],
-        ],
-        'alignment' => [
-            'horizontal' => Alignment::HORIZONTAL_CENTER,
-            'vertical' => Alignment::VERTICAL_CENTER,
-        ],
-        'borders' => [
-            'allBorders' => [
-                'borderStyle' => Border::BORDER_THIN,
-                'color' => ['rgb' => '000000'],
-            ],
-        ],
-    ];
-    
-    $sheet->getStyle('A5:P5')->applyFromArray($headerStyle);
-    
-    // Datos de la tabla
-    $total_importe = 0;
-    $total_ventas = 0;
-    $total_unidades = 0;
-    $row_num = 6;
-    
-    while ($row = $result->fetch_assoc()) {
-        $sheet->setCellValue('A' . $row_num, $row['ID_Prod_POS']);
-        $sheet->setCellValue('B' . $row_num, $row['Cod_Barra'] ?: '');
-        $sheet->setCellValue('C' . $row_num, $row['Nombre_Prod'] ?: 'Sin nombre');
-        $sheet->setCellValue('D' . $row_num, $row['Tipo'] ?: '');
-        $sheet->setCellValue('E' . $row_num, $row['Nombre_Sucursal'] ?: 'Sucursal no encontrada');
-        $sheet->setCellValue('F' . $row_num, $row['Precio_Venta'] ?: 0);
-        $sheet->setCellValue('G' . $row_num, $row['Precio_C'] ?: 0);
-        $sheet->setCellValue('H' . $row_num, $row['Existencias_R'] ?: 0);
-        $sheet->setCellValue('I' . $row_num, $row['Total_Vendido']);
-        $sheet->setCellValue('J' . $row_num, $row['Total_Importe']);
-        $sheet->setCellValue('K' . $row_num, $row['Total_Venta']);
-        $sheet->setCellValue('L' . $row_num, $row['Total_Descuento']);
-        $sheet->setCellValue('M' . $row_num, $row['Numero_Ventas']);
-        $sheet->setCellValue('N' . $row_num, $row['AgregadoPor'] ?: '');
-        $sheet->setCellValue('O' . $row_num, $row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '');
-        $sheet->setCellValue('P' . $row_num, $row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : '');
-        
-        $total_importe += $row['Total_Importe'];
-        $total_ventas += $row['Total_Venta'];
-        $total_unidades += $row['Total_Vendido'];
-        $row_num++;
-    }
-    
-    // Estilo para las filas de datos
-    $dataStyle = [
-        'borders' => [
-            'allBorders' => [
-                'borderStyle' => Border::BORDER_THIN,
-                'color' => ['rgb' => '000000'],
-            ],
-        ],
-        'alignment' => [
-            'horizontal' => Alignment::HORIZONTAL_CENTER,
-            'vertical' => Alignment::VERTICAL_CENTER,
-        ],
-    ];
-    
-    if ($row_num > 6) {
-        $sheet->getStyle('A6:P' . ($row_num - 1))->applyFromArray($dataStyle);
-    }
-    
-    // Formato para monedas
-    $sheet->getStyle('F:G')->getNumberFormat()->setFormatCode('$#,##0.00');
-    $sheet->getStyle('J:L')->getNumberFormat()->setFormatCode('$#,##0.00');
-    
-    // Formato para números
-    $sheet->getStyle('H:I')->getNumberFormat()->setFormatCode('#,##0');
-    $sheet->getStyle('M')->getNumberFormat()->setFormatCode('#,##0');
-    
-    // Ajustar ancho de columnas
-    foreach (range('A', 'P') as $col) {
-        $sheet->getColumnDimension($col)->setAutoSize(true);
-    }
-    
-    // Agregar resumen
-    $summaryRow = $row_num + 2;
-    $sheet->setCellValue('A' . $summaryRow, 'RESUMEN');
-    $sheet->mergeCells('A' . $summaryRow . ':B' . $summaryRow);
-    $sheet->getStyle('A' . $summaryRow)->getFont()->setBold(true);
-    $sheet->getStyle('A' . $summaryRow)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('EF7980');
-    $sheet->getStyle('A' . $summaryRow)->getFont()->getColor()->setRGB('FFFFFF');
-    
-    $summaryRow++;
-    $sheet->setCellValue('A' . $summaryRow, 'Total Productos:');
-    $sheet->setCellValue('B' . $summaryRow, $result->num_rows);
-    
-    $summaryRow++;
-    $sheet->setCellValue('A' . $summaryRow, 'Total Unidades Vendidas:');
-    $sheet->setCellValue('B' . $summaryRow, $total_unidades);
-    $sheet->getStyle('B' . $summaryRow)->getNumberFormat()->setFormatCode('#,##0');
-    
-    $summaryRow++;
-    $sheet->setCellValue('A' . $summaryRow, 'Total Importe:');
-    $sheet->setCellValue('B' . $summaryRow, $total_importe);
-    $sheet->getStyle('B' . $summaryRow)->getNumberFormat()->setFormatCode('$#,##0.00');
-    
-    $summaryRow++;
-    $sheet->setCellValue('A' . $summaryRow, 'Total Ventas:');
-    $sheet->setCellValue('B' . $summaryRow, $total_ventas);
-    $sheet->getStyle('B' . $summaryRow)->getNumberFormat()->setFormatCode('$#,##0.00');
-    
-    // Configurar headers para descarga
-    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="Reporte_Ventas_Producto_' . date('Y-m-d_H-i-s') . '.xlsx"');
+    // Configurar headers para descarga CSV
+    header('Content-Type: text/csv; charset=utf-8');
+    header('Content-Disposition: attachment; filename="Reporte_Ventas_Producto_' . date('Y-m-d_H-i-s') . '.csv"');
     header('Cache-Control: max-age=0');
     header('Cache-Control: max-age=1');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -242,9 +79,68 @@ try {
     header('Cache-Control: cache, must-revalidate');
     header('Pragma: public');
     
-    // Crear el archivo Excel
-    $writer = new Xlsx($spreadsheet);
-    $writer->save('php://output');
+    // Crear el archivo CSV
+    $output = fopen('php://output', 'w');
+    
+    // BOM para UTF-8 (Excel lo reconoce mejor)
+    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+    
+    // Título del reporte
+    fputcsv($output, array('Reporte de Ventas por Producto'));
+    fputcsv($output, array('Período: ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin))));
+    fputcsv($output, array('Generado: ' . date('d/m/Y H:i:s')));
+    fputcsv($output, array()); // Línea en blanco
+    
+    // Headers de la tabla
+    $headers = array(
+        'ID Producto', 'Código de Barras', 'Nombre del Producto', 'Tipo', 'Sucursal',
+        'Precio Venta', 'Precio Compra', 'Existencias', 'Total Vendido', 'Total Importe',
+        'Total Venta', 'Total Descuento', 'Número Ventas', 'Vendedor', 'Primera Venta', 'Última Venta'
+    );
+    fputcsv($output, $headers);
+    
+    // Datos de la tabla
+    $total_importe = 0;
+    $total_ventas = 0;
+    $total_unidades = 0;
+    
+    while ($row = $result->fetch_assoc()) {
+        $csv_row = array(
+            $row['ID_Prod_POS'],
+            $row['Cod_Barra'] ?: '',
+            $row['Nombre_Prod'] ?: 'Sin nombre',
+            $row['Tipo'] ?: '',
+            $row['Nombre_Sucursal'] ?: 'Sucursal no encontrada',
+            number_format($row['Precio_Venta'] ?: 0, 2),
+            number_format($row['Precio_C'] ?: 0, 2),
+            number_format($row['Existencias_R'] ?: 0),
+            number_format($row['Total_Vendido']),
+            number_format($row['Total_Importe'], 2),
+            number_format($row['Total_Venta'], 2),
+            number_format($row['Total_Descuento'], 2),
+            number_format($row['Numero_Ventas']),
+            $row['AgregadoPor'] ?: '',
+            $row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '',
+            $row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : ''
+        );
+        fputcsv($output, $csv_row);
+        
+        $total_importe += $row['Total_Importe'];
+        $total_ventas += $row['Total_Venta'];
+        $total_unidades += $row['Total_Vendido'];
+    }
+    
+    // Línea en blanco
+    fputcsv($output, array());
+    
+    // Resumen
+    fputcsv($output, array('RESUMEN'));
+    fputcsv($output, array('Total Productos:', $result->num_rows));
+    fputcsv($output, array('Total Unidades Vendidas:', number_format($total_unidades)));
+    fputcsv($output, array('Total Importe:', number_format($total_importe, 2)));
+    fputcsv($output, array('Total Ventas:', number_format($total_ventas, 2)));
+    
+    fclose($output);
     
     // Cerrar conexión
     $stmt->close();
