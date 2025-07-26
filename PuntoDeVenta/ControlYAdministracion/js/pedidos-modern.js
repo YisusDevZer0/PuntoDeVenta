@@ -2,10 +2,12 @@
 class SistemaPedidos {
     constructor() {
         this.pedidos = [];
-        this.productosSeleccionados = [];
         this.sortable = null;
         this.modalAbierto = false;
         this.pedidoEnProceso = false;
+        
+        // Usar el módulo de productos
+        this.productosModule = productosModule;
         this.init();
     }
 
@@ -20,45 +22,25 @@ class SistemaPedidos {
 
     // Cargar datos guardados en localStorage
     cargarDatosGuardados() {
-        try {
-            const datosGuardados = localStorage.getItem('pedidos_productos_seleccionados');
-            if (datosGuardados) {
-                this.productosSeleccionados = JSON.parse(datosGuardados);
-                console.log('Datos cargados desde localStorage:', this.productosSeleccionados);
-                this.actualizarIndicadorCarrito();
-            }
-        } catch (error) {
-            console.log('No hay datos guardados o error al cargar:', error);
-            this.productosSeleccionados = [];
-        }
+        this.productosModule.cargarDatosGuardados();
+        this.actualizarIndicadorCarrito();
     }
 
     // Guardar datos en localStorage
     guardarDatos() {
-        try {
-            localStorage.setItem('pedidos_productos_seleccionados', JSON.stringify(this.productosSeleccionados));
-            console.log('Datos guardados en localStorage:', this.productosSeleccionados);
-            this.actualizarIndicadorCarrito();
-        } catch (error) {
-            console.log('Error al guardar datos:', error);
-        }
+        this.productosModule.guardarDatos();
+        this.actualizarIndicadorCarrito();
     }
 
     // Limpiar datos guardados
     limpiarDatosGuardados() {
-        try {
-            localStorage.removeItem('pedidos_productos_seleccionados');
-            this.productosSeleccionados = [];
-            console.log('Datos guardados limpiados');
-            this.actualizarIndicadorCarrito();
-        } catch (error) {
-            console.log('Error al limpiar datos:', error);
-        }
+        this.productosModule.limpiarDatosGuardados();
+        this.actualizarIndicadorCarrito();
     }
 
     // Actualizar indicador del carrito
     actualizarIndicadorCarrito() {
-        const cantidad = this.productosSeleccionados.length;
+        const cantidad = this.productosModule.getProductosSeleccionados().length;
         const indicador = $('#carrito-indicador');
         const cantidadSpan = $('#carrito-cantidad');
         
@@ -113,13 +95,13 @@ class SistemaPedidos {
         });
 
         // Eventos del modal nuevo pedido
-        $('#btnBuscarProductoNuevo').on('click', () => this.buscarProductosNuevo());
-        $('#btnBuscarEncargosNuevo').on('click', () => this.buscarEncargosNuevo());
+        $('#btnBuscarProductoNuevo').on('click', () => this.productosModule.buscarProductos($('#busqueda-producto-nuevo').val(), 'nuevo'));
+        $('#btnBuscarEncargosNuevo').on('click', () => this.productosModule.buscarEncargos($('#busqueda-producto-nuevo').val(), 'nuevo'));
         $('#btnGuardarPedidoNuevo').on('click', () => this.confirmarGuardarPedidoNuevo());
         $('#btnLimpiarPedidoNuevo').on('click', () => this.confirmarLimpiarPedidoNuevo());
         
         $('#busqueda-producto-nuevo').on('keypress', (e) => {
-            if (e.which === 13) this.buscarProductosNuevo();
+            if (e.which === 13) this.productosModule.buscarProductos($('#busqueda-producto-nuevo').val(), 'nuevo');
         });
 
         // Eventos del modal nuevo pedido
@@ -127,8 +109,8 @@ class SistemaPedidos {
             this.modalAbierto = true;
             this.pedidoEnProceso = true;
             this.cargarDatosGuardados();
-            this.actualizarVistaProductosNuevo();
-            this.actualizarResumenNuevo();
+            this.productosModule.actualizarVistaProductos('nuevo');
+            this.productosModule.actualizarResumen('nuevo');
         });
 
         $('#modalNuevoPedido').on('hidden.bs.modal', () => {
@@ -158,24 +140,14 @@ class SistemaPedidos {
 
         // Tooltips para mejor UX
         $('[data-toggle="tooltip"]').tooltip();
+
+        // Event listener para cuando se agregue un producto
+        $(document).on('productoAgregado', (e, data) => {
+            this.actualizarIndicadorCarrito();
+        });
     }
 
     setupSortable() {
-        // Configurar drag & drop para productos del pedido simple
-        this.sortable = new Sortable(document.getElementById('productos-pedido-simple'), {
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            dragClass: 'sortable-drag',
-            onEnd: () => {
-                this.actualizarResumenSimple();
-                this.guardarDatos();
-            },
-            onStart: () => {
-                $('.sortable-ghost').addClass('shadow-lg');
-            }
-        });
-
         // Configurar drag & drop para productos del pedido nuevo
         this.sortableNuevo = new Sortable(document.getElementById('productos-pedido-nuevo'), {
             animation: 150,
@@ -183,7 +155,7 @@ class SistemaPedidos {
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
             onEnd: () => {
-                this.actualizarResumenNuevo();
+                this.productosModule.actualizarResumen('nuevo');
                 this.guardarDatos();
             },
             onStart: () => {
@@ -254,30 +226,30 @@ class SistemaPedidos {
         const tiempoTranscurrido = this.calcularTiempoTranscurrido(pedido.fecha_creacion);
         
         return `
-            <div class="pedido-item ${prioridadClass}" data-pedido-id="${pedido.id}">
+            <div class="pedido-item bg-white border rounded p-3 mb-3 shadow-sm" data-pedido-id="${pedido.id}">
                 <div class="row align-items-center">
                     <div class="col-md-2">
-                        <strong>${pedido.folio}</strong>
+                        <strong class="text-dark">${pedido.folio}</strong>
                         <br>
                         <small class="text-muted">${fecha}</small>
                         <br>
-                        <small class="text-info">${tiempoTranscurrido}</small>
+                        <small class="text-secondary">${tiempoTranscurrido}</small>
                     </div>
                     <div class="col-md-3">
                         <div class="d-flex align-items-center">
-                            <span class="estado-badge ${estadoClass} me-2">${pedido.estado}</span>
-                            <span class="prioridad-badge ${prioridadClass}">${pedido.prioridad}</span>
+                            <span class="badge ${estadoClass} me-2">${pedido.estado}</span>
+                            <span class="badge ${prioridadClass}">${pedido.prioridad}</span>
                         </div>
                         <br>
                         <small class="text-muted">${pedido.usuario_nombre || 'N/A'}</small>
                     </div>
                     <div class="col-md-2">
-                        <strong>${pedido.total_productos || 0}</strong> productos
+                        <strong class="text-dark">${pedido.total_productos || 0}</strong> productos
                         <br>
                         <small class="text-muted">${pedido.total_cantidad || 0} unidades</small>
                     </div>
                     <div class="col-md-2">
-                        <strong>$${parseFloat(pedido.total_estimado || 0).toFixed(2)}</strong>
+                        <strong class="text-dark">$${parseFloat(pedido.total_estimado || 0).toFixed(2)}</strong>
                         <br>
                         <small class="text-muted">${pedido.Nombre_Sucursal}</small>
                     </div>
@@ -596,401 +568,17 @@ class SistemaPedidos {
         }
     }
 
-    async buscarProductosNuevo() {
-        const query = $('#busqueda-producto-nuevo').val().trim();
-        
-        if (query.length < 3) {
-            this.mostrarError('Ingresa al menos 3 caracteres para buscar');
-            return;
-        }
 
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'buscar_producto',
-                q: query
-            });
 
-            if (response.status === 'ok') {
-                this.mostrarResultadosBusquedaNuevo(response.data);
-            } else {
-                this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
-            }
-        } catch (error) {
-            console.error('Error en buscarProductosNuevo:', error);
-            this.mostrarError('Error de conexión');
-        }
-    }
 
-    async buscarEncargosSimple() {
-        const query = $('#busqueda-producto-simple').val().trim();
-        
-        if (query.length < 2) {
-            this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
-            return;
-        }
 
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'obtener_encargos',
-                busqueda: query
-            });
 
-            if (response.status === 'ok') {
-                this.mostrarResultadosEncargosSimple(response.data);
-            } else {
-                this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
-            }
-        } catch (error) {
-            console.error('Error en buscarEncargosSimple:', error);
-            this.mostrarError('Error de conexión');
-        }
-    }
 
-    async buscarEncargosNuevo() {
-        const query = $('#busqueda-producto-nuevo').val().trim();
-        
-        if (query.length < 2) {
-            this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
-            return;
-        }
 
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'obtener_encargos',
-                busqueda: query
-            });
 
-            if (response.status === 'ok') {
-                this.mostrarResultadosEncargosNuevo(response.data);
-            } else {
-                this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
-            }
-        } catch (error) {
-            console.error('Error en buscarEncargosNuevo:', error);
-            this.mostrarError('Error de conexión');
-        }
-    }
 
-    mostrarResultadosBusquedaSimple(productos) {
-        const container = $('#resultados-busqueda-simple');
-        
-        if (!productos || productos.length === 0) {
-            container.html('<p class="text-muted">No se encontraron productos</p>');
-            return;
-        }
 
-        let html = '<h6>Resultados de búsqueda:</h6><div class="row">';
-        
-        productos.forEach(producto => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
-            const stockClass = producto.Existencias_R < producto.Min_Existencia ? 'text-danger' : 'text-success';
-            
-            html += `
-                <div class="col-md-6 mb-2">
-                    <div class="producto-card ${yaSeleccionado ? 'border-success' : ''}" 
-                         data-producto='${JSON.stringify(producto)}'>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
-                                <p class="mb-1 small text-muted">
-                                    Código: ${producto.Cod_Barra || 'N/A'} | 
-                                    Clave: ${producto.Clave_adicional || 'N/A'}
-                                </p>
-                                <p class="mb-1 small">
-                                    Stock: <span class="${stockClass}">${producto.Existencias_R}</span> | 
-                                    Mín: ${producto.Min_Existencia} | 
-                                    Máx: ${producto.Max_Existencia}
-                                </p>
-                                <p class="mb-0 small">
-                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
-                                </p>
-                            </div>
-                            <div class="ms-2">
-                                ${yaSeleccionado ? 
-                                    '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-primary btn-sm agregar-producto-simple">Agregar</button>'
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
 
-        html += '</div>';
-        container.html(html);
-
-        // Event listeners para agregar productos
-        $('.agregar-producto-simple').on('click', (e) => {
-            const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
-            this.agregarProductoAPedidoSimple(producto);
-        });
-    }
-
-    mostrarResultadosEncargosSimple(encargos) {
-        const container = $('#resultados-busqueda-simple');
-        
-        if (!encargos || encargos.length === 0) {
-            container.html('<p class="text-muted">No se encontraron encargos previos</p>');
-            return;
-        }
-
-        let html = '<h6>Encargos previos (más solicitados):</h6><div class="row">';
-        
-        encargos.forEach(encargo => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === encargo.ID_Prod_POS);
-            const stockClass = encargo.Existencias_R < encargo.Min_Existencia ? 'text-danger' : 'text-success';
-            
-            html += `
-                <div class="col-md-6 mb-2">
-                    <div class="producto-card ${yaSeleccionado ? 'border-success' : ''}" 
-                         data-producto='${JSON.stringify(encargo)}'>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${encargo.Nombre_Prod}</h6>
-                                <p class="mb-1 small text-muted">
-                                    Código: ${encargo.Cod_Barra || 'N/A'} | 
-                                    Clave: ${encargo.Clave_adicional || 'N/A'}
-                                </p>
-                                <p class="mb-1 small">
-                                    Stock: <span class="${stockClass}">${encargo.Existencias_R}</span> | 
-                                    Mín: ${encargo.Min_Existencia} | 
-                                    Máx: ${encargo.Max_Existencia}
-                                </p>
-                                <p class="mb-1 small">
-                                    <strong>Precio: $${parseFloat(encargo.Precio_Venta || 0).toFixed(2)}</strong>
-                                </p>
-                                <p class="mb-0 small text-info">
-                                    <i class="fas fa-history"></i> 
-                                    Solicitado ${encargo.veces_solicitado} veces | 
-                                    Promedio: ${Math.round(encargo.cantidad_promedio)} unidades
-                                </p>
-                            </div>
-                            <div class="ms-2">
-                                ${yaSeleccionado ? 
-                                    '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-info btn-sm agregar-producto-simple">Agregar</button>'
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        container.html(html);
-
-        // Event listeners para agregar productos
-        $('.agregar-producto-simple').on('click', (e) => {
-            const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
-            this.agregarProductoAPedidoSimple(producto);
-        });
-    }
-
-    agregarProductoAPedidoSimple(producto) {
-        console.log('Agregando producto:', producto);
-        
-        // Verificar si ya está agregado
-        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
-            this.mostrarError('Este producto ya está en el pedido');
-            return;
-        }
-
-        // Agregar al array
-        this.productosSeleccionados.push({
-            id: producto.ID_Prod_POS,
-            nombre: producto.Nombre_Prod,
-            codigo: producto.Cod_Barra,
-            precio: parseFloat(producto.Precio_Venta || 0),
-            cantidad: 1,
-            stock: producto.Existencias_R,
-            min_stock: producto.Min_Existencia
-        });
-
-        console.log('Productos seleccionados después de agregar:', this.productosSeleccionados);
-
-        // Actualizar la vista
-        this.actualizarVistaProductosSimple();
-        this.actualizarResumenSimple();
-        this.guardarDatos();
-        
-        // Mostrar notificación
-        this.mostrarExito('Producto agregado al pedido');
-    }
-
-    agregarProductoAPedidoNuevo(producto) {
-        console.log('Agregando producto al nuevo modal:', producto);
-        
-        // Verificar si ya está agregado
-        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
-            this.mostrarError('Este producto ya está en el pedido');
-            return;
-        }
-
-        // Agregar al array
-        this.productosSeleccionados.push({
-            id: producto.ID_Prod_POS,
-            nombre: producto.Nombre_Prod,
-            codigo: producto.Cod_Barra,
-            precio: parseFloat(producto.Precio_Venta || 0),
-            cantidad: 1,
-            stock: producto.Existencias_R,
-            min_stock: producto.Min_Existencia
-        });
-
-        console.log('Productos seleccionados después de agregar:', this.productosSeleccionados);
-
-        // Actualizar la vista
-        this.actualizarVistaProductosNuevo();
-        this.actualizarResumenNuevo();
-        this.guardarDatos();
-        
-        // Mostrar notificación
-        this.mostrarExito('Producto agregado al pedido');
-    }
-
-    actualizarVistaProductosSimple() {
-        const container = $('#productos-pedido-simple');
-        
-        if (this.productosSeleccionados.length === 0) {
-            container.html(`
-                <div class="text-center text-muted py-4">
-                    <i class="fas fa-shopping-cart fa-2x mb-2"></i>
-                    <p>Arrastra productos aquí o busca productos para agregar</p>
-                </div>
-            `);
-            return;
-        }
-
-        let html = '';
-        this.productosSeleccionados.forEach((producto, index) => {
-            const stockClass = producto.stock < producto.min_stock ? 'text-danger' : 'text-success';
-            
-            html += `
-                <div class="producto-card" data-index="${index}">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-grip-vertical drag-handle me-2"></i>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${producto.nombre}</h6>
-                            <p class="mb-1 small text-muted">
-                                Código: ${producto.codigo || 'N/A'} | 
-                                Stock: <span class="${stockClass}">${producto.stock}</span>
-                            </p>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <input type="number" class="form-control form-control-sm me-2" 
-                                   style="width: 80px;" min="1" value="${producto.cantidad}"
-                                   onchange="sistemaPedidos.actualizarCantidadSimple(${index}, this.value)">
-                            <span class="me-2">$${producto.precio.toFixed(2)}</span>
-                            <button class="btn btn-danger btn-sm" onclick="sistemaPedidos.eliminarProductoSimple(${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        container.html(html);
-    }
-
-    actualizarVistaProductosNuevo() {
-        const container = $('#productos-pedido-nuevo');
-        
-        if (this.productosSeleccionados.length === 0) {
-            container.html(`
-                <div class="text-center text-muted py-4">
-                    <i class="fas fa-shopping-cart fa-2x mb-2"></i>
-                    <p>Arrastra productos aquí o busca productos para agregar</p>
-                </div>
-            `);
-            return;
-        }
-
-        let html = '';
-        this.productosSeleccionados.forEach((producto, index) => {
-            const stockClass = producto.stock < producto.min_stock ? 'text-danger' : 'text-success';
-            
-            html += `
-                <div class="producto-card" data-index="${index}">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-grip-vertical drag-handle me-2"></i>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${producto.nombre}</h6>
-                            <p class="mb-1 small text-muted">
-                                Código: ${producto.codigo || 'N/A'} | 
-                                Stock: <span class="${stockClass}">${producto.stock}</span>
-                            </p>
-                        </div>
-                        <div class="d-flex align-items-center">
-                            <input type="number" class="form-control form-control-sm me-2" 
-                                   style="width: 80px;" min="1" value="${producto.cantidad}"
-                                   onchange="sistemaPedidos.actualizarCantidadNuevo(${index}, this.value)">
-                            <span class="me-2">$${producto.precio.toFixed(2)}</span>
-                            <button class="btn btn-danger btn-sm" onclick="sistemaPedidos.eliminarProductoNuevo(${index})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        container.html(html);
-    }
-
-    actualizarCantidadSimple(index, cantidad) {
-        if (this.productosSeleccionados[index]) {
-            this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
-            this.actualizarResumenSimple();
-            this.guardarDatos();
-        }
-    }
-
-    eliminarProductoSimple(index) {
-        this.productosSeleccionados.splice(index, 1);
-        this.actualizarVistaProductosSimple();
-        this.actualizarResumenSimple();
-        this.guardarDatos();
-    }
-
-    actualizarCantidadNuevo(index, cantidad) {
-        if (this.productosSeleccionados[index]) {
-            this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
-            this.actualizarResumenNuevo();
-            this.guardarDatos();
-        }
-    }
-
-    eliminarProductoNuevo(index) {
-        this.productosSeleccionados.splice(index, 1);
-        this.actualizarVistaProductosNuevo();
-        this.actualizarResumenNuevo();
-        this.guardarDatos();
-    }
-
-    actualizarResumenSimple() {
-        const totalProductos = this.productosSeleccionados.length;
-        const totalCantidad = this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0);
-        const totalPrecio = this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-
-        $('#total-productos-simple').text(totalProductos);
-        $('#total-cantidad-simple').text(totalCantidad);
-        $('#total-precio-simple').text(`$${totalPrecio.toFixed(2)}`);
-    }
-
-    actualizarResumenNuevo() {
-        const totalProductos = this.productosSeleccionados.length;
-        const totalCantidad = this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0);
-        const totalPrecio = this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-
-        $('#total-productos-nuevo').text(totalProductos);
-        $('#total-cantidad-nuevo').text(totalCantidad);
-        $('#total-precio-nuevo').text(`$${totalPrecio.toFixed(2)}`);
-    }
 
     // Confirmación para guardar pedido
     async confirmarGuardarPedido() {
@@ -1028,74 +616,12 @@ class SistemaPedidos {
         }
     }
 
-    async guardarPedidoSimple(observaciones, prioridad) {
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'crear_pedido',
-                productos: JSON.stringify(this.productosSeleccionados),
-                observaciones: observaciones,
-                prioridad: prioridad
-            });
 
-            if (response.status === 'ok') {
-                this.mostrarExito('Pedido creado exitosamente');
-                $('#modalCrearPedido').modal('hide');
-                this.limpiarPedidoSimple();
-                this.cargarPedidos();
-            } else {
-                this.mostrarError('Error al crear pedido: ' + response.msg);
-            }
-        } catch (error) {
-            console.error('Error en guardarPedidoSimple:', error);
-            this.mostrarError('Error de conexión');
-        }
-    }
-
-    // Confirmación para limpiar pedido
-    async confirmarLimpiarPedido() {
-        if (this.productosSeleccionados.length === 0) {
-            this.mostrarError('No hay productos para limpiar');
-            return;
-        }
-
-        const result = await Swal.fire({
-            title: '¿Limpiar pedido?',
-            text: 'Se eliminarán todos los productos del pedido actual. ¿Estás seguro?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, limpiar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            reverseButtons: true
-        });
-
-        // Solo ejecutar si se confirma
-        if (result.isConfirmed) {
-            this.limpiarPedidoSimple();
-        }
-    }
-
-    limpiarPedidoSimple() {
-        $('#busqueda-producto-simple').val('');
-        $('#resultados-busqueda-simple').html(`
-            <p class="text-muted text-center">
-                <i class="fas fa-search fa-2x mb-2"></i><br>
-                Busca productos para agregar al pedido
-            </p>
-        `);
-        $('#observaciones-pedido-simple').val('');
-        $('#prioridad-pedido-simple').val('normal');
-        this.productosSeleccionados = [];
-        this.actualizarVistaProductosSimple();
-        this.actualizarResumenSimple();
-        this.limpiarDatosGuardados();
-        this.mostrarExito('Pedido limpiado correctamente');
-    }
 
     // Funciones para el modal nuevo pedido
     async confirmarGuardarPedidoNuevo() {
-        if (this.productosSeleccionados.length === 0) {
+        const productos = this.productosModule.getProductosSeleccionados();
+        if (productos.length === 0) {
             this.mostrarError('Debes agregar al menos un producto al pedido');
             return;
         }
@@ -1107,9 +633,9 @@ class SistemaPedidos {
             title: '¿Confirmar pedido?',
             html: `
                 <div class="text-left">
-                    <p><strong>Productos:</strong> ${this.productosSeleccionados.length}</p>
-                    <p><strong>Cantidad total:</strong> ${this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0)}</p>
-                    <p><strong>Total estimado:</strong> $${this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</p>
+                    <p><strong>Productos:</strong> ${productos.length}</p>
+                    <p><strong>Cantidad total:</strong> ${productos.reduce((sum, p) => sum + p.cantidad, 0)}</p>
+                    <p><strong>Total estimado:</strong> $${productos.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</p>
                     <p><strong>Prioridad:</strong> ${prioridad}</p>
                     ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
                 </div>
@@ -1133,7 +659,7 @@ class SistemaPedidos {
         try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'crear_pedido',
-                productos: JSON.stringify(this.productosSeleccionados),
+                productos: JSON.stringify(this.productosModule.getProductosSeleccionados()),
                 observaciones: observaciones,
                 prioridad: prioridad
             });
@@ -1153,7 +679,8 @@ class SistemaPedidos {
     }
 
     async confirmarLimpiarPedidoNuevo() {
-        if (this.productosSeleccionados.length === 0) {
+        const productos = this.productosModule.getProductosSeleccionados();
+        if (productos.length === 0) {
             this.mostrarError('No hay productos para limpiar');
             return;
         }
@@ -1177,130 +704,15 @@ class SistemaPedidos {
     }
 
     limpiarPedidoNuevo() {
-        $('#busqueda-producto-nuevo').val('');
-        $('#resultados-busqueda-nuevo').html(`
-            <p class="text-muted text-center">
-                <i class="fas fa-search fa-2x mb-2"></i><br>
-                Busca productos para agregar al pedido
-            </p>
-        `);
-        $('#observaciones-pedido-nuevo').val('');
-        $('#prioridad-pedido-nuevo').val('normal');
-        this.productosSeleccionados = [];
-        this.actualizarVistaProductosNuevo();
-        this.actualizarResumenNuevo();
-        this.limpiarDatosGuardados();
-        this.mostrarExito('Pedido limpiado correctamente');
+        this.productosModule.limpiarPedido('nuevo');
     }
 
     // Funciones para agregar desde stock bajo
     async mostrarProductosStockBajo() {
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'productos_stock_bajo'
-            });
-
-            if (response.status === 'ok') {
-                this.mostrarModalStockBajo(response.data);
-            } else {
-                this.mostrarError('Error al cargar productos con stock bajo');
-            }
-        } catch (error) {
-            this.mostrarError('Error de conexión');
-        }
+        this.productosModule.cargarProductosStockBajo();
     }
 
-    mostrarModalStockBajo(productos) {
-        if (!productos || productos.length === 0) {
-            this.mostrarError('No hay productos con stock bajo');
-            return;
-        }
 
-        let html = '<div class="row">';
-        productos.forEach(producto => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
-            
-            html += `
-                <div class="col-md-6 mb-2">
-                    <div class="producto-card ${yaSeleccionado ? 'border-success' : 'border-warning'}" 
-                         data-producto='${JSON.stringify(producto)}'>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
-                                <p class="mb-1 small text-muted">
-                                    Código: ${producto.Cod_Barra || 'N/A'}
-                                </p>
-                                <p class="mb-1 small text-danger">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
-                                </p>
-                                <p class="mb-0 small">
-                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
-                                </p>
-                            </div>
-                            <div class="ms-2">
-                                ${yaSeleccionado ? 
-                                    '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-warning btn-sm agregar-stock-bajo">Agregar</button>'
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        html += '</div>';
-
-        $('#stock-bajo-content').html(html);
-
-        // Event listeners para agregar productos
-        $('.agregar-stock-bajo').on('click', (e) => {
-            const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
-            this.agregarProductoStockBajo(producto);
-        });
-
-        $('#modalStockBajo').modal('show');
-    }
-
-    agregarProductoStockBajo(producto) {
-        console.log('Agregando producto desde stock bajo:', producto);
-        
-        // Verificar si ya está agregado
-        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
-            this.mostrarError('Este producto ya está en el pedido');
-            return;
-        }
-
-        // Agregar al array
-        this.productosSeleccionados.push({
-            id: producto.ID_Prod_POS,
-            nombre: producto.Nombre_Prod,
-            codigo: producto.Cod_Barra,
-            precio: parseFloat(producto.Precio_Venta || 0),
-            cantidad: 1,
-            stock: producto.Existencias_R,
-            min_stock: producto.Min_Existencia
-        });
-
-        console.log('Productos seleccionados después de agregar desde stock bajo:', this.productosSeleccionados);
-
-        // Si el modal nuevo no está abierto, abrirlo
-        if (!this.modalAbierto) {
-            $('#modalNuevoPedido').modal('show');
-        }
-
-        // Actualizar la vista del modal nuevo
-        this.actualizarVistaProductosNuevo();
-        this.actualizarResumenNuevo();
-        this.guardarDatos();
-        
-        // Mostrar notificación
-        this.mostrarExito('Producto agregado al pedido');
-        
-        // Cerrar el modal de stock bajo
-        $('#modalStockBajo').modal('hide');
-    }
 
     aplicarFiltros() {
         this.cargarPedidos();
