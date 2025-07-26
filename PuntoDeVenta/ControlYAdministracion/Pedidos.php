@@ -66,6 +66,28 @@ include "Controladores/db_connect.php";
             background: #6f42c1; /* Morado para total */
         }
         
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
         .pedido-item {
             background: white;
             border-radius: 8px;
@@ -617,21 +639,87 @@ include "Controladores/db_connect.php";
         </div>
     </div>
     
-    <!-- Modal para ver detalle de pedido -->
+    <!-- Modal de Detalle del Pedido -->
     <div class="modal fade" id="modalDetallePedido" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-eye me-2"></i>Detalle del Pedido
+                        <i class="fas fa-eye me-2"></i>
+                        Detalle del Pedido
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body" id="detalle-pedido-content">
-                    <!-- Contenido del detalle se cargará aquí -->
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Información del Pedido</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>Folio:</strong></td><td id="detalle-pedido-folio"></td></tr>
+                                <tr><td><strong>Estado:</strong></td><td id="detalle-pedido-estado"></td></tr>
+                                <tr><td><strong>Fecha:</strong></td><td id="detalle-pedido-fecha"></td></tr>
+                                <tr><td><strong>Usuario:</strong></td><td id="detalle-pedido-usuario"></td></tr>
+                                <tr><td><strong>Sucursal:</strong></td><td id="detalle-pedido-sucursal"></td></tr>
+                                <tr><td><strong>Total:</strong></td><td id="detalle-pedido-total"></td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Observaciones</h6>
+                            <p class="text-muted" id="detalle-pedido-observaciones"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Productos del Pedido</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detalle-productos-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Historial de Cambios</h6>
+                            <div class="timeline" id="detalle-historial">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer" id="detalle-pedido-actions">
-                    <!-- Botones de acción se cargarán aquí -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Stock Bajo -->
+    <div class="modal fade" id="modalStockBajo" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+                        Productos con Stock Bajo
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="stock-bajo-content">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -639,7 +727,17 @@ include "Controladores/db_connect.php";
     
     <?php include "Footer.php"; ?>
     
-    <!-- Scripts adicionales -->
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando pedidos...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/pedidos-modern.js"></script>
 </body>

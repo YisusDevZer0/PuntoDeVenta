@@ -4,6 +4,7 @@ class SistemaPedidos {
         this.pedidos = [];
         this.productosSeleccionados = [];
         this.sortable = null;
+        this.modalAbierto = false;
         this.init();
     }
 
@@ -13,6 +14,32 @@ class SistemaPedidos {
         this.setupSortable();
         this.cargarEstadisticas();
         this.setupAnimations();
+        this.cargarDatosGuardados();
+    }
+
+    // Cargar datos guardados en localStorage
+    cargarDatosGuardados() {
+        try {
+            const datosGuardados = localStorage.getItem('pedidos_productos_seleccionados');
+            if (datosGuardados) {
+                this.productosSeleccionados = JSON.parse(datosGuardados);
+                if (this.modalAbierto) {
+                    this.actualizarVistaProductos();
+                    this.actualizarResumen();
+                }
+            }
+        } catch (error) {
+            console.log('No hay datos guardados o error al cargar');
+        }
+    }
+
+    // Guardar datos en localStorage
+    guardarDatos() {
+        try {
+            localStorage.setItem('pedidos_productos_seleccionados', JSON.stringify(this.productosSeleccionados));
+        } catch (error) {
+            console.log('Error al guardar datos');
+        }
     }
 
     setupAnimations() {
@@ -64,6 +91,16 @@ class SistemaPedidos {
             this.aplicarFiltros();
         });
 
+        // Eventos del modal
+        $('#modalNuevoPedido').on('shown.bs.modal', () => {
+            this.modalAbierto = true;
+            this.cargarDatosGuardados();
+        });
+
+        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
+            this.modalAbierto = false;
+        });
+
         // Eventos adicionales para mejor UX
         $(document).on('keydown', (e) => {
             // Ctrl/Cmd + N para nuevo pedido
@@ -90,7 +127,10 @@ class SistemaPedidos {
             ghostClass: 'sortable-ghost',
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
-            onEnd: () => this.actualizarResumen(),
+            onEnd: () => {
+                this.actualizarResumen();
+                this.guardarDatos();
+            },
             onStart: () => {
                 $('.sortable-ghost').addClass('shadow-lg');
             }
@@ -110,16 +150,17 @@ class SistemaPedidos {
             });
 
             if (response.status === 'ok') {
-                this.pedidos = response.data;
+                this.pedidos = response.data || [];
                 this.renderizarPedidos();
                 this.cargarEstadisticas();
                 
                 // Disparar evento para animaciones
                 $(document).trigger('pedidosLoaded');
             } else {
-                this.mostrarError('Error al cargar pedidos: ' + response.msg);
+                this.mostrarError('Error al cargar pedidos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
+            console.error('Error en cargarPedidos:', error);
             this.mostrarError('Error de conexión al cargar pedidos');
         } finally {
             this.mostrarLoading(false);
@@ -129,7 +170,7 @@ class SistemaPedidos {
     renderizarPedidos() {
         const container = $('#lista-pedidos');
         
-        if (this.pedidos.length === 0) {
+        if (!this.pedidos || this.pedidos.length === 0) {
             $('#empty-state').show();
             container.hide();
             return;
@@ -216,16 +257,14 @@ class SistemaPedidos {
         const ahora = new Date();
         const fecha = new Date(fechaCreacion);
         const diffMs = ahora - fecha;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        
-        if (diffDays > 0) {
-            return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
-        } else if (diffHours > 0) {
-            return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
-        } else {
-            return 'Hace menos de 1 hora';
-        }
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffDays > 0) return `${diffDays} día(s)`;
+        if (diffHours > 0) return `${diffHours} hora(s)`;
+        if (diffMins > 0) return `${diffMins} minuto(s)`;
+        return 'Hace un momento';
     }
 
     setupPedidoEventListeners() {
@@ -252,13 +291,6 @@ class SistemaPedidos {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.eliminarPedido(pedidoId);
         });
-
-        // Hover effects
-        $('.pedido-item').on('mouseenter', function() {
-            $(this).addClass('shadow-lg');
-        }).on('mouseleave', function() {
-            $(this).removeClass('shadow-lg');
-        });
     }
 
     async verDetallePedido(pedidoId) {
@@ -283,118 +315,72 @@ class SistemaPedidos {
         const detalles = data.detalles;
         const historial = data.historial;
 
-        let html = `
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Información del Pedido</h6>
-                    <table class="table table-sm">
-                        <tr><td><strong>Folio:</strong></td><td>${pedido.folio}</td></tr>
-                        <tr><td><strong>Estado:</strong></td><td><span class="estado-badge estado-${pedido.estado}">${pedido.estado}</span></td></tr>
-                        <tr><td><strong>Prioridad:</strong></td><td><span class="prioridad-badge prioridad-${pedido.prioridad}">${pedido.prioridad}</span></td></tr>
-                        <tr><td><strong>Sucursal:</strong></td><td>${pedido.Nombre_Sucursal}</td></tr>
-                        <tr><td><strong>Usuario:</strong></td><td>${pedido.usuario_nombre}</td></tr>
-                        <tr><td><strong>Fecha:</strong></td><td>${new Date(pedido.fecha_creacion).toLocaleString('es-ES')}</td></tr>
-                        <tr><td><strong>Total:</strong></td><td>$${parseFloat(pedido.total_estimado || 0).toFixed(2)}</td></tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h6>Observaciones</h6>
-                    <p class="text-muted">${pedido.observaciones || 'Sin observaciones'}</p>
-                </div>
-            </div>
-            
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6>Productos del Pedido</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Código</th>
-                                    <th>Cantidad Solicitada</th>
-                                    <th>Precio Unitario</th>
-                                    <th>Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-        `;
-
+        let detallesHtml = '';
         detalles.forEach(detalle => {
-            html += `
+            detallesHtml += `
                 <tr>
                     <td>${detalle.Nombre_Prod}</td>
-                    <td>${detalle.Cod_Barra || 'N/A'}</td>
                     <td>${detalle.cantidad_solicitada}</td>
-                    <td>$${parseFloat(detalle.precio_unitario || 0).toFixed(2)}</td>
-                    <td>$${parseFloat(detalle.subtotal || 0).toFixed(2)}</td>
+                    <td>$${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
+                    <td>$${parseFloat(detalle.subtotal).toFixed(2)}</td>
                 </tr>
             `;
         });
 
-        html += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        if (historial.length > 0) {
-            html += `
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Historial de Cambios</h6>
-                        <div class="timeline">
-            `;
-
-            historial.forEach(cambio => {
-                const fecha = new Date(cambio.fecha_cambio).toLocaleString('es-ES');
-                html += `
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <p class="mb-1"><strong>${cambio.usuario_nombre}</strong> - ${fecha}</p>
-                            <p class="mb-1">${cambio.estado_anterior || 'Nuevo'} → ${cambio.estado_nuevo}</p>
-                            ${cambio.comentario ? `<small class="text-muted">${cambio.comentario}</small>` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += `
-                        </div>
+        let historialHtml = '';
+        historial.forEach(hist => {
+            const fecha = new Date(hist.fecha_cambio).toLocaleString('es-ES');
+            historialHtml += `
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6 class="mb-1">${hist.estado_anterior || 'Nuevo'} → ${hist.estado_nuevo}</h6>
+                        <p class="mb-1 small text-muted">${fecha}</p>
+                        <p class="mb-0 small">${hist.comentario || 'Sin comentarios'}</p>
+                        <small class="text-muted">Por: ${hist.usuario_nombre || 'Sistema'}</small>
                     </div>
                 </div>
             `;
-        }
+        });
 
-        $('#detalle-pedido-content').html(html);
+        $('#detalle-pedido-folio').text(pedido.folio);
+        $('#detalle-pedido-estado').text(pedido.estado);
+        $('#detalle-pedido-fecha').text(new Date(pedido.fecha_creacion).toLocaleString('es-ES'));
+        $('#detalle-pedido-usuario').text(pedido.usuario_nombre);
+        $('#detalle-pedido-sucursal').text(pedido.Nombre_Sucursal);
+        $('#detalle-pedido-total').text(`$${parseFloat(pedido.total_estimado).toFixed(2)}`);
+        $('#detalle-pedido-observaciones').text(pedido.observaciones || 'Sin observaciones');
+        
+        $('#detalle-productos-tbody').html(detallesHtml);
+        $('#detalle-historial').html(historialHtml);
+
         $('#modalDetallePedido').modal('show');
     }
 
     async cambiarEstadoPedido(pedidoId, nuevoEstado) {
-        try {
-            const { value: comentario } = await Swal.fire({
-                title: `Cambiar estado a ${nuevoEstado}`,
-                input: 'textarea',
-                inputLabel: 'Comentario (opcional)',
-                inputPlaceholder: 'Escribe un comentario sobre este cambio...',
-                showCancelButton: true,
-                confirmButtonText: 'Confirmar',
-                cancelButtonText: 'Cancelar',
-                inputValidator: (value) => {
-                    if (value && value.length > 500) {
-                        return 'El comentario no puede tener más de 500 caracteres';
-                    }
-                }
-            });
+        const estados = {
+            'aprobado': '¿Estás seguro de que quieres aprobar este pedido?',
+            'rechazado': '¿Estás seguro de que quieres rechazar este pedido?',
+            'completado': '¿Estás seguro de que quieres marcar como completado este pedido?'
+        };
 
+        const confirmacion = await Swal.fire({
+            title: 'Confirmar acción',
+            text: estados[nuevoEstado] || '¿Estás seguro?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'cambiar_estado',
                 pedido_id: pedidoId,
                 nuevo_estado: nuevoEstado,
-                comentario: comentario || ''
+                comentario: `Estado cambiado a ${nuevoEstado}`
             });
 
             if (response.status === 'ok') {
@@ -409,30 +395,29 @@ class SistemaPedidos {
     }
 
     async eliminarPedido(pedidoId) {
+        const confirmacion = await Swal.fire({
+            title: '¿Eliminar pedido?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#d33'
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
         try {
-            const result = await Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción no se puede deshacer",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'eliminar_pedido',
+                pedido_id: pedidoId
             });
 
-            if (result.isConfirmed) {
-                const response = await $.post('Controladores/PedidosController.php', {
-                    accion: 'eliminar_pedido',
-                    pedido_id: pedidoId
-                });
-
-                if (response.status === 'ok') {
-                    this.mostrarExito('Pedido eliminado correctamente');
-                    this.cargarPedidos();
-                } else {
-                    this.mostrarError('Error al eliminar pedido: ' + response.msg);
-                }
+            if (response.status === 'ok') {
+                this.mostrarExito('Pedido eliminado correctamente');
+                this.cargarPedidos();
+            } else {
+                this.mostrarError('Error al eliminar pedido: ' + response.msg);
             }
         } catch (error) {
             this.mostrarError('Error de conexión');
@@ -440,28 +425,18 @@ class SistemaPedidos {
     }
 
     abrirModalNuevoPedido() {
-        this.limpiarFormularioNuevoPedido();
         $('#modalNuevoPedido').modal('show');
-        
-        // Enfocar en el campo de búsqueda
-        setTimeout(() => {
-            $('#busqueda-producto').focus();
-        }, 500);
+        this.cargarDatosGuardados();
     }
 
     limpiarFormularioNuevoPedido() {
         $('#busqueda-producto').val('');
+        $('#resultados-busqueda').html('');
         $('#observaciones-pedido').val('');
-        $('#prioridad-pedido').val('normal');
-        $('#resultados-busqueda').empty();
-        $('#productos-pedido').html(`
-            <div class="text-center text-muted py-4">
-                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
-                <p>Arrastra productos aquí o busca productos para agregar</p>
-            </div>
-        `);
         this.productosSeleccionados = [];
+        this.actualizarVistaProductos();
         this.actualizarResumen();
+        this.guardarDatos();
     }
 
     async buscarProductos() {
@@ -481,9 +456,10 @@ class SistemaPedidos {
             if (response.status === 'ok') {
                 this.mostrarResultadosBusqueda(response.data);
             } else {
-                this.mostrarError('Error al buscar productos');
+                this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
+            console.error('Error en buscarProductos:', error);
             this.mostrarError('Error de conexión');
         }
     }
@@ -505,9 +481,10 @@ class SistemaPedidos {
             if (response.status === 'ok') {
                 this.mostrarResultadosEncargos(response.data);
             } else {
-                this.mostrarError('Error al buscar encargos');
+                this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
+            console.error('Error en buscarEncargos:', error);
             this.mostrarError('Error de conexión');
         }
     }
@@ -515,7 +492,7 @@ class SistemaPedidos {
     mostrarResultadosBusqueda(productos) {
         const container = $('#resultados-busqueda');
         
-        if (productos.length === 0) {
+        if (!productos || productos.length === 0) {
             container.html('<p class="text-muted">No se encontraron productos</p>');
             return;
         }
@@ -572,7 +549,7 @@ class SistemaPedidos {
     mostrarResultadosEncargos(encargos) {
         const container = $('#resultados-busqueda');
         
-        if (encargos.length === 0) {
+        if (!encargos || encargos.length === 0) {
             container.html('<p class="text-muted">No se encontraron encargos previos</p>');
             return;
         }
@@ -599,18 +576,19 @@ class SistemaPedidos {
                                     Mín: ${encargo.Min_Existencia} | 
                                     Máx: ${encargo.Max_Existencia}
                                 </p>
-                                <p class="mb-1 small text-info">
-                                    <i class="fas fa-history"></i> Solicitado ${encargo.veces_solicitado} veces 
-                                    (Promedio: ${Math.round(encargo.cantidad_promedio || 1)})
-                                </p>
-                                <p class="mb-0 small">
+                                <p class="mb-1 small">
                                     <strong>Precio: $${parseFloat(encargo.Precio_Venta || 0).toFixed(2)}</strong>
+                                </p>
+                                <p class="mb-0 small text-info">
+                                    <i class="fas fa-history"></i> 
+                                    Solicitado ${encargo.veces_solicitado} veces | 
+                                    Promedio: ${Math.round(encargo.cantidad_promedio)} unidades
                                 </p>
                             </div>
                             <div class="ms-2">
                                 ${yaSeleccionado ? 
                                     '<span class="badge bg-success">Agregado</span>' : 
-                                    '<button class="btn btn-info btn-sm agregar-encargo">Agregar</button>'
+                                    '<button class="btn btn-info btn-sm agregar-producto">Agregar</button>'
                                 }
                             </div>
                         </div>
@@ -622,11 +600,11 @@ class SistemaPedidos {
         html += '</div>';
         container.html(html);
 
-        // Event listeners para agregar encargos
-        $('.agregar-encargo').on('click', (e) => {
+        // Event listeners para agregar productos
+        $('.agregar-producto').on('click', (e) => {
             const card = $(e.currentTarget).closest('.producto-card');
-            const encargo = JSON.parse(card.data('producto'));
-            this.agregarProductoAPedido(encargo);
+            const producto = JSON.parse(card.data('producto'));
+            this.agregarProductoAPedido(producto);
         });
     }
 
@@ -651,6 +629,7 @@ class SistemaPedidos {
         // Actualizar la vista
         this.actualizarVistaProductos();
         this.actualizarResumen();
+        this.guardarDatos();
         
         // Mostrar notificación
         this.mostrarExito('Producto agregado al pedido');
@@ -705,6 +684,7 @@ class SistemaPedidos {
         if (this.productosSeleccionados[index]) {
             this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
             this.actualizarResumen();
+            this.guardarDatos();
         }
     }
 
@@ -712,6 +692,7 @@ class SistemaPedidos {
         this.productosSeleccionados.splice(index, 1);
         this.actualizarVistaProductos();
         this.actualizarResumen();
+        this.guardarDatos();
     }
 
     actualizarResumen() {
@@ -731,10 +712,10 @@ class SistemaPedidos {
             return;
         }
 
-        try {
-            const observaciones = $('#observaciones-pedido').val();
-            const prioridad = $('#prioridad-pedido').val();
+        const observaciones = $('#observaciones-pedido').val().trim();
+        const prioridad = $('#prioridad-pedido').val();
 
+        try {
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'crear_pedido',
                 productos: JSON.stringify(this.productosSeleccionados),
@@ -743,13 +724,15 @@ class SistemaPedidos {
             });
 
             if (response.status === 'ok') {
-                this.mostrarExito(`Pedido creado exitosamente. Folio: ${response.folio}`);
+                this.mostrarExito('Pedido creado exitosamente');
                 $('#modalNuevoPedido').modal('hide');
+                this.limpiarFormularioNuevoPedido();
                 this.cargarPedidos();
             } else {
                 this.mostrarError('Error al crear pedido: ' + response.msg);
             }
         } catch (error) {
+            console.error('Error en guardarPedido:', error);
             this.mostrarError('Error de conexión');
         }
     }
@@ -771,101 +754,83 @@ class SistemaPedidos {
     }
 
     mostrarModalStockBajo(productos) {
-        let html = `
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
-                    Productos con Stock Bajo
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Código</th>
-                                <th>Stock Actual</th>
-                                <th>Stock Mínimo</th>
-                                <th>Cantidad Necesaria</th>
-                                <th>Precio</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
-
-        productos.forEach(producto => {
-            const cantidadNecesaria = producto.cantidad_necesaria;
-            html += `
-                <tr>
-                    <td>${producto.Nombre_Prod}</td>
-                    <td>${producto.Cod_Barra || 'N/A'}</td>
-                    <td><span class="text-danger">${producto.Existencias_R}</span></td>
-                    <td>${producto.Min_Existencia}</td>
-                    <td><strong>${cantidadNecesaria}</strong></td>
-                    <td>$${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick="sistemaPedidos.agregarProductoStockBajo(${JSON.stringify(producto).replace(/"/g, '&quot;')})">
-                            Agregar al Pedido
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-
-        // Crear modal dinámico
-        const modalId = 'modalStockBajo';
-        if ($('#' + modalId).length) {
-            $('#' + modalId).remove();
+        if (!productos || productos.length === 0) {
+            this.mostrarError('No hay productos con stock bajo');
+            return;
         }
 
-        const modal = $(`
-            <div class="modal fade" id="${modalId}" tabindex="-1">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        ${html}
+        let html = '<div class="row">';
+        productos.forEach(producto => {
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            
+            html += `
+                <div class="col-md-6 mb-2">
+                    <div class="producto-card ${yaSeleccionado ? 'border-success' : 'border-warning'}" 
+                         data-producto='${JSON.stringify(producto)}'>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
+                                <p class="mb-1 small text-muted">
+                                    Código: ${producto.Cod_Barra || 'N/A'}
+                                </p>
+                                <p class="mb-1 small text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
+                                </p>
+                                <p class="mb-0 small">
+                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
+                                </p>
+                            </div>
+                            <div class="ms-2">
+                                ${yaSeleccionado ? 
+                                    '<span class="badge bg-success">Agregado</span>' : 
+                                    '<button class="btn btn-warning btn-sm agregar-stock-bajo">Agregar</button>'
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `);
+            `;
+        });
+        html += '</div>';
 
-        $('body').append(modal);
-        $('#' + modalId).modal('show');
+        $('#stock-bajo-content').html(html);
+
+        // Event listeners para agregar productos
+        $('.agregar-stock-bajo').on('click', (e) => {
+            const card = $(e.currentTarget).closest('.producto-card');
+            const producto = JSON.parse(card.data('producto'));
+            this.agregarProductoStockBajo(producto);
+        });
+
+        $('#modalStockBajo').modal('show');
     }
 
     agregarProductoStockBajo(producto) {
-        // Cerrar modal de stock bajo
-        $('#modalStockBajo').modal('hide');
-        
-        // Abrir modal de nuevo pedido si no está abierto
-        if (!$('#modalNuevoPedido').hasClass('show')) {
-            this.abrirModalNuevoPedido();
+        // Verificar si ya está agregado
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
+            this.mostrarError('Este producto ya está en el pedido');
+            return;
         }
-        
-        // Agregar producto con la cantidad necesaria
+
+        // Agregar al array
         this.productosSeleccionados.push({
             id: producto.ID_Prod_POS,
             nombre: producto.Nombre_Prod,
             codigo: producto.Cod_Barra,
             precio: parseFloat(producto.Precio_Venta || 0),
-            cantidad: producto.cantidad_necesaria,
+            cantidad: 1,
             stock: producto.Existencias_R,
             min_stock: producto.Min_Existencia
         });
 
+        // Actualizar la vista
         this.actualizarVistaProductos();
         this.actualizarResumen();
+        this.guardarDatos();
         
-        this.mostrarExito('Producto agregado con cantidad sugerida');
+        // Mostrar notificación
+        this.mostrarExito('Producto agregado al pedido');
     }
 
     aplicarFiltros() {
@@ -887,18 +852,18 @@ class SistemaPedidos {
             });
 
             if (response.status === 'ok') {
-                const stats = response.data;
+                const stats = response.data || [];
                 let pendientes = 0, aprobados = 0, proceso = 0, total = 0;
 
                 stats.forEach(stat => {
-                    switch (stat.estado) {
+                    switch(stat.estado) {
                         case 'pendiente':
                             pendientes = stat.total;
                             break;
                         case 'aprobado':
                             aprobados = stat.total;
                             break;
-                        case 'en_proceso':
+                        case 'proceso':
                             proceso = stat.total;
                             break;
                     }
@@ -917,20 +882,18 @@ class SistemaPedidos {
 
     mostrarLoading(mostrar) {
         if (mostrar) {
-            $('#loading-spinner').show();
-            $('#lista-pedidos').hide();
+            $('#loading-overlay').show();
         } else {
-            $('#loading-spinner').hide();
-            $('#lista-pedidos').show();
+            $('#loading-overlay').hide();
         }
     }
 
     mostrarExito(mensaje) {
         Swal.fire({
-            icon: 'success',
             title: '¡Éxito!',
             text: mensaje,
-            timer: 3000,
+            icon: 'success',
+            timer: 2000,
             showConfirmButton: false,
             toast: true,
             position: 'top-end'
@@ -939,14 +902,15 @@ class SistemaPedidos {
 
     mostrarError(mensaje) {
         Swal.fire({
-            icon: 'error',
             title: 'Error',
-            text: mensaje
+            text: mensaje,
+            icon: 'error',
+            confirmButtonText: 'OK'
         });
     }
 }
 
-// Inicializar el sistema cuando el documento esté listo
-$(document).ready(function() {
+// Inicializar cuando el DOM esté listo
+$(document).ready(() => {
     window.sistemaPedidos = new SistemaPedidos();
 }); 
