@@ -76,6 +76,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    // Obtener encargos realizados para reutilizar productos
+    if ($accion === 'obtener_encargos') {
+        $sucursal_id = $row['Fk_Sucursal'] ?? '';
+        $busqueda = $_POST['busqueda'] ?? '';
+        
+        $sql = "SELECT DISTINCT
+                    p.ID_Prod_POS,
+                    p.Nombre_Prod,
+                    p.Cod_Barra,
+                    p.Clave_adicional,
+                    p.Precio_Venta,
+                    p.Precio_C,
+                    s.Existencias_R,
+                    s.Min_Existencia,
+                    s.Max_Existencia,
+                    COUNT(pd.id) as veces_solicitado,
+                    AVG(pd.cantidad_solicitada) as cantidad_promedio
+                FROM Productos_POS p
+                LEFT JOIN Stock_POS s ON p.ID_Prod_POS = s.ID_Prod_POS AND s.Fk_sucursal = ?
+                LEFT JOIN pedido_detalles pd ON p.ID_Prod_POS = pd.producto_id
+                LEFT JOIN pedidos ped ON pd.pedido_id = ped.id
+                WHERE ped.sucursal_id = ? 
+                AND ped.estado IN ('completado', 'aprobado')
+                AND (p.Nombre_Prod LIKE ? OR p.Cod_Barra LIKE ? OR p.Clave_adicional LIKE ?)
+                GROUP BY p.ID_Prod_POS
+                ORDER BY veces_solicitado DESC, p.Nombre_Prod ASC
+                LIMIT 20";
+        
+        $stmt = $conn->prepare($sql);
+        $like = "%$busqueda%";
+        $stmt->bind_param("sssss", $sucursal_id, $sucursal_id, $like, $like, $like);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $encargos = [];
+        
+        while($encargo = $res->fetch_assoc()) {
+            $encargos[] = $encargo;
+        }
+        
+        echo json_encode(['status' => 'ok', 'data' => $encargos]);
+        exit;
+    }
+    
     // Crear nuevo pedido
     if ($accion === 'crear_pedido') {
         try {

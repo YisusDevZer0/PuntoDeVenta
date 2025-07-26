@@ -95,6 +95,40 @@ include "Controladores/db_connect.php";
         .prioridad-alta { background: #ffc107; color: #000; }
         .prioridad-urgente { background: #dc3545; color: white; }
         
+        /* Colores por prioridad en los pedidos */
+        .pedido-item.prioridad-baja {
+            border-left-color: #28a745;
+        }
+        
+        .pedido-item.prioridad-normal {
+            border-left-color: var(--primary);
+        }
+        
+        .pedido-item.prioridad-alta {
+            border-left-color: #ffc107;
+        }
+        
+        .pedido-item.prioridad-urgente {
+            border-left-color: #dc3545;
+        }
+        
+        /* Hover effects por prioridad */
+        .pedido-item.prioridad-baja:hover {
+            border-left-color: #20c997;
+        }
+        
+        .pedido-item.prioridad-normal:hover {
+            border-left-color: #007bff;
+        }
+        
+        .pedido-item.prioridad-alta:hover {
+            border-left-color: #e0a800;
+        }
+        
+        .pedido-item.prioridad-urgente:hover {
+            border-left-color: #c82333;
+        }
+        
         .filtros-container {
             background: #FFFFFF;
             border-radius: 8px;
@@ -492,6 +526,9 @@ include "Controladores/db_connect.php";
                                     <input type="text" class="form-control" id="busqueda-producto" placeholder="Escribe el nombre, código o clave del producto...">
                                     <button class="btn btn-outline-secondary" type="button" id="btnBuscarProducto">
                                         <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" type="button" id="btnBuscarEncargos" title="Buscar en encargos previos">
+                                        <i class="fas fa-history"></i>
                                     </button>
                                 </div>
                             </div>

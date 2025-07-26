@@ -53,6 +53,9 @@ class SistemaPedidos {
             if (e.which === 13) this.buscarProductos();
         });
 
+        // Búsqueda de encargos
+        $('#btnBuscarEncargos').on('click', () => this.buscarEncargos());
+
         // Guardar pedido
         $('#btnGuardarPedido').on('click', () => this.guardarPedido());
 
@@ -155,7 +158,7 @@ class SistemaPedidos {
         const tiempoTranscurrido = this.calcularTiempoTranscurrido(pedido.fecha_creacion);
         
         return `
-            <div class="pedido-item" data-pedido-id="${pedido.id}">
+            <div class="pedido-item ${prioridadClass}" data-pedido-id="${pedido.id}">
                 <div class="row align-items-center">
                     <div class="col-md-2">
                         <strong>${pedido.folio}</strong>
@@ -485,6 +488,30 @@ class SistemaPedidos {
         }
     }
 
+    async buscarEncargos() {
+        const query = $('#busqueda-producto').val().trim();
+        
+        if (query.length < 2) {
+            this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
+            return;
+        }
+
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'obtener_encargos',
+                busqueda: query
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarResultadosEncargos(response.data);
+            } else {
+                this.mostrarError('Error al buscar encargos');
+            }
+        } catch (error) {
+            this.mostrarError('Error de conexión');
+        }
+    }
+
     mostrarResultadosBusqueda(productos) {
         const container = $('#resultados-busqueda');
         
@@ -539,6 +566,67 @@ class SistemaPedidos {
             const card = $(e.currentTarget).closest('.producto-card');
             const producto = JSON.parse(card.data('producto'));
             this.agregarProductoAPedido(producto);
+        });
+    }
+
+    mostrarResultadosEncargos(encargos) {
+        const container = $('#resultados-busqueda');
+        
+        if (encargos.length === 0) {
+            container.html('<p class="text-muted">No se encontraron encargos previos</p>');
+            return;
+        }
+
+        let html = '<h6>Encargos previos (más solicitados):</h6><div class="row">';
+        
+        encargos.forEach(encargo => {
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === encargo.ID_Prod_POS);
+            const stockClass = encargo.Existencias_R < encargo.Min_Existencia ? 'text-danger' : 'text-success';
+            
+            html += `
+                <div class="col-md-6 mb-2">
+                    <div class="producto-card ${yaSeleccionado ? 'border-success' : ''}" 
+                         data-producto='${JSON.stringify(encargo)}'>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${encargo.Nombre_Prod}</h6>
+                                <p class="mb-1 small text-muted">
+                                    Código: ${encargo.Cod_Barra || 'N/A'} | 
+                                    Clave: ${encargo.Clave_adicional || 'N/A'}
+                                </p>
+                                <p class="mb-1 small">
+                                    Stock: <span class="${stockClass}">${encargo.Existencias_R}</span> | 
+                                    Mín: ${encargo.Min_Existencia} | 
+                                    Máx: ${encargo.Max_Existencia}
+                                </p>
+                                <p class="mb-1 small text-info">
+                                    <i class="fas fa-history"></i> Solicitado ${encargo.veces_solicitado} veces 
+                                    (Promedio: ${Math.round(encargo.cantidad_promedio || 1)})
+                                </p>
+                                <p class="mb-0 small">
+                                    <strong>Precio: $${parseFloat(encargo.Precio_Venta || 0).toFixed(2)}</strong>
+                                </p>
+                            </div>
+                            <div class="ms-2">
+                                ${yaSeleccionado ? 
+                                    '<span class="badge bg-success">Agregado</span>' : 
+                                    '<button class="btn btn-info btn-sm agregar-encargo">Agregar</button>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        container.html(html);
+
+        // Event listeners para agregar encargos
+        $('.agregar-encargo').on('click', (e) => {
+            const card = $(e.currentTarget).closest('.producto-card');
+            const encargo = JSON.parse(card.data('producto'));
+            this.agregarProductoAPedido(encargo);
         });
     }
 
