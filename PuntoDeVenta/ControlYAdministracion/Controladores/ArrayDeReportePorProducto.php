@@ -18,106 +18,97 @@ try {
     $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d'); // Día actual
     $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
 
-    // Consulta SQL usando los campos correctos de Ventas_POS
+    // Consulta SQL con JOINs para obtener precios y nombres de sucursales
     $sql = "SELECT 
         v.ID_Prod_POS,
         v.Cod_Barra,
         v.Nombre_Prod,
+        v.Tipo,
+        v.Fk_sucursal,
+        s.Nombre_Sucursal,
+        p.Precio_Venta,
+        p.Precio_C,
+        p.Tipo_Servicio,
+        p.Componente_Activo,
+        st.Existencias_R,
         SUM(v.Cantidad_Venta) AS Total_Vendido,
         SUM(v.Importe) AS Total_Importe,
         SUM(v.Total_Venta) AS Total_Venta,
-        SUM(COALESCE(v.DescuentoAplicado, 0)) AS Total_Descuento,
+        SUM(v.DescuentoAplicado) AS Total_Descuento,
         COUNT(*) AS Numero_Ventas,
-        v.Fk_sucursal,
-        v.Tipo,
         v.AgregadoPor,
-        MAX(v.Fecha_venta) AS Ultima_Venta,
-        v.FormaDePago,
-        v.Estatus
+        MIN(v.Fecha_venta) AS Primera_Venta,
+        MAX(v.Fecha_venta) AS Ultima_Venta
     FROM Ventas_POS v
-    WHERE v.Fecha_venta BETWEEN ? AND ?";
+    LEFT JOIN Productos_POS p ON v.ID_Prod_POS = p.ID_Prod_POS
+    LEFT JOIN Stock_POS st ON v.ID_Prod_POS = st.ID_Prod_POS AND v.Fk_sucursal = st.Fk_sucursal
+    LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
+    WHERE v.Fecha_venta BETWEEN ? AND ?
+    AND v.Estatus = 'vendido'";
 
     // Agregar filtro de sucursal si se especifica
     if (!empty($sucursal)) {
         $sql .= " AND v.Fk_sucursal = ?";
     }
 
-    $sql .= " GROUP BY v.ID_Prod_POS, v.Cod_Barra, v.Nombre_Prod, v.Fk_sucursal, v.Tipo, v.AgregadoPor, v.FormaDePago, v.Estatus
+    $sql .= " GROUP BY v.ID_Prod_POS, v.Cod_Barra, v.Nombre_Prod, v.Tipo, v.Fk_sucursal, s.Nombre_Sucursal, p.Precio_Venta, p.Precio_C, p.Tipo_Servicio, p.Componente_Activo, st.Existencias_R, v.AgregadoPor
     ORDER BY Total_Vendido DESC";
 
     // Preparar la consulta
     $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new Exception("Error al preparar la consulta: " . $conn->error);
-    }
-
+    
     if (!empty($sucursal)) {
         $stmt->bind_param("sss", $fecha_inicio, $fecha_fin, $sucursal);
     } else {
         $stmt->bind_param("ss", $fecha_inicio, $fecha_fin);
     }
 
-    if (!$stmt->execute()) {
-        throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
-    }
-
+    $stmt->execute();
     $result = $stmt->get_result();
+    
     if (!$result) {
-        throw new Exception("Error al obtener resultados: " . $conn->error);
+        throw new Exception("Error en la consulta: " . $conn->error);
     }
 
-    $data = [];
-
-    if ($result->num_rows > 0) {
-        while ($fila = $result->fetch_assoc()) {
-            $data[] = [
-                "ID_Prod_POS" => $fila["ID_Prod_POS"] ?? '',
-                "Cod_Barra" => $fila["Cod_Barra"] ?? '',
-                "Nombre_Prod" => $fila["Nombre_Prod"] ?? '',
-                "Total_Vendido" => number_format($fila["Total_Vendido"] ?? 0, 0),
-                "Total_Importe" => '$' . number_format($fila["Total_Importe"] ?? 0, 2),
-                "Total_Venta" => '$' . number_format($fila["Total_Venta"] ?? 0, 2),
-                "Total_Descuento" => '$' . number_format($fila["Total_Descuento"] ?? 0, 2),
-                "Numero_Ventas" => $fila["Numero_Ventas"] ?? 0,
-                "Nombre_Sucursal" => 'Sucursal ' . ($fila["Fk_sucursal"] ?? 'N/A'),
-                "Precio_Venta" => '$0.00', // No disponible en esta consulta
-                "Precio_C" => '$0.00', // No disponible en esta consulta
-                "Tipo" => $fila["Tipo"] ?? 'Producto',
-                "AgregadoPor" => $fila["AgregadoPor"] ?? '',
-                "Ultima_Venta" => $fila["Ultima_Venta"] ? date('d/m/Y H:i', strtotime($fila["Ultima_Venta"])) : 'N/A'
-            ];
-        }
+    $data = array();
+    while ($row = $result->fetch_assoc()) {
+        // Formatear los datos
+        $data[] = array(
+            "ID_Prod_POS" => $row['ID_Prod_POS'],
+            "Cod_Barra" => $row['Cod_Barra'] ?: '',
+            "Nombre_Prod" => $row['Nombre_Prod'] ?: 'Sin nombre',
+            "Tipo" => $row['Tipo'] ?: '',
+            "Fk_sucursal" => $row['Fk_sucursal'],
+            "Nombre_Sucursal" => $row['Nombre_Sucursal'] ?: 'Sucursal no encontrada',
+            "Precio_Venta" => $row['Precio_Venta'] ? '$' . number_format($row['Precio_Venta'], 2) : '',
+            "Precio_C" => $row['Precio_C'] ? '$' . number_format($row['Precio_C'], 2) : '',
+            "Tipo_Servicio" => $row['Tipo_Servicio'] ?: '',
+            "Componente_Activo" => $row['Componente_Activo'] ?: '',
+            "Existencias_R" => $row['Existencias_R'] ? number_format($row['Existencias_R']) : '0',
+            "Total_Vendido" => number_format($row['Total_Vendido']),
+            "Total_Importe" => '$' . number_format($row['Total_Importe'], 2),
+            "Total_Venta" => '$' . number_format($row['Total_Venta'], 2),
+            "Total_Descuento" => '$' . number_format($row['Total_Descuento'], 2),
+            "Numero_Ventas" => number_format($row['Numero_Ventas']),
+            "AgregadoPor" => $row['AgregadoPor'] ?: '',
+            "Primera_Venta" => $row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '',
+            "Ultima_Venta" => $row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : ''
+        );
     }
 
-    // Construir el array de resultados para la respuesta JSON
-    $results = [
-        "sEcho" => 1,
-        "iTotalRecords" => count($data),
-        "iTotalDisplayRecords" => count($data),
-        "aaData" => $data
-    ];
-
-    // Imprimir la respuesta JSON
-    echo json_encode($results);
-
-    // Cerrar la conexión
-    $stmt->close();
+    echo json_encode(array(
+        "data" => $data,
+        "recordsTotal" => count($data),
+        "recordsFiltered" => count($data)
+    ));
 
 } catch (Exception $e) {
-    // En caso de error, devolver un JSON con el error
     http_response_code(500);
-    echo json_encode([
-        "error" => true,
-        "message" => $e->getMessage(),
-        "sEcho" => 1,
-        "iTotalRecords" => 0,
-        "iTotalDisplayRecords" => 0,
-        "aaData" => []
-    ]);
-}
-
-// Cerrar conexión
-if (isset($conn)) {
-    $conn->close();
+    echo json_encode(array(
+        "error" => $e->getMessage(),
+        "data" => array(),
+        "recordsTotal" => 0,
+        "recordsFiltered" => 0
+    ));
 }
 ?>

@@ -24,272 +24,156 @@
 
   /* Cambiar el color del hover */
   .dataTables_paginate .paginate_button:hover {
-    background-color: #C80096 !important;
+    background-color: #ef7980 !important;
     color: #fff !important;
-    border-color: #C80096 !important;
+    border-color: #ef7980 !important;
+  }
+
+  /* Estilo para las celdas de la tabla */
+  .table td {
+    vertical-align: middle !important;
+    padding: 8px !important;
+  }
+
+  /* Estilo para el encabezado de la tabla */
+  .table th {
+    background-color: #f8f9fa !important;
+    border-bottom: 2px solid #dee2e6 !important;
+    font-weight: bold !important;
   }
 </style>
 
-<style>
-  /* Estilos personalizados para la tabla */
-  #Clientes th {
-    font-size: 12px; /* Tamaño de letra para los encabezados */
-    padding: 4px; /* Ajustar el espaciado entre los encabezados */
-    white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
-  }
-</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Reporte de Ventas por Producto</h4>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Filtros -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="fecha_inicio">Fecha Inicio:</label>
+                            <input type="date" id="fecha_inicio" class="form-control" value="<?php echo date('Y-m-01'); ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha_fin">Fecha Fin:</label>
+                            <input type="date" id="fecha_fin" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="sucursal">Sucursal:</label>
+                            <select id="sucursal" class="form-control">
+                                <option value="">Todas las sucursales</option>
+                                <!-- Aquí se cargarían las sucursales dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-primary btn-block" onclick="filtrarDatos()">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
 
-<style>
-  /* Estilos para la tabla */
-  #Clientes {
-    font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
-    border-collapse: collapse; /* Colapsar los bordes de las celdas */
-    width: 100%;
-    text-align: center; /* Centrar el contenido de las celdas */
-  }
-
-  #Clientes th {
-    font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
-    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
-    color: white; /* Cambiar el color del texto a blanco para contrastar */
-    padding: 10px; /* Ajustar el espaciado de los encabezados */
-  }
-
-  #Clientes td {
-    font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
-    padding: 8px; /* Ajustar el espaciado de las celdas */
-    border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
-    color:#000000;
-  }
-
-  /* Estilos para el botón de Excel */
-  .dt-buttons {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-
-  .dt-buttons button {
-    font-size: 14px;
-    margin: 0 5px;
-    color: white; /* Cambiar el color del texto a blanco */
-    background-color: #fff; /* Cambiar el color de fondo a blanco */
-  }
-
- 
-</style>
-
-<style>
-  /* Estilos para la capa de carga */
-  #loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Asegurarse de que el overlay esté encima de todo */
-    display: none; /* Ocultar inicialmente el overlay */
-  }
-
-  /* Estilo para el ícono de carga */
-  .loader {
-    border: 6px solid #f3f3f3; /* Color del círculo externo */
-    border-top: 6px solid #26b814; /* Color del círculo interno */
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite; /* Animación de rotación */
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-</style>
+                    <!-- Tabla -->
+                    <div class="table-responsive">
+                        <table id="tablaReporte" class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID Producto</th>
+                                    <th>Código de Barras</th>
+                                    <th>Nombre del Producto</th>
+                                    <th>Tipo</th>
+                                    <th>Sucursal</th>
+                                    <th>Precio Venta</th>
+                                    <th>Precio Compra</th>
+                                    <th>Existencias</th>
+                                    <th>Total Vendido</th>
+                                    <th>Total Importe</th>
+                                    <th>Total Venta</th>
+                                    <th>Total Descuento</th>
+                                    <th>Número Ventas</th>
+                                    <th>Vendedor</th>
+                                    <th>Primera Venta</th>
+                                    <th>Última Venta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Los datos se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-  // Definir una lista de mensajes para el mensaje de carga
-  var mensajesCarga = [
-    "Consultando ventas por producto...",
-    "Estamos realizando la búsqueda...",
-    "Cargando datos de ventas...",
-    "Procesando la información de productos...",
-    "Espere un momento...",
-    "Cargando... ten paciencia, incluso los planetas tardaron millones de años en formarse.",
+$(document).ready(function() {
+    // Inicializar DataTable
+    var table = $('#tablaReporte').DataTable({
+        "processing": true,
+        "serverSide": false,
+        "ajax": {
+            "url": "ArrayDeReportePorProducto.php",
+            "type": "GET",
+            "data": function(d) {
+                d.fecha_inicio = $('#fecha_inicio').val();
+                d.fecha_fin = $('#fecha_fin').val();
+                d.sucursal = $('#sucursal').val();
+            }
+        },
+        "columns": [
+            {"data": "ID_Prod_POS"},
+            {"data": "Cod_Barra"},
+            {"data": "Nombre_Prod"},
+            {"data": "Tipo"},
+            {"data": "Nombre_Sucursal"},
+            {"data": "Precio_Venta"},
+            {"data": "Precio_C"},
+            {"data": "Existencias_R"},
+            {"data": "Total_Vendido"},
+            {"data": "Total_Importe"},
+            {"data": "Total_Venta"},
+            {"data": "Total_Descuento"},
+            {"data": "Numero_Ventas"},
+            {"data": "AgregadoPor"},
+            {"data": "Primera_Venta"},
+            {"data": "Ultima_Venta"}
+        ],
+        "order": [[8, "desc"]], // Ordenar por Total Vendido descendente
+        "pageLength": 25,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        }
+    });
 
-"¡Espera un momento! Estamos contando hasta el infinito... otra vez.",
+    // Función para filtrar datos
+    window.filtrarDatos = function() {
+        table.ajax.reload();
+    };
 
-"¿Sabías que los pingüinos también tienen que esperar mientras cargan su comida?",
-
-"¡Zapateando cucarachas de carga! ¿Quién necesita un exterminador?",
-
-"Cargando... ¿quieres un chiste para hacer más amena la espera? ¿Por qué los pájaros no usan Facebook? Porque ya tienen Twitter.",
-
-"¡Alerta! Un koala está jugando con los cables de carga. Espera un momento mientras lo persuadimos.",
-
-"¿Sabías que las tortugas cargan a una velocidad épica? Bueno, estamos intentando superarlas.",
-
-"¡Espera un instante! Estamos pidiendo ayuda a los unicornios para acelerar el proceso.",
-
-"Cargando... mientras nuestros programadores disfrutan de una buena taza de café.",
-"Cargando... No estamos seguros de cómo llegamos aquí, pero estamos trabajando en ello.",
-
-"Estamos contando en binario... 10%, 20%, 110%... espero que esto no sea un error de desbordamiento.",
-
-"Cargando... mientras cazamos pokémons para acelerar el proceso.",
-
-"Error 404: Mensaje gracioso no encontrado. Estamos trabajando en ello.",
-
-"Cargando... ¿Sabías que los programadores también tienen emociones? Bueno, nosotros tampoco.",
-
-"Estamos buscando la respuesta a la vida, el universo y todo mientras cargamos... Pista: es un número entre 41 y 43.",
-
-"Cargando... mientras los gatos toman el control. ¡Meowtrix está en marcha!",
-
-"Estamos ajustando tu espera a la velocidad de la luz. Aún no es suficientemente rápida, pero pronto llegaremos.",
-
-"Cargando... Ten paciencia, incluso los programadores necesitan tiempo para pensar en nombres de variables.",
-
-"Estamos destilando líneas de código para obtener la solución perfecta. ¡Casi listo!",
-"Buscando el café perdido... ☕️",
-"Cargando unicornios pixelados...",
-"Generando excusas para la lentitud...",
-"Contando hasta el infinito... dos veces.",
-"Alineando los bits desobedientes...",
-"Convocando hamsters de velocidad...",
-"Reorganizando cajones virtuales...",
-"¿Estás ahí, mundo digital?",
-"Haciendo magia binaria...",
-"Consultando el manual del universo...",
-"Midiendo la velocidad de la luz en píxeles...",
-"Desenredando cables imaginarios...",
-"Haciendo una pausa para tomar un byte.",
-"Cargando una oveja contadora de sueños...",
-"¡Alerta! Bits desordenados, se necesita aspiradora digital.",
-"Comprando boletos para el hiperespacio...",
-"Dibujando una puerta en la pared de ladrillos...",
-"Esperando a que los electrones hagan ejercicio.",
-"Silencio, estamos calibrando los chistes.",
-"Revolviendo el caos en cámara lenta...",
-"🚀 Preparándose para despegar hacia el ciberespacio...",
-"🐢 Cargando a la velocidad de una tortuga con resaca...",
-"🌀 Girando los engranajes de la paciencia...",
-"⚡ Generando rayos de alta velocidad...",
-"🎮 Insertando monedas virtuales para acelerar...",
-"🌌 Navegando por el agujero de gusano del sistema...",
-"🤖 Despertando a los gnomos del procesador...",
-"🍕 Ordenando pizza digital mientras esperas...",
-"🕒 Viajando en el tiempo para cargar más rápido...",
-"🎩 Sacando conejos del sombrero de la programación...",
-  ];
-
-  // Función para mostrar el mensaje de carga con un texto aleatorio
-  function mostrarCargando(event, settings) {
-    var randomIndex = Math.floor(Math.random() * mensajesCarga.length);
-    var mensaje = mensajesCarga[randomIndex];
-    document.getElementById('loading-text').innerText = mensaje;
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-
-  // Función para ocultar el mensaje de carga
-  function ocultarCargando() {
-    document.getElementById('loading-overlay').style.display = 'none';
-  }
-
-
-tabla = $('#Clientes').DataTable({
-
- "bProcessing": true,
- "ordering": true,
- "stateSave":true,
- "bAutoWidth": false,
- "order": [[ 3, "desc" ]], // Ordenar por Total_Vendido descendente
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeReportePorProducto.php",
- "aoColumns": [
-  { mData: 'ID_Prod_POS' },  
-  { mData: 'Cod_Barra' },
-  { mData: 'Nombre_Prod' },
-  { mData: 'Total_Vendido' },
-  { mData: 'Total_Importe' },
-  { mData: 'Total_Venta' },
-  { mData: 'Total_Descuento' },
-  { mData: 'Numero_Ventas' },
-  { mData: 'Nombre_Sucursal' },
-  { mData: 'Precio_Venta' },
-  { mData: 'Precio_C' },
-  { mData: 'Tipo' },
-  { mData: 'AgregadoPor' },
-  { mData: 'Ultima_Venta' }
-      ],
-     
-      "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
-  
-  "language": {
-  "lengthMenu": "Mostrar _MENU_ registros",
-  "sPaginationType": "extStyle",
-  "zeroRecords": "No se encontraron resultados",
-  "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-  "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-  "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-  "sSearch": "Buscar:",
-  "paginate": {
-    "first": '<i class="fas fa-angle-double-left"></i>',
-    "last": '<i class="fas fa-angle-double-right"></i>',
-    "next": '<i class="fas fa-angle-right"></i>',
-    "previous": '<i class="fas fa-angle-left"></i>'
-  },
-  "processing": function () {
-    mostrarCargando();
-  }
-},
-"initComplete": function() {
-  // Al completar la inicialización de la tabla, ocultar el mensaje de carga
-  ocultarCargando();
-},
-// Para personalizar el estilo del botón de Excel
-"buttons": [
-  {
-    extend: 'excelHtml5',
-    text: 'Exportar a Excel  <i class="fas fa-file-excel"></i> ',
-    titleAttr: 'Exportar a Excel',
-    title: 'Reporte de Ventas por Producto',
-    className: 'btn btn-success',
-    exportOptions: {
-      columns: ':visible' // Exportar solo las columnas visibles
-    }
-  }
-],
-// Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
-"responsive": true
+    // Función para exportar a Excel
+    window.exportarExcel = function() {
+        var fecha_inicio = $('#fecha_inicio').val();
+        var fecha_fin = $('#fecha_fin').val();
+        var sucursal = $('#sucursal').val();
+        
+        var url = 'exportar_reporte_producto.php?fecha_inicio=' + fecha_inicio + 
+                  '&fecha_fin=' + fecha_fin + 
+                  '&sucursal=' + sucursal;
+        
+        window.open(url, '_blank');
+    };
 });
 </script>
-<div class="text-center">
-  <div class="table-responsive">
-  <table  id="Clientes" class="table table-hover">
-<thead>
-<th>ID Producto</th>
-<th>Código de Barra</th>
-<th>Nombre del Producto</th>
-<th>Cantidad Vendida</th>
-<th>Total Importe</th>
-<th>Total Venta</th>
-<th>Total Descuento</th>
-<th>Número de Ventas</th>
-<th>Sucursal</th>
-<th>Precio de Venta</th>
-<th>Precio de Compra</th>
-<th>Tipo</th>
-<th>Vendedor</th>
-<th>Última Venta</th>
-</thead>
-
-</div>
-</div>
 
 
 
