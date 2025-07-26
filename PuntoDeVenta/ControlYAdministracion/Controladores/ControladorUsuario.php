@@ -58,7 +58,9 @@ $row = $result->fetch_assoc();
 // Verificar si se obtuvo el resultado
 if (!$row) {
 	error_log("No se encontró el usuario con ID: " . $userId);
-	die("Error: Usuario no encontrado");
+	// En lugar de die(), redirigir a la página de expiración
+	header("Location: Expiro.php");
+	exit();
 }
 
 // Cerrar la declaración
