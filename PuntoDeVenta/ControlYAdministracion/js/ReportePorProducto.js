@@ -6,7 +6,7 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": false,
         "ajax": {
-            "url": "Controladores/ArrayDeReportePorProducto.php",
+            "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeReportePorProducto.php",
             "type": "GET",
             "data": function(d) {
                 console.log("Enviando parámetros:", d);
