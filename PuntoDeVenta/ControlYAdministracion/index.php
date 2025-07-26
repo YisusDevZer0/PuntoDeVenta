@@ -19,6 +19,9 @@ $disabledAttr = '';
 // Variable para identificar la página actual
 $currentPage = 'index';
 
+// Variable específica para el dashboard (no depende de permisos)
+$showDashboard = true;
+
 ?>
 <!DOCTYPE html>
 <html lang="es">

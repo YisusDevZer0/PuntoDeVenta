@@ -28,10 +28,11 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
                 </div>
                 <div class="navbar-nav w-100">
                 <a href="index" class="nav-item nav-link <?php echo (!isset($currentPage) || $currentPage == 'index') ? 'active' : ''; ?>"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
-                
+                <?php if (isset($showDashboard) && $showDashboard): ?>
+                <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
+                <?php endif; ?>
 
 <?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
-    <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
     <div class="dropdown-menu bg-transparent border-0">
