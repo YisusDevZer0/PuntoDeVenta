@@ -6,7 +6,7 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": false,
         "ajax": {
-            "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeReportePorProducto.php",
+            "url": "Controladores/ArrayDeReportePorProducto.php",
             "type": "GET",
             "data": function(d) {
                 console.log("Enviando parámetros:", d);
@@ -18,6 +18,9 @@ $(document).ready(function() {
             },
             "dataSrc": function(json) {
                 console.log("Respuesta del servidor:", json);
+                
+                // Ocultar loading
+                $('#loading-overlay').hide();
                 
                 // Verificar si hay error en la respuesta
                 if (json.error) {
@@ -38,6 +41,7 @@ $(document).ready(function() {
             "error": function(xhr, status, error) {
                 console.error("Error AJAX:", xhr, status, error);
                 console.error("URL llamada:", "Controladores/ArrayDeReportePorProducto.php");
+                $('#loading-overlay').hide();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de conexión',
@@ -70,6 +74,7 @@ $(document).ready(function() {
         },
         "error": function(xhr, error, thrown) {
             console.error("Error en DataTables:", error);
+            $('#loading-overlay').hide();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -78,6 +83,7 @@ $(document).ready(function() {
         },
         "initComplete": function() {
             console.log("DataTable inicializado completamente");
+            $('#loading-overlay').hide();
         }
     });
 
@@ -105,10 +111,19 @@ $(document).ready(function() {
         }
     }
 
-    // Función para filtrar datos
+    // Función para filtrar datos con loading
     window.filtrarDatos = function() {
         console.log("Ejecutando filtro...");
-        table.ajax.reload();
+        
+        // Mostrar loading
+        $('#loading-overlay').show();
+        $('#loading-text').text('Filtrando datos...');
+        
+        // Recargar datos
+        table.ajax.reload(function() {
+            $('#loading-overlay').hide();
+            console.log("Filtro completado");
+        });
     };
 
     // Función para exportar a Excel
@@ -117,13 +132,24 @@ $(document).ready(function() {
         var fecha_fin = $('#fecha_fin').val();
         var sucursal = $('#sucursal').val();
         
+        // Mostrar loading
+        $('#loading-overlay').show();
+        $('#loading-text').text('Generando archivo Excel...');
+        
         var url = 'Controladores/exportar_reporte_producto.php?fecha_inicio=' + fecha_inicio + 
                   '&fecha_fin=' + fecha_fin + 
                   '&sucursal=' + sucursal;
         
-        window.open(url, '_blank');
+        // Crear un iframe temporal para la descarga
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        
+        // Ocultar loading después de un tiempo
+        setTimeout(function() {
+            $('#loading-overlay').hide();
+            document.body.removeChild(iframe);
+        }, 3000);
     };
-});
-
-  
-  
+}); 
