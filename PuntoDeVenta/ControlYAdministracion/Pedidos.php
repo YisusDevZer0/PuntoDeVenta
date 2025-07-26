@@ -13,58 +13,58 @@ include "Controladores/db_connect.php";
     <!-- CSS adicional para el sistema de pedidos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <style>
+        /* Estilos homologados con el resto de la aplicación */
         .pedidos-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #FFFFFF;
             min-height: 100vh;
             padding: 20px;
         }
         
         .dashboard-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease-in-out;
         }
         
         .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            border-radius: 15px;
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease-in-out;
         }
         
         .stats-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .pedido-item {
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 15px;
             margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--primary);
         }
         
         .pedido-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            border-left-color: #764ba2;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-left-color: #007bff;
         }
         
         .estado-badge {
@@ -73,7 +73,6 @@ include "Controladores/db_connect.php";
             font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .estado-pendiente { background: #ffc107; color: #000; }
@@ -97,65 +96,65 @@ include "Controladores/db_connect.php";
         .prioridad-urgente { background: #dc3545; color: white; }
         
         .filtros-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
+            background: #FFFFFF;
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
         }
         
         .btn-modern {
-            border-radius: 25px;
+            border-radius: 8px;
             padding: 10px 25px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
             border: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .btn-modern:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .search-box {
-            border-radius: 25px;
+            border-radius: 8px;
             border: 2px solid #e9ecef;
             padding: 10px 20px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
         }
         
         .search-box:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(0, 156, 255, 0.25);
         }
         
         .modal-content {
-            border-radius: 15px;
+            border-radius: 8px;
             border: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            border-radius: 15px 15px 0 0;
+            border-radius: 8px 8px 0 0;
+            border: none;
         }
         
         .producto-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 15px;
             margin: 10px 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            border-left: 3px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid var(--primary);
         }
         
         .producto-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .producto-card.border-success {
@@ -204,17 +203,17 @@ include "Controladores/db_connect.php";
             top: 5px;
             width: 12px;
             height: 12px;
-            background: #667eea;
+            background: var(--primary);
             border-radius: 50%;
             border: 3px solid white;
-            box-shadow: 0 0 0 3px #667eea;
+            box-shadow: 0 0 0 3px var(--primary);
         }
         
         .timeline-content {
             background: #f8f9fa;
             padding: 15px;
-            border-radius: 10px;
-            border-left: 3px solid #667eea;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
         }
         
         /* Animaciones suaves */
@@ -229,37 +228,37 @@ include "Controladores/db_connect.php";
         
         /* Mejoras para los botones de acción */
         .btn-group .btn {
-            border-radius: 20px;
+            border-radius: 8px;
             margin: 0 2px;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
         }
         
         .btn-group .btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         /* Estilos para el resumen del pedido */
         .card {
-            border-radius: 15px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
-            border-radius: 15px 15px 0 0;
+            border-radius: 8px 8px 0 0;
             border: none;
         }
         
         /* Mejoras para las tablas */
         .table {
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
         }
         
         .table thead th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             color: white;
             border: none;
             font-weight: 600;
@@ -293,12 +292,50 @@ include "Controladores/db_connect.php";
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary);
             border-radius: 10px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            background: #007bff;
+        }
+        
+        /* Estilos específicos para el sistema de pedidos */
+        .page-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .page-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #007bff;
+            border-color: #007bff;
         }
     </style>
 </head>
@@ -311,47 +348,39 @@ include "Controladores/db_connect.php";
         <div class="pedidos-container">
             <div class="container-fluid">
                 <!-- Header con estadísticas -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="text-white mb-0">
-                                <i class="fas fa-shopping-cart me-3"></i>
-                                Sistema de Gestión de Pedidos
-                            </h2>
-                            <button class="btn btn-light btn-modern" id="btnNuevoPedido">
-                                <i class="fas fa-plus me-2"></i>Nuevo Pedido
-                            </button>
-                        </div>
+                <div class="page-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="page-title">
+                            <i class="fas fa-shopping-cart me-3"></i>
+                            Sistema de Gestión de Pedidos
+                        </h2>
+                        <button class="btn btn-light btn-modern" id="btnNuevoPedido">
+                            <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                        </button>
                     </div>
-                    
-                    <!-- Tarjetas de estadísticas -->
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <i class="fas fa-clock fa-2x mb-2"></i>
-                            <h4 id="stats-pendientes">0</h4>
-                            <p class="mb-0">Pendientes</p>
-                        </div>
+                </div>
+                
+                <!-- Tarjetas de estadísticas -->
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h4 id="stats-pendientes">0</h4>
+                        <p class="mb-0">Pendientes</p>
                     </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <i class="fas fa-check-circle fa-2x mb-2"></i>
-                            <h4 id="stats-aprobados">0</h4>
-                            <p class="mb-0">Aprobados</p>
-                        </div>
+                    <div class="stats-card">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <h4 id="stats-aprobados">0</h4>
+                        <p class="mb-0">Aprobados</p>
                     </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <i class="fas fa-truck fa-2x mb-2"></i>
-                            <h4 id="stats-proceso">0</h4>
-                            <p class="mb-0">En Proceso</p>
-                        </div>
+                    <div class="stats-card">
+                        <i class="fas fa-truck fa-2x mb-2"></i>
+                        <h4 id="stats-proceso">0</h4>
+                        <p class="mb-0">En Proceso</p>
                     </div>
-                    <div class="col-md-3">
-                        <div class="stats-card">
-                            <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-                            <h4 id="stats-total">$0</h4>
-                            <p class="mb-0">Total Estimado</p>
-                        </div>
+                    <div class="stats-card">
+                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                        <h4 id="stats-total">$0</h4>
+                        <p class="mb-0">Total Estimado</p>
                     </div>
                 </div>
                 
@@ -386,7 +415,7 @@ include "Controladores/db_connect.php";
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Acciones</label>
-                                    <div class="d-flex gap-2">
+                                    <div class="action-buttons">
                                         <button class="btn btn-primary btn-modern" id="btnFiltrar">
                                             <i class="fas fa-filter me-2"></i>Filtrar
                                         </button>
@@ -408,7 +437,7 @@ include "Controladores/db_connect.php";
                                 <h5 class="mb-0">
                                     <i class="fas fa-list me-2"></i>Lista de Pedidos
                                 </h5>
-                                <div class="d-flex gap-2">
+                                <div class="action-buttons">
                                     <button class="btn btn-outline-primary btn-sm" id="btnRefresh">
                                         <i class="fas fa-sync-alt"></i>
                                     </button>
@@ -559,7 +588,6 @@ include "Controladores/db_connect.php";
     
     <!-- Scripts adicionales -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <script src="js/pedidos-modern.js"></script>
 </body>
 </html> 
