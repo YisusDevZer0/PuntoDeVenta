@@ -17,9 +17,10 @@ $disabledAttr = '';
     <title>Pantalla de inicio administrativa - <?php echo $row['Licencia']?></title>
     <meta content="" name="keywords">
     <meta content="" name="description">
-   
-   <?php
+    
+    <?php
    include "header.php";?>
+<body>
    
    <style>
        /* Estilos personalizados para el dashboard */
@@ -104,14 +105,12 @@ $disabledAttr = '';
 
 
         <!-- Sidebar Start -->
-       <?php include_once "Menu.php" ?>
-        <!-- Sidebar End -->
+        <?php include_once "Menu.php" ?>
 
-
-        <!-- Content Start -->
-        <div class="content">
-            <!-- Navbar Start -->
-            <?php include "navbar.php";?>
+<!-- Content Start -->
+<div class="content">
+    <!-- Navbar Start -->
+<?php include "navbar.php";?>
             <!-- Navbar End -->
 
 
