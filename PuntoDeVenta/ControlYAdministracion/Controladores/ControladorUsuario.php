@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
 	header("Location: Expiro.php");
 }
-include_once("db_connect.php");
+include_once("../Consultas/db_connect.php");
 
 // Determinar el ID de usuario según la sesión activa
 $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
