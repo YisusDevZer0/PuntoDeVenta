@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 // Consulta segura con JOIN a la tabla Sucursales para obtener nombres de origen y destino

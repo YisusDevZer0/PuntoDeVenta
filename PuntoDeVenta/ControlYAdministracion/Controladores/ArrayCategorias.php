@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado

@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include("db_connection.php");
+include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 // Iniciar la sesión si no está iniciada
