@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    include("../dbconect.php");
+    include("db_connect.php");
     include("ControladorUsuario.php");
     
     // Obtener parámetros de filtro
