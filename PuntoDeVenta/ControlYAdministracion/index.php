@@ -1,5 +1,13 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
+
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
+    exit();
+}
+
+// Incluir consultas del dashboard después de verificar sesión
 include_once "Controladores/ConsultaDashboard.php";
 
 // Definir variable para atributos disabled (por ahora vacía para habilitar todo)
@@ -8,91 +16,14 @@ $disabledAttr = '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8">
-    <title>Pantalla de inicio administrativa</title>
-    <!-- <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #87CEEB;
-            overflow: hidden;
-            height: 100vh;
-         
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Animación de Olas */
-        .olas {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 100px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,64L60,85.3C120,107,240,149,360,149.3C480,149,600,107,720,96C840,85,960,107,1080,138.7C1200,171,1320,213,1380,234.7L1440,256V320H0Z"></path></svg>');
-            background-size: cover;
-            animation: moverOlas 4s linear infinite;
-        }
-        @keyframes moverOlas {
-            0% { background-position: 0 0; }
-            100% { background-position: 100px 0; }
-        }
-
-        /* Animación de Burbujas */
-        .burbuja {
-            position: absolute;
-            bottom: 0;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.7;
-            animation: subirBurbujas 4s infinite ease-in-out;
-        }
-        @keyframes subirBurbujas {
-            0% {
-                transform: translateY(0);
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100vh);
-                opacity: 0;
-            }
-        }
-
-        /* Animación de Pez Nadando */
-        .pez {
-            position: absolute;
-            left: -100px;
-            width: 50px;
-            height: 30px;
-            background: orange;
-            border-radius: 50%;
-            clip-path: polygon(0% 50%, 100% 0, 80% 50%, 100% 100%);
-            animation: nadar 5s linear infinite;
-        }
-        @keyframes nadar {
-            0% { left: -100px; }
-            100% { left: 100vw; }
-        }
-    </style> -->
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Pantalla de inicio administrativa - <?php echo $row['Licencia']?></title>
     <meta content="" name="keywords">
     <meta content="" name="description">
    
    <?php
    include "header.php";?>
-   
-   <script>
-       // Actualizar el título dinámicamente después de cargar los datos
-       document.addEventListener('DOMContentLoaded', function() {
-           document.title = 'Pantalla de inicio administrativa <?php echo isset($row['Licencia']) ? $row['Licencia'] : ''; ?>';
-       });
-   </script>
    
    <style>
        /* Estilos personalizados para el dashboard */
