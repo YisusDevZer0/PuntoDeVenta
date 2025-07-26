@@ -13,7 +13,7 @@ $totalProductos = 0;
 $ventasPorFormaPago = [];
 
 try {
-    include_once("../Consultas/db_connect.php"); // Abrir la conexión una sola vez
+    include_once("db_connect.php"); // Abrir la conexión una sola vez
 
     // Consulta para contar cajas abiertas
     $sqlCajas = "SELECT COUNT(*) AS CajasAbiertas FROM Cajas WHERE Estatus = 'Abierta' AND Sucursal != 4";
