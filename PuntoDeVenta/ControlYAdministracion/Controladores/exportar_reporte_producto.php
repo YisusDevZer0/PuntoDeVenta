@@ -69,9 +69,9 @@ try {
         throw new Exception('Error al obtener resultados: ' . $stmt->error);
     }
     
-    // Configurar headers para descarga CSV
-    header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="Reporte_Ventas_Producto_' . date('Y-m-d_H-i-s') . '.csv"');
+    // Configurar headers para descarga HTML
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment; filename="Reporte_Ventas_Producto_' . date('Y-m-d_H-i-s') . '.xls"');
     header('Cache-Control: max-age=0');
     header('Cache-Control: max-age=1');
     header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -79,68 +79,114 @@ try {
     header('Cache-Control: cache, must-revalidate');
     header('Pragma: public');
     
-    // Crear el archivo CSV
-    $output = fopen('php://output', 'w');
-    
-    // BOM para UTF-8 (Excel lo reconoce mejor)
-    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+    // Crear el archivo HTML con colores del sistema
+    echo '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+    echo '<head>';
+    echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+    echo '<style>';
+    echo 'body { font-family: Arial, sans-serif; font-size: 12px; }';
+    echo 'table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }';
+    echo 'th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }';
+    echo 'th { background-color: #ef7980; color: white; font-weight: bold; font-size: 12px; }';
+    echo 'tr:nth-child(even) { background-color: #f8f9fa; }';
+    echo 'tr:hover { background-color: #ffe6e7; }';
+    echo '.title { font-size: 18px; font-weight: bold; color: #ef7980; margin-bottom: 10px; text-align: center; }';
+    echo '.subtitle { font-size: 12px; color: #666; margin-bottom: 5px; }';
+    echo '.summary { background-color: #ef7980; color: white; font-weight: bold; }';
+    echo '.summary td { background-color: #ef7980; color: white; }';
+    echo '.currency { mso-number-format:"$#,##0.00"; }';
+    echo '.number { mso-number-format:"#,##0"; }';
+    echo '.date { mso-number-format:"dd/mm/yyyy"; }';
+    echo '</style>';
+    echo '</head>';
+    echo '<body>';
     
     // Título del reporte
-    fputcsv($output, array('Reporte de Ventas por Producto'));
-    fputcsv($output, array('Período: ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin))));
-    fputcsv($output, array('Generado: ' . date('d/m/Y H:i:s')));
-    fputcsv($output, array()); // Línea en blanco
+    echo '<div class="title">Reporte de Ventas por Producto</div>';
+    echo '<div class="subtitle" style="text-align: center;">Período: ' . date('d/m/Y', strtotime($fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($fecha_fin)) . '</div>';
+    echo '<div class="subtitle" style="text-align: center;">Generado: ' . date('d/m/Y H:i:s') . '</div>';
     
-    // Headers de la tabla
-    $headers = array(
-        'ID Producto', 'Código de Barras', 'Nombre del Producto', 'Tipo', 'Sucursal',
-        'Precio Venta', 'Precio Compra', 'Existencias', 'Total Vendido', 'Total Importe',
-        'Total Venta', 'Total Descuento', 'Número Ventas', 'Vendedor', 'Primera Venta', 'Última Venta'
-    );
-    fputcsv($output, $headers);
+    // Tabla de datos
+    echo '<table>';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th>ID Producto</th>';
+    echo '<th>Código de Barras</th>';
+    echo '<th>Nombre del Producto</th>';
+    echo '<th>Tipo</th>';
+    echo '<th>Sucursal</th>';
+    echo '<th>Precio Venta</th>';
+    echo '<th>Precio Compra</th>';
+    echo '<th>Existencias</th>';
+    echo '<th>Total Vendido</th>';
+    echo '<th>Total Importe</th>';
+    echo '<th>Total Venta</th>';
+    echo '<th>Total Descuento</th>';
+    echo '<th>Número Ventas</th>';
+    echo '<th>Vendedor</th>';
+    echo '<th>Primera Venta</th>';
+    echo '<th>Última Venta</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
     
-    // Datos de la tabla
     $total_importe = 0;
     $total_ventas = 0;
     $total_unidades = 0;
     
     while ($row = $result->fetch_assoc()) {
-        $csv_row = array(
-            $row['ID_Prod_POS'],
-            $row['Cod_Barra'] ?: '',
-            $row['Nombre_Prod'] ?: 'Sin nombre',
-            $row['Tipo'] ?: '',
-            $row['Nombre_Sucursal'] ?: 'Sucursal no encontrada',
-            number_format($row['Precio_Venta'] ?: 0, 2),
-            number_format($row['Precio_C'] ?: 0, 2),
-            number_format($row['Existencias_R'] ?: 0),
-            number_format($row['Total_Vendido']),
-            number_format($row['Total_Importe'], 2),
-            number_format($row['Total_Venta'], 2),
-            number_format($row['Total_Descuento'], 2),
-            number_format($row['Numero_Ventas']),
-            $row['AgregadoPor'] ?: '',
-            $row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '',
-            $row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : ''
-        );
-        fputcsv($output, $csv_row);
+        echo '<tr>';
+        echo '<td>' . $row['ID_Prod_POS'] . '</td>';
+        echo '<td>' . ($row['Cod_Barra'] ?: '') . '</td>';
+        echo '<td>' . htmlspecialchars($row['Nombre_Prod'] ?: 'Sin nombre') . '</td>';
+        echo '<td>' . htmlspecialchars($row['Tipo'] ?: '') . '</td>';
+        echo '<td>' . htmlspecialchars($row['Nombre_Sucursal'] ?: 'Sucursal no encontrada') . '</td>';
+        echo '<td class="currency">' . ($row['Precio_Venta'] ?: 0) . '</td>';
+        echo '<td class="currency">' . ($row['Precio_C'] ?: 0) . '</td>';
+        echo '<td class="number">' . ($row['Existencias_R'] ?: 0) . '</td>';
+        echo '<td class="number">' . $row['Total_Vendido'] . '</td>';
+        echo '<td class="currency">' . $row['Total_Importe'] . '</td>';
+        echo '<td class="currency">' . $row['Total_Venta'] . '</td>';
+        echo '<td class="currency">' . $row['Total_Descuento'] . '</td>';
+        echo '<td class="number">' . $row['Numero_Ventas'] . '</td>';
+        echo '<td>' . htmlspecialchars($row['AgregadoPor'] ?: '') . '</td>';
+        echo '<td class="date">' . ($row['Primera_Venta'] ? date('d/m/Y', strtotime($row['Primera_Venta'])) : '') . '</td>';
+        echo '<td class="date">' . ($row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : '') . '</td>';
+        echo '</tr>';
         
         $total_importe += $row['Total_Importe'];
         $total_ventas += $row['Total_Venta'];
         $total_unidades += $row['Total_Vendido'];
     }
     
-    // Línea en blanco
-    fputcsv($output, array());
+    echo '</tbody>';
+    echo '</table>';
     
     // Resumen
-    fputcsv($output, array('RESUMEN'));
-    fputcsv($output, array('Total Productos:', $result->num_rows));
-    fputcsv($output, array('Total Unidades Vendidas:', number_format($total_unidades)));
-    fputcsv($output, array('Total Importe:', number_format($total_importe, 2)));
-    fputcsv($output, array('Total Ventas:', number_format($total_ventas, 2)));
+    echo '<table style="width: 50%; margin-top: 20px;">';
+    echo '<tr class="summary">';
+    echo '<td colspan="2" style="text-align: center; font-size: 14px;">RESUMEN</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td style="font-weight: bold;">Total Productos:</td>';
+    echo '<td class="number">' . $result->num_rows . '</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td style="font-weight: bold;">Total Unidades Vendidas:</td>';
+    echo '<td class="number">' . $total_unidades . '</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td style="font-weight: bold;">Total Importe:</td>';
+    echo '<td class="currency">' . $total_importe . '</td>';
+    echo '</tr>';
+    echo '<tr>';
+    echo '<td style="font-weight: bold;">Total Ventas:</td>';
+    echo '<td class="currency">' . $total_ventas . '</td>';
+    echo '</tr>';
+    echo '</table>';
     
-    fclose($output);
+    echo '</body>';
+    echo '</html>';
     
     // Cerrar conexión
     $stmt->close();
