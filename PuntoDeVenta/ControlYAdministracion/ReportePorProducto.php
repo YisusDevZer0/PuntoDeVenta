@@ -15,6 +15,104 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="loader"></div>
         <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
     </div>
+    
+    <style>
+        /* Estilos para que la tabla tenga los mismos colores que las demás */
+        #tablaReporte {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        #tablaReporte thead th {
+            background-color: #0172b6 !important;
+            color: white !important;
+            font-weight: bold;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        #tablaReporte tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        #tablaReporte tbody tr:hover {
+            background-color: #e3f2fd !important;
+        }
+        
+        #tablaReporte tbody td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        /* Estilos para los botones de paginación */
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: #0172b6 !important;
+            color: white !important;
+            border: 1px solid #0172b6 !important;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #015a8f !important;
+            color: white !important;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #015a8f !important;
+            color: white !important;
+        }
+        
+        /* Estilos para el loading */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0172b6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Estilos para las estadísticas */
+        .stats-card {
+            background: linear-gradient(135deg, #0172b6 0%, #015a8f 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
 </head>
 
 <body>
@@ -59,12 +157,13 @@ include_once "Controladores/ControladorUsuario.php";
                             <select id="sucursal" class="form-control">
                                 <option value="">Todas las sucursales</option>
                                 <?php
-                                // Cargar sucursales dinámicamente
+                                // Cargar sucursales dinámicamente usando la conexión correcta
+                                include_once "db_connect.php";
                                 $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 1 ORDER BY Nombre_Sucursal";
                                 $result_sucursales = $conn->query($sql_sucursales);
-                                if ($result_sucursales) {
+                                if ($result_sucursales && $result_sucursales->num_rows > 0) {
                                     while ($sucursal = $result_sucursales->fetch_assoc()) {
-                                        echo "<option value='" . $sucursal['ID_Sucursal'] . "'>" . $sucursal['Nombre_Sucursal'] . "</option>";
+                                        echo "<option value='" . $sucursal['ID_Sucursal'] . "'>" . htmlspecialchars($sucursal['Nombre_Sucursal']) . "</option>";
                                     }
                                 }
                                 ?>
@@ -86,27 +185,27 @@ include_once "Controladores/ControladorUsuario.php";
                     <!-- Estadísticas Rápidas -->
                     <div class="row mb-4" id="statsRow" style="display: none;">
                         <div class="col-md-3">
-                            <div class="bg-primary text-white rounded p-3 text-center">
-                                <h4 class="mb-0" id="totalProductos">0</h4>
-                                <small>Productos Vendidos</small>
+                            <div class="stats-card">
+                                <div class="stats-number" id="totalProductos">0</div>
+                                <div class="stats-label">Productos Vendidos</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="bg-success text-white rounded p-3 text-center">
-                                <h4 class="mb-0" id="totalVentas">$0</h4>
-                                <small>Total Ventas</small>
+                            <div class="stats-card">
+                                <div class="stats-number" id="totalVentas">$0</div>
+                                <div class="stats-label">Total Ventas</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="bg-info text-white rounded p-3 text-center">
-                                <h4 class="mb-0" id="totalUnidades">0</h4>
-                                <small>Unidades Vendidas</small>
+                            <div class="stats-card">
+                                <div class="stats-number" id="totalUnidades">0</div>
+                                <div class="stats-label">Unidades Vendidas</div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="bg-warning text-white rounded p-3 text-center">
-                                <h4 class="mb-0" id="promedioVenta">$0</h4>
-                                <small>Promedio por Venta</small>
+                            <div class="stats-card">
+                                <div class="stats-number" id="promedioVenta">$0</div>
+                                <div class="stats-label">Promedio por Venta</div>
                             </div>
                         </div>
                     </div>
@@ -151,6 +250,6 @@ include_once "Controladores/ControladorUsuario.php";
     include "Modales/Modales_Referencias.php";
     include "Footer.php";?>
     
-    <script src="js/ReportePorProductos.js"></script>
+    <script src="js/ReportePorProducto.js"></script>
 </body>
 </html>
