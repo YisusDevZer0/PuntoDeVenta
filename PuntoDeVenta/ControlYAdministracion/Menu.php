@@ -40,7 +40,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -52,7 +52,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -61,7 +61,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users-gear"></i></i>Personal</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -71,7 +71,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'Desarrollo Humano' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i></i>Checador</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -81,10 +81,10 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <a href="Sucursales" class="nav-item nav-link" <?php echo $disabledAttr; ?>><i class="fa-solid fa-house-medical"></i>Sucursales</a>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cash-register"></i></i></i>Cajas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -97,7 +97,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i>Clientes</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -107,7 +107,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -120,7 +120,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 </div>
 
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice-dollar"></i>Ventas</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -132,7 +132,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 
 <?php } ?>
 <!-- MENUS DE ALMACEN -->
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Almacen</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -150,7 +150,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Órdenes de pedidos</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -160,7 +160,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 <?php } ?>
 <!-- MENUS DE ALMACEN -->
 
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-arrow-right-arrow-left"></i>Traspasos</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -175,7 +175,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 
 
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Ingresos</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -187,7 +187,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -202,7 +202,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
     </div>
 </div>
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <div class="nav-item dropdown">
     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-folder-tree"></i>Reportes</a>
     <div class="dropdown-menu bg-transparent border-0">
@@ -219,7 +219,7 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 </div>
 
 <?php } ?>
-<?php if ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT') { ?>
+<?php if (isset($row['TipoUsuario']) && ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MKT')) { ?>
 <a href="Mensajes" class="nav-item nav-link"><i class="fa fa-envelope me-2"></i>Mensajes</a>
 <?php } ?>
 
