@@ -81,12 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $conn->begin_transaction();
             
-            // Generar folio único
-            $stmt = $conn->prepare("CALL generar_folio_pedido(?)");
-            $folio = '';
-            $stmt->bind_param("s", $folio);
+            // Generar folio único manualmente
+            $fecha_actual = date('Ymd');
+            $sql_count = "SELECT COUNT(*) as total FROM pedidos WHERE folio LIKE ?";
+            $stmt = $conn->prepare($sql_count);
+            $folio_pattern = "PED{$fecha_actual}%";
+            $stmt->bind_param("s", $folio_pattern);
             $stmt->execute();
-            $stmt->close();
+            $result = $stmt->get_result();
+            $count = $result->fetch_assoc()['total'];
+            $folio = "PED{$fecha_actual}" . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
             
             // Insertar pedido principal
             $sucursal_id = $row['Fk_Sucursal'];
@@ -113,12 +117,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt2->execute();
             }
             
+            // Actualizar total del pedido
+            $sql_update_total = "UPDATE pedidos SET total_estimado = (
+                SELECT SUM(subtotal) FROM pedido_detalles WHERE pedido_id = ?
+            ) WHERE id = ?";
+            $stmt3 = $conn->prepare($sql_update_total);
+            $stmt3->bind_param("ii", $pedido_id, $pedido_id);
+            $stmt3->execute();
+            
             // Registrar en historial
             $sql_hist = "INSERT INTO pedido_historial (pedido_id, usuario_id, estado_anterior, estado_nuevo, comentario) 
                         VALUES (?, ?, NULL, 'pendiente', 'Pedido creado')";
-            $stmt3 = $conn->prepare($sql_hist);
-            $stmt3->bind_param("ii", $pedido_id, $usuario_id);
-            $stmt3->execute();
+            $stmt4 = $conn->prepare($sql_hist);
+            $stmt4->bind_param("ii", $pedido_id, $usuario_id);
+            $stmt4->execute();
             
             $conn->commit();
             echo json_encode(['status' => 'ok', 'msg' => 'Pedido creado exitosamente', 'pedido_id' => $pedido_id, 'folio' => $folio]);
