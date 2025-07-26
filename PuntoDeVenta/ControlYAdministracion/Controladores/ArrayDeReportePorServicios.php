@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    include("db_connect.php");
+    include("../dbconect.php");
     include("ControladorUsuario.php");
     
     // Obtener parámetros de filtro
@@ -46,9 +46,9 @@ try {
     ORDER BY Total_Vendido DESC";
     
     // Preparar la consulta
-    $stmt = $con->prepare($sql);
+    $stmt = $conn->prepare($sql);
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $con->error);
+        throw new Exception('Error al preparar la consulta: ' . $conn->error);
     }
     
     if (!empty($sucursal)) {
@@ -102,7 +102,7 @@ try {
     
     // Cerrar conexión
     $stmt->close();
-    $con->close();
+    $conn->close();
     
 } catch (Exception $e) {
     error_log('Error en ArrayDeReportePorServicios.php: ' . $e->getMessage());
