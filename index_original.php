@@ -525,7 +525,7 @@ $disabledAttr = '';
                                 <div class="w-100 ms-3">
                                     <div class="d-flex w-100 align-items-center justify-content-between">
                                         <span>Short task goes here...</span>
-                                        <button class="btn class="btn-sm"><i class="fa fa-times"></i></button>
+                                        <button class="btn btn-sm"><i class="fa fa-times"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -649,6 +649,7 @@ $disabledAttr = '';
   <!-- Footer Start -->
   <?php 
             include "Modales/NuevoFondoDeCaja.php";
+            include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
 </body>
