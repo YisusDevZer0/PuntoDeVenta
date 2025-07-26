@@ -1,15 +1,109 @@
-function CargaReportePorProducto(){
+$(document).ready(function() {
+    // Inicializar DataTable
+    var table = $('#tablaReporte').DataTable({
+        "processing": true,
+        "serverSide": false,
+        "ajax": {
+            "url": "Controladores/ArrayDeReportePorProducto.php",
+            "type": "GET",
+            "data": function(d) {
+                d.fecha_inicio = $('#fecha_inicio').val();
+                d.fecha_fin = $('#fecha_fin').val();
+                d.sucursal = $('#sucursal').val();
+            },
+            "dataSrc": function(json) {
+                // Verificar si hay error en la respuesta
+                if (json.error) {
+                    console.error("Error del servidor:", json.error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los datos: ' + json.error
+                    });
+                    return [];
+                }
+                
+                // Actualizar estadísticas
+                actualizarEstadisticas(json.data);
+                
+                return json.data || [];
+            }
+        },
+        "columns": [
+            {"data": "ID_Prod_POS"},
+            {"data": "Cod_Barra"},
+            {"data": "Nombre_Prod"},
+            {"data": "Tipo"},
+            {"data": "Nombre_Sucursal"},
+            {"data": "Precio_Venta"},
+            {"data": "Precio_C"},
+            {"data": "Existencias_R"},
+            {"data": "Total_Vendido"},
+            {"data": "Total_Importe"},
+            {"data": "Total_Venta"},
+            {"data": "Total_Descuento"},
+            {"data": "Numero_Ventas"},
+            {"data": "AgregadoPor"},
+            {"data": "Primera_Venta"},
+            {"data": "Ultima_Venta"}
+        ],
+        "order": [[8, "desc"]], // Ordenar por Total Vendido descendente
+        "pageLength": 25,
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+        },
+        "error": function(xhr, error, thrown) {
+            console.error("Error en DataTables:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al cargar los datos. Por favor, verifica la conexión.'
+            });
+        }
+    });
 
+    // Función para actualizar estadísticas
+    function actualizarEstadisticas(data) {
+        if (data && data.length > 0) {
+            var totalProductos = data.length;
+            var totalVentas = 0;
+            var totalUnidades = 0;
+            var totalImporte = 0;
+            
+            data.forEach(function(item) {
+                totalUnidades += parseInt(item.Total_Vendido.replace(/,/g, ''));
+                totalImporte += parseFloat(item.Total_Importe.replace(/[$,]/g, ''));
+            });
+            
+            var promedioVenta = totalProductos > 0 ? totalImporte / totalProductos : 0;
+            
+            $('#totalProductos').text(totalProductos);
+            $('#totalVentas').text('$' + totalImporte.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            $('#totalUnidades').text(totalUnidades.toLocaleString('es-MX'));
+            $('#promedioVenta').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            
+            $('#statsRow').show();
+        }
+    }
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ReportePorProducto","",function(data){
-      $("#DataDeServicios").html(data);
-    })
-  
-  }
-  
-  
-  
-  CargaReportePorProducto();
+    // Función para filtrar datos
+    window.filtrarDatos = function() {
+        table.ajax.reload();
+    };
+
+    // Función para exportar a Excel
+    window.exportarExcel = function() {
+        var fecha_inicio = $('#fecha_inicio').val();
+        var fecha_fin = $('#fecha_fin').val();
+        var sucursal = $('#sucursal').val();
+        
+        var url = 'Controladores/exportar_reporte_producto.php?fecha_inicio=' + fecha_inicio + 
+                  '&fecha_fin=' + fecha_fin + 
+                  '&sucursal=' + sucursal;
+        
+        window.open(url, '_blank');
+    };
+});
 
   
   
