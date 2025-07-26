@@ -10,12 +10,12 @@ $tipoUsuario = $row['TipoUsuario'];
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;">
+                        <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 40px; height: 40px;" onerror="this.src='img/user.jpg'; this.onerror=null;">
                         <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-0"><?php echo $row['Nombre_Apellidos']?></h6>
-                        <span><?php echo $row['TipoUsuario']?></span>
+                        <h6 class="mb-0"><?php echo isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Usuario'; ?></h6>
+                        <span><?php echo isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario'; ?></span>
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
