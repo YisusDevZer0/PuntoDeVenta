@@ -71,12 +71,13 @@ try {
         
         $stmtDetalle = $conn->prepare($sqlDetalle);
         $subtotal = $producto['precio'] * $producto['cantidad'];
-        $producto_id = $producto['es_encargo'] ? null : $producto['id'];
         
-        // Si es un encargo, usar un ID especial o crear un producto temporal
-        if ($producto['es_encargo']) {
-            // Para encargos, podríamos usar un ID especial o crear un registro temporal
+        // Si es un encargo, usar un ID especial
+        if (isset($producto['es_encargo']) && $producto['es_encargo']) {
+            // Para encargos, usar un ID especial que identifique que es un encargo
             $producto_id = 999999; // ID especial para encargos
+        } else {
+            $producto_id = $producto['id'];
         }
         
         $stmtDetalle->bind_param("iiddd", $pedidoId, $producto_id, $producto['cantidad'], 

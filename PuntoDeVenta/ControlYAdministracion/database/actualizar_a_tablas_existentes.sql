@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS `Pedidos_Administrativos_Detalle`;
 -- - pedido_historial (historial de cambios)
 -- - proveedores_pedidos (proveedores)
 -- - producto_proveedor (relación productos-proveedores)
+-- - encargos (tabla existente de encargos)
 
 -- Verificar que las tablas existan
 SELECT 'Verificando tablas existentes...' as mensaje;
@@ -27,6 +28,10 @@ WHERE table_schema = DATABASE() AND table_name = 'pedido_detalles';
 -- Verificar tabla pedido_historial
 SELECT COUNT(*) as total_historial FROM information_schema.tables 
 WHERE table_schema = DATABASE() AND table_name = 'pedido_historial';
+
+-- Verificar tabla encargos (existente)
+SELECT COUNT(*) as total_encargos FROM information_schema.tables 
+WHERE table_schema = DATABASE() AND table_name = 'encargos';
 
 -- Si las tablas no existen, crearlas usando el esquema simple
 -- (Esto solo se ejecutará si las tablas no existen)
@@ -113,28 +118,5 @@ CREATE INDEX IF NOT EXISTS idx_pedidos_sucursal_estado ON pedidos(sucursal_id, e
 CREATE INDEX IF NOT EXISTS idx_pedidos_tipo_origen ON pedidos(tipo_origen);
 CREATE INDEX IF NOT EXISTS idx_detalles_estado ON pedido_detalles(estado);
 
--- Insertar algunos datos de ejemplo para encargos si la tabla no existe
-CREATE TABLE IF NOT EXISTS Encargos (
-    ID_Encargo int(11) NOT NULL AUTO_INCREMENT,
-    Descripcion varchar(500) NOT NULL,
-    Cliente varchar(255) NOT NULL,
-    Fecha_Solicitud datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    Fecha_Entrega_Estimada date NULL,
-    Observaciones text NULL,
-    Precio_Estimado decimal(10,2) NULL DEFAULT 0.00,
-    Estado enum('pendiente','en_proceso','completado','cancelado') NOT NULL DEFAULT 'pendiente',
-    Sucursal varchar(50) NOT NULL,
-    PRIMARY KEY (ID_Encargo),
-    KEY idx_fecha_solicitud (Fecha_Solicitud),
-    KEY idx_estado (Estado),
-    KEY idx_sucursal (Sucursal)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Insertar datos de ejemplo para encargos
-INSERT IGNORE INTO Encargos (Descripcion, Cliente, Fecha_Solicitud, Observaciones, Precio_Estimado, Estado, Sucursal) VALUES
-('Medicamento especial para diabetes', 'Juan Pérez', NOW(), 'Medicamento específico que no tenemos en inventario', 150.00, 'pendiente', 'SUC001'),
-('Producto de belleza específico', 'María García', NOW(), 'Producto de marca específica solicitado por cliente', 89.50, 'pendiente', 'SUC001'),
-('Suplemento vitamínico especial', 'Carlos López', NOW(), 'Suplemento con composición específica', 200.00, 'pendiente', 'SUC001');
-
 -- Mensaje de confirmación
-SELECT 'Sistema actualizado exitosamente. Ahora usa las tablas existentes.' as resultado; 
+SELECT 'Sistema actualizado exitosamente. Ahora usa las tablas existentes incluyendo la tabla encargos correcta.' as resultado; 

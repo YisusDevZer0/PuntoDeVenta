@@ -63,18 +63,54 @@ try {
     
     $productos = [];
     while ($row = $resultDetalle->fetch_assoc()) {
-        // Verificar si es un encargo (producto_id = 999999)
+        // Verificar si es un encargo (producto_id = 999999 o nombre es null)
         if ($row['nombre'] === null && $row['codigo'] === null) {
-            // Es un encargo
-            $productos[] = [
-                'id' => $row['id'],
-                'nombre' => 'Producto especial (Encargo)',
-                'codigo' => 'ENC-' . $row['id'],
-                'cantidad' => $row['cantidad'],
-                'precio' => $row['precio'],
-                'subtotal' => $row['subtotal'],
-                'es_encargo' => true
-            ];
+            // Es un encargo - intentar obtener información de la tabla de encargos
+            $sqlEncargo = "SELECT 
+                            id,
+                            medicamento,
+                            nombre_paciente,
+                            cantidad,
+                            precioventa,
+                            fecha_encargo,
+                            NumTicket,
+                            Empleado
+                          FROM encargos 
+                          WHERE id = ?";
+            
+            $stmtEncargo = $conn->prepare($sqlEncargo);
+            $stmtEncargo->bind_param("i", $row['id']);
+            $stmtEncargo->execute();
+            $resultEncargo = $stmtEncargo->get_result();
+            $encargo = $resultEncargo->fetch_assoc();
+            
+            if ($encargo) {
+                // Es un encargo con información disponible
+                $productos[] = [
+                    'id' => $row['id'],
+                    'nombre' => $encargo['medicamento'] ?? 'Medicamento especial',
+                    'codigo' => 'ENC-' . $encargo['id'],
+                    'cantidad' => $row['cantidad'],
+                    'precio' => $row['precio'],
+                    'subtotal' => $row['subtotal'],
+                    'es_encargo' => true,
+                    'cliente' => $encargo['nombre_paciente'] ?? 'N/A',
+                    'ticket' => $encargo['NumTicket'] ?? 'N/A',
+                    'empleado' => $encargo['Empleado'] ?? 'N/A',
+                    'fecha_encargo' => $encargo['fecha_encargo'] ?? 'N/A'
+                ];
+            } else {
+                // Es un encargo pero no encontramos la información
+                $productos[] = [
+                    'id' => $row['id'],
+                    'nombre' => 'Producto especial (Encargo)',
+                    'codigo' => 'ENC-' . $row['id'],
+                    'cantidad' => $row['cantidad'],
+                    'precio' => $row['precio'],
+                    'subtotal' => $row['subtotal'],
+                    'es_encargo' => true
+                ];
+            }
         } else {
             // Es un producto normal
             $productos[] = [

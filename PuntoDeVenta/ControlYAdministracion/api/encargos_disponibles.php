@@ -10,19 +10,26 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 }
 
 try {
-    // Consulta para encargos disponibles
+    // Consulta para encargos disponibles usando la tabla correcta
     $sql = "SELECT 
-                e.ID_Encargo,
-                e.Descripcion,
-                e.Cliente,
-                e.Fecha_Solicitud,
-                e.Observaciones,
-                e.Estatus,
-                e.Precio_Estimado
-            FROM Encargos e
-            WHERE e.Estatus = 'Pendiente'
-              AND e.Fecha_Solicitud >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-            ORDER BY e.Fecha_Solicitud DESC";
+                id,
+                nombre_paciente,
+                medicamento,
+                cantidad,
+                precioventa,
+                fecha_encargo,
+                estado,
+                costo,
+                abono_parcial,
+                NumTicket,
+                Fk_Sucursal,
+                Fk_Caja,
+                Empleado,
+                FormaDePago
+            FROM encargos
+            WHERE estado = 'pendiente'
+              AND fecha_encargo >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            ORDER BY fecha_encargo DESC";
     
     $result = $conn->query($sql);
     
@@ -33,13 +40,19 @@ try {
     $encargos = [];
     while ($row = $result->fetch_assoc()) {
         $encargos[] = [
-            'id' => $row['ID_Encargo'],
-            'descripcion' => $row['Descripcion'],
-            'cliente' => $row['Cliente'],
-            'fecha' => $row['Fecha_Solicitud'],
-            'observaciones' => $row['Observaciones'],
-            'estado' => $row['Estatus'],
-            'precio' => $row['Precio_Estimado']
+            'id' => $row['id'],
+            'descripcion' => $row['medicamento'],
+            'cliente' => $row['nombre_paciente'],
+            'fecha' => $row['fecha_encargo'],
+            'observaciones' => "Cantidad: " . $row['cantidad'] . " | Empleado: " . $row['Empleado'] . " | Ticket: " . $row['NumTicket'],
+            'estado' => $row['estado'],
+            'precio' => $row['precioventa'],
+            'cantidad' => $row['cantidad'],
+            'costo' => $row['costo'],
+            'abono_parcial' => $row['abono_parcial'],
+            'num_ticket' => $row['NumTicket'],
+            'empleado' => $row['Empleado'],
+            'forma_pago' => $row['FormaDePago']
         ];
     }
     

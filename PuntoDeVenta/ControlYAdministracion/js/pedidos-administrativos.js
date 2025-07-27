@@ -528,23 +528,35 @@ class PedidosAdministrativos {
 
         let html = '';
         this.encargosDisponibles.forEach(encargo => {
+            const saldoPendiente = parseFloat(encargo.precio) - parseFloat(encargo.abono_parcial || 0);
+            const fechaFormateada = new Date(encargo.fecha).toLocaleDateString('es-ES');
+            
             html += `
                 <div class="encargo-item">
                     <div class="d-flex justify-content-between align-items-start">
                         <div class="flex-grow-1">
-                            <h6 class="mb-1">${encargo.descripcion || 'Producto especial'}</h6>
+                            <h6 class="mb-1">${encargo.descripcion || 'Medicamento sin especificar'}</h6>
                             <p class="mb-1 small">
-                                <strong>Cliente:</strong> ${encargo.cliente || 'N/A'}
+                                <strong>Paciente:</strong> ${encargo.cliente || 'N/A'}
                             </p>
                             <p class="mb-1 small">
-                                <strong>Fecha:</strong> ${encargo.fecha || 'N/A'}
+                                <strong>Cantidad:</strong> ${encargo.cantidad || 1} | 
+                                <strong>Fecha:</strong> ${fechaFormateada}
+                            </p>
+                            <p class="mb-1 small">
+                                <strong>Precio:</strong> $${parseFloat(encargo.precio || 0).toFixed(2)} | 
+                                <strong>Saldo:</strong> $${saldoPendiente.toFixed(2)}
                             </p>
                             <p class="mb-0 small">
-                                <strong>Observaciones:</strong> ${encargo.observaciones || 'Sin observaciones'}
+                                <strong>Ticket:</strong> ${encargo.num_ticket || 'N/A'} | 
+                                <strong>Empleado:</strong> ${encargo.empleado || 'N/A'}
+                            </p>
+                            <p class="mb-0 small text-muted">
+                                ${encargo.observaciones || 'Sin observaciones adicionales'}
                             </p>
                         </div>
                         <div class="ms-2">
-                            <span class="badge">${encargo.estado || 'Pendiente'}</span>
+                            <span class="badge ${encargo.estado === 'pendiente' ? 'bg-warning' : 'bg-success'}">${encargo.estado || 'Pendiente'}</span>
                             <button class="btn btn-info btn-sm mt-2" onclick="pedidosAdmin.agregarEncargo(${encargo.id})">
                                 <i class="fas fa-plus me-1"></i>Agregar
                             </button>
@@ -568,16 +580,17 @@ class PedidosAdministrativos {
         // Crear producto especial desde encargo
         const productoEspecial = {
             id: `encargo_${encargo.id}`,
-            nombre: encargo.descripcion || 'Producto especial',
+            nombre: encargo.descripcion || 'Medicamento especial',
             codigo: `ENC-${encargo.id}`,
             precio: parseFloat(encargo.precio || 0),
-            cantidad: 1,
+            cantidad: parseInt(encargo.cantidad || 1),
             stock: 0,
             min_stock: 0,
             es_encargo: true,
             encargo_id: encargo.id,
             cliente: encargo.cliente,
-            observaciones: encargo.observaciones
+            observaciones: `Paciente: ${encargo.cliente} | Ticket: ${encargo.num_ticket} | Empleado: ${encargo.empleado}`,
+            saldo_pendiente: parseFloat(encargo.precio || 0) - parseFloat(encargo.abono_parcial || 0)
         };
 
         this.productosSeleccionados.push(productoEspecial);
@@ -616,12 +629,13 @@ class PedidosAdministrativos {
             total += subtotal;
             
             const esEncargo = producto.es_encargo ? ' <span class="badge bg-info">Encargo</span>' : '';
+            const infoAdicional = producto.es_encargo ? 
+                `<br><small class="text-muted">Paciente: ${producto.cliente || 'N/A'}</small>` : '';
             
             html += `
                 <tr>
                     <td>
-                        ${producto.nombre}${esEncargo}
-                        ${producto.es_encargo ? `<br><small class="text-muted">Cliente: ${producto.cliente || 'N/A'}</small>` : ''}
+                        ${producto.nombre}${esEncargo}${infoAdicional}
                     </td>
                     <td>
                         <input type="number" class="form-control form-control-sm" 
@@ -864,9 +878,15 @@ class PedidosAdministrativos {
         
         pedido.productos.forEach(producto => {
             const subtotal = producto.precio * producto.cantidad;
+            const esEncargo = producto.es_encargo ? ' <span class="badge bg-info">Encargo</span>' : '';
+            const infoAdicional = producto.es_encargo ? 
+                `<br><small class="text-muted">Paciente: ${producto.cliente || 'N/A'}</small>` : '';
+            
             html += `
                 <tr>
-                    <td>${producto.nombre}</td>
+                    <td>
+                        ${producto.nombre}${esEncargo}${infoAdicional}
+                    </td>
                     <td>${producto.cantidad}</td>
                     <td>$${producto.precio.toFixed(2)}</td>
                     <td>$${subtotal.toFixed(2)}</td>
