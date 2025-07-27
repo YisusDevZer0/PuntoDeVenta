@@ -126,7 +126,7 @@ class PedidosAdministrativos {
         this.mostrarLoading('Buscando productos...');
         
         $.ajax({
-            url: 'test_buscador.php', // Cambiar a 'api/buscar_productos.php' cuando funcione
+            url: 'api/buscar_productos.php',
             method: 'POST',
             data: { query: query },
             success: (response) => {

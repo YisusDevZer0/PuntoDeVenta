@@ -13,6 +13,7 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 try {
     $query = isset($_POST['query']) ? trim($_POST['query']) : '';
     $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
+    $sucursal = $row['Fk_Sucursal']; // Sucursal del usuario actual
     
     if (empty($query)) {
         // Si no hay query, devolver productos populares o recientes
@@ -26,16 +27,18 @@ try {
                     s.Estatus,
                     p.Precio_Venta
                 FROM Stock_POS s
+                INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
+                INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
                 INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
                 WHERE s.Estatus = 'Activo'
-                  AND s.Existencias_R > 0
+                  AND s.Fk_sucursal = ?
                 ORDER BY s.Existencias_R DESC
                 LIMIT ?";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $limit);
+        $stmt->bind_param("ii", $sucursal, $limit);
     } else {
-        // Búsqueda dinámica mejorada usando INNER JOIN como ArrayStocks.php
+        // Búsqueda dinámica mejorada usando la misma estructura que ArrayStocks.php
         $sql = "SELECT 
                     s.ID_Prod_POS,
                     s.Nombre_Prod,
@@ -52,8 +55,11 @@ try {
                         ELSE 0
                     END as relevancia
                 FROM Stock_POS s
+                INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
+                INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
                 INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
                 WHERE s.Estatus = 'Activo'
+                  AND s.Fk_sucursal = ?
                   AND (s.Nombre_Prod LIKE ? OR s.Cod_Barra LIKE ?)
                 ORDER BY relevancia DESC, s.Nombre_Prod ASC
                 LIMIT ?";
@@ -62,7 +68,7 @@ try {
         $exactQuery = $query;
         $startQuery = $query . '%';
         $containsQuery = '%' . $query . '%';
-        $stmt->bind_param("sssssi", $exactQuery, $startQuery, $containsQuery, $containsQuery, $containsQuery, $limit);
+        $stmt->bind_param("sssiisi", $exactQuery, $startQuery, $containsQuery, $sucursal, $containsQuery, $containsQuery, $limit);
     }
     
     $stmt->execute();
@@ -87,7 +93,8 @@ try {
         'success' => true,
         'productos' => $productos,
         'total' => count($productos),
-        'query' => $query
+        'query' => $query,
+        'sucursal' => $sucursal
     ]);
     
 } catch (Exception $e) {

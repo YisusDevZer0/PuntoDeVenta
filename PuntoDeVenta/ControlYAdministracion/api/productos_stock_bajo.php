@@ -11,7 +11,9 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 }
 
 try {
-    // Consulta mejorada para productos con bajo stock usando INNER JOIN como ArrayStocks.php
+    $sucursal = $row['Fk_Sucursal']; // Sucursal del usuario actual
+    
+    // Consulta mejorada para productos con bajo stock usando la misma estructura que ArrayStocks.php
     $sql = "SELECT 
                 s.ID_Prod_POS,
                 s.Nombre_Prod,
@@ -22,15 +24,21 @@ try {
                 s.Estatus,
                 p.Precio_Venta
             FROM Stock_POS s
+            INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
+            INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
             INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
             WHERE s.Estatus = 'Activo'
+              AND s.Fk_sucursal = ?
               AND s.Existencias_R IS NOT NULL
               AND s.Min_Existencia IS NOT NULL
               AND s.Existencias_R <= s.Min_Existencia
               AND s.Existencias_R >= 0
             ORDER BY (s.Min_Existencia - s.Existencias_R) DESC, s.Nombre_Prod ASC";
     
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $sucursal);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     if (!$result) {
         throw new Exception("Error en la consulta: " . $conn->error);
@@ -53,20 +61,26 @@ try {
     // Para debugging, también obtener estadísticas usando la misma lógica
     $sqlStats = "SELECT 
                     COUNT(*) as total_productos,
-                    COUNT(CASE WHEN Existencias_R <= Min_Existencia THEN 1 END) as con_bajo_stock,
-                    COUNT(CASE WHEN Existencias_R IS NULL THEN 1 END) as sin_existencias,
-                    COUNT(CASE WHEN Min_Existencia IS NULL THEN 1 END) as sin_min_existencia
+                    COUNT(CASE WHEN s.Existencias_R <= s.Min_Existencia THEN 1 END) as con_bajo_stock,
+                    COUNT(CASE WHEN s.Existencias_R IS NULL THEN 1 END) as sin_existencias,
+                    COUNT(CASE WHEN s.Min_Existencia IS NULL THEN 1 END) as sin_min_existencia
                   FROM Stock_POS s
+                  INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
+                  INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
                   INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
-                  WHERE s.Estatus = 'Activo'";
+                  WHERE s.Estatus = 'Activo' AND s.Fk_sucursal = ?";
     
-    $resultStats = $conn->query($sqlStats);
+    $stmtStats = $conn->prepare($sqlStats);
+    $stmtStats->bind_param("i", $sucursal);
+    $stmtStats->execute();
+    $resultStats = $stmtStats->get_result();
     $stats = $resultStats->fetch_assoc();
     
     echo json_encode([
         'success' => true,
         'productos' => $productos,
         'total' => count($productos),
+        'sucursal' => $sucursal,
         'debug' => [
             'total_productos' => $stats['total_productos'],
             'con_bajo_stock' => $stats['con_bajo_stock'],
