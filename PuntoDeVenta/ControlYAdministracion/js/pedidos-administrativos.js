@@ -174,7 +174,8 @@ class PedidosAdministrativos {
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">${producto.Nombre_Prod}</h6>
                                 <p class="mb-1 small text-muted">
-                                    Código: ${producto.Cod_Barra || 'N/A'}
+                                    Código: ${producto.Cod_Barra || 'N/A'} | 
+                                    Clave: ${producto.Clave_adicional || 'N/A'}
                                 </p>
                                 <p class="mb-1 small ${stockClass}">
                                     ${stockIcon} Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
@@ -390,7 +391,7 @@ class PedidosAdministrativos {
         let html = '<div class="row">';
         productosPagina.forEach(producto => {
             const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
-            const deficit = producto.Min_Existencia - producto.Existencias_R;
+            const deficit = producto.cantidad_necesaria || (producto.Min_Existencia - producto.Existencias_R);
             
             html += `
                 <div class="col-md-6 mb-2">

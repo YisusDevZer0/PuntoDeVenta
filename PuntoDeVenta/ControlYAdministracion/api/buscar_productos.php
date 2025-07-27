@@ -12,65 +12,29 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 
 try {
     $query = isset($_POST['query']) ? trim($_POST['query']) : '';
-    $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 20;
     $sucursal = $row['Fk_Sucursal']; // Sucursal del usuario actual
     
-    if (empty($query)) {
-        // Si no hay query, devolver productos populares o recientes
-        $sql = "SELECT 
-                    s.ID_Prod_POS,
-                    s.Nombre_Prod,
-                    s.Cod_Barra,
-                    s.Existencias_R,
-                    s.Min_Existencia,
-                    s.Max_Existencia,
-                    s.Estatus,
-                    p.Precio_Venta
-                FROM Stock_POS s
-                INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
-                INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
-                INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
-                WHERE s.Estatus = 'Activo'
-                  AND s.Fk_sucursal = ?
-                ORDER BY s.Existencias_R DESC
-                LIMIT ?";
-        
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $sucursal, $limit);
-    } else {
-        // Búsqueda dinámica mejorada usando la misma estructura que ArrayStocks.php
-        $sql = "SELECT 
-                    s.ID_Prod_POS,
-                    s.Nombre_Prod,
-                    s.Cod_Barra,
-                    s.Existencias_R,
-                    s.Min_Existencia,
-                    s.Max_Existencia,
-                    s.Estatus,
-                    p.Precio_Venta,
-                    CASE 
-                        WHEN s.Cod_Barra = ? THEN 3
-                        WHEN s.Nombre_Prod LIKE ? THEN 2
-                        WHEN s.Nombre_Prod LIKE ? THEN 1
-                        ELSE 0
-                    END as relevancia
-                FROM Stock_POS s
-                INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
-                INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
-                INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
-                WHERE s.Estatus = 'Activo'
-                  AND s.Fk_sucursal = ?
-                  AND (s.Nombre_Prod LIKE ? OR s.Cod_Barra LIKE ?)
-                ORDER BY relevancia DESC, s.Nombre_Prod ASC
-                LIMIT ?";
-        
-        $stmt = $conn->prepare($sql);
-        $exactQuery = $query;
-        $startQuery = $query . '%';
-        $containsQuery = '%' . $query . '%';
-        $stmt->bind_param("sssiisi", $exactQuery, $startQuery, $containsQuery, $sucursal, $containsQuery, $containsQuery, $limit);
-    }
+    // Usar la misma lógica que PedidosController.php
+    $sql = "SELECT 
+                s.ID_Prod_POS, 
+                s.Nombre_Prod, 
+                s.Cod_Barra,
+                s.Clave_adicional,
+                s.Existencias_R,
+                s.Min_Existencia,
+                s.Max_Existencia,
+                p.Precio_Venta,
+                p.Precio_C
+            FROM Stock_POS s
+            LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+            WHERE s.Fk_sucursal = ? 
+            AND (s.Nombre_Prod LIKE ? OR s.Cod_Barra LIKE ? OR s.Clave_adicional LIKE ?)
+            ORDER BY s.Nombre_Prod ASC 
+            LIMIT 20";
     
+    $stmt = $conn->prepare($sql);
+    $like = "%$query%";
+    $stmt->bind_param("ssss", $sucursal, $like, $like, $like);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -80,11 +44,12 @@ try {
             'ID_Prod_POS' => $row['ID_Prod_POS'],
             'Nombre_Prod' => $row['Nombre_Prod'],
             'Cod_Barra' => $row['Cod_Barra'],
+            'Clave_adicional' => $row['Clave_adicional'],
             'Precio_Venta' => $row['Precio_Venta'],
             'Existencias_R' => $row['Existencias_R'],
             'Min_Existencia' => $row['Min_Existencia'],
             'Max_Existencia' => $row['Max_Existencia'],
-            'Estatus' => $row['Estatus'],
+            'Estatus' => 'Activo',
             'stock_status' => getStockStatus($row['Existencias_R'], $row['Min_Existencia'])
         ];
     }
@@ -108,7 +73,7 @@ try {
 function getStockStatus($existencias, $minExistencia) {
     if ($existencias <= 0) {
         return 'agotado';
-    } elseif ($existencias <= $minExistencia) {
+    } elseif ($existencias < $minExistencia) {
         return 'bajo';
     } else {
         return 'normal';

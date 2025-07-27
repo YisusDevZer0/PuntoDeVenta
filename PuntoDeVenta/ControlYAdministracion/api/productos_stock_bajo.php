@@ -13,30 +13,24 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 try {
     $sucursal = $row['Fk_Sucursal']; // Sucursal del usuario actual
     
-    // Consulta mejorada para productos con bajo stock usando la misma estructura que ArrayStocks.php
+    // Usar la misma lógica que PedidosController.php
     $sql = "SELECT 
-                s.ID_Prod_POS,
-                s.Nombre_Prod,
+                s.ID_Prod_POS, 
+                s.Nombre_Prod, 
                 s.Cod_Barra,
                 s.Existencias_R,
                 s.Min_Existencia,
-                s.Max_Existencia,
-                s.Estatus,
-                p.Precio_Venta
+                p.Precio_Venta,
+                p.Precio_C,
+                (s.Min_Existencia - s.Existencias_R) as cantidad_necesaria
             FROM Stock_POS s
-            INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
-            INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
-            INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
-            WHERE s.Estatus = 'Activo'
-              AND s.Fk_sucursal = ?
-              AND s.Existencias_R IS NOT NULL
-              AND s.Min_Existencia IS NOT NULL
-              AND s.Existencias_R <= s.Min_Existencia
-              AND s.Existencias_R >= 0
-            ORDER BY (s.Min_Existencia - s.Existencias_R) DESC, s.Nombre_Prod ASC";
+            LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+            WHERE s.Fk_sucursal = ? 
+            AND s.Existencias_R < s.Min_Existencia
+            ORDER BY (s.Min_Existencia - s.Existencias_R) DESC";
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $sucursal);
+    $stmt->bind_param("s", $sucursal);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -53,25 +47,21 @@ try {
             'Precio_Venta' => $row['Precio_Venta'],
             'Existencias_R' => $row['Existencias_R'],
             'Min_Existencia' => $row['Min_Existencia'],
-            'Max_Existencia' => $row['Max_Existencia'],
-            'Estatus' => $row['Estatus']
+            'Max_Existencia' => 0, // No se usa en la consulta original
+            'Estatus' => 'Activo',
+            'cantidad_necesaria' => $row['cantidad_necesaria']
         ];
     }
     
-    // Para debugging, también obtener estadísticas usando la misma lógica
+    // Debug: obtener estadísticas
     $sqlStats = "SELECT 
                     COUNT(*) as total_productos,
-                    COUNT(CASE WHEN s.Existencias_R <= s.Min_Existencia THEN 1 END) as con_bajo_stock,
-                    COUNT(CASE WHEN s.Existencias_R IS NULL THEN 1 END) as sin_existencias,
-                    COUNT(CASE WHEN s.Min_Existencia IS NULL THEN 1 END) as sin_min_existencia
-                  FROM Stock_POS s
-                  INNER JOIN Sucursales suc ON s.Fk_sucursal = suc.ID_Sucursal
-                  INNER JOIN Servicios_POS ser ON s.Tipo_Servicio = ser.Servicio_ID
-                  INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
-                  WHERE s.Estatus = 'Activo' AND s.Fk_sucursal = ?";
+                    COUNT(CASE WHEN Existencias_R < Min_Existencia THEN 1 END) as con_bajo_stock
+                  FROM Stock_POS 
+                  WHERE Fk_sucursal = ?";
     
     $stmtStats = $conn->prepare($sqlStats);
-    $stmtStats->bind_param("i", $sucursal);
+    $stmtStats->bind_param("s", $sucursal);
     $stmtStats->execute();
     $resultStats = $stmtStats->get_result();
     $stats = $resultStats->fetch_assoc();
@@ -83,9 +73,7 @@ try {
         'sucursal' => $sucursal,
         'debug' => [
             'total_productos' => $stats['total_productos'],
-            'con_bajo_stock' => $stats['con_bajo_stock'],
-            'sin_existencias' => $stats['sin_existencias'],
-            'sin_min_existencia' => $stats['sin_min_existencia']
+            'con_bajo_stock' => $stats['con_bajo_stock']
         ]
     ]);
     
