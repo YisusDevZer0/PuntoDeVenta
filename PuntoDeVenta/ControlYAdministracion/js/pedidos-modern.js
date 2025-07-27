@@ -143,16 +143,24 @@ class SistemaPedidos {
                 this.productosModule.actualizarVistaProductos('nuevo');
                 this.productosModule.actualizarResumen('nuevo');
             }
+            
+            // Reinicializar Sortable cuando el modal se abra (con delay para asegurar que el DOM esté listo)
+            if (typeof Sortable !== 'undefined') {
+                setTimeout(() => {
+                    this.inicializarSortable();
+                }, 200);
+            }
         });
 
         $('#modalNuevoPedido').on('hidden.bs.modal', () => {
             this.modalAbierto = false;
             // No limpiar datos al cerrar, mantener persistencia
-        });
-
-        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
-            this.modalAbierto = false;
-            // No limpiar datos al cerrar, mantener persistencia
+            
+            // Limpiar Sortable cuando el modal se cierre
+            if (this.sortableNuevo) {
+                this.sortableNuevo.destroy();
+                this.sortableNuevo = null;
+            }
         });
 
         // Filtros
@@ -181,26 +189,60 @@ class SistemaPedidos {
         // Event listener para cuando se agregue un producto
         $(document).on('productoAgregado', (e, data) => {
             this.actualizarIndicadorCarrito();
+            
+            // Reinicializar Sortable después de agregar productos (solo si está disponible)
+            if (typeof Sortable !== 'undefined') {
+                setTimeout(() => {
+                    this.inicializarSortable();
+                }, 100);
+            }
         });
     }
 
     setupSortable() {
         // Configurar drag & drop para productos del pedido nuevo
-        this.sortableNuevo = new Sortable(document.getElementById('productos-pedido-nuevo'), {
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            dragClass: 'sortable-drag',
-            onEnd: () => {
-                if (this.productosModule) {
-                    this.productosModule.actualizarResumen('nuevo');
-                }
-                this.guardarDatos();
-            },
-            onStart: () => {
-                $('.sortable-ghost').addClass('shadow-lg');
+        // Solo inicializar si Sortable está disponible
+        if (typeof Sortable !== 'undefined') {
+            this.inicializarSortable();
+        } else {
+            console.warn('Sortable.js no está disponible, el drag & drop no funcionará');
+        }
+    }
+
+    inicializarSortable() {
+        // Verificar que Sortable esté disponible
+        if (typeof Sortable === 'undefined') {
+            console.warn('Sortable.js no está disponible');
+            return;
+        }
+        
+        const productosContainer = document.getElementById('productos-pedido-nuevo');
+        
+        if (productosContainer) {
+            // Destruir instancia anterior si existe
+            if (this.sortableNuevo) {
+                this.sortableNuevo.destroy();
             }
-        });
+            
+            this.sortableNuevo = new Sortable(productosContainer, {
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onEnd: () => {
+                    if (this.productosModule) {
+                        this.productosModule.actualizarResumen('nuevo');
+                    }
+                    this.guardarDatos();
+                },
+                onStart: () => {
+                    $('.sortable-ghost').addClass('shadow-lg');
+                }
+            });
+            console.log('Sortable inicializado para productos del pedido nuevo');
+        } else {
+            console.warn('Elemento #productos-pedido-nuevo no encontrado, Sortable no se inicializará');
+        }
     }
 
     async cargarPedidos() {
