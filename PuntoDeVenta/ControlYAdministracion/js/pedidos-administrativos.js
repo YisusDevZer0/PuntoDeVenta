@@ -1,0 +1,1064 @@
+// Sistema de Gestión de Pedidos Administrativos
+class PedidosAdministrativos {
+    constructor() {
+        this.pedidos = [];
+        this.productosSeleccionados = [];
+        this.encargosDisponibles = [];
+        this.productosStockBajo = [];
+        this.paginaActual = 1;
+        this.productosPorPagina = 10;
+        this.pedidoEnProceso = false;
+        this.sortable = null;
+        
+        // Usar el módulo de productos existente
+        this.productosModule = window.productosModule;
+        
+        this.init();
+    }
+
+    init() {
+        this.cargarDatosGuardados();
+        this.setupEventListeners();
+        this.cargarEstadisticas();
+        this.cargarPedidos();
+        this.actualizarIndicadorCarrito();
+    }
+
+    // Configurar event listeners
+    setupEventListeners() {
+        // Búsqueda de productos
+        $('#busqueda-producto-nuevo').on('keypress', (e) => {
+            if (e.which === 13) {
+                const query = $('#busqueda-producto-nuevo').val().trim();
+                if (query) {
+                    this.buscarProductos(query);
+                }
+            }
+        });
+
+        // Eventos del modal nuevo pedido
+        $('#modalNuevoPedido').on('shown.bs.modal', () => {
+            this.pedidoEnProceso = true;
+            this.cargarDatosGuardados();
+            this.actualizarVistaProductos();
+            this.actualizarResumen();
+        });
+
+        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
+            this.pedidoEnProceso = false;
+        });
+
+        // Eventos del modal stock bajo
+        $('#modalStockBajo').on('shown.bs.modal', () => {
+            this.cargarProductosStockBajo();
+        });
+
+        // Eventos del modal encargos
+        $('#modalEncargos').on('shown.bs.modal', () => {
+            this.cargarEncargosDisponibles();
+        });
+
+        // Filtros
+        $('#filtro-estado, #filtro-fecha-inicio, #filtro-fecha-fin').on('change', () => {
+            this.aplicarFiltros();
+        });
+
+        // Búsqueda de pedidos
+        $('#busqueda-pedidos').on('input', () => {
+            this.aplicarFiltros();
+        });
+
+        // Eventos de confirmación
+        $('#btn-aprobar-pedido').on('click', () => {
+            this.aprobarPedido();
+        });
+
+        $('#btn-cancelar-pedido').on('click', () => {
+            this.cancelarPedido();
+        });
+    }
+
+    // Cargar datos guardados en localStorage
+    cargarDatosGuardados() {
+        const datos = localStorage.getItem('productosSeleccionados');
+        if (datos) {
+            this.productosSeleccionados = JSON.parse(datos);
+        }
+    }
+
+    // Guardar datos en localStorage
+    guardarDatos() {
+        localStorage.setItem('productosSeleccionados', JSON.stringify(this.productosSeleccionados));
+        this.actualizarIndicadorCarrito();
+    }
+
+    // Actualizar indicador del carrito
+    actualizarIndicadorCarrito() {
+        const badge = $('#carrito-badge');
+        if (this.productosSeleccionados.length > 0) {
+            badge.text(this.productosSeleccionados.length).show();
+        } else {
+            badge.hide();
+        }
+    }
+
+    // Buscar productos
+    buscarProductos(query) {
+        this.mostrarLoading('Buscando productos...');
+        
+        $.ajax({
+            url: 'api/buscar_productos.php',
+            method: 'POST',
+            data: { query: query },
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.mostrarResultadosBusqueda(response.productos);
+                } else {
+                    this.mostrarError(response.message || 'Error al buscar productos');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al buscar productos');
+            }
+        });
+    }
+
+    // Mostrar resultados de búsqueda
+    mostrarResultadosBusqueda(productos) {
+        const container = $('#resultados-busqueda-nuevo');
+        
+        if (!productos || productos.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-search fa-2x mb-2"></i>
+                    <p>No se encontraron productos</p>
+                </div>
+            `);
+            return;
+        }
+
+        let html = '<div class="row">';
+        productos.forEach(producto => {
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            
+            html += `
+                <div class="col-md-6 mb-2">
+                    <div class="producto-card ${yaSeleccionado ? 'border-success' : 'border-warning'}" 
+                         data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
+                                <p class="mb-1 small text-muted">
+                                    Código: ${producto.Cod_Barra || 'N/A'}
+                                </p>
+                                <p class="mb-1 small">
+                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
+                                </p>
+                                <p class="mb-0 small">
+                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
+                                </p>
+                            </div>
+                            <div class="ms-2">
+                                ${yaSeleccionado ? 
+                                    '<span class="badge bg-success">Agregado</span>' : 
+                                    `<button class="btn btn-primary btn-sm agregar-producto">Agregar</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        container.html(html);
+
+        // Event listeners para agregar productos
+        $('.agregar-producto').on('click', (e) => {
+            const card = $(e.currentTarget).closest('.producto-card');
+            const producto = card.data('producto');
+            this.agregarProducto(producto);
+        });
+    }
+
+    // Agregar producto al pedido
+    agregarProducto(producto) {
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
+            this.mostrarError('Este producto ya está en el pedido');
+            return;
+        }
+
+        this.productosSeleccionados.push({
+            id: producto.ID_Prod_POS,
+            nombre: producto.Nombre_Prod,
+            codigo: producto.Cod_Barra,
+            precio: parseFloat(producto.Precio_Venta || 0),
+            cantidad: 1,
+            stock: producto.Existencias_R,
+            min_stock: producto.Min_Existencia
+        });
+
+        this.actualizarVistaProductos();
+        this.actualizarResumen();
+        this.guardarDatos();
+        this.mostrarExito('Producto agregado al pedido');
+    }
+
+    // Actualizar vista de productos
+    actualizarVistaProductos() {
+        const container = $('#productos-pedido-nuevo');
+        
+        if (this.productosSeleccionados.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                    <p>Arrastra productos aquí o busca productos para agregar</p>
+                </div>
+            `);
+            return;
+        }
+
+        let html = '';
+        this.productosSeleccionados.forEach((producto, index) => {
+            const stockClass = producto.stock < producto.min_stock ? 'text-danger' : 'text-success';
+            
+            html += `
+                <div class="producto-card" data-index="${index}">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-grip-vertical drag-handle me-2"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${producto.nombre}</h6>
+                            <p class="mb-1 small text-muted">
+                                Código: ${producto.codigo || 'N/A'} | 
+                                Stock: <span class="${stockClass}">${producto.stock}</span>
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <input type="number" class="form-control form-control-sm me-2" 
+                                   style="width: 80px;" min="1" value="${producto.cantidad}"
+                                   onchange="pedidosAdmin.actualizarCantidad(${index}, this.value)">
+                            <span class="me-2">$${producto.precio.toFixed(2)}</span>
+                            <button class="btn btn-danger btn-sm" onclick="pedidosAdmin.eliminarProducto(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.html(html);
+        this.inicializarSortable();
+    }
+
+    // Actualizar cantidad de producto
+    actualizarCantidad(index, cantidad) {
+        if (this.productosSeleccionados[index]) {
+            this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
+            this.actualizarResumen();
+            this.guardarDatos();
+        }
+    }
+
+    // Eliminar producto
+    eliminarProducto(index) {
+        this.productosSeleccionados.splice(index, 1);
+        this.actualizarVistaProductos();
+        this.actualizarResumen();
+        this.guardarDatos();
+        this.mostrarExito('Producto eliminado del pedido');
+    }
+
+    // Actualizar resumen
+    actualizarResumen() {
+        const total = this.productosSeleccionados.reduce((sum, producto) => {
+            return sum + (producto.precio * producto.cantidad);
+        }, 0);
+        
+        $('#total-pedido-nuevo').text(`$${total.toFixed(2)}`);
+    }
+
+    // Inicializar Sortable
+    inicializarSortable() {
+        const container = document.getElementById('productos-pedido-nuevo');
+        if (container && typeof Sortable !== 'undefined') {
+            if (this.sortable) {
+                this.sortable.destroy();
+            }
+            
+            this.sortable = new Sortable(container, {
+                animation: 150,
+                handle: '.drag-handle',
+                onEnd: (evt) => {
+                    // Reordenar array según el nuevo orden
+                    const newOrder = [];
+                    $(container).find('.producto-card').each((index, element) => {
+                        const dataIndex = $(element).data('index');
+                        newOrder.push(this.productosSeleccionados[dataIndex]);
+                    });
+                    this.productosSeleccionados = newOrder;
+                    this.guardarDatos();
+                }
+            });
+        }
+    }
+
+    // Cargar productos con bajo stock
+    cargarProductosStockBajo() {
+        this.mostrarLoading('Cargando productos con bajo stock...');
+        
+        $.ajax({
+            url: 'api/productos_stock_bajo.php',
+            method: 'GET',
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.productosStockBajo = response.productos;
+                    this.mostrarProductosStockBajo();
+                } else {
+                    this.mostrarError(response.message || 'Error al cargar productos con bajo stock');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al cargar productos con bajo stock');
+            }
+        });
+    }
+
+    // Mostrar productos con bajo stock
+    mostrarProductosStockBajo() {
+        const container = $('#productos-stock-bajo');
+        
+        if (!this.productosStockBajo || this.productosStockBajo.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
+                    <p>No hay productos con bajo stock</p>
+                </div>
+            `);
+            return;
+        }
+
+        const totalPaginas = Math.ceil(this.productosStockBajo.length / this.productosPorPagina);
+        const inicio = (this.paginaActual - 1) * this.productosPorPagina;
+        const fin = inicio + this.productosPorPagina;
+        const productosPagina = this.productosStockBajo.slice(inicio, fin);
+
+        let html = '<div class="row">';
+        productosPagina.forEach(producto => {
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            
+            html += `
+                <div class="col-md-6 mb-2">
+                    <div class="producto-card ${yaSeleccionado ? 'border-success' : 'border-warning'}" 
+                         data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
+                                <p class="mb-1 small text-muted">
+                                    Código: ${producto.Cod_Barra || 'N/A'}
+                                </p>
+                                <p class="mb-1 small text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
+                                </p>
+                                <p class="mb-0 small">
+                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
+                                </p>
+                            </div>
+                            <div class="ms-2">
+                                ${yaSeleccionado ? 
+                                    '<span class="badge bg-success">Agregado</span>' : 
+                                    `<button class="btn btn-warning btn-sm agregar-stock-bajo">Agregar</button>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        container.html(html);
+        this.generarPaginacionStockBajo(totalPaginas);
+
+        // Event listeners para agregar productos desde stock bajo
+        $('.agregar-stock-bajo').on('click', (e) => {
+            const card = $(e.currentTarget).closest('.producto-card');
+            const producto = card.data('producto');
+            this.agregarProductoStockBajo(producto);
+        });
+    }
+
+    // Generar paginación para stock bajo
+    generarPaginacionStockBajo(totalPaginas) {
+        const container = $('#paginacion-stock-bajo');
+        let html = '';
+        
+        if (totalPaginas > 1) {
+            html += `<li class="page-item ${this.paginaActual === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="pedidosAdmin.cambiarPaginaStockBajo(${this.paginaActual - 1})">Anterior</a>
+                     </li>`;
+            
+            for (let i = 1; i <= totalPaginas; i++) {
+                html += `<li class="page-item ${this.paginaActual === i ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="pedidosAdmin.cambiarPaginaStockBajo(${i})">${i}</a>
+                         </li>`;
+            }
+            
+            html += `<li class="page-item ${this.paginaActual === totalPaginas ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="pedidosAdmin.cambiarPaginaStockBajo(${this.paginaActual + 1})">Siguiente</a>
+                     </li>`;
+        }
+        
+        container.html(html);
+    }
+
+    // Cambiar página de stock bajo
+    cambiarPaginaStockBajo(pagina) {
+        if (pagina >= 1 && pagina <= Math.ceil(this.productosStockBajo.length / this.productosPorPagina)) {
+            this.paginaActual = pagina;
+            this.mostrarProductosStockBajo();
+        }
+    }
+
+    // Agregar producto desde stock bajo
+    agregarProductoStockBajo(producto) {
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
+            this.mostrarError('Este producto ya está en el pedido');
+            return;
+        }
+
+        this.productosSeleccionados.push({
+            id: producto.ID_Prod_POS,
+            nombre: producto.Nombre_Prod,
+            codigo: producto.Cod_Barra,
+            precio: parseFloat(producto.Precio_Venta || 0),
+            cantidad: 1,
+            stock: producto.Existencias_R,
+            min_stock: producto.Min_Existencia
+        });
+
+        // Si el modal nuevo no está abierto, abrirlo
+        if (!$('#modalNuevoPedido').hasClass('show')) {
+            $('#modalNuevoPedido').modal('show');
+        }
+
+        this.actualizarVistaProductos();
+        this.actualizarResumen();
+        this.guardarDatos();
+        this.mostrarExito('Producto agregado al pedido');
+        
+        // Cerrar el modal de stock bajo
+        $('#modalStockBajo').modal('hide');
+    }
+
+    // Agregar todos los productos de stock bajo
+    agregarTodosStockBajo() {
+        let agregados = 0;
+        this.productosStockBajo.forEach(producto => {
+            if (!this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
+                this.productosSeleccionados.push({
+                    id: producto.ID_Prod_POS,
+                    nombre: producto.Nombre_Prod,
+                    codigo: producto.Cod_Barra,
+                    precio: parseFloat(producto.Precio_Venta || 0),
+                    cantidad: 1,
+                    stock: producto.Existencias_R,
+                    min_stock: producto.Min_Existencia
+                });
+                agregados++;
+            }
+        });
+
+        if (agregados > 0) {
+            this.actualizarVistaProductos();
+            this.actualizarResumen();
+            this.guardarDatos();
+            this.mostrarExito(`${agregados} productos agregados al pedido`);
+            
+            // Abrir modal nuevo pedido si no está abierto
+            if (!$('#modalNuevoPedido').hasClass('show')) {
+                $('#modalNuevoPedido').modal('show');
+            }
+        } else {
+            this.mostrarError('No hay productos nuevos para agregar');
+        }
+    }
+
+    // Cargar encargos disponibles
+    cargarEncargosDisponibles() {
+        this.mostrarLoading('Cargando encargos disponibles...');
+        
+        $.ajax({
+            url: 'api/encargos_disponibles.php',
+            method: 'GET',
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.encargosDisponibles = response.encargos;
+                    this.mostrarEncargosDisponibles();
+                } else {
+                    this.mostrarError(response.message || 'Error al cargar encargos');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al cargar encargos');
+            }
+        });
+    }
+
+    // Mostrar encargos disponibles
+    mostrarEncargosDisponibles() {
+        const container = $('#encargos-disponibles');
+        
+        if (!this.encargosDisponibles || this.encargosDisponibles.length === 0) {
+            container.html(`
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-file-invoice fa-2x mb-2 text-info"></i>
+                    <p>No hay encargos disponibles</p>
+                </div>
+            `);
+            return;
+        }
+
+        let html = '';
+        this.encargosDisponibles.forEach(encargo => {
+            html += `
+                <div class="encargo-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${encargo.descripcion || 'Producto especial'}</h6>
+                            <p class="mb-1 small">
+                                <strong>Cliente:</strong> ${encargo.cliente || 'N/A'}
+                            </p>
+                            <p class="mb-1 small">
+                                <strong>Fecha:</strong> ${encargo.fecha || 'N/A'}
+                            </p>
+                            <p class="mb-0 small">
+                                <strong>Observaciones:</strong> ${encargo.observaciones || 'Sin observaciones'}
+                            </p>
+                        </div>
+                        <div class="ms-2">
+                            <span class="badge">${encargo.estado || 'Pendiente'}</span>
+                            <button class="btn btn-info btn-sm mt-2" onclick="pedidosAdmin.agregarEncargo(${encargo.id})">
+                                <i class="fas fa-plus me-1"></i>Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.html(html);
+    }
+
+    // Agregar encargo al pedido
+    agregarEncargo(encargoId) {
+        const encargo = this.encargosDisponibles.find(e => e.id === encargoId);
+        if (!encargo) {
+            this.mostrarError('Encargo no encontrado');
+            return;
+        }
+
+        // Crear producto especial desde encargo
+        const productoEspecial = {
+            id: `encargo_${encargo.id}`,
+            nombre: encargo.descripcion || 'Producto especial',
+            codigo: `ENC-${encargo.id}`,
+            precio: parseFloat(encargo.precio || 0),
+            cantidad: 1,
+            stock: 0,
+            min_stock: 0,
+            es_encargo: true,
+            encargo_id: encargo.id,
+            cliente: encargo.cliente,
+            observaciones: encargo.observaciones
+        };
+
+        this.productosSeleccionados.push(productoEspecial);
+        this.actualizarVistaProductos();
+        this.actualizarResumen();
+        this.guardarDatos();
+        this.mostrarExito('Encargo agregado al pedido');
+        
+        // Abrir modal nuevo pedido si no está abierto
+        if (!$('#modalNuevoPedido').hasClass('show')) {
+            $('#modalNuevoPedido').modal('show');
+        }
+    }
+
+    // Abrir resumen de pedido
+    abrirResumenPedido() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('No hay productos en el pedido');
+            return;
+        }
+
+        this.mostrarResumenPedido();
+        $('#modalResumenPedido').modal('show');
+    }
+
+    // Mostrar resumen de pedido
+    mostrarResumenPedido() {
+        const container = $('#resumen-productos');
+        
+        let html = '<div class="table-responsive"><table class="table table-sm">';
+        html += '<thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead><tbody>';
+        
+        let total = 0;
+        this.productosSeleccionados.forEach((producto, index) => {
+            const subtotal = producto.precio * producto.cantidad;
+            total += subtotal;
+            
+            const esEncargo = producto.es_encargo ? ' <span class="badge bg-info">Encargo</span>' : '';
+            
+            html += `
+                <tr>
+                    <td>
+                        ${producto.nombre}${esEncargo}
+                        ${producto.es_encargo ? `<br><small class="text-muted">Cliente: ${producto.cliente || 'N/A'}</small>` : ''}
+                    </td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm" 
+                               style="width: 80px;" min="1" value="${producto.cantidad}"
+                               onchange="pedidosAdmin.actualizarCantidadResumen(${index}, this.value)">
+                    </td>
+                    <td>$${producto.precio.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div>';
+        html += `<div class="text-end"><h5>Total: $${total.toFixed(2)}</h5></div>`;
+        
+        container.html(html);
+    }
+
+    // Actualizar cantidad en resumen
+    actualizarCantidadResumen(index, cantidad) {
+        if (this.productosSeleccionados[index]) {
+            this.productosSeleccionados[index].cantidad = parseInt(cantidad) || 1;
+            this.guardarDatos();
+            this.mostrarResumenPedido();
+        }
+    }
+
+    // Confirmar pedido
+    confirmarPedido() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('No hay productos en el pedido');
+            return;
+        }
+
+        const observaciones = $('#observaciones-pedido').val();
+        const prioridad = $('#prioridad-pedido').val();
+
+        this.mostrarLoading('Guardando pedido...');
+        
+        $.ajax({
+            url: 'api/guardar_pedido.php',
+            method: 'POST',
+            data: {
+                productos: JSON.stringify(this.productosSeleccionados),
+                observaciones: observaciones,
+                prioridad: prioridad
+            },
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.mostrarExito('Pedido guardado exitosamente');
+                    this.limpiarPedido();
+                    $('#modalResumenPedido').modal('hide');
+                    $('#modalNuevoPedido').modal('hide');
+                    this.cargarPedidos();
+                    this.cargarEstadisticas();
+                } else {
+                    this.mostrarError(response.message || 'Error al guardar el pedido');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al guardar el pedido');
+            }
+        });
+    }
+
+    // Guardar pedido (método alternativo)
+    guardarPedido() {
+        this.abrirResumenPedido();
+    }
+
+    // Limpiar pedido
+    limpiarPedido() {
+        this.productosSeleccionados = [];
+        this.guardarDatos();
+        this.actualizarVistaProductos();
+        this.actualizarResumen();
+    }
+
+    // Cargar estadísticas
+    cargarEstadisticas() {
+        $.ajax({
+            url: 'api/estadisticas_pedidos.php',
+            method: 'GET',
+            success: (response) => {
+                if (response.success) {
+                    $('#total-pedidos').text(response.total_pedidos || 0);
+                    $('#pedidos-espera').text(response.pedidos_espera || 0);
+                    $('#pedidos-completados').text(response.pedidos_completados || 0);
+                    $('#total-hoy').text(`$${(response.total_hoy || 0).toFixed(2)}`);
+                }
+            }
+        });
+    }
+
+    // Cargar pedidos
+    cargarPedidos() {
+        this.mostrarLoading('Cargando pedidos...');
+        
+        $.ajax({
+            url: 'api/pedidos_administrativos.php',
+            method: 'GET',
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.pedidos = response.pedidos || [];
+                    this.mostrarPedidos();
+                } else {
+                    this.mostrarError(response.message || 'Error al cargar pedidos');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al cargar pedidos');
+            }
+        });
+    }
+
+    // Mostrar pedidos
+    mostrarPedidos() {
+        const tbody = $('#tbody-pedidos');
+        
+        if (this.pedidos.length === 0) {
+            tbody.html(`
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                        <p>No hay pedidos registrados</p>
+                    </td>
+                </tr>
+            `);
+            return;
+        }
+
+        let html = '';
+        this.pedidos.forEach(pedido => {
+            const estadoClass = this.getEstadoClass(pedido.estado);
+            const estadoText = this.getEstadoText(pedido.estado);
+            
+            html += `
+                <tr>
+                    <td>${pedido.folio}</td>
+                    <td>${pedido.fecha}</td>
+                    <td>${pedido.cantidad_productos} productos</td>
+                    <td>$${parseFloat(pedido.total).toFixed(2)}</td>
+                    <td><span class="badge ${estadoClass}">${estadoText}</span></td>
+                    <td>${pedido.solicitante}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="pedidosAdmin.verDetallesPedido(${pedido.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        ${pedido.estado === 'pendiente' ? `
+                            <button class="btn btn-success btn-sm" onclick="pedidosAdmin.aprobarPedido(${pedido.id})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="pedidosAdmin.cancelarPedido(${pedido.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tbody.html(html);
+    }
+
+    // Obtener clase CSS para estado
+    getEstadoClass(estado) {
+        const clases = {
+            'pendiente': 'bg-warning',
+            'aprobado': 'bg-info',
+            'completado': 'bg-success',
+            'cancelado': 'bg-danger'
+        };
+        return clases[estado] || 'bg-secondary';
+    }
+
+    // Obtener texto para estado
+    getEstadoText(estado) {
+        const textos = {
+            'pendiente': 'Pendiente',
+            'aprobado': 'Aprobado',
+            'completado': 'Completado',
+            'cancelado': 'Cancelado'
+        };
+        return textos[estado] || 'Desconocido';
+    }
+
+    // Ver detalles de pedido
+    verDetallesPedido(pedidoId) {
+        this.mostrarLoading('Cargando detalles...');
+        
+        $.ajax({
+            url: 'api/detalles_pedido.php',
+            method: 'GET',
+            data: { id: pedidoId },
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.mostrarDetallesPedido(response.pedido);
+                    $('#modalDetallesPedido').modal('show');
+                } else {
+                    this.mostrarError(response.message || 'Error al cargar detalles');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al cargar detalles');
+            }
+        });
+    }
+
+    // Mostrar detalles de pedido
+    mostrarDetallesPedido(pedido) {
+        const container = $('#detalles-pedido');
+        
+        let html = `
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Folio:</strong> ${pedido.folio}<br>
+                    <strong>Fecha:</strong> ${pedido.fecha_creacion}<br>
+                    <strong>Estado:</strong> <span class="badge ${this.getEstadoClass(pedido.estado)}">${this.getEstadoText(pedido.estado)}</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Solicitante:</strong> ${pedido.solicitante}<br>
+                    <strong>Prioridad:</strong> ${pedido.prioridad}<br>
+                    <strong>Total:</strong> $${parseFloat(pedido.total_estimado).toFixed(2)}
+                </div>
+            </div>
+        `;
+        
+        if (pedido.observaciones) {
+            html += `<div class="mb-3"><strong>Observaciones:</strong><br>${pedido.observaciones}</div>`;
+        }
+        
+        html += '<h6>Productos:</h6><div class="table-responsive"><table class="table table-sm">';
+        html += '<thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead><tbody>';
+        
+        pedido.productos.forEach(producto => {
+            const subtotal = producto.precio * producto.cantidad;
+            html += `
+                <tr>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.cantidad}</td>
+                    <td>$${producto.precio.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div>';
+        
+        container.html(html);
+        
+        // Mostrar/ocultar botones según estado
+        if (pedido.estado === 'pendiente') {
+            $('#btn-aprobar-pedido, #btn-cancelar-pedido').show();
+            $('#btn-aprobar-pedido').data('pedido-id', pedido.id);
+            $('#btn-cancelar-pedido').data('pedido-id', pedido.id);
+        } else {
+            $('#btn-aprobar-pedido, #btn-cancelar-pedido').hide();
+        }
+    }
+
+    // Aprobar pedido
+    aprobarPedido(pedidoId) {
+        const pedidoIdToApprove = pedidoId || $('#btn-aprobar-pedido').data('pedido-id');
+        
+        Swal.fire({
+            title: '¿Confirmar aprobación?',
+            text: '¿Estás seguro de que deseas aprobar este pedido?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, aprobar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.cambiarEstadoPedido(pedidoIdToApprove, 'aprobado');
+            }
+        });
+    }
+
+    // Cancelar pedido
+    cancelarPedido(pedidoId) {
+        const pedidoIdToCancel = pedidoId || $('#btn-cancelar-pedido').data('pedido-id');
+        
+        Swal.fire({
+            title: '¿Confirmar cancelación?',
+            text: '¿Estás seguro de que deseas cancelar este pedido? Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.cambiarEstadoPedido(pedidoIdToCancel, 'cancelado');
+            }
+        });
+    }
+
+    // Cambiar estado de pedido
+    cambiarEstadoPedido(pedidoId, nuevoEstado) {
+        this.mostrarLoading('Actualizando estado...');
+        
+        $.ajax({
+            url: 'api/cambiar_estado_pedido.php',
+            method: 'POST',
+            data: {
+                id: pedidoId,
+                estado: nuevoEstado
+            },
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.mostrarExito(`Pedido ${nuevoEstado === 'aprobado' ? 'aprobado' : 'cancelado'} exitosamente`);
+                    $('#modalDetallesPedido').modal('hide');
+                    this.cargarPedidos();
+                    this.cargarEstadisticas();
+                } else {
+                    this.mostrarError(response.message || 'Error al cambiar estado');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al cambiar estado');
+            }
+        });
+    }
+
+    // Aplicar filtros
+    aplicarFiltros() {
+        const estado = $('#filtro-estado').val();
+        const fechaInicio = $('#filtro-fecha-inicio').val();
+        const fechaFin = $('#filtro-fecha-fin').val();
+        const busqueda = $('#busqueda-pedidos').val();
+        
+        this.mostrarLoading('Aplicando filtros...');
+        
+        $.ajax({
+            url: 'api/pedidos_administrativos.php',
+            method: 'GET',
+            data: {
+                estado: estado,
+                fecha_inicio: fechaInicio,
+                fecha_fin: fechaFin,
+                busqueda: busqueda
+            },
+            success: (response) => {
+                this.ocultarLoading();
+                if (response.success) {
+                    this.pedidos = response.pedidos || [];
+                    this.mostrarPedidos();
+                } else {
+                    this.mostrarError(response.message || 'Error al aplicar filtros');
+                }
+            },
+            error: () => {
+                this.ocultarLoading();
+                this.mostrarError('Error de conexión al aplicar filtros');
+            }
+        });
+    }
+
+    // Refrescar pedidos
+    refrescarPedidos() {
+        this.cargarPedidos();
+        this.cargarEstadisticas();
+    }
+
+    // Exportar pedidos
+    exportarPedidos() {
+        const estado = $('#filtro-estado').val();
+        const fechaInicio = $('#filtro-fecha-inicio').val();
+        const fechaFin = $('#filtro-fecha-fin').val();
+        const busqueda = $('#busqueda-pedidos').val();
+        
+        const params = new URLSearchParams({
+            estado: estado || '',
+            fecha_inicio: fechaInicio || '',
+            fecha_fin: fechaFin || '',
+            busqueda: busqueda || '',
+            exportar: '1'
+        });
+        
+        window.open(`api/pedidos_administrativos.php?${params.toString()}`, '_blank');
+    }
+
+    // Mostrar loading
+    mostrarLoading(mensaje = 'Cargando...') {
+        $('#loading-overlay').show();
+        $('#loading-overlay .loading-spinner p').text(mensaje);
+    }
+
+    // Ocultar loading
+    ocultarLoading() {
+        $('#loading-overlay').hide();
+    }
+
+    // Mostrar éxito
+    mostrarExito(mensaje) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: mensaje,
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+
+    // Mostrar error
+    mostrarError(mensaje) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: mensaje
+        });
+    }
+}
+
+// Inicializar cuando el documento esté listo
+$(document).ready(function() {
+    // Inicializar el módulo de productos si no existe
+    if (typeof productosModule === 'undefined') {
+        window.productosModule = new ProductosModule();
+    }
+    
+    // Inicializar el sistema de pedidos administrativos
+    window.pedidosAdmin = new PedidosAdministrativos();
+    
+    // Ocultar spinner
+    setTimeout(() => {
+        $('#spinner').removeClass('show');
+    }, 1000);
+}); 
