@@ -201,35 +201,53 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                 </div>
             </div>
 
-            <!-- Filtros y Búsqueda -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="bg-light rounded p-4">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label for="filtro-estado" class="form-label">Estado</label>
-                                <select class="form-select" id="filtro-estado">
-                                    <option value="">Todos</option>
-                                    <option value="pendiente">Pendiente</option>
-                                    <option value="aprobado">Aprobado</option>
-                                    <option value="completado">Completado</option>
-                                    <option value="cancelado">Cancelado</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filtro-fecha-inicio" class="form-label">Fecha Inicio</label>
-                                <input type="date" class="form-control" id="filtro-fecha-inicio">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="filtro-fecha-fin" class="form-label">Fecha Fin</label>
-                                <input type="date" class="form-control" id="filtro-fecha-fin">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="busqueda-pedidos" class="form-label">Buscar</label>
-                                <input type="text" class="form-control" id="busqueda-pedidos" placeholder="Buscar pedidos...">
-                            </div>
-                        </div>
-                    </div>
+            <!-- Filtros y búsqueda -->
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="filtro-estado" class="form-label">Estado</label>
+                    <select class="form-select" id="filtro-estado">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="aprobado">Aprobado</option>
+                        <option value="en_proceso">En Proceso</option>
+                        <option value="completado">Completado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filtro-fecha-inicio" class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="filtro-fecha-inicio">
+                </div>
+                <div class="col-md-3">
+                    <label for="filtro-fecha-fin" class="form-label">Fecha Fin</label>
+                    <input type="date" class="form-control" id="filtro-fecha-fin">
+                </div>
+                <div class="col-md-3">
+                    <label for="busqueda-pedidos" class="form-label">Buscar</label>
+                    <input type="text" class="form-control" id="busqueda-pedidos" placeholder="Buscar por folio, solicitante...">
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#modalNuevoPedido">
+                        <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                    </button>
+                    <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal" data-bs-target="#modalStockBajo">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Bajo Stock
+                    </button>
+                    <button type="button" class="btn btn-info me-2" data-bs-toggle="modal" data-bs-target="#modalEncargos">
+                        <i class="fas fa-clipboard-list me-2"></i>Encargos
+                    </button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#FiltroEspecifico">
+                        <i class="fas fa-exchange-alt me-2"></i>Cambiar Sucursal
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="pedidosAdmin.exportarPedidos()">
+                        <i class="fas fa-download me-2"></i>Exportar
+                    </button>
                 </div>
             </div>
 
@@ -310,12 +328,22 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                                     </h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mb-3">
+                                    <div class="input-group mb-3">
                                         <input type="text" class="form-control" id="busqueda-producto-nuevo" 
-                                               placeholder="Buscar por nombre o código de producto...">
+                                               placeholder="Buscar productos...">
+                                        <button class="btn btn-primary" type="button" id="btnBuscarProductoNuevo">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <button class="btn btn-info" type="button" id="btnBuscarEncargosNuevo">
+                                            <i class="fas fa-history"></i>
+                                        </button>
                                     </div>
+                                    
                                     <div id="resultados-busqueda-nuevo">
-                                        <!-- Los resultados se mostrarán aquí -->
+                                        <p class="text-muted text-center">
+                                            <i class="fas fa-search fa-2x mb-2"></i><br>
+                                            Busca productos para agregar al pedido
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -506,9 +534,72 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
         </div>
     </div>
 
+    <!-- Modal de Cambio de Sucursal -->
+    <div class="modal fade bd-example-modal-xl" id="FiltroEspecifico" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-notify modal-success">
+            <div class="modal-content">
+                <div class="text-center">
+                    <div class="modal-header" style="background-color: #ef7980 !important;">
+                        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Cambiar de sucursal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="white-text">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="exampleFormControlInput1">Sucursal Actual</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" disabled readonly value="<?php echo $row['Nombre_Sucursal']?>">
+                                    </div>
+                                </div>
+                                
+                                <div class="col">
+                                    <label for="exampleFormControlInput1">Sucursal a elegir</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
+                                        </div>
+                                        <select id="sucursal" class="form-control" name="Sucursal" required>
+                                            <option value="">Seleccione una Sucursal:</option>
+                                            <?php 
+                                                $query = $conn->query("SELECT ID_Sucursal,Nombre_Sucursal,Licencia FROM Sucursales WHERE Licencia='".$row['Licencia']."'");
+                                                while ($valores = mysqli_fetch_array($query)) {
+                                                    echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
+                                </div>
+                            </div>
+                            <button type="submit" id="submit_registroarea" value="Guardar" class="btn btn-success">
+                                Aplicar cambio de sucursal <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/productos-module.js"></script>
     <script src="js/pedidos-administrativos.js"></script>
+    <script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
+    
+    <script>
+        // Inicializar el sistema cuando el documento esté listo
+        $(document).ready(function() {
+            pedidosAdmin = new PedidosAdministrativos();
+            pedidosAdmin.init();
+        });
+    </script>
 </body>
 </html> 

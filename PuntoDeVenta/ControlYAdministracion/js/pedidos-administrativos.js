@@ -26,24 +26,14 @@ class PedidosAdministrativos {
 
     // Configurar event listeners
     setupEventListeners() {
-        // Búsqueda de productos con debounce
-        let searchTimeout;
-        $('#busqueda-producto-nuevo').on('input', (e) => {
-            clearTimeout(searchTimeout);
-            const query = $(e.target).val().trim();
-            
-            // Mostrar productos populares si está vacío
-            if (query.length === 0) {
-                this.buscarProductos('');
-                return;
+        // Búsqueda de productos con botón y Enter
+        $('#btnBuscarProductoNuevo').on('click', () => {
+            const query = $('#busqueda-producto-nuevo').val().trim();
+            if (query) {
+                this.buscarProductos(query);
+            } else {
+                this.buscarProductos(''); // Mostrar productos populares
             }
-            
-            // Esperar 300ms antes de buscar para evitar muchas peticiones
-            searchTimeout = setTimeout(() => {
-                if (query.length >= 2) {
-                    this.buscarProductos(query);
-                }
-            }, 300);
         });
 
         // Búsqueda al presionar Enter
@@ -52,8 +42,15 @@ class PedidosAdministrativos {
                 const query = $('#busqueda-producto-nuevo').val().trim();
                 if (query) {
                     this.buscarProductos(query);
+                } else {
+                    this.buscarProductos(''); // Mostrar productos populares
                 }
             }
+        });
+
+        // Búsqueda de encargos
+        $('#btnBuscarEncargosNuevo').on('click', () => {
+            $('#modalEncargos').modal('show');
         });
 
         // Eventos del modal nuevo pedido
@@ -129,7 +126,7 @@ class PedidosAdministrativos {
         this.mostrarLoading('Buscando productos...');
         
         $.ajax({
-            url: 'api/buscar_productos.php',
+            url: 'test_buscador.php', // Cambiar a 'api/buscar_productos.php' cuando funcione
             method: 'POST',
             data: { query: query },
             success: (response) => {
@@ -137,12 +134,13 @@ class PedidosAdministrativos {
                 if (response.success) {
                     this.mostrarResultadosBusqueda(response.productos);
                 } else {
-                    this.mostrarError(response.message || 'Error al buscar productos');
+                    this.mostrarError(response.message || 'Error en la búsqueda');
                 }
             },
-            error: () => {
+            error: (xhr, status, error) => {
                 this.ocultarLoading();
-                this.mostrarError('Error de conexión al buscar productos');
+                console.error('Error en búsqueda:', error);
+                this.mostrarError('Error de conexión en la búsqueda');
             }
         });
     }
@@ -1158,20 +1156,28 @@ class PedidosAdministrativos {
 
     // Exportar pedidos
     exportarPedidos() {
-        const estado = $('#filtro-estado').val();
-        const fechaInicio = $('#filtro-fecha-inicio').val();
-        const fechaFin = $('#filtro-fecha-fin').val();
-        const busqueda = $('#busqueda-pedidos').val();
+        const filtros = this.obtenerFiltrosActuales();
+        const url = `api/pedidos_administrativos.php?exportar=1&${new URLSearchParams(filtros)}`;
         
-        const params = new URLSearchParams({
-            estado: estado || '',
-            fecha_inicio: fechaInicio || '',
-            fecha_fin: fechaFin || '',
-            busqueda: busqueda || '',
-            exportar: '1'
-        });
+        // Crear un enlace temporal para descargar
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `pedidos_administrativos_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         
-        window.open(`api/pedidos_administrativos.php?${params.toString()}`, '_blank');
+        this.mostrarExito('Exportación iniciada');
+    }
+
+    // Obtener filtros actuales
+    obtenerFiltrosActuales() {
+        return {
+            estado: $('#filtro-estado').val(),
+            fecha_inicio: $('#filtro-fecha-inicio').val(),
+            fecha_fin: $('#filtro-fecha-fin').val(),
+            busqueda: $('#busqueda-pedidos').val()
+        };
     }
 
     // Mostrar loading
