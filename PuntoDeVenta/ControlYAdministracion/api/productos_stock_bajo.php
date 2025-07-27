@@ -10,19 +10,21 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 }
 
 try {
-    // Consulta para productos con bajo stock
+    // Consulta para productos con bajo stock usando la tabla Stock_POS
     $sql = "SELECT 
-                p.ID_Prod_POS,
-                p.Nombre_Prod,
-                p.Cod_Barra,
-                p.Precio_Venta,
-                p.Existencias_R,
-                p.Min_Existencia,
-                p.Estatus
-            FROM Productos_POS p
-            WHERE p.Estatus = 'Activo'
-              AND p.Existencias_R <= p.Min_Existencia
-            ORDER BY (p.Min_Existencia - p.Existencias_R) DESC, p.Nombre_Prod ASC";
+                s.ID_Prod_POS,
+                s.Nombre_Prod,
+                s.Cod_Barra,
+                s.Existencias_R,
+                s.Min_Existencia,
+                s.Max_Existencia,
+                s.Estatus,
+                p.Precio_Venta
+            FROM Stock_POS s
+            LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+            WHERE s.Estatus = 'Activo'
+              AND s.Existencias_R <= s.Min_Existencia
+            ORDER BY (s.Min_Existencia - s.Existencias_R) DESC, s.Nombre_Prod ASC";
     
     $result = $conn->query($sql);
     
@@ -39,6 +41,7 @@ try {
             'Precio_Venta' => $row['Precio_Venta'],
             'Existencias_R' => $row['Existencias_R'],
             'Min_Existencia' => $row['Min_Existencia'],
+            'Max_Existencia' => $row['Max_Existencia'],
             'Estatus' => $row['Estatus']
         ];
     }

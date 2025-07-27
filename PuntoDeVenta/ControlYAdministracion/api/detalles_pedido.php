@@ -50,10 +50,12 @@ try {
                         pd.cantidad_solicitada as cantidad,
                         pd.precio_unitario as precio,
                         pd.subtotal,
-                        p.Nombre_Prod as nombre,
-                        p.Cod_Barra as codigo
+                        s.Nombre_Prod as nombre,
+                        s.Cod_Barra as codigo,
+                        s.Existencias_R as existencias,
+                        s.Min_Existencia as min_existencia
                     FROM pedido_detalles pd
-                    LEFT JOIN Productos_POS p ON pd.producto_id = p.ID_Prod_POS
+                    LEFT JOIN Stock_POS s ON pd.producto_id = s.ID_Prod_POS
                     WHERE pd.pedido_id = ?";
     
     $stmtDetalle = $conn->prepare($sqlDetalle);

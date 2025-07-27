@@ -17,19 +17,21 @@ try {
         exit();
     }
     
-    // Consulta para buscar productos
+    // Consulta para buscar productos usando Stock_POS
     $sql = "SELECT 
-                p.ID_Prod_POS,
-                p.Nombre_Prod,
-                p.Cod_Barra,
-                p.Precio_Venta,
-                p.Existencias_R,
-                p.Min_Existencia,
-                p.Estatus
-            FROM Productos_POS p
-            WHERE p.Estatus = 'Activo'
-              AND (p.Nombre_Prod LIKE ? OR p.Cod_Barra LIKE ?)
-            ORDER BY p.Nombre_Prod ASC
+                s.ID_Prod_POS,
+                s.Nombre_Prod,
+                s.Cod_Barra,
+                s.Existencias_R,
+                s.Min_Existencia,
+                s.Max_Existencia,
+                s.Estatus,
+                p.Precio_Venta
+            FROM Stock_POS s
+            LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+            WHERE s.Estatus = 'Activo'
+              AND (s.Nombre_Prod LIKE ? OR s.Cod_Barra LIKE ?)
+            ORDER BY s.Nombre_Prod ASC
             LIMIT 50";
     
     $stmt = $conn->prepare($sql);
@@ -47,6 +49,7 @@ try {
             'Precio_Venta' => $row['Precio_Venta'],
             'Existencias_R' => $row['Existencias_R'],
             'Min_Existencia' => $row['Min_Existencia'],
+            'Max_Existencia' => $row['Max_Existencia'],
             'Estatus' => $row['Estatus']
         ];
     }

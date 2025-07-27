@@ -103,8 +103,8 @@ function actualizarInventario($pedidoId) {
     
     while ($row = $result->fetch_assoc()) {
         if ($row['producto_id']) {
-            // Actualizar inventario (reducir stock)
-            $sqlUpdate = "UPDATE Productos_POS 
+            // Actualizar inventario (reducir stock) usando Stock_POS
+            $sqlUpdate = "UPDATE Stock_POS 
                          SET Existencias_R = Existencias_R - ? 
                          WHERE ID_Prod_POS = ?";
             
