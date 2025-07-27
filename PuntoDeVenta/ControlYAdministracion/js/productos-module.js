@@ -1,62 +1,61 @@
-// Módulo para manejo de productos
+// Módulo simplificado para manejo de productos
 class ProductosModule {
     constructor() {
         this.productosSeleccionados = [];
         this.paginaActual = 1;
         this.productosPorPagina = 10;
-        this.productosStockBajo = [];
     }
 
     // Búsqueda de productos
     async buscarProductos(query, modalId) {
+        console.log('Buscando productos:', query, modalId);
+        
         if (query.length < 3) {
             this.mostrarError('Ingresa al menos 3 caracteres para buscar');
             return;
         }
 
         try {
+            console.log('Enviando petición a:', 'Controladores/PedidosController.php');
+            console.log('Datos enviados:', { accion: 'buscar_producto', q: query });
+            
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'buscar_producto',
                 q: query
             });
 
-            if (response.status === 'ok') {
+            console.log('Respuesta búsqueda:', response);
+            console.log('Tipo de respuesta:', typeof response);
+
+            // Si la respuesta es string, intentar parsear como JSON
+            if (typeof response === 'string') {
+                try {
+                    const parsedResponse = JSON.parse(response);
+                    console.log('Respuesta parseada:', parsedResponse);
+                    
+                    if (parsedResponse.status === 'ok') {
+                        this.mostrarResultadosBusqueda(parsedResponse.data, modalId);
+                    } else {
+                        this.mostrarError('Error al buscar productos: ' + (parsedResponse.msg || 'Error desconocido'));
+                    }
+                } catch (parseError) {
+                    console.error('Error al parsear respuesta:', parseError);
+                    this.mostrarError('Error en la respuesta del servidor');
+                }
+            } else if (response.status === 'ok') {
                 this.mostrarResultadosBusqueda(response.data, modalId);
             } else {
                 this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en buscarProductos:', error);
-            this.mostrarError('Error de conexión');
-        }
-    }
-
-    // Búsqueda de encargos
-    async buscarEncargos(query, modalId) {
-        if (query.length < 2) {
-            this.mostrarError('Ingresa al menos 2 caracteres para buscar encargos');
-            return;
-        }
-
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'obtener_encargos',
-                busqueda: query
-            });
-
-            if (response.status === 'ok') {
-                this.mostrarResultadosEncargos(response.data, modalId);
-            } else {
-                this.mostrarError('Error al buscar encargos: ' + (response.msg || 'Error desconocido'));
-            }
-        } catch (error) {
-            console.error('Error en buscarEncargos:', error);
-            this.mostrarError('Error de conexión');
+            this.mostrarError('Error de conexión: ' + error.message);
         }
     }
 
     // Mostrar resultados de búsqueda
     mostrarResultadosBusqueda(productos, modalId) {
+        console.log('Mostrando resultados:', productos, modalId);
         const container = $(`#resultados-busqueda-${modalId}`);
         
         if (!productos || productos.length === 0) {
@@ -113,72 +112,9 @@ class ProductosModule {
         });
     }
 
-    // Mostrar resultados de encargos
-    mostrarResultadosEncargos(encargos, modalId) {
-        const container = $(`#resultados-busqueda-${modalId}`);
-        
-        if (!encargos || encargos.length === 0) {
-            container.html('<p class="text-muted">No se encontraron encargos previos</p>');
-            return;
-        }
-
-        let html = '<h6>Encargos previos (más solicitados):</h6><div class="row">';
-        
-        encargos.forEach(encargo => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === encargo.ID_Prod_POS);
-            const stockClass = encargo.Existencias_R < encargo.Min_Existencia ? 'text-danger' : 'text-success';
-            
-            html += `
-                <div class="col-md-6 mb-2">
-                    <div class="producto-card ${yaSeleccionado ? 'border-success' : ''}" 
-                         data-producto='${JSON.stringify(encargo)}'>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${encargo.Nombre_Prod}</h6>
-                                <p class="mb-1 small text-muted">
-                                    Código: ${encargo.Cod_Barra || 'N/A'} | 
-                                    Clave: ${encargo.Clave_adicional || 'N/A'}
-                                </p>
-                                <p class="mb-1 small">
-                                    Stock: <span class="${stockClass}">${encargo.Existencias_R}</span> | 
-                                    Mín: ${encargo.Min_Existencia} | 
-                                    Máx: ${encargo.Max_Existencia}
-                                </p>
-                                <p class="mb-1 small">
-                                    <strong>Precio: $${parseFloat(encargo.Precio_Venta || 0).toFixed(2)}</strong>
-                                </p>
-                                <p class="mb-0 small text-info">
-                                    <i class="fas fa-history"></i> 
-                                    Solicitado ${encargo.veces_solicitado} veces | 
-                                    Promedio: ${Math.round(encargo.cantidad_promedio)} unidades
-                                </p>
-                            </div>
-                            <div class="ms-2">
-                                ${yaSeleccionado ? 
-                                    '<span class="badge bg-success">Agregado</span>' : 
-                                    `<button class="btn btn-info btn-sm agregar-producto-${modalId}">Agregar</button>`
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        container.html(html);
-
-        // Event listeners para agregar productos
-        $(`.agregar-producto-${modalId}`).on('click', (e) => {
-            const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
-            this.agregarProducto(producto, modalId);
-        });
-    }
-
     // Agregar producto al pedido
     agregarProducto(producto, modalId) {
-        console.log('Agregando producto:', producto);
+        console.log('Agregando producto:', producto, modalId);
         
         // Verificar si ya está agregado
         if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
@@ -293,8 +229,7 @@ class ProductosModule {
             });
 
             if (response.status === 'ok') {
-                this.productosStockBajo = response.data || [];
-                this.mostrarModalStockBajo();
+                this.mostrarModalStockBajo(response.data || []);
             } else {
                 this.mostrarError('Error al cargar productos con stock bajo');
             }
@@ -304,16 +239,16 @@ class ProductosModule {
     }
 
     // Mostrar modal de stock bajo con paginación
-    mostrarModalStockBajo() {
-        if (!this.productosStockBajo || this.productosStockBajo.length === 0) {
+    mostrarModalStockBajo(productos) {
+        if (!productos || productos.length === 0) {
             this.mostrarError('No hay productos con stock bajo');
             return;
         }
 
-        const totalPaginas = Math.ceil(this.productosStockBajo.length / this.productosPorPagina);
+        const totalPaginas = Math.ceil(productos.length / this.productosPorPagina);
         const inicio = (this.paginaActual - 1) * this.productosPorPagina;
         const fin = inicio + this.productosPorPagina;
-        const productosPagina = this.productosStockBajo.slice(inicio, fin);
+        const productosPagina = productos.slice(inicio, fin);
 
         let html = '<div class="row">';
         productosPagina.forEach(producto => {
@@ -357,7 +292,7 @@ class ProductosModule {
                     <div>
                         <small class="text-muted">
                             Página ${this.paginaActual} de ${totalPaginas} 
-                            (${this.productosStockBajo.length} productos)
+                            (${productos.length} productos)
                         </small>
                     </div>
                     <div class="btn-group" role="group">
@@ -387,14 +322,14 @@ class ProductosModule {
         $('#btnAnterior').on('click', () => {
             if (this.paginaActual > 1) {
                 this.paginaActual--;
-                this.mostrarModalStockBajo();
+                this.mostrarModalStockBajo(productos);
             }
         });
 
         $('#btnSiguiente').on('click', () => {
             if (this.paginaActual < totalPaginas) {
                 this.paginaActual++;
-                this.mostrarModalStockBajo();
+                this.mostrarModalStockBajo(productos);
             }
         });
 

@@ -8,6 +8,13 @@ class SistemaPedidos {
         
         // Usar el módulo de productos
         this.productosModule = productosModule;
+        
+        // Verificar que el módulo esté disponible
+        if (!this.productosModule) {
+            console.error('Módulo de productos no disponible');
+            return;
+        }
+        
         this.init();
     }
 
@@ -22,25 +29,31 @@ class SistemaPedidos {
 
     // Cargar datos guardados en localStorage
     cargarDatosGuardados() {
-        this.productosModule.cargarDatosGuardados();
+        if (this.productosModule) {
+            this.productosModule.cargarDatosGuardados();
+        }
         this.actualizarIndicadorCarrito();
     }
 
     // Guardar datos en localStorage
     guardarDatos() {
-        this.productosModule.guardarDatos();
+        if (this.productosModule) {
+            this.productosModule.guardarDatos();
+        }
         this.actualizarIndicadorCarrito();
     }
 
     // Limpiar datos guardados
     limpiarDatosGuardados() {
-        this.productosModule.limpiarDatosGuardados();
+        if (this.productosModule) {
+            this.productosModule.limpiarDatosGuardados();
+        }
         this.actualizarIndicadorCarrito();
     }
 
     // Actualizar indicador del carrito
     actualizarIndicadorCarrito() {
-        const cantidad = this.productosModule.getProductosSeleccionados().length;
+        const cantidad = this.productosModule ? this.productosModule.getProductosSeleccionados().length : 0;
         const indicador = $('#carrito-indicador');
         const cantidadSpan = $('#carrito-cantidad');
         
@@ -95,13 +108,30 @@ class SistemaPedidos {
         });
 
         // Eventos del modal nuevo pedido
-        $('#btnBuscarProductoNuevo').on('click', () => this.productosModule.buscarProductos($('#busqueda-producto-nuevo').val(), 'nuevo'));
-        $('#btnBuscarEncargosNuevo').on('click', () => this.productosModule.buscarEncargos($('#busqueda-producto-nuevo').val(), 'nuevo'));
+        $('#btnBuscarProductoNuevo').on('click', () => {
+            console.log('Botón buscar clickeado');
+            const query = $('#busqueda-producto-nuevo').val().trim();
+            console.log('Query:', query);
+            if (this.productosModule) {
+                this.productosModule.buscarProductos(query, 'nuevo');
+            } else {
+                console.error('Módulo de productos no disponible');
+            }
+        });
         $('#btnGuardarPedidoNuevo').on('click', () => this.confirmarGuardarPedidoNuevo());
         $('#btnLimpiarPedidoNuevo').on('click', () => this.confirmarLimpiarPedidoNuevo());
         
         $('#busqueda-producto-nuevo').on('keypress', (e) => {
-            if (e.which === 13) this.productosModule.buscarProductos($('#busqueda-producto-nuevo').val(), 'nuevo');
+            if (e.which === 13) {
+                console.log('Enter presionado');
+                const query = $('#busqueda-producto-nuevo').val().trim();
+                console.log('Query:', query);
+                if (this.productosModule) {
+                    this.productosModule.buscarProductos(query, 'nuevo');
+                } else {
+                    console.error('Módulo de productos no disponible');
+                }
+            }
         });
 
         // Eventos del modal nuevo pedido
@@ -109,8 +139,15 @@ class SistemaPedidos {
             this.modalAbierto = true;
             this.pedidoEnProceso = true;
             this.cargarDatosGuardados();
-            this.productosModule.actualizarVistaProductos('nuevo');
-            this.productosModule.actualizarResumen('nuevo');
+            if (this.productosModule) {
+                this.productosModule.actualizarVistaProductos('nuevo');
+                this.productosModule.actualizarResumen('nuevo');
+            }
+        });
+
+        $('#modalNuevoPedido').on('hidden.bs.modal', () => {
+            this.modalAbierto = false;
+            // No limpiar datos al cerrar, mantener persistencia
         });
 
         $('#modalNuevoPedido').on('hidden.bs.modal', () => {
@@ -155,7 +192,9 @@ class SistemaPedidos {
             chosenClass: 'sortable-chosen',
             dragClass: 'sortable-drag',
             onEnd: () => {
-                this.productosModule.actualizarResumen('nuevo');
+                if (this.productosModule) {
+                    this.productosModule.actualizarResumen('nuevo');
+                }
                 this.guardarDatos();
             },
             onStart: () => {
@@ -620,7 +659,7 @@ class SistemaPedidos {
 
     // Funciones para el modal nuevo pedido
     async confirmarGuardarPedidoNuevo() {
-        const productos = this.productosModule.getProductosSeleccionados();
+        const productos = this.productosModule ? this.productosModule.getProductosSeleccionados() : [];
         if (productos.length === 0) {
             this.mostrarError('Debes agregar al menos un producto al pedido');
             return;
@@ -657,9 +696,10 @@ class SistemaPedidos {
 
     async guardarPedidoNuevo(observaciones, prioridad) {
         try {
+            const productos = this.productosModule ? this.productosModule.getProductosSeleccionados() : [];
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'crear_pedido',
-                productos: JSON.stringify(this.productosModule.getProductosSeleccionados()),
+                productos: JSON.stringify(productos),
                 observaciones: observaciones,
                 prioridad: prioridad
             });
@@ -679,7 +719,7 @@ class SistemaPedidos {
     }
 
     async confirmarLimpiarPedidoNuevo() {
-        const productos = this.productosModule.getProductosSeleccionados();
+        const productos = this.productosModule ? this.productosModule.getProductosSeleccionados() : [];
         if (productos.length === 0) {
             this.mostrarError('No hay productos para limpiar');
             return;
@@ -704,12 +744,18 @@ class SistemaPedidos {
     }
 
     limpiarPedidoNuevo() {
-        this.productosModule.limpiarPedido('nuevo');
+        if (this.productosModule) {
+            this.productosModule.limpiarPedido('nuevo');
+        }
     }
 
     // Funciones para agregar desde stock bajo
     async mostrarProductosStockBajo() {
-        this.productosModule.cargarProductosStockBajo();
+        if (this.productosModule) {
+            this.productosModule.cargarProductosStockBajo();
+        } else {
+            console.error('Módulo de productos no disponible');
+        }
     }
 
 
