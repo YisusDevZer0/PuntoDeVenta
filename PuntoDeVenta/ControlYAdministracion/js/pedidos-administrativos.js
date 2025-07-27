@@ -26,7 +26,27 @@ class PedidosAdministrativos {
 
     // Configurar event listeners
     setupEventListeners() {
-        // Búsqueda de productos
+        // Búsqueda de productos con debounce
+        let searchTimeout;
+        $('#busqueda-producto-nuevo').on('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = $(e.target).val().trim();
+            
+            // Mostrar productos populares si está vacío
+            if (query.length === 0) {
+                this.buscarProductos('');
+                return;
+            }
+            
+            // Esperar 300ms antes de buscar para evitar muchas peticiones
+            searchTimeout = setTimeout(() => {
+                if (query.length >= 2) {
+                    this.buscarProductos(query);
+                }
+            }, 300);
+        });
+
+        // Búsqueda al presionar Enter
         $('#busqueda-producto-nuevo').on('keypress', (e) => {
             if (e.which === 13) {
                 const query = $('#busqueda-producto-nuevo').val().trim();
@@ -42,6 +62,8 @@ class PedidosAdministrativos {
             this.cargarDatosGuardados();
             this.actualizarVistaProductos();
             this.actualizarResumen();
+            // Cargar productos populares al abrir
+            this.buscarProductos('');
         });
 
         $('#modalNuevoPedido').on('hidden.bs.modal', () => {
@@ -134,6 +156,7 @@ class PedidosAdministrativos {
                 <div class="text-center text-muted py-4">
                     <i class="fas fa-search fa-2x mb-2"></i>
                     <p>No se encontraron productos</p>
+                    <small>Intenta con otros términos de búsqueda</small>
                 </div>
             `);
             return;
@@ -142,6 +165,8 @@ class PedidosAdministrativos {
         let html = '<div class="row">';
         productos.forEach(producto => {
             const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            const stockClass = this.getStockClass(producto.stock_status);
+            const stockIcon = this.getStockIcon(producto.stock_status);
             
             html += `
                 <div class="col-md-6 mb-2">
@@ -153,8 +178,8 @@ class PedidosAdministrativos {
                                 <p class="mb-1 small text-muted">
                                     Código: ${producto.Cod_Barra || 'N/A'}
                                 </p>
-                                <p class="mb-1 small">
-                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
+                                <p class="mb-1 small ${stockClass}">
+                                    ${stockIcon} Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
                                 </p>
                                 <p class="mb-0 small">
                                     <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
@@ -317,6 +342,17 @@ class PedidosAdministrativos {
                 if (response.success) {
                     this.productosStockBajo = response.productos;
                     this.mostrarProductosStockBajo();
+                    
+                    // Mostrar información de debugging si está disponible
+                    if (response.debug) {
+                        console.log('Debug info:', response.debug);
+                        if (response.debug.con_bajo_stock === 0) {
+                            this.mostrarError(`No se encontraron productos con bajo stock. 
+                                Total productos: ${response.debug.total_productos}, 
+                                Sin existencias: ${response.debug.sin_existencias}, 
+                                Sin mínimo: ${response.debug.sin_min_existencia}`);
+                        }
+                    }
                 } else {
                     this.mostrarError(response.message || 'Error al cargar productos con bajo stock');
                 }
@@ -337,6 +373,12 @@ class PedidosAdministrativos {
                 <div class="text-center text-muted py-4">
                     <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
                     <p>No hay productos con bajo stock</p>
+                    <small>Esto puede significar que:</small>
+                    <ul class="list-unstyled mt-2">
+                        <li><small>• Todos los productos tienen stock suficiente</small></li>
+                        <li><small>• Los productos no tienen configurado un mínimo de existencia</small></li>
+                        <li><small>• No hay productos activos en el sistema</small></li>
+                    </ul>
                 </div>
             `);
             return;
@@ -350,6 +392,7 @@ class PedidosAdministrativos {
         let html = '<div class="row">';
         productosPagina.forEach(producto => {
             const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            const deficit = producto.Min_Existencia - producto.Existencias_R;
             
             html += `
                 <div class="col-md-6 mb-2">
@@ -364,6 +407,10 @@ class PedidosAdministrativos {
                                 <p class="mb-1 small text-danger">
                                     <i class="fas fa-exclamation-triangle"></i>
                                     Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
+                                </p>
+                                <p class="mb-1 small text-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    Déficit: ${deficit} unidades
                                 </p>
                                 <p class="mb-0 small">
                                     <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
@@ -1064,6 +1111,26 @@ class PedidosAdministrativos {
             title: 'Error',
             text: mensaje
         });
+    }
+
+    // Obtener clase CSS para estado de stock
+    getStockClass(stockStatus) {
+        const clases = {
+            'agotado': 'text-danger',
+            'bajo': 'text-warning',
+            'normal': 'text-success'
+        };
+        return clases[stockStatus] || 'text-muted';
+    }
+
+    // Obtener icono para estado de stock
+    getStockIcon(stockStatus) {
+        const iconos = {
+            'agotado': '<i class="fas fa-times-circle"></i>',
+            'bajo': '<i class="fas fa-exclamation-triangle"></i>',
+            'normal': '<i class="fas fa-check-circle"></i>'
+        };
+        return iconos[stockStatus] || '<i class="fas fa-question-circle"></i>';
     }
 }
 
