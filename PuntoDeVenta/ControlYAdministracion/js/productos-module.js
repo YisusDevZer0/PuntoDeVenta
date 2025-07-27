@@ -27,25 +27,11 @@ class ProductosModule {
             console.log('Respuesta búsqueda:', response);
             console.log('Tipo de respuesta:', typeof response);
 
-            // Si la respuesta es string, intentar parsear como JSON
-            if (typeof response === 'string') {
-                try {
-                    const parsedResponse = JSON.parse(response);
-                    console.log('Respuesta parseada:', parsedResponse);
-                    
-                    if (parsedResponse.status === 'ok') {
-                        this.mostrarResultadosBusqueda(parsedResponse.data, modalId);
-                    } else {
-                        this.mostrarError('Error al buscar productos: ' + (parsedResponse.msg || 'Error desconocido'));
-                    }
-                } catch (parseError) {
-                    console.error('Error al parsear respuesta:', parseError);
-                    this.mostrarError('Error en la respuesta del servidor');
-                }
-            } else if (response.status === 'ok') {
+            // Manejar la respuesta (jQuery ya parsea JSON automáticamente)
+            if (response && response.status === 'ok') {
                 this.mostrarResultadosBusqueda(response.data, modalId);
             } else {
-                this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
+                this.mostrarError('Error al buscar productos: ' + (response?.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en buscarProductos:', error);
@@ -72,7 +58,7 @@ class ProductosModule {
             html += `
                 <div class="col-md-6 mb-2">
                     <div class="producto-card ${yaSeleccionado ? 'border-success' : ''}" 
-                         data-producto='${JSON.stringify(producto)}'>
+                         data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">${producto.Nombre_Prod}</h6>
@@ -107,7 +93,15 @@ class ProductosModule {
         // Event listeners para agregar productos
         $(`.agregar-producto-${modalId}`).on('click', (e) => {
             const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
+            const producto = card.data('producto');
+            
+            // Verificar que el producto sea válido
+            if (!producto || !producto.ID_Prod_POS) {
+                console.error('Producto inválido:', producto);
+                this.mostrarError('Error al obtener datos del producto');
+                return;
+            }
+            
             this.agregarProducto(producto, modalId);
         });
     }
@@ -257,7 +251,7 @@ class ProductosModule {
             html += `
                 <div class="col-md-6 mb-2">
                     <div class="producto-card ${yaSeleccionado ? 'border-success' : 'border-warning'}" 
-                         data-producto='${JSON.stringify(producto)}'>
+                         data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
                                 <h6 class="mb-1">${producto.Nombre_Prod}</h6>
@@ -314,7 +308,15 @@ class ProductosModule {
         // Event listeners para agregar productos
         $('.agregar-stock-bajo').on('click', (e) => {
             const card = $(e.currentTarget).closest('.producto-card');
-            const producto = JSON.parse(card.data('producto'));
+            const producto = card.data('producto');
+            
+            // Verificar que el producto sea válido
+            if (!producto || !producto.ID_Prod_POS) {
+                console.error('Producto inválido:', producto);
+                this.mostrarError('Error al obtener datos del producto');
+                return;
+            }
+            
             this.agregarProductoStockBajo(producto);
         });
 
