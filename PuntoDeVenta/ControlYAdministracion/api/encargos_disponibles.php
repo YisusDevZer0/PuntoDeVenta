@@ -4,13 +4,14 @@ include_once "../Controladores/db_connect.php";
 include_once "../Controladores/ControladorUsuario.php";
 
 // Verificar sesión
+session_start();
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
     exit();
 }
 
 try {
-    // Consulta para encargos disponibles usando la tabla correcta
+    // Consulta para encargos disponibles
     $sql = "SELECT 
                 id,
                 nombre_paciente,

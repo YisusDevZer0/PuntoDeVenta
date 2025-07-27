@@ -547,7 +547,7 @@ class PedidosAdministrativos {
                 this.ocultarLoading();
                 if (response.success) {
                     this.encargosDisponibles = response.encargos;
-                    this.mostrarEncargosDisponibles();
+                    this.mostrarEncargosDisponibles(response.encargos);
                 } else {
                     this.mostrarError(response.message || 'Error al cargar encargos');
                 }
@@ -560,60 +560,147 @@ class PedidosAdministrativos {
     }
 
     // Mostrar encargos disponibles
-    mostrarEncargosDisponibles() {
+    mostrarEncargosDisponibles(encargos) {
+        this.encargosDisponibles = encargos;
         const container = $('#encargos-disponibles');
         
         if (!this.encargosDisponibles || this.encargosDisponibles.length === 0) {
             container.html(`
                 <div class="text-center text-muted py-4">
-                    <i class="fas fa-file-invoice fa-2x mb-2 text-info"></i>
+                    <i class="fas fa-clipboard-list fa-2x mb-2 text-info"></i>
                     <p>No hay encargos disponibles</p>
+                    <small>No se encontraron encargos pendientes en los últimos 30 días</small>
                 </div>
             `);
             return;
         }
 
-        let html = '';
+        let html = '<div class="row">';
         this.encargosDisponibles.forEach(encargo => {
             const saldoPendiente = parseFloat(encargo.precio) - parseFloat(encargo.abono_parcial || 0);
             const fechaFormateada = new Date(encargo.fecha).toLocaleDateString('es-ES');
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.es_encargo && p.encargo_id === encargo.id);
+            
+            // Determinar color del estado
+            const estadoClass = encargo.estado === 'pendiente' ? 'bg-warning' : 'bg-success';
+            const estadoIcon = encargo.estado === 'pendiente' ? 'fa-clock' : 'fa-check';
+            
+            // Determinar color del saldo
+            const saldoClass = saldoPendiente > 0 ? 'text-danger' : 'text-success';
+            const saldoIcon = saldoPendiente > 0 ? 'fa-exclamation-triangle' : 'fa-check-circle';
             
             html += `
-                <div class="encargo-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${encargo.descripcion || 'Medicamento sin especificar'}</h6>
-                            <p class="mb-1 small">
-                                <strong>Paciente:</strong> ${encargo.cliente || 'N/A'}
-                            </p>
-                            <p class="mb-1 small">
-                                <strong>Cantidad:</strong> ${encargo.cantidad || 1} | 
-                                <strong>Fecha:</strong> ${fechaFormateada}
-                            </p>
-                            <p class="mb-1 small">
-                                <strong>Precio:</strong> $${parseFloat(encargo.precio || 0).toFixed(2)} | 
-                                <strong>Saldo:</strong> $${saldoPendiente.toFixed(2)}
-                            </p>
-                            <p class="mb-0 small">
-                                <strong>Ticket:</strong> ${encargo.num_ticket || 'N/A'} | 
-                                <strong>Empleado:</strong> ${encargo.empleado || 'N/A'}
-                            </p>
-                            <p class="mb-0 small text-muted">
-                                ${encargo.observaciones || 'Sin observaciones adicionales'}
-                            </p>
-                        </div>
-                        <div class="ms-2">
-                            <span class="badge ${encargo.estado === 'pendiente' ? 'bg-warning' : 'bg-success'}">${encargo.estado || 'Pendiente'}</span>
-                            <button class="btn btn-info btn-sm mt-2" onclick="pedidosAdmin.agregarEncargo(${encargo.id})">
-                                <i class="fas fa-plus me-1"></i>Agregar
-                            </button>
+                <div class="col-md-6 mb-3">
+                    <div class="encargo-card ${yaSeleccionado ? 'border-success' : 'border-info'}" 
+                         data-encargo='${JSON.stringify(encargo).replace(/'/g, "&apos;")}'>
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-pills text-primary me-2"></i>
+                                    ${encargo.descripcion || 'Medicamento sin especificar'}
+                                </h6>
+                                <span class="badge ${estadoClass}">
+                                    <i class="fas ${estadoIcon} me-1"></i>
+                                    ${encargo.estado || 'Pendiente'}
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-user text-info me-1"></i>
+                                            <strong>Paciente:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">${encargo.cliente || 'N/A'}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-hashtag text-secondary me-1"></i>
+                                            <strong>Cantidad:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">${encargo.cantidad || 1}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-calendar text-warning me-1"></i>
+                                            <strong>Fecha:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">${fechaFormateada}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-dollar-sign text-success me-1"></i>
+                                            <strong>Precio:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">$${parseFloat(encargo.precio || 0).toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-ticket-alt text-info me-1"></i>
+                                            <strong>Ticket:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">${encargo.num_ticket || 'N/A'}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="mb-1 small">
+                                            <i class="fas fa-user-md text-primary me-1"></i>
+                                            <strong>Empleado:</strong>
+                                        </p>
+                                        <p class="mb-2 small text-muted">${encargo.empleado || 'N/A'}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p class="mb-1 small">
+                                            <i class="fas ${saldoIcon} ${saldoClass} me-1"></i>
+                                            <strong>Saldo Pendiente:</strong>
+                                        </p>
+                                        <p class="mb-2 small ${saldoClass}">$${saldoPendiente.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                                
+                                ${encargo.observaciones ? `
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <p class="mb-1 small">
+                                                <i class="fas fa-sticky-note text-muted me-1"></i>
+                                                <strong>Observaciones:</strong>
+                                            </p>
+                                            <p class="mb-2 small text-muted">${encargo.observaciones}</p>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="card-footer text-center">
+                                ${yaSeleccionado ? 
+                                    '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Agregado</span>' : 
+                                    `<button class="btn btn-info btn-sm agregar-encargo">
+                                        <i class="fas fa-plus me-1"></i>Agregar
+                                    </button>`
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         });
+        html += '</div>';
         
         container.html(html);
+
+        // Event listeners para agregar encargos
+        $('.agregar-encargo').on('click', (e) => {
+            const card = $(e.currentTarget).closest('.encargo-card');
+            const encargo = card.data('encargo');
+            this.agregarEncargo(encargo.id);
+        });
     }
 
     // Agregar encargo al pedido
@@ -623,8 +710,7 @@ class PedidosAdministrativos {
             this.mostrarError('Encargo no encontrado');
             return;
         }
-
-        // Crear producto especial desde encargo
+        
         const productoEspecial = {
             id: `encargo_${encargo.id}`,
             nombre: encargo.descripcion || 'Medicamento especial',
@@ -640,16 +726,22 @@ class PedidosAdministrativos {
             saldo_pendiente: parseFloat(encargo.precio || 0) - parseFloat(encargo.abono_parcial || 0)
         };
 
+        // Verificar si ya está agregado
+        const yaExiste = this.productosSeleccionados.some(p => p.es_encargo && p.encargo_id === encargo.id);
+        if (yaExiste) {
+            this.mostrarError('Este encargo ya está agregado al pedido');
+            return;
+        }
+
         this.productosSeleccionados.push(productoEspecial);
+        this.guardarDatos();
         this.actualizarVistaProductos();
         this.actualizarResumen();
-        this.guardarDatos();
-        this.mostrarExito('Encargo agregado al pedido');
         
-        // Abrir modal nuevo pedido si no está abierto
-        if (!$('#modalNuevoPedido').hasClass('show')) {
-            $('#modalNuevoPedido').modal('show');
-        }
+        // Actualizar la vista de encargos
+        this.mostrarEncargosDisponibles(this.encargosDisponibles);
+        
+        this.mostrarExito('Encargo agregado al pedido');
     }
 
     // Abrir resumen de pedido

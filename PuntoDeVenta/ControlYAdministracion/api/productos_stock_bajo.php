@@ -4,13 +4,14 @@ include_once "../Controladores/db_connect.php";
 include_once "../Controladores/ControladorUsuario.php";
 
 // Verificar sesión
+session_start();
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
     exit();
 }
 
 try {
-    // Consulta mejorada para productos con bajo stock
+    // Consulta mejorada para productos con bajo stock usando INNER JOIN como ArrayStocks.php
     $sql = "SELECT 
                 s.ID_Prod_POS,
                 s.Nombre_Prod,
@@ -19,9 +20,9 @@ try {
                 s.Min_Existencia,
                 s.Max_Existencia,
                 s.Estatus,
-                COALESCE(p.Precio_Venta, 0) as Precio_Venta
+                p.Precio_Venta
             FROM Stock_POS s
-            LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+            INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
             WHERE s.Estatus = 'Activo'
               AND s.Existencias_R IS NOT NULL
               AND s.Min_Existencia IS NOT NULL
@@ -49,14 +50,15 @@ try {
         ];
     }
     
-    // Para debugging, también obtener estadísticas
+    // Para debugging, también obtener estadísticas usando la misma lógica
     $sqlStats = "SELECT 
                     COUNT(*) as total_productos,
                     COUNT(CASE WHEN Existencias_R <= Min_Existencia THEN 1 END) as con_bajo_stock,
                     COUNT(CASE WHEN Existencias_R IS NULL THEN 1 END) as sin_existencias,
                     COUNT(CASE WHEN Min_Existencia IS NULL THEN 1 END) as sin_min_existencia
-                  FROM Stock_POS 
-                  WHERE Estatus = 'Activo'";
+                  FROM Stock_POS s
+                  INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+                  WHERE s.Estatus = 'Activo'";
     
     $resultStats = $conn->query($sqlStats);
     $stats = $resultStats->fetch_assoc();

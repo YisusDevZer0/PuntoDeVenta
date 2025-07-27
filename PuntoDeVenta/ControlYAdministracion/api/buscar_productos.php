@@ -1,9 +1,10 @@
 <?php
 header('Content-Type: application/json');
 include_once "../Controladores/db_connect.php";
-include_once "../ControladorUsuario.php";
+include_once "../Controladores/ControladorUsuario.php";
 
 // Verificar sesión
+session_start();
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
     exit();
@@ -23,9 +24,9 @@ try {
                     s.Min_Existencia,
                     s.Max_Existencia,
                     s.Estatus,
-                    COALESCE(p.Precio_Venta, 0) as Precio_Venta
+                    p.Precio_Venta
                 FROM Stock_POS s
-                LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+                INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
                 WHERE s.Estatus = 'Activo'
                   AND s.Existencias_R > 0
                 ORDER BY s.Existencias_R DESC
@@ -34,7 +35,7 @@ try {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $limit);
     } else {
-        // Búsqueda dinámica mejorada
+        // Búsqueda dinámica mejorada usando INNER JOIN como ArrayStocks.php
         $sql = "SELECT 
                     s.ID_Prod_POS,
                     s.Nombre_Prod,
@@ -43,7 +44,7 @@ try {
                     s.Min_Existencia,
                     s.Max_Existencia,
                     s.Estatus,
-                    COALESCE(p.Precio_Venta, 0) as Precio_Venta,
+                    p.Precio_Venta,
                     CASE 
                         WHEN s.Cod_Barra = ? THEN 3
                         WHEN s.Nombre_Prod LIKE ? THEN 2
@@ -51,7 +52,7 @@ try {
                         ELSE 0
                     END as relevancia
                 FROM Stock_POS s
-                LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
+                INNER JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
                 WHERE s.Estatus = 'Activo'
                   AND (s.Nombre_Prod LIKE ? OR s.Cod_Barra LIKE ?)
                 ORDER BY relevancia DESC, s.Nombre_Prod ASC
