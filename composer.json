@@ -5,33 +5,13 @@
         "minishlink/web-push": "^9.0"
     },
     "config": {
-        "platform": {
-            "php": "8.0.30"
-        },
         "optimize-autoloader": true,
         "sort-packages": true,
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         },
-        "preferred-install": "dist",
-        "github-protocols": ["https"],
-        "process-timeout": 600,
-        "memory-limit": "2G"
+        "preferred-install": "dist"
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "conflict": {
-        "brick/math": ">=0.12.0"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packagist.org"
-        }
-    ],
-    "scripts": {
-        "post-install-cmd": [
-            "echo 'Dependencias instaladas correctamente'"
-        ]
-    }
+    "prefer-stable": true
 }
