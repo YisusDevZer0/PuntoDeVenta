@@ -1,0 +1,29 @@
+{
+  "hostinger": {
+    "pre_deploy": [
+      "git config --global pull.rebase false",
+      "git config --global pull.ff only",
+      "git config --global merge.strategy recursive",
+      "git config --global merge.strategy-option theirs",
+      "git config pull.rebase false",
+      "git config pull.ff only"
+    ],
+    "pull_command": "git pull origin main --no-rebase",
+    "fallback": "git reset --hard origin/main",
+    "post_deploy": [
+      "git status"
+    ]
+  },
+  "git_settings": {
+    "global": {
+      "pull.rebase": false,
+      "pull.ff": "only",
+      "merge.strategy": "recursive",
+      "merge.strategy-option": "theirs"
+    },
+    "local": {
+      "pull.rebase": false,
+      "pull.ff": "only"
+    }
+  }
+} 
