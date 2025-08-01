@@ -1,15 +1,15 @@
 {
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": ">=7.4",
         "phpoffice/phpspreadsheet": "^1.29",
         "minishlink/web-push": "^9.0"
     },
     "config": {
-        "platform": {
-            "php": "8.0"
-        },
         "optimize-autoloader": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     },
     "minimum-stability": "stable",
     "prefer-stable": true
