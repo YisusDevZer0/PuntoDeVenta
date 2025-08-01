@@ -3,10 +3,21 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include "ControladorUsuario.php";
 
-// Obtener parámetros de filtro
-$tipo = isset($_GET['tipo']) ? $_GET['tipo'] : '';
-$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
-$estado = isset($_GET['estado']) ? $_GET['estado'] : '';
+// Obtener parámetros de filtro desde POST (DataTables envía por POST)
+$tipo = '';
+$sucursal = '';
+$estado = '';
+
+// Buscar los parámetros en el array $_POST
+foreach ($_POST as $key => $value) {
+    if ($key === 'tipo') {
+        $tipo = $value;
+    } elseif ($key === 'sucursal') {
+        $sucursal = $value;
+    } elseif ($key === 'estado') {
+        $estado = $value;
+    }
+}
 
 // Construir la consulta SQL base
 $sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
@@ -43,9 +54,9 @@ while ($fila = $result->fetch_assoc()) {
     
     // Mostrar foto del usuario
     if (!empty($fila["file_name"])) {
-        $data[$c]["Foto"] = '<img src="PerfilesImg/' . $fila["file_name"] . '" class="rounded-circle" width="40" height="40" alt="Foto">';
+        $data[$c]["Foto"] = '<img src="../PerfilesImg/' . $fila["file_name"] . '" class="rounded-circle" width="40" height="40" alt="Foto">';
     } else {
-        $data[$c]["Foto"] = '<img src="PerfilesImg/default-avatar.png" class="rounded-circle" width="40" height="40" alt="Foto por defecto">';
+        $data[$c]["Foto"] = '<img src="../PerfilesImg/Devzero.jpg" class="rounded-circle" width="40" height="40" alt="Foto por defecto">';
     }
     
     $data[$c]["Tipousuario"] = '<span class="badge bg-primary">' . $fila["TipoUsuario"] . '</span>';

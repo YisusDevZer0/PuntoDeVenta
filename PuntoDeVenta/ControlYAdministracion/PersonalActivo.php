@@ -274,59 +274,6 @@ include_once "Controladores/ControladorUsuario.php";
         });
         $('#ModalEdDele').modal('show');
     });
-
-    // Función para filtrar datos
-    window.filtrarDatos = function() {
-        var tipo = $('#filtro_tipo').val();
-        var sucursal = $('#filtro_sucursal').val();
-        var estado = $('#filtro_estado').val();
-        
-        // Mostrar loading
-        $('#loading-overlay').show();
-        $('#loading-text').text('Filtrando datos...');
-        
-        // Recargar datos con filtros
-        if (window.tablaPersonal) {
-            window.tablaPersonal.ajax.reload(function() {
-                $('#loading-overlay').hide();
-            });
-        }
-    };
-    
-    // Función para limpiar filtros
-    window.limpiarFiltros = function() {
-        $('#filtro_tipo').val('');
-        $('#filtro_sucursal').val('');
-        $('#filtro_estado').val('');
-        filtrarDatos();
-    };
-    
-    // Función para exportar a Excel
-    window.exportarExcel = function() {
-        var tipo = $('#filtro_tipo').val();
-        var sucursal = $('#filtro_sucursal').val();
-        var estado = $('#filtro_estado').val();
-        
-        // Mostrar loading
-        $('#loading-overlay').show();
-        $('#loading-text').text('Generando archivo Excel...');
-        
-        var url = 'Controladores/exportar_personal_activo.php?tipo=' + tipo +
-                  '&sucursal=' + sucursal +
-                  '&estado=' + estado;
-        
-        // Crear un iframe temporal para la descarga
-        var iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-        
-        // Ocultar loading después de un tiempo
-        setTimeout(function() {
-            $('#loading-overlay').hide();
-            document.body.removeChild(iframe);
-        }, 3000);
-    };
    
 });
 

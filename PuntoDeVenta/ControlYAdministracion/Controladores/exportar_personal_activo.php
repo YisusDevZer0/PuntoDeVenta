@@ -1,5 +1,5 @@
 <?php
-require_once 'vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -45,6 +45,10 @@ if (!empty($estado)) {
 $sql .= " ORDER BY u.Id_PvUser DESC";
 
 $result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    die("Error en la consulta: " . mysqli_error($conn));
+}
 
 // Crear nuevo documento Excel
 $spreadsheet = new Spreadsheet();

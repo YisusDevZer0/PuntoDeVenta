@@ -1,3 +1,55 @@
+// Hacer las funciones disponibles globalmente desde el inicio
+window.filtrarDatos = function() {
+    var tipo = $('#filtro_tipo').val();
+    var sucursal = $('#filtro_sucursal').val();
+    var estado = $('#filtro_estado').val();
+    
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Filtrando datos...');
+    
+    // Recargar datos con filtros
+    if (window.tablaPersonal) {
+        window.tablaPersonal.ajax.reload(function() {
+            $('#loading-overlay').hide();
+            cargarEstadisticas();
+        });
+    }
+};
+
+window.limpiarFiltros = function() {
+    $('#filtro_tipo').val('');
+    $('#filtro_sucursal').val('');
+    $('#filtro_estado').val('');
+    filtrarDatos();
+};
+
+window.exportarExcel = function() {
+    var tipo = $('#filtro_tipo').val();
+    var sucursal = $('#filtro_sucursal').val();
+    var estado = $('#filtro_estado').val();
+    
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Generando archivo Excel...');
+    
+    var url = 'Controladores/exportar_personal_activo.php?tipo=' + encodeURIComponent(tipo) +
+              '&sucursal=' + encodeURIComponent(sucursal) +
+              '&estado=' + encodeURIComponent(estado);
+    
+    // Crear un iframe temporal para la descarga
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    
+    // Ocultar loading después de un tiempo
+    setTimeout(function() {
+        $('#loading-overlay').hide();
+        document.body.removeChild(iframe);
+    }, 3000);
+};
+
 function CargaPersonalactivo(){
     // Mostrar loading
     $('#loading-overlay').show();
@@ -18,6 +70,24 @@ function CargaPersonalactivo(){
           "bAutoWidth": false,
           "order": [[ 0, "desc" ]],
           "sAjaxSource": "Controladores/ArrayPersonalActivo.php",
+          "fnServerData": function(sSource, aoData, fnCallback) {
+              // Agregar parámetros de filtro a la petición AJAX
+              var tipo = $('#filtro_tipo').val();
+              var sucursal = $('#filtro_sucursal').val();
+              var estado = $('#filtro_estado').val();
+              
+              aoData.push({ "name": "tipo", "value": tipo });
+              aoData.push({ "name": "sucursal", "value": sucursal });
+              aoData.push({ "name": "estado", "value": estado });
+              
+              $.ajax({
+                  "dataType": 'json',
+                  "type": "POST",
+                  "url": sSource,
+                  "data": aoData,
+                  "success": fnCallback
+              });
+          },
           "aoColumns": [
               { mData: 'Idpersonal' },
               { mData: 'NombreApellidos' },
@@ -68,7 +138,15 @@ function CargaPersonalactivo(){
 
 // Función para cargar estadísticas
 function cargarEstadisticas() {
-    $.post("Controladores/EstadisticasPersonalActivo.php", "", function(data) {
+    var tipo = $('#filtro_tipo').val();
+    var sucursal = $('#filtro_sucursal').val();
+    var estado = $('#filtro_estado').val();
+    
+    $.post("Controladores/EstadisticasPersonalActivo.php", {
+        tipo: tipo,
+        sucursal: sucursal,
+        estado: estado
+    }, function(data) {
         try {
             var stats = JSON.parse(data);
             $('#totalPersonal').text(stats.totalPersonal || 0);
@@ -77,9 +155,12 @@ function cargarEstadisticas() {
             $('#personalReciente').text(stats.personalReciente || 0);
         } catch (e) {
             console.error('Error al cargar estadísticas:', e);
+            console.log('Respuesta del servidor:', data);
         }
-    }).fail(function() {
-        console.error('Error al cargar estadísticas');
+    }).fail(function(xhr, status, error) {
+        console.error('Error al cargar estadísticas:', error);
+        console.log('Status:', status);
+        console.log('Response:', xhr.responseText);
     });
 }
 
@@ -120,9 +201,9 @@ function exportarExcel() {
     $('#loading-overlay').show();
     $('#loading-text').text('Generando archivo Excel...');
     
-    var url = 'Controladores/exportar_personal_activo.php?tipo=' + tipo +
-              '&sucursal=' + sucursal +
-              '&estado=' + estado;
+    var url = 'Controladores/exportar_personal_activo.php?tipo=' + encodeURIComponent(tipo) +
+              '&sucursal=' + encodeURIComponent(sucursal) +
+              '&estado=' + encodeURIComponent(estado);
     
     // Crear un iframe temporal para la descarga
     var iframe = document.createElement('iframe');
