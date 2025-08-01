@@ -10,7 +10,8 @@
         "allow-plugins": {
             "composer/package-versions-deprecated": true
         },
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "lock": false
     },
     "minimum-stability": "stable",
     "prefer-stable": true
