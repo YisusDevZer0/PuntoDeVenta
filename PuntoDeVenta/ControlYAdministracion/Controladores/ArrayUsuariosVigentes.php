@@ -6,7 +6,12 @@ include_once "ControladorUsuario.php";
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
-// Consulta segura utilizando una sentencia preparada
+// Obtener parámetros de filtro
+$tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
+$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+$estatus = isset($_GET['estatus']) ? $_GET['estatus'] : '';
+
+// Consulta base
 $sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
 Usuarios_PV.Fk_Usuario, Usuarios_PV.Fecha_Nacimiento, Usuarios_PV.Correo_Electronico, 
 Usuarios_PV.Telefono, Usuarios_PV.AgregadoPor, Usuarios_PV.AgregadoEl, Usuarios_PV.Estatus,
@@ -15,16 +20,63 @@ Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal
 FROM Usuarios_PV 
 INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User 
 INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal
-WHERE Usuarios_PV.Estatus = 'Activo' AND Usuarios_PV.Licencia = ?";
- 
+WHERE Usuarios_PV.Licencia = ?";
+
+// Agregar filtros si están presentes
+$params = [$licencia];
+$types = "s";
+
+if (!empty($tipo_usuario)) {
+    $sql .= " AND Tipos_Usuarios.TipoUsuario = ?";
+    $params[] = $tipo_usuario;
+    $types .= "s";
+}
+
+if (!empty($sucursal)) {
+    $sql .= " AND Sucursales.ID_Sucursal = ?";
+    $params[] = $sucursal;
+    $types .= "s";
+}
+
+if (!empty($estatus)) {
+    $sql .= " AND Usuarios_PV.Estatus = ?";
+    $params[] = $estatus;
+    $types .= "s";
+} else {
+    // Por defecto mostrar solo activos si no se especifica estatus
+    $sql .= " AND Usuarios_PV.Estatus = 'Activo'";
+}
+
+$sql .= " ORDER BY Usuarios_PV.Id_PvUser DESC";
+
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Vincular parámetro
-$stmt->bind_param("s", $licencia);
+if (!$stmt) {
+    echo json_encode([
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error al preparar la consulta: " . $conn->error
+    ]);
+    exit;
+}
+
+// Vincular parámetros
+$stmt->bind_param($types, ...$params);
 
 // Ejecutar la declaración
-$stmt->execute();
+if (!$stmt->execute()) {
+    echo json_encode([
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error al ejecutar la consulta: " . $stmt->error
+    ]);
+    exit;
+}
 
 // Obtener resultado
 $result = $stmt->get_result();
@@ -34,21 +86,31 @@ $data = [];
 
 // Procesar resultados
 while ($fila = $result->fetch_assoc()) {
-    // Construir el array de datos
-    // Aquí puedes seguir con la lógica que ya tienes para construir los datos de salida
+    // Formatear fecha de nacimiento
+    $fecha_nacimiento = '';
+    if ($fila["Fecha_Nacimiento"]) {
+        $fecha_nacimiento = date('d/m/Y', strtotime($fila["Fecha_Nacimiento"]));
+    }
     
+    // Formatear fecha de creación
+    $fecha_creacion = '';
+    if ($fila["AgregadoEl"]) {
+        $fecha_creacion = date('d/m/Y H:i', strtotime($fila["AgregadoEl"]));
+    }
+    
+    // Construir el array de datos
     $data[] = [
         "Idpersonal" => $fila["Id_PvUser"],
         "NombreApellidos" => $fila["Nombre_Apellidos"],
-        "Foto" => '<img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/' . $fila["file_name"] . '" alt="Foto" width="50" height="50">',
+        "Foto" => '<img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/' . $fila["file_name"] . '" alt="Foto" class="profile-img" onerror="this.src=\'https://doctorpez.mx/PuntoDeVenta/PerfilesImg/Administrativos.jpeg\'">',
         "Tipousuario" => $fila["TipoUsuario"],
         "Sucursal" => $fila["Nombre_Sucursal"],
-        "CreadoEl" => $fila["AgregadoEl"], // Cambiado de "CreadoPorEl" a "CreadoEl"
+        "CorreoElectronico" => $fila["Correo_Electronico"] ?: 'No especificado',
+        "Telefono" => $fila["Telefono"] ?: 'No especificado',
+        "FechaNacimiento" => $fecha_nacimiento,
+        "CreadoEl" => $fecha_creacion,
         "Estatus" => $fila["Estatus"],
-        "CreadoPor" => $fila["AgregadoPor"],
-        // Agregar el botón Desglosar ticket
-        "Editar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-success btn-sm btn-edita " style="background-color: #0172b6 !important;" ><i class="fa-solid fa-pen-to-square"></i></a></td>',
-        "Eliminar" => '<td><a data-id="' . $fila["Id_PvUser"] . '" class="btn btn-danger btn-sm btn-elimina " style="background-color: #ff3131 !important;" ><i class="fa-solid fa-trash"></i></a></td>'
+        "CreadoPor" => $fila["AgregadoPor"] ?: 'Sistema'
     ];
 }
 
