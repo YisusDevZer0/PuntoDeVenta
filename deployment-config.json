@@ -1,0 +1,42 @@
+{
+    "deployment": {
+        "pre_deploy_commands": [
+            "chmod +x auto-fix-composer.sh",
+            "chmod +x clean-deploy.sh",
+            "chmod +x deploy-hook.sh"
+        ],
+        "post_deploy_commands": [
+            "./auto-fix-composer.sh"
+        ],
+        "fallback_commands": [
+            "rm -rf vendor/",
+            "rm -f composer.lock",
+            "composer install --no-dev --no-interaction --ignore-platform-reqs --prefer-dist"
+        ],
+        "php_version": "8.0.30",
+        "composer_flags": [
+            "--no-dev",
+            "--no-interaction",
+            "--ignore-platform-reqs",
+            "--prefer-dist"
+        ],
+        "required_extensions": [
+            "php",
+            "php-cli",
+            "php-json",
+            "php-mbstring",
+            "php-xml",
+            "php-zip"
+        ]
+    },
+    "troubleshooting": {
+        "auto_fix_script": "auto-fix-composer.sh",
+        "clean_script": "clean-deploy.sh",
+        "deploy_hook": "deploy-hook.sh",
+        "diagnostic_commands": [
+            "php -v",
+            "composer --version",
+            "composer diagnose"
+        ]
+    }
+} 
