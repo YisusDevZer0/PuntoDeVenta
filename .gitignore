@@ -112,6 +112,10 @@ temp/
 ehthumbs.db
 Thumbs.db
 
+# Fotos de medidores (archivos temporales)
+PuntoDeVenta/FotosMedidores/*.jpeg
+PuntoDeVenta/FotosMedidores/*.jpg
+
 # Deployment files (keep these)
 !deploy.sh
 !deploy-commands.sh

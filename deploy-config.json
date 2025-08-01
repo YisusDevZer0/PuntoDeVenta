@@ -1,17 +1,21 @@
 {
-  "git": {
-    "pull": {
-      "rebase": false,
-      "ff": "only"
-    },
-    "merge": {
-      "strategy": "recursive",
-      "strategy-option": "theirs"
+    "php_version": "8.0",
+    "composer_install_flags": [
+        "--no-dev",
+        "--optimize-autoloader",
+        "--no-interaction"
+    ],
+    "required_extensions": [
+        "php",
+        "php-cli",
+        "php-json",
+        "php-mbstring",
+        "php-xml",
+        "php-zip"
+    ],
+    "deployment_notes": {
+        "composer_conflict_resolution": "Use platform config to force PHP 8.0 compatibility",
+        "untracked_files": "FotosMedidores images are now ignored in .gitignore",
+        "dependencies": "Updated composer.json with explicit PHP version requirements"
     }
-  },
-  "deployment": {
-    "auto-resolve-conflicts": true,
-    "reset-on-conflict": true,
-    "pre-deploy-script": "./deploy.sh"
-  }
 } 

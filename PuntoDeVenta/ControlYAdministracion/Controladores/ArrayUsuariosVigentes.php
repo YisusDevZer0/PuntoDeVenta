@@ -1,10 +1,6 @@
 <?php
 header('Content-Type: application/json');
 include("db_connect.php");
-include_once "ControladorUsuario.php";
-
-// Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
-$licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
 // Obtener parámetros de filtro
 $tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
@@ -49,9 +45,7 @@ if (!empty($estatus)) {
 
 $sql .= " ORDER BY Usuarios_PV.Id_PvUser DESC";
 
-// Debug: Mostrar la consulta final
-error_log("SQL Final: " . $sql);
-error_log("Parámetros: " . json_encode($params));
+
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);

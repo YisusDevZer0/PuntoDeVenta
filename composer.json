@@ -1,6 +1,16 @@
 {
     "require": {
+        "php": "^7.4 || ^8.0",
         "phpoffice/phpspreadsheet": "^1.29",
         "minishlink/web-push": "^9.0"
-    }
+    },
+    "config": {
+        "platform": {
+            "php": "8.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }

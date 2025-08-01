@@ -1,19 +1,26 @@
 #!/bin/bash
 
-# Script de pre-despliegue para configurar Git automáticamente
-echo "Configurando Git para el despliegue..."
+echo "=== Pre-deployment script iniciado ==="
 
-# Configurar Git para manejar ramas divergentes
-git config pull.rebase false
-git config pull.ff only
-git config merge.ff no
+# Limpiar archivos temporales y cache
+echo "Limpiando archivos temporales..."
+rm -rf vendor/
+rm -f composer.lock
 
-# Configurar estrategia de merge
-git config merge.strategy recursive
-git config merge.strategy-option theirs
+# Verificar versión de PHP
+echo "Verificando versión de PHP..."
+php -v
 
-# Configurar para aceptar automáticamente cambios del remoto
-git config pull.rebase false
-git config pull.ff only
+# Instalar dependencias con configuración específica
+echo "Instalando dependencias de Composer..."
+composer install --no-dev --optimize-autoloader --no-interaction
 
-echo "Git configurado para el despliegue." 
+# Verificar que las dependencias se instalaron correctamente
+if [ -f "vendor/autoload.php" ]; then
+    echo "✓ Dependencias instaladas correctamente"
+else
+    echo "✗ Error: No se pudieron instalar las dependencias"
+    exit 1
+fi
+
+echo "=== Pre-deployment script completado ===" 
