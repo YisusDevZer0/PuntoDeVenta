@@ -116,6 +116,10 @@ Thumbs.db
 PuntoDeVenta/FotosMedidores/*.jpeg
 PuntoDeVenta/FotosMedidores/*.jpg
 
+# Composer dependencies (generated on server)
+vendor/
+composer.lock
+
 # Deployment files (keep these)
 !deploy.sh
 !deploy-commands.sh
