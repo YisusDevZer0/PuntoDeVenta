@@ -11,47 +11,7 @@ include_once "Controladores/ControladorUsuario.php";
     <title>Personal Vigente <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
-    <?php include "header.php";?>
-    
     <style>
-        /* Estilos para que la tabla tenga los mismos colores que las demás */
-        #tablaPersonal {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        #tablaPersonal thead th {
-            background-color: #ef7980 !important;
-            color: white !important;
-            font-weight: bold;
-            padding: 12px 8px;
-            text-align: center;
-            border: 1px solid #ddd;
-        }
-        #tablaPersonal tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-        #tablaPersonal tbody tr:hover {
-            background-color: #ffe6e7 !important;
-        }
-        #tablaPersonal tbody td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-        /* Estilos para los botones de paginación */
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            background: #ef7980 !important;
-            color: white !important;
-            border: 1px solid #ef7980 !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: #d65a62 !important;
-            color: white !important;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: #d65a62 !important;
-            color: white !important;
-        }
         /* Estilos para el loading */
         #loading-overlay {
             position: fixed;
@@ -115,239 +75,282 @@ include_once "Controladores/ControladorUsuario.php";
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        
         .stats-number {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 5px;
         }
+        
         .stats-label {
             font-size: 0.9rem;
             opacity: 0.9;
         }
+        
         .stats-icon {
             font-size: 2.5rem;
             margin-bottom: 10px;
             opacity: 0.8;
         }
-        /* Estilos para las imágenes de perfil */
-        .profile-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ef7980;
-        }
     </style>
-</head>
 
+    <?php
+   include "header.php";?>
+   <div id="loading-overlay">
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
 <body>
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
     
-    <?php include_once "Menu.php" ?>
+        <!-- Spinner End -->
 
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
+
+        <?php include_once "Menu.php" ?>
+
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
         <?php include "navbar.php";?>
-        <!-- Navbar End -->
+            <!-- Navbar End -->
 
-        <!-- Table Start -->
-        <div class="container-fluid pt-4 px-4">
-            <div class="col-12">
-                <div class="bg-light rounded h-100 p-4">
-                    <h6 class="mb-4" style="color:#0172b6;">
-                        <i class="fas fa-users me-2"></i>
-                        Personal Activo <?php echo $row['Licencia']?>
-                    </h6>
-                    
-                    <!-- Filtros -->
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <label for="tipo_usuario" class="form-label">
-                                <i class="fas fa-user-tag me-1"></i> Tipo de Usuario
-                            </label>
-                            <select id="tipo_usuario" class="form-control">
-                                <option value="">Todos los tipos</option>
-                                <?php
-                                include_once "db_connect.php";
-                                $sql_tipos = "SELECT DISTINCT TipoUsuario FROM Tipos_Usuarios ORDER BY TipoUsuario";
-                                $result_tipos = $conn->query($sql_tipos);
-                                if ($result_tipos && $result_tipos->num_rows > 0) {
-                                    while ($tipo = $result_tipos->fetch_assoc()) {
-                                        echo "<option value='" . htmlspecialchars($tipo['TipoUsuario']) . "'>" . htmlspecialchars($tipo['TipoUsuario']) . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
+
+            <!-- Table Start -->
+          <div class="text-center"> 
+            <div class="container-fluid pt-4 px-4">
+    <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
+            <h6 class="mb-4" style="color:#0172b6;">
+                <i class="fas fa-users me-2"></i>
+                Personal Activo <?php echo $row['Licencia']?>
+            </h6>
+            
+            <!-- Botón para agregar nuevo personal -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+                        <i class="fas fa-user-plus me-1"></i> Agregar nuevo personal
+                    </button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                        <i class="fas fa-file-excel me-1"></i> Exportar a Excel
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Cards Informativas -->
+            <div class="row mb-4" id="statsRow">
+                <div class="col-md-3">
+                    <div class="stats-card-primary">
+                        <div class="stats-icon">
+                            <i class="fas fa-users"></i>
                         </div>
-                        <div class="col-md-3">
-                            <label for="sucursal" class="form-label">
-                                <i class="fas fa-store me-1"></i> Sucursal
-                            </label>
-                            <select id="sucursal" class="form-control">
-                                <option value="">Todas las sucursales</option>
-                                <?php
-                                $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal";
-                                $result_sucursales = $conn->query($sql_sucursales);
-                                if ($result_sucursales && $result_sucursales->num_rows > 0) {
-                                    while ($sucursal = $result_sucursales->fetch_assoc()) {
-                                        echo "<option value='" . $sucursal['ID_Sucursal'] . "'>" . htmlspecialchars($sucursal['Nombre_Sucursal']) . "</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="estatus" class="form-label">
-                                <i class="fas fa-toggle-on me-1"></i> Estatus
-                            </label>
-                            <select id="estatus" class="form-control">
-                                <option value="">Todos los estatus</option>
-                                <option value="Activo">Activo</option>
-                                <option value="Inactivo">Inactivo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">&nbsp;</label>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-primary" onclick="filtrarDatos()">
-                                    <i class="fas fa-search me-1"></i> Filtrar
-                                </button>
-                                <button type="button" class="btn btn-success" onclick="exportarExcel()">
-                                    <i class="fas fa-file-excel me-1"></i> Exportar a Excel
-                                </button>
-                                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#myModal">
-                                    <i class="fas fa-plus me-1"></i> Agregar Personal
-                                </button>
-                            </div>
-                        </div>
+                        <div class="stats-number" id="totalPersonal">0</div>
+                        <div class="stats-label">Total Personal</div>
                     </div>
-                    
-                    <!-- Cards de estadísticas -->
-                    <div class="row mb-4" id="statsRow">
-                        <div class="col-md-3">
-                            <div class="stats-card-primary">
-                                <div class="stats-icon">
-                                    <i class="fas fa-users"></i>
-                                </div>
-                                <div class="stats-number" id="totalPersonal">0</div>
-                                <div class="stats-label">Total Personal</div>
-                            </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card-success">
+                        <div class="stats-icon">
+                            <i class="fas fa-user-tie"></i>
                         </div>
-                        <div class="col-md-3">
-                            <div class="stats-card-success">
-                                <div class="stats-icon">
-                                    <i class="fas fa-user-check"></i>
-                                </div>
-                                <div class="stats-number" id="personalActivo">0</div>
-                                <div class="stats-label">Personal Activo</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card-info">
-                                <div class="stats-icon">
-                                    <i class="fas fa-store"></i>
-                                </div>
-                                <div class="stats-number" id="sucursalesActivas">0</div>
-                                <div class="stats-label">Sucursales Activas</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stats-card-warning">
-                                <div class="stats-icon">
-                                    <i class="fas fa-user-tag"></i>
-                                </div>
-                                <div class="stats-number" id="tiposUsuario">0</div>
-                                <div class="stats-label">Tipos de Usuario</div>
-                            </div>
-                        </div>
+                        <div class="stats-number" id="totalAdministrativos">0</div>
+                        <div class="stats-label">Administrativos</div>
                     </div>
-                    
-                    <!-- Tabla de datos -->
-                    <div class="table-responsive">
-                        <table id="tablaPersonal" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID Empleado</th>
-                                    <th>Fotografía</th>
-                                    <th>Nombre Completo</th>
-                                    <th>Tipo de Usuario</th>
-                                    <th>Sucursal</th>
-                                    <th>Correo Electrónico</th>
-                                    <th>Teléfono</th>
-                                    <th>Fecha de Nacimiento</th>
-                                    <th>Fecha de Creación</th>
-                                    <th>Estatus</th>
-                                    <th>Creado Por</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Los datos se cargarán dinámicamente -->
-                            </tbody>
-                        </table>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card-info">
+                        <div class="stats-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stats-number" id="totalSucursales">0</div>
+                        <div class="stats-label">Sucursales Activas</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card-warning">
+                        <div class="stats-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stats-number" id="personalReciente">0</div>
+                        <div class="stats-label">Nuevos este mes</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <script src="js/ControlDeUsuarios.js"></script>
-    <script src="js/AgregarUsuarioss.js"></script>
-    <script src="js/PersonalActivo.js"></script>
+            
+            <!-- Filtros -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <label for="filtro_tipo" class="form-label">
+                        <i class="fas fa-user-tag me-1"></i> Tipo de Usuario
+                    </label>
+                    <select id="filtro_tipo" class="form-control">
+                        <option value="">Todos los tipos</option>
+                        <option value="Administrativo">Administrativo</option>
+                        <option value="Vendedor">Vendedor</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Gerente">Gerente</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filtro_sucursal" class="form-label">
+                        <i class="fas fa-store me-1"></i> Sucursal
+                    </label>
+                    <select id="filtro_sucursal" class="form-control">
+                        <option value="">Todas las sucursales</option>
+                        <?php
+                        include_once "db_connect.php";
+                        $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal";
+                        $result_sucursales = $conn->query($sql_sucursales);
+                        if ($result_sucursales && $result_sucursales->num_rows > 0) {
+                            while ($sucursal = $result_sucursales->fetch_assoc()) {
+                                echo "<option value='" . $sucursal['ID_Sucursal'] . "'>" . htmlspecialchars($sucursal['Nombre_Sucursal']) . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filtro_estado" class="form-label">
+                        <i class="fas fa-toggle-on me-1"></i> Estado
+                    </label>
+                    <select id="filtro_estado" class="form-control">
+                        <option value="">Todos los estados</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary" onclick="filtrarDatos()">
+                            <i class="fas fa-search me-1"></i> Filtrar
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="limpiarFiltros()">
+                            <i class="fas fa-times me-1"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="DataDeServicios"></div>
+            </div></div></div></div>
+            </div>
+          
+<script src="js/ControlDeUsuarios.js"></script>
+<script src="js/AgregarUsuarioss.js"></script>
+<script src="js/PersonalActivo.js"></script>
 
-    <!-- Footer Start -->
-    <?php 
-    include "Modales/AltaNuevoUsuario.php";
-    include "Modales/Modales_Referencias.php";
-    include "Footer.php";?>
+            <!-- Footer Start -->
+            <?php 
+            include "Modales/AltaNuevoUsuario.php";
+           
+            include "Modales/Modales_Referencias.php";
+            include "Footer.php";?>
 
-    <script>
-        $(document).ready(function() {
-            // Delegación de eventos para el botón "btn-edita" dentro de .dropdown-menu
-            $(document).on("click", ".btn-edita", function() {
-                console.log("Botón de editar clickeado para el ID:", id);
-                var id = $(this).data("id");
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaDatosDeUsuario.php", { id: id }, function(data) {
-                    $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("Editar datos del usuario");
-                    // Cambiar tamaño del modal agregando la clase 'modal-xl'
-                    $("#ModalEdDele .modal-dialog").removeClass("modal-sm modal-lg modal-xl").addClass("modal-lg");
-                });
-                $('#ModalEdDele').modal('show');
-            });
-
-            // Delegación de eventos para el botón "btn-elimina" dentro de .dropdown-menu
-            $(document).on("click", ".btn-elimina", function() {
-                var id = $(this).data("id");
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminarDatosDeUsuario.php", { id: id }, function(data) {
-                    $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("Eliminar usuario");
-                });
-                $('#ModalEdDele').modal('show');
-            });
+<script>
+   $(document).ready(function() {
+    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+    $(document).on("click", ".btn-edita", function() {
+      console.log("Botón de cancelar clickeado para el ID:", id);
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaDatosDeUsuario.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Editar datos del usuario");
+             // Cambiar tamaño del modal agregando la clase 'modal-xl'
+             $("#ModalEdDele .modal-dialog").removeClass("modal-sm modal-lg modal-xl").addClass("modal-lg");
+            
         });
-    </script>
+        $('#ModalEdDele').modal('show');
+    });
 
-    <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-        <div id="CajasDi" class="modal-dialog modal-notify modal-success">
-            <div class="text-center">
-                <div class="modal-content">
-                    <div class="modal-header" style="background-color: #ef7980 !important;">
-                        <p class="heading lead" id="TitulosCajas" style="color:white;"></p>
-                    </div>
-                    <div class="modal-body">
-                        <div class="text-center">
-                            <div id="FormCajas"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
+    $(document).on("click", ".btn-elimina", function() {
+        var id = $(this).data("id");
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminarDatosDeUsuario.php", { id: id }, function(data) {
+            $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Eliminar servicio");
+           
+        });
+        $('#ModalEdDele').modal('show');
+    });
+
+    // Función para filtrar datos
+    window.filtrarDatos = function() {
+        var tipo = $('#filtro_tipo').val();
+        var sucursal = $('#filtro_sucursal').val();
+        var estado = $('#filtro_estado').val();
+        
+        // Mostrar loading
+        $('#loading-overlay').show();
+        $('#loading-text').text('Filtrando datos...');
+        
+        // Recargar datos con filtros
+        if (window.tablaPersonal) {
+            window.tablaPersonal.ajax.reload(function() {
+                $('#loading-overlay').hide();
+            });
+        }
+    };
+    
+    // Función para limpiar filtros
+    window.limpiarFiltros = function() {
+        $('#filtro_tipo').val('');
+        $('#filtro_sucursal').val('');
+        $('#filtro_estado').val('');
+        filtrarDatos();
+    };
+    
+    // Función para exportar a Excel
+    window.exportarExcel = function() {
+        var tipo = $('#filtro_tipo').val();
+        var sucursal = $('#filtro_sucursal').val();
+        var estado = $('#filtro_estado').val();
+        
+        // Mostrar loading
+        $('#loading-overlay').show();
+        $('#loading-text').text('Generando archivo Excel...');
+        
+        var url = 'Controladores/exportar_personal_activo.php?tipo=' + tipo +
+                  '&sucursal=' + sucursal +
+                  '&estado=' + estado;
+        
+        // Crear un iframe temporal para la descarga
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        
+        // Ocultar loading después de un tiempo
+        setTimeout(function() {
+            $('#loading-overlay').hide();
+            document.body.removeChild(iframe);
+        }, 3000);
+    };
+   
+});
+
+</script>
+
+  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
+    <div class="text-center">
+      <div class="modal-content">
+      <div class="modal-header" style=" background-color: #ef7980 !important;" >
+         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
+
+         
+       </div>
+        
+	        <div class="modal-body">
+          <div class="text-center">
+        <div id="FormCajas"></div>
+        
         </div>
-    </div>
+
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal --></div>
 </body>
 
 </html>

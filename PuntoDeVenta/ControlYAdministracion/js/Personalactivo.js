@@ -1,164 +1,140 @@
-$(document).ready(function() {
-    console.log("Inicializando DataTable para personal...");
-    
-    // Inicializar DataTable
-    var table = $('#tablaPersonal').DataTable({
-        "processing": true,
-        "serverSide": false,
-        "ajax": {
-            "url": "Controladores/ArrayUsuariosVigentes.php",
-            "type": "GET",
-            "dataSrc": function(json) {
-                console.log("Respuesta del servidor:", json);
-                
-                // Ocultar loading
-                $('#loading-overlay').hide();
-                
-                // Verificar si hay error en la respuesta
-                if (json.error) {
-                    console.error("Error del servidor:", json.error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al cargar los datos: ' + json.error
-                    });
-                    return [];
-                }
-                
-                // Actualizar estadísticas
-                actualizarEstadisticas(json.aaData);
-                
-                return json.aaData || [];
-            },
-            "error": function(xhr, status, error) {
-                console.error("Error AJAX:", xhr, status, error);
-                console.error("URL llamada:", "Controladores/ArrayUsuariosVigentes.php");
-                $('#loading-overlay').hide();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo cargar los datos. Error: ' + error
-                });
-            }
-        },
-        "columns": [
-            {"data": "Idpersonal"},
-            {
-                "data": "Foto",
-                "render": function(data, type, row) {
-                    if (type === 'display') {
-                        return data; // Ya viene formateado como HTML
-                    }
-                    return data;
-                }
-            },
-            {"data": "NombreApellidos"},
-            {"data": "Tipousuario"},
-            {"data": "Sucursal"},
-            {"data": "CorreoElectronico"},
-            {"data": "Telefono"},
-            {"data": "FechaNacimiento"},
-            {"data": "CreadoEl"},
-            {"data": "Estatus"},
-            {"data": "CreadoPor"},
-            {
-                "data": null,
-                "render": function(data, type, row) {
-                    return '<div class="btn-group" role="group">' +
-                           '<button type="button" class="btn btn-success btn-sm btn-edita" data-id="' + row.Idpersonal + '" style="background-color: #0172b6 !important; margin-right: 5px;"><i class="fa-solid fa-pen-to-square"></i></button>' +
-                           '<button type="button" class="btn btn-danger btn-sm btn-elimina" data-id="' + row.Idpersonal + '" style="background-color: #ff3131 !important;"><i class="fa-solid fa-trash"></i></button>' +
-                           '</div>';
-                }
-            }
-        ],
-        "order": [[0, "desc"]], // Ordenar por ID descendente
-        "pageLength": 25,
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-        },
-        "error": function(xhr, error, thrown) {
-            console.error("Error en DataTables:", error);
-            $('#loading-overlay').hide();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al cargar los datos. Por favor, verifica la conexión.'
-            });
-        },
-        "initComplete": function() {
-            console.log("DataTable inicializado completamente");
-            $('#loading-overlay').hide();
-        }
+function CargaPersonalactivo(){
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Cargando datos del personal...');
+
+    $.post("Controladores/TablaPersonalActivo.php","",function(data){
+      $("#DataDeServicios").html(data);
+      
+      // Inicializar DataTable con configuración mejorada
+      if ($.fn.DataTable.isDataTable('#Productos')) {
+          $('#Productos').DataTable().destroy();
+      }
+      
+      window.tablaPersonal = $('#Productos').DataTable({
+          "bProcessing": true,
+          "ordering": true,
+          "stateSave": true,
+          "bAutoWidth": false,
+          "order": [[ 0, "desc" ]],
+          "sAjaxSource": "Controladores/ArrayPersonalActivo.php",
+          "aoColumns": [
+              { mData: 'Idpersonal' },
+              { mData: 'NombreApellidos' },
+              { mData: 'Foto' },
+              { mData: 'Tipousuario' },
+              { mData: 'Sucursal' },
+              { mData: 'CreadoEl' },
+              { mData: 'Estatus' },
+              { mData: 'CreadoPor' },
+              { mData: 'Acciones' }
+          ],
+          "lengthMenu": [[10,20,50,100, -1], [10,20,50,100, "Todos"]],
+          "language": {
+              "lengthMenu": "Mostrar _MENU_ registros",
+              "sPaginationType": "extStyle",
+              "zeroRecords": "No se encontraron resultados",
+              "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+              "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+              "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+              "sSearch": "Buscar:",
+              "paginate": {
+                  "first": '<i class="fas fa-angle-double-left"></i>',
+                  "last": '<i class="fas fa-angle-double-right"></i>',
+                  "next": '<i class="fas fa-angle-right"></i>',
+                  "previous": '<i class="fas fa-angle-left"></i>'
+              }
+          },
+          "initComplete": function() {
+              // Al completar la inicialización de la tabla, ocultar el mensaje de carga
+              $('#loading-overlay').hide();
+              // Cargar estadísticas
+              cargarEstadisticas();
+          },
+          "dom": '<"d-flex justify-content-between"lf>rtip',
+          "responsive": true
+      });
+      
+      // Mostrar el mensaje de carga mientras se procesan los datos
+      window.tablaPersonal.on('processing.dt', function (e, settings, processing) {
+          if (processing) {
+              $('#loading-overlay').show();
+          } else {
+              $('#loading-overlay').hide();
+          }
+      });
     });
+}
 
-    // Función para actualizar estadísticas
-    function actualizarEstadisticas(data) {
-        if (data && data.length > 0) {
-            var totalPersonal = data.length;
-            var personalActivo = 0;
-            var sucursalesUnicas = new Set();
-            var tiposUsuarioUnicos = new Set();
-            
-            data.forEach(function(item) {
-                if (item.Estatus === 'Activo') {
-                    personalActivo++;
-                }
-                if (item.Sucursal) {
-                    sucursalesUnicas.add(item.Sucursal);
-                }
-                if (item.Tipousuario) {
-                    tiposUsuarioUnicos.add(item.Tipousuario);
-                }
-            });
-            
-            $('#totalPersonal').text(totalPersonal);
-            $('#personalActivo').text(personalActivo);
-            $('#sucursalesActivas').text(sucursalesUnicas.size);
-            $('#tiposUsuario').text(tiposUsuarioUnicos.size);
-            
-            $('#statsRow').show();
+// Función para cargar estadísticas
+function cargarEstadisticas() {
+    $.post("Controladores/EstadisticasPersonalActivo.php", "", function(data) {
+        try {
+            var stats = JSON.parse(data);
+            $('#totalPersonal').text(stats.totalPersonal || 0);
+            $('#totalAdministrativos').text(stats.totalAdministrativos || 0);
+            $('#totalSucursales').text(stats.totalSucursales || 0);
+            $('#personalReciente').text(stats.personalReciente || 0);
+        } catch (e) {
+            console.error('Error al cargar estadísticas:', e);
         }
-    }
+    }).fail(function() {
+        console.error('Error al cargar estadísticas');
+    });
+}
 
-    // Función para filtrar datos con loading
-    window.filtrarDatos = function() {
-        console.log("Ejecutando filtro...");
-        
-        // Mostrar loading
-        $('#loading-overlay').show();
-        $('#loading-text').text('Filtrando datos...');
-        
-        // Recargar datos
-        table.ajax.reload(function() {
+// Función para filtrar datos
+function filtrarDatos() {
+    var tipo = $('#filtro_tipo').val();
+    var sucursal = $('#filtro_sucursal').val();
+    var estado = $('#filtro_estado').val();
+    
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Filtrando datos...');
+    
+    // Recargar datos con filtros
+    if (window.tablaPersonal) {
+        window.tablaPersonal.ajax.reload(function() {
             $('#loading-overlay').hide();
-            console.log("Filtro completado");
+            cargarEstadisticas();
         });
-    };
+    }
+}
 
-    // Función para exportar a Excel
-    window.exportarExcel = function() {
-        var tipo_usuario = $('#tipo_usuario').val();
-        var sucursal = $('#sucursal').val();
-        var estatus = $('#estatus').val();
-        
-        // Mostrar loading
-        $('#loading-overlay').show();
-        $('#loading-text').text('Generando archivo Excel...');
-        
-        var url = 'Controladores/exportar_reporte_personal.php?tipo_usuario=' + tipo_usuario +
-                  '&sucursal=' + sucursal +
-                  '&estatus=' + estatus;
-        
-        // Crear un iframe temporal para la descarga
-        var iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-        
-        // Ocultar loading después de un tiempo
-        setTimeout(function() {
-            $('#loading-overlay').hide();
-            document.body.removeChild(iframe);
-        }, 3000);
-    };
-});
+// Función para limpiar filtros
+function limpiarFiltros() {
+    $('#filtro_tipo').val('');
+    $('#filtro_sucursal').val('');
+    $('#filtro_estado').val('');
+    filtrarDatos();
+}
+
+// Función para exportar a Excel
+function exportarExcel() {
+    var tipo = $('#filtro_tipo').val();
+    var sucursal = $('#filtro_sucursal').val();
+    var estado = $('#filtro_estado').val();
+    
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Generando archivo Excel...');
+    
+    var url = 'Controladores/exportar_personal_activo.php?tipo=' + tipo +
+              '&sucursal=' + sucursal +
+              '&estado=' + estado;
+    
+    // Crear un iframe temporal para la descarga
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    
+    // Ocultar loading después de un tiempo
+    setTimeout(function() {
+        $('#loading-overlay').hide();
+        document.body.removeChild(iframe);
+    }, 3000);
+}
+
+CargaPersonalactivo();
