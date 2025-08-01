@@ -8,14 +8,6 @@ $(document).ready(function() {
         "ajax": {
             "url": "Controladores/ArrayUsuariosVigentes.php",
             "type": "GET",
-            "data": function(d) {
-                console.log("Enviando parámetros:", d);
-                d.tipo_usuario = $('#tipo_usuario').val();
-                d.sucursal = $('#sucursal').val();
-                d.estatus = $('#estatus').val();
-                console.log("Parámetros finales:", d);
-                return d;
-            },
             "dataSrc": function(json) {
                 console.log("Respuesta del servidor:", json);
                 
