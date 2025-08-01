@@ -1,0 +1,19 @@
+# Archivo de configuración de despliegue para Hostinger
+# Este archivo se ejecuta automáticamente antes del despliegue
+
+# Configurar Git para manejar ramas divergentes
+git config --global pull.rebase false
+git config --global pull.ff only
+git config --global merge.strategy recursive
+git config --global merge.strategy-option theirs
+
+# Configuración local
+git config pull.rebase false
+git config pull.ff only
+
+# Comando de pull con manejo de conflictos
+git fetch origin
+git pull origin main --no-rebase || git reset --hard origin/main
+
+# Verificar estado
+git status 
