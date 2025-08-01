@@ -1,0 +1,31 @@
+name: Deploy Configuration
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  configure-git:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Configure Git for deployment
+      run: |
+        git config pull.rebase false
+        git config pull.ff only
+        git config merge.strategy recursive
+        git config merge.strategy-option theirs
+    
+    - name: Pull with conflict resolution
+      run: |
+        git fetch origin
+        git pull origin main --no-rebase || git reset --hard origin/main
+    
+    - name: Verify deployment
+      run: |
+        git status
+        echo "Deployment configuration completed" 
