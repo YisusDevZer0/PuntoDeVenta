@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Git configuration for deployment
+.git/config text eol=lf
+.git/config merge=union

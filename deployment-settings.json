@@ -1,0 +1,25 @@
+{
+  "deployment": {
+    "pre_commands": [
+      "git config pull.rebase false",
+      "git config pull.ff only",
+      "git config merge.strategy recursive",
+      "git config merge.strategy-option theirs"
+    ],
+    "pull_command": "git pull origin main --no-rebase",
+    "fallback_command": "git reset --hard origin/main",
+    "post_commands": [
+      "git status"
+    ]
+  },
+  "git_settings": {
+    "pull": {
+      "rebase": false,
+      "ff": "only"
+    },
+    "merge": {
+      "strategy": "recursive",
+      "strategy-option": "theirs"
+    }
+  }
+} 
