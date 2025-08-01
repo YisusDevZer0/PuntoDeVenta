@@ -102,7 +102,7 @@ while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "Idpersonal" => $fila["Id_PvUser"],
         "NombreApellidos" => $fila["Nombre_Apellidos"],
-        "Foto" => '<img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/' . $fila["file_name"] . '" alt="Foto" class="profile-img" onerror="this.src=\'https://doctorpez.mx/PuntoDeVenta/PerfilesImg/Administrativos.jpeg\'">',
+        "Foto" => '<img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/' . $fila["file_name"] . '" alt="Foto" class="profile-img" onerror="this.src=\'https://doctorpez.mx/PuntoDeVenta/PerfilesImg/Administrativos.jpe\'">',
         "Tipousuario" => $fila["TipoUsuario"],
         "Sucursal" => $fila["Nombre_Sucursal"],
         "CorreoElectronico" => $fila["Correo_Electronico"] ?: 'No especificado',
