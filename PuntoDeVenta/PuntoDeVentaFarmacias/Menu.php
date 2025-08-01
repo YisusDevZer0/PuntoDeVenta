@@ -18,13 +18,6 @@ if (!isset($currentPage)) {
 if (!isset($showDashboard)) {
     $showDashboard = false;
 }
-
-if (!isset($disabledAttr)) {
-    $disabledAttr = '';
-}
-
-// Verificar si el usuario tiene permisos para ver el menú completo
-$isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 ?>
 
 <div class="sidebar pe-4 pb-3">
@@ -48,8 +41,9 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             <?php if ($showDashboard): ?>
             
             <?php endif; ?>
-            <?php if ($isAdmin): ?>
-                <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
+            
+            <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
+            
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
                 <div class="dropdown-menu bg-transparent border-0">
@@ -79,120 +73,118 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users-gear"></i></i>Personal</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users-gear"></i></i>Personal</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="TiposUsuarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
-                    <a href="PersonalActivo" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-check"></i>Personal activo </a>
-                    <a href="Personaldebaja" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
+                    <a href="TiposUsuarios" class="dropdown-item"><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
+                    <a href="PersonalActivo" class="dropdown-item"><i class="fa-solid fa-user-check"></i>Personal activo </a>
+                    <a href="Personaldebaja" class="dropdown-item"><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i></i>Checador</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-clock"></i></i>Checador</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="ChecadorDiario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
-                    <a href="ChecadorGeneral" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar"></i>Reporte General </a>
+                    <a href="ChecadorDiario" class="dropdown-item"><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
+                    <a href="ChecadorGeneral" class="dropdown-item"><i class="fa-solid fa-calendar"></i>Reporte General </a>
                 </div>
             </div>
             
-            <a href="Sucursales" class="nav-item nav-link" <?php echo $disabledAttr; ?>><i class="fa-solid fa-house-medical"></i>Sucursales</a>
+            <a href="Sucursales" class="nav-item nav-link"><i class="fa-solid fa-house-medical"></i>Sucursales</a>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Inventarios</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-boxes-stacked"></i>Inventarios</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="ProductosGenerales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box"></i>Productos</a>
-                    <a href="Categorias" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-tags"></i>Categorias</a>
-                    <a href="Presentaciones" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box-open"></i>Presentaciones</a>
-                    <a href="Proveedores" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Proveedores</a>
-                    <a href="Servicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-hand-holding-heart"></i>Servicios</a>
-                    <a href="InventarioSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-warehouse"></i>Inventario por sucursal</a>
-                    <a href="Stocks" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Stock</a>
-                </div>
-            </div>
-            
-            <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes</a>
-                <div class="dropdown-menu bg-transparent border-0">
-                    <a href="ReporteDeVentas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-bar"></i>Reporte de ventas</a>
-                    <a href="ReporteDeVentasTotales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-pie"></i>Reporte de ventas totales</a>
-                    <a href="ReporteMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-star"></i>Productos mas vendidos</a>
-                    <a href="ReportePorFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Reporte por forma de pago</a>
-                    <a href="ReportePorProductoFormaPago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reporte por producto y forma de pago</a>
-                    <a href="ReportesInventarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Reportes de inventarios</a>
-                    <a href="ReportesCedisInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-warehouse"></i>Reportes CEDIS inventario</a>
+                    <a href="ProductosGenerales" class="dropdown-item"><i class="fa-solid fa-box"></i>Productos</a>
+                    <a href="Categorias" class="dropdown-item"><i class="fa-solid fa-tags"></i>Categorias</a>
+                    <a href="Presentaciones" class="dropdown-item"><i class="fa-solid fa-box-open"></i>Presentaciones</a>
+                    <a href="Proveedores" class="dropdown-item"><i class="fa-solid fa-truck"></i>Proveedores</a>
+                    <a href="Servicios" class="dropdown-item"><i class="fa-solid fa-hand-holding-heart"></i>Servicios</a>
+                    <a href="InventarioSucursales" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Inventario por sucursal</a>
+                    <a href="Stocks" class="dropdown-item"><i class="fa-solid fa-chart-line"></i>Stock</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cogs"></i>Configuracion</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-chart-line"></i>Reportes</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="TiposDeGastos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bill"></i>Tipos de gastos</a>
-                    <a href="SolicitudPendientes" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i>Solicitudes pendientes</a>
-                    <a href="RegistroSolicitudesCompletas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-check-circle"></i>Registro de solicitudes completas</a>
+                    <a href="ReporteDeVentas" class="dropdown-item"><i class="fa-solid fa-chart-bar"></i>Reporte de ventas</a>
+                    <a href="ReporteDeVentasTotales" class="dropdown-item"><i class="fa-solid fa-chart-pie"></i>Reporte de ventas totales</a>
+                    <a href="ReporteMasVendidos" class="dropdown-item"><i class="fa-solid fa-star"></i>Productos mas vendidos</a>
+                    <a href="ReportePorFormaDePago" class="dropdown-item"><i class="fa-solid fa-credit-card"></i>Reporte por forma de pago</a>
+                    <a href="ReportePorProductoFormaPago" class="dropdown-item"><i class="fa-solid fa-chart-line"></i>Reporte por producto y forma de pago</a>
+                    <a href="ReportesInventarios" class="dropdown-item"><i class="fa-solid fa-boxes-stacked"></i>Reportes de inventarios</a>
+                    <a href="ReportesCedisInventario" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Reportes CEDIS inventario</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-exchange-alt"></i>Traspasos</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cogs"></i>Configuracion</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="RealizarTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Realizar traspasos</a>
-                    <a href="ListaDeTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-list"></i>Lista de traspasos</a>
+                    <a href="TiposDeGastos" class="dropdown-item"><i class="fa-solid fa-money-bill"></i>Tipos de gastos</a>
+                    <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-clock"></i>Solicitudes pendientes</a>
+                    <a href="RegistroSolicitudesCompletas" class="dropdown-item"><i class="fa-solid fa-check-circle"></i>Registro de solicitudes completas</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-plus"></i>Ingresos</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-exchange-alt"></i>Traspasos</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="Ingresos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-plus-circle"></i>Ingresos</a>
+                    <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-truck"></i>Realizar traspasos</a>
+                    <a href="ListaDeTraspasos" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de traspasos</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-receipt"></i>Tickets</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-plus"></i>Ingresos</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="Tickets" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-ticket"></i>Tickets</a>
+                    <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-plus-circle"></i>Ingresos</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i>Clientes</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-receipt"></i>Tickets</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="DatosDeClientes" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user"></i>Datos de clientes</a>
-                    <a href="Creditos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Creditos</a>
+                    <a href="Tickets" class="dropdown-item"><i class="fa-solid fa-ticket"></i>Tickets</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cash-register"></i>Cajas</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-users"></i>Clientes</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="CortesDeCaja" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cash-register"></i>Cortes de caja</a>
-                    <a href="RegistroDeGastos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bill"></i>Registro de gastos</a>
+                    <a href="DatosDeClientes" class="dropdown-item"><i class="fa-solid fa-user"></i>Datos de clientes</a>
+                    <a href="Creditos" class="dropdown-item"><i class="fa-solid fa-credit-card"></i>Creditos</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-cash-register"></i>Cajas</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="Pedidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
-                    <a href="PedidosAdministrativos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice-dollar"></i>Pedidos administrativos</a>
+                    <a href="CortesDeCaja" class="dropdown-item"><i class="fa-solid fa-cash-register"></i>Cortes de caja</a>
+                    <a href="RegistroDeGastos" class="dropdown-item"><i class="fa-solid fa-money-bill"></i>Registro de gastos</a>
                 </div>
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes Anuales</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="ReportesAnuales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes anuales</a>
-                    <a href="ReporteVentasTotalesPorFechas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-bar"></i>Reporte ventas totales por fechas</a>
-                    <a href="ReporteSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-building"></i>Reporte sucursales</a>
-                    <a href="ReporteProductosMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-star"></i>Reporte productos mas vendidos</a>
-                    <a href="ReporteFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Reporte forma de pago</a>
-                    <a href="ReporteServicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-hand-holding-heart"></i>Reporte servicios</a>
-                    <a href="ReportePorProducto" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box"></i>Reporte por producto</a>
-                    <a href="TotalesDeVentaPorVendedor" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-tie"></i>Totales de venta por vendedor</a>
+                    <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
+                    <a href="PedidosAdministrativos" class="dropdown-item"><i class="fa-solid fa-file-invoice-dollar"></i>Pedidos administrativos</a>
                 </div>
             </div>
             
-            <?php endif; ?>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-chart-line"></i>Reportes Anuales</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ReportesAnuales" class="dropdown-item"><i class="fa-solid fa-chart-line"></i>Reportes anuales</a>
+                    <a href="ReporteVentasTotalesPorFechas" class="dropdown-item"><i class="fa-solid fa-chart-bar"></i>Reporte ventas totales por fechas</a>
+                    <a href="ReporteSucursales" class="dropdown-item"><i class="fa-solid fa-building"></i>Reporte sucursales</a>
+                    <a href="ReporteProductosMasVendidos" class="dropdown-item"><i class="fa-solid fa-star"></i>Reporte productos mas vendidos</a>
+                    <a href="ReporteFormaDePago" class="dropdown-item"><i class="fa-solid fa-credit-card"></i>Reporte forma de pago</a>
+                    <a href="ReporteServicios" class="dropdown-item"><i class="fa-solid fa-hand-holding-heart"></i>Reporte servicios</a>
+                    <a href="ReportePorProducto" class="dropdown-item"><i class="fa-solid fa-box"></i>Reporte por producto</a>
+                    <a href="TotalesDeVentaPorVendedor" class="dropdown-item"><i class="fa-solid fa-user-tie"></i>Totales de venta por vendedor</a>
+                </div>
+            </div>
         </div>
     </nav>
 </div>
