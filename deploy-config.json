@@ -1,0 +1,17 @@
+{
+  "git": {
+    "pull": {
+      "rebase": false,
+      "ff": "only"
+    },
+    "merge": {
+      "strategy": "recursive",
+      "strategy-option": "theirs"
+    }
+  },
+  "deployment": {
+    "auto-resolve-conflicts": true,
+    "reset-on-conflict": true,
+    "pre-deploy-script": "./deploy.sh"
+  }
+} 
