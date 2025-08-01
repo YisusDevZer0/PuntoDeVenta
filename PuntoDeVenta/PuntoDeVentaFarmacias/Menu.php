@@ -129,6 +129,7 @@
                 </a>
                 <div class="collapse" id="TraspasosMenu">
                     <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
+                        <a href="RealizarTraspasos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-exchange-alt me-2 text-primary"></i>Realizar Traspasos</a>
                         <a href="ListadoDeTraspasos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-list-check me-2 text-primary"></i>Listado de traspasos</a>
                         <a href="Ingresos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-inbox me-2 text-primary"></i>Solicitar ingresos</a>
                         <a href="SolicitudPendientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Solicitudes pendientes</a>
