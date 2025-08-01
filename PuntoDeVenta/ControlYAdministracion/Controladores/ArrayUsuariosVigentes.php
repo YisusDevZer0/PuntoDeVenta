@@ -9,6 +9,20 @@ $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 // Debug: Verificar si la licencia está disponible
 error_log("Licencia obtenida: " . $licencia);
 
+// Consulta base simplificada para mostrar todos los usuarios activos
+$sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
+Usuarios_PV.Fk_Usuario, Usuarios_PV.Fecha_Nacimiento, Usuarios_PV.Correo_Electronico, 
+Usuarios_PV.Telefono, Usuarios_PV.AgregadoPor, Usuarios_PV.AgregadoEl, Usuarios_PV.Estatus,
+Usuarios_PV.Licencia, Tipos_Usuarios.ID_User, Tipos_Usuarios.TipoUsuario,
+Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+FROM Usuarios_PV 
+INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User 
+INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal
+WHERE Usuarios_PV.Estatus = 'Activo'";
+
+$params = [];
+$types = "";
+
 // Obtener parámetros de filtro
 $tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
 $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
@@ -30,9 +44,6 @@ error_log("SQL Query: " . $sql);
 error_log("Parámetros: " . json_encode($params));
 
 // Agregar filtros si están presentes
-$params = [$licencia];
-$types = "s";
-
 if (!empty($tipo_usuario)) {
     $sql .= " AND Tipos_Usuarios.TipoUsuario = ?";
     $params[] = $tipo_usuario;
@@ -70,8 +81,10 @@ if (!$stmt) {
     exit;
 }
 
-// Vincular parámetros
-$stmt->bind_param($types, ...$params);
+// Vincular parámetros solo si hay parámetros
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 // Ejecutar la declaración
 if (!$stmt->execute()) {
