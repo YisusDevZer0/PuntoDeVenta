@@ -6,6 +6,9 @@ include_once "ControladorUsuario.php";
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
+// Debug: Verificar si la licencia está disponible
+error_log("Licencia obtenida: " . $licencia);
+
 // Obtener parámetros de filtro
 $tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
 $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
