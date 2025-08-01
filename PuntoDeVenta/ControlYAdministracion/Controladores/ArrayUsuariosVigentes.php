@@ -84,6 +84,9 @@ if (!$stmt->execute()) {
 // Obtener resultado
 $result = $stmt->get_result();
 
+// Debug: Verificar si hay resultados
+error_log("Número de filas encontradas: " . ($result ? $result->num_rows : 0));
+
 // Inicializar array para almacenar los resultados
 $data = [];
 
