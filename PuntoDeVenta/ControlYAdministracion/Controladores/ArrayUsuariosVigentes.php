@@ -6,8 +6,10 @@ include_once "ControladorUsuario.php";
 // Obtener el valor de la licencia de la fila, asegurándote de que esté correctamente formateado
 $licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 
-// Debug: Verificar si la licencia está disponible
-error_log("Licencia obtenida: " . $licencia);
+// Obtener parámetros de filtro
+$tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
+$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+$estatus = isset($_GET['estatus']) ? $_GET['estatus'] : '';
 
 // Consulta base simplificada para mostrar todos los usuarios activos
 $sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
@@ -23,25 +25,7 @@ WHERE Usuarios_PV.Estatus = 'Activo'";
 $params = [];
 $types = "";
 
-// Obtener parámetros de filtro
-$tipo_usuario = isset($_GET['tipo_usuario']) ? $_GET['tipo_usuario'] : '';
-$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
-$estatus = isset($_GET['estatus']) ? $_GET['estatus'] : '';
 
-// Consulta base
-$sql = "SELECT Usuarios_PV.Id_PvUser, Usuarios_PV.Nombre_Apellidos, Usuarios_PV.file_name, 
-Usuarios_PV.Fk_Usuario, Usuarios_PV.Fecha_Nacimiento, Usuarios_PV.Correo_Electronico, 
-Usuarios_PV.Telefono, Usuarios_PV.AgregadoPor, Usuarios_PV.AgregadoEl, Usuarios_PV.Estatus,
-Usuarios_PV.Licencia, Tipos_Usuarios.ID_User, Tipos_Usuarios.TipoUsuario,
-Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
-FROM Usuarios_PV 
-INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User 
-INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal
-WHERE Usuarios_PV.Licencia = ?";
-
-// Debug: Mostrar la consulta SQL
-error_log("SQL Query: " . $sql);
-error_log("Parámetros: " . json_encode($params));
 
 // Agregar filtros si están presentes
 if (!empty($tipo_usuario)) {
@@ -57,15 +41,17 @@ if (!empty($sucursal)) {
 }
 
 if (!empty($estatus)) {
-    $sql .= " AND Usuarios_PV.Estatus = ?";
+    // Si se especifica estatus, reemplazar la condición WHERE
+    $sql = str_replace("WHERE Usuarios_PV.Estatus = 'Activo'", "WHERE Usuarios_PV.Estatus = ?", $sql);
     $params[] = $estatus;
     $types .= "s";
-} else {
-    // Por defecto mostrar solo activos si no se especifica estatus
-    $sql .= " AND Usuarios_PV.Estatus = 'Activo'";
 }
 
 $sql .= " ORDER BY Usuarios_PV.Id_PvUser DESC";
+
+// Debug: Mostrar la consulta final
+error_log("SQL Final: " . $sql);
+error_log("Parámetros: " . json_encode($params));
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
@@ -100,9 +86,6 @@ if (!$stmt->execute()) {
 
 // Obtener resultado
 $result = $stmt->get_result();
-
-// Debug: Verificar si hay resultados
-error_log("Número de filas encontradas: " . ($result ? $result->num_rows : 0));
 
 // Inicializar array para almacenar los resultados
 $data = [];
