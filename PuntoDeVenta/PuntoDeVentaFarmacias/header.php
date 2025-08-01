@@ -57,8 +57,67 @@
 <style>
     .nav-link {
         position: static !important;
-    display: inline-block;
-}
+        display: inline-block;
+    }
+    
+    /* Estilos para dropdowns del sidebar */
+    .sidebar .dropdown-toggle::after {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        border: none;
+        content: "\f107";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        transition: .5s;
+    }
+    
+    .sidebar .dropdown-toggle[aria-expanded=true]::after {
+        transform: rotate(-180deg);
+    }
+    
+    .sidebar .dropdown-menu {
+        position: static !important;
+        float: none;
+        width: 100%;
+        margin-top: 0;
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding-left: 20px;
+    }
+    
+    .sidebar .dropdown-item {
+        padding: 7px 20px;
+        color: var(--dark);
+        font-weight: 500;
+        border-left: 3px solid transparent;
+        border-radius: 0 30px 30px 0;
+        outline: none;
+    }
+    
+    .sidebar .dropdown-item:hover,
+    .sidebar .dropdown-item.active {
+        color: var(--primary);
+        background: #FFFFFF;
+        border-color: var(--primary);
+    }
+    
+    .sidebar .dropdown-item i {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #FFFFFF;
+        border-radius: 40px;
+    }
+    
+    .sidebar .dropdown-item:hover i,
+    .sidebar .dropdown-item.active i {
+        background: var(--light);
+    }
 </style>
 </head>
 

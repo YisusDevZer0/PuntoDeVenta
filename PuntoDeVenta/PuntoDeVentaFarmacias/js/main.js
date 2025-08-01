@@ -98,13 +98,13 @@
                     label: "Salse",
                     data: [15, 30, 55, 45, 70, 65, 85],
                     backgroundColor: "rgba(0, 156, 255, .5)",
-                    fill: true
+                    fill: false
                 },
                 {
                     label: "Revenue",
                     data: [99, 135, 170, 130, 190, 180, 270],
                     backgroundColor: "rgba(0, 156, 255, .3)",
-                    fill: true
+                    fill: false
                 }
             ]
             },
@@ -112,7 +112,6 @@
             responsive: true
         }
     });
-    
 
 
     // Single Line Chart
@@ -122,12 +121,12 @@
         data: {
             labels: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
             datasets: [{
-                label: "Salse",
-                fill: false,
-                backgroundColor: "rgba(0, 156, 255, .3)",
-                data: [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15]
-            }]
-        },
+                    label: "Salse",
+                    fill: false,
+                    backgroundColor: "rgba(0, 156, 255, .3)",
+                    data: [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15]
+                }]
+            },
         options: {
             responsive: true
         }
@@ -141,89 +140,45 @@
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
             datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
-
-
-    // Pie Chart
-    var ctx5 = $("#pie-chart").get(0).getContext("2d");
-    var myChart5 = new Chart(ctx5, {
-        type: "pie",
-        data: {
-            labels: ["Italy", "France", "Spain", "USA", "Argentina"],
-            datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
-
-
-    // Doughnut Chart
-    var ctx6 = $("#doughnut-chart").get(0).getContext("2d");
-    var myChart6 = new Chart(ctx6, {
-        type: "doughnut",
-        data: {
-            labels: ["Italy", "France", "Spain", "USA", "Argentina"],
-            datasets: [{
-                backgroundColor: [
-                    "rgba(0, 156, 255, .7)",
-                    "rgba(0, 156, 255, .6)",
-                    "rgba(0, 156, 255, .5)",
-                    "rgba(0, 156, 255, .4)",
-                    "rgba(0, 156, 255, .3)"
-                ],
-                data: [55, 49, 44, 24, 15]
-            }]
-        },
+                    backgroundColor: [
+                        "rgba(0, 156, 255, .7)",
+                        "rgba(0, 156, 255, .6)",
+                        "rgba(0, 156, 255, .5)",
+                        "rgba(0, 156, 255, .4)",
+                        "rgba(0, 156, 255, .3)"
+                    ],
+                    data: [55, 49, 44, 24, 15]
+                }]
+            },
         options: {
             responsive: true
         }
     });
 
     
-    // Menú dropdown en el sidebar
-    $('.sidebar .dropdown-toggle').click(function() {
-        if ($(this).hasClass('show')) {
-            $(this).removeClass('show');
-            $(this).siblings('.dropdown-menu').removeClass('show');
-        } else {
-            // Cierra los otros dropdown abiertos
-            $('.sidebar .dropdown-toggle.show').removeClass('show');
-            $('.sidebar .dropdown-menu.show').removeClass('show');
-            
-            // Abre el dropdown actual
-            $(this).addClass('show');
-            $(this).siblings('.dropdown-menu').addClass('show');
-        }
+    // Menú dropdown en el sidebar - Compatible con Bootstrap 5
+    $('.sidebar .dropdown-toggle').click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const $this = $(this);
+        const $dropdown = $this.closest('.dropdown');
+        const $dropdownMenu = $dropdown.find('.dropdown-menu');
+        
+        // Cierra todos los otros dropdowns
+        $('.sidebar .dropdown').not($dropdown).removeClass('show');
+        $('.sidebar .dropdown-menu').not($dropdownMenu).removeClass('show');
+        
+        // Toggle del dropdown actual
+        $dropdown.toggleClass('show');
+        $dropdownMenu.toggleClass('show');
     });
 
     // Cierra los dropdown cuando se hace clic fuera de ellos
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.sidebar .dropdown').length) {
-            $('.sidebar .dropdown-toggle.show').removeClass('show');
-            $('.sidebar .dropdown-menu.show').removeClass('show');
+            $('.sidebar .dropdown').removeClass('show');
+            $('.sidebar .dropdown-menu').removeClass('show');
         }
     });
 
@@ -240,7 +195,7 @@
             // Si el elemento está dentro de un dropdown, abre el dropdown
             if ($(this).hasClass('dropdown-item')) {
                 const dropdown = $(this).closest('.dropdown');
-                dropdown.find('.dropdown-toggle').addClass('show');
+                dropdown.addClass('show');
                 dropdown.find('.dropdown-menu').addClass('show');
             }
         }
@@ -283,7 +238,7 @@
     checkWindowSize();
     
     // Verificar tamaño al redimensionar
-    $(window).resize(function() {
+    $(window).resize(function () {
         checkWindowSize();
     });
 
