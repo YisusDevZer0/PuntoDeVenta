@@ -120,6 +120,11 @@ PuntoDeVenta/FotosMedidores/*.jpg
 vendor/
 composer.lock
 
+# Server temporary files
+satisfiable
+*.tmp
+*.temp
+
 # Deployment files (keep these)
 !deploy.sh
 !deploy-commands.sh

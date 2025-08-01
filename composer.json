@@ -14,7 +14,9 @@
             "composer/package-versions-deprecated": true
         },
         "preferred-install": "dist",
-        "github-protocols": ["https", "ssh", "git"]
+        "github-protocols": ["https"],
+        "process-timeout": 600,
+        "memory-limit": "2G"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -26,5 +28,10 @@
             "type": "composer",
             "url": "https://packagist.org"
         }
-    ]
+    ],
+    "scripts": {
+        "post-install-cmd": [
+            "echo 'Dependencias instaladas correctamente'"
+        ]
+    }
 }
