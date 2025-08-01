@@ -25,6 +25,10 @@ INNER JOIN Tipos_Usuarios ON Usuarios_PV.Fk_Usuario = Tipos_Usuarios.ID_User
 INNER JOIN Sucursales ON Usuarios_PV.Fk_Sucursal = Sucursales.ID_Sucursal
 WHERE Usuarios_PV.Licencia = ?";
 
+// Debug: Mostrar la consulta SQL
+error_log("SQL Query: " . $sql);
+error_log("Parámetros: " . json_encode($params));
+
 // Agregar filtros si están presentes
 $params = [$licencia];
 $types = "s";
