@@ -1,163 +1,198 @@
-<div class="sidebar pe-4 pb-3" style="background: #f8fafc; min-height: 100vh; box-shadow: 2px 0 8px rgba(0,0,0,0.04); border-radius: 0 18px 18px 0;">
-    <nav class="navbar bg-light navbar-light" style="border-radius: 0 18px 18px 0;">
-        <a href="index.html" class="navbar-brand mx-4 mb-3 d-flex align-items-center">
-            <h3 class="text-primary mb-0" style="font-weight: bold;"><i style="color: #ef7980!important; margin-right: 8px;" class="fa-solid fa-fish"></i><?php echo $row['Licencia']?></h3>
+<?php 
+// Verificar si $row está disponible, si no, obtener los datos del usuario
+if (!isset($row) || !isset($row['TipoUsuario'])) {
+    // Incluir el controlador de usuario si no está ya incluido
+    if (!function_exists('getUserData')) {
+        include_once "Controladores/ControladorUsuario.php";
+    }
+}
+
+// Obtener el tipo de usuario actual
+$tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
+
+// Asegurar que las variables necesarias estén definidas
+if (!isset($currentPage)) {
+    $currentPage = 'index';
+}
+
+if (!isset($showDashboard)) {
+    $showDashboard = false;
+}
+
+if (!isset($disabledAttr)) {
+    $disabledAttr = '';
+}
+
+// Verificar si el usuario tiene permisos para ver el menú completo
+$isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
+?>
+
+<div class="sidebar pe-4 pb-3">
+    <nav class="navbar bg-light navbar-light">
+        <a href="index.html" class="navbar-brand mx-4 mb-3">
+            <h3 class="text-primary"><i style="color: #ef7980!important;" class="fa-solid fa-fish"></i><?php echo isset($row['Licencia']) ? $row['Licencia'] : 'Doctor Pez'; ?></h3>
         </a>
         <div class="d-flex align-items-center ms-4 mb-4">
-            <div class="position-relative shadow" style="box-shadow: 0 2px 8px rgba(0,0,0,0.10);">
-                <img class="rounded-circle border border-3 border-white" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" alt="" style="width: 60px; height: 60px; object-fit: cover;">
+            <div class="position-relative">
+                <img class="rounded-circle" src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo isset($row['file_name']) ? $row['file_name'] : 'user.jpg'; ?>" alt="" style="width: 40px; height: 40px;" onerror="this.src='img/user.jpg'; this.onerror=null;">
                 <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
             </div>
             <div class="ms-3">
-                <h6 class="mb-0" style="font-weight: 600; color: #222; font-size: 1.1rem;"><?php echo $row['Nombre_Apellidos']?></h6>
-                <span style="color: #888; font-size: 0.95rem;"> <?php echo $row['TipoUsuario']?></span>
+                <h6 class="mb-0"><?php echo isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Usuario'; ?></h6>
+                <span><?php echo $tipoUsuario; ?></span>
             </div>
         </div>
         <div class="navbar-nav w-100">
-            <a href="index" class="nav-item nav-link py-2 px-4 border-start border-4 border-transparent rounded-pill mb-1" style="transition: all 0.2s; font-weight: 500;">
-                <i class="fa fa-tachometer-alt me-2 text-primary"></i>Inicio
-            </a>
-
-            <div class="nav-item">
-                <a href="#PuntoVentaMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-money-bill-transfer me-2 text-primary"></i>Punto de venta<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="PuntoVentaMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="AperturarCajaV2" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-cash-register me-2 text-primary"></i>Apertura de caja</a>
-                        <a href="RealizarVentas" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-hand-holding-dollar me-2 text-primary"></i>Realizar Ventas</a>
-                        <a href="GeneracionDeEncargos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice me-2 text-primary"></i>Encargos</a>
-                    </div>
+            <a href="index" class="nav-item nav-link <?php echo (!isset($currentPage) || $currentPage == 'index') ? 'active' : ''; ?>"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
+            
+            <?php if ($showDashboard): ?>
+            
+            <?php endif; ?>
+            <?php if ($isAdmin): ?>
+                <a href="dashboard" class="nav-item nav-link <?php echo (isset($currentPage) && $currentPage == 'dashboard') ? 'active' : ''; ?>"><i class="fa fa-chart-line me-2"></i>Dashboard</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-money-bill-transfer"></i>Punto de venta</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-cash-register"></i> Apertura de caja</a>
+                    <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
+                    <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
                 </div>
             </div>
             
-            <div class="nav-item">
-                <a href="#FarmaciaMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-house-medical me-2 text-primary"></i>Farmacia<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="FarmaciaMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="RegistrosdeEnergia" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-lightbulb me-2 text-primary"></i>Registro de energía</a>
-                        <a href="BitacoraLimpieza" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-broom me-2 text-primary"></i>Bitácora de limpieza</a>
-                        <a href="TareasPorHacer" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-list me-2 text-primary"></i>Lista de tareas</a>
-                        <a href="Mensajes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-message me-2 text-primary"></i>Mensajes</a>
-                        <a href="Recordatorios" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-bell me-2 text-primary"></i>Crear recordatorios</a>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="nav-item">
-                <a href="#AgendasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-calendar me-2 text-primary"></i>Agendas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="AgendasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="AgendaRevaloraciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-person-walking-arrow-loop-left me-2 text-primary"></i>Revaloraciones</a>
-                        <a href="AgendaEspecialista" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-hospital-user me-2 text-primary"></i>Especialistas</a>
-                    </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-house-medical"></i>Farmacia</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energia</a>
+                    <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
+                    <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
+                    <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Mensajes</a>
+                    <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
                 </div>
             </div>
             
-            <div class="nav-item">
-                <a href="#CajasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-cash-register me-2 text-primary"></i>Cajas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="CajasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="CortesDeCaja" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice-dollar me-2 text-primary"></i>Cortes de caja</a>
-                        <a href="RegistroDeGastos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-comment-dollar me-2 text-primary"></i>Registro de gastos</a>
-                    </div>
-                </div>
-            </div>
-           
-            <div class="nav-item">
-                <a href="#ClientesMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-users me-2 text-primary"></i>Clientes<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="ClientesMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="DatosDeClientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-people-group me-2 text-primary"></i>Lista de clientes</a>
-                        <a href="Creditos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-regular fa-credit-card me-2 text-primary"></i>Créditos</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-item">
-                <a href="#TicketsMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-receipt me-2 text-primary"></i>Tickets<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="TicketsMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="Tickets" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-ticket-simple me-2 text-primary"></i>Desglose de tickets</a>
-                        <a href="AbonosEnCreditos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-money-bills me-2 text-primary"></i>Tickets de crédito</a>
-                        <a href="EncargosPendientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice-dollar me-2 text-primary"></i>Encargos</a>
-                    </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-person-walking-arrow-loop-left"></i>Revaloraciones</a>
+                    <a href="AgendaEspecialista" class="dropdown-item"><i class="fa-solid fa-hospital-user"></i>Especialistas </a>
                 </div>
             </div>
             
-            <div class="nav-item">
-                <a href="#VentasMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-chart-line me-2 text-primary"></i>Ventas<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="VentasMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="VentasDelDia" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-coins me-2 text-primary"></i>Ventas del día</a>
-                        <a href="VentasAcredito" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Ventas a crédito</a>
-                    </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users-gear"></i></i>Personal</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="TiposUsuarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i> Tipos de usuarios</a>
+                    <a href="PersonalActivo" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-check"></i>Personal activo </a>
+                    <a href="Personaldebaja" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-xmark"></i>Personal inactivo</a>
                 </div>
             </div>
-
-            <div class="nav-item">
-                <a href="#AlmacenMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Almacén<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="AlmacenMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="StockSucursal" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-dolly me-2 text-primary"></i>Stock</a>
-                        <a href="StockInsumos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-box me-2 text-primary"></i>Stock de insumos</a>
-                        <a href="Pedidos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-truck me-2 text-primary"></i>Órdenes de pedidos</a>
-                        <a href="ConteoDiario" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clipboard-list me-2 text-primary"></i>Conteo diario</a>
-                        <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-file-invoice me-2 text-primary"></i>Devoluciones</a>
-                        <a href="Cotizaciones" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-calendar-xmark me-2 text-primary"></i>Caducados</a>
-                    </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i></i>Checador</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ChecadorDiario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
+                    <a href="ChecadorGeneral" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar"></i>Reporte General </a>
                 </div>
             </div>
-
-            <div class="nav-item">
-                <a href="#TraspasosMenu" data-bs-toggle="collapse" class="nav-link py-2 px-4 border-start border-4 border-transparent collapsed">
-                    <i class="fa-solid fa-arrow-right-arrow-left me-2 text-primary"></i>Traspasos<i class="fa fa-angle-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="TraspasosMenu">
-                    <div style="background-color: rgba(0,188,212,0.03); margin-left: 30px;">
-                        <a href="RealizarTraspasos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-exchange-alt me-2 text-primary"></i>Realizar Traspasos</a>
-                        <a href="ListadoDeTraspasos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-list-check me-2 text-primary"></i>Listado de traspasos</a>
-                        <a href="Ingresos" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-inbox me-2 text-primary"></i>Solicitar ingresos</a>
-                        <a href="SolicitudPendientes" class="nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-clock-rotate-left me-2 text-primary"></i>Solicitudes pendientes</a>
-                    </div>
+            
+            <a href="Sucursales" class="nav-item nav-link" <?php echo $disabledAttr; ?>><i class="fa-solid fa-house-medical"></i>Sucursales</a>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Inventarios</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ProductosGenerales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box"></i>Productos</a>
+                    <a href="Categorias" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-tags"></i>Categorias</a>
+                    <a href="Presentaciones" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box-open"></i>Presentaciones</a>
+                    <a href="Proveedores" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Proveedores</a>
+                    <a href="Servicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-hand-holding-heart"></i>Servicios</a>
+                    <a href="InventarioSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-warehouse"></i>Inventario por sucursal</a>
+                    <a href="Stocks" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Stock</a>
                 </div>
             </div>
-
-            <a href="videos" class="nav-item nav-link py-2 px-4 border-start border-4 border-transparent"><i class="fa-solid fa-circle-play me-2 text-primary"></i>Video tutoriales</a>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ReporteDeVentas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-bar"></i>Reporte de ventas</a>
+                    <a href="ReporteDeVentasTotales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-pie"></i>Reporte de ventas totales</a>
+                    <a href="ReporteMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-star"></i>Productos mas vendidos</a>
+                    <a href="ReportePorFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Reporte por forma de pago</a>
+                    <a href="ReportePorProductoFormaPago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reporte por producto y forma de pago</a>
+                    <a href="ReportesInventarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>Reportes de inventarios</a>
+                    <a href="ReportesCedisInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-warehouse"></i>Reportes CEDIS inventario</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cogs"></i>Configuracion</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="TiposDeGastos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bill"></i>Tipos de gastos</a>
+                    <a href="SolicitudPendientes" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i>Solicitudes pendientes</a>
+                    <a href="RegistroSolicitudesCompletas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-check-circle"></i>Registro de solicitudes completas</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-exchange-alt"></i>Traspasos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="RealizarTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck"></i>Realizar traspasos</a>
+                    <a href="ListaDeTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-list"></i>Lista de traspasos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-plus"></i>Ingresos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="Ingresos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-plus-circle"></i>Ingresos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-receipt"></i>Tickets</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="Tickets" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-ticket"></i>Tickets</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i>Clientes</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="DatosDeClientes" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user"></i>Datos de clientes</a>
+                    <a href="Creditos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Creditos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cash-register"></i>Cajas</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="CortesDeCaja" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-cash-register"></i>Cortes de caja</a>
+                    <a href="RegistroDeGastos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bill"></i>Registro de gastos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="Pedidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice"></i>Pedidos</a>
+                    <a href="PedidosAdministrativos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice-dollar"></i>Pedidos administrativos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes Anuales</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="ReportesAnuales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-line"></i>Reportes anuales</a>
+                    <a href="ReporteVentasTotalesPorFechas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-bar"></i>Reporte ventas totales por fechas</a>
+                    <a href="ReporteSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-building"></i>Reporte sucursales</a>
+                    <a href="ReporteProductosMasVendidos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-star"></i>Reporte productos mas vendidos</a>
+                    <a href="ReporteFormaDePago" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-credit-card"></i>Reporte forma de pago</a>
+                    <a href="ReporteServicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-hand-holding-heart"></i>Reporte servicios</a>
+                    <a href="ReportePorProducto" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-box"></i>Reporte por producto</a>
+                    <a href="TotalesDeVentaPorVendedor" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-user-tie"></i>Totales de venta por vendedor</a>
+                </div>
+            </div>
+            
+            <?php endif; ?>
         </div>
-
     </nav>
 </div>
-
-<style>
-    .sidebar .nav-link {
-        color: #222;
-        border-radius: 18px;
-    }
-    .sidebar .nav-link.active, .sidebar .nav-link:hover {
-        background: #e3f2fd;
-        color: #0172b6;
-        font-weight: bold;
-        box-shadow: 0 2px 8px rgba(0,123,255,0.07);
-    }
-    .sidebar .nav-link i {
-        transition: color 0.2s;
-    }
-    .sidebar .nav-link.active i, .sidebar .nav-link:hover i {
-        color: #0172b6 !important;
-    }
-</style>
