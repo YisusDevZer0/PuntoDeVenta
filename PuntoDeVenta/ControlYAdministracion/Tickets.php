@@ -42,22 +42,20 @@ include_once "Controladores/ControladorUsuario.php";
             </div></div></div></div>
             
           
-<script src="js/DesgloseTickets.js"></script>
-
-            <!-- Footer Start -->
-            <?php 
+<script src="js/DesgloseTicketss.js"></script>
+<?php 
             include "Modales/NuevoFondoDeCaja.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
-            <script>
+<script>
   $(document).ready(function() {
     // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
     $(document).on("click", ".btn-Reimpresion", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVentaControlYAdministracion/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
@@ -73,7 +71,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
@@ -114,6 +112,7 @@ include_once "Controladores/ControladorUsuario.php";
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal --></div>
+         
 </body>
 
 </html>

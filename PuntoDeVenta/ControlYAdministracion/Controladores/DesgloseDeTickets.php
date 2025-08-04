@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "Controladores/ArrayDesgloseTickets.php",
+ "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDesgloseTickets.php",
  "aoColumns": [
     { mData: 'NumberTicket' },  
   
@@ -216,7 +216,7 @@ tabla = $('#Clientes').DataTable({
   { mData: 'Hora' },
        { mData: 'Vendedor' },
        { mData: 'Desglose' },
-      
+       { mData: 'Reimpresion' },
       
        
       
@@ -248,20 +248,20 @@ tabla = $('#Clientes').DataTable({
   ocultarCargando();
 },
 // Para personalizar el estilo del botón de Excel
-// "buttons": [
-//   {
-//     extend: 'excelHtml5',
-//     text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
-//     titleAttr: 'Exportar a Excel',
-//     title: 'Base de Clientes',
-//     className: 'btn btn-success',
-//     exportOptions: {
-//       columns: ':visible' // Exportar solo las columnas visibles
-//     }
-//   }
-// ],
+"buttons": [
+  {
+    extend: 'excelHtml5',
+    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+    titleAttr: 'Exportar a Excel',
+    title: 'Base de Clientes',
+    className: 'btn btn-success',
+    exportOptions: {
+      columns: ':visible' // Exportar solo las columnas visibles
+    }
+  }
+],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
 </script>
@@ -274,8 +274,8 @@ tabla = $('#Clientes').DataTable({
 <th>Fecha</th>
 <th>Hora</th>
     <th>Vendedor</th>
-    <th>Elegir para eliminar</th>
-
+    <th>Desglose</th>
+    <th>Reimpresion</th>
   
 </thead>
 
