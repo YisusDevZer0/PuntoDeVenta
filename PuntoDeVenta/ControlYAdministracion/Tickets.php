@@ -79,7 +79,20 @@ include_once "Controladores/ControladorUsuario.php";
         
         $('#ModalEdDele').modal('show');
     });
-
+$(document).on("click", ".btn-eliminar", function() {
+        var id = $(this).data("id");  // Asignar el valor correcto aquí
+        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
+        
+    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
+   
+        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/eliminar_ticket.php", { id: id }, function(data) {
+          $("#TitulosCajas").html("Eliminar ticket");  
+          $("#FormCajas").html(data);
+            $("#TitulosCajas").html("Eliminar ticket");
+        });
+        
+        $('#ModalEdDele').modal('show');
+    });
 
    
 

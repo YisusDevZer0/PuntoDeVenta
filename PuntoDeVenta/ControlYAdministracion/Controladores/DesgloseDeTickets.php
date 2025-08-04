@@ -217,7 +217,7 @@ tabla = $('#Clientes').DataTable({
        { mData: 'Vendedor' },
        { mData: 'Desglose' },
        { mData: 'Reimpresion' },
-      
+       { mData: 'Eliminar' },
        
       
   
@@ -276,7 +276,7 @@ tabla = $('#Clientes').DataTable({
     <th>Vendedor</th>
     <th>Desglose</th>
     <th>Reimpresion</th>
-  
+    <th>Eliminar</th>
 </thead>
 
 </div>
