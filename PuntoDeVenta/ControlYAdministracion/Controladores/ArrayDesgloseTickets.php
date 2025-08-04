@@ -1,12 +1,7 @@
 <?php
 header('Content-Type: application/json');
-include("db_connect.php");
+include("db_connection.php");
 include_once "ControladorUsuario.php";
-
-// Iniciar la sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Función para convertir la fecha a formato español
 function fechaCastellano($fecha) {
@@ -23,8 +18,8 @@ function fechaCastellano($fecha) {
     $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
-// Obtener el valor de Fk_Sucursal desde la sesión
-$fk_sucursal = isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : '';
+// Obtener el valor de Fk_Sucursal desde la solicitud
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
@@ -39,7 +34,8 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
         Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Ventas_POS 
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
+        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
+        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
         AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
         ORDER BY Ventas_POS.AgregadoEl DESC;";
@@ -81,8 +77,8 @@ while ($fila = $result->fetch_assoc()) {
         "Fecha" => fechaCastellano($fila["AgregadoEl"]),
         "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
         "Vendedor" => $fila["AgregadoPor"],
-        "Desglose" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-success btn-sm btn-eliminar dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fa-solid fa-trash"></i></a></td>',
-        
+        "Desglose" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-success btn-sm btn-desglose dropdown-item" style="background-color: #ef7980!important; color:white"><i class="fas fa-receipt"></i></a></td>',
+        "Reimpresion" => '<td><a data-id="' . $fila["Folio_Ticket"] . '" class="btn btn-primary btn-sm btn-Reimpresion dropdown-item" style="background-color: #ef7980 !important; color:white"><i class="fas fa-print"></i></a></td>'
     ];
 }
 
