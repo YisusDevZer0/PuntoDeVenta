@@ -1,12 +1,16 @@
 <?php
 header('Content-Type: application/json');
-include("db_connect.php");
-include_once "ControladorUsuario.php";
-// Verificar sesión antes de incluir ControladorUsuario
+
+// Iniciar sesión si no está iniciada
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Incluir archivos necesarios
+include("db_connect.php");
+include_once "ControladorUsuario.php";
+
+// Verificar sesión
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     http_response_code(401);
     echo json_encode(array(
@@ -19,11 +23,13 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
     exit();
 }
 
-include("ControladorUsuario.php");
-
 // Habilitar reporte de errores para debugging
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // Cambiar a 0 para evitar que los errores se muestren en HTML
+ini_set('log_errors', 1);
+
+// Capturar cualquier salida de error
+ob_start();
 
 try {
     // Verificar conexión
