@@ -91,7 +91,8 @@ $(document).ready(function() {
             {"data": "Primera_Venta"},
             {"data": "Ultima_Venta"}
         ],
-        "order": [[8, "desc"]], // Ordenar por Total Vendido descendente
+        // Ordenar por Total Vendido descendente
+        "order": [[8, "desc"]],
         "pageLength": 25,
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
