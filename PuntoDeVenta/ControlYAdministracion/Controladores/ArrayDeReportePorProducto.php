@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-i¿include("db_connect.php");
+include("db_connect.php");
 include_once "ControladorUsuario.php";
 // Verificar sesión antes de incluir ControladorUsuario
 if (session_status() == PHP_SESSION_NONE) {
