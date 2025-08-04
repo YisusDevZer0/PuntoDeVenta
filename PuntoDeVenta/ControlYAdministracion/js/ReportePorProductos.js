@@ -1,6 +1,30 @@
 $(document).ready(function() {
     console.log("Inicializando DataTable...");
     
+    // Función para actualizar estadísticas
+    function actualizarEstadisticas(data) {
+        if (data && data.length > 0) {
+            var totalProductos = data.length;
+            var totalVentas = 0;
+            var totalUnidades = 0;
+            var totalImporte = 0;
+            
+            data.forEach(function(item) {
+                totalUnidades += parseInt(item.Total_Vendido.replace(/,/g, ''));
+                totalImporte += parseFloat(item.Total_Importe.replace(/[$,]/g, ''));
+            });
+            
+            var promedioVenta = totalProductos > 0 ? totalImporte / totalProductos : 0;
+            
+            $('#totalProductos').text(totalProductos);
+            $('#totalVentas').text('$' + totalImporte.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            $('#totalUnidades').text(totalUnidades.toLocaleString('es-MX'));
+            $('#promedioVenta').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            
+            $('#statsRow').show();
+        }
+    }
+    
     // Inicializar DataTable
     var table = $('#tablaReporte').DataTable({
         "processing": true,
@@ -86,30 +110,6 @@ $(document).ready(function() {
             $('#loading-overlay').hide();
         }
     });
-
-    // Función para actualizar estadísticas
-    function actualizarEstadisticas(data) {
-        if (data && data.length > 0) {
-            var totalProductos = data.length;
-            var totalVentas = 0;
-            var totalUnidades = 0;
-            var totalImporte = 0;
-            
-            data.forEach(function(item) {
-                totalUnidades += parseInt(item.Total_Vendido.replace(/,/g, ''));
-                totalImporte += parseFloat(item.Total_Importe.replace(/[$,]/g, ''));
-            });
-            
-            var promedioVenta = totalProductos > 0 ? totalImporte / totalProductos : 0;
-            
-            $('#totalProductos').text(totalProductos);
-            $('#totalVentas').text('$' + totalImporte.toLocaleString('es-MX', {minimumFractionDigits: 2}));
-            $('#totalUnidades').text(totalUnidades.toLocaleString('es-MX'));
-            $('#promedioVenta').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
-            
-            $('#statsRow').show();
-        }
-    }
 
     // Función para filtrar datos con loading
     window.filtrarDatos = function() {
