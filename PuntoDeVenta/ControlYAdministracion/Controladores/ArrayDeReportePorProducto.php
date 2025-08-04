@@ -1,6 +1,24 @@
 <?php
 header('Content-Type: application/json');
 include("db_connect.php");
+
+// Verificar sesión antes de incluir ControladorUsuario
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    http_response_code(401);
+    echo json_encode(array(
+        "draw" => isset($_GET['draw']) ? intval($_GET['draw']) : 1,
+        "recordsTotal" => 0,
+        "recordsFiltered" => 0,
+        "data" => array(),
+        "error" => "Sesión expirada. Por favor, inicie sesión nuevamente."
+    ));
+    exit();
+}
+
 include("ControladorUsuario.php");
 
 // Habilitar reporte de errores para debugging

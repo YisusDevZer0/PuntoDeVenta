@@ -49,11 +49,24 @@ $(document).ready(function() {
                 // Verificar si hay error en la respuesta
                 if (json.error) {
                     console.error("Error del servidor:", json.error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al cargar los datos: ' + json.error
-                    });
+                    
+                    // Verificar si es un error de sesión expirada
+                    if (json.error.includes('Sesión expirada')) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Sesión expirada',
+                            text: 'Su sesión ha expirado. Será redirigido a la página de inicio de sesión.',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            window.location.href = 'login.php';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al cargar los datos: ' + json.error
+                        });
+                    }
                     return [];
                 }
                 
@@ -66,11 +79,24 @@ $(document).ready(function() {
                 console.error("Error AJAX:", xhr, status, error);
                 console.error("URL llamada:", "Controladores/ArrayDeReportePorProducto.php");
                 $('#loading-overlay').hide();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo cargar los datos. Error: ' + error
-                });
+                
+                // Verificar si es un error de sesión expirada
+                if (xhr.status === 401) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sesión expirada',
+                        text: 'Su sesión ha expirado. Será redirigido a la página de inicio de sesión.',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        window.location.href = 'login.php';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo cargar los datos. Error: ' + error
+                    });
+                }
             }
         },
         "columns": [
