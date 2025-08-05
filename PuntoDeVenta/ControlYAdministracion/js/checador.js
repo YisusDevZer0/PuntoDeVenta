@@ -1,0 +1,478 @@
+/**
+ * Sistema de Checador - JavaScript
+ * Maneja todas las operaciones del checador de entrada y salida
+ */
+
+class ChecadorManager {
+    constructor() {
+        this.userLocation = null;
+        this.workLocations = [];
+        this.isInWorkArea = false;
+        this.currentPosition = null;
+        this.verificationInterval = null;
+        this.controllerUrl = 'Controladores/ChecadorController.php';
+    }
+
+    /**
+     * Inicializar el sistema de checador
+     */
+    async init() {
+        try {
+            await this.loadWorkLocations();
+            this.startLocationVerification();
+            this.setupEventListeners();
+        } catch (error) {
+            console.error('Error inicializando checador:', error);
+            this.showError('Error al inicializar el sistema de checador');
+        }
+    }
+
+    /**
+     * Cargar ubicaciones de trabajo del usuario
+     */
+    async loadWorkLocations() {
+        try {
+            const response = await this.makeRequest('obtener_ubicaciones', {});
+            if (response.success) {
+                this.workLocations = response.data;
+                this.updateWorkCenterDisplay();
+            }
+        } catch (error) {
+            console.error('Error cargando ubicaciones:', error);
+        }
+    }
+
+    /**
+     * Iniciar verificación de ubicación
+     */
+    startLocationVerification() {
+        this.checkLocation();
+        // Verificar ubicación cada 30 segundos
+        this.verificationInterval = setInterval(() => {
+            this.checkLocation();
+        }, 30000);
+    }
+
+    /**
+     * Verificar ubicación del usuario
+     */
+    async checkLocation() {
+        if (!navigator.geolocation) {
+            this.updateStatus('error', 'Geolocalización no soportada');
+            return;
+        }
+
+        try {
+            const position = await this.getCurrentPosition();
+            this.currentPosition = position;
+            this.userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            document.getElementById('currentLocation').textContent = 'Ubicación detectada';
+            await this.verifyWorkArea();
+            this.updateLastVerification();
+        } catch (error) {
+            console.error('Error obteniendo ubicación:', error);
+            document.getElementById('currentLocation').textContent = 'Error obteniendo ubicación';
+            this.updateStatus('error', 'No se pudo obtener la ubicación');
+        }
+    }
+
+    /**
+     * Obtener posición actual
+     */
+    getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                resolve,
+                reject,
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        });
+    }
+
+    /**
+     * Verificar si está en el área de trabajo
+     */
+    async verifyWorkArea() {
+        if (!this.userLocation || this.workLocations.length === 0) {
+            this.isInWorkArea = false;
+            this.updateStatus('outside', 'Fuera del área');
+            return;
+        }
+
+        try {
+            const response = await this.makeRequest('verificar_ubicacion', {
+                latitud: this.userLocation.lat,
+                longitud: this.userLocation.lng
+            });
+
+            if (response.success) {
+                this.isInWorkArea = response.en_area;
+                
+                if (this.isInWorkArea) {
+                    this.updateStatus('inside', 'En el área de trabajo');
+                    this.enableButtons();
+                    this.hideLocationSetup();
+                } else {
+                    this.updateStatus('outside', 'Fuera del área');
+                    this.disableButtons();
+                    this.showLocationSetup();
+                }
+            }
+        } catch (error) {
+            console.error('Error verificando ubicación:', error);
+        }
+    }
+
+    /**
+     * Actualizar estado visual
+     */
+    updateStatus(type, message) {
+        const indicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        
+        indicator.className = 'status-indicator';
+        if (type === 'inside') {
+            indicator.classList.add('status-inside');
+        } else if (type === 'outside') {
+            indicator.classList.add('status-outside');
+        } else {
+            indicator.classList.add('status-outside');
+        }
+        
+        statusText.textContent = `Estado: ${message}`;
+    }
+
+    /**
+     * Habilitar botones de registro
+     */
+    enableButtons() {
+        const btnEntry = document.getElementById('btnEntry');
+        const btnExit = document.getElementById('btnExit');
+        
+        if (btnEntry) btnEntry.disabled = false;
+        if (btnExit) btnExit.disabled = false;
+    }
+
+    /**
+     * Deshabilitar botones de registro
+     */
+    disableButtons() {
+        const btnEntry = document.getElementById('btnEntry');
+        const btnExit = document.getElementById('btnExit');
+        
+        if (btnEntry) btnEntry.disabled = true;
+        if (btnExit) btnExit.disabled = true;
+    }
+
+    /**
+     * Mostrar configuración de ubicación
+     */
+    showLocationSetup() {
+        const setup = document.getElementById('locationSetup');
+        if (setup) setup.style.display = 'block';
+    }
+
+    /**
+     * Ocultar configuración de ubicación
+     */
+    hideLocationSetup() {
+        const setup = document.getElementById('locationSetup');
+        if (setup) setup.style.display = 'none';
+    }
+
+    /**
+     * Actualizar última verificación
+     */
+    updateLastVerification() {
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('es-MX') + ', ' + 
+                            now.toLocaleTimeString('es-MX', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true 
+                            });
+        
+        const lastVerification = document.getElementById('lastVerification');
+        if (lastVerification) {
+            lastVerification.textContent = formattedDate;
+        }
+    }
+
+    /**
+     * Actualizar centro de trabajo en pantalla
+     */
+    updateWorkCenterDisplay() {
+        const workCenter = document.getElementById('workCenter');
+        if (workCenter && this.workLocations.length > 0) {
+            workCenter.textContent = this.workLocations[0].nombre;
+        }
+    }
+
+    /**
+     * Registrar entrada
+     */
+    async registrarEntrada() {
+        if (!this.isInWorkArea) {
+            this.showError('Debes estar en el área de trabajo para registrar entrada.');
+            return;
+        }
+
+        const confirmed = await this.showConfirmation(
+            'Registrando Entrada',
+            '¿Confirmas tu entrada?'
+        );
+
+        if (confirmed) {
+            await this.registrarAsistencia('entrada');
+        }
+    }
+
+    /**
+     * Registrar salida
+     */
+    async registrarSalida() {
+        if (!this.isInWorkArea) {
+            this.showError('Debes estar en el área de trabajo para registrar salida.');
+            return;
+        }
+
+        const confirmed = await this.showConfirmation(
+            'Registrando Salida',
+            '¿Confirmas tu salida?'
+        );
+
+        if (confirmed) {
+            await this.registrarAsistencia('salida');
+        }
+    }
+
+    /**
+     * Registrar asistencia en el servidor
+     */
+    async registrarAsistencia(tipo) {
+        try {
+            const data = {
+                tipo: tipo,
+                latitud: this.userLocation.lat,
+                longitud: this.userLocation.lng,
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await this.makeRequest('registrar_asistencia', data);
+            
+            if (response.success) {
+                this.showSuccess(`${tipo.charAt(0).toUpperCase() + tipo.slice(1)} registrada exitosamente`);
+                this.logActivity(`registro_${tipo}`, `Registro de ${tipo} exitoso`);
+            } else {
+                this.showError(response.message);
+            }
+        } catch (error) {
+            console.error('Error registrando asistencia:', error);
+            this.showError('Error al registrar la asistencia');
+        }
+    }
+
+    /**
+     * Configurar ubicación de trabajo
+     */
+    async setupLocation() {
+        if (!this.currentPosition) {
+            this.showError('No se pudo obtener la ubicación actual');
+            return;
+        }
+
+        const confirmed = await this.showConfirmation(
+            'Configurar Ubicación',
+            '¿Deseas configurar esta ubicación como tu centro de trabajo?'
+        );
+
+        if (confirmed) {
+            try {
+                const data = {
+                    nombre: 'Ubicación configurada',
+                    descripcion: 'Ubicación configurada automáticamente',
+                    latitud: this.currentPosition.coords.latitude,
+                    longitud: this.currentPosition.coords.longitude,
+                    radio: 100,
+                    direccion: '',
+                    estado: 'active'
+                };
+
+                const response = await this.makeRequest('guardar_ubicacion', data);
+                
+                if (response.success) {
+                    this.showSuccess('Ubicación configurada exitosamente');
+                    await this.loadWorkLocations();
+                    await this.verifyWorkArea();
+                } else {
+                    this.showError(response.message);
+                }
+            } catch (error) {
+                console.error('Error configurando ubicación:', error);
+                this.showError('Error al configurar la ubicación');
+            }
+        }
+    }
+
+    /**
+     * Realizar petición al servidor
+     */
+    async makeRequest(action, data = {}) {
+        const formData = new FormData();
+        formData.append('action', action);
+        
+        for (const [key, value] of Object.entries(data)) {
+            formData.append(key, value);
+        }
+
+        const response = await fetch(this.controllerUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+    /**
+     * Mostrar confirmación
+     */
+    showConfirmation(title, text) {
+        return Swal.fire({
+            title: title,
+            text: text,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => result.isConfirmed);
+    }
+
+    /**
+     * Mostrar mensaje de éxito
+     */
+    showSuccess(message) {
+        Swal.fire({
+            title: '¡Éxito!',
+            text: message,
+            icon: 'success',
+            timer: 3000
+        });
+    }
+
+    /**
+     * Mostrar mensaje de error
+     */
+    showError(message) {
+        Swal.fire({
+            title: 'Error',
+            text: message,
+            icon: 'error'
+        });
+    }
+
+    /**
+     * Registrar actividad en logs
+     */
+    logActivity(accion, detalles) {
+        // Aquí podrías enviar logs al servidor si es necesario
+        console.log(`Actividad: ${accion} - ${detalles}`);
+    }
+
+    /**
+     * Configurar event listeners
+     */
+    setupEventListeners() {
+        // Event listeners para botones de registro
+        const btnEntry = document.getElementById('btnEntry');
+        const btnExit = document.getElementById('btnExit');
+        const btnSetupLocation = document.querySelector('.btn-setup-location');
+
+        if (btnEntry) {
+            btnEntry.addEventListener('click', () => this.registrarEntrada());
+        }
+
+        if (btnExit) {
+            btnExit.addEventListener('click', () => this.registrarSalida());
+        }
+
+        if (btnSetupLocation) {
+            btnSetupLocation.addEventListener('click', () => this.setupLocation());
+        }
+
+        // Event listener para actualizar fecha y hora
+        this.updateDateTime();
+        setInterval(() => this.updateDateTime(), 1000);
+    }
+
+    /**
+     * Actualizar fecha y hora
+     */
+    updateDateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('es-MX', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true 
+        });
+        const dateString = now.toLocaleDateString('es-MX', { 
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        });
+        const dayString = now.toLocaleDateString('es-MX', { weekday: 'short' }).toUpperCase();
+
+        const currentTime = document.getElementById('currentTime');
+        const currentDate = document.getElementById('currentDate');
+
+        if (currentTime) currentTime.textContent = timeString;
+        if (currentDate) currentDate.textContent = `${dateString} ${dayString}`;
+    }
+
+    /**
+     * Limpiar recursos al destruir
+     */
+    destroy() {
+        if (this.verificationInterval) {
+            clearInterval(this.verificationInterval);
+        }
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    window.checadorManager = new ChecadorManager();
+    window.checadorManager.init();
+});
+
+// Funciones globales para compatibilidad con onclick
+function registrarEntrada() {
+    if (window.checadorManager) {
+        window.checadorManager.registrarEntrada();
+    }
+}
+
+function registrarSalida() {
+    if (window.checadorManager) {
+        window.checadorManager.registrarSalida();
+    }
+}
+
+function setupLocation() {
+    if (window.checadorManager) {
+        window.checadorManager.setupLocation();
+    }
+} 
