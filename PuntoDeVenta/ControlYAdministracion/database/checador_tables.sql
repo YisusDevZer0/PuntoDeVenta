@@ -94,15 +94,14 @@ ORDER BY fecha DESC;
 CREATE OR REPLACE VIEW `v_resumen_mensual` AS
 SELECT 
     a.usuario_id,
-    u.nombre,
-    u.apellido,
+    u.Nombre_Apellidos,
     YEAR(a.fecha_hora) as año,
     MONTH(a.fecha_hora) as mes,
     COUNT(CASE WHEN a.tipo = 'entrada' THEN 1 END) as total_entradas,
     COUNT(CASE WHEN a.tipo = 'salida' THEN 1 END) as total_salidas,
     COUNT(*) as total_registros
 FROM asistencias a
-JOIN usuarios u ON a.usuario_id = u.id
+JOIN Usuarios_PV u ON a.usuario_id = u.Id_PvUser
 GROUP BY a.usuario_id, YEAR(a.fecha_hora), MONTH(a.fecha_hora)
 ORDER BY año DESC, mes DESC;
 
