@@ -4,7 +4,7 @@
 -- Tabla para almacenar las ubicaciones de trabajo de los usuarios
 CREATE TABLE IF NOT EXISTS `ubicaciones_trabajo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
+  `usuario_id` varchar(50) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `descripcion` text,
   `latitud` decimal(10,8) NOT NULL,
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS `ubicaciones_trabajo` (
   PRIMARY KEY (`id`),
   KEY `idx_usuario_id` (`usuario_id`),
   KEY `idx_estado` (`estado`),
-  CONSTRAINT `fk_ubicaciones_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_ubicaciones_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `Usuarios_PV` (`Id_PvUser`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla para almacenar los registros de asistencia
 CREATE TABLE IF NOT EXISTS `asistencias` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
+  `usuario_id` varchar(50) NOT NULL,
   `tipo` enum('entrada','salida') NOT NULL,
   `latitud` decimal(10,8) NOT NULL,
   `longitud` decimal(11,8) NOT NULL,
@@ -34,26 +34,26 @@ CREATE TABLE IF NOT EXISTS `asistencias` (
   KEY `idx_tipo` (`tipo`),
   KEY `idx_fecha_hora` (`fecha_hora`),
   KEY `idx_usuario_fecha` (`usuario_id`, `fecha_hora`),
-  CONSTRAINT `fk_asistencias_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_asistencias_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `Usuarios_PV` (`Id_PvUser`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla para almacenar configuraciones del checador
 CREATE TABLE IF NOT EXISTS `configuracion_checador` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
+  `usuario_id` varchar(50) NOT NULL,
   `clave` varchar(100) NOT NULL,
   `valor` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_usuario_clave` (`usuario_id`, `clave`),
-  CONSTRAINT `fk_config_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_config_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `Usuarios_PV` (`Id_PvUser`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla para almacenar logs de actividad del checador
 CREATE TABLE IF NOT EXISTS `logs_checador` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11) NOT NULL,
+  `usuario_id` varchar(50) NOT NULL,
   `accion` varchar(100) NOT NULL,
   `detalles` text,
   `ip_address` varchar(45),
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `logs_checador` (
   KEY `idx_usuario_id` (`usuario_id`),
   KEY `idx_accion` (`accion`),
   KEY `idx_created_at` (`created_at`),
-  CONSTRAINT `fk_logs_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+  CONSTRAINT `fk_logs_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `Usuarios_PV` (`Id_PvUser`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insertar configuraciones por defecto

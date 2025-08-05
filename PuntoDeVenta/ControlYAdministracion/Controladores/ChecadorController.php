@@ -1,6 +1,19 @@
 <?php
-session_start();
-require_once '../Consultas/db_connect.php';
+include_once "../Controladores/ControladorUsuario.php";
+
+// Verificar sesión usando las variables correctas del sistema
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: ../Expiro.php");
+    exit();
+}
+
+// Asegurar que $row esté disponible
+if (!isset($row)) {
+    include_once "../Controladores/ControladorUsuario.php";
+}
+
+// Determinar el ID de usuario según la sesión activa
+$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
 
 class ChecadorController {
     private $conn;
@@ -14,9 +27,9 @@ class ChecadorController {
      */
     public function registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp) {
         try {
-            // Validar que el usuario existe
-            $stmt = $this->conn->prepare("SELECT id, nombre, apellido FROM usuarios WHERE id = ?");
-            $stmt->bind_param("i", $usuario_id);
+            // Validar que el usuario existe usando la tabla correcta
+            $stmt = $this->conn->prepare("SELECT Id_PvUser, Nombre_Apellidos FROM Usuarios_PV WHERE Id_PvUser = ?");
+            $stmt->bind_param("s", $usuario_id);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -32,7 +45,7 @@ class ChecadorController {
                 SELECT id FROM asistencias 
                 WHERE usuario_id = ? AND tipo = ? AND DATE(fecha_hora) = ?
             ");
-            $stmt->bind_param("iss", $usuario_id, $tipo, $fecha_hoy);
+            $stmt->bind_param("sss", $usuario_id, $tipo, $fecha_hoy);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -45,14 +58,14 @@ class ChecadorController {
                 INSERT INTO asistencias (usuario_id, tipo, latitud, longitud, fecha_hora, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            $stmt->bind_param("ssdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
             
             if ($stmt->execute()) {
                 return [
                     'success' => true, 
                     'message' => "$tipo registrada exitosamente",
                     'data' => [
-                        'usuario' => $usuario['nombre'] . ' ' . $usuario['apellido'],
+                        'usuario' => $usuario['Nombre_Apellidos'],
                         'tipo' => $tipo,
                         'fecha' => $timestamp
                     ]
@@ -298,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     switch ($action) {
         case 'registrar_asistencia':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $tipo = $_POST['tipo'];
             $latitud = $_POST['latitud'];
             $longitud = $_POST['longitud'];
@@ -308,12 +321,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
             
         case 'obtener_ubicaciones':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $response = $controller->obtenerUbicacionesUsuario($usuario_id);
             break;
             
         case 'guardar_ubicacion':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $nombre = $_POST['nombre'];
             $descripcion = $_POST['descripcion'] ?? '';
             $latitud = $_POST['latitud'];
@@ -327,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
         case 'actualizar_ubicacion':
             $ubicacion_id = $_POST['ubicacion_id'];
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $nombre = $_POST['nombre'];
             $descripcion = $_POST['descripcion'] ?? '';
             $latitud = $_POST['latitud'];
@@ -341,13 +354,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
         case 'eliminar_ubicacion':
             $ubicacion_id = $_POST['ubicacion_id'];
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             
             $response = $controller->eliminarUbicacion($ubicacion_id, $usuario_id);
             break;
             
         case 'verificar_ubicacion':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $latitud = $_POST['latitud'];
             $longitud = $_POST['longitud'];
             
@@ -355,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
             
         case 'obtener_historial':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $fecha_inicio = $_POST['fecha_inicio'] ?? null;
             $fecha_fin = $_POST['fecha_fin'] ?? null;
             
@@ -363,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
             
         case 'obtener_estadisticas':
-            $usuario_id = $_SESSION['usuario_id'];
+            $usuario_id = $userId;
             $mes = $_POST['mes'] ?? null;
             $año = $_POST['año'] ?? null;
             

@@ -1,8 +1,16 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: index.php');
+include_once "Controladores/ControladorUsuario.php";
+
+// Verificar sesión usando las variables correctas del sistema
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
     exit();
+}
+
+// Asegurar que $row esté disponible
+if (!isset($row)) {
+    // Si $row no está disponible, incluir nuevamente el controlador
+    include_once "Controladores/ControladorUsuario.php";
 }
 ?>
 <!DOCTYPE html>
