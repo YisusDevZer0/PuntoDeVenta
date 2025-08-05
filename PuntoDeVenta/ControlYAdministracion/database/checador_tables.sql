@@ -80,14 +80,13 @@ CREATE INDEX IF NOT EXISTS `idx_ubicaciones_usuario_activas` ON `ubicaciones_tra
 CREATE OR REPLACE VIEW `v_estadisticas_asistencia` AS
 SELECT 
     a.usuario_id,
-    u.nombre,
-    u.apellido,
+    u.Nombre_Apellidos,
     DATE(a.fecha_hora) as fecha,
     COUNT(CASE WHEN a.tipo = 'entrada' THEN 1 END) as entradas,
     COUNT(CASE WHEN a.tipo = 'salida' THEN 1 END) as salidas,
     COUNT(*) as total_registros
 FROM asistencias a
-JOIN usuarios u ON a.usuario_id = u.id
+JOIN Usuarios_PV u ON a.usuario_id = u.Id_PvUser
 GROUP BY a.usuario_id, DATE(a.fecha_hora)
 ORDER BY fecha DESC;
 
