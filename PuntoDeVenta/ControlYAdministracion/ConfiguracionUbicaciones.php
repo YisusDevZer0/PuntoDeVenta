@@ -767,13 +767,13 @@ if (!isset($row)) {
             editingLocationId = locationId;
             
             // Llenar formulario
-            document.getElementById('locationName').value = location.name;
-            document.getElementById('locationDescription').value = location.description || '';
-            document.getElementById('latitude').value = location.latitude;
-            document.getElementById('longitude').value = location.longitude;
-            document.getElementById('radius').value = location.radius;
-            document.getElementById('address').value = location.address || '';
-            document.getElementById('status').value = location.status;
+            document.getElementById('locationName').value = location.nombre;
+            document.getElementById('locationDescription').value = location.descripcion || '';
+            document.getElementById('latitude').value = location.latitud;
+            document.getElementById('longitude').value = location.longitud;
+            document.getElementById('radius').value = location.radio;
+            document.getElementById('address').value = location.direccion || '';
+            document.getElementById('status').value = location.estado;
 
             // Cambiar texto del botón
             const saveButton = document.querySelector('button[onclick="saveLocation()"]');
@@ -786,29 +786,67 @@ if (!isset($row)) {
         }
 
         // Eliminar ubicación
-        function deleteLocation(locationId) {
-            Swal.fire({
+        async function deleteLocation(locationId) {
+            const confirmed = await Swal.fire({
                 title: '¿Estás seguro?',
                 text: 'Esta acción no se puede deshacer.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    currentLocations = currentLocations.filter(loc => loc.id !== locationId);
-                    localStorage.setItem('workLocations', JSON.stringify(currentLocations));
-                    
+            });
+
+            if (confirmed.isConfirmed) {
+                try {
+                    // Mostrar loading
                     Swal.fire({
-                        title: '¡Eliminado!',
-                        text: 'La ubicación ha sido eliminada.',
-                        icon: 'success',
-                        timer: 2000
+                        title: 'Eliminando...',
+                        text: 'Por favor espera.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
                     });
 
-                    loadLocations();
+                    // Enviar al servidor
+                    const response = await fetch('Controladores/ChecadorController.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({
+                            action: 'eliminar_ubicacion',
+                            ubicacion_id: locationId
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            title: '¡Eliminado!',
+                            text: result.message,
+                            icon: 'success',
+                            timer: 2000
+                        });
+
+                        loadLocations();
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: result.message || 'Error al eliminar la ubicación.',
+                            icon: 'error'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error eliminando ubicación:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Error de conexión. Intenta nuevamente.',
+                        icon: 'error'
+                    });
                 }
-            });
+            }
         }
     </script>
 </body>
