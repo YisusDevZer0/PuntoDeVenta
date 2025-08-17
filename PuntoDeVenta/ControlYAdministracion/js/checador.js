@@ -63,90 +63,50 @@ class ChecadorManager {
             return;
         }
 
-        // Si ya tenemos ubicaciones configuradas y no hay error de permiso, continuar normalmente
-        if (this.workLocations.length > 0 && !this.permissionErrorShown) {
-            try {
-                const position = await this.getCurrentPosition();
-                this.currentPosition = position;
-                this.userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
+        try {
+            const position = await this.getCurrentPosition();
+            this.currentPosition = position;
+            this.userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
 
-                // Resetear la bandera de error de permiso si se obtiene ubicación exitosamente
-                this.permissionErrorShown = false;
+            // Resetear la bandera de error de permiso si se obtiene ubicación exitosamente
+            this.permissionErrorShown = false;
 
-                document.getElementById('currentLocation').textContent = 'Ubicación detectada';
-                await this.verifyWorkArea();
-                this.updateLastVerification();
-            } catch (error) {
-                console.error('Error obteniendo ubicación:', error);
-                
-                let errorMessage = 'No se pudo obtener la ubicación';
-                let statusMessage = 'Error de ubicación';
-                
-                // Manejar diferentes tipos de errores de geolocalización
-                if (error.code === 1) {
-                    errorMessage = 'Permiso de ubicación denegado';
-                    statusMessage = 'Permiso denegado';
-                    // Solo mostrar el modal una vez
-                    if (!this.permissionErrorShown) {
-                        this.showLocationPermissionError();
-                        this.permissionErrorShown = true;
-                    }
-                } else if (error.code === 2) {
-                    errorMessage = 'Ubicación no disponible';
-                    statusMessage = 'Ubicación no disponible';
-                } else if (error.code === 3) {
-                    errorMessage = 'Tiempo de espera agotado';
-                    statusMessage = 'Tiempo agotado';
+            document.getElementById('currentLocation').textContent = 'Ubicación detectada';
+            await this.verifyWorkArea();
+            this.updateLastVerification();
+        } catch (error) {
+            console.error('Error obteniendo ubicación:', error);
+            
+            let errorMessage = 'No se pudo obtener la ubicación';
+            let statusMessage = 'Error de ubicación';
+            
+            // Manejar diferentes tipos de errores de geolocalización
+            if (error.code === 1) {
+                errorMessage = 'Permiso de ubicación denegado';
+                statusMessage = 'Permiso denegado';
+                // Solo mostrar el modal una vez si no hay ubicaciones configuradas
+                if (!this.permissionErrorShown && this.workLocations.length === 0) {
+                    this.showLocationPermissionError();
+                    this.permissionErrorShown = true;
                 }
-                
-                document.getElementById('currentLocation').textContent = errorMessage;
-                this.updateStatus('error', statusMessage);
+            } else if (error.code === 2) {
+                errorMessage = 'Ubicación no disponible';
+                statusMessage = 'Ubicación no disponible';
+            } else if (error.code === 3) {
+                errorMessage = 'Tiempo de espera agotado';
+                statusMessage = 'Tiempo agotado';
             }
-        } else {
-            // Si no hay ubicaciones configuradas, intentar obtener ubicación para mostrar el modal
-            try {
-                const position = await this.getCurrentPosition();
-                this.currentPosition = position;
-                this.userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                this.permissionErrorShown = false;
-                document.getElementById('currentLocation').textContent = 'Ubicación detectada';
-                await this.verifyWorkArea();
-                this.updateLastVerification();
-            } catch (error) {
-                console.error('Error obteniendo ubicación:', error);
-                
-                let errorMessage = 'No se pudo obtener la ubicación';
-                let statusMessage = 'Error de ubicación';
-                
-                if (error.code === 1) {
-                    errorMessage = 'Permiso de ubicación denegado';
-                    statusMessage = 'Permiso denegado';
-                    if (!this.permissionErrorShown) {
-                        this.showLocationPermissionError();
-                        this.permissionErrorShown = true;
-                    }
-                } else if (error.code === 2) {
-                    errorMessage = 'Ubicación no disponible';
-                    statusMessage = 'Ubicación no disponible';
-                } else if (error.code === 3) {
-                    errorMessage = 'Tiempo de espera agotado';
-                    statusMessage = 'Tiempo agotado';
-                }
-                
-                document.getElementById('currentLocation').textContent = errorMessage;
-                this.updateStatus('error', statusMessage);
-                
-                // Mostrar configuración de ubicación solo si no hay ubicaciones configuradas
-                if (this.workLocations.length === 0 && !this.permissionErrorShown) {
-                    this.showLocationSetup();
-                }
+            
+            document.getElementById('currentLocation').textContent = errorMessage;
+            this.updateStatus('error', statusMessage);
+            
+            // Si hay ubicaciones configuradas, no mostrar el modal de error
+            // Solo mostrar configuración si no hay ubicaciones
+            if (this.workLocations.length === 0 && !this.permissionErrorShown) {
+                this.showLocationSetup();
             }
         }
     }
@@ -160,9 +120,9 @@ class ChecadorManager {
                 resolve,
                 reject,
                 {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 60000
+                    enableHighAccuracy: false, // Cambiar a false para ser menos estricto
+                    timeout: 15000, // Aumentar timeout a 15 segundos
+                    maximumAge: 300000 // 5 minutos de cache
                 }
             );
         });
@@ -208,6 +168,13 @@ class ChecadorManager {
     updateStatus(type, message) {
         const indicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
+        
+        // Si hay ubicaciones configuradas y hay un error de ubicación, no mostrar el error
+        if (type === 'error' && this.workLocations.length > 0) {
+            // En lugar de mostrar error, mostrar que está fuera del área
+            type = 'outside';
+            message = 'Fuera del área';
+        }
         
         indicator.className = 'status-indicator';
         if (type === 'inside') {
@@ -279,7 +246,9 @@ class ChecadorManager {
             confirmButtonText: 'Configurar Manualmente',
             cancelButtonText: 'Recargar Página',
             reverseButtons: true,
-            allowOutsideClick: false
+            allowOutsideClick: false,
+            timer: null,
+            timerProgressBar: false
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirigir a la página de configuración de ubicaciones
@@ -487,6 +456,13 @@ class ChecadorManager {
      * Mostrar mensaje de error
      */
     showError(message) {
+        // No mostrar errores de geolocalización si ya hay ubicaciones configuradas
+        if (this.workLocations.length > 0 && 
+            (message.includes('ubicación') || message.includes('geolocalización'))) {
+            console.warn('Error de geolocalización ignorado porque hay ubicaciones configuradas:', message);
+            return;
+        }
+        
         Swal.fire({
             title: 'Error',
             text: message,
