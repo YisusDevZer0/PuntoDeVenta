@@ -12,6 +12,7 @@ class ChecadorManager {
         this.verificationInterval = null;
         this.controllerUrl = 'Controladores/ChecadorController.php';
         this.permissionErrorShown = false;
+        this.isCheckingLocation = false; // Evitar verificaciones simultáneas
     }
 
     /**
@@ -48,20 +49,35 @@ class ChecadorManager {
      */
     startLocationVerification() {
         this.checkLocation();
-        // Verificar ubicación cada 30 segundos
+        // Verificar ubicación cada 60 segundos (aumentar intervalo para reducir ciclos)
         this.verificationInterval = setInterval(() => {
             this.checkLocation();
-        }, 30000);
+        }, 60000);
     }
 
     /**
      * Verificar ubicación del usuario
      */
     async checkLocation() {
+        // Evitar verificaciones simultáneas
+        if (this.isCheckingLocation) {
+            console.log('Verificación de ubicación ya en progreso, saltando...');
+            return;
+        }
+
+        // Si ya tenemos una ubicación válida y reciente, no verificar de nuevo
+        if (this.userLocation && this.currentPosition && 
+            (Date.now() - this.currentPosition.timestamp) < 300000) { // 5 minutos
+            console.log('Ubicación reciente disponible, saltando verificación...');
+            return;
+        }
+
         if (!navigator.geolocation) {
             this.updateStatus('error', 'Geolocalización no soportada');
             return;
         }
+
+        this.isCheckingLocation = true;
 
         try {
             const position = await this.getCurrentPosition();
@@ -108,6 +124,8 @@ class ChecadorManager {
             if (this.workLocations.length === 0 && !this.permissionErrorShown) {
                 this.showLocationSetup();
             }
+        } finally {
+            this.isCheckingLocation = false;
         }
     }
 
@@ -120,9 +138,9 @@ class ChecadorManager {
                 resolve,
                 reject,
                 {
-                    enableHighAccuracy: false, // Cambiar a false para ser menos estricto
-                    timeout: 15000, // Aumentar timeout a 15 segundos
-                    maximumAge: 300000 // 5 minutos de cache
+                    enableHighAccuracy: false, // Menos estricto para evitar ciclos
+                    timeout: 10000, // Reducir timeout para evitar bloqueos largos
+                    maximumAge: 600000 // 10 minutos de cache para reducir verificaciones
                 }
             );
         });
@@ -174,6 +192,11 @@ class ChecadorManager {
             // En lugar de mostrar error, mostrar que está fuera del área
             type = 'outside';
             message = 'Fuera del área';
+        }
+        
+        // No actualizar el estado si es el mismo que ya está mostrado
+        if (statusText && statusText.textContent === `Estado: ${message}`) {
+            return;
         }
         
         indicator.className = 'status-indicator';
@@ -535,6 +558,27 @@ class ChecadorManager {
     destroy() {
         if (this.verificationInterval) {
             clearInterval(this.verificationInterval);
+            this.verificationInterval = null;
+        }
+        this.isCheckingLocation = false;
+    }
+
+    /**
+     * Pausar verificación de ubicación
+     */
+    pauseLocationVerification() {
+        if (this.verificationInterval) {
+            clearInterval(this.verificationInterval);
+            this.verificationInterval = null;
+        }
+    }
+
+    /**
+     * Reanudar verificación de ubicación
+     */
+    resumeLocationVerification() {
+        if (!this.verificationInterval) {
+            this.startLocationVerification();
         }
     }
 }
