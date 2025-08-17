@@ -74,7 +74,7 @@ INSERT IGNORE INTO `configuracion_checador` (`usuario_id`, `clave`, `valor`) VAL
 
 -- Crear índices adicionales para mejorar el rendimiento
 CREATE INDEX IF NOT EXISTS `idx_asistencias_usuario_tipo_fecha` ON `asistencias` (`usuario_id`, `tipo`, `fecha_hora`);
-CREATE INDEX IF NOT EXISTS `idx_ubicaciones_usuario_activas` ON `ubicaciones_trabajo` (`usuario_id`, `estado`) WHERE `estado` = 'active';
+CREATE INDEX IF NOT EXISTS `idx_ubicaciones_usuario_estado` ON `ubicaciones_trabajo` (`usuario_id`, `estado`);
 
 -- Crear vista para estadísticas de asistencia
 CREATE OR REPLACE VIEW `v_estadisticas_asistencia` AS
@@ -120,13 +120,12 @@ CREATE TRIGGER IF NOT EXISTS `tr_asistencias_log`
 AFTER INSERT ON `asistencias`
 FOR EACH ROW
 BEGIN
-    INSERT INTO logs_checador (usuario_id, accion, detalles, ip_address, user_agent)
+    INSERT INTO logs_checador (usuario_id, accion, detalles, created_at)
     VALUES (
         NEW.usuario_id, 
         CONCAT('registro_', NEW.tipo), 
         CONCAT('Registro de ', NEW.tipo, ' en ', NEW.latitud, ',', NEW.longitud),
-        @ip_address,
-        @user_agent
+        NOW()
     );
 END //
 DELIMITER ;
