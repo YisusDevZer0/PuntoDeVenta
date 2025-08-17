@@ -72,8 +72,11 @@ class ChecadorManager {
             return;
         }
 
+        // Si no hay geolocalización disponible, mostrar error solo si no hay ubicaciones configuradas
         if (!navigator.geolocation) {
-            this.updateStatus('error', 'Geolocalización no soportada');
+            if (this.workLocations.length === 0) {
+                this.updateStatus('error', 'Geolocalización no soportada');
+            }
             return;
         }
 
@@ -95,6 +98,14 @@ class ChecadorManager {
             this.updateLastVerification();
         } catch (error) {
             console.error('Error obteniendo ubicación:', error);
+            
+            // Si hay ubicaciones configuradas, no mostrar errores de geolocalización
+            if (this.workLocations.length > 0) {
+                console.log('Ubicaciones configuradas disponibles, ignorando error de geolocalización');
+                document.getElementById('currentLocation').textContent = 'Ubicación configurada disponible';
+                this.updateStatus('outside', 'Fuera del área');
+                return;
+            }
             
             let errorMessage = 'No se pudo obtener la ubicación';
             let statusMessage = 'Error de ubicación';
@@ -119,7 +130,6 @@ class ChecadorManager {
             document.getElementById('currentLocation').textContent = errorMessage;
             this.updateStatus('error', statusMessage);
             
-            // Si hay ubicaciones configuradas, no mostrar el modal de error
             // Solo mostrar configuración si no hay ubicaciones
             if (this.workLocations.length === 0 && !this.permissionErrorShown) {
                 this.showLocationSetup();
@@ -150,9 +160,21 @@ class ChecadorManager {
      * Verificar si está en el área de trabajo
      */
     async verifyWorkArea() {
-        if (!this.userLocation || this.workLocations.length === 0) {
+        // Si no hay ubicaciones configuradas, no verificar
+        if (this.workLocations.length === 0) {
+            this.isInWorkArea = false;
+            this.updateStatus('outside', 'Sin ubicaciones configuradas');
+            this.disableButtons();
+            this.showLocationSetup();
+            return;
+        }
+
+        // Si no hay ubicación del usuario, mostrar estado fuera del área
+        if (!this.userLocation) {
             this.isInWorkArea = false;
             this.updateStatus('outside', 'Fuera del área');
+            this.disableButtons();
+            this.hideLocationSetup();
             return;
         }
 
@@ -172,11 +194,15 @@ class ChecadorManager {
                 } else {
                     this.updateStatus('outside', 'Fuera del área');
                     this.disableButtons();
-                    this.showLocationSetup();
+                    this.hideLocationSetup(); // No mostrar setup si ya hay ubicaciones configuradas
                 }
             }
         } catch (error) {
             console.error('Error verificando ubicación:', error);
+            // En caso de error, asumir que está fuera del área
+            this.isInWorkArea = false;
+            this.updateStatus('outside', 'Fuera del área');
+            this.disableButtons();
         }
     }
 
@@ -197,6 +223,12 @@ class ChecadorManager {
         // No actualizar el estado si es el mismo que ya está mostrado
         if (statusText && statusText.textContent === `Estado: ${message}`) {
             return;
+        }
+        
+        // Si hay ubicaciones configuradas, nunca mostrar errores de geolocalización
+        if (type === 'error' && this.workLocations.length > 0) {
+            type = 'outside';
+            message = 'Fuera del área';
         }
         
         indicator.className = 'status-indicator';
@@ -237,6 +269,11 @@ class ChecadorManager {
      * Mostrar configuración de ubicación
      */
     showLocationSetup() {
+        // No mostrar setup si ya hay ubicaciones configuradas
+        if (this.workLocations.length > 0) {
+            return;
+        }
+        
         const setup = document.getElementById('locationSetup');
         if (setup) setup.style.display = 'block';
     }
@@ -581,6 +618,15 @@ class ChecadorManager {
             this.startLocationVerification();
         }
     }
+
+    /**
+     * Verificar ubicación manualmente (para botones de refresh)
+     */
+    async checkLocationManual() {
+        console.log('Verificación manual de ubicación iniciada...');
+        this.isCheckingLocation = false; // Resetear bandera para permitir verificación manual
+        await this.checkLocation();
+    }
 }
 
 // Inicializar cuando el DOM esté listo
@@ -605,5 +651,11 @@ function registrarSalida() {
 function setupLocation() {
     if (window.checadorManager) {
         window.checadorManager.setupLocation();
+    }
+}
+
+function checkLocationManual() {
+    if (window.checadorManager) {
+        window.checadorManager.checkLocationManual();
     }
 } 
