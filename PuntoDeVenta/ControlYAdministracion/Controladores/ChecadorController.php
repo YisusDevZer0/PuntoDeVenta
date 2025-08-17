@@ -29,7 +29,7 @@ class ChecadorController {
         try {
             // Validar que el usuario existe usando la tabla correcta
             $stmt = $this->conn->prepare("SELECT Id_PvUser, Nombre_Apellidos FROM Usuarios_PV WHERE Id_PvUser = ?");
-            $stmt->bind_param("s", $usuario_id);
+            $stmt->bind_param("i", $usuario_id);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -45,7 +45,7 @@ class ChecadorController {
                 SELECT id FROM asistencias 
                 WHERE usuario_id = ? AND tipo = ? AND DATE(fecha_hora) = ?
             ");
-            $stmt->bind_param("sss", $usuario_id, $tipo, $fecha_hoy);
+            $stmt->bind_param("iss", $usuario_id, $tipo, $fecha_hoy);
             $stmt->execute();
             $result = $stmt->get_result();
             
@@ -58,7 +58,7 @@ class ChecadorController {
                 INSERT INTO asistencias (usuario_id, tipo, latitud, longitud, fecha_hora, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->bind_param("ssdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
             
             if ($stmt->execute()) {
                 return [

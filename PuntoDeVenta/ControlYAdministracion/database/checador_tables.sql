@@ -4,7 +4,7 @@
 -- Tabla para almacenar las ubicaciones de trabajo de los usuarios
 CREATE TABLE IF NOT EXISTS `ubicaciones_trabajo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` varchar(50) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `descripcion` text,
   `latitud` decimal(10,8) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `ubicaciones_trabajo` (
 -- Tabla para almacenar los registros de asistencia
 CREATE TABLE IF NOT EXISTS `asistencias` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` varchar(50) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
   `tipo` enum('entrada','salida') NOT NULL,
   `latitud` decimal(10,8) NOT NULL,
   `longitud` decimal(11,8) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `asistencias` (
 -- Tabla para almacenar configuraciones del checador
 CREATE TABLE IF NOT EXISTS `configuracion_checador` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` varchar(50) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
   `clave` varchar(100) NOT NULL,
   `valor` text,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `configuracion_checador` (
 -- Tabla para almacenar logs de actividad del checador
 CREATE TABLE IF NOT EXISTS `logs_checador` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `usuario_id` varchar(50) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
   `accion` varchar(100) NOT NULL,
   `detalles` text,
   `ip_address` varchar(45),
