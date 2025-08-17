@@ -499,10 +499,38 @@ if (!isset($row)) {
                     },
                     function(error) {
                         console.error('Error obteniendo ubicación:', error);
+                        
+                        let errorMessage = 'No se pudo obtener tu ubicación.';
+                        let errorTitle = 'Error';
+                        
+                        // Manejar diferentes tipos de errores
+                        if (error.code === 1) {
+                            errorTitle = 'Permiso Denegado';
+                            errorMessage = `
+                                <div class="text-left">
+                                    <p><strong>El acceso a la ubicación fue denegado.</strong></p>
+                                    <p>Para habilitar la geolocalización:</p>
+                                    <ol class="text-left">
+                                        <li>Haz clic en el ícono de ubicación en la barra de direcciones</li>
+                                        <li>Selecciona "Permitir" o "Allow"</li>
+                                        <li>Intenta nuevamente</li>
+                                    </ol>
+                                    <p><strong>Alternativa:</strong> Puedes ingresar las coordenadas manualmente.</p>
+                                </div>
+                            `;
+                        } else if (error.code === 2) {
+                            errorTitle = 'Ubicación No Disponible';
+                            errorMessage = 'La información de ubicación no está disponible en este momento.';
+                        } else if (error.code === 3) {
+                            errorTitle = 'Tiempo Agotado';
+                            errorMessage = 'Se agotó el tiempo de espera para obtener la ubicación.';
+                        }
+                        
                         Swal.fire({
-                            title: 'Error',
-                            text: 'No se pudo obtener tu ubicación. Verifica que tengas el GPS activado.',
-                            icon: 'error'
+                            title: errorTitle,
+                            html: errorMessage,
+                            icon: 'warning',
+                            confirmButtonText: 'Entendido'
                         });
                     },
                     {
@@ -547,62 +575,91 @@ if (!isset($row)) {
         }
 
         // Guardar ubicación
-        function saveLocation() {
+        async function saveLocation() {
             const formData = {
-                name: document.getElementById('locationName').value,
-                description: document.getElementById('locationDescription').value,
-                latitude: parseFloat(document.getElementById('latitude').value),
-                longitude: parseFloat(document.getElementById('longitude').value),
-                radius: parseInt(document.getElementById('radius').value),
-                address: document.getElementById('address').value,
-                status: document.getElementById('status').value
+                nombre: document.getElementById('locationName').value,
+                descripcion: document.getElementById('locationDescription').value,
+                latitud: parseFloat(document.getElementById('latitude').value),
+                longitud: parseFloat(document.getElementById('longitude').value),
+                radio: parseInt(document.getElementById('radius').value),
+                direccion: document.getElementById('address').value,
+                estado: document.getElementById('status').value
             };
 
             // Validaciones
-            if (!formData.name) {
+            if (!formData.nombre) {
                 Swal.fire('Error', 'El nombre de la ubicación es requerido.', 'error');
                 return;
             }
 
-            if (!formData.latitude || !formData.longitude) {
+            if (!formData.latitud || !formData.longitud) {
                 Swal.fire('Error', 'Las coordenadas son requeridas.', 'error');
                 return;
             }
 
-            if (formData.radius < 10 || formData.radius > 1000) {
+            if (formData.radio < 10 || formData.radio > 1000) {
                 Swal.fire('Error', 'El radio debe estar entre 10 y 1000 metros.', 'error');
                 return;
             }
 
-            // Simular guardado en base de datos
-            if (editingLocationId) {
-                // Actualizar ubicación existente
-                const index = currentLocations.findIndex(loc => loc.id === editingLocationId);
-                if (index !== -1) {
-                    currentLocations[index] = { ...currentLocations[index], ...formData };
-                }
-            } else {
-                // Nueva ubicación
-                const newLocation = {
-                    id: Date.now(),
-                    ...formData,
-                    created_at: new Date().toISOString()
+            try {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Guardando...',
+                    text: 'Por favor espera mientras guardamos la ubicación.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Preparar datos para el servidor
+                const action = editingLocationId ? 'actualizar_ubicacion' : 'guardar_ubicacion';
+                const requestData = {
+                    action: action,
+                    ...formData
                 };
-                currentLocations.push(newLocation);
+
+                if (editingLocationId) {
+                    requestData.ubicacion_id = editingLocationId;
+                }
+
+                // Enviar al servidor
+                const response = await fetch('Controladores/ChecadorController.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(requestData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        title: editingLocationId ? '¡Actualizado!' : '¡Guardado!',
+                        text: result.message,
+                        icon: 'success',
+                        timer: 2000
+                    });
+
+                    clearForm();
+                    loadLocations();
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: result.message || 'Error al guardar la ubicación.',
+                        icon: 'error'
+                    });
+                }
+            } catch (error) {
+                console.error('Error guardando ubicación:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error de conexión. Intenta nuevamente.',
+                    icon: 'error'
+                });
             }
-
-            // Guardar en localStorage (simulando base de datos)
-            localStorage.setItem('workLocations', JSON.stringify(currentLocations));
-
-            Swal.fire({
-                title: editingLocationId ? '¡Actualizado!' : '¡Guardado!',
-                text: editingLocationId ? 'La ubicación ha sido actualizada.' : 'La ubicación ha sido guardada.',
-                icon: 'success',
-                timer: 2000
-            });
-
-            clearForm();
-            loadLocations();
         }
 
         // Limpiar formulario
@@ -617,50 +674,89 @@ if (!isset($row)) {
         }
 
         // Cargar ubicaciones
-        function loadLocations() {
-            const savedLocations = localStorage.getItem('workLocations');
-            currentLocations = savedLocations ? JSON.parse(savedLocations) : [];
-
+        async function loadLocations() {
             const locationsList = document.getElementById('locationsList');
             
-            if (currentLocations.length === 0) {
+            try {
+                // Mostrar loading
                 locationsList.innerHTML = `
                     <div class="text-center text-muted">
-                        <i class="fas fa-map-marker-alt" style="font-size: 48px; margin-bottom: 20px;"></i>
-                        <p>No hay ubicaciones configuradas</p>
-                        <p>Agrega tu primera ubicación de trabajo usando el formulario de arriba.</p>
+                        <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>Cargando ubicaciones...</p>
                     </div>
                 `;
-                return;
-            }
 
-            locationsList.innerHTML = currentLocations.map(location => `
-                <div class="location-item">
-                    <div class="location-item-header">
-                        <div class="location-name">${location.name}</div>
-                        <div class="location-actions">
-                            <span class="status-badge ${location.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                ${location.status === 'active' ? 'Activa' : 'Inactiva'}
-                            </span>
-                            <button class="btn btn-sm btn-edit" onclick="editLocation(${location.id})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteLocation(${location.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                // Obtener ubicaciones del servidor
+                const response = await fetch('Controladores/ChecadorController.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'obtener_ubicaciones'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentLocations = result.data || [];
+                    
+                    if (currentLocations.length === 0) {
+                        locationsList.innerHTML = `
+                            <div class="text-center text-muted">
+                                <i class="fas fa-map-marker-alt" style="font-size: 48px; margin-bottom: 20px;"></i>
+                                <p>No hay ubicaciones configuradas</p>
+                                <p>Agrega tu primera ubicación de trabajo usando el formulario de arriba.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    locationsList.innerHTML = currentLocations.map(location => `
+                        <div class="location-item">
+                            <div class="location-item-header">
+                                <div class="location-name">${location.nombre}</div>
+                                <div class="location-actions">
+                                    <span class="status-badge ${location.estado === 'active' ? 'status-active' : 'status-inactive'}">
+                                        ${location.estado === 'active' ? 'Activa' : 'Inactiva'}
+                                    </span>
+                                    <button class="btn btn-sm btn-edit" onclick="editLocation(${location.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-delete" onclick="deleteLocation(${location.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="location-details">
+                                ${location.descripcion ? `<div><strong>Descripción:</strong> ${location.descripcion}</div>` : ''}
+                                ${location.direccion ? `<div><strong>Dirección:</strong> ${location.direccion}</div>` : ''}
+                                <div class="coordinate-display">
+                                    <strong>Coordenadas:</strong> ${location.latitud}, ${location.longitud}
+                                </div>
+                                <div><strong>Radio:</strong> ${location.radio} metros</div>
+                                <div><strong>Creado:</strong> ${new Date(location.created_at).toLocaleDateString('es-MX')}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="location-details">
-                        ${location.description ? `<div><strong>Descripción:</strong> ${location.description}</div>` : ''}
-                        ${location.address ? `<div><strong>Dirección:</strong> ${location.address}</div>` : ''}
-                        <div class="coordinate-display">
-                            <strong>Coordenadas:</strong> ${location.latitude}, ${location.longitude}
+                    `).join('');
+                } else {
+                    locationsList.innerHTML = `
+                        <div class="text-center text-danger">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Error al cargar ubicaciones: ${result.message}</p>
                         </div>
-                        <div><strong>Radio:</strong> ${location.radius} metros</div>
-                        <div><strong>Creado:</strong> ${new Date(location.created_at).toLocaleDateString('es-MX')}</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error cargando ubicaciones:', error);
+                locationsList.innerHTML = `
+                    <div class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>Error de conexión al cargar ubicaciones</p>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }
         }
 
         // Editar ubicación

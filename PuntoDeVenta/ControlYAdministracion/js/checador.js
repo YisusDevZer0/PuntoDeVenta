@@ -75,8 +75,30 @@ class ChecadorManager {
             this.updateLastVerification();
         } catch (error) {
             console.error('Error obteniendo ubicación:', error);
-            document.getElementById('currentLocation').textContent = 'Error obteniendo ubicación';
-            this.updateStatus('error', 'No se pudo obtener la ubicación');
+            
+            let errorMessage = 'No se pudo obtener la ubicación';
+            let statusMessage = 'Error de ubicación';
+            
+            // Manejar diferentes tipos de errores de geolocalización
+            if (error.code === 1) {
+                errorMessage = 'Permiso de ubicación denegado';
+                statusMessage = 'Permiso denegado';
+                this.showLocationPermissionError();
+            } else if (error.code === 2) {
+                errorMessage = 'Ubicación no disponible';
+                statusMessage = 'Ubicación no disponible';
+            } else if (error.code === 3) {
+                errorMessage = 'Tiempo de espera agotado';
+                statusMessage = 'Tiempo agotado';
+            }
+            
+            document.getElementById('currentLocation').textContent = errorMessage;
+            this.updateStatus('error', statusMessage);
+            
+            // Mostrar configuración de ubicación si no hay ubicaciones configuradas
+            if (this.workLocations.length === 0) {
+                this.showLocationSetup();
+            }
         }
     }
 
@@ -178,6 +200,40 @@ class ChecadorManager {
     showLocationSetup() {
         const setup = document.getElementById('locationSetup');
         if (setup) setup.style.display = 'block';
+    }
+
+    /**
+     * Mostrar error de permiso de ubicación
+     */
+    showLocationPermissionError() {
+        Swal.fire({
+            title: 'Permiso de Ubicación Requerido',
+            html: `
+                <div class="text-left">
+                    <p><strong>El sistema necesita acceso a tu ubicación para funcionar correctamente.</strong></p>
+                    <p>Para habilitar la geolocalización:</p>
+                    <ol class="text-left">
+                        <li>Haz clic en el ícono de ubicación en la barra de direcciones</li>
+                        <li>Selecciona "Permitir" o "Allow"</li>
+                        <li>Recarga la página</li>
+                    </ol>
+                    <p><strong>Alternativa:</strong> Puedes configurar una ubicación manualmente.</p>
+                </div>
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Configurar Manualmente',
+            cancelButtonText: 'Recargar Página',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirigir a la página de configuración de ubicaciones
+                window.location.href = 'ConfiguracionUbicaciones.php';
+            } else {
+                // Recargar la página
+                window.location.reload();
+            }
+        });
     }
 
     /**
