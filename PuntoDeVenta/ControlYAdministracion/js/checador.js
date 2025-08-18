@@ -1,3 +1,66 @@
+// Funciones del Checador - usan el endpoint simple
+
+function showToast(type, message) {
+  if (window.Swal) {
+    Swal.fire({ icon: type, text: message, timer: 2000, showConfirmButton: false });
+  } else {
+    alert(message);
+  }
+}
+
+function getPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error('Geolocalización no soportada'));
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      (err) => reject(err),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+}
+
+async function registrar(tipo) {
+  try {
+    const { lat, lon } = await getPosition();
+    const now = new Date();
+    const ts = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' +
+               String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+
+    const userId = window.CHECK_USER_ID || 1;
+
+    const params = new URLSearchParams();
+    params.set('action', 'registrar_asistencia');
+    params.set('usuario_id', String(userId));
+    params.set('tipo', tipo);
+    params.set('latitud', String(lat));
+    params.set('longitud', String(lon));
+    params.set('timestamp', ts);
+
+    const resp = await fetch('../api/checador_simple.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params
+    });
+    const data = await resp.json().catch(() => ({}));
+
+    if (resp.ok && data && data.success) {
+      showToast('success', (tipo === 'entrada' ? 'Entrada' : 'Salida') + ' registrada');
+    } else {
+      const msg = (data && data.message) ? data.message : 'Error al registrar';
+      showToast('error', msg);
+    }
+  } catch (e) {
+    showToast('error', e.message || 'Error de geolocalización');
+  }
+}
+
+function registrarEntrada() { registrar('entrada'); }
+function registrarSalida() { registrar('salida'); }
+
+// Exponer funciones globales si no existen
+window.registrarEntrada = window.registrarEntrada || registrarEntrada;
+window.registrarSalida = window.registrarSalida || registrarSalida;
+
 /**
  * Sistema de Checador - JavaScript
  * Maneja todas las operaciones del checador de entrada y salida

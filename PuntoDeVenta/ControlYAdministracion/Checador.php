@@ -12,6 +12,8 @@ if (!isset($row)) {
     // Si $row no está disponible, incluir nuevamente el controlador
     include_once "Controladores/ControladorUsuario.php";
 }
+// Determinar ID de usuario para JS
+$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -308,6 +310,16 @@ if (!isset($row)) {
 </head>
 
 <body>
+    <script>
+        window.CHECK_USER_ID = <?php echo intval($userId); ?>;
+        // Habilitar botones al cargar
+        window.addEventListener('DOMContentLoaded', function(){
+            const be = document.getElementById('btnEntry');
+            const bs = document.getElementById('btnExit');
+            if (be) be.disabled = false;
+            if (bs) bs.disabled = false;
+        });
+    </script>
     <div class="checador-container">
         <div class="checador-card">
             <!-- Barra de Estado -->
