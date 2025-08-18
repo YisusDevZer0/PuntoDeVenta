@@ -327,6 +327,10 @@ if (!isset($row)) {
                     <a href="test_checador.php" class="btn btn-sm btn-outline-info" style="margin-top: 5px;">
                         <i class="fas fa-bug"></i> Probar Sistema
                     </a>
+                    <br>
+                    <a href="test_checador_connection.php" class="btn btn-sm btn-outline-warning" style="margin-top: 5px;">
+                        <i class="fas fa-database"></i> Probar Conexión
+                    </a>
                 </div>
             </div>
 
