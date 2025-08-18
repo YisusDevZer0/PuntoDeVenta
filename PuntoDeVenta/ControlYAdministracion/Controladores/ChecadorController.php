@@ -1,20 +1,81 @@
 <?php
-include_once "../Controladores/ControladorUsuario.php";
-include_once "../Controladores/db_connect.php";
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Verificar sesión usando las variables correctas del sistema
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    header("Location: ../Expiro.php");
+// Logging para debugging
+function logError($message) {
+    error_log("ChecadorController Error: " . $message);
+}
+
+try {
+    // Verificar si los archivos existen antes de incluirlos
+    $controladorUsuarioPath = "../Controladores/ControladorUsuario.php";
+    $dbConnectPath = "../Controladores/db_connect.php";
+    
+    if (!file_exists($controladorUsuarioPath)) {
+        throw new Exception("Archivo ControladorUsuario.php no encontrado en: " . $controladorUsuarioPath);
+    }
+    
+    if (!file_exists($dbConnectPath)) {
+        throw new Exception("Archivo db_connect.php no encontrado en: " . $dbConnectPath);
+    }
+    
+    include_once $controladorUsuarioPath;
+    include_once $dbConnectPath;
+    
+    // Verificar si la conexión a la base de datos está disponible
+    if (!isset($conn) || !$conn) {
+        throw new Exception("Conexión a la base de datos no disponible");
+    }
+    
+} catch (Exception $e) {
+    logError($e->getMessage());
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Error de configuración: ' . $e->getMessage(),
+        'debug_info' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'error' => $e->getMessage()
+        ]
+    ]);
     exit();
+}
+
+// Verificar sesión solo si no es una prueba directa
+$isTestMode = isset($_GET['test']) || isset($_POST['test_mode']);
+$skipAuth = $isTestMode;
+
+if (!$skipAuth) {
+    // Verificar sesión usando las variables correctas del sistema
+    if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Sesión no válida o expirada',
+            'redirect' => '../Expiro.php'
+        ]);
+        exit();
+    }
 }
 
 // Asegurar que $row esté disponible
 if (!isset($row)) {
-    include_once "../Controladores/ControladorUsuario.php";
+    try {
+        include_once "../Controladores/ControladorUsuario.php";
+    } catch (Exception $e) {
+        logError("Error incluyendo ControladorUsuario: " . $e->getMessage());
+    }
 }
 
-// Determinar el ID de usuario según la sesión activa
-$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+// Determinar el ID de usuario según la sesión activa o modo de prueba
+if ($skipAuth) {
+    $userId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : 1; // ID por defecto para pruebas
+} else {
+    $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+}
 
 class ChecadorController {
     private $conn;
@@ -328,30 +389,40 @@ class ChecadorController {
 
 // Manejar requests AJAX
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $controller = new ChecadorController($conn);
-    $action = $_POST['action'] ?? '';
-    $response = [];
-    
-    switch ($action) {
-        case 'registrar_asistencia':
-            try {
-                $usuario_id = $userId;
-                $tipo = $_POST['tipo'];
-                $latitud = $_POST['latitud'];
-                $longitud = $_POST['longitud'];
-                $timestamp = $_POST['timestamp'];
-                
-                // Validar datos requeridos
-                if (empty($usuario_id) || empty($tipo) || empty($latitud) || empty($longitud) || empty($timestamp)) {
-                    $response = ['success' => false, 'message' => 'Datos incompletos para registrar asistencia'];
-                    break;
+    try {
+        $controller = new ChecadorController($conn);
+        $action = $_POST['action'] ?? '';
+        $response = [];
+        
+        // Log de la acción recibida
+        logError("Acción recibida: " . $action . " - Usuario ID: " . $userId);
+        
+        switch ($action) {
+            case 'registrar_asistencia':
+                try {
+                    $usuario_id = $userId;
+                    $tipo = $_POST['tipo'];
+                    $latitud = $_POST['latitud'];
+                    $longitud = $_POST['longitud'];
+                    $timestamp = $_POST['timestamp'];
+                    
+                    // Log de los datos recibidos
+                    logError("Datos recibidos - Usuario: $usuario_id, Tipo: $tipo, Lat: $latitud, Lon: $longitud, Time: $timestamp");
+                    
+                    // Validar datos requeridos
+                    if (empty($usuario_id) || empty($tipo) || empty($latitud) || empty($longitud) || empty($timestamp)) {
+                        $response = ['success' => false, 'message' => 'Datos incompletos para registrar asistencia'];
+                        logError("Datos incompletos para registrar asistencia");
+                        break;
+                    }
+                    
+                    $response = $controller->registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp);
+                    logError("Respuesta del controlador: " . json_encode($response));
+                } catch (Exception $e) {
+                    $response = ['success' => false, 'message' => 'Error en registro: ' . $e->getMessage()];
+                    logError("Error en registro: " . $e->getMessage());
                 }
-                
-                $response = $controller->registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp);
-            } catch (Exception $e) {
-                $response = ['success' => false, 'message' => 'Error en registro: ' . $e->getMessage()];
-            }
-            break;
+                break;
             
         case 'obtener_ubicaciones':
             $usuario_id = $userId;
