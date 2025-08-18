@@ -21,8 +21,8 @@ echo "<pre>";
 print_r($datosPrueba);
 echo "</pre>";
 
-// URL del archivo corregido
-$url = 'http://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ChecadorController.php';
+// URL del endpoint público
+$url = 'https://doctorpez.mx/PuntoDeVenta/api/checador.php';
 
 echo "<h2>URL del controlador corregido:</h2>";
 echo "<p>$url</p>";
