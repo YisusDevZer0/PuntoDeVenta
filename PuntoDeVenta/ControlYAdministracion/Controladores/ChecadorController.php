@@ -1,5 +1,6 @@
 <?php
 include_once "../Controladores/ControladorUsuario.php";
+include_once "../Consultas/db_connect.php";
 
 // Verificar sesión usando las variables correctas del sistema
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
@@ -27,14 +28,28 @@ class ChecadorController {
      */
     public function registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp) {
         try {
+            // Verificar conexión a la base de datos
+            if (!$this->conn) {
+                return ['success' => false, 'message' => 'Error de conexión a la base de datos'];
+            }
+            
+            // Validar parámetros
+            if (empty($usuario_id) || empty($tipo) || empty($latitud) || empty($longitud) || empty($timestamp)) {
+                return ['success' => false, 'message' => 'Parámetros incompletos'];
+            }
+            
             // Validar que el usuario existe usando la tabla correcta
             $stmt = $this->conn->prepare("SELECT Id_PvUser, Nombre_Apellidos FROM Usuarios_PV WHERE Id_PvUser = ?");
+            if (!$stmt) {
+                return ['success' => false, 'message' => 'Error preparando consulta de usuario: ' . $this->conn->error];
+            }
+            
             $stmt->bind_param("i", $usuario_id);
             $stmt->execute();
             $result = $stmt->get_result();
             
             if ($result->num_rows === 0) {
-                return ['success' => false, 'message' => 'Usuario no encontrado'];
+                return ['success' => false, 'message' => 'Usuario no encontrado (ID: ' . $usuario_id . ')'];
             }
             
             $usuario = $result->fetch_assoc();
@@ -45,6 +60,10 @@ class ChecadorController {
                 SELECT id FROM asistencias 
                 WHERE usuario_id = ? AND tipo = ? AND DATE(fecha_hora) = ?
             ");
+            if (!$stmt) {
+                return ['success' => false, 'message' => 'Error preparando consulta de verificación: ' . $this->conn->error];
+            }
+            
             $stmt->bind_param("iss", $usuario_id, $tipo, $fecha_hoy);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -58,6 +77,10 @@ class ChecadorController {
                 INSERT INTO asistencias (usuario_id, tipo, latitud, longitud, fecha_hora, created_at) 
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
+            if (!$stmt) {
+                return ['success' => false, 'message' => 'Error preparando inserción: ' . $this->conn->error];
+            }
+            
             $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
             
             if ($stmt->execute()) {
@@ -71,7 +94,7 @@ class ChecadorController {
                     ]
                 ];
             } else {
-                return ['success' => false, 'message' => 'Error al registrar la asistencia'];
+                return ['success' => false, 'message' => 'Error al ejecutar inserción: ' . $stmt->error];
             }
             
         } catch (Exception $e) {
@@ -311,13 +334,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     switch ($action) {
         case 'registrar_asistencia':
-            $usuario_id = $userId;
-            $tipo = $_POST['tipo'];
-            $latitud = $_POST['latitud'];
-            $longitud = $_POST['longitud'];
-            $timestamp = $_POST['timestamp'];
-            
-            $response = $controller->registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            try {
+                $usuario_id = $userId;
+                $tipo = $_POST['tipo'];
+                $latitud = $_POST['latitud'];
+                $longitud = $_POST['longitud'];
+                $timestamp = $_POST['timestamp'];
+                
+                // Validar datos requeridos
+                if (empty($usuario_id) || empty($tipo) || empty($latitud) || empty($longitud) || empty($timestamp)) {
+                    $response = ['success' => false, 'message' => 'Datos incompletos para registrar asistencia'];
+                    break;
+                }
+                
+                $response = $controller->registrarAsistencia($usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            } catch (Exception $e) {
+                $response = ['success' => false, 'message' => 'Error en registro: ' . $e->getMessage()];
+            }
             break;
             
         case 'obtener_ubicaciones':

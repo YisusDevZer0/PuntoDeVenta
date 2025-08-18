@@ -323,6 +323,10 @@ if (!isset($row)) {
                     <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-top: 5px;">
                         <i class="fas fa-sync-alt"></i> Verificar Ubicación
                     </button>
+                    <br>
+                    <a href="test_checador.php" class="btn btn-sm btn-outline-info" style="margin-top: 5px;">
+                        <i class="fas fa-bug"></i> Probar Sistema
+                    </a>
                 </div>
             </div>
 
