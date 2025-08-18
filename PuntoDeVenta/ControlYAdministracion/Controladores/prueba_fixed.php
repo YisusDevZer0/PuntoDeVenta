@@ -22,7 +22,7 @@ print_r($datosPrueba);
 echo "</pre>";
 
 // URL del archivo corregido
-$url = 'http://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ChecadorController_fixed.php';
+$url = 'http://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ChecadorController.php';
 
 echo "<h2>URL del controlador corregido:</h2>";
 echo "<p>$url</p>";
