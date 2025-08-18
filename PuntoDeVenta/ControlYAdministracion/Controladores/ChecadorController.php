@@ -1,6 +1,6 @@
 <?php
 include_once "../Controladores/ControladorUsuario.php";
-include_once "../Consultas/db_connect.php";
+include_once "../Controladores/db_connect.php";
 
 // Verificar sesión usando las variables correctas del sistema
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
