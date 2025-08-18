@@ -494,5 +494,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     echo json_encode($response);
     exit;
+    
+} catch (Exception $e) {
+    logError("Error general en el controlador: " . $e->getMessage());
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Error interno del servidor: ' . $e->getMessage(),
+        'debug_info' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'error' => $e->getMessage()
+        ]
+    ]);
+    exit;
 }
 ?> 
