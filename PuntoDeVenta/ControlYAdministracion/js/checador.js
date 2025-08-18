@@ -404,6 +404,10 @@ class ChecadorManager {
      * Registrar entrada
      */
     async registrarEntrada() {
+        console.log('Función registrarEntrada llamada');
+        console.log('Estado isInWorkArea:', this.isInWorkArea);
+        console.log('Ubicación del usuario:', this.userLocation);
+        
         if (!this.isInWorkArea) {
             this.showError('Debes estar en el área de trabajo para registrar entrada.');
             return;
@@ -415,7 +419,10 @@ class ChecadorManager {
         );
 
         if (confirmed) {
+            console.log('Confirmación aceptada, registrando entrada...');
             await this.registrarAsistencia('entrada');
+        } else {
+            console.log('Confirmación cancelada');
         }
     }
 
@@ -423,6 +430,10 @@ class ChecadorManager {
      * Registrar salida
      */
     async registrarSalida() {
+        console.log('Función registrarSalida llamada');
+        console.log('Estado isInWorkArea:', this.isInWorkArea);
+        console.log('Ubicación del usuario:', this.userLocation);
+        
         if (!this.isInWorkArea) {
             this.showError('Debes estar en el área de trabajo para registrar salida.');
             return;
@@ -434,7 +445,10 @@ class ChecadorManager {
         );
 
         if (confirmed) {
+            console.log('Confirmación aceptada, registrando salida...');
             await this.registrarAsistencia('salida');
+        } else {
+            console.log('Confirmación cancelada');
         }
     }
 
@@ -443,6 +457,14 @@ class ChecadorManager {
      */
     async registrarAsistencia(tipo) {
         try {
+            console.log('Iniciando registro de asistencia:', tipo);
+            console.log('Datos a enviar:', {
+                tipo: tipo,
+                latitud: this.userLocation.lat,
+                longitud: this.userLocation.lng,
+                timestamp: new Date().toISOString()
+            });
+
             const data = {
                 tipo: tipo,
                 latitud: this.userLocation.lat,
@@ -450,12 +472,16 @@ class ChecadorManager {
                 timestamp: new Date().toISOString()
             };
 
+            console.log('Enviando petición al servidor...');
             const response = await this.makeRequest('registrar_asistencia', data);
+            console.log('Respuesta del servidor:', response);
             
             if (response.success) {
+                console.log('Registro exitoso');
                 this.showSuccess(`${tipo.charAt(0).toUpperCase() + tipo.slice(1)} registrada exitosamente`);
                 this.logActivity(`registro_${tipo}`, `Registro de ${tipo} exitoso`);
             } else {
+                console.log('Error en respuesta del servidor:', response.message);
                 this.showError(response.message);
             }
         } catch (error) {
@@ -510,6 +536,10 @@ class ChecadorManager {
      * Realizar petición al servidor
      */
     async makeRequest(action, data = {}) {
+        console.log('makeRequest - Acción:', action);
+        console.log('makeRequest - Datos:', data);
+        console.log('makeRequest - URL:', this.controllerUrl);
+        
         const formData = new FormData();
         formData.append('action', action);
         
@@ -517,16 +547,22 @@ class ChecadorManager {
             formData.append(key, value);
         }
 
+        console.log('makeRequest - Enviando petición...');
         const response = await fetch(this.controllerUrl, {
             method: 'POST',
             body: formData
         });
 
+        console.log('makeRequest - Status:', response.status);
+        console.log('makeRequest - OK:', response.ok);
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return await response.json();
+        const result = await response.json();
+        console.log('makeRequest - Resultado:', result);
+        return result;
     }
 
     /**
@@ -585,23 +621,9 @@ class ChecadorManager {
      * Configurar event listeners
      */
     setupEventListeners() {
-        // Event listeners para botones de registro
-        const btnEntry = document.getElementById('btnEntry');
-        const btnExit = document.getElementById('btnExit');
-        const btnSetupLocation = document.querySelector('.btn-setup-location');
-
-        if (btnEntry) {
-            btnEntry.addEventListener('click', () => this.registrarEntrada());
-        }
-
-        if (btnExit) {
-            btnExit.addEventListener('click', () => this.registrarSalida());
-        }
-
-        if (btnSetupLocation) {
-            btnSetupLocation.addEventListener('click', () => this.setupLocation());
-        }
-
+        // Solo configurar event listeners para fecha y hora
+        // Los botones usan onclick en el HTML para evitar conflictos
+        
         // Event listener para actualizar fecha y hora
         this.updateDateTime();
         setInterval(() => this.updateDateTime(), 1000);
@@ -706,14 +728,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Funciones globales para compatibilidad con onclick
 function registrarEntrada() {
+    console.log('Función global registrarEntrada llamada');
     if (window.checadorManager) {
+        console.log('ChecadorManager encontrado, llamando registrarEntrada...');
         window.checadorManager.registrarEntrada();
+    } else {
+        console.error('ChecadorManager no encontrado');
     }
 }
 
 function registrarSalida() {
+    console.log('Función global registrarSalida llamada');
     if (window.checadorManager) {
+        console.log('ChecadorManager encontrado, llamando registrarSalida...');
         window.checadorManager.registrarSalida();
+    } else {
+        console.error('ChecadorManager no encontrado');
     }
 }
 
