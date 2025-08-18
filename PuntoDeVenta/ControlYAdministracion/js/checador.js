@@ -20,8 +20,17 @@ class ChecadorManager {
      */
     async init() {
         try {
+            console.log('Inicializando sistema de checador...');
             await this.loadWorkLocations();
-            this.startLocationVerification();
+            
+            // Solo iniciar verificación automática si no hay ubicaciones configuradas
+            if (this.workLocations.length === 0) {
+                console.log('No hay ubicaciones configuradas, iniciando verificación automática...');
+                this.startLocationVerification();
+            } else {
+                console.log('Ubicaciones configuradas encontradas, sistema listo para uso manual');
+            }
+            
             this.setupEventListeners();
         } catch (error) {
             console.error('Error inicializando checador:', error);
@@ -38,6 +47,15 @@ class ChecadorManager {
             if (response.success) {
                 this.workLocations = response.data;
                 this.updateWorkCenterDisplay();
+                
+                // Si hay ubicaciones configuradas, configurar el estado inicial
+                if (this.workLocations.length > 0) {
+                    console.log('Ubicaciones cargadas:', this.workLocations.length);
+                    document.getElementById('currentLocation').textContent = 'Ubicación configurada disponible';
+                    this.updateStatus('outside', 'Fuera del área');
+                    this.disableButtons();
+                    this.hideLocationSetup();
+                }
             }
         } catch (error) {
             console.error('Error cargando ubicaciones:', error);
@@ -48,11 +66,18 @@ class ChecadorManager {
      * Iniciar verificación de ubicación
      */
     startLocationVerification() {
-        this.checkLocation();
-        // Verificar ubicación cada 60 segundos (aumentar intervalo para reducir ciclos)
-        this.verificationInterval = setInterval(() => {
+        // Solo verificar ubicación si no hay ubicaciones configuradas
+        if (this.workLocations.length === 0) {
             this.checkLocation();
-        }, 60000);
+            // Verificar ubicación cada 60 segundos solo si no hay ubicaciones configuradas
+            this.verificationInterval = setInterval(() => {
+                this.checkLocation();
+            }, 60000);
+        } else {
+            console.log('Ubicaciones configuradas disponibles, no iniciando verificación automática');
+            // Si hay ubicaciones configuradas, solo verificar una vez al inicio
+            this.checkLocationOnce();
+        }
     }
 
     /**
@@ -137,6 +162,24 @@ class ChecadorManager {
         } finally {
             this.isCheckingLocation = false;
         }
+    }
+
+    /**
+     * Verificar ubicación una sola vez (sin geolocalización si hay ubicaciones configuradas)
+     */
+    async checkLocationOnce() {
+        // Si hay ubicaciones configuradas, no intentar obtener geolocalización
+        if (this.workLocations.length > 0) {
+            console.log('Ubicaciones configuradas disponibles, configurando estado inicial');
+            document.getElementById('currentLocation').textContent = 'Ubicación configurada disponible';
+            this.updateStatus('outside', 'Fuera del área');
+            this.disableButtons();
+            this.hideLocationSetup();
+            return;
+        }
+
+        // Solo verificar geolocalización si no hay ubicaciones configuradas
+        await this.checkLocation();
     }
 
     /**
@@ -624,8 +667,34 @@ class ChecadorManager {
      */
     async checkLocationManual() {
         console.log('Verificación manual de ubicación iniciada...');
-        this.isCheckingLocation = false; // Resetear bandera para permitir verificación manual
-        await this.checkLocation();
+        
+        // Si hay ubicaciones configuradas, intentar obtener geolocalización una vez
+        if (this.workLocations.length > 0) {
+            console.log('Intentando obtener ubicación para verificar proximidad...');
+            this.isCheckingLocation = false; // Resetear bandera para permitir verificación manual
+            
+            try {
+                const position = await this.getCurrentPosition();
+                this.currentPosition = position;
+                this.userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                document.getElementById('currentLocation').textContent = 'Ubicación detectada';
+                await this.verifyWorkArea();
+                this.updateLastVerification();
+                
+                console.log('Verificación manual completada exitosamente');
+            } catch (error) {
+                console.log('No se pudo obtener ubicación en verificación manual, manteniendo estado actual');
+                // No mostrar errores en verificación manual si hay ubicaciones configuradas
+            }
+        } else {
+            // Si no hay ubicaciones configuradas, usar el método normal
+            this.isCheckingLocation = false;
+            await this.checkLocation();
+        }
     }
 }
 

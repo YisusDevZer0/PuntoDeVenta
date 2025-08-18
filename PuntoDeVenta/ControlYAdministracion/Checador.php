@@ -319,6 +319,10 @@ if (!isset($row)) {
                 <div>
                     <small>Última verificación: <span id="lastVerification">--</span></small><br>
                     <small>Centro de trabajo: <span id="workCenter">--</span></small>
+                    <br>
+                    <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-top: 5px;">
+                        <i class="fas fa-sync-alt"></i> Verificar Ubicación
+                    </button>
                 </div>
             </div>
 
