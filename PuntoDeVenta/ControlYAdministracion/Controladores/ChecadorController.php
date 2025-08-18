@@ -142,7 +142,8 @@ class ChecadorController {
                 return ['success' => false, 'message' => 'Error preparando inserción: ' . $this->conn->error];
             }
             
-            $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            // Tipos: i (usuario_id), s (tipo), d (latitud), d (longitud), s (timestamp)
+            $stmt->bind_param("isdds", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
             
             if ($stmt->execute()) {
                 return [
