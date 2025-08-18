@@ -424,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 break;
             
-        case 'obtener_ubicaciones':
+            case 'obtener_ubicaciones':
             $usuario_id = $userId;
             $response = $controller->obtenerUbicacionesUsuario($usuario_id);
             break;
