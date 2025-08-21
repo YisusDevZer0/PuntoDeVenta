@@ -158,7 +158,7 @@ class ChecadorManager {
         }
 
         this.isCheckingLocation = true;
-        console.log('🌍 Solicitando ubicación al navegador...');
+        console.log('🌍 Solicitando ubicación al navegador... (Forzando nueva verificación)');
 
         try {
             const position = await this.getCurrentPosition();
@@ -254,9 +254,9 @@ class ChecadorManager {
                 resolve,
                 reject,
                 {
-                    enableHighAccuracy: false, // Menos estricto para evitar ciclos
-                    timeout: 10000, // Reducir timeout para evitar bloqueos largos
-                    maximumAge: 600000 // 10 minutos de cache para reducir verificaciones
+                    enableHighAccuracy: true, // Alta precisión para mejor detección
+                    timeout: 15000, // Timeout más largo para permitir GPS
+                    maximumAge: 0 // Sin cache - siempre obtener ubicación fresca
                 }
             );
         });
@@ -266,8 +266,13 @@ class ChecadorManager {
      * Verificar si está en el área de trabajo
      */
     async verifyWorkArea() {
+        console.log('🎯 Verificando área de trabajo...');
+        console.log('📍 Ubicaciones configuradas:', this.workLocations.length);
+        console.log('📍 Ubicación actual:', this.userLocation);
+        
         // Si no hay ubicaciones configuradas, no verificar
         if (this.workLocations.length === 0) {
+            console.log('❌ No hay ubicaciones configuradas');
             this.isInWorkArea = false;
             this.updateStatus('outside', 'Sin ubicaciones configuradas');
             this.disableButtons();
@@ -277,6 +282,7 @@ class ChecadorManager {
 
         // Si no hay ubicación del usuario, mostrar estado fuera del área
         if (!this.userLocation) {
+            console.log('❌ No hay ubicación del usuario disponible');
             this.isInWorkArea = false;
             this.updateStatus('outside', 'Fuera del área');
             this.disableButtons();
@@ -285,26 +291,32 @@ class ChecadorManager {
         }
 
         try {
+            console.log('🔄 Enviando verificación al servidor...');
             const response = await this.makeRequest('verificar_ubicacion', {
                 latitud: this.userLocation.lat,
                 longitud: this.userLocation.lng
             });
 
+            console.log('📡 Respuesta del servidor:', response);
+
             if (response.success) {
                 this.isInWorkArea = response.en_area;
+                console.log('🏢 ¿Está en el área?', this.isInWorkArea);
                 
                 if (this.isInWorkArea) {
+                    console.log('✅ Usuario DENTRO del área de trabajo');
                     this.updateStatus('inside', 'En el área de trabajo');
                     this.enableButtons();
                     this.hideLocationSetup();
                 } else {
+                    console.log('🚫 Usuario FUERA del área de trabajo');
                     this.updateStatus('outside', 'Fuera del área');
                     this.disableButtons();
                     this.hideLocationSetup(); // No mostrar setup si ya hay ubicaciones configuradas
                 }
             }
         } catch (error) {
-            console.error('Error verificando ubicación:', error);
+            console.error('❌ Error verificando ubicación:', error);
             // En caso de error, asumir que está fuera del área
             this.isInWorkArea = false;
             this.updateStatus('outside', 'Fuera del área');
