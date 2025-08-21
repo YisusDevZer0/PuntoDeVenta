@@ -100,6 +100,7 @@
                     </div>
 
                     <a href="videos" class="nav-item nav-link"><i class="fa-solid fa-circle-play me-2"></i>Video tutoriales</a>
+                    <a href="Checador" class="nav-item nav-link"><i class="fa-solid fa-clock me-2"></i>Checador</a>
                    
             </nav>
         </div>
