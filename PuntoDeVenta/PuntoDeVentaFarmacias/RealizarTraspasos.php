@@ -677,6 +677,11 @@ $(document).ready(function() {
     });
   });
 
+  // Verificar si DataTable ya está inicializado y destruirlo si es necesario
+  if ($.fn.DataTable.isDataTable('#tablaAgregarArticulos')) {
+    $('#tablaAgregarArticulos').DataTable().destroy();
+  }
+  
   table = $('#tablaAgregarArticulos').DataTable({
     searching: false, // Deshabilitar la funcionalidad de búsqueda
     paging: false, // Deshabilitar el paginador
