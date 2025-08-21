@@ -1,8 +1,8 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-// Verificar sesión usando las variables correctas del sistema
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+// Verificar sesión usando las variables correctas del sistema PuntoDeVentaFarmacias
+if(!isset($_SESSION['VentasPos'])){
     header("Location: Expiro.php");
     exit();
 }
@@ -13,7 +13,7 @@ if (!isset($row)) {
     include_once "Controladores/ControladorUsuario.php";
 }
 // Determinar ID de usuario para JS
-$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+$userId = $_SESSION['VentasPos'];
 ?>
 <!DOCTYPE html>
 <html lang="es">

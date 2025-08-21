@@ -49,13 +49,13 @@ $isTestMode = isset($_GET['test']) || isset($_POST['test_mode']);
 $skipAuth = $isTestMode;
 
 if (!$skipAuth) {
-    // Verificar sesión usando las variables correctas del sistema
-    if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    // Verificar sesión usando las variables correctas del sistema PuntoDeVentaFarmacias
+    if(!isset($_SESSION['VentasPos'])){
         header('Content-Type: application/json');
         echo json_encode([
             'success' => false, 
             'message' => 'Sesión no válida o expirada',
-            'redirect' => '../Expiro.php'
+            'redirect' => 'Expiro.php'
         ]);
         exit();
     }
@@ -74,7 +74,7 @@ if (!isset($row)) {
 if ($skipAuth) {
     $userId = isset($_POST['usuario_id']) ? $_POST['usuario_id'] : 1; // ID por defecto para pruebas
 } else {
-    $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+    $userId = $_SESSION['VentasPos'];
 }
 
 class ChecadorController {
