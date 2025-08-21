@@ -7,13 +7,15 @@ $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
 $primeras_tres_letras = strtoupper($primeras_tres_letras);
 
 // Buscar solo tickets que sigan el formato correcto (sin fechas)
-$patron_correcto = $primeras_tres_letras . '%';
 $sql = "SELECT Folio_Ticket FROM Ventas_POS 
         WHERE Fk_sucursal='" . $row['Fk_Sucursal'] . "' 
-        AND Folio_Ticket LIKE '$patron_correcto'
+        AND Folio_Ticket NOT LIKE 'VEN-%'
         AND Folio_Ticket NOT LIKE '%-%-%'
-        AND Folio_Ticket REGEXP '^[A-Z]{3}[0-9]+$'
-        ORDER BY CAST(SUBSTRING(Folio_Ticket, 4) AS UNSIGNED) DESC 
+        AND Folio_Ticket NOT LIKE '%2024%'
+        AND Folio_Ticket NOT LIKE '%2023%'
+        AND Folio_Ticket NOT LIKE '%2025%'
+        AND Folio_Ticket REGEXP '^[A-Z]{2,4}[0-9]+$'
+        ORDER BY Venta_POS_ID DESC 
         LIMIT 1";
 
 $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
