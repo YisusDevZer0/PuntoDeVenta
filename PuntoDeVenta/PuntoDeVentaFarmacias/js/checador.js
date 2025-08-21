@@ -799,6 +799,35 @@ class ChecadorManager {
     }
 }
 
+// Funciones globales disponibles inmediatamente
+window.forceLocationCheck = function() {
+    console.log('🚀 FORZANDO verificación de ubicación...');
+    if (window.checadorManager) {
+        // Resetear completamente el estado
+        window.checadorManager.isCheckingLocation = false;
+        window.checadorManager.userLocation = null;
+        window.checadorManager.currentPosition = null;
+        window.checadorManager.permissionErrorShown = false;
+        
+        // Forzar nueva verificación
+        window.checadorManager.checkLocationManual();
+    } else {
+        console.error('ChecadorManager no encontrado');
+    }
+};
+
+window.checkLocationManual = function() {
+    if (window.checadorManager) {
+        window.checadorManager.checkLocationManual();
+    }
+};
+
+window.setupLocation = function() {
+    if (window.checadorManager) {
+        window.checadorManager.setupLocation();
+    }
+};
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, inicializando checador...');
@@ -844,30 +873,4 @@ function registrarSalida() {
     }
 }
 
-function setupLocation() {
-    if (window.checadorManager) {
-        window.checadorManager.setupLocation();
-    }
-}
-
-function checkLocationManual() {
-    if (window.checadorManager) {
-        window.checadorManager.checkLocationManual();
-    }
-}
-
-function forceLocationCheck() {
-    console.log('🚀 FORZANDO verificación de ubicación...');
-    if (window.checadorManager) {
-        // Resetear completamente el estado
-        window.checadorManager.isCheckingLocation = false;
-        window.checadorManager.userLocation = null;
-        window.checadorManager.currentPosition = null;
-        window.checadorManager.permissionErrorShown = false;
-        
-        // Forzar nueva verificación
-        window.checadorManager.checkLocationManual();
-    } else {
-        console.error('ChecadorManager no encontrado');
-    }
-}
+// Funciones duplicadas removidas - ya están definidas arriba como window.* functions
