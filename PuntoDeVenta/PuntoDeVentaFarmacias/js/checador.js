@@ -86,13 +86,9 @@ class ChecadorManager {
             console.log('Inicializando sistema de checador...');
             await this.loadWorkLocations();
             
-            // Solo iniciar verificación automática si no hay ubicaciones configuradas
-            if (this.workLocations.length === 0) {
-                console.log('No hay ubicaciones configuradas, iniciando verificación automática...');
-                this.startLocationVerification();
-            } else {
-                console.log('Ubicaciones configuradas encontradas, sistema listo para uso manual');
-            }
+            // Siempre iniciar verificación automática
+            console.log('🚀 Iniciando verificación automática de ubicación...');
+            this.startLocationVerification();
             
             this.setupEventListeners();
         } catch (error) {
@@ -116,8 +112,9 @@ class ChecadorManager {
                     console.log('Ubicaciones cargadas:', this.workLocations.length);
                     document.getElementById('currentLocation').textContent = 'Ubicación configurada disponible';
                     this.updateStatus('outside', 'Fuera del área');
-                    this.disableButtons();
                     this.hideLocationSetup();
+                    // Iniciar verificación automática para determinar si está en el área
+                    this.checkLocationManual();
                 }
             }
         } catch (error) {
@@ -129,18 +126,14 @@ class ChecadorManager {
      * Iniciar verificación de ubicación
      */
     startLocationVerification() {
-        // Solo verificar ubicación si no hay ubicaciones configuradas
-        if (this.workLocations.length === 0) {
+        // Siempre verificar ubicación para determinar si está en el área
+        console.log('🚀 Iniciando verificación de ubicación automática...');
+        this.checkLocation();
+        
+        // Verificar ubicación cada 60 segundos
+        this.verificationInterval = setInterval(() => {
             this.checkLocation();
-            // Verificar ubicación cada 60 segundos solo si no hay ubicaciones configuradas
-            this.verificationInterval = setInterval(() => {
-                this.checkLocation();
-            }, 60000);
-        } else {
-            console.log('Ubicaciones configuradas disponibles, no iniciando verificación automática');
-            // Si hay ubicaciones configuradas, solo verificar una vez al inicio
-            this.checkLocationOnce();
-        }
+        }, 60000);
     }
 
     /**
