@@ -147,21 +147,17 @@ class ChecadorManager {
      * Verificar ubicación del usuario
      */
     async checkLocation() {
+        console.log('🔍 Iniciando verificación de ubicación...');
+        
         // Evitar verificaciones simultáneas
         if (this.isCheckingLocation) {
             console.log('Verificación de ubicación ya en progreso, saltando...');
             return;
         }
 
-        // Si ya tenemos una ubicación válida y reciente, no verificar de nuevo
-        if (this.userLocation && this.currentPosition && 
-            (Date.now() - this.currentPosition.timestamp) < 300000) { // 5 minutos
-            console.log('Ubicación reciente disponible, saltando verificación...');
-            return;
-        }
-
         // Si no hay geolocalización disponible, mostrar error solo si no hay ubicaciones configuradas
         if (!navigator.geolocation) {
+            console.error('❌ Geolocalización no soportada por el navegador');
             if (this.workLocations.length === 0) {
                 this.updateStatus('error', 'Geolocalización no soportada');
             }
@@ -169,10 +165,14 @@ class ChecadorManager {
         }
 
         this.isCheckingLocation = true;
+        console.log('🌍 Solicitando ubicación al navegador...');
 
         try {
             const position = await this.getCurrentPosition();
+            console.log('✅ Ubicación obtenida:', position.coords.latitude, position.coords.longitude);
+            
             this.currentPosition = position;
+            this.currentPosition.timestamp = Date.now(); // Agregar timestamp
             this.userLocation = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
@@ -181,11 +181,11 @@ class ChecadorManager {
             // Resetear la bandera de error de permiso si se obtiene ubicación exitosamente
             this.permissionErrorShown = false;
 
-            document.getElementById('currentLocation').textContent = 'Ubicación detectada';
+            document.getElementById('currentLocation').textContent = `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`;
             await this.verifyWorkArea();
             this.updateLastVerification();
         } catch (error) {
-            console.error('Error obteniendo ubicación:', error);
+            console.error('❌ Error obteniendo ubicación:', error);
             
             // Si hay ubicaciones configuradas, no mostrar errores de geolocalización
             if (this.workLocations.length > 0) {
@@ -202,6 +202,7 @@ class ChecadorManager {
             if (error.code === 1) {
                 errorMessage = 'Permiso de ubicación denegado';
                 statusMessage = 'Permiso denegado';
+                console.warn('🚫 Permisos de geolocalización denegados');
                 // Solo mostrar el modal una vez si no hay ubicaciones configuradas
                 if (!this.permissionErrorShown && this.workLocations.length === 0) {
                     this.showLocationPermissionError();
@@ -210,13 +211,19 @@ class ChecadorManager {
             } else if (error.code === 2) {
                 errorMessage = 'Ubicación no disponible';
                 statusMessage = 'Ubicación no disponible';
+                console.warn('📍 Ubicación no disponible');
             } else if (error.code === 3) {
                 errorMessage = 'Tiempo de espera agotado';
                 statusMessage = 'Tiempo agotado';
+                console.warn('⏰ Timeout obteniendo ubicación');
             }
             
             document.getElementById('currentLocation').textContent = errorMessage;
             this.updateStatus('error', statusMessage);
+            
+            // Habilitar botones temporalmente para testing
+            console.log('🔧 Habilitando botones para testing sin ubicación');
+            this.enableButtons();
             
             // Solo mostrar configuración si no hay ubicaciones
             if (this.workLocations.length === 0 && !this.permissionErrorShown) {
@@ -785,8 +792,26 @@ class ChecadorManager {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando checador...');
     window.checadorManager = new ChecadorManager();
     window.checadorManager.init();
+    
+    // Debugging: Verificar permisos de geolocalización
+    if (navigator.geolocation) {
+        console.log('Geolocalización disponible');
+        navigator.permissions.query({name:'geolocation'}).then(function(result) {
+            console.log('Estado de permisos de geolocalización:', result.state);
+            if (result.state === 'denied') {
+                console.warn('Permisos de geolocalización denegados');
+                alert('Los permisos de geolocalización están denegados. Por favor, habilítalos en la configuración del navegador.');
+            }
+        }).catch(function(error) {
+            console.log('No se pudo verificar permisos:', error);
+        });
+    } else {
+        console.error('Geolocalización no soportada por el navegador');
+        alert('Tu navegador no soporta geolocalización');
+    }
 });
 
 // Funciones globales para compatibilidad con onclick
