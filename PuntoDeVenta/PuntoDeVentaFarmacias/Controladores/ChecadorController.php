@@ -11,7 +11,7 @@ function logError($message) {
 try {
     // Verificar si los archivos existen antes de incluirlos
     $controladorUsuarioPath = "ControladorUsuario.php";
-    $dbConnectPath = "../Consultas/db_connect.php";
+    $dbConnectPath = "db_connect.php";
     
     if (!file_exists($controladorUsuarioPath)) {
         throw new Exception("Archivo ControladorUsuario.php no encontrado en: " . $controladorUsuarioPath);
