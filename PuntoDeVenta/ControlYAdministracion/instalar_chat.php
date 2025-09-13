@@ -17,10 +17,14 @@ echo "<h2>Instalación del Sistema de Chat</h2>";
 echo "<p>Iniciando instalación...</p>";
 
 try {
-    // Leer el archivo SQL
-    $sqlFile = 'database/chat_tables.sql';
+    // Leer el archivo SQL mejorado
+    $sqlFile = 'database/chat_tables_mejorado.sql';
     if (!file_exists($sqlFile)) {
-        throw new Exception("Archivo SQL no encontrado: $sqlFile");
+        // Intentar con el archivo original si el mejorado no existe
+        $sqlFile = 'database/chat_tables.sql';
+        if (!file_exists($sqlFile)) {
+            throw new Exception("Archivo SQL no encontrado: $sqlFile");
+        }
     }
     
     $sql = file_get_contents($sqlFile);
