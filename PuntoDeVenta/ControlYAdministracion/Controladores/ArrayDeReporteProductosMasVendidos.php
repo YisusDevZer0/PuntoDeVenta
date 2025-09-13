@@ -63,8 +63,10 @@ try {
     
     // Procesar resultados
     $data = [];
+    $ranking = 1;
     while ($row = $result->fetch_assoc()) {
         $data[] = [
+            "Ranking" => $ranking,
             "ID_Prod_POS" => $row['ID_Prod_POS'],
             "Cod_Barra" => $row['Cod_Barra'] ?: '',
             "Nombre_Prod" => $row['Nombre_Prod'] ?: 'Sin nombre',
@@ -75,6 +77,7 @@ try {
             "Numero_Ventas" => number_format($row['Numero_Ventas']),
             "Ultima_Venta" => $row['Ultima_Venta'] ? date('d/m/Y', strtotime($row['Ultima_Venta'])) : ''
         ];
+        $ranking++;
     }
     
     // Construir respuesta JSON para DataTables
