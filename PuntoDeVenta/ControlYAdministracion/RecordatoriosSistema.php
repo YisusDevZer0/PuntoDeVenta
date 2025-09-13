@@ -19,8 +19,11 @@ include_once "Controladores/ControladorUsuario.php";
 if (!isset($con) || !$con) {
     include_once "Controladores/db_connect.php";
     
-    // Si aún no hay conexión, crear una manualmente
-    if (!isset($con) || !$con) {
+    // El archivo db_connect.php usa $conn, así que lo asignamos a $con
+    if (isset($conn) && $conn) {
+        $con = $conn;
+    } else {
+        // Si aún no hay conexión, crear una manualmente
         $con = new mysqli("localhost", "u858848268_devpezer0", "F9+nIIOuCh8yI6wu4!08", "u858848268_doctorpez");
         if ($con->connect_error) {
             die("Error de conexión: " . $con->connect_error);

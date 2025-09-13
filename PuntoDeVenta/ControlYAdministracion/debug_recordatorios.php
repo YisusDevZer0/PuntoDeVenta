@@ -13,6 +13,11 @@ echo "<h1>Debug de Tablas de Recordatorios</h1>";
 // Incluir conexión directamente
 include_once "Controladores/db_connect.php";
 
+// El archivo db_connect.php usa $conn, así que lo asignamos a $con
+if (isset($conn) && $conn) {
+    $con = $conn;
+}
+
 // Verificar conexión
 if (!isset($con) || !$con) {
     echo "<p style='color: red;'>Error: No hay conexión a la base de datos</p>";
