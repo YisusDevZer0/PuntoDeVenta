@@ -11,7 +11,7 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 echo "<h1>Debug de Tablas de Recordatorios</h1>";
 
 // Incluir conexión directamente
-include_once "Consultas/db_connect.php";
+include_once "Controladores/db_connect.php";
 
 // Verificar conexión
 if (!isset($con) || !$con) {
@@ -19,10 +19,10 @@ if (!isset($con) || !$con) {
     echo "<p>Variable \$con: " . (isset($con) ? "definida" : "NO definida") . "</p>";
     echo "<p>Tipo de \$con: " . (isset($con) ? gettype($con) : "N/A") . "</p>";
     
-    // Intentar crear conexión manualmente
+    // Intentar crear conexión manualmente con las credenciales correctas
     echo "<h2>Intentando conexión manual...</h2>";
     try {
-        $manual_con = new mysqli("localhost", "u858848268_devpezer0", "DoctorPez2024!", "u858848268_doctorpez");
+        $manual_con = new mysqli("localhost", "u858848268_devpezer0", "F9+nIIOuCh8yI6wu4!08", "u858848268_doctorpez");
         if ($manual_con->connect_error) {
             echo "<p style='color: red;'>Error de conexión manual: " . $manual_con->connect_error . "</p>";
         } else {
