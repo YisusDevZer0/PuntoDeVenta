@@ -142,25 +142,44 @@ function cargarEstadisticas() {
     var sucursal = $('#filtro_sucursal').val();
     var estado = $('#filtro_estado').val();
     
+    console.log('Cargando estadísticas con filtros:', {tipo: tipo, sucursal: sucursal, estado: estado});
+    
     $.post("Controladores/EstadisticasPersonalActivo.php", {
         tipo: tipo,
         sucursal: sucursal,
         estado: estado
     }, function(data) {
+        console.log('Respuesta del servidor:', data);
         try {
             var stats = JSON.parse(data);
+            console.log('Estadísticas parseadas:', stats);
+            
             $('#totalPersonal').text(stats.totalPersonal || 0);
             $('#totalAdministrativos').text(stats.totalAdministrativos || 0);
             $('#totalSucursales').text(stats.totalSucursales || 0);
             $('#personalReciente').text(stats.personalReciente || 0);
+            
+            console.log('Estadísticas actualizadas en la interfaz');
         } catch (e) {
-            console.error('Error al cargar estadísticas:', e);
-            console.log('Respuesta del servidor:', data);
+            console.error('Error al parsear estadísticas:', e);
+            console.log('Respuesta del servidor (raw):', data);
+            
+            // Mostrar valores por defecto en caso de error
+            $('#totalPersonal').text('0');
+            $('#totalAdministrativos').text('0');
+            $('#totalSucursales').text('0');
+            $('#personalReciente').text('0');
         }
     }).fail(function(xhr, status, error) {
         console.error('Error al cargar estadísticas:', error);
         console.log('Status:', status);
         console.log('Response:', xhr.responseText);
+        
+        // Mostrar valores por defecto en caso de error
+        $('#totalPersonal').text('0');
+        $('#totalAdministrativos').text('0');
+        $('#totalSucursales').text('0');
+        $('#personalReciente').text('0');
     });
 }
 
