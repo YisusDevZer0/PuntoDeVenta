@@ -150,32 +150,23 @@ function cargarEstadisticas() {
         estado: estado
     }, function(data) {
         console.log('Respuesta del servidor:', data);
-        try {
-            var stats = JSON.parse(data);
-            console.log('Estadísticas parseadas:', stats);
-            
-            // Verificar si hay error en la respuesta
-            if (stats.error) {
-                console.error('Error del servidor:', stats.message);
-                alert('Error al cargar estadísticas: ' + stats.message);
-            }
-            
-            $('#totalPersonal').text(stats.totalPersonal || 0);
-            $('#totalAdministrativos').text(stats.totalAdministrativos || 0);
-            $('#totalSucursales').text(stats.totalSucursales || 0);
-            $('#personalReciente').text(stats.personalReciente || 0);
-            
-            console.log('Estadísticas actualizadas en la interfaz');
-        } catch (e) {
-            console.error('Error al parsear estadísticas:', e);
-            console.log('Respuesta del servidor (raw):', data);
-            
-            // Mostrar valores por defecto en caso de error
-            $('#totalPersonal').text('0');
-            $('#totalAdministrativos').text('0');
-            $('#totalSucursales').text('0');
-            $('#personalReciente').text('0');
+        
+        // jQuery ya parsea automáticamente JSON, no necesitamos JSON.parse()
+        var stats = data;
+        console.log('Estadísticas recibidas:', stats);
+        
+        // Verificar si hay error en la respuesta
+        if (stats.error) {
+            console.error('Error del servidor:', stats.message);
+            alert('Error al cargar estadísticas: ' + stats.message);
         }
+        
+        $('#totalPersonal').text(stats.totalPersonal || 0);
+        $('#totalAdministrativos').text(stats.totalAdministrativos || 0);
+        $('#totalSucursales').text(stats.totalSucursales || 0);
+        $('#personalReciente').text(stats.personalReciente || 0);
+        
+        console.log('Estadísticas actualizadas en la interfaz');
     }).fail(function(xhr, status, error) {
         console.error('Error al cargar estadísticas:', error);
         console.log('Status:', status);
