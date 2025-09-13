@@ -242,21 +242,30 @@ class ChatSystem {
             const response = await fetch(`api/chat_api.php?action=mensajes&conversacion_id=${conversacionId}&offset=${offset}&limite=${this.configuracion.mensajes_por_pagina || 50}`);
             const data = await response.json();
             
+            console.log('Respuesta de la API:', data); // Debug
+            
             if (data.success) {
+                // Asegurar que data.data sea un array
+                const mensajesData = Array.isArray(data.data) ? data.data : [];
+                
                 if (offset === 0) {
-                    this.mensajes = data.data;
+                    this.mensajes = mensajesData;
                 } else {
-                    this.mensajes = [...data.data, ...this.mensajes];
+                    this.mensajes = [...mensajesData, ...this.mensajes];
                 }
                 
+                console.log('Mensajes cargados:', this.mensajes); // Debug
                 this.renderizarMensajes();
                 this.scrollToBottom();
             } else {
+                console.error('Error en la API:', data.error);
                 this.mostrarError(data.error || 'Error al cargar mensajes');
+                this.mensajes = []; // Asegurar que sea un array vacío
             }
         } catch (error) {
             console.error('Error al cargar mensajes:', error);
             this.mostrarError('Error al cargar mensajes');
+            this.mensajes = []; // Asegurar que sea un array vacío
         } finally {
             this.cargandoMensajes = false;
         }
@@ -268,6 +277,13 @@ class ChatSystem {
     renderizarMensajes() {
         const container = document.getElementById('chat-mensajes');
         container.innerHTML = '';
+        
+        // Verificar que this.mensajes sea un array
+        if (!Array.isArray(this.mensajes)) {
+            console.error('this.mensajes no es un array:', this.mensajes);
+            this.mensajes = [];
+            return;
+        }
         
         this.mensajes.forEach(mensaje => {
             const elemento = this.crearElementoMensaje(mensaje);
@@ -613,7 +629,6 @@ class ChatSystem {
      * Obtener ID del usuario actual
      */
     getUsuarioActual() {
-        // Esto debería venir del PHP
         return window.usuarioId || 1;
     }
     
@@ -621,7 +636,6 @@ class ChatSystem {
      * Obtener nombre del usuario actual
      */
     getNombreUsuario() {
-        // Esto debería venir del PHP
         return window.nombreUsuario || 'Usuario';
     }
     

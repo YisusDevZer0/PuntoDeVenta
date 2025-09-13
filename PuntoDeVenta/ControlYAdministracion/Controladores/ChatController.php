@@ -58,6 +58,7 @@ class ChatController {
         
         $sql = "SELECT 
                     m.id_mensaje,
+                    m.conversacion_id,
                     m.usuario_id,
                     u.Nombre_Apellidos as usuario_nombre,
                     u.file_name as usuario_avatar,
@@ -70,6 +71,7 @@ class ChatController {
                     m.fecha_envio,
                     m.fecha_edicion,
                     m.editado,
+                    m.eliminado,
                     m.mensaje_respuesta_id,
                     mr.mensaje as mensaje_respuesta,
                     mr.usuario_id as mensaje_respuesta_usuario_id,
@@ -83,11 +85,25 @@ class ChatController {
                 LIMIT ? OFFSET ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $conversacion_id, $limite, $offset);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        if (!$stmt) {
+            error_log("Error al preparar consulta: " . $this->conn->error);
+            return ['error' => 'Error en la consulta de base de datos'];
+        }
         
+        $stmt->bind_param("iii", $conversacion_id, $limite, $offset);
+        
+        if (!$stmt->execute()) {
+            error_log("Error al ejecutar consulta: " . $stmt->error);
+            return ['error' => 'Error al ejecutar la consulta'];
+        }
+        
+        $result = $stmt->get_result();
         $mensajes = $result->fetch_all(MYSQLI_ASSOC);
+        
+        // Asegurar que siempre devolvamos un array
+        if (!is_array($mensajes)) {
+            $mensajes = [];
+        }
         
         // Marcar mensajes como leídos
         $this->marcarMensajesComoLeidos($conversacion_id);

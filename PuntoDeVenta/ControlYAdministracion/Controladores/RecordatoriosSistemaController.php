@@ -6,14 +6,20 @@
  */
 
 include_once "../Consultas/db_connect.php";
+include_once "WhatsAppService.php";
+include_once "NotificacionesService.php";
 
 class RecordatoriosSistemaController {
     private $conn;
     private $usuario_id;
+    private $whatsappService;
+    private $notificacionesService;
     
     public function __construct($connection, $usuario_id = null) {
         $this->conn = $connection;
         $this->usuario_id = $usuario_id;
+        $this->whatsappService = new WhatsAppService($connection);
+        $this->notificacionesService = new NotificacionesService($connection);
     }
     
     /**
@@ -432,17 +438,40 @@ class RecordatoriosSistemaController {
     }
     
     private function enviarWhatsApp($destinatario, $recordatorio) {
-        // Implementar envío por WhatsApp
-        // Por ahora solo registrar en log
-        $this->registrarLog($recordatorio['id_recordatorio'], 'whatsapp', 'exitoso', 
-            "WhatsApp enviado a {$destinatario['usuario_nombre']} ({$destinatario['telefono_whatsapp']})");
+        try {
+            $mensaje = $recordatorio['mensaje_whatsapp'] ?: 
+                      "🔔 Recordatorio: " . $recordatorio['titulo'] . "\n\n" . 
+                      ($recordatorio['descripcion'] ?: 'Sin descripción adicional');
+            
+            $resultado = $this->whatsappService->enviarMensaje(
+                $destinatario['telefono_whatsapp'],
+                $mensaje,
+                $recordatorio['id_recordatorio']
+            );
+            
+            if (!$resultado['success']) {
+                throw new Exception($resultado['error']);
+            }
+            
+        } catch (Exception $e) {
+            throw new Exception("Error al enviar WhatsApp: " . $e->getMessage());
+        }
     }
     
     private function enviarNotificacionInterna($destinatario, $recordatorio) {
-        // Implementar envío de notificación interna
-        // Por ahora solo registrar en log
-        $this->registrarLog($recordatorio['id_recordatorio'], 'notificacion', 'exitoso', 
-            "Notificación interna enviada a {$destinatario['usuario_nombre']}");
+        try {
+            $resultado = $this->notificacionesService->enviarNotificacionRecordatorio(
+                $recordatorio,
+                $destinatario
+            );
+            
+            if (!$resultado['success']) {
+                throw new Exception($resultado['message']);
+            }
+            
+        } catch (Exception $e) {
+            throw new Exception("Error al enviar notificación: " . $e->getMessage());
+        }
     }
     
     private function registrarLog($recordatorio_id, $tipo_envio, $estado, $mensaje, $detalles = null) {

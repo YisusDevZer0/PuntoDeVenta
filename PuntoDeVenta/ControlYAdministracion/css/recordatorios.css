@@ -1,0 +1,532 @@
+/* =====================================================
+   SISTEMA DE RECORDATORIOS - ESTILOS CSS
+   ===================================================== */
+
+/* Variables CSS */
+:root {
+    --primary-color: #2196F3;
+    --accent-color: #FF4081;
+    --success-color: #4CAF50;
+    --warning-color: #FF9800;
+    --error-color: #F44336;
+    --info-color: #2196F3;
+    --text-color: #333;
+    --text-muted: #666;
+    --border-color: #e0e0e0;
+    --background-color: #f5f5f5;
+    --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Layout Principal */
+.page-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Cards */
+.filtros-card,
+.recordatorios-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.filtros-card .mdl-card__title {
+    background: linear-gradient(135deg, var(--primary-color), #1976D2);
+    color: white;
+}
+
+.recordatorios-card .mdl-card__title {
+    background: linear-gradient(135deg, var(--info-color), #1565C0);
+    color: white;
+}
+
+/* Formulario de Filtros */
+.filtros-form {
+    width: 100%;
+}
+
+.filtros-form .mdl-grid {
+    padding: 0;
+}
+
+.filtros-form .mdl-cell {
+    margin: 0 8px 16px 0;
+}
+
+.filtros-form .mdl-textfield {
+    width: 100%;
+}
+
+/* Tabla de Recordatorios */
+.recordatorios-table-container {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.recordatorios-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recordatorios-table th {
+    background-color: var(--background-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.recordatorios-table td {
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
+    padding: 16px 8px;
+}
+
+.recordatorios-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Badges de Estado y Prioridad */
+.prioridad-badge,
+.estado-badge,
+.tipo-envio-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Prioridades */
+.prioridad-urgente {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.prioridad-alta {
+    background-color: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffcc02;
+}
+
+.prioridad-media {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+}
+
+.prioridad-baja {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #e1bee7;
+}
+
+/* Estados */
+.estado-programado {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.estado-enviando {
+    background-color: #fff3e0;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+}
+
+.estado-enviado {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.estado-cancelado {
+    background-color: #fafafa;
+    color: #616161;
+    border: 1px solid #e0e0e0;
+}
+
+.estado-error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* Tipos de Envío */
+.tipo-whatsapp {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    margin-right: 4px;
+}
+
+.tipo-notificacion {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+    margin-right: 4px;
+}
+
+.tipo-ambos {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #e1bee7;
+}
+
+/* Botones de Acción */
+.btn-ver,
+.btn-editar,
+.btn-enviar,
+.btn-eliminar {
+    margin: 0 2px;
+    min-width: 32px;
+    height: 32px;
+}
+
+.btn-ver {
+    color: var(--info-color);
+}
+
+.btn-editar {
+    color: var(--warning-color);
+}
+
+.btn-enviar {
+    color: var(--success-color);
+}
+
+.btn-eliminar {
+    color: var(--error-color);
+}
+
+/* Estado Sin Datos */
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.no-data i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.no-data p {
+    font-size: 18px;
+    margin-bottom: 24px;
+}
+
+/* Modal */
+.mdl-dialog {
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.mdl-dialog__content {
+    padding: 24px;
+}
+
+.mdl-dialog__content h4 {
+    margin: 0 0 24px 0;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.mdl-dialog__content .mdl-textfield {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.mdl-dialog__actions {
+    padding: 16px 24px;
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-color);
+}
+
+.mdl-dialog__actions .mdl-button {
+    margin-left: 8px;
+}
+
+/* Contenedores Condicionales */
+#sucursal-container,
+#grupo-container {
+    transition: all 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-content {
+        padding: 10px;
+    }
+    
+    .filtros-form .mdl-grid {
+        display: block;
+    }
+    
+    .filtros-form .mdl-cell {
+        width: 100%;
+        margin: 0 0 16px 0;
+    }
+    
+    .recordatorios-table {
+        font-size: 12px;
+    }
+    
+    .recordatorios-table th,
+    .recordatorios-table td {
+        padding: 8px 4px;
+    }
+    
+    .mdl-dialog {
+        width: 95%;
+        margin: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recordatorios-table-container {
+        font-size: 11px;
+    }
+    
+    .prioridad-badge,
+    .estado-badge,
+    .tipo-envio-badge {
+        font-size: 9px;
+        padding: 2px 4px;
+    }
+    
+    .btn-ver,
+    .btn-editar,
+    .btn-enviar,
+    .btn-eliminar {
+        min-width: 28px;
+        height: 28px;
+        margin: 0 1px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recordatorios-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 3px solid var(--primary-color);
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notificaciones Toast */
+.toast-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.toast-error {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.toast-warning {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.toast-info {
+    background-color: var(--info-color);
+    color: white;
+}
+
+/* Mejoras en Material Design */
+.mdl-button--fab.mdl-button--mini-fab {
+    background-color: var(--accent-color);
+}
+
+.mdl-button--fab.mdl-button--mini-fab:hover {
+    background-color: #E91E63;
+}
+
+.mdl-layout__header {
+    background-color: var(--primary-color);
+}
+
+.mdl-layout__drawer {
+    border-right: 1px solid var(--border-color);
+}
+
+.mdl-navigation__link {
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.mdl-navigation__link:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+/* Utilidades */
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: 8px;
+}
+
+.mb-2 {
+    margin-bottom: 16px;
+}
+
+.mb-3 {
+    margin-bottom: 24px;
+}
+
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-1 {
+    margin-top: 8px;
+}
+
+.mt-2 {
+    margin-top: 16px;
+}
+
+.mt-3 {
+    margin-top: 24px;
+}
+
+/* Estados de Hover Mejorados */
+.recordatorios-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.recordatorios-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Mejoras en Formularios */
+.mdl-textfield__input:focus {
+    border-color: var(--primary-color);
+}
+
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
+    color: var(--primary-color);
+}
+
+/* Indicadores de Estado */
+.status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-indicator.online {
+    background-color: var(--success-color);
+}
+
+.status-indicator.offline {
+    background-color: var(--text-muted);
+}
+
+.status-indicator.busy {
+    background-color: var(--warning-color);
+}
+
+/* Mejoras en Cards */
+.mdl-card {
+    transition: all 0.3s ease;
+}
+
+.mdl-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Scrollbar Personalizado */
+.recordatorios-table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.recordatorios-table-container::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+.recordatorios-table-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.recordatorios-table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}

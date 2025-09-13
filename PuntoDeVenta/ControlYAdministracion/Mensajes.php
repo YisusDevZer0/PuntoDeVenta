@@ -308,6 +308,12 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
     <script src="js/main.js"></script>
     
     <!-- Chat JavaScript -->
+    <script>
+        // Variables globales para el chat
+        window.usuarioId = <?php echo $usuario_id; ?>;
+        window.nombreUsuario = '<?php echo addslashes($row['Nombre_Apellidos']); ?>';
+        window.sucursalId = <?php echo $row['Fk_Sucursal']; ?>;
+    </script>
     <script src="js/chat.js"></script>
 </body>
 </html>

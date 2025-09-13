@@ -68,11 +68,23 @@ function handleGetRequest($action, $chatController) {
             $offset = $_GET['offset'] ?? 0;
             
             if (!$conversacion_id) {
-                echo json_encode(['error' => 'ID de conversación requerido']);
+                echo json_encode(['success' => false, 'error' => 'ID de conversación requerido']);
                 return;
             }
             
             $mensajes = $chatController->obtenerMensajes($conversacion_id, $limite, $offset);
+            
+            // Verificar si hay error en la respuesta
+            if (isset($mensajes['error'])) {
+                echo json_encode(['success' => false, 'error' => $mensajes['error']]);
+                return;
+            }
+            
+            // Asegurar que siempre devolvamos un array
+            if (!is_array($mensajes)) {
+                $mensajes = [];
+            }
+            
             echo json_encode(['success' => true, 'data' => $mensajes]);
             break;
             
