@@ -358,6 +358,18 @@ VALUES (2, 'Soporte Técnico', 'Canal de soporte técnico para reportar problema
 INSERT INTO `chat_conversaciones` (`id_conversacion`, `nombre_conversacion`, `descripcion`, `tipo_conversacion`, `creado_por`, `privado`) 
 VALUES (3, 'Notificaciones del Sistema', 'Notificaciones automáticas del sistema', 'sistema', 1, 0);
 
+-- Crear conversaciones por sucursal
+INSERT INTO `chat_conversaciones` (`nombre_conversacion`, `descripcion`, `tipo_conversacion`, `sucursal_id`, `creado_por`, `privado`)
+SELECT 
+    CONCAT('Chat - ', s.Nombre_Sucursal) as nombre_conversacion,
+    CONCAT('Conversación interna de la sucursal ', s.Nombre_Sucursal) as descripcion,
+    'sucursal' as tipo_conversacion,
+    s.ID_Sucursal as sucursal_id,
+    1 as creado_por,
+    0 as privado
+FROM Sucursales s
+WHERE s.ID_Sucursal IS NOT NULL;
+
 -- =============================================
 -- CREAR VISTAS OPTIMIZADAS
 -- =============================================
@@ -476,6 +488,31 @@ SELECT Id_PvUser FROM Usuarios_PV WHERE Estatus = 'Activo';
 -- Insertar estados de usuario para usuarios existentes
 INSERT IGNORE INTO chat_estados_usuario (usuario_id, estado)
 SELECT Id_PvUser, 'offline' FROM Usuarios_PV WHERE Estatus = 'Activo';
+
+-- Agregar usuarios a conversaciones de su sucursal
+INSERT IGNORE INTO chat_participantes (conversacion_id, usuario_id, rol)
+SELECT 
+    c.id_conversacion,
+    u.Id_PvUser,
+    CASE 
+        WHEN u.Fk_Usuario IN (SELECT ID_User FROM Tipos_Usuarios WHERE TipoUsuario IN ('Administrador', 'MKT')) THEN 'admin'
+        ELSE 'miembro'
+    END as rol
+FROM chat_conversaciones c
+INNER JOIN Usuarios_PV u ON c.sucursal_id = u.Fk_Sucursal
+WHERE c.tipo_conversacion = 'sucursal' AND u.Estatus = 'Activo';
+
+-- Agregar usuarios a conversación general
+INSERT IGNORE INTO chat_participantes (conversacion_id, usuario_id, rol)
+SELECT 
+    1 as conversacion_id,
+    u.Id_PvUser,
+    CASE 
+        WHEN u.Fk_Usuario IN (SELECT ID_User FROM Tipos_Usuarios WHERE TipoUsuario IN ('Administrador', 'MKT')) THEN 'admin'
+        ELSE 'miembro'
+    END as rol
+FROM Usuarios_PV u
+WHERE u.Estatus = 'Activo';
 
 -- =============================================
 -- FINALIZAR TRANSACCIÓN

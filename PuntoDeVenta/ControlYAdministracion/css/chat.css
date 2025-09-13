@@ -402,6 +402,108 @@
     background-color: var(--chat-light);
 }
 
+/* Notificaciones */
+.notificaciones-contenedor {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 350px;
+}
+
+.notificacion-toast {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    border-left: 4px solid #009CFF;
+}
+
+.notificacion-toast.mostrar {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notificacion-toast.ocultar {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.notificacion-contenido {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+.notificacion-icono {
+    background: #009CFF;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.notificacion-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.notificacion-titulo {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.notificacion-mensaje {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.notificacion-cerrar {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.notificacion-cerrar:hover {
+    background: #f5f5f5;
+    color: #666;
+}
+
+/* Contador de notificaciones */
+.contador-notificaciones {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .chat-container {

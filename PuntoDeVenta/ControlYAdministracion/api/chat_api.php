@@ -99,6 +99,36 @@ function handleGetRequest($action, $chatController) {
             echo json_encode(['success' => true, 'data' => $config]);
             break;
             
+        case 'notificaciones':
+            $usuario_id = $_GET['usuario_id'] ?? $usuario_id;
+            if (!$usuario_id) {
+                echo json_encode(['success' => false, 'error' => 'ID de usuario requerido']);
+                return;
+            }
+            
+            include_once '../Controladores/NotificacionesController.php';
+            $notificacionesController = new NotificacionesController($conn);
+            $notificaciones = $notificacionesController->obtenerNotificacionesNoLeidas($usuario_id);
+            echo json_encode(['success' => true, 'data' => $notificaciones]);
+            break;
+            
+        case 'contador_notificaciones':
+            $usuario_id = $_GET['usuario_id'] ?? $usuario_id;
+            if (!$usuario_id) {
+                echo json_encode(['success' => false, 'error' => 'ID de usuario requerido']);
+                return;
+            }
+            
+            $sql = "SELECT COUNT(*) as count FROM Notificaciones WHERE UsuarioID = ? AND Leido = 0";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $usuario_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $count = $result->fetch_assoc()['count'];
+            
+            echo json_encode(['success' => true, 'count' => $count]);
+            break;
+            
         default:
             echo json_encode(['error' => 'Acción no válida']);
     }
@@ -305,6 +335,27 @@ function actualizarConfiguracionUsuario($chatController, $configuracion) {
         return ['success' => true];
     } else {
         return ['error' => 'Error al actualizar configuración: ' . $stmt->error];
+    }
+}
+
+// Agregar endpoint para marcar notificaciones como leídas
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['action'] === 'marcar_notificacion_leida') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $notificacion_id = $input['notificacion_id'] ?? null;
+    
+    if (!$notificacion_id) {
+        echo json_encode(['success' => false, 'error' => 'ID de notificación requerido']);
+        return;
+    }
+    
+    include_once '../Controladores/NotificacionesController.php';
+    $notificacionesController = new NotificacionesController($conn);
+    $resultado = $notificacionesController->marcarComoLeida($notificacion_id, $usuario_id);
+    
+    if ($resultado) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error al marcar notificación como leída']);
     }
 }
 ?>

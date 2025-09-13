@@ -394,12 +394,14 @@ class ChatSystem {
         // Crear mensaje temporal
         const mensajeTemporal = {
             id_mensaje: 'temp_' + Date.now(),
+            conversacion_id: this.conversacionActual,
             usuario_id: this.getUsuarioActual(),
             usuario_nombre: this.getNombreUsuario(),
             mensaje: mensaje,
             tipo_mensaje: 'texto',
             fecha_envio: new Date().toISOString(),
             editado: false,
+            eliminado: false,
             temporal: true
         };
         

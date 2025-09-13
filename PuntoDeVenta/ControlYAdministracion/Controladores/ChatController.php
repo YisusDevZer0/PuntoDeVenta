@@ -22,21 +22,27 @@ class ChatController {
         $sql = "SELECT 
                     c.id_conversacion,
                     c.nombre_conversacion,
+                    c.descripcion,
                     c.tipo_conversacion,
                     c.sucursal_id,
                     s.Nombre_Sucursal,
                     c.ultimo_mensaje,
                     c.ultimo_mensaje_fecha,
+                    c.ultimo_mensaje_usuario_id,
+                    um.Nombre_Apellidos as ultimo_mensaje_usuario_nombre,
+                    um.file_name as ultimo_mensaje_usuario_avatar,
                     COUNT(p.id_participante) as total_participantes,
                     p.ultima_lectura,
                     (SELECT COUNT(*) FROM chat_mensajes m 
                      WHERE m.conversacion_id = c.id_conversacion 
-                     AND m.fecha_envio > p.ultima_lectura 
-                     AND m.usuario_id != ?) as mensajes_no_leidos
+                     AND m.fecha_envio > COALESCE(p.ultima_lectura, '1900-01-01')
+                     AND m.usuario_id != ? AND m.eliminado = 0) as mensajes_no_leidos
                 FROM chat_conversaciones c
                 LEFT JOIN Sucursales s ON c.sucursal_id = s.ID_Sucursal
+                LEFT JOIN Usuarios_PV um ON c.ultimo_mensaje_usuario_id = um.Id_PvUser
                 INNER JOIN chat_participantes p ON c.id_conversacion = p.conversacion_id
                 WHERE p.usuario_id = ? AND p.activo = 1 AND c.activo = 1
+                GROUP BY c.id_conversacion
                 ORDER BY c.ultimo_mensaje_fecha DESC";
         
         $stmt = $this->conn->prepare($sql);
@@ -284,11 +290,18 @@ class ChatController {
                     u.Id_PvUser,
                     u.Nombre_Apellidos,
                     u.file_name,
+                    u.Correo_Electronico,
+                    u.Telefono,
+                    s.ID_Sucursal,
                     s.Nombre_Sucursal,
-                    t.TipoUsuario
+                    t.ID_User,
+                    t.TipoUsuario,
+                    eu.estado as estado_usuario,
+                    eu.ultima_actividad
                 FROM Usuarios_PV u
                 LEFT JOIN Sucursales s ON u.Fk_Sucursal = s.ID_Sucursal
                 LEFT JOIN Tipos_Usuarios t ON u.Fk_Usuario = t.ID_User
+                LEFT JOIN chat_estados_usuario eu ON u.Id_PvUser = eu.usuario_id
                 WHERE u.Estatus = 'Activo'";
         
         // Excluir participantes actuales si se especifica conversación
@@ -299,7 +312,7 @@ class ChatController {
                      )";
         }
         
-        $sql .= " ORDER BY u.Nombre_Apellidos";
+        $sql .= " ORDER BY s.Nombre_Sucursal, u.Nombre_Apellidos";
         
         $stmt = $this->conn->prepare($sql);
         if ($conversacion_id) {
@@ -353,7 +366,7 @@ class ChatController {
      * Procesar archivo subido
      */
     private function procesarArchivo($archivo_data) {
-        $upload_dir = '../uploads/chat/';
+        $upload_dir = __DIR__ . '/../uploads/chat/';
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
@@ -378,21 +391,12 @@ class ChatController {
      * Enviar notificaciones push
      */
     private function enviarNotificacionesPush($conversacion_id, $mensaje, $mensaje_id) {
-        // Obtener participantes de la conversación (excepto el remitente)
-        $sql = "SELECT p.usuario_id, u.Nombre_Apellidos, c.nombre_conversacion
-                FROM chat_participantes p
-                LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
-                LEFT JOIN chat_conversaciones c ON p.conversacion_id = c.id_conversacion
-                WHERE p.conversacion_id = ? AND p.usuario_id != ? AND p.activo = 1";
+        // Incluir controlador de notificaciones
+        include_once __DIR__ . '/NotificacionesController.php';
+        $notificacionesController = new NotificacionesController($this->conn);
         
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $conversacion_id, $this->usuario_id);
-        $stmt->execute();
-        $participantes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        
-        // Aquí se integraría con el sistema de notificaciones push existente
-        // Por ahora solo registramos en log
-        error_log("Notificación de chat enviada a " . count($participantes) . " usuarios");
+        // Enviar notificación de chat
+        $notificacionesController->enviarNotificacionChat($conversacion_id, $mensaje, $this->usuario_id, 'mensaje');
     }
 }
 ?>

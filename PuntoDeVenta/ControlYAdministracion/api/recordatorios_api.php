@@ -16,23 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Incluir dependencias
-include_once "../Consultas/db_connect.php";
+include_once "../Controladores/ControladorUsuario.php";
 include_once "../Controladores/RecordatoriosSistemaController.php";
 
-// Iniciar sesión
-session_start();
-
-// Verificar autenticación
-if (!isset($_SESSION["Id_PvUser"])) {
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     echo json_encode([
         'success' => false,
-        'message' => 'No autorizado'
+        'message' => 'Sesión no válida'
     ]);
     exit();
 }
 
-$usuario_id = $_SESSION["Id_PvUser"];
-$sucursal_id = $_SESSION["ID_Sucursal"] ?? 1;
+// Obtener ID del usuario actual
+$usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : 
+            (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+
+$sucursal_id = $row['Fk_Sucursal'] ?? 1;
 
 // Inicializar controlador
 $recordatoriosController = new RecordatoriosSistemaController($con, $usuario_id);

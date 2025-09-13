@@ -319,18 +319,122 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
         window.sucursalId = <?php echo $row['Fk_Sucursal']; ?>;
         
         // Funciones globales para los modales
-        function crearNuevaConversacion() {
+        async function crearNuevaConversacion() {
             const modal = new bootstrap.Modal(document.getElementById('modalNuevaConversacion'));
             modal.show();
+            
+            // Cargar usuarios disponibles
+            await cargarUsuariosDisponibles();
         }
         
-        function abrirConfiguracion() {
+        async function cargarUsuariosDisponibles() {
+            try {
+                const response = await fetch('api/chat_api.php?action=usuarios');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const select = document.getElementById('participantes');
+                    select.innerHTML = '';
+                    
+                    data.data.forEach(usuario => {
+                        const option = document.createElement('option');
+                        option.value = usuario.Id_PvUser;
+                        option.textContent = `${usuario.Nombre_Apellidos} (${usuario.TipoUsuario})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cargar usuarios:', error);
+            }
+        }
+        
+        async function abrirConfiguracion() {
             const modal = new bootstrap.Modal(document.getElementById('modalConfiguracion'));
             modal.show();
+            
+            // Cargar configuración actual
+            await cargarConfiguracionActual();
+        }
+        
+        async function cargarConfiguracionActual() {
+            try {
+                const response = await fetch('api/chat_api.php?action=configuracion');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const config = data.data;
+                    document.getElementById('notificacionesSonido').checked = config.notificaciones_sonido || false;
+                    document.getElementById('notificacionesPush').checked = config.notificaciones_push || false;
+                    document.getElementById('temaOscuro').checked = config.tema_oscuro || false;
+                    document.getElementById('mensajesPorPagina').value = config.mensajes_por_pagina || 50;
+                }
+            } catch (error) {
+                console.error('Error al cargar configuración:', error);
+            }
         }
         
         function abrirSelectorArchivos() {
             document.getElementById('input-archivo').click();
+        }
+        
+        // Event listener para subir archivos
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputArchivo = document.getElementById('input-archivo');
+            if (inputArchivo) {
+                inputArchivo.addEventListener('change', function(e) {
+                    if (e.target.files.length > 0) {
+                        subirArchivo(e.target.files[0]);
+                    }
+                });
+            }
+        });
+        
+        async function subirArchivo(archivo) {
+            if (!window.chatSystem || !window.chatSystem.conversacionActual) {
+                alert('Selecciona una conversación primero');
+                return;
+            }
+            
+            // Validar tamaño del archivo (10MB máximo)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (archivo.size > maxSize) {
+                alert('El archivo es demasiado grande. Máximo 10MB');
+                return;
+            }
+            
+            // Validar tipo de archivo
+            const allowedTypes = ['image/', 'video/', 'audio/', 'application/pdf', 'text/', 'application/msword', 'application/vnd.openxmlformats-officedocument'];
+            const isValidType = allowedTypes.some(type => archivo.type.startsWith(type));
+            
+            if (!isValidType) {
+                alert('Tipo de archivo no permitido');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('conversacion_id', window.chatSystem.conversacionActual);
+                formData.append('mensaje', '');
+                formData.append('archivo', archivo);
+                
+                const response = await fetch('api/chat_api.php?action=subir_archivo', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recargar mensajes para mostrar el archivo
+                    await window.chatSystem.cargarMensajes(window.chatSystem.conversacionActual);
+                    alert('Archivo enviado exitosamente');
+                } else {
+                    alert('Error al subir archivo: ' + (data.error || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error al subir archivo:', error);
+                alert('Error de conexión al subir archivo');
+            }
         }
         
         function mostrarEmojis() {
@@ -338,7 +442,7 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
             console.log('Mostrar emojis');
         }
         
-        function crearConversacion() {
+        async function crearConversacion() {
             const nombre = document.getElementById('nombreConversacion').value;
             const tipo = document.getElementById('tipoConversacion').value;
             const participantes = Array.from(document.getElementById('participantes').selectedOptions).map(option => option.value);
@@ -348,21 +452,84 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                 return;
             }
             
-            // Aquí se enviaría la petición para crear la conversación
-            console.log('Crear conversación:', { nombre, tipo, participantes });
-            alert('Función de crear conversación en desarrollo');
+            try {
+                const response = await fetch('api/chat_api.php?action=crear_conversacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: nombre,
+                        tipo_conversacion: tipo,
+                        participantes: participantes
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Cerrar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevaConversacion'));
+                    modal.hide();
+                    
+                    // Limpiar formulario
+                    document.getElementById('formNuevaConversacion').reset();
+                    
+                    // Recargar conversaciones
+                    if (window.chatSystem) {
+                        await window.chatSystem.cargarConversaciones();
+                    }
+                    
+                    alert('Conversación creada exitosamente');
+                } else {
+                    alert('Error al crear conversación: ' + (data.error || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error al crear conversación:', error);
+                alert('Error de conexión al crear conversación');
+            }
         }
         
-        function guardarConfiguracion() {
+        async function guardarConfiguracion() {
             const config = {
                 notificaciones_sonido: document.getElementById('notificacionesSonido').checked,
                 notificaciones_push: document.getElementById('notificacionesPush').checked,
                 tema_oscuro: document.getElementById('temaOscuro').checked,
-                mensajes_por_pagina: document.getElementById('mensajesPorPagina').value
+                mensajes_por_pagina: parseInt(document.getElementById('mensajesPorPagina').value)
             };
             
-            console.log('Guardar configuración:', config);
-            alert('Función de guardar configuración en desarrollo');
+            try {
+                const response = await fetch('api/chat_api.php?action=actualizar_configuracion', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        configuracion: config
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Cerrar modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfiguracion'));
+                    modal.hide();
+                    
+                    // Aplicar configuración
+                    if (window.chatSystem) {
+                        window.chatSystem.configuracion = { ...window.chatSystem.configuracion, ...config };
+                        window.chatSystem.aplicarConfiguracion();
+                    }
+                    
+                    alert('Configuración guardada exitosamente');
+                } else {
+                    alert('Error al guardar configuración: ' + (data.error || 'Error desconocido'));
+                }
+            } catch (error) {
+                console.error('Error al guardar configuración:', error);
+                alert('Error de conexión al guardar configuración');
+            }
         }
         
         function verInfoConversacion() {
@@ -388,5 +555,6 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
         }
     </script>
     <script src="js/chat.js"></script>
+    <script src="js/notificaciones.js"></script>
 </body>
 </html>

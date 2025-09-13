@@ -1,0 +1,11 @@
+# Proteger archivos de uploads
+<Files "*">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Permitir solo archivos de imagen, video y audio
+<FilesMatch "\.(jpg|jpeg|png|gif|mp4|avi|mov|mp3|wav|pdf|doc|docx|txt)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
