@@ -31,7 +31,7 @@ class ChatController {
                     c.ultimo_mensaje_usuario_id,
                     um.Nombre_Apellidos as ultimo_mensaje_usuario_nombre,
                     um.file_name as ultimo_mensaje_usuario_avatar,
-                    COUNT(p.id_participante) as total_participantes,
+                    (SELECT COUNT(*) FROM chat_participantes p2 WHERE p2.conversacion_id = c.id_conversacion AND p2.activo = 1) as total_participantes,
                     p.ultima_lectura,
                     (SELECT COUNT(*) FROM chat_mensajes m 
                      WHERE m.conversacion_id = c.id_conversacion 
@@ -42,15 +42,23 @@ class ChatController {
                 LEFT JOIN Usuarios_PV um ON c.ultimo_mensaje_usuario_id = um.Id_PvUser
                 INNER JOIN chat_participantes p ON c.id_conversacion = p.conversacion_id
                 WHERE p.usuario_id = ? AND p.activo = 1 AND c.activo = 1
-                GROUP BY c.id_conversacion
                 ORDER BY c.ultimo_mensaje_fecha DESC";
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $this->usuario_id, $this->usuario_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
         
-        return $result->fetch_all(MYSQLI_ASSOC);
+        if (!$stmt->execute()) {
+            error_log("Error en obtenerConversaciones: " . $stmt->error);
+            return [];
+        }
+        
+        $result = $stmt->get_result();
+        $conversaciones = $result->fetch_all(MYSQLI_ASSOC);
+        
+        // Log para debug
+        error_log("Conversaciones encontradas: " . count($conversaciones));
+        
+        return $conversaciones;
     }
     
     /**
@@ -286,22 +294,20 @@ class ChatController {
      * Obtener usuarios disponibles para agregar a conversaciones
      */
     public function obtenerUsuariosDisponibles($conversacion_id = null) {
+        // Consulta simplificada para obtener usuarios
         $sql = "SELECT 
                     u.Id_PvUser,
                     u.Nombre_Apellidos,
                     u.file_name,
                     u.Correo_Electronico,
                     u.Telefono,
-                    s.ID_Sucursal,
+                    u.Fk_Sucursal,
                     s.Nombre_Sucursal,
-                    t.ID_User,
-                    t.TipoUsuario,
-                    eu.estado as estado_usuario,
-                    eu.ultima_actividad
+                    u.Fk_Usuario,
+                    t.TipoUsuario
                 FROM Usuarios_PV u
                 LEFT JOIN Sucursales s ON u.Fk_Sucursal = s.ID_Sucursal
                 LEFT JOIN Tipos_Usuarios t ON u.Fk_Usuario = t.ID_User
-                LEFT JOIN chat_estados_usuario eu ON u.Id_PvUser = eu.usuario_id
                 WHERE u.Estatus = 'Activo'";
         
         // Excluir participantes actuales si se especifica conversación
@@ -312,16 +318,25 @@ class ChatController {
                      )";
         }
         
-        $sql .= " ORDER BY s.Nombre_Sucursal, u.Nombre_Apellidos";
+        $sql .= " ORDER BY u.Nombre_Apellidos";
         
         $stmt = $this->conn->prepare($sql);
         if ($conversacion_id) {
             $stmt->bind_param("i", $conversacion_id);
         }
-        $stmt->execute();
-        $result = $stmt->get_result();
         
-        return $result->fetch_all(MYSQLI_ASSOC);
+        if (!$stmt->execute()) {
+            error_log("Error en obtenerUsuariosDisponibles: " . $stmt->error);
+            return [];
+        }
+        
+        $result = $stmt->get_result();
+        $usuarios = $result->fetch_all(MYSQLI_ASSOC);
+        
+        // Log para debug
+        error_log("Usuarios encontrados: " . count($usuarios));
+        
+        return $usuarios;
     }
     
     /**
@@ -397,6 +412,48 @@ class ChatController {
         
         // Enviar notificación de chat
         $notificacionesController->enviarNotificacionChat($conversacion_id, $mensaje, $this->usuario_id, 'mensaje');
+    }
+    
+    /**
+     * Obtener participantes de una conversación
+     */
+    public function obtenerParticipantes($conversacion_id) {
+        $sql = "SELECT 
+                    p.id_participante,
+                    p.usuario_id,
+                    p.rol,
+                    p.activo,
+                    p.ultima_lectura,
+                    u.Nombre_Apellidos,
+                    u.file_name,
+                    u.Correo_Electronico,
+                    s.Nombre_Sucursal,
+                    t.TipoUsuario,
+                    eu.estado as estado_usuario,
+                    eu.ultima_actividad
+                FROM chat_participantes p
+                LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+                LEFT JOIN Sucursales s ON u.Fk_Sucursal = s.ID_Sucursal
+                LEFT JOIN Tipos_Usuarios t ON u.Fk_Usuario = t.ID_User
+                LEFT JOIN chat_estados_usuario eu ON u.Id_PvUser = eu.usuario_id
+                WHERE p.conversacion_id = ? AND p.activo = 1
+                ORDER BY p.rol DESC, u.Nombre_Apellidos";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $conversacion_id);
+        
+        if (!$stmt->execute()) {
+            error_log("Error en obtenerParticipantes: " . $stmt->error);
+            return [];
+        }
+        
+        $result = $stmt->get_result();
+        $participantes = $result->fetch_all(MYSQLI_ASSOC);
+        
+        // Log para debug
+        error_log("Participantes encontrados para conversación $conversacion_id: " . count($participantes));
+        
+        return $participantes;
     }
 }
 ?>

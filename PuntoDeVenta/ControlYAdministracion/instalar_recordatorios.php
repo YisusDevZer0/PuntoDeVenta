@@ -23,19 +23,11 @@ $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] :
 
 $sucursal_id = $row['Fk_Sucursal'] ?? 1;
 
-// Definir variable para atributos disabled
+// Definir variables necesarias para el menú
 $disabledAttr = '';
-
-// Variable para identificar la página actual
 $currentPage = 'recordatorios';
-
-// Variable específica para el dashboard
 $showDashboard = false;
-
-// Obtener el tipo de usuario actual
 $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
-
-// Verificar si el usuario tiene permisos de administrador
 $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 
 $mensaje = '';
@@ -44,33 +36,76 @@ $tipo_mensaje = '';
 // Procesar instalación si se envió el formulario
 if ($_POST && isset($_POST['instalar'])) {
     try {
-        // Leer el archivo SQL
-        $sql_file = 'database/recordatorios_tables_mejorado.sql';
-        if (!file_exists($sql_file)) {
-            throw new Exception('El archivo SQL no existe: ' . $sql_file);
-        }
-        
-        $sql_content = file_get_contents($sql_file);
-        if ($sql_content === false) {
-            throw new Exception('No se pudo leer el archivo SQL');
-        }
-        
-        // Dividir el SQL en comandos individuales
-        $comandos = array_filter(array_map('trim', explode(';', $sql_content)));
+        // SQL básico para crear las tablas principales
+        $sql_commands = [
+            "CREATE TABLE IF NOT EXISTS `recordatorios_sistema` (
+                `id_recordatorio` int(11) NOT NULL AUTO_INCREMENT,
+                `titulo` varchar(255) NOT NULL,
+                `descripcion` text,
+                `fecha_programada` datetime NOT NULL,
+                `prioridad` enum('baja','media','alta','urgente') DEFAULT 'media',
+                `estado` enum('programado','enviando','enviado','cancelado','error') DEFAULT 'programado',
+                `tipo_envio` enum('whatsapp','notificacion','ambos') DEFAULT 'ambos',
+                `mensaje_whatsapp` text,
+                `mensaje_notificacion` text,
+                `destinatarios` enum('todos','sucursal','grupo','individual') DEFAULT 'todos',
+                `sucursal_id` int(11) DEFAULT NULL,
+                `grupo_id` int(11) DEFAULT NULL,
+                `usuario_creador` int(11) NOT NULL,
+                `fecha_creacion` timestamp DEFAULT CURRENT_TIMESTAMP,
+                `fecha_actualizacion` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                `activo` tinyint(1) DEFAULT 1,
+                PRIMARY KEY (`id_recordatorio`),
+                KEY `idx_fecha_programada` (`fecha_programada`),
+                KEY `idx_estado` (`estado`),
+                KEY `idx_prioridad` (`prioridad`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            
+            "CREATE TABLE IF NOT EXISTS `recordatorios_destinatarios` (
+                `id_destinatario` int(11) NOT NULL AUTO_INCREMENT,
+                `recordatorio_id` int(11) NOT NULL,
+                `usuario_id` int(11) NOT NULL,
+                `telefono_whatsapp` varchar(20) DEFAULT NULL,
+                `estado_envio` enum('pendiente','enviando','enviado','error') DEFAULT 'pendiente',
+                `fecha_envio` datetime DEFAULT NULL,
+                `error_envio` text DEFAULT NULL,
+                `tipo_envio` enum('whatsapp','notificacion','ambos') DEFAULT 'ambos',
+                PRIMARY KEY (`id_destinatario`),
+                KEY `idx_recordatorio_id` (`recordatorio_id`),
+                KEY `idx_usuario_id` (`usuario_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            
+            "CREATE TABLE IF NOT EXISTS `recordatorios_grupos` (
+                `id_grupo` int(11) NOT NULL AUTO_INCREMENT,
+                `nombre_grupo` varchar(100) NOT NULL,
+                `descripcion` text,
+                `fecha_creacion` timestamp DEFAULT CURRENT_TIMESTAMP,
+                `activo` tinyint(1) DEFAULT 1,
+                PRIMARY KEY (`id_grupo`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
+            
+            "CREATE TABLE IF NOT EXISTS `recordatorios_logs` (
+                `id_log` int(11) NOT NULL AUTO_INCREMENT,
+                `recordatorio_id` int(11) NOT NULL,
+                `tipo_envio` enum('whatsapp','notificacion','ambos') NOT NULL,
+                `estado` enum('iniciado','completado','error') NOT NULL,
+                `mensaje` text,
+                `detalles_tecnico` text,
+                `fecha_log` timestamp DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id_log`),
+                KEY `idx_recordatorio_id` (`recordatorio_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+        ];
         
         $comandos_ejecutados = 0;
         $errores = [];
         
-        foreach ($comandos as $comando) {
-            if (empty($comando) || strpos($comando, '--') === 0) {
-                continue;
-            }
-            
+        foreach ($sql_commands as $comando) {
             try {
                 if ($con->query($comando)) {
                     $comandos_ejecutados++;
                 } else {
-                    $errores[] = "Error en comando: " . $con->error;
+                    $errores[] = "Error: " . $con->error;
                 }
             } catch (Exception $e) {
                 $errores[] = "Error: " . $e->getMessage();
@@ -78,10 +113,10 @@ if ($_POST && isset($_POST['instalar'])) {
         }
         
         if (empty($errores)) {
-            $mensaje = "Instalación completada exitosamente. Se ejecutaron $comandos_ejecutados comandos SQL.";
+            $mensaje = "Instalación completada exitosamente. Se crearon $comandos_ejecutados tablas.";
             $tipo_mensaje = 'success';
         } else {
-            $mensaje = "Instalación completada con errores. Comandos ejecutados: $comandos_ejecutados. Errores: " . implode(', ', $errores);
+            $mensaje = "Instalación completada con algunos errores. Tablas creadas: $comandos_ejecutados. Errores: " . implode(', ', array_slice($errores, 0, 3));
             $tipo_mensaje = 'warning';
         }
         
@@ -92,20 +127,12 @@ if ($_POST && isset($_POST['instalar'])) {
 }
 
 // Verificar si las tablas ya existen
-$tablas_existen = true;
-$tablas_requeridas = [
-    'recordatorios_sistema',
-    'recordatorios_destinatarios', 
-    'recordatorios_grupos',
-    'recordatorios_logs'
-];
-
-foreach ($tablas_requeridas as $tabla) {
-    $resultado = $con->query("SHOW TABLES LIKE '$tabla'");
-    if ($resultado->num_rows == 0) {
-        $tablas_existen = false;
-        break;
-    }
+$tablas_existen = false;
+try {
+    $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
+    $tablas_existen = ($resultado && $resultado->num_rows > 0);
+} catch (Exception $e) {
+    $tablas_existen = false;
 }
 ?>
 
@@ -238,5 +265,12 @@ foreach ($tablas_requeridas as $tabla) {
 
     <!-- JavaScript Libraries -->
     <?php include "scripts.php";?>
+    
+    <script>
+        $(document).ready(function() {
+            // Ocultar spinner
+            $('#spinner').hide();
+        });
+    </script>
 </body>
 </html>

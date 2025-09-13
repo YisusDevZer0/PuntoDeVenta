@@ -143,7 +143,7 @@ class ChecadorController {
             }
             
             // Tipos: i (usuario_id), s (tipo), d (latitud), d (longitud), s (timestamp)
-            $stmt->bind_param("isdds", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
+            $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud);
             
             if ($stmt->execute()) {
                 return [

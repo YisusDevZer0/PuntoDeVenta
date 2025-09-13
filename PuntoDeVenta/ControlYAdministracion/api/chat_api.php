@@ -130,6 +130,17 @@ function handleGetRequest($action, $chatController) {
             echo json_encode(['success' => true, 'count' => $count]);
             break;
             
+        case 'participantes':
+            $conversacion_id = $_GET['conversacion_id'] ?? null;
+            if (!$conversacion_id) {
+                echo json_encode(['success' => false, 'error' => 'ID de conversación requerido']);
+                return;
+            }
+            
+            $participantes = $chatController->obtenerParticipantes($conversacion_id);
+            echo json_encode(['success' => true, 'data' => $participantes]);
+            break;
+            
         default:
             echo json_encode(['error' => 'Acción no válida']);
     }
