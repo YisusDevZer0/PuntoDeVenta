@@ -237,4 +237,10 @@ function exportarExcel() {
     }, 3000);
 }
 
+// Cargar datos al inicializar
 CargaPersonalactivo();
+
+// Cargar estadísticas inmediatamente
+$(document).ready(function() {
+    cargarEstadisticas();
+});

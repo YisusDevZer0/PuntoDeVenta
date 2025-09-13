@@ -241,12 +241,6 @@ include_once "Controladores/ControladorUsuario.php";
 <script src="js/AgregarUsuarioss.js"></script>
 <script src="js/PersonalActivo.js"></script>
 
-<script>
-$(document).ready(function() {
-    // Cargar estadísticas inmediatamente al cargar la página
-    cargarEstadisticas();
-});
-</script>
 
             <!-- Footer Start -->
             <?php 
