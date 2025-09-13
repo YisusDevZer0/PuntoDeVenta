@@ -428,7 +428,8 @@ $tareasController = new TareasController($conn, $userId);
                     "type": "POST",
                     "data": function(d) {
                         return $.extend(d, filtrosActuales);
-                    }
+                    },
+                    "dataSrc": "data"
                 },
                 "columns": [
                     {"data": "id"},
