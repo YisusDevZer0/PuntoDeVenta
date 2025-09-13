@@ -1,6 +1,6 @@
 /**
- * Sistema de Chat Completo - Doctor Pez
- * Interfaz moderna y funcional para mensajería
+ * Sistema de Chat - Doctor Pez
+ * Compatible con el sistema existente
  */
 
 class ChatSystem {
@@ -50,32 +50,33 @@ class ChatSystem {
      */
     configurarEventListeners() {
         // Envío de mensajes con Enter
-        document.getElementById('input-mensaje').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                this.enviarMensaje();
-            }
-        });
+        const inputMensaje = document.getElementById('input-mensaje');
+        if (inputMensaje) {
+            inputMensaje.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.enviarMensaje();
+                }
+            });
+        }
 
         // Búsqueda de conversaciones
-        document.getElementById('buscar-conversaciones').addEventListener('input', (e) => {
-            this.filtrarConversaciones(e.target.value);
-        });
+        const buscarInput = document.getElementById('buscar-conversaciones');
+        if (buscarInput) {
+            buscarInput.addEventListener('input', (e) => {
+                this.filtrarConversaciones(e.target.value);
+            });
+        }
 
         // Subida de archivos
-        document.getElementById('input-archivo').addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                this.subirArchivo(e.target.files[0]);
-            }
-        });
-
-        // Scroll infinito en mensajes
-        const mensajesContainer = document.getElementById('mensajes-container');
-        mensajesContainer.addEventListener('scroll', () => {
-            if (mensajesContainer.scrollTop === 0) {
-                this.cargarMasMensajes();
-            }
-        });
+        const inputArchivo = document.getElementById('input-archivo');
+        if (inputArchivo) {
+            inputArchivo.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    this.subirArchivo(e.target.files[0]);
+                }
+            });
+        }
     }
 
     /**
@@ -116,7 +117,7 @@ class ChatSystem {
             const data = await response.json();
             
             if (data.success) {
-                this.conversaciones = data.data;
+                this.conversaciones = data.data || [];
                 this.renderizarConversaciones();
             } else {
                 console.error('Error al cargar conversaciones:', data.error);
@@ -133,6 +134,7 @@ class ChatSystem {
      */
     renderizarConversaciones() {
         const container = document.getElementById('conversaciones-lista');
+        if (!container) return;
         
         if (this.conversaciones.length === 0) {
             container.innerHTML = `
@@ -173,33 +175,42 @@ class ChatSystem {
         document.querySelectorAll('.conversacion-item').forEach(item => {
             item.classList.remove('active');
         });
-        document.querySelector(`[data-conversacion-id="${conversacionId}"]`).classList.add('active');
+        const itemActivo = document.querySelector(`[data-conversacion-id="${conversacionId}"]`);
+        if (itemActivo) {
+            itemActivo.classList.add('active');
+        }
         
         // Mostrar área de chat
         this.mostrarAreaChat();
         
         // Cargar mensajes
         await this.cargarMensajes(conversacionId);
-        
-        // Cargar participantes
-        await this.cargarParticipantes(conversacionId);
     }
 
     /**
      * Mostrar área de chat
      */
     mostrarAreaChat() {
-        document.getElementById('chat-vacio').style.display = 'none';
-        document.getElementById('chat-header').style.display = 'block';
-        document.getElementById('chat-mensajes').style.display = 'block';
-        document.getElementById('chat-input').style.display = 'block';
+        const chatVacio = document.getElementById('chat-vacio');
+        const chatHeader = document.getElementById('chat-header');
+        const chatMensajes = document.getElementById('chat-mensajes');
+        const chatInput = document.getElementById('chat-input');
+        
+        if (chatVacio) chatVacio.style.display = 'none';
+        if (chatHeader) chatHeader.style.display = 'block';
+        if (chatMensajes) chatMensajes.style.display = 'block';
+        if (chatInput) chatInput.style.display = 'block';
         
         // Actualizar header
         const conversacion = this.conversaciones.find(c => c.id_conversacion == this.conversacionActual);
         if (conversacion) {
-            document.getElementById('chat-nombre').textContent = conversacion.nombre_conversacion;
-            document.getElementById('chat-descripcion').textContent = `${conversacion.total_participantes} participantes • ${conversacion.tipo_conversacion}`;
-            document.getElementById('chat-avatar').src = `PerfilesImg/${conversacion.ultimo_mensaje_usuario_avatar || 'user.jpg'}`;
+            const chatNombre = document.getElementById('chat-nombre');
+            const chatDescripcion = document.getElementById('chat-descripcion');
+            const chatAvatar = document.getElementById('chat-avatar');
+            
+            if (chatNombre) chatNombre.textContent = conversacion.nombre_conversacion;
+            if (chatDescripcion) chatDescripcion.textContent = `${conversacion.total_participantes} participantes • ${conversacion.tipo_conversacion}`;
+            if (chatAvatar) chatAvatar.src = `PerfilesImg/${conversacion.ultimo_mensaje_usuario_avatar || 'user.jpg'}`;
         }
     }
 
@@ -232,6 +243,7 @@ class ChatSystem {
      */
     renderizarMensajes() {
         const container = document.getElementById('mensajes-container');
+        if (!container) return;
         
         if (!Array.isArray(this.mensajes)) {
             console.error('this.mensajes no es un array:', this.mensajes);
@@ -274,29 +286,13 @@ class ChatSystem {
     }
 
     /**
-     * Cargar participantes de una conversación
-     */
-    async cargarParticipantes(conversacionId) {
-        try {
-            const response = await fetch(`api/chat_api.php?action=participantes&conversacion_id=${conversacionId}`);
-            const data = await response.json();
-            
-            if (data.success) {
-                console.log('Participantes cargados:', data.data);
-                // Aquí puedes actualizar la UI con los participantes si es necesario
-            }
-        } catch (error) {
-            console.error('Error al cargar participantes:', error);
-        }
-    }
-
-    /**
      * Enviar mensaje
      */
     async enviarMensaje() {
         const input = document.getElementById('input-mensaje');
-        const mensaje = input.value.trim();
+        if (!input) return;
         
+        const mensaje = input.value.trim();
         if (!mensaje || !this.conversacionActual) return;
         
         // Limpiar input
@@ -352,6 +348,8 @@ class ChatSystem {
      */
     agregarMensajeTemporal(mensaje) {
         const container = document.getElementById('mensajes-container');
+        if (!container) return;
+        
         const elemento = document.createElement('div');
         elemento.className = 'mensaje propio';
         elemento.id = `mensaje-${mensaje.id_mensaje}`;
@@ -380,7 +378,9 @@ class ChatSystem {
         if (elemento) {
             elemento.classList.add('error');
             const contenido = elemento.querySelector('.mensaje-contenido');
-            contenido.innerHTML = `❌ Error: ${error}`;
+            if (contenido) {
+                contenido.innerHTML = `❌ Error: ${error}`;
+            }
         }
     }
 
@@ -442,13 +442,18 @@ class ChatSystem {
         const terminoLower = termino.toLowerCase();
         
         items.forEach(item => {
-            const nombre = item.querySelector('.conversacion-nombre').textContent.toLowerCase();
-            const mensaje = item.querySelector('.conversacion-ultimo-mensaje').textContent.toLowerCase();
+            const nombre = item.querySelector('.conversacion-nombre');
+            const mensaje = item.querySelector('.conversacion-ultimo-mensaje');
             
-            if (nombre.includes(terminoLower) || mensaje.includes(terminoLower)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
+            if (nombre && mensaje) {
+                const nombreText = nombre.textContent.toLowerCase();
+                const mensajeText = mensaje.textContent.toLowerCase();
+                
+                if (nombreText.includes(terminoLower) || mensajeText.includes(terminoLower)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
             }
         });
     }
@@ -458,14 +463,9 @@ class ChatSystem {
      */
     scrollToBottom() {
         const container = document.getElementById('mensajes-container');
-        container.scrollTop = container.scrollHeight;
-    }
-
-    /**
-     * Cargar más mensajes (scroll infinito)
-     */
-    async cargarMasMensajes() {
-        // Implementar scroll infinito si es necesario
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
 
     /**
@@ -518,7 +518,6 @@ class ChatSystem {
      * Mostrar error
      */
     mostrarError(mensaje) {
-        // Usar SweetAlert2 si está disponible, sino alert
         if (typeof Swal !== 'undefined') {
             Swal.fire({
                 icon: 'error',
@@ -563,14 +562,16 @@ async function cargarUsuariosDisponibles() {
         
         if (data.success) {
             const select = document.getElementById('participantes');
-            select.innerHTML = '';
-            
-            data.data.forEach(usuario => {
-                const option = document.createElement('option');
-                option.value = usuario.Id_PvUser;
-                option.textContent = `${usuario.Nombre_Apellidos} (${usuario.TipoUsuario})`;
-                select.appendChild(option);
-            });
+            if (select) {
+                select.innerHTML = '';
+                
+                data.data.forEach(usuario => {
+                    const option = document.createElement('option');
+                    option.value = usuario.Id_PvUser;
+                    option.textContent = `${usuario.Nombre_Apellidos} (${usuario.TipoUsuario})`;
+                    select.appendChild(option);
+                });
+            }
         }
     } catch (error) {
         console.error('Error al cargar usuarios:', error);
@@ -592,10 +593,15 @@ async function cargarConfiguracionActual() {
         
         if (data.success) {
             const config = data.data;
-            document.getElementById('notificacionesSonido').checked = config.notificaciones_sonido || false;
-            document.getElementById('notificacionesPush').checked = config.notificaciones_push || false;
-            document.getElementById('temaOscuro').checked = config.tema_oscuro || false;
-            document.getElementById('mensajesPorPagina').value = config.mensajes_por_pagina || 50;
+            const notificacionesSonido = document.getElementById('notificacionesSonido');
+            const notificacionesPush = document.getElementById('notificacionesPush');
+            const temaOscuro = document.getElementById('temaOscuro');
+            const mensajesPorPagina = document.getElementById('mensajesPorPagina');
+            
+            if (notificacionesSonido) notificacionesSonido.checked = config.notificaciones_sonido || false;
+            if (notificacionesPush) notificacionesPush.checked = config.notificaciones_push || false;
+            if (temaOscuro) temaOscuro.checked = config.tema_oscuro || false;
+            if (mensajesPorPagina) mensajesPorPagina.value = config.mensajes_por_pagina || 50;
         }
     } catch (error) {
         console.error('Error al cargar configuración:', error);
@@ -603,20 +609,28 @@ async function cargarConfiguracionActual() {
 }
 
 function abrirSelectorArchivos() {
-    document.getElementById('input-archivo').click();
+    const input = document.getElementById('input-archivo');
+    if (input) {
+        input.click();
+    }
 }
 
 function mostrarEmojis() {
-    // Implementar selector de emojis
     console.log('Mostrar emojis');
 }
 
 async function crearConversacion() {
-    const nombre = document.getElementById('nombreConversacion').value;
-    const tipo = document.getElementById('tipoConversacion').value;
-    const participantes = Array.from(document.getElementById('participantes').selectedOptions).map(option => option.value);
+    const nombre = document.getElementById('nombreConversacion');
+    const tipo = document.getElementById('tipoConversacion');
+    const participantes = document.getElementById('participantes');
     
-    if (!nombre.trim()) {
+    if (!nombre || !tipo || !participantes) return;
+    
+    const nombreValue = nombre.value;
+    const tipoValue = tipo.value;
+    const participantesValue = Array.from(participantes.selectedOptions).map(option => option.value);
+    
+    if (!nombreValue.trim()) {
         alert('Por favor ingresa un nombre para la conversación');
         return;
     }
@@ -628,9 +642,9 @@ async function crearConversacion() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                nombre: nombre,
-                tipo_conversacion: tipo,
-                participantes: participantes
+                nombre: nombreValue,
+                tipo_conversacion: tipoValue,
+                participantes: participantesValue
             })
         });
         
@@ -639,10 +653,11 @@ async function crearConversacion() {
         if (data.success) {
             // Cerrar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('modalNuevaConversacion'));
-            modal.hide();
+            if (modal) modal.hide();
             
             // Limpiar formulario
-            document.getElementById('formNuevaConversacion').reset();
+            const form = document.getElementById('formNuevaConversacion');
+            if (form) form.reset();
             
             // Recargar conversaciones
             if (window.chatSystem) {
@@ -660,11 +675,18 @@ async function crearConversacion() {
 }
 
 async function guardarConfiguracion() {
+    const notificacionesSonido = document.getElementById('notificacionesSonido');
+    const notificacionesPush = document.getElementById('notificacionesPush');
+    const temaOscuro = document.getElementById('temaOscuro');
+    const mensajesPorPagina = document.getElementById('mensajesPorPagina');
+    
+    if (!notificacionesSonido || !notificacionesPush || !temaOscuro || !mensajesPorPagina) return;
+    
     const config = {
-        notificaciones_sonido: document.getElementById('notificacionesSonido').checked,
-        notificaciones_push: document.getElementById('notificacionesPush').checked,
-        tema_oscuro: document.getElementById('temaOscuro').checked,
-        mensajes_por_pagina: parseInt(document.getElementById('mensajesPorPagina').value)
+        notificaciones_sonido: notificacionesSonido.checked,
+        notificaciones_push: notificacionesPush.checked,
+        tema_oscuro: temaOscuro.checked,
+        mensajes_por_pagina: parseInt(mensajesPorPagina.value)
     };
     
     try {
@@ -683,7 +705,7 @@ async function guardarConfiguracion() {
         if (data.success) {
             // Cerrar modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfiguracion'));
-            modal.hide();
+            if (modal) modal.hide();
             
             // Aplicar configuración
             if (window.chatSystem) {
