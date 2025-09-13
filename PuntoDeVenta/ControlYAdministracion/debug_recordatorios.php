@@ -8,18 +8,37 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
     exit();
 }
 
-// Incluir controlador de usuario
-include_once "Controladores/ControladorUsuario.php";
-
 echo "<h1>Debug de Tablas de Recordatorios</h1>";
+
+// Incluir conexión directamente
+include_once "Consultas/db_connect.php";
 
 // Verificar conexión
 if (!isset($con) || !$con) {
     echo "<p style='color: red;'>Error: No hay conexión a la base de datos</p>";
-    exit();
+    echo "<p>Variable \$con: " . (isset($con) ? "definida" : "NO definida") . "</p>";
+    echo "<p>Tipo de \$con: " . (isset($con) ? gettype($con) : "N/A") . "</p>";
+    
+    // Intentar crear conexión manualmente
+    echo "<h2>Intentando conexión manual...</h2>";
+    try {
+        $manual_con = new mysqli("localhost", "u858848268_devpezer0", "DoctorPez2024!", "u858848268_doctorpez");
+        if ($manual_con->connect_error) {
+            echo "<p style='color: red;'>Error de conexión manual: " . $manual_con->connect_error . "</p>";
+        } else {
+            echo "<p style='color: green;'>Conexión manual: OK</p>";
+            $con = $manual_con;
+        }
+    } catch (Exception $e) {
+        echo "<p style='color: red;'>Excepción en conexión manual: " . $e->getMessage() . "</p>";
+    }
+    
+    if (!isset($con) || !$con) {
+        exit();
+    }
+} else {
+    echo "<p style='color: green;'>Conexión a base de datos: OK</p>";
 }
-
-echo "<p style='color: green;'>Conexión a base de datos: OK</p>";
 
 // Verificar tablas con diferentes métodos
 $tablas_requeridas = [

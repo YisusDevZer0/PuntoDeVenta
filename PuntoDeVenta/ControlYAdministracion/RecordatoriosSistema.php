@@ -15,6 +15,11 @@ $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] :
 // Incluir controlador de usuario
 include_once "Controladores/ControladorUsuario.php";
 
+// Incluir conexión directamente si no existe
+if (!isset($con) || !$con) {
+    include_once "Consultas/db_connect.php";
+}
+
 $sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;
 $disabledAttr = '';
 $currentPage = 'recordatorios';
