@@ -154,6 +154,12 @@ function cargarEstadisticas() {
             var stats = JSON.parse(data);
             console.log('Estadísticas parseadas:', stats);
             
+            // Verificar si hay error en la respuesta
+            if (stats.error) {
+                console.error('Error del servidor:', stats.message);
+                alert('Error al cargar estadísticas: ' + stats.message);
+            }
+            
             $('#totalPersonal').text(stats.totalPersonal || 0);
             $('#totalAdministrativos').text(stats.totalAdministrativos || 0);
             $('#totalSucursales').text(stats.totalSucursales || 0);

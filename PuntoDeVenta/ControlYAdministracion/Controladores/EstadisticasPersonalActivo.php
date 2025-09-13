@@ -1,15 +1,34 @@
 <?php
 header('Content-Type: application/json');
-include("db_connect.php");
-include "ControladorUsuario.php";
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Obtener parámetros de filtro
-$tipo = isset($_POST['tipo']) ? $_POST['tipo'] : '';
-$sucursal = isset($_POST['sucursal']) ? $_POST['sucursal'] : '';
-$estado = isset($_POST['estado']) ? $_POST['estado'] : '';
+// Verificar si es una petición OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
-// Consulta para obtener estadísticas del personal
-$stats = array();
+// Inicializar array de estadísticas con valores por defecto
+$stats = array(
+    'totalPersonal' => 0,
+    'totalAdministrativos' => 0,
+    'totalSucursales' => 0,
+    'personalReciente' => 0
+);
+
+try {
+    include("db_connect.php");
+    include "ControladorUsuario.php";
+
+    // Obtener parámetros de filtro
+    $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : '';
+    $sucursal = isset($_POST['sucursal']) ? $_POST['sucursal'] : '';
+    $estado = isset($_POST['estado']) ? $_POST['estado'] : '';
+
+    // Log para depuración
+    error_log("Estadísticas solicitadas - Tipo: $tipo, Sucursal: $sucursal, Estado: $estado");
 
 // Construir condiciones WHERE base
 $where_conditions = "WHERE u.Estatus = 'Activo'";
@@ -97,8 +116,20 @@ if ($result_reciente && $row = $result_reciente->fetch_assoc()) {
     error_log("Error en consulta personal reciente: " . $conn->error);
 }
 
-// Log para depuración
-error_log("Estadísticas calculadas: " . json_encode($stats));
+    // Log para depuración
+    error_log("Estadísticas calculadas: " . json_encode($stats));
+
+} catch (Exception $e) {
+    error_log("Error en EstadisticasPersonalActivo.php: " . $e->getMessage());
+    $stats = array(
+        'error' => true,
+        'message' => 'Error al cargar estadísticas: ' . $e->getMessage(),
+        'totalPersonal' => 0,
+        'totalAdministrativos' => 0,
+        'totalSucursales' => 0,
+        'personalReciente' => 0
+    );
+}
 
 echo json_encode($stats);
 ?> 
