@@ -184,8 +184,8 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="AjusteInsumos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Insumos </a>
                     <a href="ReportesCedisInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
                     <a href="ReportesInventarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
-                    <a href="ConteosPausados" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
-                    <a href="ConteosDiarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-square-poll-vertical"></i>Reportes inventarios </a>
+                    <a href="ConteosPausados" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-pause-circle"></i>Conteos Pausados </a>
+                    <a href="ConteosDiarios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-day"></i>Conteos Diarios </a>
                 </div>
             </div>
             
