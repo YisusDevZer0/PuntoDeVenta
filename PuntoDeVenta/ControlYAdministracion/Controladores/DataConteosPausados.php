@@ -69,30 +69,30 @@ if (!empty($fechaHasta)) {
 
 $sql .= " ORDER BY cd.AgregadoEl ASC LIMIT ? OFFSET ?";
 
-// Primero obtener el total de registros para la paginación
-$sqlCount = str_replace("SELECT 
-    cd.Folio_Ingreso,
-    cd.Cod_Barra,
-    cd.Nombre_Producto,
-    cd.Fk_sucursal,
-    s.Nombre_Sucursal,
-    cd.Existencias_R,
-    cd.ExistenciaFisica,
-    cd.AgregadoPor,
-    cd.AgregadoEl,
-    cd.EnPausa,
-    TIMESTAMPDIFF(HOUR, cd.AgregadoEl, NOW()) as HorasPausado,
-    CASE 
-        WHEN TIMESTAMPDIFF(HOUR, cd.AgregadoEl, NOW()) > 24 THEN 'danger'
-        WHEN TIMESTAMPDIFF(HOUR, cd.AgregadoEl, NOW()) > 12 THEN 'warning'
-        ELSE 'info'
-    END as PrioridadClass,
-    CASE 
-        WHEN TIMESTAMPDIFF(HOUR, cd.AgregadoEl, NOW()) > 24 THEN 'Alta'
-        WHEN TIMESTAMPDIFF(HOUR, cd.AgregadoEl, NOW()) > 12 THEN 'Media'
-        ELSE 'Baja'
-    END as Prioridad", "SELECT COUNT(*) as total", $sql);
+// Consulta de conteo
+$sqlCount = "SELECT COUNT(*) as total
+FROM ConteosDiarios cd
+LEFT JOIN Sucursales s ON cd.Fk_sucursal = s.ID_Sucursal
+WHERE cd.EnPausa = 1";
 
+// Aplicar los mismos filtros a la consulta de conteo
+if (!empty($filtroSucursal)) {
+    $sqlCount .= " AND cd.Fk_sucursal = ?";
+}
+
+if (!empty($filtroUsuario)) {
+    $sqlCount .= " AND cd.AgregadoPor = ?";
+}
+
+if (!empty($fechaDesde)) {
+    $sqlCount .= " AND DATE(cd.AgregadoEl) >= ?";
+}
+
+if (!empty($fechaHasta)) {
+    $sqlCount .= " AND DATE(cd.AgregadoEl) <= ?";
+}
+
+// Obtener total de registros
 $stmtCount = $conn->prepare($sqlCount);
 if ($stmtCount) {
     if (!empty($params)) {

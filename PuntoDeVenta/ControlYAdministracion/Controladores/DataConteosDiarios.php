@@ -89,46 +89,36 @@ if (!empty($fechaHasta)) {
 
 $sql .= " ORDER BY cd.AgregadoEl DESC LIMIT ? OFFSET ?";
 
-// Primero obtener el total de registros para la paginación
-$sqlCount = str_replace("SELECT 
-    cd.Folio_Ingreso,
-    cd.Cod_Barra,
-    cd.Nombre_Producto,
-    cd.Fk_sucursal,
-    s.Nombre_Sucursal,
-    cd.Existencias_R as ExistenciaConteo,
-    cd.ExistenciaFisica,
-    cd.AgregadoPor,
-    cd.AgregadoEl,
-    cd.EnPausa,
-    COALESCE(sp.Existencias_R, 0) as StockRealSistema,
-    COALESCE(iss.StockEnMomento, 0) as StockInventarioSucursal,
-    CASE 
-        WHEN cd.EnPausa = 1 THEN 'En Pausa'
-        WHEN cd.ExistenciaFisica IS NULL THEN 'Pendiente'
-        ELSE 'Completado'
-    END as Estado,
-    CASE 
-        WHEN cd.ExistenciaFisica IS NOT NULL AND COALESCE(sp.Existencias_R, 0) > 0 THEN 
-            ROUND(((cd.ExistenciaFisica - COALESCE(sp.Existencias_R, 0)) / COALESCE(sp.Existencias_R, 0)) * 100, 2)
-        ELSE NULL
-    END as DiferenciaPorcentajeSistema,
-    CASE 
-        WHEN cd.ExistenciaFisica IS NOT NULL AND COALESCE(iss.StockEnMomento, 0) > 0 THEN 
-            ROUND(((cd.ExistenciaFisica - COALESCE(iss.StockEnMomento, 0)) / COALESCE(iss.StockEnMomento, 0)) * 100, 2)
-        ELSE NULL
-    END as DiferenciaPorcentajeInventario,
-    CASE 
-        WHEN cd.ExistenciaFisica IS NOT NULL THEN 
-            (cd.ExistenciaFisica - COALESCE(sp.Existencias_R, 0))
-        ELSE NULL
-    END as DiferenciaUnidadesSistema,
-    CASE 
-        WHEN cd.ExistenciaFisica IS NOT NULL THEN 
-            (cd.ExistenciaFisica - COALESCE(iss.StockEnMomento, 0))
-        ELSE NULL
-    END as DiferenciaUnidadesInventario", "SELECT COUNT(*) as total", $sql);
+// Consulta de conteo
+$sqlCount = "SELECT COUNT(*) as total
+FROM ConteosDiarios cd
+LEFT JOIN Sucursales s ON cd.Fk_sucursal = s.ID_Sucursal
+LEFT JOIN Stock_POS sp ON cd.Cod_Barra = sp.Cod_Barra AND cd.Fk_sucursal = sp.Fk_sucursal
+LEFT JOIN InventariosSucursales iss ON cd.Cod_Barra = iss.Cod_Barra AND cd.Fk_sucursal = iss.Fk_Sucursal
+WHERE 1=1";
 
+// Aplicar los mismos filtros a la consulta de conteo
+if (!empty($filtroSucursal)) {
+    $sqlCount .= " AND cd.Fk_sucursal = ?";
+}
+
+if ($filtroEstado !== '') {
+    if ($filtroEstado == '0') {
+        $sqlCount .= " AND cd.EnPausa = 0 AND cd.ExistenciaFisica IS NOT NULL";
+    } elseif ($filtroEstado == '1') {
+        $sqlCount .= " AND cd.EnPausa = 1";
+    }
+}
+
+if (!empty($fechaDesde)) {
+    $sqlCount .= " AND DATE(cd.AgregadoEl) >= ?";
+}
+
+if (!empty($fechaHasta)) {
+    $sqlCount .= " AND DATE(cd.AgregadoEl) <= ?";
+}
+
+// Obtener total de registros
 $stmtCount = $conn->prepare($sqlCount);
 if ($stmtCount) {
     if (!empty($params)) {
