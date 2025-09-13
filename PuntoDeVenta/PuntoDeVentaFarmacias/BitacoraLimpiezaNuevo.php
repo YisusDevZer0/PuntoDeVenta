@@ -46,9 +46,6 @@ $bitacoras = $controller->obtenerBitacoras();
                         <button type="button" class="btn btn-info" id="btnVerBitacoras">
                             <i class="fas fa-list"></i> Ver Bitácoras
                         </button>
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosLimpieza">
-                            <i class="fas fa-bell"></i> Recordatorios
-                        </button>
                     </div>
 
                     <!-- Selector de bitácora -->
@@ -143,7 +140,6 @@ $bitacoras = $controller->obtenerBitacoras();
         <?php 
         include "Modales/NuevaBitacora.php";
         include "Modales/AgregarElemento.php";
-        include "Modales/RecordatoriosLimpieza.php";
         include "Footer.php";
         ?>
     </div>
@@ -449,184 +445,6 @@ $bitacoras = $controller->obtenerBitacoras();
                     });
                 }
             });
-        });
-
-        // Funcionalidad de recordatorios
-        $('#btnGuardarRecordatorio').click(function() {
-            const formData = {
-                titulo: $('#titulo_recordatorio').val(),
-                descripcion: $('#descripcion_recordatorio').val(),
-                fecha_recordatorio: $('#fecha_recordatorio').val(),
-                prioridad: $('#prioridad_recordatorio').val(),
-                id_usuario: 1 // Se puede obtener de la sesión
-            };
-
-            if (!formData.titulo.trim() || !formData.descripcion.trim() || !formData.fecha_recordatorio) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Advertencia',
-                    text: 'Todos los campos son requeridos'
-                });
-                return;
-            }
-
-            $.ajax({
-                url: 'api/crear_recordatorio.php',
-                method: 'POST',
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: response.message
-                        }).then(() => {
-                            $('#formRecordatorio')[0].reset();
-                            cargarRecordatorios();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message
-                        });
-                    }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error de conexión'
-                    });
-                }
-            });
-        });
-
-        // Cargar recordatorios
-        function cargarRecordatorios() {
-            $.ajax({
-                url: 'api/obtener_recordatorios.php',
-                method: 'POST',
-                data: { estado: 'activo' },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        mostrarRecordatorios(response.data);
-                    }
-                },
-                error: function() {
-                    console.error('Error al cargar recordatorios');
-                }
-            });
-        }
-
-        // Mostrar recordatorios
-        function mostrarRecordatorios(recordatorios) {
-            const container = $('#lista-recordatorios');
-            container.empty();
-
-            if (recordatorios.length === 0) {
-                container.append('<p class="text-muted">No hay recordatorios activos</p>');
-                return;
-            }
-
-            recordatorios.forEach(function(recordatorio) {
-                const prioridadClass = {
-                    'baja': 'text-success',
-                    'media': 'text-warning',
-                    'alta': 'text-danger'
-                };
-
-                const recordatorioHtml = `
-                    <div class="card mb-2">
-                        <div class="card-body p-2">
-                            <h6 class="card-title ${prioridadClass[recordatorio.prioridad]}">${recordatorio.titulo}</h6>
-                            <p class="card-text small">${recordatorio.descripcion}</p>
-                            <small class="text-muted">
-                                <i class="fas fa-clock"></i> ${new Date(recordatorio.fecha_recordatorio).toLocaleString()}
-                            </small>
-                            <div class="mt-2">
-                                <button class="btn btn-sm btn-success btn-completar-recordatorio" data-id="${recordatorio.id_recordatorio}">
-                                    <i class="fas fa-check"></i> Completar
-                                </button>
-                                <button class="btn btn-sm btn-danger btn-cancelar-recordatorio" data-id="${recordatorio.id_recordatorio}">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.append(recordatorioHtml);
-            });
-        }
-
-        // Completar recordatorio
-        $(document).on('click', '.btn-completar-recordatorio', function() {
-            const idRecordatorio = $(this).data('id');
-            
-            $.ajax({
-                url: 'api/actualizar_recordatorio.php',
-                method: 'POST',
-                data: {
-                    id_recordatorio: idRecordatorio,
-                    estado: 'completado'
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Completado',
-                            text: 'Recordatorio marcado como completado'
-                        });
-                        cargarRecordatorios();
-                    }
-                }
-            });
-        });
-
-        // Cancelar recordatorio
-        $(document).on('click', '.btn-cancelar-recordatorio', function() {
-            const idRecordatorio = $(this).data('id');
-            
-            Swal.fire({
-                title: '¿Cancelar recordatorio?',
-                text: "Esta acción marcará el recordatorio como cancelado",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, cancelar',
-                cancelButtonText: 'No'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: 'api/actualizar_recordatorio.php',
-                        method: 'POST',
-                        data: {
-                            id_recordatorio: idRecordatorio,
-                            estado: 'cancelado'
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Cancelado',
-                                    text: 'Recordatorio cancelado'
-                                });
-                                cargarRecordatorios();
-                            }
-                        }
-                    });
-                }
-            });
-        });
-
-        // Cargar recordatorios al abrir el modal
-        $('#ModalRecordatoriosLimpieza').on('show.bs.modal', function() {
-            cargarRecordatorios();
         });
     });
     </script>
