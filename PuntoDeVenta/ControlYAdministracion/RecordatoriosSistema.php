@@ -45,9 +45,23 @@ try {
         
         // Si al menos la tabla principal existe, consideramos que está instalado
         $tablas_existen = in_array('recordatorios_sistema', $tablas_creadas);
+        
+        // Debug: mostrar información adicional
+        if (!$tablas_existen) {
+            // Intentar verificar con información del esquema
+            $schema_check = $con->query("SELECT COUNT(*) as count FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'recordatorios_sistema'");
+            if ($schema_check) {
+                $schema_result = $schema_check->fetch_assoc();
+                if ($schema_result['count'] > 0) {
+                    $tablas_existen = true;
+                    $tablas_creadas[] = 'recordatorios_sistema (detectado por schema)';
+                }
+            }
+        }
     }
 } catch (Exception $e) {
     $tablas_existen = false;
+    error_log("Error verificando tablas: " . $e->getMessage());
 }
 
 // Obtener sucursales
