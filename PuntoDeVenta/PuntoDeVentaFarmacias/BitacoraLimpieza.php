@@ -14,25 +14,25 @@ $bitacoras = $controller->obtenerBitacoras();
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
     <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
+  <div class="loader"></div>
+  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+</div>
     <?php include "header.php";?>
 </head>
 <body>
-    <!-- Spinner End -->
-    <?php include_once "Menu.php" ?>
+        <!-- Spinner End -->
+        <?php include_once "Menu.php" ?>
 
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
         <?php include "navbar.php";?>
-        <!-- Navbar End -->
+            <!-- Navbar End -->
 
-        <!-- Table Start -->
-        <div class="container-fluid pt-4 px-8">
-            <div class="col-12">
-                <div class="bg-light rounded h-100 p-4">
+            <!-- Table Start -->
+            <div class="container-fluid pt-4 px-8">
+    <div class="col-12">
+        <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4" style="color:#0172b6;">Bitácora y control de limpieza de <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
                     
                     <!-- Botones de acción -->
@@ -108,9 +108,9 @@ $bitacoras = $controller->obtenerBitacoras();
                                     <th>Responsable</th>
                                     <th>Supervisor</th>
                                     <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+            </tr>
+        </thead>
+        <tbody>
                                 <?php foreach($bitacoras as $bitacora): ?>
                                 <tr>
                                     <td><?php echo $bitacora['id_bitacora']; ?></td>
@@ -131,14 +131,14 @@ $bitacoras = $controller->obtenerBitacoras();
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
-                                </tr>
+            </tr>
                                 <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+        </tbody>
+    </table>
                 </div>
             </div>
         </div>
+    </div>
         <!-- Footer Start -->
         <?php 
         include "Modales/NuevaBitacora.php";
@@ -146,10 +146,10 @@ $bitacoras = $controller->obtenerBitacoras();
         include "Modales/RecordatoriosLimpieza.php";
         include "Footer.php";
         ?>
-    </div>
+</div>
 
-    <script>
-    $(document).ready(function() {
+<script>
+   $(document).ready(function() {
         // Inicializar DataTable para bitácoras
         $('#tablaBitacoras').DataTable({
             "paging": true,
@@ -555,7 +555,7 @@ $bitacoras = $controller->obtenerBitacoras();
                                 </button>
                             </div>
                         </div>
-                    </div>
+       </div>
                 `;
                 container.append(recordatorioHtml);
             });
