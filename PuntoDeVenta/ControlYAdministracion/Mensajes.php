@@ -12,6 +12,10 @@ if (!isset($row)) {
     include_once "Controladores/ControladorUsuario.php";
 }
 
+// Obtener ID del usuario actual
+$usuarioId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : 
+            (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+
 // Definir variable para atributos disabled
 $disabledAttr = '';
 
@@ -310,9 +314,78 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
     <!-- Chat JavaScript -->
     <script>
         // Variables globales para el chat
-        window.usuarioId = <?php echo $usuario_id; ?>;
+        window.usuarioId = <?php echo $usuarioId; ?>;
         window.nombreUsuario = '<?php echo addslashes($row['Nombre_Apellidos']); ?>';
         window.sucursalId = <?php echo $row['Fk_Sucursal']; ?>;
+        
+        // Funciones globales para los modales
+        function crearNuevaConversacion() {
+            const modal = new bootstrap.Modal(document.getElementById('modalNuevaConversacion'));
+            modal.show();
+        }
+        
+        function abrirConfiguracion() {
+            const modal = new bootstrap.Modal(document.getElementById('modalConfiguracion'));
+            modal.show();
+        }
+        
+        function abrirSelectorArchivos() {
+            document.getElementById('input-archivo').click();
+        }
+        
+        function mostrarEmojis() {
+            // Implementar selector de emojis
+            console.log('Mostrar emojis');
+        }
+        
+        function crearConversacion() {
+            const nombre = document.getElementById('nombreConversacion').value;
+            const tipo = document.getElementById('tipoConversacion').value;
+            const participantes = Array.from(document.getElementById('participantes').selectedOptions).map(option => option.value);
+            
+            if (!nombre.trim()) {
+                alert('Por favor ingresa un nombre para la conversación');
+                return;
+            }
+            
+            // Aquí se enviaría la petición para crear la conversación
+            console.log('Crear conversación:', { nombre, tipo, participantes });
+            alert('Función de crear conversación en desarrollo');
+        }
+        
+        function guardarConfiguracion() {
+            const config = {
+                notificaciones_sonido: document.getElementById('notificacionesSonido').checked,
+                notificaciones_push: document.getElementById('notificacionesPush').checked,
+                tema_oscuro: document.getElementById('temaOscuro').checked,
+                mensajes_por_pagina: document.getElementById('mensajesPorPagina').value
+            };
+            
+            console.log('Guardar configuración:', config);
+            alert('Función de guardar configuración en desarrollo');
+        }
+        
+        function verInfoConversacion() {
+            alert('Información de la conversación');
+        }
+        
+        function agregarParticipantes() {
+            alert('Agregar participantes');
+        }
+        
+        function exportarConversacion() {
+            alert('Exportar conversación');
+        }
+        
+        function abandonarConversacion() {
+            if (confirm('¿Estás seguro de que quieres abandonar esta conversación?')) {
+                alert('Abandonar conversación');
+            }
+        }
+        
+        function exportarConversaciones() {
+            alert('Exportar conversaciones');
+        }
     </script>
     <script src="js/chat.js"></script>
 </body>

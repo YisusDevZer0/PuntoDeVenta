@@ -66,9 +66,10 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
                     <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
                     <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-comments"></i>Mensajes</a>
-                    <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-business-time"></i>Crear recordatorios</a>
                 </div>
             </div>
+            
+            <a href="RecordatoriosSistema" class="nav-item nav-link"><i class="fa-solid fa-bell"></i>Recordatorios</a>
             
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>

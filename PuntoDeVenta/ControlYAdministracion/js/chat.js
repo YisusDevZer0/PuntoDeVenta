@@ -688,25 +688,7 @@ class ChatSystem {
     }
 }
 
-// Funciones globales para los modales
-function crearNuevaConversacion() {
-    const modal = new bootstrap.Modal(document.getElementById('modalNuevaConversacion'));
-    modal.show();
-}
-
-function abrirConfiguracion() {
-    const modal = new bootstrap.Modal(document.getElementById('modalConfiguracion'));
-    modal.show();
-}
-
-function abrirSelectorArchivos() {
-    document.getElementById('input-archivo').click();
-}
-
-function mostrarEmojis() {
-    // Implementar selector de emojis
-    console.log('Mostrar emojis');
-}
+// Las funciones globales están definidas en Mensajes.php
 
 // Inicializar el sistema de chat cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {
