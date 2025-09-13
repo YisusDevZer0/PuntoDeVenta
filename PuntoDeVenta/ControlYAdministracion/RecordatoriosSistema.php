@@ -18,6 +18,14 @@ include_once "Controladores/ControladorUsuario.php";
 // Incluir conexión directamente si no existe
 if (!isset($con) || !$con) {
     include_once "Controladores/db_connect.php";
+    
+    // Si aún no hay conexión, crear una manualmente
+    if (!isset($con) || !$con) {
+        $con = new mysqli("localhost", "u858848268_devpezer0", "F9+nIIOuCh8yI6wu4!08", "u858848268_doctorpez");
+        if ($con->connect_error) {
+            die("Error de conexión: " . $con->connect_error);
+        }
+    }
 }
 
 $sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;
