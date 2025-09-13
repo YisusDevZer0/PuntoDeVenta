@@ -1,9 +1,17 @@
-function CargarConteosDiarios() {
+// Variables globales para paginación
+let paginaActual = 1;
+let registrosPorPagina = 10;
+
+function CargarConteosDiarios(pagina = 1) {
+    paginaActual = pagina;
+    
     const filtros = {
         sucursal: $('#filtroSucursal').val(),
         estado: $('#filtroEstado').val(),
         fechaDesde: $('#fechaDesde').val(),
-        fechaHasta: $('#fechaHasta').val()
+        fechaHasta: $('#fechaHasta').val(),
+        pagina: paginaActual,
+        registros: registrosPorPagina
     };
 
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataConteosDiarios.php", 
@@ -77,7 +85,31 @@ function LimpiarFiltros() {
     $('#filtroEstado').val('');
     $('#fechaDesde').val('');
     $('#fechaHasta').val(new Date().toISOString().split('T')[0]);
+    paginaActual = 1;
     CargarConteosDiarios();
+}
+
+// Funciones de paginación
+function CambiarPagina(pagina) {
+    CargarConteosDiarios(pagina);
+}
+
+function CambiarRegistrosPorPagina(registros) {
+    registrosPorPagina = parseInt(registros);
+    paginaActual = 1;
+    CargarConteosDiarios();
+}
+
+// Función para ir a la primera página
+function PrimeraPagina() {
+    CargarConteosDiarios(1);
+}
+
+// Función para ir a la última página
+function UltimaPagina() {
+    // Esta función se actualizará dinámicamente cuando se carguen los datos
+    const ultimaPagina = parseInt($('#totalPaginas').text()) || 1;
+    CargarConteosDiarios(ultimaPagina);
 }
 
 // Función para mostrar estadísticas

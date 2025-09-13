@@ -1,15 +1,25 @@
-function CargarConteosPausados() {
+// Variables globales para paginación
+let paginaActualPausados = 1;
+let registrosPorPaginaPausados = 10;
+
+function CargarConteosPausados(pagina = 1) {
+    paginaActualPausados = pagina;
+    
     const filtros = {
         sucursal: $('#filtroSucursal').val(),
         usuario: $('#filtroUsuario').val(),
         fechaDesde: $('#fechaDesde').val(),
-        fechaHasta: $('#fechaHasta').val()
+        fechaHasta: $('#fechaHasta').val(),
+        pagina: paginaActualPausados,
+        registros: registrosPorPaginaPausados
     };
 
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataConteosPausados.php", 
         filtros, 
         function(data) {
             $("#DataConteosPausados").html(data);
+            // Cargar estadísticas después de cargar los datos
+            CargarEstadisticas();
         })
         .fail(function() {
             $("#DataConteosPausados").html('<div class="alert alert-danger">Error al cargar los datos de conteos pausados</div>');
@@ -111,8 +121,20 @@ function LimpiarFiltros() {
     $('#filtroUsuario').val('');
     $('#fechaDesde').val('');
     $('#fechaHasta').val(new Date().toISOString().split('T')[0]);
+    paginaActualPausados = 1;
     CargarConteosPausados();
     CargarEstadisticas();
+}
+
+// Funciones de paginación para conteos pausados
+function CambiarPaginaPausados(pagina) {
+    CargarConteosPausados(pagina);
+}
+
+function CambiarRegistrosPorPaginaPausados(registros) {
+    registrosPorPaginaPausados = parseInt(registros);
+    paginaActualPausados = 1;
+    CargarConteosPausados();
 }
 
 // Función para mostrar detalles de un conteo

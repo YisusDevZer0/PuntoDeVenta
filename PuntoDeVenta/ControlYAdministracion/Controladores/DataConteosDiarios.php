@@ -1,11 +1,16 @@
 <?php
 include_once "db_connect.php";
 
-// Obtener parámetros de filtro
+// Obtener parámetros de filtro y paginación
 $filtroSucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
 $filtroEstado = isset($_GET['estado']) ? $_GET['estado'] : '';
 $fechaDesde = isset($_GET['fechaDesde']) ? $_GET['fechaDesde'] : '';
 $fechaHasta = isset($_GET['fechaHasta']) ? $_GET['fechaHasta'] : '';
+
+// Parámetros de paginación
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$registrosPorPagina = isset($_GET['registros']) ? (int)$_GET['registros'] : 10;
+$offset = ($pagina - 1) * $registrosPorPagina;
 
 // Construir consulta base con comparación de stock real
 $sql = "SELECT 
@@ -82,11 +87,71 @@ if (!empty($fechaHasta)) {
     $types .= "s";
 }
 
-$sql .= " ORDER BY cd.AgregadoEl DESC";
+$sql .= " ORDER BY cd.AgregadoEl DESC LIMIT ? OFFSET ?";
 
-// Preparar y ejecutar consulta
+// Primero obtener el total de registros para la paginación
+$sqlCount = str_replace("SELECT 
+    cd.Folio_Ingreso,
+    cd.Cod_Barra,
+    cd.Nombre_Producto,
+    cd.Fk_sucursal,
+    s.Nombre_Sucursal,
+    cd.Existencias_R as ExistenciaConteo,
+    cd.ExistenciaFisica,
+    cd.AgregadoPor,
+    cd.AgregadoEl,
+    cd.EnPausa,
+    COALESCE(sp.Existencias_R, 0) as StockRealSistema,
+    COALESCE(iss.StockEnMomento, 0) as StockInventarioSucursal,
+    CASE 
+        WHEN cd.EnPausa = 1 THEN 'En Pausa'
+        WHEN cd.ExistenciaFisica IS NULL THEN 'Pendiente'
+        ELSE 'Completado'
+    END as Estado,
+    CASE 
+        WHEN cd.ExistenciaFisica IS NOT NULL AND COALESCE(sp.Existencias_R, 0) > 0 THEN 
+            ROUND(((cd.ExistenciaFisica - COALESCE(sp.Existencias_R, 0)) / COALESCE(sp.Existencias_R, 0)) * 100, 2)
+        ELSE NULL
+    END as DiferenciaPorcentajeSistema,
+    CASE 
+        WHEN cd.ExistenciaFisica IS NOT NULL AND COALESCE(iss.StockEnMomento, 0) > 0 THEN 
+            ROUND(((cd.ExistenciaFisica - COALESCE(iss.StockEnMomento, 0)) / COALESCE(iss.StockEnMomento, 0)) * 100, 2)
+        ELSE NULL
+    END as DiferenciaPorcentajeInventario,
+    CASE 
+        WHEN cd.ExistenciaFisica IS NOT NULL THEN 
+            (cd.ExistenciaFisica - COALESCE(sp.Existencias_R, 0))
+        ELSE NULL
+    END as DiferenciaUnidadesSistema,
+    CASE 
+        WHEN cd.ExistenciaFisica IS NOT NULL THEN 
+            (cd.ExistenciaFisica - COALESCE(iss.StockEnMomento, 0))
+        ELSE NULL
+    END as DiferenciaUnidadesInventario", "SELECT COUNT(*) as total", $sql);
+
+$stmtCount = $conn->prepare($sqlCount);
+if ($stmtCount) {
+    if (!empty($params)) {
+        $stmtCount->bind_param($types, ...$params);
+    }
+    $stmtCount->execute();
+    $resultCount = $stmtCount->get_result();
+    $totalRegistros = $resultCount->fetch_assoc()['total'];
+    $stmtCount->close();
+} else {
+    $totalRegistros = 0;
+}
+
+$totalPaginas = ceil($totalRegistros / $registrosPorPagina);
+
+// Preparar y ejecutar consulta principal
 $stmt = $conn->prepare($sql);
 if ($stmt) {
+    // Agregar parámetros de paginación
+    $params[] = $registrosPorPagina;
+    $params[] = $offset;
+    $types .= "ii";
+    
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
     }
@@ -216,6 +281,90 @@ if ($stmt) {
         echo '</tbody>';
         echo '</table>';
         echo '</div>';
+        
+        // Información de paginación
+        echo '<div class="row mt-3">';
+        echo '<div class="col-md-6">';
+        echo '<div class="d-flex align-items-center">';
+        echo '<span class="text-muted me-3">Mostrando ' . (($pagina - 1) * $registrosPorPagina + 1) . ' a ' . min($pagina * $registrosPorPagina, $totalRegistros) . ' de ' . $totalRegistros . ' registros</span>';
+        echo '<select class="form-select form-select-sm" style="width: auto;" onchange="CambiarRegistrosPorPagina(this.value)">';
+        echo '<option value="10" ' . ($registrosPorPagina == 10 ? 'selected' : '') . '>10 por página</option>';
+        echo '<option value="25" ' . ($registrosPorPagina == 25 ? 'selected' : '') . '>25 por página</option>';
+        echo '<option value="50" ' . ($registrosPorPagina == 50 ? 'selected' : '') . '>50 por página</option>';
+        echo '<option value="100" ' . ($registrosPorPagina == 100 ? 'selected' : '') . '>100 por página</option>';
+        echo '</select>';
+        echo '</div>';
+        echo '</div>';
+        
+        echo '<div class="col-md-6">';
+        echo '<nav aria-label="Paginación de conteos">';
+        echo '<ul class="pagination pagination-sm justify-content-end mb-0">';
+        
+        // Botón anterior
+        if ($pagina > 1) {
+            echo '<li class="page-item">';
+            echo '<a class="page-link" href="#" onclick="CambiarPagina(' . ($pagina - 1) . ')">';
+            echo '<i class="fa-solid fa-chevron-left"></i>';
+            echo '</a>';
+            echo '</li>';
+        } else {
+            echo '<li class="page-item disabled">';
+            echo '<span class="page-link"><i class="fa-solid fa-chevron-left"></i></span>';
+            echo '</li>';
+        }
+        
+        // Números de página
+        $inicio = max(1, $pagina - 2);
+        $fin = min($totalPaginas, $pagina + 2);
+        
+        if ($inicio > 1) {
+            echo '<li class="page-item">';
+            echo '<a class="page-link" href="#" onclick="CambiarPagina(1)">1</a>';
+            echo '</li>';
+            if ($inicio > 2) {
+                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+        }
+        
+        for ($i = $inicio; $i <= $fin; $i++) {
+            if ($i == $pagina) {
+                echo '<li class="page-item active">';
+                echo '<span class="page-link">' . $i . '</span>';
+                echo '</li>';
+            } else {
+                echo '<li class="page-item">';
+                echo '<a class="page-link" href="#" onclick="CambiarPagina(' . $i . ')">' . $i . '</a>';
+                echo '</li>';
+            }
+        }
+        
+        if ($fin < $totalPaginas) {
+            if ($fin < $totalPaginas - 1) {
+                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+            }
+            echo '<li class="page-item">';
+            echo '<a class="page-link" href="#" onclick="CambiarPagina(' . $totalPaginas . ')">' . $totalPaginas . '</a>';
+            echo '</li>';
+        }
+        
+        // Botón siguiente
+        if ($pagina < $totalPaginas) {
+            echo '<li class="page-item">';
+            echo '<a class="page-link" href="#" onclick="CambiarPagina(' . ($pagina + 1) . ')">';
+            echo '<i class="fa-solid fa-chevron-right"></i>';
+            echo '</a>';
+            echo '</li>';
+        } else {
+            echo '<li class="page-item disabled">';
+            echo '<span class="page-link"><i class="fa-solid fa-chevron-right"></i></span>';
+            echo '</li>';
+        }
+        
+        echo '</ul>';
+        echo '</nav>';
+        echo '</div>';
+        echo '</div>';
+        
     } else {
         echo '<div class="alert alert-info text-center">';
         echo '<i class="fa-solid fa-info-circle me-2"></i>';
