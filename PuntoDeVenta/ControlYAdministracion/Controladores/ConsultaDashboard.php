@@ -14,6 +14,11 @@ $ventasPorFormaPago = [];
 
 try {
     include_once("db_connect.php"); // Abrir la conexión una sola vez
+    
+    // Verificar conexión
+    if (!$conn) {
+        throw new Exception("Error de conexión a la base de datos");
+    }
 
     // Consulta para contar cajas abiertas
     $sqlCajas = "SELECT COUNT(*) AS CajasAbiertas FROM Cajas WHERE Estatus = 'Abierta' AND Sucursal != 4";
@@ -22,6 +27,8 @@ try {
     if ($resultCajas && $resultCajas->num_rows > 0) {
         $cajasData = $resultCajas->fetch_assoc();
         $CajasAbiertas = $cajasData['CajasAbiertas'] ?? 0;
+    } else {
+        error_log("Error en consulta de cajas: " . $conn->error);
     }
 
     // Consulta para calcular total de ventas del día
@@ -31,6 +38,8 @@ try {
     if ($resultVentas && $resultVentas->num_rows > 0) {
         $ventasData = $resultVentas->fetch_assoc();
         $formattedTotal = number_format($ventasData['Total_Venta'] ?? 0, 2, '.', ',');
+    } else {
+        error_log("Error en consulta de ventas del día: " . $conn->error);
     }
 
     // Consulta para ventas del mes
@@ -40,15 +49,19 @@ try {
     if ($resultVentasMes && $resultVentasMes->num_rows > 0) {
         $ventasMesData = $resultVentasMes->fetch_assoc();
         $ventasMes = number_format($ventasMesData['Total_Venta_Mes'] ?? 0, 2, '.', ',');
+    } else {
+        error_log("Error en consulta de ventas del mes: " . $conn->error);
     }
 
     // Consulta para productos con bajo stock
-    $sqlBajoStock = "SELECT COUNT(*) AS ProductosBajoStock FROM Productos_POS WHERE Stock_Minimo >= Stock_Actual";
+    $sqlBajoStock = "SELECT COUNT(*) AS ProductosBajoStock FROM Stock_POS WHERE Min_Existencia >= Existencias_R AND Existencias_R > 0";
     $resultBajoStock = $conn->query($sqlBajoStock);
     
     if ($resultBajoStock && $resultBajoStock->num_rows > 0) {
         $bajoStockData = $resultBajoStock->fetch_assoc();
         $productosBajoStock = $bajoStockData['ProductosBajoStock'] ?? 0;
+    } else {
+        error_log("Error en consulta de bajo stock: " . $conn->error);
     }
 
     // Consulta para traspasos pendientes
@@ -58,6 +71,8 @@ try {
     if ($resultTraspasos && $resultTraspasos->num_rows > 0) {
         $traspasosData = $resultTraspasos->fetch_assoc();
         $traspasosPendientes = $traspasosData['TraspasosPendientes'] ?? 0;
+    } else {
+        error_log("Error en consulta de traspasos: " . $conn->error);
     }
 
     // Consulta para productos más vendidos del mes
@@ -66,6 +81,7 @@ try {
                        WHERE MONTH(v.Fecha_venta) = MONTH(CURDATE()) 
                        AND YEAR(v.Fecha_venta) = YEAR(CURDATE())
                        AND v.Estatus = 'Pagado'
+                       AND v.Cantidad_Venta > 0
                        GROUP BY v.ID_Prod_POS, v.Nombre_Prod 
                        ORDER BY Total_Vendido DESC 
                        LIMIT 5";
@@ -75,6 +91,8 @@ try {
         while ($row = $resultMasVendidos->fetch_assoc()) {
             $productosMasVendidos[] = $row;
         }
+    } else {
+        error_log("Error en consulta de productos más vendidos: " . $conn->error);
     }
 
     // Consulta para productos menos vendidos del mes
@@ -83,6 +101,7 @@ try {
                          WHERE MONTH(v.Fecha_venta) = MONTH(CURDATE()) 
                          AND YEAR(v.Fecha_venta) = YEAR(CURDATE())
                          AND v.Estatus = 'Pagado'
+                         AND v.Cantidad_Venta > 0
                          GROUP BY v.ID_Prod_POS, v.Nombre_Prod 
                          ORDER BY Total_Vendido ASC 
                          LIMIT 5";
@@ -92,14 +111,16 @@ try {
         while ($row = $resultMenosVendidos->fetch_assoc()) {
             $productosMenosVendidos[] = $row;
         }
+    } else {
+        error_log("Error en consulta de productos menos vendidos: " . $conn->error);
     }
 
     // Consulta para últimas ventas
-    $sqlUltimasVentas = "SELECT v.Folio_Ticket, v.Nombre_Prod, v.Total_Venta, v.Fecha_venta, s.Nombre_Sucursal
+    $sqlUltimasVentas = "SELECT v.Folio_Ticket, v.Nombre_Prod, (v.Importe + v.Pagos_tarjeta) AS Total_Venta, v.Fecha_venta, s.Nombre_Sucursal
                           FROM Ventas_POS v
                           LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
                           WHERE v.Estatus = 'Pagado'
-                          ORDER BY v.Fecha_venta DESC
+                          ORDER BY v.Fecha_venta DESC, v.AgregadoEl DESC
                           LIMIT 10";
     $resultUltimasVentas = $conn->query($sqlUltimasVentas);
     
@@ -107,28 +128,34 @@ try {
         while ($row = $resultUltimasVentas->fetch_assoc()) {
             $ultimasVentas[] = $row;
         }
+    } else {
+        error_log("Error en consulta de últimas ventas: " . $conn->error);
     }
 
     // Consulta para productos sin stock
-    $sqlSinStock = "SELECT COUNT(*) AS ProductosSinStock FROM Productos_POS WHERE Stock_Actual = 0";
+    $sqlSinStock = "SELECT COUNT(*) AS ProductosSinStock FROM Stock_POS WHERE Existencias_R = 0";
     $resultSinStock = $conn->query($sqlSinStock);
     
     if ($resultSinStock && $resultSinStock->num_rows > 0) {
         $sinStockData = $resultSinStock->fetch_assoc();
         $productosSinStock = $sinStockData['ProductosSinStock'] ?? 0;
+    } else {
+        error_log("Error en consulta de productos sin stock: " . $conn->error);
     }
 
     // Consulta para total de productos
-    $sqlTotalProductos = "SELECT COUNT(*) AS TotalProductos FROM Productos_POS";
+    $sqlTotalProductos = "SELECT COUNT(DISTINCT ID_Prod_POS) AS TotalProductos FROM Stock_POS";
     $resultTotalProductos = $conn->query($sqlTotalProductos);
     
     if ($resultTotalProductos && $resultTotalProductos->num_rows > 0) {
         $totalProductosData = $resultTotalProductos->fetch_assoc();
         $totalProductos = $totalProductosData['TotalProductos'] ?? 0;
+    } else {
+        error_log("Error en consulta de total de productos: " . $conn->error);
     }
 
     // Consulta para ventas por forma de pago del día
-    $sqlFormaPago = "SELECT FormaDePago, COUNT(*) AS Cantidad, SUM(Importe) AS Total
+    $sqlFormaPago = "SELECT FormaDePago, COUNT(*) AS Cantidad, SUM(Importe + Pagos_tarjeta) AS Total
                       FROM Ventas_POS 
                       WHERE DATE(Fecha_venta) = CURDATE() 
                       AND Estatus = 'Pagado'
@@ -140,6 +167,8 @@ try {
         while ($row = $resultFormaPago->fetch_assoc()) {
             $ventasPorFormaPago[] = $row;
         }
+    } else {
+        error_log("Error en consulta de formas de pago: " . $conn->error);
     }
 
     // Cerrar la conexión
