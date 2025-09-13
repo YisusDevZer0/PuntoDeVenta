@@ -1,84 +1,48 @@
 <?php
-/**
- * Sistema de Recordatorios - Doctor Pez
- * Interfaz administrativa para gestionar recordatorios
- */
+// Verificación básica de sesión
+session_start();
 
-include_once "Controladores/ControladorUsuario.php";
-
-// Verificar sesión
+// Verificar sesión de manera simple
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     header("Location: Expiro.php");
     exit();
 }
 
-// Asegurar que $row esté disponible
-if (!isset($row)) {
-    include_once "Controladores/ControladorUsuario.php";
-}
+// Incluir controlador de usuario
+include_once "Controladores/ControladorUsuario.php";
 
-// Obtener ID del usuario actual
+// Variables básicas
 $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : 
             (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
 
 $sucursal_id = $row['Fk_Sucursal'] ?? 1;
-
-// Definir variables necesarias para el menú
 $disabledAttr = '';
 $currentPage = 'recordatorios';
 $showDashboard = false;
 $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 
-// Verificar si las tablas existen
+// Verificar tablas de manera segura
 $tablas_existen = false;
 try {
-    $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
-    $tablas_existen = ($resultado && $resultado->num_rows > 0);
+    if (isset($con) && $con) {
+        $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
+        $tablas_existen = ($resultado && $resultado->num_rows > 0);
+    }
 } catch (Exception $e) {
     $tablas_existen = false;
 }
-
-// Obtener sucursales
-$sucursales = [];
-try {
-    $sucursales_query = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Activo = 1 ORDER BY Nombre_Sucursal";
-    $sucursales_result = $con->query($sucursales_query);
-    if ($sucursales_result) {
-        while ($row_sucursal = $sucursales_result->fetch_assoc()) {
-            $sucursales[] = $row_sucursal;
-        }
-    }
-} catch (Exception $e) {
-    // Error al obtener sucursales
-}
-
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Sistema de Recordatorios - <?php echo $row['Licencia']?></title>
+    <title>Sistema de Recordatorios - <?php echo isset($row['Licencia']) ? $row['Licencia'] : 'Doctor Pez'; ?></title>
     <meta content="" name="keywords">
     <meta content="" name="description">
     
     <?php include "header.php";?>
-    
-    <!-- Estilos específicos de recordatorios -->
-    <style>
-        .recordatorios-container {
-            min-height: 400px;
-        }
-        .install-message {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        .install-message i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-    </style>
 </head>
 <body>
     <!-- Spinner Start -->
@@ -108,57 +72,28 @@ try {
                                 <i class="fa-solid fa-bell me-2"></i>
                                 Sistema de Recordatorios
                             </h6>
-                            <?php if ($tablas_existen): ?>
-                                <button class="btn btn-primary" id="btn-nuevo-recordatorio">
-                                    <i class="fa-solid fa-plus me-2"></i>
-                                    Nuevo Recordatorio
-                                </button>
-                            <?php endif; ?>
                         </div>
                         
-                        <div class="recordatorios-container">
+                        <div class="text-center py-5">
                             <?php if (!$tablas_existen): ?>
-                                <div class="install-message">
-                                    <i class="fa-solid fa-exclamation-triangle text-warning"></i>
-                                    <h4 class="text-warning">Instalación Requerida</h4>
-                                    <p class="text-muted">Las tablas de la base de datos para el sistema de recordatorios no están instaladas.</p>
-                                    <p class="text-muted">Para usar esta funcionalidad, necesitas ejecutar el script SQL de instalación.</p>
-                                    <div class="mt-4">
-                                        <a href="instalar_recordatorios.php" class="btn btn-primary btn-lg">
-                                            <i class="fa-solid fa-download me-2"></i>
-                                            Instalar Sistema de Recordatorios
-                                        </a>
-                                    </div>
-                                    <div class="mt-3">
-                                        <small class="text-muted">
-                                            O ejecuta manualmente el archivo: <code>database/recordatorios_tables_mejorado.sql</code>
-                                        </small>
-                                    </div>
+                                <i class="fa-solid fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                <h4 class="text-warning">Instalación Requerida</h4>
+                                <p class="text-muted">Las tablas de la base de datos para el sistema de recordatorios no están instaladas.</p>
+                                <div class="mt-4">
+                                    <a href="instalar_recordatorios.php" class="btn btn-primary btn-lg">
+                                        <i class="fa-solid fa-download me-2"></i>
+                                        Instalar Sistema
+                                    </a>
                                 </div>
                             <?php else: ?>
-                                <div class="alert alert-success">
-                                    <i class="fa-solid fa-check-circle me-2"></i>
-                                    <strong>¡Sistema instalado correctamente!</strong> El sistema de recordatorios está listo para usar.
-                                </div>
-                                
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">
-                                            <i class="fa-solid fa-bell me-2"></i>
-                                            Recordatorios del Sistema
-                                        </h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="text-center py-5">
-                                            <i class="fa-solid fa-bell-slash fa-3x text-muted mb-3"></i>
-                                            <h5 class="text-muted">No hay recordatorios creados</h5>
-                                            <p class="text-muted">Crea tu primer recordatorio para comenzar</p>
-                                            <button class="btn btn-primary" id="btn-crear-primer-recordatorio">
-                                                <i class="fa-solid fa-plus me-2"></i>
-                                                Crear Primer Recordatorio
-                                            </button>
-                                        </div>
-                                    </div>
+                                <i class="fa-solid fa-check-circle fa-3x text-success mb-3"></i>
+                                <h4 class="text-success">¡Sistema Instalado!</h4>
+                                <p class="text-muted">El sistema de recordatorios está listo para usar.</p>
+                                <div class="mt-4">
+                                    <button class="btn btn-primary btn-lg" onclick="alert('Funcionalidad en desarrollo')">
+                                        <i class="fa-solid fa-plus me-2"></i>
+                                        Crear Recordatorio
+                                    </button>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -180,16 +115,9 @@ try {
     <!-- JavaScript Libraries -->
     <?php include "scripts.php";?>
     
-    <!-- Scripts específicos de recordatorios -->
     <script>
         $(document).ready(function() {
-            // Ocultar spinner
             $('#spinner').hide();
-            
-            // Botón crear recordatorio
-            $('#btn-crear-primer-recordatorio, #btn-nuevo-recordatorio').click(function() {
-                alert('Funcionalidad de crear recordatorio en desarrollo. Primero instala las tablas de la base de datos.');
-            });
         });
     </script>
 </body>

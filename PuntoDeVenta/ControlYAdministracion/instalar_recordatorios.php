@@ -1,29 +1,21 @@
 <?php
-/**
- * Instalador del Sistema de Recordatorios - Doctor Pez
- * Ejecuta el script SQL para crear las tablas necesarias
- */
+// Verificación básica de sesión
+session_start();
 
-include_once "Controladores/ControladorUsuario.php";
-
-// Verificar sesión
+// Verificar sesión de manera simple
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     header("Location: Expiro.php");
     exit();
 }
 
-// Asegurar que $row esté disponible
-if (!isset($row)) {
-    include_once "Controladores/ControladorUsuario.php";
-}
+// Incluir controlador de usuario
+include_once "Controladores/ControladorUsuario.php";
 
-// Obtener ID del usuario actual
+// Variables básicas
 $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : 
             (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
 
 $sucursal_id = $row['Fk_Sucursal'] ?? 1;
-
-// Definir variables necesarias para el menú
 $disabledAttr = '';
 $currentPage = 'recordatorios';
 $showDashboard = false;
@@ -33,91 +25,36 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 $mensaje = '';
 $tipo_mensaje = '';
 
-// Procesar instalación si se envió el formulario
+// Procesar instalación
 if ($_POST && isset($_POST['instalar'])) {
     try {
-        // SQL básico para crear las tablas principales
-        $sql_commands = [
-            "CREATE TABLE IF NOT EXISTS `recordatorios_sistema` (
-                `id_recordatorio` int(11) NOT NULL AUTO_INCREMENT,
-                `titulo` varchar(255) NOT NULL,
-                `descripcion` text,
-                `fecha_programada` datetime NOT NULL,
-                `prioridad` enum('baja','media','alta','urgente') DEFAULT 'media',
-                `estado` enum('programado','enviando','enviado','cancelado','error') DEFAULT 'programado',
-                `tipo_envio` enum('whatsapp','notificacion','ambos') DEFAULT 'ambos',
-                `mensaje_whatsapp` text,
-                `mensaje_notificacion` text,
-                `destinatarios` enum('todos','sucursal','grupo','individual') DEFAULT 'todos',
-                `sucursal_id` int(11) DEFAULT NULL,
-                `grupo_id` int(11) DEFAULT NULL,
-                `usuario_creador` int(11) NOT NULL,
-                `fecha_creacion` timestamp DEFAULT CURRENT_TIMESTAMP,
-                `fecha_actualizacion` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                `activo` tinyint(1) DEFAULT 1,
-                PRIMARY KEY (`id_recordatorio`),
-                KEY `idx_fecha_programada` (`fecha_programada`),
-                KEY `idx_estado` (`estado`),
-                KEY `idx_prioridad` (`prioridad`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-            
-            "CREATE TABLE IF NOT EXISTS `recordatorios_destinatarios` (
-                `id_destinatario` int(11) NOT NULL AUTO_INCREMENT,
-                `recordatorio_id` int(11) NOT NULL,
-                `usuario_id` int(11) NOT NULL,
-                `telefono_whatsapp` varchar(20) DEFAULT NULL,
-                `estado_envio` enum('pendiente','enviando','enviado','error') DEFAULT 'pendiente',
-                `fecha_envio` datetime DEFAULT NULL,
-                `error_envio` text DEFAULT NULL,
-                `tipo_envio` enum('whatsapp','notificacion','ambos') DEFAULT 'ambos',
-                PRIMARY KEY (`id_destinatario`),
-                KEY `idx_recordatorio_id` (`recordatorio_id`),
-                KEY `idx_usuario_id` (`usuario_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-            
-            "CREATE TABLE IF NOT EXISTS `recordatorios_grupos` (
-                `id_grupo` int(11) NOT NULL AUTO_INCREMENT,
-                `nombre_grupo` varchar(100) NOT NULL,
-                `descripcion` text,
-                `fecha_creacion` timestamp DEFAULT CURRENT_TIMESTAMP,
-                `activo` tinyint(1) DEFAULT 1,
-                PRIMARY KEY (`id_grupo`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-            
-            "CREATE TABLE IF NOT EXISTS `recordatorios_logs` (
-                `id_log` int(11) NOT NULL AUTO_INCREMENT,
-                `recordatorio_id` int(11) NOT NULL,
-                `tipo_envio` enum('whatsapp','notificacion','ambos') NOT NULL,
-                `estado` enum('iniciado','completado','error') NOT NULL,
-                `mensaje` text,
-                `detalles_tecnico` text,
-                `fecha_log` timestamp DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id_log`),
-                KEY `idx_recordatorio_id` (`recordatorio_id`)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-        ];
+        // SQL básico para crear la tabla principal
+        $sql = "CREATE TABLE IF NOT EXISTS `recordatorios_sistema` (
+            `id_recordatorio` int(11) NOT NULL AUTO_INCREMENT,
+            `titulo` varchar(255) NOT NULL,
+            `descripcion` text,
+            `fecha_programada` datetime NOT NULL,
+            `prioridad` enum('baja','media','alta','urgente') DEFAULT 'media',
+            `estado` enum('programado','enviando','enviado','cancelado','error') DEFAULT 'programado',
+            `tipo_envio` enum('whatsapp','notificacion','ambos') DEFAULT 'ambos',
+            `mensaje_whatsapp` text,
+            `mensaje_notificacion` text,
+            `destinatarios` enum('todos','sucursal','grupo','individual') DEFAULT 'todos',
+            `sucursal_id` int(11) DEFAULT NULL,
+            `grupo_id` int(11) DEFAULT NULL,
+            `usuario_creador` int(11) NOT NULL,
+            `fecha_creacion` timestamp DEFAULT CURRENT_TIMESTAMP,
+            `fecha_actualizacion` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            `activo` tinyint(1) DEFAULT 1,
+            PRIMARY KEY (`id_recordatorio`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         
-        $comandos_ejecutados = 0;
-        $errores = [];
-        
-        foreach ($sql_commands as $comando) {
-            try {
-                if ($con->query($comando)) {
-                    $comandos_ejecutados++;
-                } else {
-                    $errores[] = "Error: " . $con->error;
-                }
-            } catch (Exception $e) {
-                $errores[] = "Error: " . $e->getMessage();
-            }
-        }
-        
-        if (empty($errores)) {
-            $mensaje = "Instalación completada exitosamente. Se crearon $comandos_ejecutados tablas.";
+        if ($con->query($sql)) {
+            $mensaje = "Instalación completada exitosamente. Tabla 'recordatorios_sistema' creada.";
             $tipo_mensaje = 'success';
         } else {
-            $mensaje = "Instalación completada con algunos errores. Tablas creadas: $comandos_ejecutados. Errores: " . implode(', ', array_slice($errores, 0, 3));
-            $tipo_mensaje = 'warning';
+            $mensaje = "Error al crear la tabla: " . $con->error;
+            $tipo_mensaje = 'danger';
         }
         
     } catch (Exception $e) {
@@ -126,13 +63,15 @@ if ($_POST && isset($_POST['instalar'])) {
     }
 }
 
-// Verificar si las tablas ya existen
-$tablas_existen = false;
+// Verificar si la tabla existe
+$tabla_existe = false;
 try {
-    $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
-    $tablas_existen = ($resultado && $resultado->num_rows > 0);
+    if (isset($con) && $con) {
+        $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
+        $tabla_existe = ($resultado && $resultado->num_rows > 0);
+    }
 } catch (Exception $e) {
-    $tablas_existen = false;
+    $tabla_existe = false;
 }
 ?>
 
@@ -140,7 +79,7 @@ try {
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Instalador de Recordatorios - <?php echo $row['Licencia']?></title>
+    <title>Instalador de Recordatorios - <?php echo isset($row['Licencia']) ? $row['Licencia'] : 'Doctor Pez'; ?></title>
     <meta content="" name="keywords">
     <meta content="" name="description">
     
@@ -178,16 +117,16 @@ try {
                         
                         <?php if ($mensaje): ?>
                             <div class="alert alert-<?= $tipo_mensaje ?> alert-dismissible fade show" role="alert">
-                                <i class="fa-solid fa-<?= $tipo_mensaje === 'success' ? 'check-circle' : ($tipo_mensaje === 'warning' ? 'exclamation-triangle' : 'times-circle') ?> me-2"></i>
+                                <i class="fa-solid fa-<?= $tipo_mensaje === 'success' ? 'check-circle' : 'times-circle' ?> me-2"></i>
                                 <?= htmlspecialchars($mensaje) ?>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         <?php endif; ?>
                         
-                        <?php if ($tablas_existen): ?>
+                        <?php if ($tabla_existe): ?>
                             <div class="alert alert-success">
                                 <i class="fa-solid fa-check-circle me-2"></i>
-                                <strong>¡Sistema ya instalado!</strong> Las tablas de recordatorios ya existen en la base de datos.
+                                <strong>¡Sistema ya instalado!</strong> La tabla de recordatorios ya existe en la base de datos.
                                 <div class="mt-3">
                                     <a href="RecordatoriosSistema.php" class="btn btn-success">
                                         <i class="fa-solid fa-arrow-right me-2"></i>
@@ -204,29 +143,7 @@ try {
                                     </h5>
                                 </div>
                                 <div class="card-body">
-                                    <p>Este instalador creará las siguientes tablas en tu base de datos:</p>
-                                    <ul class="list-group list-group-flush mb-4">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <i class="fa-solid fa-table me-2"></i>
-                                            recordatorios_sistema
-                                            <span class="badge bg-primary rounded-pill">Tabla principal</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <i class="fa-solid fa-table me-2"></i>
-                                            recordatorios_destinatarios
-                                            <span class="badge bg-secondary rounded-pill">Destinatarios</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <i class="fa-solid fa-table me-2"></i>
-                                            recordatorios_grupos
-                                            <span class="badge bg-secondary rounded-pill">Grupos</span>
-                                        </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <i class="fa-solid fa-table me-2"></i>
-                                            recordatorios_logs
-                                            <span class="badge bg-secondary rounded-pill">Logs</span>
-                                        </li>
-                                    </ul>
+                                    <p>Este instalador creará la tabla principal para el sistema de recordatorios.</p>
                                     
                                     <div class="alert alert-info">
                                         <i class="fa-solid fa-info-circle me-2"></i>
@@ -268,7 +185,6 @@ try {
     
     <script>
         $(document).ready(function() {
-            // Ocultar spinner
             $('#spinner').hide();
         });
     </script>
