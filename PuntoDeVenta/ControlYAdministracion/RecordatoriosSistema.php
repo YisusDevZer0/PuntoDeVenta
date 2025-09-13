@@ -22,21 +22,57 @@ $showDashboard = false;
 $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 
-// Verificar tablas de manera segura
+// Verificar tablas de manera más robusta
 $tablas_existen = false;
-if (isset($con) && $con) {
-    $resultado = $con->query("SHOW TABLES LIKE 'recordatorios_sistema'");
-    if ($resultado) {
-        $tablas_existen = ($resultado->num_rows > 0);
+$tablas_creadas = [];
+
+try {
+    if (isset($con) && $con) {
+        // Verificar cada tabla individualmente
+        $tablas_requeridas = [
+            'recordatorios_sistema',
+            'recordatorios_destinatarios', 
+            'recordatorios_grupos',
+            'recordatorios_logs'
+        ];
+        
+        foreach ($tablas_requeridas as $tabla) {
+            $resultado = $con->query("SHOW TABLES LIKE '$tabla'");
+            if ($resultado && $resultado->num_rows > 0) {
+                $tablas_creadas[] = $tabla;
+            }
+        }
+        
+        // Si al menos la tabla principal existe, consideramos que está instalado
+        $tablas_existen = in_array('recordatorios_sistema', $tablas_creadas);
     }
+} catch (Exception $e) {
+    $tablas_existen = false;
 }
+
+// Obtener sucursales
+$sucursales = [];
+try {
+    if (isset($con) && $con) {
+        $sucursales_query = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Activo = 1 ORDER BY Nombre_Sucursal";
+        $sucursales_result = $con->query($sucursales_query);
+        if ($sucursales_result) {
+            while ($row_sucursal = $sucursales_result->fetch_assoc()) {
+                $sucursales[] = $row_sucursal;
+            }
+        }
+    }
+} catch (Exception $e) {
+    // Error al obtener sucursales
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Sistema de Recordatorios</title>
+    <title>Sistema de Recordatorios - <?php echo isset($row['Licencia']) ? $row['Licencia'] : 'Doctor Pez'; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <?php include "header.php";?>
@@ -74,10 +110,20 @@ if (isset($con) && $con) {
                                         Instalar Sistema
                                     </a>
                                 </div>
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        Tablas encontradas: <?= implode(', ', $tablas_creadas) ?: 'Ninguna' ?>
+                                    </small>
+                                </div>
                             <?php else: ?>
                                 <i class="fa-solid fa-check-circle fa-3x text-success mb-3"></i>
                                 <h4 class="text-success">¡Sistema Instalado!</h4>
                                 <p class="text-muted">El sistema de recordatorios está listo para usar.</p>
+                                <div class="mt-3">
+                                    <small class="text-muted">
+                                        Tablas instaladas: <?= implode(', ', $tablas_creadas) ?>
+                                    </small>
+                                </div>
                                 <div class="mt-4">
                                     <button class="btn btn-primary btn-lg" onclick="alert('Funcionalidad en desarrollo')">
                                         <i class="fa-solid fa-plus me-2"></i>
