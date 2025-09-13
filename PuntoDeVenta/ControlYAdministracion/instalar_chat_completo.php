@@ -5,7 +5,7 @@
  */
 
 // Incluir conexión a la base de datos
-include_once "Consultas/db_connect.php";
+include_once "Controladores/db_connect.php";
 
 if (!$conn) {
     die("Error de conexión a la base de datos");

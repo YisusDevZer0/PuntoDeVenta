@@ -24,9 +24,6 @@ $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] :
 
 $sucursal_id = $row['Fk_Sucursal'] ?? 1;
 
-// Incluir controlador de recordatorios
-include_once "Controladores/RecordatoriosSistemaController.php";
-
 // Definir variable para atributos disabled
 $disabledAttr = '';
 
@@ -42,35 +39,62 @@ $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 // Verificar si el usuario tiene permisos de administrador
 $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 
-// Inicializar controlador
-$recordatoriosController = new RecordatoriosSistemaController($con, $usuario_id);
-
-// Obtener datos para la interfaz
-$filtros = [
-    'limit' => 20,
-    'estado' => $_GET['estado'] ?? null,
-    'prioridad' => $_GET['prioridad'] ?? null,
-    'fecha_desde' => $_GET['fecha_desde'] ?? null,
-    'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
-    'sucursal_id' => $sucursal_id
+// Verificar si las tablas de recordatorios existen
+$tablas_existen = true;
+$tablas_requeridas = [
+    'recordatorios_sistema',
+    'recordatorios_destinatarios', 
+    'recordatorios_grupos',
+    'recordatorios_logs'
 ];
 
-$recordatorios = $recordatoriosController->obtenerRecordatorios($filtros);
-
-// Obtener sucursales para filtros
-$sucursales_query = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Activo = 1 ORDER BY Nombre_Sucursal";
-$sucursales_result = $con->query($sucursales_query);
-$sucursales = [];
-while ($row = $sucursales_result->fetch_assoc()) {
-    $sucursales[] = $row;
+foreach ($tablas_requeridas as $tabla) {
+    $resultado = $con->query("SHOW TABLES LIKE '$tabla'");
+    if ($resultado->num_rows == 0) {
+        $tablas_existen = false;
+        break;
+    }
 }
 
-// Obtener grupos para filtros
-$grupos_query = "SELECT id_grupo, nombre_grupo FROM recordatorios_grupos WHERE activo = 1 ORDER BY nombre_grupo";
-$grupos_result = $con->query($grupos_query);
-$grupos = [];
-while ($row = $grupos_result->fetch_assoc()) {
-    $grupos[] = $row;
+// Si las tablas no existen, mostrar mensaje de instalación
+if (!$tablas_existen) {
+    $recordatorios = ['success' => false, 'message' => 'Las tablas de recordatorios no están instaladas'];
+    $sucursales = [];
+    $grupos = [];
+} else {
+    // Incluir controlador de recordatorios solo si las tablas existen
+    include_once "Controladores/RecordatoriosSistemaController.php";
+    
+    // Inicializar controlador
+    $recordatoriosController = new RecordatoriosSistemaController($con, $usuario_id);
+
+    // Obtener datos para la interfaz
+    $filtros = [
+        'limit' => 20,
+        'estado' => $_GET['estado'] ?? null,
+        'prioridad' => $_GET['prioridad'] ?? null,
+        'fecha_desde' => $_GET['fecha_desde'] ?? null,
+        'fecha_hasta' => $_GET['fecha_hasta'] ?? null,
+        'sucursal_id' => $sucursal_id
+    ];
+
+    $recordatorios = $recordatoriosController->obtenerRecordatorios($filtros);
+
+    // Obtener sucursales para filtros
+    $sucursales_query = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Activo = 1 ORDER BY Nombre_Sucursal";
+    $sucursales_result = $con->query($sucursales_query);
+    $sucursales = [];
+    while ($row_sucursal = $sucursales_result->fetch_assoc()) {
+        $sucursales[] = $row_sucursal;
+    }
+
+    // Obtener grupos para filtros
+    $grupos_query = "SELECT id_grupo, nombre_grupo FROM recordatorios_grupos WHERE activo = 1 ORDER BY nombre_grupo";
+    $grupos_result = $con->query($grupos_query);
+    $grupos = [];
+    while ($row_grupo = $grupos_result->fetch_assoc()) {
+        $grupos[] = $row_grupo;
+    }
 }
 ?>
 
@@ -186,7 +210,20 @@ while ($row = $grupos_result->fetch_assoc()) {
                                 </button>
                             </div>
                             <div class="card-body">
-                                <?php if ($recordatorios['success'] && !empty($recordatorios['recordatorios'])): ?>
+                                <?php if (!$tablas_existen): ?>
+                                    <div class="alert alert-warning text-center">
+                                        <i class="fa-solid fa-exclamation-triangle fa-3x mb-3"></i>
+                                        <h4>Instalación Requerida</h4>
+                                        <p>Las tablas de la base de datos para el sistema de recordatorios no están instaladas.</p>
+                                        <p>Para usar esta funcionalidad, necesitas ejecutar el script SQL de instalación.</p>
+                                        <div class="mt-4">
+                                            <a href="instalar_recordatorios.php" class="btn btn-primary">
+                                                <i class="fa-solid fa-download me-2"></i>
+                                                Instalar Sistema de Recordatorios
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php elseif ($recordatorios['success'] && !empty($recordatorios['recordatorios'])): ?>
                                     <div class="table-responsive">
                                         <table class="table table-hover">
                                             <thead class="table-light">

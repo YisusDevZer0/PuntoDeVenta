@@ -34,6 +34,31 @@ $usuario_id = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] :
 
 $sucursal_id = $row['Fk_Sucursal'] ?? 1;
 
+// Verificar si las tablas de recordatorios existen
+$tablas_existen = true;
+$tablas_requeridas = [
+    'recordatorios_sistema',
+    'recordatorios_destinatarios', 
+    'recordatorios_grupos',
+    'recordatorios_logs'
+];
+
+foreach ($tablas_requeridas as $tabla) {
+    $resultado = $con->query("SHOW TABLES LIKE '$tabla'");
+    if ($resultado->num_rows == 0) {
+        $tablas_existen = false;
+        break;
+    }
+}
+
+if (!$tablas_existen) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Las tablas de recordatorios no están instaladas. Ejecuta el script de instalación primero.'
+    ]);
+    exit();
+}
+
 // Inicializar controlador
 $recordatoriosController = new RecordatoriosSistemaController($con, $usuario_id);
 

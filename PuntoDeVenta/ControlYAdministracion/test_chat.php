@@ -5,7 +5,7 @@
  */
 
 // Incluir conexión a la base de datos
-include_once "Consultas/db_connect.php";
+include_once "Controladores/db_connect.php";
 
 echo "<h2>Prueba del Sistema de Chat</h2>";
 
