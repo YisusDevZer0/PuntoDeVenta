@@ -158,8 +158,8 @@ class ChecadorController {
                 return ['success' => false, 'message' => 'Error preparando inserción: ' . $this->conn->error];
             }
             
-            // Tipos: i (usuario_id), s (tipo), d (latitud), d (longitud)
-            $stmt->bind_param("isdd", $usuario_id, $tipo, $latitud, $longitud);
+            // Tipos: i (usuario_id), s (tipo), d (latitud), d (longitud), s (fecha_hora)
+            $stmt->bind_param("isddss", $usuario_id, $tipo, $latitud, $longitud, $timestamp);
             
             if ($stmt->execute()) {
                 return [
@@ -509,7 +509,7 @@ class ChecadorController {
                 (nombre, direccion, descripcion, latitud, longitud, radio, estado, created_at) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->bind_param("sssddiss", $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
+            $stmt->bind_param("sssdiss", $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
             
             if ($stmt->execute()) {
                 return ['success' => true, 'message' => 'Centro de trabajo guardado exitosamente', 'id' => $stmt->insert_id];
