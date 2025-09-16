@@ -1,5 +1,6 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
+include_once "Controladores/BitacoraLimpiezaAdminController.php";
 
 // Verificar sesión
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
@@ -31,54 +32,41 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 // Verificar si es desarrollo humano (RH)
 $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
 
-// Obtener datos básicos directamente
-$bitacoras = [];
-$sucursales = [];
-$areas = [];
+// Inicializar controlador
+$controller = new BitacoraLimpiezaAdminController($conn);
 
-// Consulta simple para bitácoras
-$sql_bitacoras = "SELECT 
-                    bl.id_bitacora,
-                    bl.area,
-                    bl.semana,
-                    bl.fecha_inicio,
-                    bl.fecha_fin,
-                    bl.responsable,
-                    bl.supervisor,
-                    bl.aux_res
-                  FROM Bitacora_Limpieza bl 
-                  ORDER BY bl.fecha_inicio DESC 
-                  LIMIT 50";
+// Obtener filtros
+$filtros = [
+    'sucursal' => $_GET['sucursal'] ?? '',
+    'area' => $_GET['area'] ?? '',
+    'fecha_inicio' => $_GET['fecha_inicio'] ?? '',
+    'fecha_fin' => $_GET['fecha_fin'] ?? '',
+    'estado' => $_GET['estado'] ?? '',
+    'limit' => 50
+];
 
-$result = mysqli_query($conn, $sql_bitacoras);
-if ($result) {
-    while($row_bitacora = mysqli_fetch_assoc($result)) {
-        $bitacoras[] = $row_bitacora;
-    }
+try {
+    // Obtener datos usando el controlador
+    $bitacoras = $controller->obtenerBitacorasConFiltros($filtros);
+    $sucursales = $controller->obtenerSucursales();
+    $areas = $controller->obtenerAreas();
+    $estadisticas = $controller->obtenerEstadisticasGenerales();
+    
+    $total_bitacoras = $estadisticas['total_bitacoras'];
+    $total_sucursales = $estadisticas['total_sucursales'];
+    $total_areas = $estadisticas['total_areas'];
+    $bitacoras_activas = $estadisticas['bitacoras_activas'];
+    
+} catch (Exception $e) {
+    // En caso de error, usar datos básicos
+    $bitacoras = [];
+    $sucursales = [];
+    $areas = [];
+    $total_bitacoras = 0;
+    $total_sucursales = 0;
+    $total_areas = 0;
+    $bitacoras_activas = 0;
 }
-
-// Consulta simple para sucursales
-$sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 10";
-$result_sucursales = mysqli_query($conn, $sql_sucursales);
-if ($result_sucursales) {
-    while($row_sucursal = mysqli_fetch_assoc($result_sucursales)) {
-        $sucursales[] = $row_sucursal;
-    }
-}
-
-// Consulta simple para áreas
-$sql_areas = "SELECT DISTINCT area FROM Bitacora_Limpieza ORDER BY area LIMIT 10";
-$result_areas = mysqli_query($conn, $sql_areas);
-if ($result_areas) {
-    while($row_area = mysqli_fetch_assoc($result_areas)) {
-        $areas[] = $row_area['area'];
-    }
-}
-
-// Estadísticas básicas
-$total_bitacoras = count($bitacoras);
-$total_sucursales = count($sucursales);
-$total_areas = count($areas);
 
 ?>
 <!DOCTYPE html>
@@ -123,13 +111,13 @@ $total_areas = count($areas);
                                 Control de Bitácoras de Limpieza
                             </h4>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary" onclick="alert('Función en desarrollo')">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalNuevaBitacoraAdmin">
                                     <i class="fa fa-plus me-2"></i>Nueva Bitácora
                                 </button>
-                                <button type="button" class="btn btn-success" onclick="alert('Función en desarrollo')">
+                                <button type="button" class="btn btn-success" onclick="exportarCSV()">
                                     <i class="fa fa-download me-2"></i>Exportar CSV
                                 </button>
-                                <button type="button" class="btn btn-info" onclick="location.reload()">
+                                <button type="button" class="btn btn-info" onclick="aplicarFiltros()">
                                     <i class="fa fa-refresh me-2"></i>Actualizar
                                 </button>
                             </div>
@@ -183,7 +171,16 @@ $total_areas = count($areas);
                             <div class="col-md-3">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
-                                        <i class="fa fa-building fa-2x text-success mb-2"></i>
+                                        <i class="fa fa-check-circle fa-2x text-success mb-2"></i>
+                                        <h5 class="card-title"><?php echo $bitacoras_activas; ?></h5>
+                                        <p class="card-text text-muted">Bitácoras Activas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fa fa-building fa-2x text-info mb-2"></i>
                                         <h5 class="card-title"><?php echo $total_sucursales; ?></h5>
                                         <p class="card-text text-muted">Sucursales</p>
                                     </div>
@@ -192,18 +189,9 @@ $total_areas = count($areas);
                             <div class="col-md-3">
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
-                                        <i class="fa fa-map-marker-alt fa-2x text-info mb-2"></i>
+                                        <i class="fa fa-map-marker-alt fa-2x text-warning mb-2"></i>
                                         <h5 class="card-title"><?php echo $total_areas; ?></h5>
                                         <p class="card-text text-muted">Áreas</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card border-0 shadow-sm">
-                                    <div class="card-body text-center">
-                                        <i class="fa fa-chart-line fa-2x text-warning mb-2"></i>
-                                        <h5 class="card-title">0%</h5>
-                                        <p class="card-text text-muted">Cumplimiento</p>
                                     </div>
                                 </div>
                             </div>
@@ -219,16 +207,18 @@ $total_areas = count($areas);
                             Bitácoras de Limpieza
                         </h5>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped" style="width:100%">
+                            <table class="table table-bordered table-striped" id="tablaBitacoras" style="width:100%">
                                 <thead class="table-primary">
                                     <tr>
                                         <th>ID</th>
+                                        <th>Sucursal</th>
                                         <th>Área</th>
                                         <th>Semana</th>
                                         <th>Fecha Inicio</th>
                                         <th>Fecha Fin</th>
                                         <th>Responsable</th>
                                         <th>Supervisor</th>
+                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -236,21 +226,27 @@ $total_areas = count($areas);
                                     <?php foreach($bitacoras as $bitacora): ?>
                                     <tr>
                                         <td><?php echo $bitacora['id_bitacora']; ?></td>
-                                        <td><?php echo $bitacora['area']; ?></td>
-                                        <td><?php echo $bitacora['semana']; ?></td>
+                                        <td><?php echo $bitacora['Nombre_Sucursal'] ?? 'N/A'; ?></td>
+                                        <td><?php echo htmlspecialchars($bitacora['area']); ?></td>
+                                        <td><?php echo htmlspecialchars($bitacora['semana']); ?></td>
                                         <td><?php echo $bitacora['fecha_inicio']; ?></td>
                                         <td><?php echo $bitacora['fecha_fin']; ?></td>
-                                        <td><?php echo $bitacora['responsable']; ?></td>
-                                        <td><?php echo $bitacora['supervisor']; ?></td>
+                                        <td><?php echo htmlspecialchars($bitacora['responsable']); ?></td>
+                                        <td><?php echo htmlspecialchars($bitacora['supervisor']); ?></td>
+                                        <td>
+                                            <span class="badge bg-<?php echo $bitacora['estado'] == 'Activa' ? 'success' : ($bitacora['estado'] == 'Completada' ? 'primary' : 'warning'); ?>">
+                                                <?php echo htmlspecialchars($bitacora['estado']); ?>
+                                            </span>
+                                        </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-primary" onclick="alert('Ver detalles ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Ver Detalles">
+                                                <button class="btn btn-sm btn-primary" onclick="verDetallesBitacora(<?php echo $bitacora['id_bitacora']; ?>)" title="Ver Detalles">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-success" onclick="alert('Ver elementos ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Ver Elementos">
+                                                <button class="btn btn-sm btn-success" onclick="verElementosLimpieza(<?php echo $bitacora['id_bitacora']; ?>)" title="Ver Elementos">
                                                     <i class="fa fa-list"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger" onclick="if(confirm('¿Eliminar bitácora?')) alert('Eliminar ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Eliminar">
+                                                <button class="btn btn-sm btn-danger" onclick="eliminarBitacora(<?php echo $bitacora['id_bitacora']; ?>)" title="Eliminar">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -271,8 +267,16 @@ $total_areas = count($areas);
     </div>
     <!-- Content End -->
 
+    <!-- Modales -->
+    <?php include "Modales/NuevaBitacoraAdmin.php"; ?>
+    <?php include "Modales/VerDetallesBitacora.php"; ?>
+    <?php include "Modales/VerElementosLimpieza.php"; ?>
+
     <script>
-    // Script mínimo para evitar problemas de carga
+    // Variables globales
+    let tablaBitacoras;
+    
+    // Inicialización cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página cargada correctamente');
         
@@ -282,9 +286,17 @@ $total_areas = count($areas);
             spinner.style.display = 'none';
         }
         
-        // Inicializar DataTable si está disponible
+        // Inicializar DataTable
+        inicializarDataTable();
+        
+        // Configurar formulario de nueva bitácora
+        configurarFormularioNuevaBitacora();
+    });
+    
+    // Inicializar DataTable
+    function inicializarDataTable() {
         if (typeof $.fn.DataTable !== 'undefined') {
-            $('table').DataTable({
+            tablaBitacoras = $('#tablaBitacoras').DataTable({
                 "paging": true,
                 "searching": true,
                 "info": true,
@@ -293,10 +305,263 @@ $total_areas = count($areas);
                     "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
                 },
                 "order": [[0, "desc"]],
-                "pageLength": 25
+                "pageLength": 25,
+                "columnDefs": [
+                    { "orderable": false, "targets": 9 } // Columna de acciones
+                ]
             });
         }
-    });
+    }
+    
+    // Configurar formulario de nueva bitácora
+    function configurarFormularioNuevaBitacora() {
+        $('#formNuevaBitacoraAdmin').on('submit', function(e) {
+            e.preventDefault();
+            crearBitacora();
+        });
+    }
+    
+    // Aplicar filtros
+    function aplicarFiltros() {
+        const sucursal = document.getElementById('filtroSucursal').value;
+        const area = document.getElementById('filtroArea').value;
+        const fechaInicio = document.getElementById('filtroFechaInicio').value;
+        const fechaFin = document.getElementById('filtroFechaFin').value;
+        
+        const params = new URLSearchParams();
+        if (sucursal) params.append('sucursal', sucursal);
+        if (area) params.append('area', area);
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        
+        window.location.href = 'BitacoraLimpieza.php?' + params.toString();
+    }
+    
+    // Exportar CSV
+    function exportarCSV() {
+        const sucursal = document.getElementById('filtroSucursal').value;
+        const area = document.getElementById('filtroArea').value;
+        const fechaInicio = document.getElementById('filtroFechaInicio').value;
+        const fechaFin = document.getElementById('filtroFechaFin').value;
+        
+        const params = new URLSearchParams();
+        if (sucursal) params.append('sucursal', sucursal);
+        if (area) params.append('area', area);
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        
+        window.open('api/exportar_bitacoras_csv.php?' + params.toString(), '_blank');
+    }
+    
+    // Crear nueva bitácora
+    function crearBitacora() {
+        const formData = new FormData(document.getElementById('formNuevaBitacoraAdmin'));
+        
+        fetch('api/crear_bitacora_admin.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: data.message
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error de conexión'
+            });
+        });
+    }
+    
+    // Ver detalles de bitácora
+    function verDetallesBitacora(id) {
+        fetch(`api/obtener_detalles_bitacora.php?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarDetallesBitacora(data.data);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error de conexión'
+            });
+        });
+    }
+    
+    // Mostrar detalles en modal
+    function mostrarDetallesBitacora(bitacora) {
+        const contenido = `
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <strong>ID Bitácora:</strong> ${bitacora.id_bitacora}
+                </div>
+                <div class="col-md-6">
+                    <strong>Sucursal:</strong> ${bitacora.Nombre_Sucursal || 'N/A'}
+                </div>
+                <div class="col-md-6">
+                    <strong>Área:</strong> ${bitacora.area}
+                </div>
+                <div class="col-md-6">
+                    <strong>Semana:</strong> ${bitacora.semana}
+                </div>
+                <div class="col-md-6">
+                    <strong>Fecha Inicio:</strong> ${bitacora.fecha_inicio}
+                </div>
+                <div class="col-md-6">
+                    <strong>Fecha Fin:</strong> ${bitacora.fecha_fin}
+                </div>
+                <div class="col-md-6">
+                    <strong>Responsable:</strong> ${bitacora.responsable}
+                </div>
+                <div class="col-md-6">
+                    <strong>Supervisor:</strong> ${bitacora.supervisor}
+                </div>
+                <div class="col-md-6">
+                    <strong>Auxiliar:</strong> ${bitacora.aux_res || 'N/A'}
+                </div>
+                <div class="col-md-6">
+                    <strong>Estado:</strong> 
+                    <span class="badge bg-${bitacora.estado == 'Activa' ? 'success' : (bitacora.estado == 'Completada' ? 'primary' : 'warning')}">
+                        ${bitacora.estado}
+                    </span>
+                </div>
+                <div class="col-12">
+                    <strong>Observaciones:</strong><br>
+                    ${bitacora.observaciones || 'Sin observaciones'}
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('contenidoDetallesBitacora').innerHTML = contenido;
+        $('#ModalVerDetallesBitacora').modal('show');
+    }
+    
+    // Ver elementos de limpieza
+    function verElementosLimpieza(id) {
+        fetch(`api/obtener_elementos_limpieza.php?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                mostrarElementosLimpieza(data.data);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error de conexión'
+            });
+        });
+    }
+    
+    // Mostrar elementos en modal
+    function mostrarElementosLimpieza(elementos) {
+        let contenido = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Elemento</th><th>Estado</th><th>Fecha</th><th>Hora</th><th>Observaciones</th></tr></thead><tbody>';
+        
+        if (elementos.length > 0) {
+            elementos.forEach(elemento => {
+                contenido += `
+                    <tr>
+                        <td>${elemento.elemento_limpieza}</td>
+                        <td><span class="badge bg-${elemento.estado == 'Completado' ? 'success' : 'warning'}">${elemento.estado}</span></td>
+                        <td>${elemento.fecha_realizacion || 'N/A'}</td>
+                        <td>${elemento.hora_realizacion || 'N/A'}</td>
+                        <td>${elemento.observaciones || 'N/A'}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            contenido += '<tr><td colspan="5" class="text-center">No hay elementos de limpieza registrados</td></tr>';
+        }
+        
+        contenido += '</tbody></table></div>';
+        
+        document.getElementById('contenidoElementosLimpieza').innerHTML = contenido;
+        $('#ModalVerElementosLimpieza').modal('show');
+    }
+    
+    // Eliminar bitácora
+    function eliminarBitacora(id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData();
+                formData.append('id', id);
+                
+                fetch('api/eliminar_bitacora_admin.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Eliminada',
+                            text: data.message
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error de conexión'
+                    });
+                });
+            }
+        });
+    }
     </script>
 
 </body>

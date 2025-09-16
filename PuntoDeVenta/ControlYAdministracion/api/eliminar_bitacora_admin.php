@@ -1,32 +1,38 @@
 <?php
-include_once "../Controladores/ControladorUsuario.php";
-include_once "../Controladores/BitacoraLimpiezaAdminControllerSimple.php";
+header('Content-Type: application/json');
+include_once "../../Consultas/db_connect.php";
+include_once "../Controladores/BitacoraLimpiezaAdminController.php";
 
-// Verificar sesión administrativa
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Acceso denegado']);
-    exit;
-}
-
-$controller = new BitacoraLimpiezaAdminControllerSimple($conn);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id_bitacora = $_POST['id_bitacora'] ?? null;
-    
-    if (!$id_bitacora) {
-        echo json_encode(['success' => false, 'message' => 'ID de bitácora requerido']);
-        exit;
+try {
+    // Verificar método POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Método no permitido');
     }
     
-    $resultado = $controller->eliminarBitacoraAdmin($id_bitacora);
+    // Obtener ID de la bitácora
+    $id_bitacora = $_POST['id'] ?? null;
     
-    if ($resultado) {
-        echo json_encode(['success' => true, 'message' => 'Bitácora eliminada correctamente']);
+    if (!$id_bitacora || !is_numeric($id_bitacora)) {
+        throw new Exception('ID de bitácora inválido');
+    }
+    
+    // Crear controlador y eliminar bitácora
+    $controller = new BitacoraLimpiezaAdminController($conn);
+    $eliminada = $controller->eliminarBitacora($id_bitacora);
+    
+    if ($eliminada) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Bitácora eliminada exitosamente'
+        ]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error al eliminar la bitácora']);
+        throw new Exception('Error al eliminar la bitácora');
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }
 ?>

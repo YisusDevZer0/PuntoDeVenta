@@ -1,48 +1,16 @@
-<!-- Modal para ver detalles de bitácora -->
-<div class="modal fade" id="ModalVerDetalles" tabindex="-1" aria-labelledby="ModalVerDetallesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Modal Ver Detalles Bitácora -->
+<div class="modal fade" id="ModalVerDetallesBitacora" tabindex="-1" aria-labelledby="ModalVerDetallesBitacoraLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ModalVerDetallesLabel">
-                    <i class="fa fa-info-circle me-2"></i>
-                    Detalles de Bitácora
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="ModalVerDetallesBitacoraLabel">
+                    <i class="fa fa-eye me-2"></i>Detalles de la Bitácora
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Sucursal:</label>
-                        <p id="detalleSucursal" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Área:</label>
-                        <p id="detalleArea" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Semana:</label>
-                        <p id="detalleSemana" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Fecha Inicio:</label>
-                        <p id="detalleFechaInicio" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Fecha Fin:</label>
-                        <p id="detalleFechaFin" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Responsable:</label>
-                        <p id="detalleResponsable" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Supervisor:</label>
-                        <p id="detalleSupervisor" class="form-control-plaintext">-</p>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Auxiliar:</label>
-                        <p id="detalleAuxiliar" class="form-control-plaintext">-</p>
-                    </div>
+                <div id="contenidoDetallesBitacora">
+                    <!-- El contenido se carga dinámicamente -->
                 </div>
             </div>
             <div class="modal-footer">
