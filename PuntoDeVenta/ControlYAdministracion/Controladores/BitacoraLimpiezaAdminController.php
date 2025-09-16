@@ -58,24 +58,24 @@ class BitacoraLimpiezaAdminController {
                     'Todas las Sucursales' as Nombre_Sucursal,
                     NOW() as created_at,
                     NOW() as updated_at,
-                    COUNT(dl.id_detalle) as total_elementos,
-                    SUM(CASE 
-                        WHEN dl.lunes_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.lunes_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.martes_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.martes_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.miercoles_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.miercoles_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.jueves_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.jueves_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.viernes_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.viernes_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.sabado_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.sabado_vesp = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.domingo_mat = 1 THEN 1 ELSE 0 END +
-                        CASE WHEN dl.domingo_vesp = 1 THEN 1 ELSE 0 END
-                    ) as tareas_completadas,
-                    (COUNT(dl.id_detalle) * 14) as total_tareas_posibles
+                    COALESCE(COUNT(dl.id_detalle), 0) as total_elementos,
+                    COALESCE(SUM(
+                        (CASE WHEN dl.lunes_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.lunes_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.martes_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.martes_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.miercoles_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.miercoles_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.jueves_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.jueves_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.viernes_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.viernes_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.sabado_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.sabado_vesp = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.domingo_mat = 1 THEN 1 ELSE 0) +
+                        (CASE WHEN dl.domingo_vesp = 1 THEN 1 ELSE 0)
+                    ), 0) as tareas_completadas,
+                    (COALESCE(COUNT(dl.id_detalle), 0) * 14) as total_tareas_posibles
                 FROM Bitacora_Limpieza bl 
                 LEFT JOIN Detalle_Limpieza dl ON bl.id_bitacora = dl.id_bitacora
                 WHERE $where
@@ -83,11 +83,22 @@ class BitacoraLimpiezaAdminController {
                 ORDER BY bl.fecha_inicio DESC";
         
         $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Error preparando consulta: " . mysqli_error($this->conn));
+        }
+        
         if (!empty($params)) {
             mysqli_stmt_bind_param($stmt, $types, ...$params);
         }
-        mysqli_stmt_execute($stmt);
+        
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("Error ejecutando consulta: " . mysqli_stmt_error($stmt));
+        }
+        
         $result = mysqli_stmt_get_result($stmt);
+        if (!$result) {
+            throw new Exception("Error obteniendo resultado: " . mysqli_error($this->conn));
+        }
         
         $bitacoras = [];
         while($row = mysqli_fetch_assoc($result)) {
@@ -97,6 +108,7 @@ class BitacoraLimpiezaAdminController {
             $bitacoras[] = $row;
         }
         
+        mysqli_stmt_close($stmt);
         return $bitacoras;
     }
     

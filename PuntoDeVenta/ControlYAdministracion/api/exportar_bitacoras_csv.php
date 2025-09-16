@@ -1,6 +1,6 @@
 <?php
 include_once "../Controladores/ControladorUsuario.php";
-include_once "../Controladores/BitacoraLimpiezaAdminController.php";
+include_once "../Controladores/BitacoraLimpiezaAdminControllerSimple.php";
 
 // Verificar sesión administrativa
 if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
@@ -8,7 +8,7 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
     exit('Acceso denegado');
 }
 
-$controller = new BitacoraLimpiezaAdminController($conn);
+$controller = new BitacoraLimpiezaAdminControllerSimple($conn);
 
 // Obtener filtros
 $filtros = [];

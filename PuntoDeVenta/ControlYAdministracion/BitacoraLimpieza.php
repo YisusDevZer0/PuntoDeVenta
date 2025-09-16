@@ -1,39 +1,86 @@
 <?php
-include_once "Controladores/ControladorUsuario.php";
-include_once "Controladores/BitacoraLimpiezaAdminController.php";
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Verificar sesión administrativa
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    header("Location: Expiro.php");
-    exit();
-}
+try {
+    include_once "Controladores/ControladorUsuario.php";
+    include_once "Controladores/BitacoraLimpiezaAdminControllerSimple.php";
 
-$controller = new BitacoraLimpiezaAdminController($conn);
+    // Verificar sesión administrativa
+    if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+        header("Location: Expiro.php");
+        exit();
+    }
 
-// Obtener filtros
-$filtros = [];
-if (isset($_GET['sucursal']) && !empty($_GET['sucursal'])) {
-    $filtros['sucursal'] = $_GET['sucursal'];
-}
-if (isset($_GET['area']) && !empty($_GET['area'])) {
-    $filtros['area'] = $_GET['area'];
-}
-if (isset($_GET['fecha_inicio']) && !empty($_GET['fecha_inicio'])) {
-    $filtros['fecha_inicio'] = $_GET['fecha_inicio'];
-}
-if (isset($_GET['fecha_fin']) && !empty($_GET['fecha_fin'])) {
-    $filtros['fecha_fin'] = $_GET['fecha_fin'];
-}
+    // Verificar que $conn esté disponible
+    if (!isset($conn) || !$conn) {
+        throw new Exception("Error de conexión a la base de datos");
+    }
 
-// Obtener datos
-$bitacoras = $controller->obtenerBitacorasAdmin($filtros);
-$estadisticas = $controller->obtenerEstadisticasGenerales($filtros);
-$sucursales = $controller->obtenerSucursales();
-$areas = $controller->obtenerAreas();
-$bitacorasPorSucursal = $controller->obtenerBitacorasPorSucursal($filtros);
+    $controller = new BitacoraLimpiezaAdminControllerSimple($conn);
 
-// Variable para identificar la página actual
-$currentPage = 'bitacora_limpieza';
+    // Obtener filtros
+    $filtros = [];
+    if (isset($_GET['area']) && !empty($_GET['area'])) {
+        $filtros['area'] = $_GET['area'];
+    }
+    if (isset($_GET['fecha_inicio']) && !empty($_GET['fecha_inicio'])) {
+        $filtros['fecha_inicio'] = $_GET['fecha_inicio'];
+    }
+    if (isset($_GET['fecha_fin']) && !empty($_GET['fecha_fin'])) {
+        $filtros['fecha_fin'] = $_GET['fecha_fin'];
+    }
+
+    // Obtener datos con manejo de errores
+    $bitacoras = [];
+    $estadisticas = [];
+    $sucursales = [];
+    $areas = [];
+    $bitacorasPorSucursal = [];
+
+    try {
+        $bitacoras = $controller->obtenerBitacorasAdmin($filtros);
+    } catch (Exception $e) {
+        error_log("Error obteniendo bitácoras: " . $e->getMessage());
+        $bitacoras = [];
+    }
+
+    try {
+        $estadisticas = $controller->obtenerEstadisticasGenerales($filtros);
+    } catch (Exception $e) {
+        error_log("Error obteniendo estadísticas: " . $e->getMessage());
+        $estadisticas = ['total_bitacoras' => 0, 'total_sucursales' => 1, 'total_areas' => 0, 'promedio_cumplimiento' => 0];
+    }
+
+    try {
+        $sucursales = $controller->obtenerSucursales();
+    } catch (Exception $e) {
+        error_log("Error obteniendo sucursales: " . $e->getMessage());
+        $sucursales = [];
+    }
+
+    try {
+        $areas = $controller->obtenerAreas();
+    } catch (Exception $e) {
+        error_log("Error obteniendo áreas: " . $e->getMessage());
+        $areas = [];
+    }
+
+    try {
+        $bitacorasPorSucursal = $controller->obtenerBitacorasPorSucursal($filtros);
+    } catch (Exception $e) {
+        error_log("Error obteniendo bitácoras por sucursal: " . $e->getMessage());
+        $bitacorasPorSucursal = [];
+    }
+
+    // Variable para identificar la página actual
+    $currentPage = 'bitacora_limpieza';
+
+} catch (Exception $e) {
+    // Mostrar error en pantalla para debugging
+    die("Error fatal: " . $e->getMessage() . " en línea " . $e->getLine());
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
