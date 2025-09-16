@@ -17,6 +17,20 @@ try {
         throw new Exception("Error de conexión a la base de datos");
     }
 
+    // Asegurar que las variables necesarias para el menú estén definidas
+    if (!isset($row)) {
+        $row = [
+            'Licencia' => 'Sistema',
+            'Nombre_Sucursal' => 'Administración',
+            'TipoUsuario' => 'Administrador'
+        ];
+    }
+    
+    // Variables para el menú
+    $currentPage = 'bitacora_limpieza';
+    $showDashboard = true;
+    $disabledAttr = '';
+
     // Obtener datos básicos directamente
     $bitacoras = [];
     $sucursales = [];
@@ -78,6 +92,16 @@ try {
     <title>Control de Bitácoras de Limpieza</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php";?>
+    <style>
+        .sidebar {
+            display: block !important;
+            visibility: visible !important;
+        }
+        .content {
+            display: block !important;
+            visibility: visible !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar Start -->
@@ -255,6 +279,20 @@ try {
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página cargada correctamente');
         
+        // Asegurar que el menú esté visible
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            sidebar.style.display = 'block';
+            sidebar.style.visibility = 'visible';
+        }
+        
+        // Asegurar que el contenido esté visible
+        const content = document.querySelector('.content');
+        if (content) {
+            content.style.display = 'block';
+            content.style.visibility = 'visible';
+        }
+        
         // Inicializar DataTable si está disponible
         if (typeof $.fn.DataTable !== 'undefined') {
             $('table').DataTable({
@@ -269,6 +307,12 @@ try {
                 "pageLength": 25
             });
         }
+    });
+    
+    // Asegurar que el menú esté visible después de cargar jQuery
+    $(document).ready(function() {
+        $('.sidebar').show();
+        $('.content').show();
     });
     </script>
 
