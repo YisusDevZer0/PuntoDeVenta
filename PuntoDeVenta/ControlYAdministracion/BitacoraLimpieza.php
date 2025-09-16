@@ -78,7 +78,7 @@ include_once "Controladores/ControladorUsuario.php";
     }
     
     // Consulta simple para sucursales
-    $sql_sucursales = "SELECT Id_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Estado = 1 ORDER BY Nombre_Sucursal LIMIT 20";
+    $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 20";
     $result_sucursales = mysqli_query($conn, $sql_sucursales);
     if ($result_sucursales) {
         while($row = mysqli_fetch_assoc($result_sucursales)) {
@@ -169,8 +169,8 @@ include_once "Controladores/ControladorUsuario.php";
                                 <select class="form-select" id="filtroSucursal">
                                     <option value="">Todas las sucursales</option>
                                     <?php foreach($sucursales as $sucursal): ?>
-                                        <option value="<?php echo $sucursal['Id_Sucursal']; ?>" 
-                                                <?php echo (isset($filtros['sucursal']) && $filtros['sucursal'] == $sucursal['Id_Sucursal']) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo $sucursal['ID_Sucursal']; ?>" 
+                                                <?php echo (isset($filtros['sucursal']) && $filtros['sucursal'] == $sucursal['ID_Sucursal']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($sucursal['Nombre_Sucursal']); ?>
                                         </option>
                                     <?php endforeach; ?>

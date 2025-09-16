@@ -152,12 +152,14 @@ class BitacoraLimpiezaAdminControllerSimple {
     
     // Obtener sucursales reales
     public function obtenerSucursales() {
-        $sql = "SELECT Id_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Estado = 1 ORDER BY Nombre_Sucursal";
+        $sql = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal";
         $result = mysqli_query($this->conn, $sql);
         
         $sucursales = [];
-        while($row = mysqli_fetch_assoc($result)) {
-            $sucursales[] = $row;
+        if ($result) {
+            while($row = mysqli_fetch_assoc($result)) {
+                $sucursales[] = $row;
+            }
         }
         
         return $sucursales;

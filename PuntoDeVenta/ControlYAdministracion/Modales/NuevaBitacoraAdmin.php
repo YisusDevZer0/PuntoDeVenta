@@ -20,7 +20,7 @@
                                 $sucursales = $controller->obtenerSucursales();
                                 foreach($sucursales as $sucursal): 
                                 ?>
-                                    <option value="<?php echo $sucursal['Id_Sucursal']; ?>">
+                                    <option value="<?php echo $sucursal['ID_Sucursal']; ?>">
                                         <?php echo htmlspecialchars($sucursal['Nombre_Sucursal']); ?>
                                     </option>
                                 <?php endforeach; ?>

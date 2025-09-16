@@ -78,7 +78,7 @@ try {
     
     // Paso 4: Obtener sucursales disponibles
     echo "<p>🔄 Obteniendo sucursales disponibles...</p>";
-    $getSucursales = "SELECT Id_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Estado = 1 ORDER BY Id_Sucursal";
+    $getSucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY ID_Sucursal";
     $resultSucursales = mysqli_query($conn, $getSucursales);
     
     if ($resultSucursales && mysqli_num_rows($resultSucursales) > 0) {
@@ -87,12 +87,12 @@ try {
         $sucursales = [];
         while ($sucursal = mysqli_fetch_assoc($resultSucursales)) {
             $sucursales[] = $sucursal;
-            echo "<li>ID: {$sucursal['Id_Sucursal']} - {$sucursal['Nombre_Sucursal']}</li>";
+            echo "<li>ID: {$sucursal['ID_Sucursal']} - {$sucursal['Nombre_Sucursal']}</li>";
         }
         echo "</ul>";
         
         // Usar la primera sucursal como predeterminada
-        $sucursalPredeterminada = $sucursales[0]['Id_Sucursal'];
+        $sucursalPredeterminada = $sucursales[0]['ID_Sucursal'];
         $nombreSucursal = $sucursales[0]['Nombre_Sucursal'];
         
         echo "<p>🔄 Asignando bitácoras existentes a la sucursal: <strong>$nombreSucursal (ID: $sucursalPredeterminada)</strong></p>";
