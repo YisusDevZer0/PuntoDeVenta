@@ -35,13 +35,21 @@ try {
     echo json_encode([
         'test' => 'registrarAsistencia',
         'resultado' => $resultado,
-        'timestamp' => date('Y-m-d H:i:s')
+        'timestamp' => date('Y-m-d H:i:s'),
+        'debug' => [
+            'usuario_id' => 1,
+            'tipo' => 'entrada',
+            'latitud' => 19.4326,
+            'longitud' => -99.1332,
+            'timestamp' => date('Y-m-d H:i:s')
+        ]
     ], JSON_PRETTY_PRINT);
     
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
         'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString(),
         'timestamp' => date('Y-m-d H:i:s')
     ], JSON_PRETTY_PRINT);
 }

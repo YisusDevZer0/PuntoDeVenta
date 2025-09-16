@@ -139,6 +139,49 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             text-align: center;
         }
         
+        .user-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+        }
+        
+        .user-info .user-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .user-info .user-section > div {
+            flex: 1;
+        }
+        
+        .user-info .user-section > div:first-child {
+            text-align: left;
+        }
+        
+        .user-info .user-section > div:last-child {
+            text-align: right;
+        }
+        
+        .user-info .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-info .section-value {
+            font-size: 16px;
+            color: #424242;
+            font-weight: 500;
+        }
+        
         .location-info {
             display: flex;
             justify-content: space-between;
@@ -286,6 +329,20 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         }
         
         @media (max-width: 768px) {
+            .user-info .user-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-info .user-section > div {
+                margin-bottom: 15px;
+            }
+            
+            .user-info .user-section > div:first-child,
+            .user-info .user-section > div:last-child {
+                text-align: center;
+            }
+            
             .location-info {
                 flex-direction: column;
                 text-align: center;
@@ -327,6 +384,9 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                 updateDateTime();
                 setInterval(updateDateTime, 1000);
                 
+                // Cargar información del centro de trabajo
+                await loadWorkCenterInfo();
+                
                 // Verificar ubicación
                 await checkLocation();
                 
@@ -338,6 +398,24 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                 console.error('Error inicializando checador:', error);
                 // Aún así habilitar botones para permitir uso
                 enableButtons();
+            }
+        }
+        
+        // Cargar información del centro de trabajo
+        async function loadWorkCenterInfo() {
+            try {
+                const response = await makeRequest('obtener_centros_trabajo');
+                
+                if (response.success && response.data && response.data.length > 0) {
+                    // Mostrar el primer centro de trabajo activo
+                    const workCenter = response.data.find(center => center.estado === 'active') || response.data[0];
+                    document.getElementById('workCenter').textContent = workCenter.nombre || 'Centro de Trabajo';
+                } else {
+                    document.getElementById('workCenter').textContent = 'No configurado';
+                }
+            } catch (error) {
+                console.error('Error cargando centro de trabajo:', error);
+                document.getElementById('workCenter').textContent = 'Error al cargar';
             }
         }
     </script>
@@ -367,12 +445,34 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                 </div>
             </div>
 
-            <!-- Panel de Información -->
+            <!-- Panel de Información del Usuario -->
             <div class="info-panel">
+                <!-- Información del Usuario -->
+                <div class="user-info">
+                    <div class="user-section">
+                        <div>
+                            <div class="section-title">
+                                <i class="fas fa-user"></i> USUARIO
+                            </div>
+                            <div class="section-value" id="userName">
+                                <?php echo isset($row['Nombre_Apellidos']) ? htmlspecialchars($row['Nombre_Apellidos']) : 'Usuario'; ?>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="section-title">
+                                <i class="fas fa-building"></i> CENTRO DE TRABAJO
+                            </div>
+                            <div class="section-value" id="workCenter">
+                                Cargando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Información de Ubicación -->
                 <div class="location-info">
                     <div class="location-left">
-                        <div class="location-title">UBICACIÓN</div>
+                        <div class="location-title">UBICACIÓN ACTUAL</div>
                         <div class="location-value" id="currentLocation">Cargando...</div>
                     </div>
                     <div class="location-right">
@@ -505,10 +605,11 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                     isInWorkArea = response.en_area;
                     
                     if (isInWorkArea) {
-                        updateStatus('inside', 'En el área de trabajo');
+                        const workCenterName = response.ubicacion_encontrada ? response.ubicacion_encontrada.nombre : 'Centro de Trabajo';
+                        updateStatus('inside', `En el área: ${workCenterName}`);
                         enableButtons();
                     } else {
-                        updateStatus('outside', 'Fuera del área');
+                        updateStatus('outside', 'Fuera del área de trabajo');
                         // Aún habilitar botones para permitir uso
                         enableButtons();
                     }

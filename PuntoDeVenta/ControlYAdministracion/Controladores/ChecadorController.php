@@ -151,8 +151,8 @@ class ChecadorController {
             
             // Insertar el registro de asistencia
             $stmt = $this->conn->prepare("
-                INSERT INTO asistencias (usuario_id, tipo, latitud, longitud, fecha_hora, created_at) 
-                VALUES (?, ?, ?, ?, ?, NOW())
+                INSERT INTO asistencias (usuario_id, tipo, latitud, longitud, fecha_hora) 
+                VALUES (?, ?, ?, ?, ?)
             ");
             if (!$stmt) {
                 return ['success' => false, 'message' => 'Error preparando inserción: ' . $this->conn->error];
@@ -502,14 +502,14 @@ class ChecadorController {
     /**
      * Guardar centro de trabajo
      */
-    public function guardarCentroTrabajo($nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado) {
+    public function guardarCentroTrabajo($usuario_id, $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado) {
         try {
             $stmt = $this->conn->prepare("
                 INSERT INTO ubicaciones_trabajo 
-                (nombre, direccion, descripcion, latitud, longitud, radio, estado, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+                (usuario_id, nombre, direccion, descripcion, latitud, longitud, radio, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
-            $stmt->bind_param("sssdiss", $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
+            $stmt->bind_param("isssddiss", $usuario_id, $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
             
             if ($stmt->execute()) {
                 return ['success' => true, 'message' => 'Centro de trabajo guardado exitosamente', 'id' => $stmt->insert_id];
