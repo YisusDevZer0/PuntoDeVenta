@@ -72,6 +72,14 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             <a href="RecordatoriosSistema" class="nav-item nav-link"><i class="fa-solid fa-bell"></i>Recordatorios</a>
             
             <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-broom"></i>Limpieza</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-clipboard-list"></i>Control de Bitácoras</a>
+                    <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-chart-line"></i>Reportes de Limpieza</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-solid fa-business-time"></i>Agendas</a>
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="AgendaRevaloraciones" class="dropdown-item"><i class="fa-solid fa-person-walking-arrow-loop-left"></i>Revaloraciones</a>
