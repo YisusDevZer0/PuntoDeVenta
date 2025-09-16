@@ -150,11 +150,17 @@ class BitacoraLimpiezaAdminControllerSimple {
         return $areas;
     }
     
-    // Obtener sucursales (simulado)
+    // Obtener sucursales reales
     public function obtenerSucursales() {
-        return [
-            ['Id_Sucursal' => 1, 'Nombre_Sucursal' => 'Todas las Sucursales']
-        ];
+        $sql = "SELECT Id_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Estado = 1 ORDER BY Nombre_Sucursal";
+        $result = mysqli_query($this->conn, $sql);
+        
+        $sucursales = [];
+        while($row = mysqli_fetch_assoc($result)) {
+            $sucursales[] = $row;
+        }
+        
+        return $sucursales;
     }
     
     // Obtener bitácoras por área (simulado)
@@ -240,9 +246,135 @@ class BitacoraLimpiezaAdminControllerSimple {
         return false;
     }
     
+    // Crear nueva bitácora administrativa
+    public function crearBitacoraAdmin($datos) {
+        $sql = "INSERT INTO Bitacora_Limpieza (
+                    area, 
+                    semana, 
+                    fecha_inicio, 
+                    fecha_fin, 
+                    responsable, 
+                    supervisor, 
+                    aux_res,
+                    sucursal_id,
+                    created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        
+        $stmt = mysqli_prepare($this->conn, $sql);
+        if (!$stmt) {
+            throw new Exception("Error preparando consulta: " . mysqli_error($this->conn));
+        }
+        
+        mysqli_stmt_bind_param($stmt, "sssssssi", 
+            $datos['area'],
+            $datos['semana'],
+            $datos['fecha_inicio'],
+            $datos['fecha_fin'],
+            $datos['responsable'],
+            $datos['supervisor'],
+            $datos['aux_res'],
+            $datos['sucursal_id']
+        );
+        
+        $result = mysqli_stmt_execute($stmt);
+        $id_bitacora = mysqli_insert_id($this->conn);
+        mysqli_stmt_close($stmt);
+        
+        if ($result) {
+            return $id_bitacora;
+        } else {
+            throw new Exception("Error creando bitácora: " . mysqli_error($this->conn));
+        }
+    }
+    
+    // Obtener bitácoras con información de sucursal
+    public function obtenerBitacorasConSucursal($filtros = []) {
+        $where = "1=1";
+        $params = [];
+        $types = "";
+        
+        // Filtro por sucursal
+        if (!empty($filtros['sucursal'])) {
+            $where .= " AND bl.sucursal_id = ?";
+            $params[] = $filtros['sucursal'];
+            $types .= "i";
+        }
+        
+        // Filtro por área
+        if (!empty($filtros['area'])) {
+            $where .= " AND bl.area = ?";
+            $params[] = $filtros['area'];
+            $types .= "s";
+        }
+        
+        // Filtro por fecha inicio
+        if (!empty($filtros['fecha_inicio'])) {
+            $where .= " AND bl.fecha_inicio >= ?";
+            $params[] = $filtros['fecha_inicio'];
+            $types .= "s";
+        }
+        
+        // Filtro por fecha fin
+        if (!empty($filtros['fecha_fin'])) {
+            $where .= " AND bl.fecha_fin <= ?";
+            $params[] = $filtros['fecha_fin'];
+            $types .= "s";
+        }
+        
+        $sql = "SELECT 
+                    bl.id_bitacora,
+                    bl.area,
+                    bl.semana,
+                    bl.fecha_inicio,
+                    bl.fecha_fin,
+                    bl.responsable,
+                    bl.supervisor,
+                    bl.aux_res,
+                    bl.firma_responsable,
+                    bl.firma_supervisor,
+                    bl.firma_aux_res,
+                    bl.sucursal_id,
+                    s.Nombre_Sucursal,
+                    bl.created_at,
+                    bl.updated_at,
+                    0 as total_elementos,
+                    0 as tareas_completadas,
+                    0 as total_tareas_posibles,
+                    0 as porcentaje_cumplimiento
+                FROM Bitacora_Limpieza bl 
+                LEFT JOIN Sucursales s ON bl.sucursal_id = s.Id_Sucursal
+                WHERE $where
+                ORDER BY bl.fecha_inicio DESC";
+        
+        if (!empty($params)) {
+            $stmt = mysqli_prepare($this->conn, $sql);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, $types, ...$params);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                
+                $bitacoras = [];
+                while($row = mysqli_fetch_assoc($result)) {
+                    $bitacoras[] = $row;
+                }
+                mysqli_stmt_close($stmt);
+                return $bitacoras;
+            }
+        } else {
+            $result = mysqli_query($this->conn, $sql);
+            $bitacoras = [];
+            while($row = mysqli_fetch_assoc($result)) {
+                $bitacoras[] = $row;
+            }
+            return $bitacoras;
+        }
+        
+        return [];
+    }
+    
     // Exportar datos a CSV
     public function exportarDatosCSV($filtros = []) {
-        $bitacoras = $this->obtenerBitacorasAdmin($filtros);
+        $bitacoras = $this->obtenerBitacorasConSucursal($filtros);
         
         $csv = "ID,Área,Semana,Fecha Inicio,Fecha Fin,Responsable,Supervisor,Auxiliar,Sucursal,Total Elementos,Tareas Completadas,Porcentaje Cumplimiento\n";
         
