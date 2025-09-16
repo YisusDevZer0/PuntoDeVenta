@@ -441,9 +441,17 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                 <div>
                     <small>Última verificación: <span id="lastVerification">--</span></small>
                     <br>
-                    <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-top: 5px;">
-                        <i class="fas fa-sync-alt"></i> Verificar Ubicación
-                    </button>
+                    <div style="margin-top: 5px;">
+                        <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-right: 5px;">
+                            <i class="fas fa-sync-alt"></i> Verificar Ubicación
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="diagnosticarGeolocalizacion()" style="margin-right: 5px;">
+                            <i class="fas fa-bug"></i> Diagnóstico
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="testGeolocation()">
+                            <i class="fas fa-test-tube"></i> Test
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -590,18 +598,68 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             }
         }
         
-        // Obtener posición actual
+        // Obtener posición actual - Versión mejorada
         function getCurrentPosition() {
             return new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(
-                    resolve,
-                    reject,
-                    {
-                        enableHighAccuracy: false,
-                        timeout: 10000,
-                        maximumAge: 300000 // 5 minutos de cache
+                console.log('🔍 Iniciando solicitud de geolocalización...');
+                
+                // Verificar si geolocalización está disponible
+                if (!navigator.geolocation) {
+                    console.error('❌ Geolocalización no soportada');
+                    reject(new Error('Geolocalización no soportada en este navegador'));
+                    return;
+                }
+                
+                // Configuración optimizada para diferentes escenarios
+                const options = {
+                    enableHighAccuracy: true,  // Intentar GPS primero
+                    timeout: 15000,           // 15 segundos de timeout
+                    maximumAge: 0             // No usar cache, siempre obtener ubicación fresca
+                };
+                
+                console.log('📍 Opciones de geolocalización:', options);
+                
+                // Función de éxito
+                const onSuccess = (position) => {
+                    console.log('✅ Ubicación obtenida exitosamente:', {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: new Date(position.timestamp)
+                    });
+                    resolve(position);
+                };
+                
+                // Función de error con detalles
+                const onError = (error) => {
+                    console.error('❌ Error de geolocalización:', error);
+                    
+                    let errorMessage = 'Error desconocido';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Permisos de ubicación denegados por el usuario';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Ubicación no disponible (GPS deshabilitado o sin señal)';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Tiempo de espera agotado (GPS lento o sin señal)';
+                            break;
+                        default:
+                            errorMessage = `Error: ${error.message}`;
                     }
-                );
+                    
+                    console.error('📝 Detalles del error:', errorMessage);
+                    reject(new Error(errorMessage));
+                };
+                
+                // Intentar obtener ubicación
+                try {
+                    navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+                } catch (err) {
+                    console.error('💥 Error crítico al solicitar geolocalización:', err);
+                    reject(new Error('Error crítico: ' + err.message));
+                }
             });
         }
         
@@ -830,16 +888,205 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         }
         
         // Verificar ubicación manualmente
+        // Diagnóstico de geolocalización
+        function diagnosticarGeolocalizacion() {
+            console.log('🔧 DIAGNÓSTICO DE GEOLOCALIZACIÓN');
+            console.log('================================');
+            
+            // 1. Verificar soporte
+            console.log('1. Soporte de geolocalización:', !!navigator.geolocation);
+            
+            // 2. Verificar HTTPS
+            console.log('2. Protocolo seguro (HTTPS):', location.protocol === 'https:');
+            
+            // 3. Verificar permisos (si está disponible)
+            if (navigator.permissions) {
+                navigator.permissions.query({name: 'geolocation'}).then(result => {
+                    console.log('3. Estado de permisos:', result.state);
+                }).catch(err => {
+                    console.log('3. No se puede verificar permisos:', err);
+                });
+            } else {
+                console.log('3. API de permisos no disponible');
+            }
+            
+            // 4. Verificar configuración del navegador
+            console.log('4. User Agent:', navigator.userAgent);
+            console.log('5. Plataforma:', navigator.platform);
+            
+            // 5. Verificar variables globales
+            console.log('6. Variables del checador:', {
+                userLocation,
+                isInWorkArea,
+                locationPermissionDenied,
+                locationCheckAttempted
+            });
+            
+            console.log('================================');
+        }
+        
+        // Test de geolocalización
+        async function testGeolocation() {
+            console.log('🧪 INICIANDO TEST DE GEOLOCALIZACIÓN');
+            
+            try {
+                // Test básico
+                console.log('1. Test básico de disponibilidad...');
+                if (!navigator.geolocation) {
+                    throw new Error('Geolocalización no soportada');
+                }
+                console.log('✅ Geolocalización disponible');
+                
+                // Test de permisos
+                console.log('2. Test de permisos...');
+                if (navigator.permissions) {
+                    const permission = await navigator.permissions.query({name: 'geolocation'});
+                    console.log('📋 Estado de permisos:', permission.state);
+                } else {
+                    console.log('⚠️ API de permisos no disponible');
+                }
+                
+                // Test de ubicación con diferentes configuraciones
+                console.log('3. Test de ubicación (baja precisión)...');
+                const position1 = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: false,
+                        timeout: 5000,
+                        maximumAge: 60000
+                    });
+                });
+                console.log('✅ Ubicación obtenida (baja precisión):', {
+                    lat: position1.coords.latitude,
+                    lng: position1.coords.longitude,
+                    accuracy: position1.coords.accuracy
+                });
+                
+                // Test de ubicación con alta precisión
+                console.log('4. Test de ubicación (alta precisión)...');
+                const position2 = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                });
+                console.log('✅ Ubicación obtenida (alta precisión):', {
+                    lat: position2.coords.latitude,
+                    lng: position2.coords.longitude,
+                    accuracy: position2.coords.accuracy
+                });
+                
+                // Mostrar resultado exitoso
+                Swal.fire({
+                    title: '¡Test Exitoso!',
+                    html: `
+                        <p><strong>Geolocalización funcionando correctamente</strong></p>
+                        <p><strong>Última ubicación:</strong></p>
+                        <p>Lat: ${position2.coords.latitude.toFixed(6)}</p>
+                        <p>Lng: ${position2.coords.longitude.toFixed(6)}</p>
+                        <p>Precisión: ${Math.round(position2.coords.accuracy)} metros</p>
+                    `,
+                    icon: 'success',
+                    confirmButtonText: 'Excelente'
+                });
+                
+            } catch (error) {
+                console.error('❌ Test falló:', error);
+                
+                Swal.fire({
+                    title: 'Test Falló',
+                    html: `
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Recomendaciones:</strong></p>
+                        <ul style="text-align: left;">
+                            <li>Verifica permisos de ubicación en el navegador</li>
+                            <li>Asegúrate de estar en HTTPS</li>
+                            <li>Intenta en un dispositivo móvil</li>
+                            <li>Revisa la configuración de privacidad</li>
+                        </ul>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+        }
+        
         // Verificación manual de ubicación
         async function checkLocationManual() {
-            console.log('Verificación manual de ubicación...');
+            console.log('🔄 Verificación manual de ubicación...');
+            
+            // Ejecutar diagnóstico
+            diagnosticarGeolocalizacion();
             
             // Resetear flags para permitir reintento
             locationPermissionDenied = false;
             locationCheckAttempted = false;
             
-            // Intentar obtener ubicación nuevamente
-            await checkLocation();
+            // Mostrar loading
+            Swal.fire({
+                title: 'Obteniendo ubicación...',
+                text: 'Por favor espera mientras obtenemos tu ubicación',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            try {
+                // Intentar obtener ubicación con timeout personalizado
+                const position = await Promise.race([
+                    getCurrentPosition(),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Timeout personalizado')), 20000)
+                    )
+                ]);
+                
+                userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                Swal.close();
+                
+                // Mostrar información de la ubicación
+                Swal.fire({
+                    title: '¡Ubicación obtenida!',
+                    html: `
+                        <p><strong>Latitud:</strong> ${userLocation.lat.toFixed(6)}</p>
+                        <p><strong>Longitud:</strong> ${userLocation.lng.toFixed(6)}</p>
+                        <p><strong>Precisión:</strong> ${Math.round(position.coords.accuracy)} metros</p>
+                    `,
+                    icon: 'success',
+                    confirmButtonText: 'Continuar'
+                });
+                
+                // Actualizar interfaz
+                document.getElementById('currentLocation').textContent = 'Ubicación detectada';
+                updateLastVerification();
+                
+                // Verificar área de trabajo
+                await verifyWorkArea();
+                
+            } catch (error) {
+                Swal.close();
+                console.error('❌ Error en verificación manual:', error);
+                
+                Swal.fire({
+                    title: 'Error obteniendo ubicación',
+                    html: `
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Posibles soluciones:</strong></p>
+                        <ul style="text-align: left;">
+                            <li>Verifica que el navegador tenga permisos de ubicación</li>
+                            <li>Asegúrate de estar en una conexión HTTPS</li>
+                            <li>Intenta en un dispositivo con GPS</li>
+                            <li>Revisa la configuración de privacidad del navegador</li>
+                        </ul>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'Entendido'
+                });
+            }
         }
         
         // Configurar ubicación
