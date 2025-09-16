@@ -125,7 +125,7 @@ include_once "Controladores/ControladorUsuario.php";
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
             <span class="sr-only">Loading...</span>
         </div>
-    </div>
+</div>
         <!-- Spinner End -->
 
     <!-- Sidebar Start -->
@@ -559,7 +559,7 @@ include_once "Controladores/ControladorUsuario.php";
                         }).then(() => {
                             location.reload();
                         });
-                    } else {
+        } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
