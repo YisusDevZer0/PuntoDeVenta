@@ -54,10 +54,10 @@ class BitacoraLimpiezaAdminController {
                     bl.firma_responsable,
                     bl.firma_supervisor,
                     bl.firma_aux_res,
-                    bl.sucursal,
-                    s.Nombre_Sucursal,
-                    bl.created_at,
-                    bl.updated_at,
+                    'N/A' as sucursal,
+                    'Todas las Sucursales' as Nombre_Sucursal,
+                    NOW() as created_at,
+                    NOW() as updated_at,
                     COUNT(dl.id_detalle) as total_elementos,
                     SUM(CASE 
                         WHEN dl.lunes_mat = 1 THEN 1 ELSE 0 END +
@@ -77,10 +77,9 @@ class BitacoraLimpiezaAdminController {
                     ) as tareas_completadas,
                     (COUNT(dl.id_detalle) * 14) as total_tareas_posibles
                 FROM Bitacora_Limpieza bl 
-                LEFT JOIN Sucursales s ON bl.sucursal = s.Id_Sucursal
                 LEFT JOIN Detalle_Limpieza dl ON bl.id_bitacora = dl.id_bitacora
                 WHERE $where
-                GROUP BY bl.id_bitacora, bl.area, bl.semana, bl.fecha_inicio, bl.fecha_fin, bl.responsable, bl.supervisor, bl.aux_res, bl.firma_responsable, bl.firma_supervisor, bl.firma_aux_res, bl.sucursal, s.Nombre_Sucursal, bl.created_at, bl.updated_at
+                GROUP BY bl.id_bitacora, bl.area, bl.semana, bl.fecha_inicio, bl.fecha_fin, bl.responsable, bl.supervisor, bl.aux_res, bl.firma_responsable, bl.firma_supervisor, bl.firma_aux_res
                 ORDER BY bl.fecha_inicio DESC";
         
         $stmt = mysqli_prepare($this->conn, $sql);
@@ -184,7 +183,6 @@ class BitacoraLimpiezaAdminController {
         
         // Obtener estadísticas adicionales
         $sql2 = "SELECT 
-                    COUNT(DISTINCT bl.sucursal) as total_sucursales,
                     COUNT(DISTINCT bl.area) as total_areas
                 FROM Bitacora_Limpieza bl 
                 WHERE $where";
@@ -197,13 +195,13 @@ class BitacoraLimpiezaAdminController {
         $result2 = mysqli_stmt_get_result($stmt2);
         $row2 = mysqli_fetch_assoc($result2);
         
-        $stats['total_sucursales'] = $row2['total_sucursales'];
+        $stats['total_sucursales'] = 1; // Como no hay campo sucursal, mostramos 1
         $stats['total_areas'] = $row2['total_areas'];
         
         return $stats;
     }
     
-    // Obtener bitácoras por sucursal
+    // Obtener bitácoras por área (ya que no hay campo sucursal)
     public function obtenerBitacorasPorSucursal($filtros = []) {
         $where = "1=1";
         $params = [];
@@ -222,8 +220,8 @@ class BitacoraLimpiezaAdminController {
         }
         
         $sql = "SELECT 
-                    s.Id_Sucursal,
-                    s.Nombre_Sucursal,
+                    bl.area as Id_Sucursal,
+                    bl.area as Nombre_Sucursal,
                     COUNT(bl.id_bitacora) as total_bitacoras,
                     AVG(
                         CASE 
@@ -247,11 +245,11 @@ class BitacoraLimpiezaAdminController {
                             ELSE 0
                         END
                     ) as promedio_cumplimiento
-                FROM Sucursales s
-                LEFT JOIN Bitacora_Limpieza bl ON s.Id_Sucursal = bl.sucursal AND $where
+                FROM Bitacora_Limpieza bl
                 LEFT JOIN Detalle_Limpieza dl ON bl.id_bitacora = dl.id_bitacora
-                GROUP BY s.Id_Sucursal, s.Nombre_Sucursal
-                ORDER BY s.Nombre_Sucursal";
+                WHERE $where
+                GROUP BY bl.area
+                ORDER BY bl.area";
         
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!empty($params)) {
@@ -282,12 +280,10 @@ class BitacoraLimpiezaAdminController {
         return $areas;
     }
     
-    // Obtener sucursales con bitácoras
+    // Obtener sucursales con bitácoras (simulado ya que no hay campo sucursal)
     public function obtenerSucursales() {
-        $sql = "SELECT DISTINCT s.Id_Sucursal, s.Nombre_Sucursal 
-                FROM Sucursales s
-                INNER JOIN Bitacora_Limpieza bl ON s.Id_Sucursal = bl.sucursal
-                ORDER BY s.Nombre_Sucursal";
+        // Como no hay campo sucursal en Bitacora_Limpieza, retornamos sucursales genéricas
+        $sql = "SELECT Id_Sucursal, Nombre_Sucursal FROM Sucursales ORDER BY Nombre_Sucursal";
         $result = mysqli_query($this->conn, $sql);
         
         $sucursales = [];
@@ -302,9 +298,8 @@ class BitacoraLimpiezaAdminController {
     public function obtenerDetallesBitacora($id_bitacora) {
         $sql = "SELECT 
                     bl.*,
-                    s.Nombre_Sucursal
+                    'Todas las Sucursales' as Nombre_Sucursal
                 FROM Bitacora_Limpieza bl
-                LEFT JOIN Sucursales s ON bl.sucursal = s.Id_Sucursal
                 WHERE bl.id_bitacora = ?";
         
         $stmt = mysqli_prepare($this->conn, $sql);

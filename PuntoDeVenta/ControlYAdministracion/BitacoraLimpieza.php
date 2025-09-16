@@ -85,19 +85,7 @@ $currentPage = 'bitacora_limpieza';
 
                         <!-- Filtros -->
                         <div class="row g-3 mb-4">
-                            <div class="col-md-3">
-                                <label for="filtroSucursal" class="form-label">Sucursal:</label>
-                                <select class="form-select" id="filtroSucursal">
-                                    <option value="">Todas las sucursales</option>
-                                    <?php foreach($sucursales as $sucursal): ?>
-                                        <option value="<?php echo $sucursal['Id_Sucursal']; ?>" 
-                                                <?php echo (isset($filtros['sucursal']) && $filtros['sucursal'] == $sucursal['Id_Sucursal']) ? 'selected' : ''; ?>>
-                                            <?php echo $sucursal['Nombre_Sucursal']; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="filtroArea" class="form-label">Área:</label>
                                 <select class="form-select" id="filtroArea">
                                     <option value="">Todas las áreas</option>
@@ -109,12 +97,12 @@ $currentPage = 'bitacora_limpieza';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="filtroFechaInicio" class="form-label">Fecha Inicio:</label>
                                 <input type="date" class="form-control" id="filtroFechaInicio" 
                                        value="<?php echo $filtros['fecha_inicio'] ?? ''; ?>">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="filtroFechaFin" class="form-label">Fecha Fin:</label>
                                 <input type="date" class="form-control" id="filtroFechaFin" 
                                        value="<?php echo $filtros['fecha_fin'] ?? ''; ?>">
@@ -136,8 +124,8 @@ $currentPage = 'bitacora_limpieza';
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <i class="fa fa-building fa-2x text-success mb-2"></i>
-                                        <h5 class="card-title"><?php echo $estadisticas['total_sucursales']; ?></h5>
-                                        <p class="card-text text-muted">Sucursales Activas</p>
+                                        <h5 class="card-title"><?php echo $estadisticas['total_bitacoras']; ?></h5>
+                                        <p class="card-text text-muted">Bitácoras Activas</p>
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +163,6 @@ $currentPage = 'bitacora_limpieza';
                                 <thead class="table-primary">
                                     <tr>
                                         <th>ID</th>
-                                        <th>Sucursal</th>
                                         <th>Área</th>
                                         <th>Semana</th>
                                         <th>Fecha Inicio</th>
@@ -191,7 +178,6 @@ $currentPage = 'bitacora_limpieza';
                                     <?php foreach($bitacoras as $bitacora): ?>
                                     <tr>
                                         <td><?php echo $bitacora['id_bitacora']; ?></td>
-                                        <td><?php echo $bitacora['Nombre_Sucursal'] ?? 'N/A'; ?></td>
                                         <td><?php echo $bitacora['area']; ?></td>
                                         <td><?php echo $bitacora['semana']; ?></td>
                                         <td><?php echo $bitacora['fecha_inicio']; ?></td>
@@ -270,7 +256,6 @@ $currentPage = 'bitacora_limpieza';
 
         // Aplicar filtros
         function aplicarFiltros() {
-            const sucursal = $('#filtroSucursal').val();
             const area = $('#filtroArea').val();
             const fechaInicio = $('#filtroFechaInicio').val();
             const fechaFin = $('#filtroFechaFin').val();
@@ -278,7 +263,6 @@ $currentPage = 'bitacora_limpieza';
             let url = 'BitacoraLimpieza.php?';
             const params = [];
             
-            if (sucursal) params.push('sucursal=' + sucursal);
             if (area) params.push('area=' + area);
             if (fechaInicio) params.push('fecha_inicio=' + fechaInicio);
             if (fechaFin) params.push('fecha_fin=' + fechaFin);
@@ -291,7 +275,7 @@ $currentPage = 'bitacora_limpieza';
         }
 
         // Event listeners para filtros
-        $('#filtroSucursal, #filtroArea, #filtroFechaInicio, #filtroFechaFin').change(function() {
+        $('#filtroArea, #filtroFechaInicio, #filtroFechaFin').change(function() {
             aplicarFiltros();
         });
 
@@ -302,7 +286,6 @@ $currentPage = 'bitacora_limpieza';
 
         // Exportar CSV
         $('#btnExportarCSV').click(function() {
-            const sucursal = $('#filtroSucursal').val();
             const area = $('#filtroArea').val();
             const fechaInicio = $('#filtroFechaInicio').val();
             const fechaFin = $('#filtroFechaFin').val();
@@ -310,7 +293,6 @@ $currentPage = 'bitacora_limpieza';
             let url = 'api/exportar_bitacoras_csv.php?';
             const params = [];
             
-            if (sucursal) params.push('sucursal=' + sucursal);
             if (area) params.push('area=' + area);
             if (fechaInicio) params.push('fecha_inicio=' + fechaInicio);
             if (fechaFin) params.push('fecha_fin=' + fechaFin);
