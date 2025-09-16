@@ -37,6 +37,7 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
 <head>
     <meta charset="utf-8">
     <title>Pantalla de inicio administrativa - <?php echo $row['Licencia']?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
     
@@ -93,14 +94,14 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                             </p>
                             
                             <!-- Dashboard Section - Visible para todos -->
-                            <div class="row mb-4">
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm mb-4">
-                                        <div class="card-body text-center">
+                            <div class="row g-3 mb-4">
+                                <div class="col-12 col-lg-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body text-center d-flex flex-column">
                                             <i class="fa fa-chart-line fa-3x text-primary mb-3"></i>
                                             <h5 class="card-title">Dashboard</h5>
-                                            <p class="card-text">Accede a estadísticas detalladas y reportes en tiempo real</p>
-                                            <a href="dashboard" class="btn btn-primary">
+                                            <p class="card-text flex-grow-1">Accede a estadísticas detalladas y reportes en tiempo real</p>
+                                            <a href="dashboard" class="btn btn-primary mt-auto">
                                                 <i class="fa fa-chart-line me-2"></i>Ver Dashboard
                                             </a>
                                         </div>
@@ -108,12 +109,12 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                                 </div>
                                 
                                 <!-- Acciones Rápidas según tipo de usuario -->
-                                <div class="col-md-6">
-                                    <div class="card border-0 shadow-sm mb-4">
-                                        <div class="card-body text-center">
+                                <div class="col-12 col-lg-6">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body text-center d-flex flex-column">
                                             <i class="fa fa-tachometer-alt fa-3x text-success mb-3"></i>
                                             <h5 class="card-title">Acciones Rápidas</h5>
-                                            <p class="card-text">Accede directamente a las funciones más utilizadas</p>
+                                            <p class="card-text flex-grow-1">Accede directamente a las funciones más utilizadas</p>
                                             
                                             <?php if ($isAdmin): ?>
                                             <!-- Opciones para Administradores -->
@@ -174,37 +175,45 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                                             <h5 class="mb-0"><i class="fa fa-cogs me-2"></i>Gestión Administrativa</h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <div class="text-center p-3">
+                                            <div class="row g-3">
+                                                <div class="col-6 col-md-3">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-boxes-stacked fa-2x text-primary mb-2"></i>
-                                                        <h6>Almacén</h6>
-                                                        <a href="ProductosGenerales" class="btn btn-sm btn-outline-primary">Productos</a>
-                                                        <a href="Stocks" class="btn btn-sm btn-outline-primary">Stock</a>
+                                                        <h6 class="mb-2">Almacén</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="ProductosGenerales" class="btn btn-sm btn-outline-primary">Productos</a>
+                                                            <a href="Stocks" class="btn btn-sm btn-outline-primary">Stock</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <div class="text-center p-3">
+                                                <div class="col-6 col-md-3">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-chart-line fa-2x text-success mb-2"></i>
-                                                        <h6>Ventas</h6>
-                                                        <a href="VentasDelDia" class="btn btn-sm btn-outline-success">Ventas del Día</a>
-                                                        <a href="ReportePorProducto" class="btn btn-sm btn-outline-success">Reportes</a>
+                                                        <h6 class="mb-2">Ventas</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="VentasDelDia" class="btn btn-sm btn-outline-success">Ventas del Día</a>
+                                                            <a href="ReportePorProducto" class="btn btn-sm btn-outline-success">Reportes</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <div class="text-center p-3">
+                                                <div class="col-6 col-md-3">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-truck fa-2x text-warning mb-2"></i>
-                                                        <h6>Traspasos</h6>
-                                                        <a href="RealizarTraspasos" class="btn btn-sm btn-outline-warning">Realizar</a>
-                                                        <a href="ListaDeTraspasos" class="btn btn-sm btn-outline-warning">Listado</a>
+                                                        <h6 class="mb-2">Traspasos</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="RealizarTraspasos" class="btn btn-sm btn-outline-warning">Realizar</a>
+                                                            <a href="ListaDeTraspasos" class="btn btn-sm btn-outline-warning">Listado</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
-                                                    <div class="text-center p-3">
+                                                <div class="col-6 col-md-3">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-file-invoice fa-2x text-info mb-2"></i>
-                                                        <h6>Reportes</h6>
-                                                        <a href="ReportesAnuales" class="btn btn-sm btn-outline-info">Anuales</a>
-                                                        <a href="ReporteSucursales" class="btn btn-sm btn-outline-info">Sucursales</a>
+                                                        <h6 class="mb-2">Reportes</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="ReportesAnuales" class="btn btn-sm btn-outline-info">Anuales</a>
+                                                            <a href="ReporteSucursales" class="btn btn-sm btn-outline-info">Sucursales</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -223,29 +232,35 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                                             <h5 class="mb-0"><i class="fa fa-users me-2"></i>Gestión de Recursos Humanos</h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="text-center p-3">
+                                            <div class="row g-3">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-user-check fa-2x text-success mb-2"></i>
-                                                        <h6>Personal</h6>
-                                                        <a href="PersonalActivo" class="btn btn-sm btn-outline-success">Activo</a>
-                                                        <a href="Personaldebaja" class="btn btn-sm btn-outline-warning">Inactivo</a>
+                                                        <h6 class="mb-2">Personal</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="PersonalActivo" class="btn btn-sm btn-outline-success">Activo</a>
+                                                            <a href="Personaldebaja" class="btn btn-sm btn-outline-warning">Inactivo</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="text-center p-3">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-clock fa-2x text-primary mb-2"></i>
-                                                        <h6>Asistencia</h6>
-                                                        <a href="ChecadorDiario" class="btn btn-sm btn-outline-primary">Diario</a>
-                                                        <a href="ChecadorGeneral" class="btn btn-sm btn-outline-primary">General</a>
+                                                        <h6 class="mb-2">Asistencia</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="ChecadorDiario" class="btn btn-sm btn-outline-primary">Diario</a>
+                                                            <a href="ChecadorGeneral" class="btn btn-sm btn-outline-primary">General</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="text-center p-3">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="text-center p-2 p-md-3">
                                                         <i class="fa fa-user-tag fa-2x text-info mb-2"></i>
-                                                        <h6>Configuración</h6>
-                                                        <a href="TiposUsuarios" class="btn btn-sm btn-outline-info">Tipos</a>
-                                                        <a href="Sucursales" class="btn btn-sm btn-outline-info">Sucursales</a>
+                                                        <h6 class="mb-2">Configuración</h6>
+                                                        <div class="d-grid gap-1">
+                                                            <a href="TiposUsuarios" class="btn btn-sm btn-outline-info">Tipos</a>
+                                                            <a href="Sucursales" class="btn btn-sm btn-outline-info">Sucursales</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -409,6 +424,104 @@ $isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
                 }
                 50% {
                     filter: brightness(1.2);
+                }
+            }
+            
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .bubbles-container {
+                    display: none; /* Ocultar animaciones en móviles para mejor rendimiento */
+                }
+                
+                .bg-light::before {
+                    display: none; /* Ocultar efecto de ondas en móviles */
+                }
+                
+                .card:hover {
+                    transform: none; /* Desactivar hover en móviles */
+                }
+                
+                .text-primary {
+                    animation: none; /* Desactivar animación de shimmer en móviles */
+                }
+                
+                /* Ajustar espaciado en móviles */
+                .container-fluid {
+                    padding-left: 15px;
+                    padding-right: 15px;
+                }
+                
+                /* Mejorar botones en móviles */
+                .btn {
+                    font-size: 0.875rem;
+                    padding: 0.5rem 1rem;
+                }
+                
+                .btn-sm {
+                    font-size: 0.75rem;
+                    padding: 0.375rem 0.75rem;
+                }
+                
+                /* Ajustar iconos en móviles */
+                .fa-3x {
+                    font-size: 2rem !important;
+                }
+                
+                .fa-2x {
+                    font-size: 1.5rem !important;
+                }
+                
+                /* Mejorar títulos en móviles */
+                h1 {
+                    font-size: 1.75rem;
+                }
+                
+                h5 {
+                    font-size: 1.25rem;
+                }
+                
+                h6 {
+                    font-size: 1rem;
+                }
+                
+                /* Ajustar padding de tarjetas en móviles */
+                .card-body {
+                    padding: 1rem;
+                }
+                
+                .p-2 {
+                    padding: 0.75rem !important;
+                }
+            }
+            
+            @media (max-width: 576px) {
+                /* Ajustes adicionales para pantallas muy pequeñas */
+                .col-6 {
+                    margin-bottom: 1rem;
+                }
+                
+                .d-grid .btn {
+                    font-size: 0.75rem;
+                    padding: 0.375rem 0.5rem;
+                }
+                
+                .lead {
+                    font-size: 1rem;
+                }
+                
+                .text-muted {
+                    font-size: 0.875rem;
+                }
+            }
+            
+            /* Mejoras para tablets */
+            @media (min-width: 768px) and (max-width: 1024px) {
+                .col-md-3 {
+                    margin-bottom: 1rem;
+                }
+                
+                .col-md-4 {
+                    margin-bottom: 1rem;
                 }
             }
         </style>
