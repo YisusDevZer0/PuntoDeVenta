@@ -370,6 +370,8 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         // Variables globales para el checador
         let userLocation = null;
         let isInWorkArea = false;
+        let locationPermissionDenied = false;
+        let locationCheckAttempted = false;
         
         // Habilitar botones al cargar
         window.addEventListener('DOMContentLoaded', function(){
@@ -545,6 +547,14 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         
         // Verificar ubicación
         async function checkLocation() {
+            // Si ya se intentó y fue denegado, no volver a intentar
+            if (locationPermissionDenied || locationCheckAttempted) {
+                console.log('Ubicación ya verificada o denegada, omitiendo...');
+                return;
+            }
+            
+            locationCheckAttempted = true;
+            
             try {
                 if (!navigator.geolocation) {
                     console.log('Geolocalización no soportada');
@@ -567,8 +577,16 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                 
             } catch (error) {
                 console.log('Error obteniendo ubicación:', error);
-                document.getElementById('currentLocation').textContent = 'Ubicación no disponible';
-                updateStatus('outside', 'Ubicación no disponible');
+                
+                // Marcar como denegado si es error de permisos
+                if (error.code === 1) {
+                    locationPermissionDenied = true;
+                    document.getElementById('currentLocation').textContent = 'Permisos de ubicación denegados';
+                    updateStatus('outside', 'Ubicación no disponible - Permisos denegados');
+                } else {
+                    document.getElementById('currentLocation').textContent = 'Ubicación no disponible';
+                    updateStatus('outside', 'Ubicación no disponible');
+                }
             }
         }
         
@@ -715,8 +733,8 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         async function registrarEntrada() {
             console.log('Registrando entrada...');
             
-            if (!userLocation) {
-                // Intentar obtener ubicación si no la tenemos
+            // Solo intentar obtener ubicación si no se ha denegado antes
+            if (!userLocation && !locationPermissionDenied) {
                 try {
                     await checkLocation();
                 } catch (error) {
@@ -738,8 +756,8 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         async function registrarSalida() {
             console.log('Registrando salida...');
             
-            if (!userLocation) {
-                // Intentar obtener ubicación si no la tenemos
+            // Solo intentar obtener ubicación si no se ha denegado antes
+            if (!userLocation && !locationPermissionDenied) {
                 try {
                     await checkLocation();
                 } catch (error) {
@@ -812,8 +830,15 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         }
         
         // Verificar ubicación manualmente
+        // Verificación manual de ubicación
         async function checkLocationManual() {
             console.log('Verificación manual de ubicación...');
+            
+            // Resetear flags para permitir reintento
+            locationPermissionDenied = false;
+            locationCheckAttempted = false;
+            
+            // Intentar obtener ubicación nuevamente
             await checkLocation();
         }
         

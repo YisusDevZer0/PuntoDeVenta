@@ -16,6 +16,7 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Configuración de Ubicaciones - Checador</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
     <style>
         .location-card {
@@ -45,12 +46,29 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                         <h5>Configurar Nueva Ubicación</h5>
                     </div>
                     <div class="card-body">
-                        <button class="btn btn-primary" onclick="configurarUbicacionActual()">
-                            <i class="fas fa-map-marker-alt"></i> Usar Ubicación Actual
-                        </button>
-                        <button class="btn btn-secondary" onclick="mostrarFormularioManual()">
-                            <i class="fas fa-edit"></i> Configurar Manualmente
-                        </button>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-primary w-100" onclick="configurarUbicacionActual()">
+                                    <i class="fas fa-map-marker-alt"></i> Usar Ubicación Actual
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-secondary w-100" onclick="mostrarFormularioManual()">
+                                    <i class="fas fa-edit"></i> Configurar Manualmente
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button class="btn btn-info w-100" onclick="abrirGoogleMaps()">
+                                    <i class="fas fa-external-link-alt"></i> Obtener desde Google Maps
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                <strong>Consejos:</strong> Si la ubicación automática falla, puedes usar Google Maps para obtener las coordenadas exactas o configurar manualmente.
+                            </small>
+                        </div>
                     </div>
                 </div>
                 
@@ -129,9 +147,19 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
         // Obtener ubicación actual
         async function configurarUbicacionActual() {
             if (!navigator.geolocation) {
-                Swal.fire('Error', 'Geolocalización no soportada', 'error');
+                Swal.fire('Error', 'Geolocalización no soportada en este navegador', 'error');
                 return;
             }
+            
+            // Mostrar loading
+            Swal.fire({
+                title: 'Obteniendo ubicación...',
+                text: 'Por favor permite el acceso a tu ubicación',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             
             try {
                 const position = await getCurrentPosition();
@@ -140,7 +168,28 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                     lng: position.coords.longitude
                 };
                 
-                const nombre = prompt('Nombre para esta ubicación:', 'Mi ubicación de trabajo');
+                Swal.close();
+                
+                // Mostrar información de la ubicación obtenida
+                const { value: nombre } = await Swal.fire({
+                    title: 'Ubicación obtenida',
+                    html: `
+                        <p><strong>Coordenadas:</strong> ${userLocation.lat.toFixed(6)}, ${userLocation.lng.toFixed(6)}</p>
+                        <p><strong>Precisión:</strong> ${Math.round(position.coords.accuracy)} metros</p>
+                        <p>Ingresa un nombre para esta ubicación:</p>
+                    `,
+                    input: 'text',
+                    inputValue: 'Mi ubicación de trabajo',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Debes ingresar un nombre para la ubicación';
+                        }
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Guardar Ubicación',
+                    cancelButtonText: 'Cancelar'
+                });
+                
                 if (nombre) {
                     await guardarUbicacion({
                         nombre: nombre,
@@ -153,22 +202,155 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                     });
                 }
             } catch (error) {
-                Swal.fire('Error', 'No se pudo obtener la ubicación', 'error');
+                Swal.close();
+                
+                let errorMessage = 'No se pudo obtener la ubicación';
+                let errorDetails = '';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = 'Permisos de ubicación denegados';
+                        errorDetails = 'Por favor permite el acceso a tu ubicación en la configuración del navegador';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = 'Ubicación no disponible';
+                        errorDetails = 'Tu ubicación no está disponible en este momento';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = 'Tiempo de espera agotado';
+                        errorDetails = 'La solicitud de ubicación tardó demasiado tiempo';
+                        break;
+                    default:
+                        errorDetails = 'Error desconocido: ' + error.message;
+                }
+                
+                await Swal.fire({
+                    title: errorMessage,
+                    text: errorDetails,
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonText: 'Configurar Manualmente',
+                    cancelButtonText: 'Cerrar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        mostrarFormularioManual();
+                    }
+                });
             }
         }
         
         function getCurrentPosition() {
             return new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: true,
-                    timeout: 10000
-                });
+                // Primero intentar con alta precisión
+                navigator.geolocation.getCurrentPosition(
+                    resolve,
+                    (error) => {
+                        // Si falla con alta precisión, intentar con baja precisión
+                        console.warn('Alta precisión falló, intentando con baja precisión:', error);
+                        navigator.geolocation.getCurrentPosition(
+                            resolve,
+                            reject,
+                            {
+                                enableHighAccuracy: false,
+                                timeout: 15000,
+                                maximumAge: 300000 // 5 minutos de cache
+                            }
+                        );
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000 // 1 minuto de cache
+                    }
+                );
             });
         }
         
         function mostrarFormularioManual() {
             const modal = new bootstrap.Modal(document.getElementById('modalManual'));
             modal.show();
+        }
+        
+        function abrirGoogleMaps() {
+            Swal.fire({
+                title: 'Obtener Coordenadas desde Google Maps',
+                html: `
+                    <p>Se abrirá Google Maps en una nueva ventana. Sigue estos pasos:</p>
+                    <ol style="text-align: left;">
+                        <li>Busca tu ubicación en Google Maps</li>
+                        <li>Haz clic derecho en el punto exacto</li>
+                        <li>Selecciona las coordenadas que aparecen</li>
+                        <li>Copia y pega las coordenadas aquí</li>
+                    </ol>
+                    <p><strong>Ejemplo:</strong> 21.023336, -89.570884</p>
+                `,
+                input: 'text',
+                inputPlaceholder: 'Pega las coordenadas aquí (lat, lng)',
+                showCancelButton: true,
+                confirmButtonText: 'Usar Coordenadas',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Debes ingresar las coordenadas';
+                    }
+                    const coords = value.split(',').map(c => c.trim());
+                    if (coords.length !== 2) {
+                        return 'Formato incorrecto. Usa: latitud, longitud';
+                    }
+                    const lat = parseFloat(coords[0]);
+                    const lng = parseFloat(coords[1]);
+                    if (isNaN(lat) || isNaN(lng)) {
+                        return 'Las coordenadas deben ser números válidos';
+                    }
+                    if (lat < -90 || lat > 90) {
+                        return 'La latitud debe estar entre -90 y 90';
+                    }
+                    if (lng < -180 || lng > 180) {
+                        return 'La longitud debe estar entre -180 y 180';
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const coords = result.value.split(',').map(c => c.trim());
+                    const lat = parseFloat(coords[0]);
+                    const lng = parseFloat(coords[1]);
+                    
+                    // Abrir Google Maps con las coordenadas
+                    const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                    window.open(mapsUrl, '_blank');
+                    
+                    // Preguntar por el nombre
+                    Swal.fire({
+                        title: 'Confirmar Ubicación',
+                        html: `
+                            <p><strong>Coordenadas:</strong> ${lat}, ${lng}</p>
+                            <p>Ingresa un nombre para esta ubicación:</p>
+                        `,
+                        input: 'text',
+                        inputValue: 'Mi ubicación de trabajo',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Debes ingresar un nombre para la ubicación';
+                            }
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Guardar Ubicación',
+                        cancelButtonText: 'Cancelar'
+                    }).then(async (result2) => {
+                        if (result2.isConfirmed) {
+                            await guardarUbicacion({
+                                nombre: result2.value,
+                                descripcion: 'Ubicación obtenida desde Google Maps',
+                                latitud: lat,
+                                longitud: lng,
+                                radio: 100,
+                                direccion: '',
+                                estado: 'active'
+                            });
+                        }
+                    });
+                }
+            });
         }
         
         async function guardarUbicacionManual() {
