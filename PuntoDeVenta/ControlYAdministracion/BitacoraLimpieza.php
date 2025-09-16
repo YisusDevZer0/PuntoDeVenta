@@ -1,109 +1,106 @@
 <?php
-// Versión ultra-simplificada para evitar problemas de carga
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+include_once "Controladores/ControladorUsuario.php";
 
-try {
-    include_once "Controladores/ControladorUsuario.php";
-    
-    // Verificar sesión administrativa
-    if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-        header("Location: Expiro.php");
-        exit();
-    }
-
-    // Verificar que $conn esté disponible
-    if (!isset($conn) || !$conn) {
-        throw new Exception("Error de conexión a la base de datos");
-    }
-
-    // Asegurar que las variables necesarias para el menú estén definidas
-    if (!isset($row)) {
-        $row = [
-            'Licencia' => 'Sistema',
-            'Nombre_Sucursal' => 'Administración',
-            'TipoUsuario' => 'Administrador'
-        ];
-    }
-    
-    // Variables para el menú
-    $currentPage = 'bitacora_limpieza';
-    $showDashboard = true;
-    $disabledAttr = '';
-
-    // Obtener datos básicos directamente
-    $bitacoras = [];
-    $sucursales = [];
-    $areas = [];
-    
-    // Consulta simple para bitácoras
-    $sql_bitacoras = "SELECT 
-                        bl.id_bitacora,
-                        bl.area,
-                        bl.semana,
-                        bl.fecha_inicio,
-                        bl.fecha_fin,
-                        bl.responsable,
-                        bl.supervisor,
-                        bl.aux_res
-                      FROM Bitacora_Limpieza bl 
-                      ORDER BY bl.fecha_inicio DESC 
-                      LIMIT 50";
-    
-    $result = mysqli_query($conn, $sql_bitacoras);
-    if ($result) {
-        while($row = mysqli_fetch_assoc($result)) {
-            $bitacoras[] = $row;
-        }
-    }
-    
-    // Consulta simple para sucursales
-    $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 10";
-    $result_sucursales = mysqli_query($conn, $sql_sucursales);
-    if ($result_sucursales) {
-        while($row = mysqli_fetch_assoc($result_sucursales)) {
-            $sucursales[] = $row;
-        }
-    }
-    
-    // Consulta simple para áreas
-    $sql_areas = "SELECT DISTINCT area FROM Bitacora_Limpieza ORDER BY area LIMIT 10";
-    $result_areas = mysqli_query($conn, $sql_areas);
-    if ($result_areas) {
-        while($row = mysqli_fetch_assoc($result_areas)) {
-            $areas[] = $row['area'];
-        }
-    }
-    
-    // Estadísticas básicas
-    $total_bitacoras = count($bitacoras);
-    $total_sucursales = count($sucursales);
-    $total_areas = count($areas);
-
-} catch (Exception $e) {
-    // Mostrar error en pantalla para debugging
-    die("Error fatal: " . $e->getMessage() . " en línea " . $e->getLine());
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
+    exit();
 }
+
+// Asegurar que $row esté disponible
+if (!isset($row)) {
+    // Si $row no está disponible, incluir nuevamente el controlador
+    include_once "Controladores/ControladorUsuario.php";
+}
+
+// Definir variable para atributos disabled (por ahora vacía para habilitar todo)
+$disabledAttr = '';
+
+// Variable para identificar la página actual
+$currentPage = 'bitacora_limpieza';
+
+// Variable específica para el dashboard (no depende de permisos)
+$showDashboard = true;
+
+// Obtener el tipo de usuario actual
+$tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
+
+// Verificar si el usuario tiene permisos de administrador
+$isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
+
+// Verificar si es desarrollo humano (RH)
+$isRH = ($tipoUsuario == 'Desarrollo Humano' || $tipoUsuario == 'RH');
+
+// Obtener datos básicos directamente
+$bitacoras = [];
+$sucursales = [];
+$areas = [];
+
+// Consulta simple para bitácoras
+$sql_bitacoras = "SELECT 
+                    bl.id_bitacora,
+                    bl.area,
+                    bl.semana,
+                    bl.fecha_inicio,
+                    bl.fecha_fin,
+                    bl.responsable,
+                    bl.supervisor,
+                    bl.aux_res
+                  FROM Bitacora_Limpieza bl 
+                  ORDER BY bl.fecha_inicio DESC 
+                  LIMIT 50";
+
+$result = mysqli_query($conn, $sql_bitacoras);
+if ($result) {
+    while($row_bitacora = mysqli_fetch_assoc($result)) {
+        $bitacoras[] = $row_bitacora;
+    }
+}
+
+// Consulta simple para sucursales
+$sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 10";
+$result_sucursales = mysqli_query($conn, $sql_sucursales);
+if ($result_sucursales) {
+    while($row_sucursal = mysqli_fetch_assoc($result_sucursales)) {
+        $sucursales[] = $row_sucursal;
+    }
+}
+
+// Consulta simple para áreas
+$sql_areas = "SELECT DISTINCT area FROM Bitacora_Limpieza ORDER BY area LIMIT 10";
+$result_areas = mysqli_query($conn, $sql_areas);
+if ($result_areas) {
+    while($row_area = mysqli_fetch_assoc($result_areas)) {
+        $areas[] = $row_area['area'];
+    }
+}
+
+// Estadísticas básicas
+$total_bitacoras = count($bitacoras);
+$total_sucursales = count($sucursales);
+$total_areas = count($areas);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Control de Bitácoras de Limpieza</title>
+    <title>Control de Bitácoras de Limpieza - <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    
     <?php include "header.php";?>
-    <style>
-        .sidebar {
-            display: block !important;
-            visibility: visible !important;
-        }
-        .content {
-            display: block !important;
-            visibility: visible !important;
-        }
-    </style>
 </head>
 <body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
     <!-- Sidebar Start -->
     <?php include_once "Menu.php" ?>
     <!-- Sidebar End -->
@@ -279,18 +276,10 @@ try {
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página cargada correctamente');
         
-        // Asegurar que el menú esté visible
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) {
-            sidebar.style.display = 'block';
-            sidebar.style.visibility = 'visible';
-        }
-        
-        // Asegurar que el contenido esté visible
-        const content = document.querySelector('.content');
-        if (content) {
-            content.style.display = 'block';
-            content.style.visibility = 'visible';
+        // Ocultar spinner
+        const spinner = document.getElementById('spinner');
+        if (spinner) {
+            spinner.style.display = 'none';
         }
         
         // Inicializar DataTable si está disponible
@@ -307,12 +296,6 @@ try {
                 "pageLength": 25
             });
         }
-    });
-    
-    // Asegurar que el menú esté visible después de cargar jQuery
-    $(document).ready(function() {
-        $('.sidebar').show();
-        $('.content').show();
     });
     </script>
 
