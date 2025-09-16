@@ -1,12 +1,44 @@
 <?php
-// Habilitar reporte de errores para debugging
+// Configurar para API JSON
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0); // No mostrar errores en HTML
+ini_set('log_errors', 1); // Solo log de errores
 
 // Logging para debugging
 function logError($message) {
     error_log("ChecadorController Error: " . $message);
 }
+
+// Función para devolver error JSON
+function returnJsonError($message, $code = 500) {
+    http_response_code($code);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => $message,
+        'debug_info' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'timestamp' => date('Y-m-d H:i:s')
+        ]
+    ]);
+    exit();
+}
+
+// Manejar errores fatales
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error && $error['type'] === E_ERROR) {
+        returnJsonError('Error interno del servidor: ' . $error['message']);
+    }
+});
+
+// Manejar errores no capturados
+set_error_handler(function($severity, $message, $file, $line) {
+    if (error_reporting() & $severity) {
+        returnJsonError('Error: ' . $message);
+    }
+});
 
 try {
     // Verificar si los archivos existen antes de incluirlos
@@ -31,17 +63,7 @@ try {
     
 } catch (Exception $e) {
     logError($e->getMessage());
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => false, 
-        'message' => 'Error de configuración: ' . $e->getMessage(),
-        'debug_info' => [
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'error' => $e->getMessage()
-        ]
-    ]);
-    exit();
+    returnJsonError('Error de configuración: ' . $e->getMessage());
 }
 
 // Verificar sesión solo si no es una prueba directa
@@ -51,13 +73,7 @@ $skipAuth = $isTestMode;
 if (!$skipAuth) {
     // Verificar sesión usando las variables correctas del sistema
     if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => false, 
-            'message' => 'Sesión no válida o expirada',
-            'redirect' => '../Expiro.php'
-        ]);
-        exit();
+        returnJsonError('Sesión no válida o expirada', 401);
     }
 }
 
@@ -696,17 +712,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
     } catch (Exception $e) {
         logError("Error general en el controlador: " . $e->getMessage());
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => false, 
-            'message' => 'Error interno del servidor: ' . $e->getMessage(),
-            'debug_info' => [
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'error' => $e->getMessage()
-            ]
-        ]);
-        exit;
+        returnJsonError('Error interno del servidor: ' . $e->getMessage());
     }
 }
 ?>
