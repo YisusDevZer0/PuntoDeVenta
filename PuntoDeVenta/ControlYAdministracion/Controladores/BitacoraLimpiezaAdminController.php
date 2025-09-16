@@ -8,27 +8,55 @@ class BitacoraLimpiezaAdminController {
     
     // Obtener todas las bitácoras con filtros
     public function obtenerBitacorasConFiltros($filtros = []) {
-        $sql = "SELECT 
-                    bl.id_bitacora,
-                    bl.area,
-                    bl.semana,
-                    bl.fecha_inicio,
-                    bl.fecha_fin,
-                    bl.responsable,
-                    bl.supervisor,
-                    bl.aux_res,
-                    bl.firma_responsable,
-                    bl.firma_supervisor,
-                    bl.firma_aux_res,
-                    bl.observaciones,
-                    bl.estado,
-                    bl.created_at,
-                    bl.updated_at,
-                    s.Nombre_Sucursal,
-                    s.ID_Sucursal
-                FROM Bitacora_Limpieza bl
-                LEFT JOIN Sucursales s ON bl.sucursal_id = s.ID_Sucursal
-                WHERE 1=1";
+        // Verificar si existe la columna sucursal_id
+        $check_column = "SHOW COLUMNS FROM Bitacora_Limpieza LIKE 'sucursal_id'";
+        $result = mysqli_query($this->conn, $check_column);
+        $has_sucursal_id = mysqli_num_rows($result) > 0;
+        
+        if ($has_sucursal_id) {
+            $sql = "SELECT 
+                        bl.id_bitacora,
+                        bl.area,
+                        bl.semana,
+                        bl.fecha_inicio,
+                        bl.fecha_fin,
+                        bl.responsable,
+                        bl.supervisor,
+                        bl.aux_res,
+                        bl.firma_responsable,
+                        bl.firma_supervisor,
+                        bl.firma_aux_res,
+                        bl.sucursal_id,
+                        s.Nombre_Sucursal,
+                        s.ID_Sucursal,
+                        'Activa' as estado,
+                        '' as observaciones,
+                        NOW() as created_at
+                    FROM Bitacora_Limpieza bl
+                    LEFT JOIN Sucursales s ON bl.sucursal_id = s.ID_Sucursal
+                    WHERE 1=1";
+        } else {
+            $sql = "SELECT 
+                        bl.id_bitacora,
+                        bl.area,
+                        bl.semana,
+                        bl.fecha_inicio,
+                        bl.fecha_fin,
+                        bl.responsable,
+                        bl.supervisor,
+                        bl.aux_res,
+                        bl.firma_responsable,
+                        bl.firma_supervisor,
+                        bl.firma_aux_res,
+                        NULL as sucursal_id,
+                        'N/A - Actualizar BD' as Nombre_Sucursal,
+                        NULL as ID_Sucursal,
+                        'Activa' as estado,
+                        '' as observaciones,
+                        NOW() as created_at
+                    FROM Bitacora_Limpieza bl
+                    WHERE 1=1";
+        }
         
         $params = [];
         $types = "";
@@ -134,13 +162,33 @@ class BitacoraLimpiezaAdminController {
     
     // Obtener detalles de una bitácora específica
     public function obtenerDetallesBitacora($id_bitacora) {
-        $sql = "SELECT 
-                    bl.*,
-                    s.Nombre_Sucursal,
-                    s.ID_Sucursal
-                FROM Bitacora_Limpieza bl
-                LEFT JOIN Sucursales s ON bl.sucursal_id = s.ID_Sucursal
-                WHERE bl.id_bitacora = ?";
+        // Verificar si existe la columna sucursal_id
+        $check_column = "SHOW COLUMNS FROM Bitacora_Limpieza LIKE 'sucursal_id'";
+        $result = mysqli_query($this->conn, $check_column);
+        $has_sucursal_id = mysqli_num_rows($result) > 0;
+        
+        if ($has_sucursal_id) {
+            $sql = "SELECT 
+                        bl.*,
+                        s.Nombre_Sucursal,
+                        s.ID_Sucursal,
+                        'Activa' as estado,
+                        '' as observaciones,
+                        NOW() as created_at
+                    FROM Bitacora_Limpieza bl
+                    LEFT JOIN Sucursales s ON bl.sucursal_id = s.ID_Sucursal
+                    WHERE bl.id_bitacora = ?";
+        } else {
+            $sql = "SELECT 
+                        bl.*,
+                        'N/A - Actualizar BD' as Nombre_Sucursal,
+                        NULL as ID_Sucursal,
+                        'Activa' as estado,
+                        '' as observaciones,
+                        NOW() as created_at
+                    FROM Bitacora_Limpieza bl
+                    WHERE bl.id_bitacora = ?";
+        }
         
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -162,16 +210,38 @@ class BitacoraLimpiezaAdminController {
     
     // Obtener elementos de limpieza de una bitácora
     public function obtenerElementosLimpieza($id_bitacora) {
-        $sql = "SELECT 
-                    dl.id_detalle,
-                    dl.elemento_limpieza,
-                    dl.estado,
-                    dl.observaciones,
-                    dl.fecha_realizacion,
-                    dl.hora_realizacion
-                FROM Detalle_Limpieza dl
-                WHERE dl.id_bitacora = ?
-                ORDER BY dl.id_detalle";
+        // Verificar estructura de la tabla Detalle_Limpieza
+        $check_columns = "SHOW COLUMNS FROM Detalle_Limpieza";
+        $result = mysqli_query($this->conn, $check_columns);
+        $columns = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $columns[] = $row['Field'];
+        }
+        
+        // Adaptar consulta según la estructura disponible
+        if (in_array('elemento_limpieza', $columns)) {
+            $sql = "SELECT 
+                        dl.id_detalle,
+                        dl.elemento_limpieza as elemento_limpieza,
+                        'Pendiente' as estado,
+                        '' as observaciones,
+                        NULL as fecha_realizacion,
+                        NULL as hora_realizacion
+                    FROM Detalle_Limpieza dl
+                    WHERE dl.id_bitacora = ?
+                    ORDER BY dl.id_detalle";
+        } else {
+            $sql = "SELECT 
+                        dl.id_detalle,
+                        dl.elemento as elemento_limpieza,
+                        'Pendiente' as estado,
+                        '' as observaciones,
+                        NULL as fecha_realizacion,
+                        NULL as hora_realizacion
+                    FROM Detalle_Limpieza dl
+                    WHERE dl.id_bitacora = ?
+                    ORDER BY dl.id_detalle";
+        }
         
         $stmt = mysqli_prepare($this->conn, $sql);
         if (!$stmt) {
@@ -206,15 +276,15 @@ class BitacoraLimpiezaAdminController {
             $sql = "INSERT INTO Bitacora_Limpieza (
                         area, semana, fecha_inicio, fecha_fin, 
                         responsable, supervisor, aux_res, 
-                        sucursal_id, observaciones, estado, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                        sucursal_id
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = mysqli_prepare($this->conn, $sql);
             if (!$stmt) {
                 throw new Exception("Error preparando consulta: " . mysqli_error($this->conn));
             }
             
-            mysqli_stmt_bind_param($stmt, "sssssssiss", 
+            mysqli_stmt_bind_param($stmt, "sssssssi", 
                 $datos['area'], 
                 $datos['semana'], 
                 $datos['fecha_inicio'], 
@@ -222,32 +292,27 @@ class BitacoraLimpiezaAdminController {
                 $datos['responsable'], 
                 $datos['supervisor'], 
                 $datos['aux_res'], 
-                $datos['sucursal_id'], 
-                $datos['observaciones'], 
-                $datos['estado']
+                $datos['sucursal_id']
             );
         } else {
             $sql = "INSERT INTO Bitacora_Limpieza (
                         area, semana, fecha_inicio, fecha_fin, 
-                        responsable, supervisor, aux_res, 
-                        observaciones, estado, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                        responsable, supervisor, aux_res
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)";
             
             $stmt = mysqli_prepare($this->conn, $sql);
             if (!$stmt) {
                 throw new Exception("Error preparando consulta: " . mysqli_error($this->conn));
             }
             
-            mysqli_stmt_bind_param($stmt, "ssssssss", 
+            mysqli_stmt_bind_param($stmt, "sssssss", 
                 $datos['area'], 
                 $datos['semana'], 
                 $datos['fecha_inicio'], 
                 $datos['fecha_fin'], 
                 $datos['responsable'], 
                 $datos['supervisor'], 
-                $datos['aux_res'], 
-                $datos['observaciones'], 
-                $datos['estado']
+                $datos['aux_res']
             );
         }
         
@@ -300,10 +365,8 @@ class BitacoraLimpiezaAdminController {
         $result = mysqli_query($this->conn, $sql_total);
         $stats['total_bitacoras'] = mysqli_fetch_assoc($result)['total'];
         
-        // Bitácoras activas
-        $sql_activas = "SELECT COUNT(*) as activas FROM Bitacora_Limpieza WHERE estado = 'Activa'";
-        $result = mysqli_query($this->conn, $sql_activas);
-        $stats['bitacoras_activas'] = mysqli_fetch_assoc($result)['activas'];
+        // Bitácoras activas (todas las existentes se consideran activas)
+        $stats['bitacoras_activas'] = $stats['total_bitacoras'];
         
         // Total sucursales
         $sql_sucursales = "SELECT COUNT(*) as total FROM Sucursales WHERE Sucursal_Activa = 'Si'";

@@ -74,6 +74,37 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             margin: 0 auto;
         }
         
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
         .status-bar {
             background: #f8f9fa;
             padding: 15px 20px;
@@ -144,39 +175,6 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             color: #495057;
             margin: 20px 0;
             font-family: 'Courier New', monospace;
-        }
-        
-        .weather-panel {
-            background: #e9ecef;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .weather-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .weather-item {
-            text-align: center;
-            padding: 10px;
-            background: white;
-            border-radius: 10px;
-        }
-        
-        .weather-label {
-            font-size: 12px;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-        
-        .weather-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: #495057;
         }
         
         .attendance-section {
@@ -345,6 +343,15 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
     </script>
     <div class="checador-container">
         <div class="checador-card">
+            <!-- Header Section -->
+            <div class="header-section">
+                <button class="back-button" onclick="window.location.href='ChecadorIndex.php'">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+                <h1><i class="fas fa-clock"></i> Registro de Asistencia</h1>
+                <p>Registra tu entrada y salida del trabajo</p>
+            </div>
+
             <!-- Barra de Estado -->
             <div class="status-bar">
                 <div class="status-indicator" id="statusIndicator">
@@ -352,24 +359,11 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                     <span id="statusText">Estado: Verificando ubicación...</span>
                 </div>
                 <div>
-                    <small>Última verificación: <span id="lastVerification">--</span></small><br>
-                    <small>Centro de trabajo: <span id="workCenter">--</span></small>
+                    <small>Última verificación: <span id="lastVerification">--</span></small>
                     <br>
                     <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-top: 5px;">
                         <i class="fas fa-sync-alt"></i> Verificar Ubicación
                     </button>
-                    <br>
-                    <a href="test_checador.php" class="btn btn-sm btn-outline-info" style="margin-top: 5px;">
-                        <i class="fas fa-bug"></i> Probar Sistema
-                    </a>
-                    <br>
-                    <a href="test_checador_connection.php" class="btn btn-sm btn-outline-warning" style="margin-top: 5px;">
-                        <i class="fas fa-database"></i> Probar Conexión
-                    </a>
-                    <br>
-                    <a href="test_controller_direct.php" class="btn btn-sm btn-outline-danger" style="margin-top: 5px;">
-                        <i class="fas fa-code"></i> Probar Controlador
-                    </a>
                 </div>
             </div>
 
@@ -385,28 +379,6 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                         <div class="clock-display" id="currentTime">--:--</div>
                         <div class="location-title">FECHA</div>
                         <div class="location-value" id="currentDate">--</div>
-                    </div>
-                </div>
-
-                <!-- Panel del Clima -->
-                <div class="weather-panel">
-                    <div class="weather-grid">
-                        <div class="weather-item">
-                            <div class="weather-label">Temperatura</div>
-                            <div class="weather-value" id="temperature">--°C</div>
-                        </div>
-                        <div class="weather-item">
-                            <div class="weather-label">Condiciones</div>
-                            <div class="weather-value" id="conditions">--</div>
-                        </div>
-                        <div class="weather-item">
-                            <div class="weather-label">Humedad</div>
-                            <div class="weather-value" id="humidity">--%</div>
-                        </div>
-                        <div class="weather-item">
-                            <div class="weather-label">Viento</div>
-                            <div class="weather-value" id="wind">-- km/h</div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -447,17 +419,6 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
     </div>
 
     <script>
-        // Actualizar clima (simulado)
-        function updateWeather() {
-            document.getElementById('temperature').textContent = '28°C';
-            document.getElementById('conditions').textContent = 'Algo De Nubes';
-            document.getElementById('humidity').textContent = '74%';
-            document.getElementById('wind').textContent = '11 km/h';
-        }
-
-        // Actualizar clima cada 30 minutos
-        updateWeather();
-        setInterval(updateWeather, 1800000);
         
         // Actualizar fecha y hora
         function updateDateTime() {

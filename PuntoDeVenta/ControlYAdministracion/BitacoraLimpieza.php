@@ -57,8 +57,13 @@ try {
     $total_areas = $estadisticas['total_areas'];
     $bitacoras_activas = $estadisticas['bitacoras_activas'];
     
+    // Debug: mostrar información en consola
+    echo "<script>console.log('Bitácoras obtenidas:', " . count($bitacoras) . ");</script>";
+    echo "<script>console.log('Sucursales obtenidas:', " . count($sucursales) . ");</script>";
+    echo "<script>console.log('Áreas obtenidas:', " . count($areas) . ");</script>";
+    
 } catch (Exception $e) {
-    // En caso de error, usar datos básicos
+    // En caso de error, usar datos básicos y mostrar error
     $bitacoras = [];
     $sucursales = [];
     $areas = [];
@@ -66,6 +71,22 @@ try {
     $total_sucursales = 0;
     $total_areas = 0;
     $bitacoras_activas = 0;
+    
+    echo "<script>console.error('Error en controlador:', '" . addslashes($e->getMessage()) . "');</script>";
+    
+    // Intentar obtener datos directamente
+    try {
+        $sql_direct = "SELECT * FROM Bitacora_Limpieza LIMIT 10";
+        $result_direct = mysqli_query($conn, $sql_direct);
+        if ($result_direct) {
+            while($row = mysqli_fetch_assoc($result_direct)) {
+                $bitacoras[] = $row;
+            }
+            echo "<script>console.log('Datos obtenidos directamente:', " . count($bitacoras) . ");</script>";
+        }
+    } catch (Exception $e2) {
+        echo "<script>console.error('Error en consulta directa:', '" . addslashes($e2->getMessage()) . "');</script>";
+    }
 }
 
 ?>

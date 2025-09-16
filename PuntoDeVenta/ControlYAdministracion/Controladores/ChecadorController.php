@@ -386,6 +386,167 @@ class ChecadorController {
             return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
         }
     }
+    
+    /**
+     * Obtener estadísticas para administradores
+     */
+    public function obtenerEstadisticasAdmin() {
+        try {
+            // Total de usuarios activos
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM Usuarios_PV WHERE Estatus = 'Activo'");
+            $stmt->execute();
+            $totalUsuarios = $stmt->get_result()->fetch_assoc()['total'];
+            
+            // Total de ubicaciones configuradas
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM ubicaciones_trabajo WHERE estado = 'active'");
+            $stmt->execute();
+            $totalUbicaciones = $stmt->get_result()->fetch_assoc()['total'];
+            
+            // Registros de hoy
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM asistencias WHERE DATE(fecha_hora) = CURDATE()");
+            $stmt->execute();
+            $registrosHoy = $stmt->get_result()->fetch_assoc()['total'];
+            
+            // Registros del mes
+            $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM asistencias WHERE MONTH(fecha_hora) = MONTH(CURDATE()) AND YEAR(fecha_hora) = YEAR(CURDATE())");
+            $stmt->execute();
+            $registrosMes = $stmt->get_result()->fetch_assoc()['total'];
+            
+            return [
+                'success' => true,
+                'data' => [
+                    'total_usuarios' => $totalUsuarios,
+                    'total_ubicaciones' => $totalUbicaciones,
+                    'registros_hoy' => $registrosHoy,
+                    'registros_mes' => $registrosMes
+                ]
+            ];
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Obtener actividad reciente
+     */
+    public function obtenerActividadReciente() {
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT a.tipo, a.fecha_hora, u.Nombre_Apellidos as usuario
+                FROM asistencias a
+                JOIN Usuarios_PV u ON a.usuario_id = u.Id_PvUser
+                ORDER BY a.fecha_hora DESC
+                LIMIT 10
+            ");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $actividad = [];
+            while ($row = $result->fetch_assoc()) {
+                $actividad[] = [
+                    'tipo' => $row['tipo'],
+                    'usuario' => $row['usuario'],
+                    'fecha_hora' => date('d/m/Y H:i', strtotime($row['fecha_hora']))
+                ];
+            }
+            
+            return ['success' => true, 'data' => $actividad];
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Obtener centros de trabajo
+     */
+    public function obtenerCentrosTrabajo() {
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT id, nombre, direccion, descripcion, latitud, longitud, radio, estado, created_at
+                FROM ubicaciones_trabajo
+                ORDER BY created_at DESC
+            ");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $centros = [];
+            while ($row = $result->fetch_assoc()) {
+                $centros[] = $row;
+            }
+            
+            return ['success' => true, 'data' => $centros];
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Guardar centro de trabajo
+     */
+    public function guardarCentroTrabajo($nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado) {
+        try {
+            $stmt = $this->conn->prepare("
+                INSERT INTO ubicaciones_trabajo 
+                (nombre, direccion, descripcion, latitud, longitud, radio, estado, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->bind_param("sssddiss", $nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
+            
+            if ($stmt->execute()) {
+                return ['success' => true, 'message' => 'Centro de trabajo guardado exitosamente', 'id' => $stmt->insert_id];
+            } else {
+                return ['success' => false, 'message' => 'Error al guardar el centro de trabajo'];
+            }
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Actualizar centro de trabajo
+     */
+    public function actualizarCentroTrabajo($id, $estado) {
+        try {
+            $stmt = $this->conn->prepare("
+                UPDATE ubicaciones_trabajo 
+                SET estado = ?, updated_at = NOW()
+                WHERE id = ?
+            ");
+            $stmt->bind_param("si", $estado, $id);
+            
+            if ($stmt->execute()) {
+                return ['success' => true, 'message' => 'Centro de trabajo actualizado exitosamente'];
+            } else {
+                return ['success' => false, 'message' => 'Error al actualizar el centro de trabajo'];
+            }
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+    
+    /**
+     * Eliminar centro de trabajo
+     */
+    public function eliminarCentroTrabajo($id) {
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM ubicaciones_trabajo WHERE id = ?");
+            $stmt->bind_param("i", $id);
+            
+            if ($stmt->execute()) {
+                return ['success' => true, 'message' => 'Centro de trabajo eliminado exitosamente'];
+            } else {
+                return ['success' => false, 'message' => 'Error al eliminar el centro de trabajo'];
+            }
+            
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
 }
 
 // Manejar requests AJAX
@@ -486,6 +647,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $año = $_POST['año'] ?? null;
                 
                 $response = $controller->obtenerEstadisticasAsistencia($usuario_id, $mes, $año);
+                break;
+                
+            case 'obtener_estadisticas_admin':
+                $response = $controller->obtenerEstadisticasAdmin();
+                break;
+                
+            case 'obtener_actividad_reciente':
+                $response = $controller->obtenerActividadReciente();
+                break;
+                
+            case 'obtener_centros_trabajo':
+                $response = $controller->obtenerCentrosTrabajo();
+                break;
+                
+            case 'guardar_centro_trabajo':
+                $nombre = $_POST['nombre'];
+                $direccion = $_POST['direccion'] ?? '';
+                $descripcion = $_POST['descripcion'] ?? '';
+                $latitud = $_POST['latitud'];
+                $longitud = $_POST['longitud'];
+                $radio = $_POST['radio'];
+                $estado = $_POST['estado'];
+                
+                $response = $controller->guardarCentroTrabajo($nombre, $direccion, $descripcion, $latitud, $longitud, $radio, $estado);
+                break;
+                
+            case 'actualizar_centro_trabajo':
+                $id = $_POST['id'];
+                $estado = $_POST['estado'];
+                
+                $response = $controller->actualizarCentroTrabajo($id, $estado);
+                break;
+                
+            case 'eliminar_centro_trabajo':
+                $id = $_POST['id'];
+                
+                $response = $controller->eliminarCentroTrabajo($id);
                 break;
                 
             default:

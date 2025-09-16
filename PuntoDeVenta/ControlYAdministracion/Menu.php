@@ -97,10 +97,19 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             </div>
             
             <div class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i></i>Checador</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clock"></i>Checador</a>
                 <div class="dropdown-menu bg-transparent border-0">
-                    <a href="ChecadorDiario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-day"></i>Reporte diario</a>
-                    <a href="ChecadorGeneral" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar"></i>Reporte General </a>
+                    <a href="ChecadorIndex" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-home"></i>Inicio Checador</a>
+                    <a href="Checador" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-sign-in-alt"></i>Registrar Asistencia</a>
+                    <a href="ChecadorDiario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-day"></i>Reporte Diario</a>
+                    <a href="ChecadorGeneral" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar"></i>Reporte General</a>
+                    <a href="ConfiguracionUbicaciones" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-map-marker-alt"></i>Configurar Ubicaciones</a>
+                    <?php if ($isAdmin): ?>
+                    <div class="dropdown-divider"></div>
+                    <a href="ChecadorAdmin" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users-cog"></i>Administración</a>
+                    <a href="ChecadorCentrosTrabajo" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-building"></i>Centros de Trabajo</a>
+                    <a href="ChecadorReportes" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-chart-bar"></i>Reportes Avanzados</a>
+                    <?php endif; ?>
                 </div>
             </div>
             
