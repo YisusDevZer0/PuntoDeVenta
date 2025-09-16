@@ -1,5 +1,5 @@
 <?php
-// Versión optimizada del control de bitácoras de limpieza
+// Versión ultra-simplificada para evitar problemas de carga
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -17,7 +17,7 @@ try {
         throw new Exception("Error de conexión a la base de datos");
     }
 
-    // Obtener datos básicos directamente para evitar problemas de carga
+    // Obtener datos básicos directamente
     $bitacoras = [];
     $sucursales = [];
     $areas = [];
@@ -31,18 +31,10 @@ try {
                         bl.fecha_fin,
                         bl.responsable,
                         bl.supervisor,
-                        bl.aux_res,
-                        'N/A' as sucursal_id,
-                        'Sin Sucursal' as Nombre_Sucursal,
-                        NOW() as created_at,
-                        NOW() as updated_at,
-                        0 as total_elementos,
-                        0 as tareas_completadas,
-                        0 as total_tareas_posibles,
-                        0 as porcentaje_cumplimiento
+                        bl.aux_res
                       FROM Bitacora_Limpieza bl 
                       ORDER BY bl.fecha_inicio DESC 
-                      LIMIT 100";
+                      LIMIT 50";
     
     $result = mysqli_query($conn, $sql_bitacoras);
     if ($result) {
@@ -52,7 +44,7 @@ try {
     }
     
     // Consulta simple para sucursales
-    $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 20";
+    $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal LIMIT 10";
     $result_sucursales = mysqli_query($conn, $sql_sucursales);
     if ($result_sucursales) {
         while($row = mysqli_fetch_assoc($result_sucursales)) {
@@ -61,7 +53,7 @@ try {
     }
     
     // Consulta simple para áreas
-    $sql_areas = "SELECT DISTINCT area FROM Bitacora_Limpieza ORDER BY area LIMIT 20";
+    $sql_areas = "SELECT DISTINCT area FROM Bitacora_Limpieza ORDER BY area LIMIT 10";
     $result_areas = mysqli_query($conn, $sql_areas);
     if ($result_areas) {
         while($row = mysqli_fetch_assoc($result_areas)) {
@@ -70,15 +62,9 @@ try {
     }
     
     // Estadísticas básicas
-    $estadisticas = [
-        'total_bitacoras' => count($bitacoras),
-        'total_sucursales' => count($sucursales),
-        'total_areas' => count($areas),
-        'promedio_cumplimiento' => 0
-    ];
-    
-    $bitacorasPorSucursal = [];
-    $currentPage = 'bitacora_limpieza';
+    $total_bitacoras = count($bitacoras);
+    $total_sucursales = count($sucursales);
+    $total_areas = count($areas);
 
 } catch (Exception $e) {
     // Mostrar error en pantalla para debugging
@@ -89,19 +75,11 @@ try {
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Control de Bitácoras de Limpieza - <?php echo $row['Licencia'] ?? 'Sistema'; ?></title>
+    <title>Control de Bitácoras de Limpieza</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php";?>
 </head>
 <body>
-    <!-- Spinner Start -->
-    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Spinner End -->
-
     <!-- Sidebar Start -->
     <?php include_once "Menu.php" ?>
     <!-- Sidebar End -->
@@ -124,13 +102,13 @@ try {
                                 Control de Bitácoras de Limpieza
                             </h4>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary" id="btnNuevaBitacora">
+                                <button type="button" class="btn btn-primary" onclick="alert('Función en desarrollo')">
                                     <i class="fa fa-plus me-2"></i>Nueva Bitácora
                                 </button>
-                                <button type="button" class="btn btn-success" id="btnExportarCSV">
+                                <button type="button" class="btn btn-success" onclick="alert('Función en desarrollo')">
                                     <i class="fa fa-download me-2"></i>Exportar CSV
                                 </button>
-                                <button type="button" class="btn btn-info" id="btnActualizar">
+                                <button type="button" class="btn btn-info" onclick="location.reload()">
                                     <i class="fa fa-refresh me-2"></i>Actualizar
                                 </button>
                             </div>
@@ -176,7 +154,7 @@ try {
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <i class="fa fa-clipboard-list fa-2x text-primary mb-2"></i>
-                                        <h5 class="card-title"><?php echo $estadisticas['total_bitacoras']; ?></h5>
+                                        <h5 class="card-title"><?php echo $total_bitacoras; ?></h5>
                                         <p class="card-text text-muted">Total Bitácoras</p>
                                     </div>
                                 </div>
@@ -185,7 +163,7 @@ try {
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <i class="fa fa-building fa-2x text-success mb-2"></i>
-                                        <h5 class="card-title"><?php echo $estadisticas['total_sucursales']; ?></h5>
+                                        <h5 class="card-title"><?php echo $total_sucursales; ?></h5>
                                         <p class="card-text text-muted">Sucursales</p>
                                     </div>
                                 </div>
@@ -194,7 +172,7 @@ try {
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <i class="fa fa-map-marker-alt fa-2x text-info mb-2"></i>
-                                        <h5 class="card-title"><?php echo $estadisticas['total_areas']; ?></h5>
+                                        <h5 class="card-title"><?php echo $total_areas; ?></h5>
                                         <p class="card-text text-muted">Áreas</p>
                                     </div>
                                 </div>
@@ -203,7 +181,7 @@ try {
                                 <div class="card border-0 shadow-sm">
                                     <div class="card-body text-center">
                                         <i class="fa fa-chart-line fa-2x text-warning mb-2"></i>
-                                        <h5 class="card-title"><?php echo $estadisticas['promedio_cumplimiento']; ?>%</h5>
+                                        <h5 class="card-title">0%</h5>
                                         <p class="card-text text-muted">Cumplimiento</p>
                                     </div>
                                 </div>
@@ -220,19 +198,16 @@ try {
                             Bitácoras de Limpieza
                         </h5>
                         <div class="table-responsive">
-                            <table id="tablaBitacoras" class="table table-bordered table-striped" style="width:100%">
+                            <table class="table table-bordered table-striped" style="width:100%">
                                 <thead class="table-primary">
                                     <tr>
                                         <th>ID</th>
-                                        <th>Sucursal</th>
                                         <th>Área</th>
                                         <th>Semana</th>
                                         <th>Fecha Inicio</th>
                                         <th>Fecha Fin</th>
                                         <th>Responsable</th>
                                         <th>Supervisor</th>
-                                        <th>Elementos</th>
-                                        <th>Cumplimiento</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -240,7 +215,6 @@ try {
                                     <?php foreach($bitacoras as $bitacora): ?>
                                     <tr>
                                         <td><?php echo $bitacora['id_bitacora']; ?></td>
-                                        <td><?php echo $bitacora['Nombre_Sucursal']; ?></td>
                                         <td><?php echo $bitacora['area']; ?></td>
                                         <td><?php echo $bitacora['semana']; ?></td>
                                         <td><?php echo $bitacora['fecha_inicio']; ?></td>
@@ -248,29 +222,14 @@ try {
                                         <td><?php echo $bitacora['responsable']; ?></td>
                                         <td><?php echo $bitacora['supervisor']; ?></td>
                                         <td>
-                                            <span class="badge bg-info">
-                                                <?php echo $bitacora['total_elementos']; ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar" role="progressbar" 
-                                                     style="width: <?php echo $bitacora['porcentaje_cumplimiento']; ?>%"
-                                                     aria-valuenow="<?php echo $bitacora['porcentaje_cumplimiento']; ?>" 
-                                                     aria-valuemin="0" aria-valuemax="100">
-                                                    <?php echo $bitacora['porcentaje_cumplimiento']; ?>%
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
                                             <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-primary btn-ver-detalles" data-id="<?php echo $bitacora['id_bitacora']; ?>" title="Ver Detalles">
+                                                <button class="btn btn-sm btn-primary" onclick="alert('Ver detalles ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Ver Detalles">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-success btn-ver-elementos" data-id="<?php echo $bitacora['id_bitacora']; ?>" title="Ver Elementos">
+                                                <button class="btn btn-sm btn-success" onclick="alert('Ver elementos ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Ver Elementos">
                                                     <i class="fa fa-list"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger btn-eliminar" data-id="<?php echo $bitacora['id_bitacora']; ?>" title="Eliminar">
+                                                <button class="btn btn-sm btn-danger" onclick="if(confirm('¿Eliminar bitácora?')) alert('Eliminar ID: <?php echo $bitacora['id_bitacora']; ?>')" title="Eliminar">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </div>
@@ -286,96 +245,30 @@ try {
         </div>
         <!-- Container End -->
 
-        <!-- Modales -->
-        <?php 
-        include "Modales/NuevaBitacoraAdmin.php";
-        include "Modales/VerDetallesBitacora.php";
-        include "Modales/VerElementosLimpieza.php";
-        include "Footer.php";
-        ?>
+        <!-- Footer -->
+        <?php include "Footer.php"; ?>
     </div>
     <!-- Content End -->
 
     <script>
-    $(document).ready(function() {
-        // Ocultar spinner
-        $('#spinner').hide();
+    // Script mínimo para evitar problemas de carga
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página cargada correctamente');
         
-        // Inicializar DataTable
-        $('#tablaBitacoras').DataTable({
-            "paging": true,
-            "searching": true,
-            "info": true,
-            "responsive": true,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-            },
-            "order": [[0, "desc"]],
-            "pageLength": 25
-        });
-        
-        // Abrir modal de nueva bitácora
-        $('#btnNuevaBitacora').click(function() {
-            $('#ModalNuevaBitacoraAdmin').modal('show');
-        });
-
-        // Aplicar filtros
-        function aplicarFiltros() {
-            const sucursal = $('#filtroSucursal').val();
-            const area = $('#filtroArea').val();
-            const fechaInicio = $('#filtroFechaInicio').val();
-            const fechaFin = $('#filtroFechaFin').val();
-            
-            let url = 'BitacoraLimpieza.php?';
-            const params = [];
-            
-            if (sucursal) params.push('sucursal=' + sucursal);
-            if (area) params.push('area=' + area);
-            if (fechaInicio) params.push('fecha_inicio=' + fechaInicio);
-            if (fechaFin) params.push('fecha_fin=' + fechaFin);
-            
-            if (params.length > 0) {
-                url += params.join('&');
-            }
-            
-            window.location.href = url;
+        // Inicializar DataTable si está disponible
+        if (typeof $.fn.DataTable !== 'undefined') {
+            $('table').DataTable({
+                "paging": true,
+                "searching": true,
+                "info": true,
+                "responsive": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                "order": [[0, "desc"]],
+                "pageLength": 25
+            });
         }
-
-        // Event listeners para filtros
-        $('#filtroSucursal, #filtroArea, #filtroFechaInicio, #filtroFechaFin').change(function() {
-            aplicarFiltros();
-        });
-
-        // Botón actualizar
-        $('#btnActualizar').click(function() {
-            location.reload();
-        });
-
-        // Exportar CSV
-        $('#btnExportarCSV').click(function() {
-            alert('Función de exportación en desarrollo');
-        });
-
-        // Ver detalles de bitácora
-        $(document).on('click', '.btn-ver-detalles', function() {
-            const idBitacora = $(this).data('id');
-            alert('Ver detalles de bitácora ID: ' + idBitacora);
-        });
-
-        // Ver elementos de bitácora
-        $(document).on('click', '.btn-ver-elementos', function() {
-            const idBitacora = $(this).data('id');
-            alert('Ver elementos de bitácora ID: ' + idBitacora);
-        });
-
-        // Eliminar bitácora
-        $(document).on('click', '.btn-eliminar', function() {
-            const idBitacora = $(this).data('id');
-            
-            if (confirm('¿Está seguro de eliminar esta bitácora?')) {
-                alert('Eliminar bitácora ID: ' + idBitacora);
-            }
-        });
     });
     </script>
 
