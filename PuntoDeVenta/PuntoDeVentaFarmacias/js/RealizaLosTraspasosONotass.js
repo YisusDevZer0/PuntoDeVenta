@@ -127,7 +127,7 @@ $(document).ready(function () {
 
       $.ajax({
           type: 'POST',
-          url: 'http://localhost/ticket/TicketTraspasoONotaDeCredito.php',
+          url: 'Controladores/TicketTraspasoONotaDeCredito.php',
           data: data,
           success: function (response) {
               try {
@@ -135,51 +135,74 @@ $(document).ready(function () {
                   if (res.status === 'success') {
                       console.log("Ticket generado exitosamente:", response);
                   } else {
-                      Swal.fire({
-                          icon: 'error',
-                          title: 'Error al generar el ticket',
-                          text: res.message,
-                      });
+                      console.log("Ticket no generado:", res.message);
                   }
               } catch (e) {
-                  Swal.fire({
-                      icon: 'error',
-                      title: 'Respuesta inesperada',
-                      text: 'El servidor devolvió un formato no esperado.',
-                  });
-                  console.error('Error al procesar la respuesta del ticket:', e);
+                  console.log("Respuesta inesperada del ticket:", e);
               }
           },
           error: function (xhr, status, error) {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Error al generar el ticket',
-                  text: `No se pudo conectar con el servidor: ${status} - ${error}`,
-              });
-              console.error('Error AJAX al generar el ticket:', xhr.responseText);
+              console.log("Error al generar el ticket:", status, error);
           }
       });
   }
 
   $("#TraspasosNotasALMomento").validate({
       rules: {
-          codbarras: {
-              required: true,
-          },
+          // Validación básica - verificar que haya al menos un artículo en la tabla
       },
       messages: {
-          codbarras: {
-              required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido",
-          },
+          // Mensajes de validación
       },
       submitHandler: function () {
+          console.log("Validación del formulario iniciada");
+          
+          // Verificar que haya al menos un artículo en la tabla
+          if ($('#tablaAgregarArticulos tbody tr').length === 0) {
+              console.log("No hay artículos en la tabla");
+              Swal.fire({
+                  icon: 'warning',
+                  title: 'Sin artículos',
+                  text: 'Debe agregar al menos un artículo antes de realizar el traspaso.',
+              });
+              return false;
+          }
+          
+          // Verificar que se haya seleccionado el tipo de movimiento
+          const tipoMovimiento = $('#selTipoPago').val();
+          if (!tipoMovimiento || tipoMovimiento === '0') {
+              console.log("Tipo de movimiento no seleccionado");
+              Swal.fire({
+                  icon: 'warning',
+                  title: 'Tipo de movimiento requerido',
+                  text: 'Debe seleccionar el tipo de movimiento antes de continuar.',
+              });
+              return false;
+          }
+          
+          // Verificar que se haya seleccionado la sucursal destino
+          const sucursalDestino = $('#sucursaldestinoelegida').val();
+          if (!sucursalDestino || sucursalDestino === '0') {
+              console.log("Sucursal destino no seleccionada");
+              Swal.fire({
+                  icon: 'warning',
+                  title: 'Sucursal destino requerida',
+                  text: 'Debe seleccionar la sucursal destino antes de continuar.',
+              });
+              return false;
+          }
+          
+          console.log("Validación exitosa, generando vista previa...");
           generarVistaPreviaYConfirmar();
       }
   });
 
   // Manejador de clic para el botón de realizar traspaso
   $("#btnIniciarVenta").click(function(e) {
+      console.log("Botón btnIniciarVenta clickeado");
       e.preventDefault(); // Prevenir el comportamiento por defecto del botón
+      e.stopPropagation(); // Detener la propagación del evento
+      console.log("Enviando formulario...");
       $("#TraspasosNotasALMomento").submit(); // Enviar el formulario
   });
 });
