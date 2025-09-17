@@ -88,6 +88,7 @@
             responsive: true
         }
     });
+    }
 
 
     // Salse & Revenue Chart
@@ -165,6 +166,7 @@
             responsive: true
         }
     });
+    }
 
 
     // Pie Chart
@@ -298,10 +300,6 @@
     // Verificar tamaño al cargar
     checkWindowSize();
     
-    // Verificar tamaño al redimensionar
-    $(window).resize(function() {
-        checkWindowSize();
-    });
     // Verificar tamaño al redimensionar
     $(window).resize(function() {
         checkWindowSize();

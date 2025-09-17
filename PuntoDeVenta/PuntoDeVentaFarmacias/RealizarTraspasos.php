@@ -269,7 +269,7 @@ $fechaActual = date('Y-m-d H:i:s');
                           margin-bottom: 5px !important;
                         }
                       </style>
-                      <form action="javascript:void(0)" target="print_popup" method="post" id="TraspasosNotasALMomento">
+                      <form action="javascript:void(0)" method="post" id="TraspasosNotasALMomento">
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
@@ -453,7 +453,7 @@ if (sucursalDestinoElement) {
 
       <div class="col-md-12 text-center">
         <div class="my-3">
-          <button class="btn btn-primary btn-sm" id="btnIniciarVenta">
+          <button type="button" class="btn btn-primary btn-sm" id="btnIniciarVenta">
           <i class="fa-solid fa-right-left"></i> Realizar Traspaso
           </button>
         </div>

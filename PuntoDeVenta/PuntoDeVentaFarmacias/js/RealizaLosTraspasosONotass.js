@@ -176,4 +176,10 @@ $(document).ready(function () {
           generarVistaPreviaYConfirmar();
       }
   });
+
+  // Manejador de clic para el botón de realizar traspaso
+  $("#btnIniciarVenta").click(function(e) {
+      e.preventDefault(); // Prevenir el comportamiento por defecto del botón
+      $("#TraspasosNotasALMomento").submit(); // Enviar el formulario
+  });
 });
