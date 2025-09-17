@@ -443,10 +443,7 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 
       <div class="col-md-12 text-center">
         <div class="my-3">
-          <button type="button" class="btn btn-success btn-sm" id="btnTestSwal" style="margin-right: 10px;">
-          <i class="fa-solid fa-bug"></i> Test SweetAlert
-          </button>
-          <button type="button" class="btn btn-primary btn-sm" id="btnIniciarVenta">
+          <button class="btn btn-primary btn-sm" id="btnIniciarVenta">
           <i class="fa-solid fa-right-left"></i> Realizar Traspaso
           </button>
         </div>
@@ -459,74 +456,11 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 </div>
 </div>
 </div>
-
-<!-- Control Sidebar -->
-
-<!-- Main Footer -->
-<?php
-
-include("Modales/Error.php");
-include("Modales/Exito.php");
-
-include("Modales/AdvierteDeCaja.php");
-
-include("Modales/ReimpresionTicketsVistaVentas.php");
-include("Modales/ExitoActualiza.php"); ?>
-
-
-  <!-- ./wrapper -->
-
-
-
-
-  
-  <!-- Bootstrap -->
-
-
-  <!-- PAGE PLUGINS -->
-
- 
-
-<?php
-
-function fechaCastellano($fecha)
-{
-  $fecha = substr($fecha, 0, 10);
-  $numeroDia = date('d', strtotime($fecha));
-  $dia = date('l', strtotime($fecha));
-  $mes = date('F', strtotime($fecha));
-  $anio = date('Y', strtotime($fecha));
-  $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
-  $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-  $nombredia = str_replace($dias_EN, $dias_ES, $dia);
-  $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
-  $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-  $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
-  return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
-}
-?>
 <script>
-// Funciones para el sistema de traspasos
 
-$(document).ready(function() {
-  // Verificar que SweetAlert esté cargado
-  if (typeof Swal === 'undefined') {
-    console.error('SweetAlert no está cargado');
-  } else {
-    console.log('SweetAlert está cargado correctamente');
-  }
 
-  // Botón de prueba para SweetAlert
-  $('#btnTestSwal').on('click', function() {
-    console.log('Botón de prueba clickeado');
-    Swal.fire({
-      title: 'Prueba de SweetAlert',
-      text: 'Si ves este mensaje, SweetAlert está funcionando correctamente',
-      icon: 'success',
-      confirmButtonText: 'Perfecto!'
-    });
-  });
-});
+
+
 
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
@@ -586,15 +520,23 @@ function actualizarSumaTotal() {
 }
 
 // Detectar cambios en el método de pago
-$(document).ready(function() {
-  document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
-  // Detectar cambios en los campos de tarjeta y efectivo
-  document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-  document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
-});
+// Detectar cambios en los campos de tarjeta y efectivo
+document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
+document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
 
-$(document).ready(function() {
+
+
+
+
+
+
+</script>
+
+
+<script>
+ $(document).ready(function() {
   
 
   // Agregar un controlador de eventos al input
@@ -638,7 +580,9 @@ $(document).ready(function() {
       }
     });
   });
+</script>
 
+<script>
   $("#btnVaciarListado").click(function() {
     console.log("Click en el botón");
     $("#tablaAgregarArticulos tbody").empty();
@@ -660,6 +604,11 @@ $(document).ready(function() {
   inputEfectivoOculto.value = inputEfectivo.value;
 }
 
+</script>
+
+
+
+<script>
   $(function() {
     $("#clienteInput").autocomplete({
       source: function(request, response) {
@@ -677,61 +626,63 @@ $(document).ready(function() {
       minLength: 0
     });
   });
+</script>
 
+<script>
   table = $('#tablaAgregarArticulos').DataTable({
-      searching: false, // Deshabilitar la funcionalidad de búsqueda
-      paging: false, // Deshabilitar el paginador
-      "columns": [{
-          "data": "id"
-        },
-        {
-          "data": "codigo"
-        },
-        {
-          "data": "descripcion"
-        },
-        {
-          "data": "cantidad"
-        },
-
-        {
-          "data": "precio"
-        },
-        // {
-        //     "data": "importesiniva"
-        // },
-        // {
-        //     "data": "ivatotal"
-        // },
-        // {
-        //     "data": "ieps"
-        // },
-        {
-          "data": "eliminar"
-        },
-        {
-          "data": "descuentos"
-
-        },
-        {
-          "data": "descuentos2"
-        },
-        {
-          "data": "descuento2"
-        },
-      ],
-
-      "order": [
-        [0, 'desc']
-
-      ],
-      "language": {
-        "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+    searching: false, // Deshabilitar la funcionalidad de búsqueda
+    paging: false, // Deshabilitar el paginador
+    "columns": [{
+        "data": "id"
       },
-      //para usar los botones   
-      responsive: "true",
+      {
+        "data": "codigo"
+      },
+      {
+        "data": "descripcion"
+      },
+      {
+        "data": "cantidad"
+      },
 
-    });
+      {
+        "data": "precio"
+      },
+      // {
+      //     "data": "importesiniva"
+      // },
+      // {
+      //     "data": "ivatotal"
+      // },
+      // {
+      //     "data": "ieps"
+      // },
+      {
+        "data": "eliminar"
+      },
+      {
+        "data": "descuentos"
+
+      },
+      {
+        "data": "descuentos2"
+      },
+      {
+        "data": "descuento2"
+      },
+    ],
+
+    "order": [
+      [0, 'desc']
+
+    ],
+    "language": {
+      "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+    },
+    //para usar los botones   
+    responsive: "true",
+
+  });
 
   function mostrarTotalVenta() {
     var totalVenta = 0;
@@ -776,20 +727,10 @@ $(document).ready(function() {
     $('#ivatotal').text(subtotal.toFixed(2));
   }
   function mostrarToast(mensaje) {
-  Swal.fire({
-    icon: 'success',
-    title: 'Éxito',
-    text: mensaje,
-    timer: 2000,
-    showConfirmButton: false
-  });
-}
-
-function msjError(mensaje) {
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: mensaje
+  var toast = $('<div class="toast"></div>').text(mensaje);
+  $('body').append(toast);
+  toast.fadeIn(400).delay(3000).fadeOut(400, function() {
+    $(this).remove();
   });
 }
   function buscarArticulo(codigoEscaneado) {
@@ -834,11 +775,7 @@ function msjError(mensaje) {
       limpiarCampo();
     },
     error: function (data) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error en la búsqueda'
-      });
+      msjError('Error en la búsqueda');
     }
   });
 }
@@ -898,11 +835,7 @@ $('#codigoEscaneado').autocomplete({
   var totalIVA = 0;
   function agregarArticulo(articulo) {
   if (!articulo || (!articulo.id && !articulo.descripcion)) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'El artículo no es válido'
-    });
+    mostrarMensaje('El artículo no es válido');
     return;
   }
 
@@ -924,11 +857,7 @@ $('#codigoEscaneado').autocomplete({
     let nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
 
     if (nuevaCantidad < 0) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'La cantidad no puede ser negativa'
-      });
+      mostrarMensaje('La cantidad no puede ser negativa');
       return;
     }
 
@@ -1010,20 +939,12 @@ $('#fecha-apertura').on('change', function() {
   
 
   if (cantidad < 0) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'La cantidad no puede ser negativa'
-    });
+    mostrarMensaje('La cantidad no puede ser negativa');
     return;
   }
 
   if (precio < 0) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'El precio no puede ser negativo'
-    });
+    mostrarMensaje('El precio no puede ser negativo');
     return;
   }
 
@@ -1075,6 +996,11 @@ $('#fecha-apertura').on('change', function() {
     $('#totalIEPS').text(totalIEPS.toFixed(2));
   }
 
+  // Función para mostrar un mensaje
+  function mostrarMensaje(mensaje) {
+    // Mostrar el mensaje en una ventana emergente de alerta
+    alert(mensaje);
+  }
 // Modificar la función eliminarFila() para llamar a las funciones necesarias después de eliminar la fila
 function eliminarFila(element) {
   var fila = $(element).closest('tr'); // Obtener la fila más cercana al elemento
@@ -1109,7 +1035,7 @@ function abrirSweetAlert(elemento) {
   // $(elemento).hide();
 
   // Mostrar el SweetAlert para ingresar el descuento
-  Swal.fire({
+  var swalInstance = Swal.fire({
     title: 'Seleccionar descuento',
     html: '<label for="customDescuento">Ingresar monto a descontar:</label>' +
       '<input type="number" class="form-control" id="customDescuento" min="0" placeholder="Ingrese monto a descontar">' +
@@ -1214,7 +1140,7 @@ function abrirSweetAlert(elemento) {
       mostrarIvaTotal();
       actualizarImporte();
     },
-    allowOutsideClick: false
+    allowOutsideClick: () => !Swal.isLoading()
   });
 
   // Agregar el evento "change" al input de monto a descontar
@@ -1255,152 +1181,62 @@ $('#abrirSweetAlertBtn').on('click', function() {
   aplicarDescuento();
 });
 
-// Función para mostrar un mensaje
-function mostrarMensaje(mensaje) {
-  // Mostrar el mensaje en una ventana emergente de alerta
-  alert(mensaje);
-}
+</script>
 
-// Evento click para el botón de realizar traspaso
-$('#btnIniciarVenta').on('click', function(e) {
-  e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-  console.log('Botón clickeado'); // Debug
-  
-  // Validar que se haya seleccionado un tipo de movimiento
-  var tipoMovimiento = $('#selTipoPago').val();
-  console.log('Tipo movimiento:', tipoMovimiento); // Debug
-  if (tipoMovimiento === '0' || tipoMovimiento === '') {
-    console.log('Mostrando SweetAlert de advertencia'); // Debug
-    Swal.fire({
-      icon: 'warning',
-      title: 'Advertencia',
-      text: 'Debe seleccionar un tipo de movimiento'
-    });
-    return;
-  }
-  
-  // Validar que se haya seleccionado una sucursal destino
-  var sucursalDestino = $('#sucursaldestinoelegida').val();
-  if (sucursalDestino === '0' || sucursalDestino === '') {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Advertencia',
-      text: 'Debe seleccionar una sucursal destino'
-    });
-    return;
-  }
-  
-  // Validar que haya productos en la tabla
-  var filasProductos = $('#tablaAgregarArticulos tbody tr').length;
-  if (filasProductos === 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Advertencia',
-      text: 'Debe agregar al menos un producto para realizar el traspaso'
-    });
-    return;
-  }
-  
-  // Mostrar confirmación
-  Swal.fire({
-    title: '¿Confirmar traspaso?',
-    text: 'Se realizará el traspaso de los productos seleccionados',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, realizar traspaso',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Aquí se procesaría el traspaso
-      procesarTraspaso();
-    }
-  });
-});
 
-// Función para procesar el traspaso
-function procesarTraspaso() {
-  // Mostrar loading
-  Swal.fire({
-    title: 'Procesando...',
-    text: 'Realizando el traspaso',
-    allowOutsideClick: false,
-    showConfirmButton: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
+
+
+
+<!-- Control Sidebar -->
+
+<!-- Main Footer -->
+<?php
+
+include("Modales/Error.php");
+include("Modales/Exito.php");
+
+include("Modales/AdvierteDeCaja.php");
+
+include("Modales/ReimpresionTicketsVistaVentas.php");
+include("Modales/ExitoActualiza.php"); ?>
+
+
+  <!-- ./wrapper -->
+
+
+
+
+  <script src="js/RealizaLosTraspasosONotass.js"></script>
   
-  // Recopilar datos del formulario
-  var formData = new FormData();
-  
-  // Agregar datos de cada fila de la tabla
-  $('#tablaAgregarArticulos tbody tr').each(function(index) {
-    var fila = $(this);
-    formData.append('CodBarras[]', fila.find('input[name="CodBarras[]"]').val());
-    formData.append('NombreDelProducto[]', fila.find('input[name="NombreDelProducto[]"]').val());
-    formData.append('Cantidad[]', fila.find('input[name="Cantidad[]"]').val());
-    formData.append('Pc[]', fila.find('input[name="Pc[]"]').val());
-    formData.append('ImporteGenerado[]', fila.find('input[name="ImporteGenerado[]"]').val());
-    formData.append('IdBasedatos[]', fila.find('input[name="IdBasedatos[]"]').val());
-    formData.append('LoteDelProducto[]', fila.find('input[name="LoteDelProducto[]"]').val());
-    formData.append('ClaveAdicional[]', fila.find('input[name="ClaveAdicional[]"]').val());
-    formData.append('Tipo[]', fila.find('input[name="Tipo[]"]').val());
-    formData.append('Folio_Ticket[]', fila.find('input[name="Folio_Ticket[]"]').val());
-    formData.append('AgregadoPor[]', fila.find('input[name="AgregadoPor[]"]').val());
-    formData.append('TipoDeMov[]', fila.find('input[name="TipoDeMov[]"]').val());
-    formData.append('Fk_sucursal[]', fila.find('input[name="Fk_sucursal[]"]').val());
-    formData.append('Fk_SucursalDestino[]', fila.find('input[name="Fk_SucursalDestino[]"]').val());
-    formData.append('Fk_SucursalDestinoLetras[]', fila.find('input[name="Fk_SucursalDestinoLetras[]"]').val());
-    formData.append('Fk_SucursalOrigenLetras[]', fila.find('input[name="Fk_SucursalOrigenLetras[]"]').val());
-    formData.append('Sistema[]', fila.find('input[name="Sistema[]"]').val());
-    formData.append('Liquidado[]', fila.find('input[name="Liquidado[]"]').val());
-    formData.append('Estatus[]', fila.find('input[name="Estatus[]"]').val());
-    formData.append('ID_H_O_D[]', fila.find('input[name="ID_H_O_D[]"]').val());
-    formData.append('FechaVenta[]', fila.find('input[name="FechaVenta[]"]').val());
-    formData.append('FormaDePago[]', fila.find('input[name="FormaDePago[]"]').val());
-  });
-  
-  // Agregar datos adicionales
-  formData.append('tipoMovimiento', $('#selTipoPago').val());
-  formData.append('sucursalDestino', $('#sucursaldestinoelegida').val());
-  formData.append('fechaTraspaso', $('#fecha-apertura').val());
-  
-  // Enviar datos al servidor
-  $.ajax({
-    url: 'Controladores/procesar_traspaso.php',
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: 'json',
-    success: function(response) {
-      if (response.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: response.message
-        }).then(() => {
-          // Limpiar la tabla y recargar la página
-          $('#tablaAgregarArticulos tbody').empty();
-          location.reload();
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.message
-        });
-      }
-    },
-    error: function() {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error de conexión al procesar el traspaso'
-      });
-    }
-  });
+  <!-- Bootstrap -->
+
+
+  <!-- PAGE PLUGINS -->
+
+ 
+
+<?php
+
+function fechaCastellano($fecha)
+{
+  $fecha = substr($fecha, 0, 10);
+  $numeroDia = date('d', strtotime($fecha));
+  $dia = date('l', strtotime($fecha));
+  $mes = date('F', strtotime($fecha));
+  $anio = date('Y', strtotime($fecha));
+  $dias_ES = array("Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo");
+  $dias_EN = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+  $nombredia = str_replace($dias_EN, $dias_ES, $dia);
+  $meses_ES = array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre");
+  $meses_EN = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+  $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
+  return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
+?>
+<script>
+
+
+
 
 </script>
 
@@ -1410,4 +1246,4 @@ function procesarTraspaso() {
             include "Footer.php";?>
 </body>
 
-</html> 
+</html>
