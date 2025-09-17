@@ -443,6 +443,9 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 
       <div class="col-md-12 text-center">
         <div class="my-3">
+          <button type="button" class="btn btn-success btn-sm" id="btnTestSwal" style="margin-right: 10px;">
+          <i class="fa-solid fa-bug"></i> Test SweetAlert
+          </button>
           <button type="button" class="btn btn-primary btn-sm" id="btnIniciarVenta">
           <i class="fa-solid fa-right-left"></i> Realizar Traspaso
           </button>
@@ -476,7 +479,6 @@ include("Modales/ExitoActualiza.php"); ?>
 
 
 
-  <script src="js/RealizaLosTraspasosONotass.js"></script>
   
   <!-- Bootstrap -->
 
@@ -504,8 +506,27 @@ function fechaCastellano($fecha)
 }
 ?>
 <script>
-
 // Funciones para el sistema de traspasos
+
+$(document).ready(function() {
+  // Verificar que SweetAlert esté cargado
+  if (typeof Swal === 'undefined') {
+    console.error('SweetAlert no está cargado');
+  } else {
+    console.log('SweetAlert está cargado correctamente');
+  }
+
+  // Botón de prueba para SweetAlert
+  $('#btnTestSwal').on('click', function() {
+    console.log('Botón de prueba clickeado');
+    Swal.fire({
+      title: 'Prueba de SweetAlert',
+      text: 'Si ves este mensaje, SweetAlert está funcionando correctamente',
+      icon: 'success',
+      confirmButtonText: 'Perfecto!'
+    });
+  });
+});
 
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
@@ -565,11 +586,13 @@ function actualizarSumaTotal() {
 }
 
 // Detectar cambios en el método de pago
-document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+$(document).ready(function() {
+  document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
-// Detectar cambios en los campos de tarjeta y efectivo
-document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
+  // Detectar cambios en los campos de tarjeta y efectivo
+  document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
+  document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
+});
 
 $(document).ready(function() {
   
@@ -753,10 +776,12 @@ $(document).ready(function() {
     $('#ivatotal').text(subtotal.toFixed(2));
   }
   function mostrarToast(mensaje) {
-  var toast = $('<div class="toast"></div>').text(mensaje);
-  $('body').append(toast);
-  toast.fadeIn(400).delay(3000).fadeOut(400, function() {
-    $(this).remove();
+  Swal.fire({
+    icon: 'success',
+    title: 'Éxito',
+    text: mensaje,
+    timer: 2000,
+    showConfirmButton: false
   });
 }
 
@@ -809,7 +834,11 @@ function msjError(mensaje) {
       limpiarCampo();
     },
     error: function (data) {
-      msjError('Error en la búsqueda');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error en la búsqueda'
+      });
     }
   });
 }
@@ -869,7 +898,11 @@ $('#codigoEscaneado').autocomplete({
   var totalIVA = 0;
   function agregarArticulo(articulo) {
   if (!articulo || (!articulo.id && !articulo.descripcion)) {
-    mostrarMensaje('El artículo no es válido');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'El artículo no es válido'
+    });
     return;
   }
 
@@ -891,7 +924,11 @@ $('#codigoEscaneado').autocomplete({
     let nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
 
     if (nuevaCantidad < 0) {
-      mostrarMensaje('La cantidad no puede ser negativa');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La cantidad no puede ser negativa'
+      });
       return;
     }
 
@@ -973,12 +1010,20 @@ $('#fecha-apertura').on('change', function() {
   
 
   if (cantidad < 0) {
-    mostrarMensaje('La cantidad no puede ser negativa');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'La cantidad no puede ser negativa'
+    });
     return;
   }
 
   if (precio < 0) {
-    mostrarMensaje('El precio no puede ser negativo');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'El precio no puede ser negativo'
+    });
     return;
   }
 
@@ -1064,7 +1109,7 @@ function abrirSweetAlert(elemento) {
   // $(elemento).hide();
 
   // Mostrar el SweetAlert para ingresar el descuento
-  var swalInstance = Swal.fire({
+  Swal.fire({
     title: 'Seleccionar descuento',
     html: '<label for="customDescuento">Ingresar monto a descontar:</label>' +
       '<input type="number" class="form-control" id="customDescuento" min="0" placeholder="Ingrese monto a descontar">' +
@@ -1169,7 +1214,7 @@ function abrirSweetAlert(elemento) {
       mostrarIvaTotal();
       actualizarImporte();
     },
-    allowOutsideClick: () => !Swal.isLoading()
+    allowOutsideClick: false
   });
 
   // Agregar el evento "change" al input de monto a descontar
@@ -1219,10 +1264,13 @@ function mostrarMensaje(mensaje) {
 // Evento click para el botón de realizar traspaso
 $('#btnIniciarVenta').on('click', function(e) {
   e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+  console.log('Botón clickeado'); // Debug
   
   // Validar que se haya seleccionado un tipo de movimiento
   var tipoMovimiento = $('#selTipoPago').val();
+  console.log('Tipo movimiento:', tipoMovimiento); // Debug
   if (tipoMovimiento === '0' || tipoMovimiento === '') {
+    console.log('Mostrando SweetAlert de advertencia'); // Debug
     Swal.fire({
       icon: 'warning',
       title: 'Advertencia',
@@ -1277,7 +1325,7 @@ function procesarTraspaso() {
     text: 'Realizando el traspaso',
     allowOutsideClick: false,
     showConfirmButton: false,
-    willOpen: () => {
+    didOpen: () => {
       Swal.showLoading();
     }
   });
@@ -1326,7 +1374,6 @@ function procesarTraspaso() {
     contentType: false,
     dataType: 'json',
     success: function(response) {
-      Swal.close();
       if (response.success) {
         Swal.fire({
           icon: 'success',
@@ -1346,7 +1393,6 @@ function procesarTraspaso() {
       }
     },
     error: function() {
-      Swal.close();
       Swal.fire({
         icon: 'error',
         title: 'Error',
