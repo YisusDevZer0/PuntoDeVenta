@@ -60,8 +60,10 @@
 
 
     // Worldwide Sales Chart
-    var ctx1 = $("#worldwide-sales").get(0).getContext("2d");
-    var myChart1 = new Chart(ctx1, {
+    var ctx1 = $("#worldwide-sales").get(0);
+    if (ctx1) {
+        ctx1 = ctx1.getContext("2d");
+        var myChart1 = new Chart(ctx1, {
         type: "bar",
         data: {
             labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022"],
@@ -89,8 +91,10 @@
 
 
     // Salse & Revenue Chart
-    var ctx2 = $("#salse-revenue").get(0).getContext("2d");
-    var myChart2 = new Chart(ctx2, {
+    var ctx2 = $("#salse-revenue").get(0);
+    if (ctx2) {
+        ctx2 = ctx2.getContext("2d");
+        var myChart2 = new Chart(ctx2, {
         type: "line",
         data: {
             labels: ["2016", "2017", "2018", "2019", "2020", "2021", "2022"],
@@ -112,12 +116,15 @@
             responsive: true
         }
     });
+    }
     
 
 
     // Single Line Chart
-    var ctx3 = $("#line-chart").get(0).getContext("2d");
-    var myChart3 = new Chart(ctx3, {
+    var ctx3 = $("#line-chart").get(0);
+    if (ctx3) {
+        ctx3 = ctx3.getContext("2d");
+        var myChart3 = new Chart(ctx3, {
         type: "line",
         data: {
             labels: [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150],
@@ -132,11 +139,14 @@
             responsive: true
         }
     });
+    }
 
 
     // Single Bar Chart
-    var ctx4 = $("#bar-chart").get(0).getContext("2d");
-    var myChart4 = new Chart(ctx4, {
+    var ctx4 = $("#bar-chart").get(0);
+    if (ctx4) {
+        ctx4 = ctx4.getContext("2d");
+        var myChart4 = new Chart(ctx4, {
         type: "bar",
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],

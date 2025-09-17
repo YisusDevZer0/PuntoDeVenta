@@ -720,4 +720,144 @@ function abrirSweetAlert(elemento) {
 // Agregar el evento click a un botón o enlace que abrirá el SweetAlert
 $('#abrirSweetAlertBtn').on('click', function() {
   aplicarDescuento();
-}); 
+});
+
+// Evento click para el botón de realizar traspaso
+$('#btnIniciarVenta').on('click', function(e) {
+  e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+  
+  // Validar que se haya seleccionado un tipo de movimiento
+  var tipoMovimiento = $('#selTipoPago').val();
+  if (tipoMovimiento === '0' || tipoMovimiento === '') {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: 'Debe seleccionar un tipo de movimiento'
+    });
+    return;
+  }
+  
+  // Validar que se haya seleccionado una sucursal destino
+  var sucursalDestino = $('#sucursaldestinoelegida').val();
+  if (sucursalDestino === '0' || sucursalDestino === '') {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: 'Debe seleccionar una sucursal destino'
+    });
+    return;
+  }
+  
+  // Validar que haya productos en la tabla
+  var filasProductos = $('#tablaAgregarArticulos tbody tr').length;
+  if (filasProductos === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: 'Debe agregar al menos un producto para realizar el traspaso'
+    });
+    return;
+  }
+  
+  // Mostrar confirmación
+  Swal.fire({
+    title: '¿Confirmar traspaso?',
+    text: 'Se realizará el traspaso de los productos seleccionados',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, realizar traspaso',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Aquí se procesaría el traspaso
+      procesarTraspaso();
+    }
+  });
+});
+
+// Función para procesar el traspaso
+function procesarTraspaso() {
+  // Mostrar loading
+  Swal.fire({
+    title: 'Procesando...',
+    text: 'Realizando el traspaso',
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    willOpen: () => {
+      Swal.showLoading();
+    }
+  });
+  
+  // Recopilar datos del formulario
+  var formData = new FormData();
+  
+  // Agregar datos de cada fila de la tabla
+  $('#tablaAgregarArticulos tbody tr').each(function(index) {
+    var fila = $(this);
+    formData.append('CodBarras[]', fila.find('input[name="CodBarras[]"]').val());
+    formData.append('NombreDelProducto[]', fila.find('input[name="NombreDelProducto[]"]').val());
+    formData.append('Cantidad[]', fila.find('input[name="Cantidad[]"]').val());
+    formData.append('Pc[]', fila.find('input[name="Pc[]"]').val());
+    formData.append('ImporteGenerado[]', fila.find('input[name="ImporteGenerado[]"]').val());
+    formData.append('IdBasedatos[]', fila.find('input[name="IdBasedatos[]"]').val());
+    formData.append('LoteDelProducto[]', fila.find('input[name="LoteDelProducto[]"]').val());
+    formData.append('ClaveAdicional[]', fila.find('input[name="ClaveAdicional[]"]').val());
+    formData.append('Tipo[]', fila.find('input[name="Tipo[]"]').val());
+    formData.append('Folio_Ticket[]', fila.find('input[name="Folio_Ticket[]"]').val());
+    formData.append('AgregadoPor[]', fila.find('input[name="AgregadoPor[]"]').val());
+    formData.append('TipoDeMov[]', fila.find('input[name="TipoDeMov[]"]').val());
+    formData.append('Fk_sucursal[]', fila.find('input[name="Fk_sucursal[]"]').val());
+    formData.append('Fk_SucursalDestino[]', fila.find('input[name="Fk_SucursalDestino[]"]').val());
+    formData.append('Fk_SucursalDestinoLetras[]', fila.find('input[name="Fk_SucursalDestinoLetras[]"]').val());
+    formData.append('Fk_SucursalOrigenLetras[]', fila.find('input[name="Fk_SucursalOrigenLetras[]"]').val());
+    formData.append('Sistema[]', fila.find('input[name="Sistema[]"]').val());
+    formData.append('Liquidado[]', fila.find('input[name="Liquidado[]"]').val());
+    formData.append('Estatus[]', fila.find('input[name="Estatus[]"]').val());
+    formData.append('ID_H_O_D[]', fila.find('input[name="ID_H_O_D[]"]').val());
+    formData.append('FechaVenta[]', fila.find('input[name="FechaVenta[]"]').val());
+    formData.append('FormaDePago[]', fila.find('input[name="FormaDePago[]"]').val());
+  });
+  
+  // Agregar datos adicionales
+  formData.append('tipoMovimiento', $('#selTipoPago').val());
+  formData.append('sucursalDestino', $('#sucursaldestinoelegida').val());
+  formData.append('fechaTraspaso', $('#fecha-apertura').val());
+  
+  // Enviar datos al servidor
+  $.ajax({
+    url: 'Controladores/procesar_traspaso.php',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: 'json',
+    success: function(response) {
+      Swal.close();
+      if (response.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: response.message
+        }).then(() => {
+          // Limpiar la tabla y recargar la página
+          $('#tablaAgregarArticulos tbody').empty();
+          location.reload();
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.message
+        });
+      }
+    },
+    error: function() {
+      Swal.close();
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error de conexión al procesar el traspaso'
+      });
+    }
+  });
+} 

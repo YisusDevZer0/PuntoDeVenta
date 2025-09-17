@@ -51,6 +51,11 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <!-- Leaflet para mapas y geolocalización -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- IP Geolocation API -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
     <script type="text/javascript" src="js/validation.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -443,13 +448,19 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
                     <br>
                     <div style="margin-top: 5px;">
                         <button class="btn btn-sm btn-outline-primary" onclick="checkLocationManual()" style="margin-right: 5px;">
-                            <i class="fas fa-sync-alt"></i> Verificar Ubicación
+                            <i class="fas fa-sync-alt"></i> GPS
+                    </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="getLocationByIP().then(handleLocationSuccess).catch(handleLocationError)" style="margin-right: 5px;">
+                            <i class="fas fa-globe"></i> IP
                         </button>
-                        <button class="btn btn-sm btn-outline-info" onclick="diagnosticarGeolocalizacion()" style="margin-right: 5px;">
-                            <i class="fas fa-bug"></i> Diagnóstico
+                        <button class="btn btn-sm btn-outline-info" onclick="getLocationWithMap().then(handleLocationSuccess).catch(handleLocationError)" style="margin-right: 5px;">
+                            <i class="fas fa-map"></i> Mapa
                         </button>
-                        <button class="btn btn-sm btn-outline-warning" onclick="testGeolocation()">
+                        <button class="btn btn-sm btn-outline-warning" onclick="testGeolocation()" style="margin-right: 5px;">
                             <i class="fas fa-test-tube"></i> Test
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="diagnosticarGeolocalizacion()">
+                            <i class="fas fa-bug"></i> Debug
                         </button>
                     </div>
                 </div>
@@ -553,7 +564,52 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             if (currentDate) currentDate.textContent = `${dateString} ${dayString}`;
         }
         
-        // Verificar ubicación
+        // Manejo de ubicación exitosa
+        async function handleLocationSuccess(position) {
+            console.log('🎉 Ubicación obtenida exitosamente:', position);
+            
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            const source = position.source || 'Desconocido';
+            document.getElementById('currentLocation').textContent = `Ubicación detectada (${source})`;
+            updateLastVerification();
+            
+            // Mostrar información de la ubicación
+            Swal.fire({
+                title: '¡Ubicación Obtenida!',
+                html: `
+                    <p><strong>Método:</strong> ${source}</p>
+                    <p><strong>Latitud:</strong> ${userLocation.lat.toFixed(6)}</p>
+                    <p><strong>Longitud:</strong> ${userLocation.lng.toFixed(6)}</p>
+                    <p><strong>Precisión:</strong> ${Math.round(position.coords.accuracy)} metros</p>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Continuar'
+            });
+            
+            // Verificar área de trabajo
+            await verifyWorkArea();
+        }
+        
+        // Manejo de error de ubicación
+        function handleLocationError(error) {
+            console.error('❌ Error obteniendo ubicación:', error);
+            
+            Swal.fire({
+                title: 'Error de Ubicación',
+                text: error.message || 'No se pudo obtener la ubicación',
+                icon: 'error',
+                confirmButtonText: 'Entendido'
+            });
+            
+            document.getElementById('currentLocation').textContent = 'Error obteniendo ubicación';
+            updateStatus('outside', 'Error de ubicación');
+        }
+        
+        // Verificar ubicación (método híbrido)
         async function checkLocation() {
             // Si ya se intentó y fue denegado, no volver a intentar
             if (locationPermissionDenied || locationCheckAttempted) {
@@ -564,24 +620,9 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             locationCheckAttempted = true;
             
             try {
-                if (!navigator.geolocation) {
-                    console.log('Geolocalización no soportada');
-                    document.getElementById('currentLocation').textContent = 'Geolocalización no disponible';
-                    updateStatus('outside', 'Geolocalización no disponible');
-                    return;
-                }
-
+                console.log('🔄 Iniciando verificación de ubicación híbrida...');
                 const position = await getCurrentPosition();
-                userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
-                document.getElementById('currentLocation').textContent = 'Ubicación detectada';
-                updateLastVerification();
-                
-                // Verificar si está en área de trabajo
-                await verifyWorkArea();
+                await handleLocationSuccess(position);
                 
             } catch (error) {
                 console.log('Error obteniendo ubicación:', error);
@@ -598,68 +639,195 @@ $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (is
             }
         }
         
-        // Obtener posición actual - Versión mejorada
-        function getCurrentPosition() {
-            return new Promise((resolve, reject) => {
-                console.log('🔍 Iniciando solicitud de geolocalización...');
+        // SISTEMA DE GEOLOCALIZACIÓN MÚLTIPLE
+        // =====================================
+        
+        // 1. Geolocalización por IP (más confiable)
+        async function getLocationByIP() {
+            console.log('🌐 Obteniendo ubicación por IP...');
+            
+            try {
+                // Usar múltiples APIs como fallback
+                const apis = [
+                    'https://ipapi.co/json/',
+                    'https://ip-api.com/json/',
+                    'https://api.ipgeolocation.io/ipgeo?apiKey=free'
+                ];
                 
-                // Verificar si geolocalización está disponible
+                for (const api of apis) {
+                    try {
+                        console.log(`🔗 Intentando API: ${api}`);
+                        const response = await fetch(api);
+                        const data = await response.json();
+                        
+                        if (data.latitude && data.longitude) {
+                            console.log('✅ Ubicación obtenida por IP:', data);
+                            return {
+                                lat: parseFloat(data.latitude),
+                                lng: parseFloat(data.longitude),
+                                accuracy: 1000, // Aproximación por IP
+                                source: 'IP',
+                                city: data.city || data.city_name,
+                                country: data.country || data.country_name
+                            };
+                        }
+                    } catch (apiError) {
+                        console.warn(`⚠️ API falló: ${api}`, apiError);
+                        continue;
+                    }
+                }
+                
+                throw new Error('Todas las APIs de IP fallaron');
+                
+            } catch (error) {
+                console.error('❌ Error obteniendo ubicación por IP:', error);
+                throw error;
+            }
+        }
+        
+        // 2. Geolocalización del navegador (GPS)
+        function getLocationByGPS() {
+            return new Promise((resolve, reject) => {
+                console.log('📡 Obteniendo ubicación por GPS...');
+                
                 if (!navigator.geolocation) {
-                    console.error('❌ Geolocalización no soportada');
-                    reject(new Error('Geolocalización no soportada en este navegador'));
+                    reject(new Error('Geolocalización no soportada'));
                     return;
                 }
                 
-                // Configuración optimizada para diferentes escenarios
                 const options = {
-                    enableHighAccuracy: true,  // Intentar GPS primero
-                    timeout: 15000,           // 15 segundos de timeout
-                    maximumAge: 0             // No usar cache, siempre obtener ubicación fresca
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 };
                 
-                console.log('📍 Opciones de geolocalización:', options);
-                
-                // Función de éxito
-                const onSuccess = (position) => {
-                    console.log('✅ Ubicación obtenida exitosamente:', {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                        accuracy: position.coords.accuracy,
-                        timestamp: new Date(position.timestamp)
-                    });
-                    resolve(position);
-                };
-                
-                // Función de error con detalles
-                const onError = (error) => {
-                    console.error('❌ Error de geolocalización:', error);
-                    
-                    let errorMessage = 'Error desconocido';
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage = 'Permisos de ubicación denegados por el usuario';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage = 'Ubicación no disponible (GPS deshabilitado o sin señal)';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage = 'Tiempo de espera agotado (GPS lento o sin señal)';
-                            break;
-                        default:
-                            errorMessage = `Error: ${error.message}`;
-                    }
-                    
-                    console.error('📝 Detalles del error:', errorMessage);
-                    reject(new Error(errorMessage));
-                };
-                
-                // Intentar obtener ubicación
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log('✅ GPS exitoso:', position.coords);
+                        resolve({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy,
+                            source: 'GPS',
+                            timestamp: position.timestamp
+                        });
+                    },
+                    (error) => {
+                        console.error('❌ GPS falló:', error);
+                        reject(error);
+                    },
+                    options
+                );
+            });
+        }
+        
+        // 3. Geolocalización híbrida (múltiples métodos)
+        async function getCurrentPosition() {
+            console.log('🚀 INICIANDO GEOLOCALIZACIÓN HÍBRIDA');
+            
+            const methods = [
+                { name: 'GPS', fn: getLocationByGPS, priority: 1 },
+                { name: 'IP', fn: getLocationByIP, priority: 2 }
+            ];
+            
+            // Ordenar por prioridad
+            methods.sort((a, b) => a.priority - b.priority);
+            
+            for (const method of methods) {
                 try {
-                    navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-                } catch (err) {
-                    console.error('💥 Error crítico al solicitar geolocalización:', err);
-                    reject(new Error('Error crítico: ' + err.message));
+                    console.log(`🔄 Intentando método: ${method.name}`);
+                    const location = await method.fn();
+                    
+                    console.log(`✅ Éxito con ${method.name}:`, location);
+                    return {
+                        coords: {
+                            latitude: location.lat,
+                            longitude: location.lng,
+                            accuracy: location.accuracy || 1000
+                        },
+                        timestamp: location.timestamp || Date.now(),
+                        source: location.source || method.name
+                    };
+                    
+                } catch (error) {
+                    console.warn(`⚠️ Método ${method.name} falló:`, error.message);
+                    continue;
                 }
+            }
+            
+            throw new Error('Todos los métodos de geolocalización fallaron');
+        }
+        
+        // 4. Geolocalización con mapa interactivo (Leaflet)
+        async function getLocationWithMap() {
+            return new Promise((resolve, reject) => {
+                Swal.fire({
+                    title: 'Seleccionar Ubicación',
+                    html: `
+                        <div id="map" style="height: 400px; width: 100%;"></div>
+                        <p class="mt-3">Haz clic en el mapa para seleccionar tu ubicación</p>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Usar esta ubicación',
+                    cancelButtonText: 'Cancelar',
+                    didOpen: () => {
+                        // Inicializar mapa
+                        const map = L.map('map').setView([19.4326, -99.1332], 13);
+                        
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+                        
+                        let marker = null;
+                        
+                        // Obtener ubicación actual si es posible
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition((pos) => {
+                                const lat = pos.coords.latitude;
+                                const lng = pos.coords.longitude;
+                                map.setView([lat, lng], 15);
+                                marker = L.marker([lat, lng]).addTo(map);
+                            });
+                        }
+                        
+                        // Click en el mapa
+                        map.on('click', (e) => {
+                            if (marker) {
+                                map.removeLayer(marker);
+                            }
+                            marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+                        });
+                        
+                        // Guardar referencia para usar después
+                        window.tempMap = map;
+                        window.tempMarker = marker;
+                    },
+                    preConfirm: () => {
+                        if (window.tempMarker) {
+                            const latlng = window.tempMarker.getLatLng();
+                            return {
+                                lat: latlng.lat,
+                                lng: latlng.lng,
+                                source: 'Mapa'
+                            };
+                        }
+                        return null;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed && result.value) {
+                        resolve({
+                            coords: {
+                                latitude: result.value.lat,
+                                longitude: result.value.lng,
+                                accuracy: 10 // Muy preciso por selección manual
+                            },
+                            timestamp: Date.now(),
+                            source: 'Mapa'
+                        });
+                    } else {
+                        reject(new Error('Selección cancelada'));
+                    }
+                });
             });
         }
         
