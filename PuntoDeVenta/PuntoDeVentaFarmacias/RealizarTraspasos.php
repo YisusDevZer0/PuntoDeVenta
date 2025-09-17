@@ -88,9 +88,12 @@ $fechaActual = date('Y-m-d H:i:s');
         });
 
         // Sincronizar los campos ocultos con los valores seleccionados
-        document.querySelectorAll('input[name="FechaDeTraspaso[]"]').forEach(inputOculto => {
-            inputOculto.value = document.getElementById('fecha-apertura').value || establecerFechaActual();
-        });
+        const fechaApertura = document.getElementById('fecha-apertura');
+        if (fechaApertura) {
+            document.querySelectorAll('input[name="FechaDeTraspaso[]"]').forEach(inputOculto => {
+                inputOculto.value = fechaApertura.value || establecerFechaActual();
+            });
+        }
     }
 
     // Ejecutar la función al cargar la página
@@ -188,7 +191,9 @@ $fechaActual = date('Y-m-d H:i:s');
         const today = new Date().toISOString().split('T')[0];
 
         // Establecer la fecha actual como valor por defecto en el input base
-        fechaBase.value = today;
+        if (fechaBase) {
+            fechaBase.value = today;
+        }
 
         // Función para actualizar todos los inputs dinámicos
         function actualizarFechasDinamicas(valor) {
@@ -202,9 +207,11 @@ $fechaActual = date('Y-m-d H:i:s');
         actualizarFechasDinamicas(today);
 
         // Escuchar cambios en el input base y actualizar los dinámicos
-        fechaBase.addEventListener('change', function () {
-            actualizarFechasDinamicas(this.value);
-        });
+        if (fechaBase) {
+            fechaBase.addEventListener('change', function () {
+                actualizarFechasDinamicas(this.value);
+            });
+        }
     });
 </script>
 </div>
@@ -401,21 +408,24 @@ let selectedAdjustment = "";
 let selectedText = "";
 
 // Evento para capturar el valor seleccionado del select
-document.getElementById('sucursaldestinoelegida').addEventListener('change', function () {
-    const selectedOption = this.options[this.selectedIndex];
-    selectedAdjustment = selectedOption.value; // Obtiene el value
-    selectedText = selectedOption.textContent; // Obtiene el texto visible
+const sucursalDestinoElement = document.getElementById('sucursaldestinoelegida');
+if (sucursalDestinoElement) {
+    sucursalDestinoElement.addEventListener('change', function () {
+        const selectedOption = this.options[this.selectedIndex];
+        selectedAdjustment = selectedOption.value; // Obtiene el value
+        selectedText = selectedOption.textContent; // Obtiene el texto visible
 
-    // Actualiza el input correspondiente en la tabla con el value
-    document.querySelectorAll('.tipoajuste-input').forEach(input => {
-        input.value = selectedAdjustment;
-    });
+        // Actualiza el input correspondiente en la tabla con el value
+        document.querySelectorAll('.tipoajuste-input').forEach(input => {
+            input.value = selectedAdjustment;
+        });
 
-    // Actualiza el input correspondiente en la tabla con el texto
-    document.querySelectorAll('.tipoajusteletras-input').forEach(input => {
-        input.value = selectedText;
+        // Actualiza el input correspondiente en la tabla con el texto
+        document.querySelectorAll('.tipoajusteletras-input').forEach(input => {
+            input.value = selectedText;
+        });
     });
-});
+}
 </script>
 
 <!-- MOSTRAR MONTO EFECTIVO ENTREGADO Y EL VUELTO -->
@@ -463,17 +473,27 @@ document.getElementById('sucursaldestinoelegida').addEventListener('change', fun
 
 
 function actualizarSumaTotal() {
-  var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
-  var metodoPago = document.getElementById("selTipoPago").value; // Método de pago seleccionado
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta (por defecto 0)
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo (por defecto 0)
+  var totalVentaElement = document.getElementById("totalVenta");
+  var totalVenta = totalVentaElement ? parseFloat(totalVentaElement.textContent) : 0; // Total de la venta
+  
+  var selTipoPagoElement = document.getElementById("selTipoPago");
+  var metodoPago = selTipoPagoElement ? selTipoPagoElement.value : ""; // Método de pago seleccionado
+  
+  var iptTarjetaElement = document.getElementById("iptTarjeta");
+  var iptTarjeta = iptTarjetaElement ? parseFloat(iptTarjetaElement.value) || 0 : 0; // Pago con tarjeta (por defecto 0)
+  
+  var iptEfectivoElement = document.getElementById("iptEfectivoRecibido");
+  var iptEfectivo = iptEfectivoElement ? parseFloat(iptEfectivoElement.value) || 0 : 0; // Pago con efectivo (por defecto 0)
+  
   var totalCubierto = 0; // Inicializamos el total cubierto
   var cambio = 0; // Inicializamos el cambio
   switch (metodoPago) {
   case "Credito":
     iptEfectivo = totalVenta;
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
+    if (iptEfectivoElement) {
+      iptEfectivoElement.value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input');
+    }
   
     totalCubierto = iptEfectivo;
     cambio = 0;
@@ -485,8 +505,10 @@ function actualizarSumaTotal() {
     } else {
       iptEfectivo = totalVenta - iptTarjeta;
     }
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
+    if (iptEfectivoElement) {
+      iptEfectivoElement.value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input');
+    }
     totalCubierto = iptTarjeta + iptEfectivo;
     cambio = iptEfectivo - (totalVenta - iptTarjeta);
     cambio = cambio > 0 ? cambio : 0;
@@ -499,8 +521,10 @@ function actualizarSumaTotal() {
     } else {
       iptEfectivo = totalVenta - iptTarjeta;
     }
-    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-    $('#iptEfectivoRecibido').trigger('input');
+    if (iptEfectivoElement) {
+      iptEfectivoElement.value = iptEfectivo.toFixed(2);
+      $('#iptEfectivoRecibido').trigger('input');
+    }
     totalCubierto = iptTarjeta + iptEfectivo;
     cambio = iptEfectivo - (totalVenta - iptTarjeta);
     cambio = cambio > 0 ? cambio : 0;
@@ -509,22 +533,38 @@ function actualizarSumaTotal() {
 }
 
   // Actualizar el cambio en el elemento <span>
-  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
+  var vueltoElement = document.getElementById("Vuelto");
+  if (vueltoElement) {
+    vueltoElement.textContent = cambio.toFixed(2);
+  }
 
   // Actualizar el total que se muestra al cliente
-  if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito") {
-    document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
-  } else {
-    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
+  var totaldeventaclienteElement = document.getElementById("totaldeventacliente");
+  if (totaldeventaclienteElement) {
+    if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito") {
+      totaldeventaclienteElement.value = iptEfectivo.toFixed(2);
+    } else {
+      totaldeventaclienteElement.value = totalVenta.toFixed(2);
+    }
   }
 }
 
 // Detectar cambios en el método de pago
-document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
+const selTipoPago = document.getElementById("selTipoPago");
+if (selTipoPago) {
+    selTipoPago.addEventListener("change", actualizarSumaTotal);
+}
 
 // Detectar cambios en los campos de tarjeta y efectivo
-document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
+const iptTarjeta = document.getElementById("iptTarjeta");
+if (iptTarjeta) {
+    iptTarjeta.addEventListener("input", actualizarSumaTotal);
+}
+
+const iptEfectivoRecibido = document.getElementById("iptEfectivoRecibido");
+if (iptEfectivoRecibido) {
+    iptEfectivoRecibido.addEventListener("input", actualizarSumaTotal);
+}
 
 
 
@@ -560,8 +600,12 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
     $("#chkEfectivoExacto").change(function() {
       if ($(this).is(":checked")) {
         var boletaTotal = parseFloat($("#boleta_total").text());
-        $("#Vuelto").text("0.00");
-        $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+        if ($("#Vuelto").length) {
+          $("#Vuelto").text("0.00");
+        }
+        if ($("#iptEfectivoRecibido").length) {
+          $("#iptEfectivoRecibido").val(boletaTotal.toFixed(2));
+        }
       }
     });
 
@@ -570,13 +614,20 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
       var efectivoRecibido = parseFloat($(this).val());
 
       if ($("#chkEfectivoExacto").is(":checked") && boletaTotal >= efectivoRecibido) {
-        $("#Vuelto").text("0.00");
-        $("#boleta_total").text(efectivoRecibido.toFixed(2));
+        if ($("#Vuelto").length) {
+          $("#Vuelto").text("0.00");
+        }
+        if ($("#boleta_total").length) {
+          $("#boleta_total").text(efectivoRecibido.toFixed(2));
+        }
       } else {
         var vuelto = efectivoRecibido - boletaTotal;
-        $("#Vuelto").text(vuelto.toFixed(2));
-        $("#cambiorecibidocliente").val(vuelto.toFixed(2));
-        
+        if ($("#Vuelto").length) {
+          $("#Vuelto").text(vuelto.toFixed(2));
+        }
+        if ($("#cambiorecibidocliente").length) {
+          $("#cambiorecibidocliente").val(vuelto.toFixed(2));
+        }
       }
     });
   });
@@ -600,8 +651,12 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
   var spanEfectivoEntregado = document.getElementById("EfectivoEntregado");
   var inputEfectivoOculto = document.getElementById("iptEfectivoOculto");
 
-  spanEfectivoEntregado.innerText = inputEfectivo.value;
-  inputEfectivoOculto.value = inputEfectivo.value;
+  if (inputEfectivo && spanEfectivoEntregado) {
+    spanEfectivoEntregado.innerText = inputEfectivo.value;
+  }
+  if (inputEfectivo && inputEfectivoOculto) {
+    inputEfectivoOculto.value = inputEfectivo.value;
+  }
 }
 
 </script>
@@ -629,60 +684,63 @@ document.getElementById("iptEfectivoRecibido").addEventListener("input", actuali
 </script>
 
 <script>
-  table = $('#tablaAgregarArticulos').DataTable({
-    searching: false, // Deshabilitar la funcionalidad de búsqueda
-    paging: false, // Deshabilitar el paginador
-    "columns": [{
-        "data": "id"
-      },
-      {
-        "data": "codigo"
-      },
-      {
-        "data": "descripcion"
-      },
-      {
-        "data": "cantidad"
-      },
+  // Verificar si la tabla existe antes de inicializar DataTable
+  if ($('#tablaAgregarArticulos').length > 0) {
+    table = $('#tablaAgregarArticulos').DataTable({
+      searching: false, // Deshabilitar la funcionalidad de búsqueda
+      paging: false, // Deshabilitar el paginador
+      "columns": [{
+          "data": "id"
+        },
+        {
+          "data": "codigo"
+        },
+        {
+          "data": "descripcion"
+        },
+        {
+          "data": "cantidad"
+        },
 
-      {
-        "data": "precio"
-      },
-      // {
-      //     "data": "importesiniva"
-      // },
-      // {
-      //     "data": "ivatotal"
-      // },
-      // {
-      //     "data": "ieps"
-      // },
-      {
-        "data": "eliminar"
-      },
-      {
-        "data": "descuentos"
+        {
+          "data": "precio"
+        },
+        // {
+        //     "data": "importesiniva"
+        // },
+        // {
+        //     "data": "ivatotal"
+        // },
+        // {
+        //     "data": "ieps"
+        // },
+        {
+          "data": "eliminar"
+        },
+        {
+          "data": "descuentos"
 
-      },
-      {
-        "data": "descuentos2"
-      },
-      {
-        "data": "descuento2"
-      },
-    ],
+        },
+        {
+          "data": "descuentos2"
+        },
+        {
+          "data": "descuento2"
+        },
+      ],
 
-    "order": [
-      [0, 'desc']
+      "order": [
+        [0, 'desc']
 
-    ],
-    "language": {
-      "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
-    },
-    //para usar los botones   
-    responsive: "true",
+      ],
+      "language": {
+        "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+      },
+      //para usar los botones   
+      responsive: "true",
 
-  });
+    });
+  }
 
   function mostrarTotalVenta() {
     var totalVenta = 0;

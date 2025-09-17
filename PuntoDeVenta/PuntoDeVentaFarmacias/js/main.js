@@ -168,8 +168,10 @@
 
 
     // Pie Chart
-    var ctx5 = $("#pie-chart").get(0).getContext("2d");
-    var myChart5 = new Chart(ctx5, {
+    var ctx5 = $("#pie-chart").get(0);
+    if (ctx5) {
+        ctx5 = ctx5.getContext("2d");
+        var myChart5 = new Chart(ctx5, {
         type: "pie",
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
@@ -188,11 +190,14 @@
             responsive: true
         }
     });
+    }
 
 
     // Doughnut Chart
-    var ctx6 = $("#doughnut-chart").get(0).getContext("2d");
-    var myChart6 = new Chart(ctx6, {
+    var ctx6 = $("#doughnut-chart").get(0);
+    if (ctx6) {
+        ctx6 = ctx6.getContext("2d");
+        var myChart6 = new Chart(ctx6, {
         type: "doughnut",
         data: {
             labels: ["Italy", "France", "Spain", "USA", "Argentina"],
@@ -211,6 +216,7 @@
             responsive: true
         }
     });
+    }
 
     
     // Menú dropdown en el sidebar
@@ -296,6 +302,9 @@
     $(window).resize(function() {
         checkWindowSize();
     });
+    // Verificar tamaño al redimensionar
+    $(window).resize(function() {
+        checkWindowSize();
+    });
 
 })(jQuery);
-
