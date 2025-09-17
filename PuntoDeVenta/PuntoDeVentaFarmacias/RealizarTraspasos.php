@@ -262,7 +262,7 @@ $fechaActual = date('Y-m-d H:i:s');
                           margin-bottom: 5px !important;
                         }
                       </style>
-                      <form action="javascript:void(0)" method="post" id="TraspasosNotasALMomento">
+                      <form action="javascript:void(0)" target="print_popup" method="post" id="TraspasosNotasALMomento">
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
@@ -510,17 +510,15 @@ function fechaCastellano($fecha)
 function actualizarSumaTotal() {
   var totalVenta = parseFloat(document.getElementById("totalVenta").textContent); // Total de la venta
   var metodoPago = document.getElementById("selTipoPago").value; // Método de pago seleccionado
-  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta")?.value) || 0; // Pago con tarjeta (por defecto 0)
-  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido")?.value) || 0; // Pago con efectivo (por defecto 0)
+  var iptTarjeta = parseFloat(document.getElementById("iptTarjeta").value) || 0; // Pago con tarjeta (por defecto 0)
+  var iptEfectivo = parseFloat(document.getElementById("iptEfectivoRecibido").value) || 0; // Pago con efectivo (por defecto 0)
   var totalCubierto = 0; // Inicializamos el total cubierto
   var cambio = 0; // Inicializamos el cambio
   switch (metodoPago) {
   case "Credito":
     iptEfectivo = totalVenta;
-    if (document.getElementById("iptEfectivoRecibido")) {
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input');
-    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
   
     totalCubierto = iptEfectivo;
     cambio = 0;
@@ -532,10 +530,8 @@ function actualizarSumaTotal() {
     } else {
       iptEfectivo = totalVenta - iptTarjeta;
     }
-    if (document.getElementById("iptEfectivoRecibido")) {
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input');
-    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
     totalCubierto = iptTarjeta + iptEfectivo;
     cambio = iptEfectivo - (totalVenta - iptTarjeta);
     cambio = cambio > 0 ? cambio : 0;
@@ -548,10 +544,8 @@ function actualizarSumaTotal() {
     } else {
       iptEfectivo = totalVenta - iptTarjeta;
     }
-    if (document.getElementById("iptEfectivoRecibido")) {
-      document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
-      $('#iptEfectivoRecibido').trigger('input');
-    }
+    document.getElementById("iptEfectivoRecibido").value = iptEfectivo.toFixed(2);
+    $('#iptEfectivoRecibido').trigger('input');
     totalCubierto = iptTarjeta + iptEfectivo;
     cambio = iptEfectivo - (totalVenta - iptTarjeta);
     cambio = cambio > 0 ? cambio : 0;
@@ -560,34 +554,22 @@ function actualizarSumaTotal() {
 }
 
   // Actualizar el cambio en el elemento <span>
-  if (document.getElementById("Vuelto")) {
-    document.getElementById("Vuelto").textContent = cambio.toFixed(2);
-  }
+  document.getElementById("Vuelto").textContent = cambio.toFixed(2);
 
   // Actualizar el total que se muestra al cliente
   if (metodoPago === "Efectivo y Tarjeta" || metodoPago === "Efectivo Y Credito") {
-    if (document.getElementById("totaldeventacliente")) {
-      document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
-    }
+    document.getElementById("totaldeventacliente").value = iptEfectivo.toFixed(2);
   } else {
-    if (document.getElementById("totaldeventacliente")) {
-      document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
-    }
+    document.getElementById("totaldeventacliente").value = totalVenta.toFixed(2);
   }
 }
 
 // Detectar cambios en el método de pago
-if (document.getElementById("selTipoPago")) {
-  document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
-}
+document.getElementById("selTipoPago").addEventListener("change", actualizarSumaTotal);
 
 // Detectar cambios en los campos de tarjeta y efectivo
-if (document.getElementById("iptTarjeta")) {
-  document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
-}
-if (document.getElementById("iptEfectivoRecibido")) {
-  document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
-}
+document.getElementById("iptTarjeta").addEventListener("input", actualizarSumaTotal);
+document.getElementById("iptEfectivoRecibido").addEventListener("input", actualizarSumaTotal);
 
 $(document).ready(function() {
   
@@ -651,12 +633,8 @@ $(document).ready(function() {
   var spanEfectivoEntregado = document.getElementById("EfectivoEntregado");
   var inputEfectivoOculto = document.getElementById("iptEfectivoOculto");
 
-  if (spanEfectivoEntregado && inputEfectivo) {
-    spanEfectivoEntregado.innerText = inputEfectivo.value;
-  }
-  if (inputEfectivoOculto && inputEfectivo) {
-    inputEfectivoOculto.value = inputEfectivo.value;
-  }
+  spanEfectivoEntregado.innerText = inputEfectivo.value;
+  inputEfectivoOculto.value = inputEfectivo.value;
 }
 
   $(function() {
@@ -677,19 +655,7 @@ $(document).ready(function() {
     });
   });
 
-  // Verificar si DataTable ya está inicializado y destruirlo si es necesario
-  if ($.fn.DataTable.isDataTable('#tablaAgregarArticulos')) {
-    $('#tablaAgregarArticulos').DataTable().destroy();
-  }
-  
-  // Verificar que la tabla existe antes de inicializar DataTable
-  if ($('#tablaAgregarArticulos').length > 0) {
-    // Verificar si DataTable ya está inicializado y destruirlo si es necesario
-    if ($.fn.DataTable.isDataTable('#tablaAgregarArticulos')) {
-      $('#tablaAgregarArticulos').DataTable().destroy();
-    }
-    
-    table = $('#tablaAgregarArticulos').DataTable({
+  table = $('#tablaAgregarArticulos').DataTable({
       searching: false, // Deshabilitar la funcionalidad de búsqueda
       paging: false, // Deshabilitar el paginador
       "columns": [{
@@ -743,7 +709,6 @@ $(document).ready(function() {
       responsive: "true",
 
     });
-  }
 
   function mostrarTotalVenta() {
     var totalVenta = 0;
@@ -792,6 +757,14 @@ $(document).ready(function() {
   $('body').append(toast);
   toast.fadeIn(400).delay(3000).fadeOut(400, function() {
     $(this).remove();
+  });
+}
+
+function msjError(mensaje) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: mensaje
   });
 }
   function buscarArticulo(codigoEscaneado) {
@@ -1057,11 +1030,6 @@ $('#fecha-apertura').on('change', function() {
     $('#totalIEPS').text(totalIEPS.toFixed(2));
   }
 
-  // Función para mostrar un mensaje
-  function mostrarMensaje(mensaje) {
-    // Mostrar el mensaje en una ventana emergente de alerta
-    alert(mensaje);
-  }
 // Modificar la función eliminarFila() para llamar a las funciones necesarias después de eliminar la fila
 function eliminarFila(element) {
   var fila = $(element).closest('tr'); // Obtener la fila más cercana al elemento
@@ -1241,6 +1209,12 @@ function abrirSweetAlert(elemento) {
 $('#abrirSweetAlertBtn').on('click', function() {
   aplicarDescuento();
 });
+
+// Función para mostrar un mensaje
+function mostrarMensaje(mensaje) {
+  // Mostrar el mensaje en una ventana emergente de alerta
+  alert(mensaje);
+}
 
 // Evento click para el botón de realizar traspaso
 $('#btnIniciarVenta').on('click', function(e) {
