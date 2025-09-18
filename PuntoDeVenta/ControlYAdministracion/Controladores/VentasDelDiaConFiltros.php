@@ -58,7 +58,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Construir la URL para el AJAX de DataTables
-$ajax_url = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/TestArrayVentas.php";
+$ajax_url = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasSimple.php";
 ?>
 
 <style>
