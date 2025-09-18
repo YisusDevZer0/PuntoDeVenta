@@ -299,89 +299,94 @@ include_once "Controladores/ControladorUsuario.php";
     </div></div>
             
           
-<script src="js/DesgloseTicketss.js"></script>
-<?php 
-            include "Modales/NuevoFondoDeCaja.php";
-            include "Modales/Modales_Errores.php";
-            include "Modales/Modales_Referencias.php";
-            include "Footer.php";?>
-<script>
-  $(document).ready(function() {
-    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
-    $(document).on("click", ".btn-Reimpresion", function() {
-        var id = $(this).data("id");  // Asignar el valor correcto aquí
-        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
-        $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-        $.post("https://doctorpez.mx/PuntoDeVentaControlYAdministracion/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
-            $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Generando archivo para reimpresion");
-        });
+    <script src="js/DesgloseTicketss.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Cargar tickets al iniciar la página
+        cargarTickets();
         
-        $('#ModalEdDele').modal('show');
+        // Delegación de eventos para el botón "btn-Reimpresion"
+        $(document).on("click", ".btn-Reimpresion", function() {
+            var id = $(this).data("id");
+            console.log("Botón de reimpresión clickeado para el ID:", id);
+            $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success').addClass('modal-dialog modal-notify modal-success');
+            
+            $.post("https://doctorpez.mx/PuntoDeVentaControlYAdministracion/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
+                $("#FormCajas").html(data);
+                $("#TitulosCajas").html("Generando archivo para reimpresión");
+            });
+            
+            $('#ModalEdDele').modal('show');
+        });
+
+        // Delegación de eventos para el botón "btn-desglose"
+        $(document).on("click", ".btn-desglose", function() {
+            var id = $(this).data("id");
+            console.log("Botón de desglose clickeado para el ID:", id);
+            
+            $('#CajasDi').removeClass('modal-dialog modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
+            
+            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+                $("#TitulosCajas").html("Desglose de ticket");  
+                $("#FormCajas").html(data);
+            });
+            
+            $('#ModalEdDele').modal('show');
+        });
+
+        // Delegación de eventos para el botón "btn-eliminar"
+        $(document).on("click", ".btn-eliminar", function() {
+            var id = $(this).data("id");
+            console.log("Botón de eliminar clickeado para el ID:", id);
+            
+            $('#CajasDi').removeClass('modal-dialog modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
+            
+            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/eliminar_ticket.php", { id: id }, function(data) {
+                $("#TitulosCajas").html("Eliminar ticket");  
+                $("#FormCajas").html(data);
+            });
+            
+            $('#ModalEdDele').modal('show');
+        });
     });
 
+    // Función para cargar tickets (debe ser implementada en el archivo JS correspondiente)
+    function cargarTickets() {
+        // Esta función debe ser implementada en el archivo DesgloseTicketss.js
+        // o en el archivo JS correspondiente para cargar los datos de tickets
+        console.log("Cargando tickets...");
+    }
+    </script>
 
-    // Delegación de eventos para el botón "btn-Reimpresion" dentro de .dropdown-menu
-    $(document).on("click", ".btn-desglose", function() {
-        var id = $(this).data("id");  // Asignar el valor correcto aquí
-        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
-        
-    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-   
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
-          $("#TitulosCajas").html("Desglose de ticket");  
-          $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Desglose de ticket");
-        });
-        
-        $('#ModalEdDele').modal('show');
-    });
-$(document).on("click", ".btn-eliminar", function() {
-        var id = $(this).data("id");  // Asignar el valor correcto aquí
-        console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
-        
-    $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-   
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/eliminar_ticket.php", { id: id }, function(data) {
-          $("#TitulosCajas").html("Eliminar ticket");  
-          $("#FormCajas").html(data);
-            $("#TitulosCajas").html("Eliminar ticket");
-        });
-        
-        $('#ModalEdDele').modal('show');
-    });
+    <!-- Footer Start -->
+    <?php 
+    include "Modales/FiltroPorSucursales.php";
+    include "Modales/FiltroPorMeses.php";
+    include "Modales/FiltroRangoFechas.php";
+    include "Modales/NuevoFondoDeCaja.php";
+    include "Modales/Modales_Errores.php";
+    include "Modales/Modales_Referencias.php";
+    include "Footer.php";?>
 
-   
-
-});
-
-
-
-</script>
-
-
-
-
-
-  <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
-  <div id="CajasDi"class="modal-dialog  modal-notify modal-success" >
-    <div class="text-center">
-      <div class="modal-content">
-      <div class="modal-header" style=" background-color: #ef7980 !important;" >
-         <p class="heading lead" id="TitulosCajas"  style="color:white;" ></p>
-
-         
-       </div>
-        
-	        <div class="modal-body">
-          <div class="text-center">
-        <div id="FormCajas"></div>
-        
-        </div>
-
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal --></div>
+    <!-- Modal para acciones de tickets -->
+    <div class="modal fade" id="ModalEdDele" tabindex="-1" role="dialog" style="overflow-y: scroll;" aria-labelledby="ModalEdDeleLabel" aria-hidden="true">
+        <div id="CajasDi" class="modal-dialog modal-notify modal-success">
+            <div class="text-center">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #ef7980 !important;">
+                        <p class="heading lead" id="TitulosCajas" style="color:white;"></p>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <div id="FormCajas"></div>
+                        </div>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
          
 </body>
 
