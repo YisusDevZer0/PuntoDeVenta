@@ -1,18 +1,24 @@
-function CargaListadoDeProductos(){
+// Función para cargar el reporte de ventas
+function cargarReporteDeVentas() {
     mostrarCargando();
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDia.php","",function(data){
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDia.php", "", function(data) {
         $("#DataDeServicios").html(data);
-        calcularEstadisticasHoy();
+        calcularEstadisticas();
         ocultarCargando();
     }).fail(function() {
         ocultarCargando();
-        mostrarError("Error al cargar los datos de ventas del día");
+        mostrarError("Error al cargar los datos del reporte");
     });
 }
 
-// Función para calcular estadísticas del día
-function calcularEstadisticasHoy() {
+// Función para cargar el reporte completo
+function cargarReporteCompleto() {
+    cargarReporteDeVentas();
+}
+
+// Función para calcular estadísticas
+function calcularEstadisticas() {
     // Obtener datos de la tabla
     var tabla = $('#Clientes').DataTable();
     var datos = tabla.data().toArray();
@@ -37,10 +43,10 @@ function calcularEstadisticasHoy() {
     var promedioVenta = totalVentas > 0 ? totalIngresos / totalVentas : 0;
     
     // Actualizar las estadísticas en la interfaz
-    $('#total-ventas-hoy').text(totalVentas.toLocaleString());
-    $('#total-ingresos-hoy').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
-    $('#sucursales-activas').text(sucursalesUnicas.size);
-    $('#promedio-venta-hoy').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+    $('#total-ventas').text(totalVentas.toLocaleString());
+    $('#total-ingresos').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+    $('#total-sucursales').text(sucursalesUnicas.size);
+    $('#promedio-venta').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
 }
 
 // Función para mostrar el loading
@@ -75,7 +81,7 @@ function mostrarExito(mensaje) {
 
 // Mensajes de carga personalizados
 var mensajesCarga = [
-    "Consultando ventas del día...",
+    "Consultando ventas...",
     "Estamos realizando la búsqueda...",
     "Cargando datos...",
     "Procesando la información...",
@@ -140,7 +146,7 @@ function mostrarMensajeCarga() {
 
 // Inicializar el reporte al cargar la página
 $(document).ready(function() {
-    CargaListadoDeProductos();
+    cargarReporteDeVentas();
     
     // Actualizar mensaje de carga cada 3 segundos
     setInterval(function() {
@@ -149,6 +155,3 @@ $(document).ready(function() {
         }
     }, 3000);
 });
-
-  
-  
