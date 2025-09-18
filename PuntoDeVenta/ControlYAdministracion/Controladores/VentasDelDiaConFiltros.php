@@ -220,26 +220,26 @@ if (!empty($sucursal)) {
     "bAutoWidth": false,
     "order": [[ 0, "desc" ]],
     "sAjaxSource": "<?php echo $ajax_url; ?>",
-    "aoColumns": [
-      { mData: 'Cod_Barra' },
-      { mData: 'Nombre_Prod' },
-      { mData: 'PrecioCompra' },
-      { mData: 'PrecioVenta' },
-      { mData: 'FolioTicket' },
-      { mData: 'Sucursal' },
-      { mData: 'Turno' },
-      { mData: 'Cantidad_Venta' },
-      { mData: 'Total_Venta' },
-      { mData: 'Importe' },
-      { mData: 'Descuento' },
-      { mData: 'FormaPago' },
-      { mData: 'Cliente' },
-      { mData: 'FolioSignoVital' },
-      { mData: 'NomServ' },
-      { mData: 'AgregadoEl' },
-      { mData: 'AgregadoEnMomento' },
-      { mData: 'AgregadoPor' }
-    ],
+     "aoColumns": [
+       { mData: 'Cod_Barra' },
+       { mData: 'Nombre_Prod' },
+       { mData: 'PrecioVenta' },
+       { mData: 'PrecioVenta' },
+       { mData: 'FolioTicket' },
+       { mData: 'Sucursal' },
+       { mData: 'Turno' },
+       { mData: 'Cantidad_Venta' },
+       { mData: 'Total_Venta' },
+       { mData: 'Importe' },
+       { mData: 'Descuento' },
+       { mData: 'FormaPago' },
+       { mData: 'Cliente' },
+       { mData: 'FolioSignoVital' },
+       { mData: 'NomServ' },
+       { mData: 'AgregadoEl' },
+       { mData: 'AgregadoEnMomento' },
+       { mData: 'AgregadoPor' }
+     ],
     "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],
     "language": {
       "lengthMenu": "Mostrar _MENU_ registros",
@@ -282,26 +282,26 @@ if (!empty($sucursal)) {
 <div class="text-center">
   <div class="table-responsive">
     <table id="Clientes" class="order-column">
-      <thead>
-        <th>Cod</th>
-        <th>Nombre</th>
-        <th>Precio compra</th>
-        <th>Precio Venta</th>
-        <th>N° Ticket</th>
-        <th>Sucursal</th>
-        <th>Turno</th>
-        <th>Cantidad</th>
-        <th>P.U</th>
-        <th>Importe</th>
-        <th>Descuento</th>
-        <th>Forma de pago</th>
-        <th>Cliente</th>
-        <th>Folio Signo Vital</th>
-        <th>Servicio</th>
-        <th>Fecha</th>
-        <th>Hora</th>   
-        <th>Vendedor</th>
-      </thead>
+       <thead>
+         <th>Cod</th>
+         <th>Nombre</th>
+         <th>Precio Venta</th>
+         <th>Precio Venta</th>
+         <th>N° Ticket</th>
+         <th>Sucursal</th>
+         <th>Turno</th>
+         <th>Cantidad</th>
+         <th>P.U</th>
+         <th>Importe</th>
+         <th>Descuento</th>
+         <th>Forma de pago</th>
+         <th>Cliente</th>
+         <th>Folio Signo Vital</th>
+         <th>Servicio</th>
+         <th>Fecha</th>
+         <th>Hora</th>   
+         <th>Vendedor</th>
+       </thead>
     </table>
   </div>
 </div>

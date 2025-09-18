@@ -55,14 +55,14 @@ function calcularEstadisticasHoy() {
     var sumaVentas = 0;
     
     datos.forEach(function(fila) {
-        // Sumar ingresos (asumiendo que la columna de total está en el índice 9)
-        if (fila[9] && !isNaN(parseFloat(fila[9]))) {
-            totalIngresos += parseFloat(fila[9]);
+        // Sumar ingresos (columna Importe está en el índice 9)
+        if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
+            totalIngresos += parseFloat(fila.Importe);
         }
         
-        // Contar sucursales únicas (asumiendo que la columna de sucursal está en el índice 5)
-        if (fila[5]) {
-            sucursalesUnicas.add(fila[5]);
+        // Contar sucursales únicas (columna Sucursal está en el índice 5)
+        if (fila.Sucursal) {
+            sucursalesUnicas.add(fila.Sucursal);
         }
     });
     
@@ -91,7 +91,7 @@ function filtrarDatos() {
     };
     
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
-        $("#DataDeServicios").html(data);
+      $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {
             calcularEstadisticasHoy();
@@ -209,7 +209,7 @@ function mostrarMensajeCarga() {
 
 // Inicializar el reporte al cargar la página
 $(document).ready(function() {
-    CargaListadoDeProductos();
+  CargaListadoDeProductos();
     
     // Actualizar mensaje de carga cada 3 segundos
     setInterval(function() {
