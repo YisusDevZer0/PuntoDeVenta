@@ -108,8 +108,21 @@ function CargaListadoDeProductos(){
         },
         "initComplete": function() {
             console.log("Tabla inicializada correctamente");
+            // Esperar un poco más para asegurar que los datos estén completamente cargados
+            setTimeout(function() {
+                calcularEstadisticasHoy();
+                ocultarCargando();
+            }, 500);
+        },
+        "drawCallback": function() {
+            console.log("Tabla redibujada, recalculando estadísticas...");
             calcularEstadisticasHoy();
+        },
+        "error": function(xhr, error, thrown) {
+            console.error("Error en DataTables:", error, thrown);
             ocultarCargando();
+            // Intentar calcular estadísticas de forma alternativa
+            calcularEstadisticasAlternativo();
         }
     });
 }
@@ -133,34 +146,111 @@ function getCurrentDate() {
 
 // Función para calcular estadísticas del día
 function calcularEstadisticasHoy() {
-    // Obtener datos de la tabla
-    var tabla = $('#Clientes').DataTable();
-    var datos = tabla.data().toArray();
+    console.log("Calculando estadísticas...");
     
-    var totalVentas = datos.length;
-    var totalIngresos = 0;
-    var sucursalesUnicas = new Set();
-    var sumaVentas = 0;
-    
-    datos.forEach(function(fila) {
-        // Sumar ingresos (columna Importe está en el índice 9)
-        if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
-            totalIngresos += parseFloat(fila.Importe);
-        }
+    try {
+        // Obtener datos de la tabla
+        var tabla = $('#Clientes').DataTable();
+        var datos = tabla.data().toArray();
         
-        // Contar sucursales únicas (columna Sucursal está en el índice 5)
-        if (fila.Sucursal) {
-            sucursalesUnicas.add(fila.Sucursal);
+        console.log("Datos obtenidos:", datos.length, "registros");
+        
+        var totalVentas = datos.length;
+        var totalIngresos = 0;
+        var sucursalesUnicas = new Set();
+        
+        datos.forEach(function(fila) {
+            console.log("Procesando fila:", fila);
+            
+            // Sumar ingresos usando la columna Importe
+            if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
+                totalIngresos += parseFloat(fila.Importe);
+            }
+            
+            // Contar sucursales únicas
+            if (fila.Sucursal && fila.Sucursal !== 'Sin Sucursal') {
+                sucursalesUnicas.add(fila.Sucursal);
+            }
+        });
+        
+        var promedioVenta = totalVentas > 0 ? totalIngresos / totalVentas : 0;
+        
+        console.log("Estadísticas calculadas:", {
+            totalVentas: totalVentas,
+            totalIngresos: totalIngresos,
+            sucursalesUnicas: sucursalesUnicas.size,
+            promedioVenta: promedioVenta
+        });
+        
+        // Actualizar las estadísticas en la interfaz
+        $('#total-ventas-hoy').text(totalVentas.toLocaleString());
+        $('#total-ingresos-hoy').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+        $('#sucursales-activas').text(sucursalesUnicas.size);
+        $('#promedio-venta-hoy').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+        
+        console.log("Estadísticas actualizadas en la interfaz");
+    } catch (error) {
+        console.error("Error al calcular estadísticas:", error);
+        // Valores por defecto en caso de error
+        $('#total-ventas-hoy').text('0');
+        $('#total-ingresos-hoy').text('$0.00');
+        $('#sucursales-activas').text('0');
+        $('#promedio-venta-hoy').text('$0.00');
+    }
+}
+
+// Función alternativa para calcular estadísticas usando AJAX directo
+function calcularEstadisticasAlternativo() {
+    console.log("Calculando estadísticas de forma alternativa...");
+    
+    var fechaInicio = $('#fecha_inicio').val() || getFirstDayOfMonth();
+    var fechaFin = $('#fecha_fin').val() || getCurrentDate();
+    var sucursal = $('#sucursal').val() || '';
+    
+    var parametros = {
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        sucursal: sucursal
+    };
+    
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php", parametros, function(data) {
+        if (data && data.data) {
+            var datos = data.data;
+            var totalVentas = datos.length;
+            var totalIngresos = 0;
+            var sucursalesUnicas = new Set();
+            
+            datos.forEach(function(fila) {
+                if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
+                    totalIngresos += parseFloat(fila.Importe);
+                }
+                if (fila.Sucursal && fila.Sucursal !== 'Sin Sucursal') {
+                    sucursalesUnicas.add(fila.Sucursal);
+                }
+            });
+            
+            var promedioVenta = totalVentas > 0 ? totalIngresos / totalVentas : 0;
+            
+            // Actualizar las estadísticas
+            $('#total-ventas-hoy').text(totalVentas.toLocaleString());
+            $('#total-ingresos-hoy').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            $('#sucursales-activas').text(sucursalesUnicas.size);
+            $('#promedio-venta-hoy').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+            
+            console.log("Estadísticas calculadas alternativamente:", {
+                totalVentas: totalVentas,
+                totalIngresos: totalIngresos,
+                sucursalesUnicas: sucursalesUnicas.size,
+                promedioVenta: promedioVenta
+            });
         }
+    }).fail(function() {
+        console.error("Error al calcular estadísticas alternativas");
+        $('#total-ventas-hoy').text('0');
+        $('#total-ingresos-hoy').text('$0.00');
+        $('#sucursales-activas').text('0');
+        $('#promedio-venta-hoy').text('$0.00');
     });
-    
-    var promedioVenta = totalVentas > 0 ? totalIngresos / totalVentas : 0;
-    
-    // Actualizar las estadísticas en la interfaz
-    $('#total-ventas-hoy').text(totalVentas.toLocaleString());
-    $('#total-ingresos-hoy').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
-    $('#sucursales-activas').text(sucursalesUnicas.size);
-    $('#promedio-venta-hoy').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
 }
 
 // Función para filtrar datos
