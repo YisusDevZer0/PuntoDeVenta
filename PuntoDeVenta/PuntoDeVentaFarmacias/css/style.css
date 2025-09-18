@@ -275,3 +275,47 @@
     background: var(--dark);
     border-color: var(--primary);
 }
+
+/*** Dropdown Menu Fixes ***/
+.sidebar .dropdown-menu {
+    display: none;
+    position: static;
+    float: none;
+    width: 100%;
+    margin-top: 0;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+    padding-left: 20px;
+}
+
+.sidebar .dropdown-menu.show {
+    display: block;
+}
+
+.sidebar .dropdown-item {
+    padding: 7px 20px;
+    color: var(--dark);
+    font-weight: 500;
+    border-left: 3px solid var(--light);
+    border-radius: 0 30px 30px 0;
+    outline: none;
+    margin-left: 20px;
+}
+
+.sidebar .dropdown-item:hover {
+    color: var(--primary);
+    background: #FFFFFF;
+    border-color: var(--primary);
+}
+
+.sidebar .dropdown-item i {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 30px;
+    margin-right: 10px;
+}

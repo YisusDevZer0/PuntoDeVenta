@@ -221,29 +221,42 @@
     }
 
     
-    // Menú dropdown en el sidebar
-    $('.sidebar .dropdown-toggle').click(function() {
-        if ($(this).hasClass('show')) {
-            $(this).removeClass('show');
-            $(this).siblings('.dropdown-menu').removeClass('show');
+    // Menú dropdown en el sidebar - Compatible con Bootstrap 5
+    $('.sidebar .dropdown-toggle').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const $this = $(this);
+        const $dropdown = $this.closest('.dropdown');
+        const $menu = $dropdown.find('.dropdown-menu');
+        
+        // Cierra todos los otros dropdowns abiertos
+        $('.sidebar .dropdown').not($dropdown).each(function() {
+            $(this).find('.dropdown-toggle').removeClass('show');
+            $(this).find('.dropdown-menu').removeClass('show');
+        });
+        
+        // Toggle el dropdown actual
+        if ($this.hasClass('show')) {
+            $this.removeClass('show');
+            $menu.removeClass('show');
         } else {
-            // Cierra los otros dropdown abiertos
-            $('.sidebar .dropdown-toggle.show').removeClass('show');
-            $('.sidebar .dropdown-menu.show').removeClass('show');
-            
-            // Abre el dropdown actual
-            $(this).addClass('show');
-            $(this).siblings('.dropdown-menu').addClass('show');
+            $this.addClass('show');
+            $menu.addClass('show');
         }
     });
 
     // Cierra los dropdown cuando se hace clic fuera de ellos
     $(document).on('click', function(e) {
         if (!$(e.target).closest('.sidebar .dropdown').length) {
-            $('.sidebar .dropdown-toggle.show').removeClass('show');
-            $('.sidebar .dropdown-menu.show').removeClass('show');
+            $('.sidebar .dropdown-toggle').removeClass('show');
+            $('.sidebar .dropdown-menu').removeClass('show');
         }
     });
+
+    // Prevenir que Bootstrap maneje los dropdowns automáticamente en el sidebar
+    $('.sidebar .dropdown-toggle').attr('data-bs-toggle', '');
+    $('.sidebar .dropdown-toggle').removeAttr('data-bs-toggle');
 
     // Agrega la clase active al elemento del menú actual
     const currentLocation = location.pathname;
