@@ -1,9 +1,24 @@
 function CargaListadoDeProductos(){
     mostrarCargando();
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDia.php","",function(data){
+    // Obtener valores de filtros
+    var fechaInicio = $('#fecha_inicio').val() || '<?php echo date('Y-m-01'); ?>';
+    var fechaFin = $('#fecha_fin').val() || '<?php echo date('Y-m-d'); ?>';
+    var sucursal = $('#sucursal').val() || '';
+    
+    // Construir parámetros
+    var parametros = {
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        sucursal: sucursal
+    };
+    
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
         $("#DataDeServicios").html(data);
-        calcularEstadisticasHoy();
+        // Esperar a que se inicialice la tabla antes de calcular estadísticas
+        setTimeout(function() {
+            calcularEstadisticasHoy();
+        }, 1000);
         ocultarCargando();
     }).fail(function() {
         ocultarCargando();
@@ -41,6 +56,43 @@ function calcularEstadisticasHoy() {
     $('#total-ingresos-hoy').text('$' + totalIngresos.toLocaleString('es-MX', {minimumFractionDigits: 2}));
     $('#sucursales-activas').text(sucursalesUnicas.size);
     $('#promedio-venta-hoy').text('$' + promedioVenta.toLocaleString('es-MX', {minimumFractionDigits: 2}));
+}
+
+// Función para filtrar datos
+function filtrarDatos() {
+    mostrarCargando();
+    
+    var fechaInicio = $('#fecha_inicio').val();
+    var fechaFin = $('#fecha_fin').val();
+    var sucursal = $('#sucursal').val();
+    
+    // Construir parámetros para la consulta
+    var parametros = {
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        sucursal: sucursal
+    };
+    
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
+        $("#DataDeServicios").html(data);
+        // Esperar a que se inicialice la tabla antes de calcular estadísticas
+        setTimeout(function() {
+            calcularEstadisticasHoy();
+        }, 1000);
+        ocultarCargando();
+    }).fail(function() {
+        ocultarCargando();
+        mostrarError("Error al filtrar los datos");
+    });
+}
+
+// Función para exportar a Excel
+function exportarExcel() {
+    if ($.fn.DataTable.isDataTable('#Clientes')) {
+        $('#Clientes').DataTable().button('.buttons-excel').trigger();
+    } else {
+        mostrarError("No hay datos para exportar");
+    }
 }
 
 // Función para mostrar el loading

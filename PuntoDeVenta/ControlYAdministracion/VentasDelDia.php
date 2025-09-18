@@ -180,24 +180,48 @@ include_once "Controladores/ControladorUsuario.php";
                         <!-- Filtros -->
                         <div class="row mb-4">
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#BusquedaVentasSucursal">
-                                    <i class="fas fa-clinic-medical me-1"></i> Filtrar por Sucursal
-                                </button>
+                                <label for="fecha_inicio" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i> Fecha Inicio
+                                </label>
+                                <input type="date" id="fecha_inicio" class="form-control" 
+                                       value="<?php echo date('Y-m-01'); ?>">
                             </div>
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#FiltroEspecificoMesxd">
-                                    <i class="fas fa-calendar-week me-1"></i> Buscar por Mes
-                                </button>
+                                <label for="fecha_fin" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i> Fecha Fin
+                                </label>
+                                <input type="date" id="fecha_fin" class="form-control" 
+                                       value="<?php echo date('Y-m-d'); ?>">
                             </div>
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#FiltroEspecificoFechaVentas">
-                                    <i class="fas fa-calendar me-1"></i> Rango de Fechas
-</button>
+                                <label for="sucursal" class="form-label">
+                                    <i class="fas fa-store me-1"></i> Sucursal
+                                </label>
+                                <select id="sucursal" class="form-control">
+                                    <option value="">Todas las sucursales</option>
+                                    <?php
+                                    // Cargar sucursales dinámicamente usando la conexión correcta
+                                    include_once "db_connect.php";
+                                    $sql_sucursales = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Sucursal_Activa = 'Si' ORDER BY Nombre_Sucursal";
+                                    $result_sucursales = $conn->query($sql_sucursales);
+                                    if ($result_sucursales && $result_sucursales->num_rows > 0) {
+                                        while ($sucursal = $result_sucursales->fetch_assoc()) {
+                                            echo "<option value='" . $sucursal['ID_Sucursal'] . "'>" . htmlspecialchars($sucursal['Nombre_Sucursal']) . "</option>";
+                                        }
+                                    }
+                                    ?>
+                                </select>
                             </div>
                             <div class="col-md-3">
-                                <button type="button" class="btn btn-success" onclick="CargaListadoDeProductos()">
-                                    <i class="fas fa-sync-alt me-1"></i> Actualizar Datos
-</button>
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary" onclick="filtrarDatos()">
+                                        <i class="fas fa-search me-1"></i> Filtrar
+                                    </button>
+                                    <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                                        <i class="fas fa-file-excel me-1"></i> Exportar Excel
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
