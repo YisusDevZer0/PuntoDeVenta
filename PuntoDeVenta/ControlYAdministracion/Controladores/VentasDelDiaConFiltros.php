@@ -27,10 +27,10 @@ $sql = "SELECT
     v.AgregadoPor
 FROM Ventas_POS v
 LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
-WHERE v.AgregadoEl BETWEEN ? AND ?
+WHERE v.Fecha_venta BETWEEN ? AND ?
 ";
 
-$params = [$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59'];
+$params = [$fecha_inicio, $fecha_fin];
 $types = "ss";
 
 // Agregar filtro de sucursal si se especifica
@@ -40,7 +40,7 @@ if (!empty($sucursal)) {
     $types .= "i";
 }
 
-$sql .= " ORDER BY v.AgregadoEl DESC";
+$sql .= " ORDER BY v.Fecha_venta DESC, v.AgregadoEl DESC";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
