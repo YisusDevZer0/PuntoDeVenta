@@ -220,6 +220,15 @@ if (!empty($sucursal)) {
     "bAutoWidth": false,
     "order": [[ 0, "desc" ]],
     "sAjaxSource": "<?php echo $ajax_url; ?>",
+    "dom": 'Bfrtip',
+    "buttons": [
+        {
+            extend: 'excelHtml5',
+            text: 'Exportar Excel',
+            className: 'btn btn-success',
+            title: 'Ventas del Día - ' + new Date().toLocaleDateString()
+        }
+    ],
      "aoColumns": [
        { mData: 'Cod_Barra' },
        { mData: 'Nombre_Prod' },

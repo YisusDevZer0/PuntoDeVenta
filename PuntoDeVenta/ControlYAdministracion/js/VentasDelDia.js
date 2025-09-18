@@ -83,6 +83,24 @@ function filtrarDatos() {
     var fechaFin = $('#fecha_fin').val();
     var sucursal = $('#sucursal').val();
     
+    // Validar fechas
+    if (!fechaInicio || !fechaFin) {
+        ocultarCargando();
+        mostrarError("Por favor selecciona las fechas de inicio y fin");
+        return;
+    }
+    
+    if (fechaInicio > fechaFin) {
+        ocultarCargando();
+        mostrarError("La fecha de inicio no puede ser mayor a la fecha fin");
+        return;
+    }
+    
+    // Si existe la tabla, destruirla antes de crear una nueva
+    if ($.fn.DataTable.isDataTable('#Clientes')) {
+        $('#Clientes').DataTable().destroy();
+    }
+    
     // Construir parámetros para la consulta
     var parametros = {
         fecha_inicio: fechaInicio,
@@ -91,24 +109,90 @@ function filtrarDatos() {
     };
     
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
-      $("#DataDeServicios").html(data);
+        $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {
             calcularEstadisticasHoy();
-        }, 1000);
+        }, 1500);
         ocultarCargando();
-    }).fail(function() {
+        mostrarExito("Filtros aplicados correctamente");
+    }).fail(function(xhr, status, error) {
         ocultarCargando();
-        mostrarError("Error al filtrar los datos");
+        console.error('Error en filtrarDatos:', xhr.responseText);
+        mostrarError("Error al filtrar los datos: " + error);
     });
 }
 
 // Función para exportar a Excel
 function exportarExcel() {
     if ($.fn.DataTable.isDataTable('#Clientes')) {
-        $('#Clientes').DataTable().button('.buttons-excel').trigger();
+        var tabla = $('#Clientes').DataTable();
+        var button = tabla.button(0);
+        if (button) {
+            button.trigger();
+        } else {
+            // Alternativa: exportar datos manualmente
+            exportarExcelManual();
+        }
     } else {
         mostrarError("No hay datos para exportar");
+    }
+}
+
+// Función alternativa para exportar a Excel
+function exportarExcelManual() {
+    try {
+        var tabla = $('#Clientes').DataTable();
+        var datos = tabla.data().toArray();
+        
+        if (datos.length === 0) {
+            mostrarError("No hay datos para exportar");
+            return;
+        }
+        
+        // Crear CSV simple
+        var csv = "Código,Nombre,Precio Venta,Ticket,Sucursal,Turno,Cantidad,Total,Importe,Descuento,Forma Pago,Cliente,Folio SV,Servicio,Fecha,Hora,Vendedor\n";
+        
+        datos.forEach(function(fila) {
+            var linea = [
+                fila.Cod_Barra || '',
+                fila.Nombre_Prod || '',
+                fila.PrecioVenta || '',
+                fila.FolioTicket || '',
+                fila.Sucursal || '',
+                fila.Turno || '',
+                fila.Cantidad_Venta || '',
+                fila.Total_Venta || '',
+                fila.Importe || '',
+                fila.Descuento || '',
+                fila.FormaPago || '',
+                fila.Cliente || '',
+                fila.FolioSignoVital || '',
+                fila.NomServ || '',
+                fila.AgregadoEl || '',
+                fila.AgregadoEnMomento || '',
+                fila.AgregadoPor || ''
+            ].map(function(campo) {
+                return '"' + String(campo).replace(/"/g, '""') + '"';
+            }).join(',');
+            csv += linea + '\n';
+        });
+        
+        // Descargar archivo
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement("a");
+        var url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "ventas_del_dia_" + new Date().toISOString().slice(0,10) + ".csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        mostrarExito("Archivo exportado correctamente");
+    } catch (error) {
+        console.error('Error al exportar:', error);
+        mostrarError("Error al exportar los datos: " + error.message);
     }
 }
 
