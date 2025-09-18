@@ -1,3 +1,5 @@
+console.log("VentasDelDia.js cargado correctamente");
+
 function CargaListadoDeProductos(){
     console.log("Iniciando CargaListadoDeProductos...");
     mostrarCargando();
@@ -461,7 +463,8 @@ function mostrarMensajeCarga() {
 
 // Inicializar el reporte al cargar la página
 $(document).ready(function() {
-  CargaListadoDeProductos();
+    console.log("Documento listo, iniciando VentasDelDia...");
+    CargaListadoDeProductos();
     
     // Actualizar mensaje de carga cada 3 segundos
     setInterval(function() {
@@ -470,6 +473,14 @@ $(document).ready(function() {
         }
     }, 3000);
 });
+
+// También ejecutar inmediatamente si el documento ya está listo
+if (document.readyState === 'loading') {
+    console.log("Documento aún cargando, esperando...");
+} else {
+    console.log("Documento ya listo, ejecutando inmediatamente...");
+    CargaListadoDeProductos();
+}
 
   
   

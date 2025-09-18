@@ -285,7 +285,23 @@ include_once "Controladores/ControladorUsuario.php";
             </div>
             
           
-<script src="js/VentasDelDia.js"></script>
+<script src="js/VentasDelDiaSimple.js"></script>
+
+<script>
+console.log("Script inline ejecutándose...");
+console.log("jQuery disponible:", typeof $ !== 'undefined');
+console.log("DataTables disponible:", typeof $.fn.DataTable !== 'undefined');
+
+// Verificar que el archivo JS se cargó
+setTimeout(function() {
+    console.log("Verificando después de 2 segundos...");
+    if (typeof CargaListadoDeProductos === 'function') {
+        console.log("Función CargaListadoDeProductos encontrada");
+    } else {
+        console.error("Función CargaListadoDeProductos NO encontrada");
+    }
+}, 2000);
+</script>
 
             <!-- Footer Start -->
             <?php 
