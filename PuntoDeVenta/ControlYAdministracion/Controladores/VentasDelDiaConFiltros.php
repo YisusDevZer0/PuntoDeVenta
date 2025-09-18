@@ -10,24 +10,23 @@ $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
 $sql = "SELECT 
     v.Cod_Barra,
     v.Nombre_Prod,
-    v.PrecioCompra,
-    v.PrecioVenta,
-    v.FolioTicket,
+    v.Total_Venta as PrecioVenta,
+    v.Folio_Ticket as FolioTicket,
     s.Nombre_Sucursal as Sucursal,
     v.Turno,
     v.Cantidad_Venta,
     v.Total_Venta,
     v.Importe,
-    v.Descuento,
-    v.FormaPago,
+    v.DescuentoAplicado as Descuento,
+    v.FormaDePago as FormaPago,
     v.Cliente,
     v.FolioSignoVital,
-    v.NomServ,
+    v.Tipo as NomServ,
     v.AgregadoEl,
-    v.AgregadoEnMomento,
+    v.AgregadoEl as AgregadoEnMomento,
     v.AgregadoPor
 FROM Ventas_POS v
-LEFT JOIN Sucursales s ON v.ID_Sucursal = s.ID_Sucursal
+LEFT JOIN Sucursales s ON v.Fk_sucursal = s.ID_Sucursal
 WHERE v.AgregadoEl BETWEEN ? AND ?
 ";
 
@@ -36,7 +35,7 @@ $types = "ss";
 
 // Agregar filtro de sucursal si se especifica
 if (!empty($sucursal)) {
-    $sql .= " AND v.ID_Sucursal = ?";
+    $sql .= " AND v.Fk_sucursal = ?";
     $params[] = $sucursal;
     $types .= "i";
 }

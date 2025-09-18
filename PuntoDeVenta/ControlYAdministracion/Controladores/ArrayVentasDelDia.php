@@ -29,21 +29,20 @@ if (!$conn) {
 $sql = "SELECT 
     Cod_Barra,
     Nombre_Prod,
-    PrecioCompra,
-    PrecioVenta,
-    FolioTicket,
-    ID_Sucursal,
+    Total_Venta as PrecioVenta,
+    Folio_Ticket as FolioTicket,
+    Fk_sucursal as ID_Sucursal,
     Turno,
     Cantidad_Venta,
     Total_Venta,
     Importe,
-    Descuento,
-    FormaPago,
+    DescuentoAplicado as Descuento,
+    FormaDePago as FormaPago,
     Cliente,
     FolioSignoVital,
-    NomServ,
+    Tipo as NomServ,
     AgregadoEl,
-    AgregadoEnMomento,
+    AgregadoEl as AgregadoEnMomento,
     AgregadoPor
 FROM Ventas_POS 
 WHERE AgregadoEl BETWEEN ? AND ?";
@@ -53,7 +52,7 @@ $types = "ss";
 
 // Agregar filtro de sucursal si se especifica
 if (!empty($sucursal)) {
-    $sql .= " AND ID_Sucursal = ?";
+    $sql .= " AND Fk_sucursal = ?";
     $params[] = $sucursal;
     $types .= "i";
 }
