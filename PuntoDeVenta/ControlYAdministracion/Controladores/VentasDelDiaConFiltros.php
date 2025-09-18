@@ -1,5 +1,5 @@
 <?php
-include_once "db_connect.php";
+include_once "../Consultas/db_connect.php";
 
 // Obtener parámetros de filtro
 $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
@@ -44,6 +44,10 @@ if (!empty($sucursal)) {
 $sql .= " ORDER BY v.AgregadoEl DESC";
 
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("Error en la preparación de la consulta: " . $conn->error);
+}
+
 $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
