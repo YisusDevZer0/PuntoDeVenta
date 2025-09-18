@@ -71,11 +71,18 @@ function calcularEstadisticasHoy() {
             return;
         }
         
-        // Obtener datos de la tabla
+        // Obtener datos de la tabla (incluyendo datos filtrados)
         var tabla = $('#Clientes').DataTable();
         var datos = tabla.data().toArray();
         
-        console.log("Datos obtenidos:", datos.length, "registros");
+        console.log("Datos obtenidos de DataTable:", datos.length, "registros");
+        
+        // Si no hay datos en la tabla, usar método alternativo
+        if (datos.length === 0) {
+            console.log("No hay datos en la tabla, usando método alternativo");
+            calcularEstadisticasAlternativo();
+            return;
+        }
         
         var totalVentas = datos.length;
         var totalIngresos = 0;
@@ -124,6 +131,12 @@ function calcularEstadisticasAlternativo() {
     var fechaFin = $('#fecha_fin').val() || getCurrentDate();
     var sucursal = $('#sucursal').val() || '';
     
+    console.log("Parámetros para estadísticas alternativas:", {
+        fechaInicio: fechaInicio,
+        fechaFin: fechaFin,
+        sucursal: sucursal
+    });
+    
     var parametros = {
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFin,
@@ -131,11 +144,15 @@ function calcularEstadisticasAlternativo() {
     };
     
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php", parametros, function(data) {
+        console.log("Respuesta de ArrayVentasDelDia.php:", data);
+        
         if (data && data.data) {
             var datos = data.data;
             var totalVentas = datos.length;
             var totalIngresos = 0;
             var sucursalesUnicas = new Set();
+            
+            console.log("Procesando", datos.length, "registros para estadísticas");
             
             datos.forEach(function(fila) {
                 if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
@@ -160,9 +177,16 @@ function calcularEstadisticasAlternativo() {
                 sucursalesUnicas: sucursalesUnicas.size,
                 promedioVenta: promedioVenta
             });
+        } else {
+            console.log("No hay datos en la respuesta");
+            $('#total-ventas-hoy').text('0');
+            $('#total-ingresos-hoy').text('$0.00');
+            $('#sucursales-activas').text('0');
+            $('#promedio-venta-hoy').text('$0.00');
         }
-    }).fail(function() {
-        console.error("Error al calcular estadísticas alternativas");
+    }).fail(function(xhr, status, error) {
+        console.error("Error al calcular estadísticas alternativas:", error);
+        console.error("Respuesta del servidor:", xhr.responseText);
         $('#total-ventas-hoy').text('0');
         $('#total-ingresos-hoy').text('$0.00');
         $('#sucursales-activas').text('0');
@@ -208,8 +232,9 @@ function filtrarDatos() {
       $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {
+            console.log("Recalculando estadísticas después del filtro...");
             calcularEstadisticasHoy();
-        }, 1500);
+        }, 2000); // Aumentar el tiempo para asegurar que la tabla esté lista
         ocultarCargando();
         mostrarExito("Filtros aplicados correctamente");
     }).fail(function(xhr, status, error) {
@@ -393,7 +418,28 @@ function mostrarMensajeCarga() {
 // Inicializar el reporte al cargar la página
 $(document).ready(function() {
     console.log("Documento listo, iniciando VentasDelDia...");
-  CargaListadoDeProductos();
+    CargaListadoDeProductos();
+    
+    // Configurar eventos de los filtros
+    $('#fecha_inicio, #fecha_fin, #sucursal').on('change', function() {
+        console.log("Filtro cambiado:", $(this).attr('id'), $(this).val());
+        // Recalcular estadísticas cuando cambien los filtros
+        setTimeout(function() {
+            calcularEstadisticasHoy();
+        }, 500);
+    });
+    
+    // Configurar botón de filtrar
+    $('#btn-filtrar').on('click', function() {
+        console.log("Botón filtrar clickeado");
+        filtrarDatos();
+    });
+    
+    // Configurar botón de exportar
+    $('#btn-exportar').on('click', function() {
+        console.log("Botón exportar clickeado");
+        exportarExcel();
+    });
     
     // Actualizar mensaje de carga cada 3 segundos
     setInterval(function() {
