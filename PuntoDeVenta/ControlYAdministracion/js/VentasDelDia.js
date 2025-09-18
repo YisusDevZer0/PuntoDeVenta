@@ -24,19 +24,64 @@ function CargaListadoDeProductos(){
     
     console.log("Enviando petición a VentasDelDiaConFiltros.php...");
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
-        console.log("Respuesta recibida:", data);
-        $("#DataDeServicios").html(data);
-        // Esperar a que se inicialice la tabla antes de calcular estadísticas
-        setTimeout(function() {
-            console.log("Calculando estadísticas...");
+    // Crear la tabla DataTables directamente
+    if ($.fn.DataTable.isDataTable('#Clientes')) {
+        $('#Clientes').DataTable().destroy();
+    }
+    
+    // Crear la tabla con AJAX
+    var tabla = $('#Clientes').DataTable({
+        "bProcessing": true,
+        "ordering": true,
+        "stateSave": true,
+        "bAutoWidth": false,
+        "order": [[ 0, "desc" ]],
+        "ajax": {
+            "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php",
+            "data": parametros,
+            "type": "GET"
+        },
+        "columns": [
+            { data: 'Cod_Barra' },
+            { data: 'Nombre_Prod' },
+            { data: 'PrecioVenta' },
+            { data: 'PrecioVenta' },
+            { data: 'FolioTicket' },
+            { data: 'Sucursal' },
+            { data: 'Turno' },
+            { data: 'Cantidad_Venta' },
+            { data: 'Total_Venta' },
+            { data: 'Importe' },
+            { data: 'Descuento' },
+            { data: 'FormaPago' },
+            { data: 'Cliente' },
+            { data: 'FolioSignoVital' },
+            { data: 'NomServ' },
+            { data: 'AgregadoEl' },
+            { data: 'AgregadoEnMomento' },
+            { data: 'AgregadoPor' }
+        ],
+        "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "sPaginationType": "extStyle",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sSearch": "Buscar:",
+            "oPaginate": {
+                "sFirst": "Primero",
+                "sLast": "Último",
+                "sNext": "Siguiente",
+                "sPrevious": "Anterior"
+            }
+        },
+        "initComplete": function() {
+            console.log("Tabla inicializada correctamente");
             calcularEstadisticasHoy();
-        }, 1500);
-        ocultarCargando();
-    }).fail(function(xhr, status, error) {
-        ocultarCargando();
-        console.error('Error en CargaListadoDeProductos:', xhr.responseText);
-        mostrarError("Error al cargar los datos de ventas del día: " + error);
+            ocultarCargando();
+        }
     });
 }
 
@@ -91,6 +136,7 @@ function calcularEstadisticasHoy() {
 
 // Función para filtrar datos
 function filtrarDatos() {
+    console.log("Iniciando filtrarDatos...");
     mostrarCargando();
     
     var fechaInicio = $('#fecha_inicio').val();
@@ -110,44 +156,32 @@ function filtrarDatos() {
         return;
     }
     
-    // Si existe la tabla, destruirla antes de crear una nueva
+    // Si existe la tabla, recargar con nuevos parámetros
     if ($.fn.DataTable.isDataTable('#Clientes')) {
-        $('#Clientes').DataTable().destroy();
-    }
-    
-    // Construir parámetros para la consulta
-    var parametros = {
-        fecha_inicio: fechaInicio,
-        fecha_fin: fechaFin,
-        sucursal: sucursal
-    };
-    
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
-        $("#DataDeServicios").html(data);
-        // Esperar a que se inicialice la tabla antes de calcular estadísticas
-        setTimeout(function() {
-            calcularEstadisticasHoy();
-        }, 1500);
-        ocultarCargando();
+        var tabla = $('#Clientes').DataTable();
+        tabla.ajax.url("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php?fecha_inicio=" + 
+                      encodeURIComponent(fechaInicio) + "&fecha_fin=" + encodeURIComponent(fechaFin) + 
+                      "&sucursal=" + encodeURIComponent(sucursal)).load();
         mostrarExito("Filtros aplicados correctamente");
-    }).fail(function(xhr, status, error) {
-        ocultarCargando();
-        console.error('Error en filtrarDatos:', xhr.responseText);
-        mostrarError("Error al filtrar los datos: " + error);
-    });
+    } else {
+        // Si no existe la tabla, crear una nueva
+        CargaListadoDeProductos();
+    }
 }
 
 // Función para exportar a Excel
 function exportarExcel() {
     if ($.fn.DataTable.isDataTable('#Clientes')) {
         var tabla = $('#Clientes').DataTable();
-        var button = tabla.button(0);
-        if (button) {
-            button.trigger();
-        } else {
-            // Alternativa: exportar datos manualmente
-            exportarExcelManual();
+        var datos = tabla.data().toArray();
+        
+        if (datos.length === 0) {
+            mostrarError("No hay datos para exportar");
+            return;
         }
+        
+        // Usar la función manual de exportación
+        exportarExcelManual();
     } else {
         mostrarError("No hay datos para exportar");
     }
