@@ -1,8 +1,10 @@
 function CargaListadoDeProductos(){
+    console.log("Iniciando CargaListadoDeProductos...");
     mostrarCargando();
     
     // Si existe la tabla, destruirla antes de crear una nueva
     if ($.fn.DataTable.isDataTable('#Clientes')) {
+        console.log("Destruyendo tabla existente...");
         $('#Clientes').DataTable().destroy();
     }
     
@@ -11,6 +13,8 @@ function CargaListadoDeProductos(){
     var fechaFin = $('#fecha_fin').val() || getCurrentDate();
     var sucursal = $('#sucursal').val() || '';
     
+    console.log("Filtros:", {fechaInicio, fechaFin, sucursal});
+    
     // Construir parámetros
     var parametros = {
         fecha_inicio: fechaInicio,
@@ -18,10 +22,14 @@ function CargaListadoDeProductos(){
         sucursal: sucursal
     };
     
+    console.log("Enviando petición a VentasDelDiaConFiltros.php...");
+    
     $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
+        console.log("Respuesta recibida:", data);
         $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {
+            console.log("Calculando estadísticas...");
             calcularEstadisticasHoy();
         }, 1500);
         ocultarCargando();
