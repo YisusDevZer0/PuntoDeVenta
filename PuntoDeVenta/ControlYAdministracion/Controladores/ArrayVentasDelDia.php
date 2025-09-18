@@ -45,9 +45,9 @@ $sql = "SELECT
     AgregadoEl as AgregadoEnMomento,
     AgregadoPor
 FROM Ventas_POS 
-WHERE AgregadoEl BETWEEN ? AND ?";
+WHERE Fecha_venta BETWEEN ? AND ?";
 
-$params = [$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59'];
+$params = [$fecha_inicio, $fecha_fin];
 $types = "ss";
 
 // Agregar filtro de sucursal si se especifica
@@ -57,7 +57,7 @@ if (!empty($sucursal)) {
     $types .= "i";
 }
 
-$sql .= " ORDER BY AgregadoEl DESC";
+$sql .= " ORDER BY Fecha_venta DESC, AgregadoEl DESC";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {

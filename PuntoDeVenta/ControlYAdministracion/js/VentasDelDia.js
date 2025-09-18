@@ -13,7 +13,7 @@ function CargaListadoDeProductos(){
         sucursal: sucursal
     };
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
+           $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
         $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {
