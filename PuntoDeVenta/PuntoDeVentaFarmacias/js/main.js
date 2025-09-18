@@ -318,4 +318,8 @@
         checkWindowSize();
     });
 
+    // Debug: Verificar que los dropdowns estén funcionando
+    console.log('Dropdowns inicializados correctamente');
+    console.log('Número de dropdowns encontrados:', $('.sidebar .dropdown-toggle').length);
+
 })(jQuery);
