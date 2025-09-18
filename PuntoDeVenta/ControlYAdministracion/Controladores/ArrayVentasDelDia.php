@@ -1,78 +1,104 @@
 <?php
-// Incluir la conexión a la base de datos
-include_once "../Consultas/db_connect.php";
-
 // Configurar headers para JSON
 header('Content-Type: application/json');
 
-try {
-    // Obtener parámetros de filtro
-    $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
-    $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
-    $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+// Incluir la conexión a la base de datos
+include_once "../Consultas/db_connect.php";
 
-    // Construir la consulta SQL con filtros
-    $sql = "SELECT 
-        v.Cod_Barra,
-        v.Nombre_Prod,
-        v.PrecioCompra,
-        v.PrecioVenta,
-        v.FolioTicket,
-        s.Nombre_Sucursal as Sucursal,
-        v.Turno,
-        v.Cantidad_Venta,
-        v.Total_Venta,
-        v.Importe,
-        v.Descuento,
-        v.FormaPago,
-        v.Cliente,
-        v.FolioSignoVital,
-        v.NomServ,
-        v.AgregadoEl,
-        v.AgregadoEnMomento,
-        v.AgregadoPor
-    FROM Ventas v
-    LEFT JOIN Sucursales s ON v.ID_Sucursal = s.ID_Sucursal
-    WHERE v.AgregadoEl BETWEEN ? AND ?
-    ";
+// Obtener parámetros de filtro
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
+$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
 
-    $params = [$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59'];
-    $types = "ss";
-
-    // Agregar filtro de sucursal si se especifica
-    if (!empty($sucursal)) {
-        $sql .= " AND v.ID_Sucursal = ?";
-        $params[] = $sucursal;
-        $types .= "i";
-    }
-
-    $sql .= " ORDER BY v.AgregadoEl DESC";
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        throw new Exception("Error en la preparación de la consulta: " . $conn->error);
-    }
-
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
-    }
-
-    // Devolver los datos en formato JSON para DataTables
-    echo json_encode([
-        "data" => $data
-    ]);
-
-} catch (Exception $e) {
-    // En caso de error, devolver un JSON con error
+// Verificar conexión
+if (!$conn) {
     echo json_encode([
         "error" => true,
-        "message" => "Error: " . $e->getMessage(),
+        "message" => "Error de conexión a la base de datos",
         "data" => []
     ]);
+    exit;
 }
+
+// Construir la consulta SQL básica primero
+$sql = "SELECT 
+    Cod_Barra,
+    Nombre_Prod,
+    PrecioCompra,
+    PrecioVenta,
+    FolioTicket,
+    ID_Sucursal,
+    Turno,
+    Cantidad_Venta,
+    Total_Venta,
+    Importe,
+    Descuento,
+    FormaPago,
+    Cliente,
+    FolioSignoVital,
+    NomServ,
+    AgregadoEl,
+    AgregadoEnMomento,
+    AgregadoPor
+FROM Ventas 
+WHERE AgregadoEl BETWEEN ? AND ?";
+
+$params = [$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59'];
+$types = "ss";
+
+// Agregar filtro de sucursal si se especifica
+if (!empty($sucursal)) {
+    $sql .= " AND ID_Sucursal = ?";
+    $params[] = $sucursal;
+    $types .= "i";
+}
+
+$sql .= " ORDER BY AgregadoEl DESC";
+
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    echo json_encode([
+        "error" => true,
+        "message" => "Error en la preparación de la consulta: " . $conn->error,
+        "data" => []
+    ]);
+    exit;
+}
+
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$data = [];
+while ($row = $result->fetch_assoc()) {
+    // Obtener nombre de sucursal por separado
+    $sucursal_id = $row['ID_Sucursal'];
+    $sucursal_nombre = 'Sin Sucursal';
+    
+    if ($sucursal_id) {
+        $sql_sucursal = "SELECT Nombre_Sucursal FROM Sucursales WHERE ID_Sucursal = ?";
+        $stmt_sucursal = $conn->prepare($sql_sucursal);
+        if ($stmt_sucursal) {
+            $stmt_sucursal->bind_param("i", $sucursal_id);
+            $stmt_sucursal->execute();
+            $result_sucursal = $stmt_sucursal->get_result();
+            if ($sucursal_row = $result_sucursal->fetch_assoc()) {
+                $sucursal_nombre = $sucursal_row['Nombre_Sucursal'];
+            }
+            $stmt_sucursal->close();
+        }
+    }
+    
+    // Agregar el nombre de sucursal al array
+    $row['Sucursal'] = $sucursal_nombre;
+    $data[] = $row;
+}
+
+// Devolver los datos en formato JSON para DataTables
+echo json_encode([
+    "data" => $data
+]);
+
+$stmt->close();
+$conn->close();
 ?>
