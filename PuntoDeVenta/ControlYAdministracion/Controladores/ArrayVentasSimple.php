@@ -40,7 +40,7 @@ $sql = "SELECT
     AgregadoEl,
     AgregadoEnMomento,
     AgregadoPor
-FROM Ventas 
+FROM Ventas_POS 
 ORDER BY AgregadoEl DESC 
 LIMIT 10";
 

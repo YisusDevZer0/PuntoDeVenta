@@ -26,7 +26,7 @@ $sql = "SELECT
     v.AgregadoEl,
     v.AgregadoEnMomento,
     v.AgregadoPor
-FROM Ventas v
+FROM Ventas_POS v
 LEFT JOIN Sucursales s ON v.ID_Sucursal = s.ID_Sucursal
 WHERE v.AgregadoEl BETWEEN ? AND ?
 ";
@@ -58,7 +58,12 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Construir la URL para el AJAX de DataTables
-$ajax_url = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasSimple.php";
+$ajax_url = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php";
+$ajax_url .= "?fecha_inicio=" . urlencode($fecha_inicio);
+$ajax_url .= "&fecha_fin=" . urlencode($fecha_fin);
+if (!empty($sucursal)) {
+    $ajax_url .= "&sucursal=" . urlencode($sucursal);
+}
 ?>
 
 <style>

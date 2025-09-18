@@ -45,7 +45,7 @@ $sql = "SELECT
     AgregadoEl,
     AgregadoEnMomento,
     AgregadoPor
-FROM Ventas 
+FROM Ventas_POS 
 WHERE AgregadoEl BETWEEN ? AND ?";
 
 $params = [$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59'];
