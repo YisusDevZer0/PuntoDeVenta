@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 // Incluir la conexión a la base de datos
-include_once "../Consultas/db_connect.php";
+include_once "../Controladores/db_connect.php";
 
 // Obtener parámetros de filtro
 $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');

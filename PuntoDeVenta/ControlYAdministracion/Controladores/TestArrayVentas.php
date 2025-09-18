@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 // Incluir la conexión a la base de datos
-include_once "../Consultas/db_connect.php";
+include_once "../Controladores/db_connect.php";
 
 // Verificar conexión
 if (!$conn) {
