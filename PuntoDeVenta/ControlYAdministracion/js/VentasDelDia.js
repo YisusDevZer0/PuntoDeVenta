@@ -26,106 +26,19 @@ function CargaListadoDeProductos(){
     
     console.log("Enviando petición a VentasDelDiaConFiltros.php...");
     
-    // Crear la estructura de la tabla si no existe
-    if ($('#Clientes').length === 0) {
-        var tablaHTML = `
-            <table id="Clientes" class="order-column">
-                <thead>
-                    <th>Cod</th>
-                    <th>Nombre</th>
-                    <th>Precio Compra</th>
-                    <th>Precio Venta</th>
-                    <th>N° Ticket</th>
-                    <th>Sucursal</th>
-                    <th>Turno</th>
-                    <th>Cantidad</th>
-                    <th>P.U</th>
-                    <th>Importe</th>
-                    <th>Descuento</th>
-                    <th>Forma de pago</th>
-                    <th>Cliente</th>
-                    <th>Folio Signo Vital</th>
-                    <th>Servicio</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>   
-                    <th>Vendedor</th>
-                </thead>
-            </table>
-        `;
-        $("#DataDeServicios").html(tablaHTML);
-    }
-    
-    // Crear la tabla DataTables directamente
-    if ($.fn.DataTable.isDataTable('#Clientes')) {
-        $('#Clientes').DataTable().destroy();
-    }
-    
-    // Crear la tabla con AJAX
-    var tabla = $('#Clientes').DataTable({
-        "bProcessing": true,
-        "ordering": true,
-        "stateSave": true,
-        "bAutoWidth": false,
-        "order": [[ 0, "desc" ]],
-        "ajax": {
-            "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php",
-            "data": parametros,
-            "type": "GET"
-        },
-        "columns": [
-            { data: 'Cod_Barra' },
-            { data: 'Nombre_Prod' },
-            { data: 'PrecioCompra' },
-            { data: 'PrecioVenta' },
-            { data: 'FolioTicket' },
-            { data: 'Sucursal' },
-            { data: 'Turno' },
-            { data: 'Cantidad_Venta' },
-            { data: 'Total_Venta' },
-            { data: 'Importe' },
-            { data: 'Descuento' },
-            { data: 'FormaPago' },
-            { data: 'Cliente' },
-            { data: 'FolioSignoVital' },
-            { data: 'NomServ' },
-            { data: 'AgregadoEl' },
-            { data: 'AgregadoEnMomento' },
-            { data: 'AgregadoPor' }
-        ],
-        "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],
-        "language": {
-            "lengthMenu": "Mostrar _MENU_ registros",
-            "sPaginationType": "extStyle",
-            "zeroRecords": "No se encontraron resultados",
-            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-            "sSearch": "Buscar:",
-            "oPaginate": {
-                "sFirst": "Primero",
-                "sLast": "Último",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
-            }
-        },
-        "initComplete": function() {
-            console.log("Tabla inicializada correctamente");
-            // Esperar un poco más para asegurar que los datos estén completamente cargados
-            setTimeout(function() {
-                calcularEstadisticasHoy();
-                ocultarCargando();
-            }, 500);
-        },
-        "drawCallback": function() {
-            console.log("Tabla redibujada, recalculando estadísticas...");
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
+        console.log("Respuesta recibida:", data);
+        $("#DataDeServicios").html(data);
+        // Esperar a que se inicialice la tabla antes de calcular estadísticas
+        setTimeout(function() {
+            console.log("Calculando estadísticas...");
             calcularEstadisticasHoy();
-        },
-        "error": function(xhr, error, thrown) {
-            console.error("Error en DataTables:", error, thrown);
-            ocultarCargando();
-            // Intentar calcular estadísticas de forma alternativa
-            calcularEstadisticasAlternativo();
-        }
+        }, 1500);
+        ocultarCargando();
+    }).fail(function(xhr, status, error) {
+        ocultarCargando();
+        console.error('Error en CargaListadoDeProductos:', xhr.responseText);
+        mostrarError("Error al cargar los datos de ventas del día: " + error);
     });
 }
 
@@ -151,6 +64,13 @@ function calcularEstadisticasHoy() {
     console.log("Calculando estadísticas...");
     
     try {
+        // Verificar si la tabla existe
+        if (!$.fn.DataTable.isDataTable('#Clientes')) {
+            console.log("DataTable no está inicializada, usando método alternativo");
+            calcularEstadisticasAlternativo();
+            return;
+        }
+        
         // Obtener datos de la tabla
         var tabla = $('#Clientes').DataTable();
         var datos = tabla.data().toArray();
@@ -162,8 +82,6 @@ function calcularEstadisticasHoy() {
         var sucursalesUnicas = new Set();
         
         datos.forEach(function(fila) {
-            console.log("Procesando fila:", fila);
-            
             // Sumar ingresos usando la columna Importe
             if (fila.Importe && !isNaN(parseFloat(fila.Importe))) {
                 totalIngresos += parseFloat(fila.Importe);
@@ -193,11 +111,8 @@ function calcularEstadisticasHoy() {
         console.log("Estadísticas actualizadas en la interfaz");
     } catch (error) {
         console.error("Error al calcular estadísticas:", error);
-        // Valores por defecto en caso de error
-        $('#total-ventas-hoy').text('0');
-        $('#total-ingresos-hoy').text('$0.00');
-        $('#sucursales-activas').text('0');
-        $('#promedio-venta-hoy').text('$0.00');
+        // Usar método alternativo
+        calcularEstadisticasAlternativo();
     }
 }
 
@@ -277,17 +192,31 @@ function filtrarDatos() {
         return;
     }
     
-    // Si existe la tabla, recargar con nuevos parámetros
+    // Si existe la tabla, destruirla antes de crear una nueva
     if ($.fn.DataTable.isDataTable('#Clientes')) {
-        var tabla = $('#Clientes').DataTable();
-        tabla.ajax.url("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php?fecha_inicio=" + 
-                      encodeURIComponent(fechaInicio) + "&fecha_fin=" + encodeURIComponent(fechaFin) + 
-                      "&sucursal=" + encodeURIComponent(sucursal)).load();
-        mostrarExito("Filtros aplicados correctamente");
-    } else {
-        // Si no existe la tabla, crear una nueva
-        CargaListadoDeProductos();
+        $('#Clientes').DataTable().destroy();
     }
+    
+    // Construir parámetros para la consulta
+    var parametros = {
+        fecha_inicio: fechaInicio,
+        fecha_fin: fechaFin,
+        sucursal: sucursal
+    };
+    
+    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
+      $("#DataDeServicios").html(data);
+        // Esperar a que se inicialice la tabla antes de calcular estadísticas
+        setTimeout(function() {
+            calcularEstadisticasHoy();
+        }, 1500);
+        ocultarCargando();
+        mostrarExito("Filtros aplicados correctamente");
+    }).fail(function(xhr, status, error) {
+        ocultarCargando();
+        console.error('Error en filtrarDatos:', xhr.responseText);
+        mostrarError("Error al filtrar los datos: " + error);
+    });
 }
 
 // Función para exportar a Excel
@@ -464,7 +393,7 @@ function mostrarMensajeCarga() {
 // Inicializar el reporte al cargar la página
 $(document).ready(function() {
     console.log("Documento listo, iniciando VentasDelDia...");
-    CargaListadoDeProductos();
+  CargaListadoDeProductos();
     
     // Actualizar mensaje de carga cada 3 segundos
     setInterval(function() {

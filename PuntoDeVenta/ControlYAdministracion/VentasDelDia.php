@@ -285,7 +285,7 @@ include_once "Controladores/ControladorUsuario.php";
             </div>
             
           
-<script src="js/VentasDelDiaSimple.js"></script>
+<script src="js/VentasDelDia.js"></script>
 
 <script>
 console.log("Script inline ejecutándose...");
