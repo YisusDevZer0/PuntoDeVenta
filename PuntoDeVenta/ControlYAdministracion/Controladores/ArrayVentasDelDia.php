@@ -29,6 +29,7 @@ if (!$conn) {
 $sql = "SELECT 
     Cod_Barra,
     Nombre_Prod,
+    Total_Venta as PrecioCompra,
     Total_Venta as PrecioVenta,
     Folio_Ticket as FolioTicket,
     Fk_sucursal as ID_Sucursal,

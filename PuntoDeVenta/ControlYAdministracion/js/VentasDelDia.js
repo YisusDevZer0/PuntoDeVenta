@@ -24,6 +24,35 @@ function CargaListadoDeProductos(){
     
     console.log("Enviando petición a VentasDelDiaConFiltros.php...");
     
+    // Crear la estructura de la tabla si no existe
+    if ($('#Clientes').length === 0) {
+        var tablaHTML = `
+            <table id="Clientes" class="order-column">
+                <thead>
+                    <th>Cod</th>
+                    <th>Nombre</th>
+                    <th>Precio Compra</th>
+                    <th>Precio Venta</th>
+                    <th>N° Ticket</th>
+                    <th>Sucursal</th>
+                    <th>Turno</th>
+                    <th>Cantidad</th>
+                    <th>P.U</th>
+                    <th>Importe</th>
+                    <th>Descuento</th>
+                    <th>Forma de pago</th>
+                    <th>Cliente</th>
+                    <th>Folio Signo Vital</th>
+                    <th>Servicio</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>   
+                    <th>Vendedor</th>
+                </thead>
+            </table>
+        `;
+        $("#DataDeServicios").html(tablaHTML);
+    }
+    
     // Crear la tabla DataTables directamente
     if ($.fn.DataTable.isDataTable('#Clientes')) {
         $('#Clientes').DataTable().destroy();
@@ -44,7 +73,7 @@ function CargaListadoDeProductos(){
         "columns": [
             { data: 'Cod_Barra' },
             { data: 'Nombre_Prod' },
-            { data: 'PrecioVenta' },
+            { data: 'PrecioCompra' },
             { data: 'PrecioVenta' },
             { data: 'FolioTicket' },
             { data: 'Sucursal' },
@@ -199,12 +228,13 @@ function exportarExcelManual() {
         }
         
         // Crear CSV simple
-        var csv = "Código,Nombre,Precio Venta,Ticket,Sucursal,Turno,Cantidad,Total,Importe,Descuento,Forma Pago,Cliente,Folio SV,Servicio,Fecha,Hora,Vendedor\n";
+        var csv = "Código,Nombre,Precio Compra,Precio Venta,Ticket,Sucursal,Turno,Cantidad,Total,Importe,Descuento,Forma Pago,Cliente,Folio SV,Servicio,Fecha,Hora,Vendedor\n";
         
         datos.forEach(function(fila) {
             var linea = [
                 fila.Cod_Barra || '',
                 fila.Nombre_Prod || '',
+                fila.PrecioCompra || '',
                 fila.PrecioVenta || '',
                 fila.FolioTicket || '',
                 fila.Sucursal || '',
