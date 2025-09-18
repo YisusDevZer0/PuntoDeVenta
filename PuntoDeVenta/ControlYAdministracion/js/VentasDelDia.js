@@ -2,8 +2,8 @@ function CargaListadoDeProductos(){
     mostrarCargando();
     
     // Obtener valores de filtros
-    var fechaInicio = $('#fecha_inicio').val() || '<?php echo date('Y-m-01'); ?>';
-    var fechaFin = $('#fecha_fin').val() || '<?php echo date('Y-m-d'); ?>';
+    var fechaInicio = $('#fecha_inicio').val() || getFirstDayOfMonth();
+    var fechaFin = $('#fecha_fin').val() || getCurrentDate();
     var sucursal = $('#sucursal').val() || '';
     
     // Construir parámetros
@@ -24,6 +24,23 @@ function CargaListadoDeProductos(){
         ocultarCargando();
         mostrarError("Error al cargar los datos de ventas del día");
     });
+}
+
+// Función para obtener el primer día del mes actual
+function getFirstDayOfMonth() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = (now.getMonth() + 1).toString().padStart(2, '0');
+    return year + '-' + month + '-01';
+}
+
+// Función para obtener la fecha actual
+function getCurrentDate() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = (now.getMonth() + 1).toString().padStart(2, '0');
+    var day = now.getDate().toString().padStart(2, '0');
+    return year + '-' + month + '-' + day;
 }
 
 // Función para calcular estadísticas del día
