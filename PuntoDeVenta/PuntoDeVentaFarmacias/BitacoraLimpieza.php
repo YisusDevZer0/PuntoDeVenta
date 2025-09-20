@@ -54,57 +54,96 @@ $bitacoras = $controller->obtenerBitacoras();
                         </button>
                     </div>
 
-                    <!-- Selector de bitácora -->
+                    <!-- Selector de bitácora mejorado -->
                     <div class="row mb-4" id="selector-bitacora" style="display:none;">
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <label for="selectBitacora" class="form-label">Seleccionar Bitácora para Completar Datos:</label>
                             <select class="form-select" id="selectBitacora">
                                 <option value="">-- Seleccione una bitácora para trabajar --</option>
                                 <?php foreach($bitacoras as $bitacora): ?>
-                                    <option value="<?php echo $bitacora['id_bitacora']; ?>">
+                                    <option value="<?php echo $bitacora['id_bitacora']; ?>" 
+                                            data-area="<?php echo htmlspecialchars($bitacora['area']); ?>"
+                                            data-semana="<?php echo htmlspecialchars($bitacora['semana']); ?>"
+                                            data-fecha-inicio="<?php echo $bitacora['fecha_inicio']; ?>"
+                                            data-fecha-fin="<?php echo $bitacora['fecha_fin']; ?>"
+                                            data-responsable="<?php echo htmlspecialchars($bitacora['responsable']); ?>"
+                                            data-supervisor="<?php echo htmlspecialchars($bitacora['supervisor']); ?>">
                                         <?php echo $bitacora['area'] . ' - ' . $bitacora['semana'] . ' (' . $bitacora['fecha_inicio'] . ' a ' . $bitacora['fecha_fin'] . ')'; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button type="button" class="btn btn-primary" id="btnAplicarFiltros">
-                                <i class="fas fa-search me-2"></i>Buscar Bitácoras
-                            </button>
+                        <div class="col-md-6">
+                            <label class="form-label">Información de la Bitácora:</label>
+                            <div id="info-bitacora" class="alert alert-info" style="display:none;">
+                                <div class="row">
+                                    <div class="col-6"><strong>Área:</strong> <span id="info-area"></span></div>
+                                    <div class="col-6"><strong>Semana:</strong> <span id="info-semana"></span></div>
+                                    <div class="col-6"><strong>Responsable:</strong> <span id="info-responsable"></span></div>
+                                    <div class="col-6"><strong>Supervisor:</strong> <span id="info-supervisor"></span></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Tabla de elementos de limpieza -->
+                    <!-- Tabla de elementos de limpieza mejorada -->
                     <div id="tabla-limpieza" style="display:none;">
-                        <div class="alert alert-success mb-3">
-                            <i class="fas fa-check-circle me-2"></i>
-                            <strong>Registro de Limpieza:</strong> Marque con ✓ las tareas de limpieza que haya completado. Los cambios se guardan automáticamente.
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong>Registro de Limpieza:</strong> Marque con ✓ las tareas de limpieza que haya completado. Los cambios se guardan automáticamente.
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-success btn-sm" id="btnMarcarTodo">
+                                        <i class="fas fa-check-double me-1"></i>Marcar Todo
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm" id="btnDesmarcarTodo">
+                                        <i class="fas fa-times me-1"></i>Desmarcar Todo
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" id="btnGuardarManual">
+                                        <i class="fas fa-save me-1"></i>Guardar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <table id="tablaElementos" class="table table-bordered table-striped" style="width:100%">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>Elemento de Limpieza</th>
-                                    <th>Lunes M</th>
-                                    <th>Lunes V</th>
-                                    <th>Martes M</th>
-                                    <th>Martes V</th>
-                                    <th>Miércoles M</th>
-                                    <th>Miércoles V</th>
-                                    <th>Jueves M</th>
-                                    <th>Jueves V</th>
-                                    <th>Viernes M</th>
-                                    <th>Viernes V</th>
-                                    <th>Sábado M</th>
-                                    <th>Sábado V</th>
-                                    <th>Domingo M</th>
-                                    <th>Domingo V</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbodyElementos">
-                                <!-- Los datos se cargarán dinámicamente -->
-                            </tbody>
-                        </table>
+                        
+                        <!-- Indicador de progreso -->
+                        <div class="progress mb-3" style="height: 25px;">
+                            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%">
+                                <span id="progressText">0% Completado</span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table id="tablaElementos" class="table table-bordered table-striped" style="width:100%">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Elemento de Limpieza</th>
+                                        <th>Lunes M</th>
+                                        <th>Lunes V</th>
+                                        <th>Martes M</th>
+                                        <th>Martes V</th>
+                                        <th>Miércoles M</th>
+                                        <th>Miércoles V</th>
+                                        <th>Jueves M</th>
+                                        <th>Jueves V</th>
+                                        <th>Viernes M</th>
+                                        <th>Viernes V</th>
+                                        <th>Sábado M</th>
+                                        <th>Sábado V</th>
+                                        <th>Domingo M</th>
+                                        <th>Domingo V</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbodyElementos">
+                                    <!-- Los datos se cargarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <!-- Tabla de bitácoras -->
@@ -113,6 +152,38 @@ $bitacoras = $controller->obtenerBitacoras();
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Bitácoras Asignadas:</strong> Estas bitácoras han sido creadas por el administrador. Seleccione una para completar los datos de limpieza.
                         </div>
+                        
+                        <!-- Filtros de búsqueda -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="buscarBitacora" placeholder="Buscar por área, semana o responsable...">
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="filtroAreaBitacora">
+                                    <option value="">Todas las áreas</option>
+                                    <?php 
+                                    $areasUnicas = array_unique(array_column($bitacoras, 'area'));
+                                    foreach($areasUnicas as $area): 
+                                    ?>
+                                        <option value="<?php echo htmlspecialchars($area); ?>"><?php echo htmlspecialchars($area); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" id="filtroEstadoBitacora">
+                                    <option value="">Todas las bitácoras</option>
+                                    <option value="activa">Activas</option>
+                                    <option value="completada">Completadas</option>
+                                    <option value="pendiente">Pendientes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-outline-secondary w-100" id="btnLimpiarFiltros">
+                                    <i class="fas fa-times me-1"></i>Limpiar
+                                </button>
+                            </div>
+                        </div>
+                        
                         <table id="tablaBitacoras" class="table table-bordered table-striped" style="width:100%">
                             <thead class="table-primary">
                                 <tr>
@@ -123,6 +194,7 @@ $bitacoras = $controller->obtenerBitacoras();
                                     <th>Fecha Fin</th>
                                     <th>Responsable</th>
                                     <th>Supervisor</th>
+                                    <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -136,6 +208,9 @@ $bitacoras = $controller->obtenerBitacoras();
                                     <td><?php echo $bitacora['fecha_fin']; ?></td>
                                     <td><?php echo $bitacora['responsable']; ?></td>
                                     <td><?php echo $bitacora['supervisor']; ?></td>
+                                    <td>
+                                        <span class="badge bg-success">Activa</span>
+                                    </td>
                                     <td>
                                         <button class="btn btn-sm btn-success btn-ver-elementos" data-id="<?php echo $bitacora['id_bitacora']; ?>" title="Completar Datos de Limpieza">
                                             <i class="fas fa-edit me-1"></i>Trabajar
@@ -160,19 +235,55 @@ $bitacoras = $controller->obtenerBitacoras();
 
 <script>
    $(document).ready(function() {
-        // Inicializar DataTable para bitácoras
-        $('#tablaBitacoras').DataTable({
+        // Inicializar DataTable para bitácoras con filtros personalizados
+        const tablaBitacoras = $('#tablaBitacoras').DataTable({
             "paging": true,
-            "searching": true,
+            "searching": false, // Deshabilitamos la búsqueda nativa para usar la personalizada
             "info": true,
             "responsive": true,
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+            },
+            "columnDefs": [
+                { "orderable": false, "targets": 8 } // Columna de acciones
+            ]
+        });
+
+        // Filtros personalizados
+        $('#buscarBitacora').on('keyup', function() {
+            tablaBitacoras.search(this.value).draw();
+        });
+
+        $('#filtroAreaBitacora').on('change', function() {
+            const area = this.value;
+            if (area) {
+                tablaBitacoras.column(1).search(area).draw();
+            } else {
+                tablaBitacoras.column(1).search('').draw();
             }
+        });
+
+        $('#filtroEstadoBitacora').on('change', function() {
+            const estado = this.value;
+            if (estado) {
+                tablaBitacoras.column(7).search(estado).draw();
+            } else {
+                tablaBitacoras.column(7).search('').draw();
+            }
+        });
+
+        $('#btnLimpiarFiltros').click(function() {
+            $('#buscarBitacora').val('');
+            $('#filtroAreaBitacora').val('');
+            $('#filtroEstadoBitacora').val('');
+            tablaBitacoras.search('').columns().search('').draw();
         });
 
         // Variables globales
         let bitacoraActual = null;
+        let elementosLimpieza = [];
+        let cambiosPendientes = new Map();
+        let autoSaveTimeout = null;
 
         // Mostrar/ocultar vistas
         $('#btnVerBitacoras').click(function() {
@@ -180,6 +291,20 @@ $bitacoras = $controller->obtenerBitacoras();
             $('#tabla-limpieza').hide();
             $('#selector-bitacora').hide();
             $('#btnAgregarElemento').hide();
+        });
+
+        // Mostrar información de la bitácora seleccionada
+        $('#selectBitacora').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            if (selectedOption.val()) {
+                $('#info-area').text(selectedOption.data('area'));
+                $('#info-semana').text(selectedOption.data('semana'));
+                $('#info-responsable').text(selectedOption.data('responsable'));
+                $('#info-supervisor').text(selectedOption.data('supervisor'));
+                $('#info-bitacora').show();
+            } else {
+                $('#info-bitacora').hide();
+            }
         });
 
         // Crear nueva bitácora
@@ -269,20 +394,22 @@ $bitacoras = $controller->obtenerBitacoras();
             });
         }
 
-        // Función para mostrar elementos de limpieza
+        // Función para mostrar elementos de limpieza mejorada
         function mostrarElementosLimpieza(elementos) {
             const tbody = $('#tbodyElementos');
             tbody.empty();
+            elementosLimpieza = elementos;
 
             if (elementos.length === 0) {
                 tbody.append('<tr><td colspan="16" class="text-center">No hay elementos registrados</td></tr>');
+                actualizarProgreso();
                 return;
             }
 
-            elementos.forEach(function(elemento) {
+            elementos.forEach(function(elemento, index) {
                 const row = `
-                    <tr>
-                        <td>${elemento.elemento}</td>
+                    <tr data-elemento-id="${elemento.id_detalle}">
+                        <td class="fw-bold">${elemento.elemento}</td>
                         <td><input type="checkbox" class="form-check-input checkbox-limpieza" data-id="${elemento.id_detalle}" data-campo="lunes_mat" ${elemento.lunes_mat ? 'checked' : ''}></td>
                         <td><input type="checkbox" class="form-check-input checkbox-limpieza" data-id="${elemento.id_detalle}" data-campo="lunes_vesp" ${elemento.lunes_vesp ? 'checked' : ''}></td>
                         <td><input type="checkbox" class="form-check-input checkbox-limpieza" data-id="${elemento.id_detalle}" data-campo="martes_mat" ${elemento.martes_mat ? 'checked' : ''}></td>
@@ -298,7 +425,7 @@ $bitacoras = $controller->obtenerBitacoras();
                         <td><input type="checkbox" class="form-check-input checkbox-limpieza" data-id="${elemento.id_detalle}" data-campo="domingo_mat" ${elemento.domingo_mat ? 'checked' : ''}></td>
                         <td><input type="checkbox" class="form-check-input checkbox-limpieza" data-id="${elemento.id_detalle}" data-campo="domingo_vesp" ${elemento.domingo_vesp ? 'checked' : ''}></td>
                         <td>
-                            <button class="btn btn-sm btn-danger btn-eliminar-elemento" data-id="${elemento.id_detalle}">
+                            <button class="btn btn-sm btn-danger btn-eliminar-elemento" data-id="${elemento.id_detalle}" title="Eliminar elemento">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -308,43 +435,161 @@ $bitacoras = $controller->obtenerBitacoras();
             });
 
             // Inicializar DataTable para elementos
+            if ($.fn.DataTable.isDataTable('#tablaElementos')) {
+                $('#tablaElementos').DataTable().destroy();
+            }
+            
             $('#tablaElementos').DataTable({
                 "paging": false,
                 "searching": false,
                 "info": false,
                 "responsive": true,
-                "scrollX": true
+                "scrollX": true,
+                "order": [[0, "asc"]]
             });
+
+            actualizarProgreso();
         }
 
-        // Actualizar estado de limpieza
+        // Actualizar estado de limpieza con guardado inteligente
         $(document).on('change', '.checkbox-limpieza', function() {
             const idDetalle = $(this).data('id');
             const campo = $(this).data('campo');
             const valor = $(this).is(':checked') ? 1 : 0;
+            const checkbox = $(this);
 
-            $.ajax({
-                url: 'api/actualizar_estado_limpieza.php',
-                method: 'POST',
-                data: {
-                    id_detalle: idDetalle,
-                    campo: campo,
-                    valor: valor
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (!response.success) {
-                        console.error('Error:', response.message);
-                        // Revertir el checkbox si hay error
-                        $(this).prop('checked', !$(this).is(':checked'));
+            // Agregar a cambios pendientes
+            const key = `${idDetalle}_${campo}`;
+            cambiosPendientes.set(key, { idDetalle, campo, valor });
+
+            // Actualizar progreso inmediatamente
+            actualizarProgreso();
+
+            // Guardado automático con debounce (esperar 2 segundos después del último cambio)
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                guardarCambiosPendientes();
+            }, 2000);
+
+            // Mostrar indicador visual de guardado
+            mostrarIndicadorGuardado();
+        });
+
+        // Función para guardar cambios pendientes
+        function guardarCambiosPendientes() {
+            if (cambiosPendientes.size === 0) return;
+
+            const cambios = Array.from(cambiosPendientes.values());
+            let guardados = 0;
+            let errores = 0;
+
+            cambios.forEach(cambio => {
+                $.ajax({
+                    url: 'api/actualizar_estado_limpieza.php',
+                    method: 'POST',
+                    data: {
+                        id_detalle: cambio.idDetalle,
+                        campo: cambio.campo,
+                        valor: cambio.valor
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        guardados++;
+                        if (response.success) {
+                            cambiosPendientes.delete(`${cambio.idDetalle}_${cambio.campo}`);
+                        } else {
+                            errores++;
+                            console.error('Error:', response.message);
+                        }
+                        
+                        if (guardados + errores === cambios.length) {
+                            if (errores === 0) {
+                                mostrarMensajeGuardado('success', 'Cambios guardados correctamente');
+                            } else {
+                                mostrarMensajeGuardado('warning', `${guardados} cambios guardados, ${errores} errores`);
+                            }
+                        }
+                    },
+                    error: function() {
+                        errores++;
+                        console.error('Error de conexión');
+                        if (guardados + errores === cambios.length) {
+                            mostrarMensajeGuardado('error', 'Error al guardar algunos cambios');
+                        }
                     }
-                },
-                error: function() {
-                    console.error('Error de conexión');
-                    // Revertir el checkbox si hay error
-                    $(this).prop('checked', !$(this).is(':checked'));
-                }
+                });
             });
+        }
+
+        // Función para actualizar progreso
+        function actualizarProgreso() {
+            const totalCheckboxes = $('.checkbox-limpieza').length;
+            const checkboxesMarcados = $('.checkbox-limpieza:checked').length;
+            const porcentaje = totalCheckboxes > 0 ? Math.round((checkboxesMarcados / totalCheckboxes) * 100) : 0;
+            
+            $('#progressBar').css('width', porcentaje + '%');
+            $('#progressText').text(`${porcentaje}% Completado (${checkboxesMarcados}/${totalCheckboxes})`);
+            
+            // Cambiar color según progreso
+            const progressBar = $('#progressBar');
+            progressBar.removeClass('bg-success bg-warning bg-danger');
+            if (porcentaje === 100) {
+                progressBar.addClass('bg-success');
+            } else if (porcentaje >= 50) {
+                progressBar.addClass('bg-warning');
+            } else {
+                progressBar.addClass('bg-danger');
+            }
+        }
+
+        // Función para mostrar indicador de guardado
+        function mostrarIndicadorGuardado() {
+            const indicador = $('#btnGuardarManual');
+            indicador.html('<i class="fas fa-spinner fa-spin me-1"></i>Guardando...');
+            indicador.prop('disabled', true);
+            
+            setTimeout(() => {
+                indicador.html('<i class="fas fa-save me-1"></i>Guardar');
+                indicador.prop('disabled', false);
+            }, 1000);
+        }
+
+        // Función para mostrar mensaje de guardado
+        function mostrarMensajeGuardado(tipo, mensaje) {
+            const alertClass = tipo === 'success' ? 'alert-success' : tipo === 'warning' ? 'alert-warning' : 'alert-danger';
+            const icon = tipo === 'success' ? 'fa-check-circle' : tipo === 'warning' ? 'fa-exclamation-triangle' : 'fa-times-circle';
+            
+            const alert = $(`
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    <i class="fas ${icon} me-2"></i>${mensaje}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+            
+            $('#tabla-limpieza .alert-success').after(alert);
+            
+            setTimeout(() => {
+                alert.fadeOut();
+            }, 3000);
+        }
+
+        // Botones de control masivo
+        $('#btnMarcarTodo').click(function() {
+            $('.checkbox-limpieza').prop('checked', true).trigger('change');
+            mostrarMensajeGuardado('info', 'Todos los elementos marcados');
+        });
+
+        $('#btnDesmarcarTodo').click(function() {
+            $('.checkbox-limpieza').prop('checked', false).trigger('change');
+            mostrarMensajeGuardado('info', 'Todos los elementos desmarcados');
+        });
+
+        $('#btnGuardarManual').click(function() {
+            if (cambiosPendientes.size > 0) {
+                guardarCambiosPendientes();
+            } else {
+                mostrarMensajeGuardado('info', 'No hay cambios pendientes para guardar');
+            }
         });
 
         // Agregar elemento
