@@ -1,0 +1,243 @@
+<?php
+class TareasController {
+    private $conn;
+    private $userId;
+    private $sucursalId;
+    
+    public function __construct($conn, $userId, $sucursalId) {
+        $this->conn = $conn;
+        $this->userId = $userId;
+        $this->sucursalId = $sucursalId;
+    }
+    
+    /**
+     * Obtener tareas asignadas al usuario actual de la sucursal actual
+     */
+    public function getTareasAsignadas($filtros = []) {
+        $sql = "SELECT 
+                    t.id,
+                    t.titulo,
+                    t.descripcion,
+                    t.prioridad,
+                    t.fecha_limite,
+                    t.estado,
+                    t.asignado_a,
+                    t.creado_por,
+                    t.fecha_creacion,
+                    t.fecha_actualizacion,
+                    u_asignado.Nombre_Apellidos as asignado_nombre,
+                    u_creador.Nombre_Apellidos as creador_nombre
+                FROM tareas t
+                LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
+                LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
+                WHERE t.asignado_a = ? AND u_asignado.Fk_Sucursal = ?";
+        
+        $params = [$this->userId, $this->sucursalId];
+        $types = "ii";
+        
+        // Aplicar filtros
+        if (!empty($filtros['estado'])) {
+            $sql .= " AND t.estado = ?";
+            $params[] = $filtros['estado'];
+            $types .= "s";
+        }
+        
+        if (!empty($filtros['prioridad'])) {
+            $sql .= " AND t.prioridad = ?";
+            $params[] = $filtros['prioridad'];
+            $types .= "s";
+        }
+        
+        $sql .= " ORDER BY 
+                    CASE t.prioridad 
+                        WHEN 'Alta' THEN 1 
+                        WHEN 'Media' THEN 2 
+                        WHEN 'Baja' THEN 3 
+                    END,
+                    t.fecha_limite ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
+    
+    /**
+     * Obtener estadísticas de tareas del usuario actual
+     */
+    public function getEstadisticas() {
+        $sql = "SELECT 
+                    t.estado,
+                    COUNT(*) as cantidad
+                FROM tareas t
+                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
+                WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?
+                GROUP BY t.estado";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
+    
+    /**
+     * Obtener tareas próximas a vencer (próximos 3 días)
+     */
+    public function getTareasProximasVencer() {
+        $sql = "SELECT 
+                    t.id,
+                    t.titulo,
+                    t.fecha_limite,
+                    t.prioridad,
+                    t.estado
+                FROM tareas t
+                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
+                WHERE t.asignado_a = ? 
+                AND u.Fk_Sucursal = ?
+                AND t.estado IN ('Por hacer', 'En progreso')
+                AND t.fecha_limite IS NOT NULL
+                AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                ORDER BY t.fecha_limite ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
+    
+    /**
+     * Cambiar estado de una tarea
+     */
+    public function cambiarEstado($tareaId, $nuevoEstado) {
+        // Verificar que la tarea pertenece al usuario actual
+        if (!$this->verificarPropiedadTarea($tareaId)) {
+            return ['success' => false, 'message' => 'No tienes permisos para modificar esta tarea'];
+        }
+        
+        $sql = "UPDATE tareas 
+                SET estado = ?, fecha_actualizacion = NOW() 
+                WHERE id = ? AND asignado_a = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sii", $nuevoEstado, $tareaId, $this->userId);
+        
+        if ($stmt->execute()) {
+            return ['success' => true, 'message' => 'Estado actualizado correctamente'];
+        } else {
+            return ['success' => false, 'message' => 'Error al actualizar el estado'];
+        }
+    }
+    
+    /**
+     * Obtener una tarea específica
+     */
+    public function getTarea($tareaId) {
+        $sql = "SELECT 
+                    t.id,
+                    t.titulo,
+                    t.descripcion,
+                    t.prioridad,
+                    t.fecha_limite,
+                    t.estado,
+                    t.asignado_a,
+                    t.creado_por,
+                    t.fecha_creacion,
+                    t.fecha_actualizacion,
+                    u_asignado.Nombre_Apellidos as asignado_nombre,
+                    u_creador.Nombre_Apellidos as creador_nombre
+                FROM tareas t
+                LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
+                LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
+                WHERE t.id = ? AND t.asignado_a = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $tareaId, $this->userId);
+        $stmt->execute();
+        
+        return $stmt->get_result()->fetch_assoc();
+    }
+    
+    /**
+     * Verificar que una tarea pertenece al usuario actual
+     */
+    private function verificarPropiedadTarea($tareaId) {
+        $sql = "SELECT COUNT(*) as count 
+                FROM tareas t
+                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
+                WHERE t.id = ? AND t.asignado_a = ? AND u.Fk_Sucursal = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("iii", $tareaId, $this->userId, $this->sucursalId);
+        $stmt->execute();
+        
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['count'] > 0;
+    }
+    
+    /**
+     * Obtener tareas vencidas del usuario actual
+     */
+    public function getTareasVencidas() {
+        $sql = "SELECT 
+                    t.id,
+                    t.titulo,
+                    t.fecha_limite,
+                    t.prioridad,
+                    t.estado,
+                    DATEDIFF(CURDATE(), t.fecha_limite) as dias_vencida
+                FROM tareas t
+                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
+                WHERE t.asignado_a = ? 
+                AND u.Fk_Sucursal = ?
+                AND t.estado IN ('Por hacer', 'En progreso')
+                AND t.fecha_limite IS NOT NULL
+                AND t.fecha_limite < CURDATE()
+                ORDER BY t.fecha_limite ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
+    
+    /**
+     * Marcar tarea como completada
+     */
+    public function marcarCompletada($tareaId) {
+        return $this->cambiarEstado($tareaId, 'Completada');
+    }
+    
+    /**
+     * Marcar tarea como en progreso
+     */
+    public function marcarEnProgreso($tareaId) {
+        return $this->cambiarEstado($tareaId, 'En progreso');
+    }
+    
+    /**
+     * Obtener resumen de productividad del usuario
+     */
+    public function getResumenProductividad() {
+        $sql = "SELECT 
+                    COUNT(*) as total_tareas,
+                    SUM(CASE WHEN estado = 'Completada' THEN 1 ELSE 0 END) as completadas,
+                    SUM(CASE WHEN estado = 'En progreso' THEN 1 ELSE 0 END) as en_progreso,
+                    SUM(CASE WHEN estado = 'Por hacer' THEN 1 ELSE 0 END) as por_hacer,
+                    SUM(CASE WHEN estado = 'Cancelada' THEN 1 ELSE 0 END) as canceladas,
+                    SUM(CASE WHEN fecha_limite < CURDATE() AND estado IN ('Por hacer', 'En progreso') THEN 1 ELSE 0 END) as vencidas
+                FROM tareas t
+                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
+                WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->execute();
+        
+        return $stmt->get_result()->fetch_assoc();
+    }
+}
+?>
