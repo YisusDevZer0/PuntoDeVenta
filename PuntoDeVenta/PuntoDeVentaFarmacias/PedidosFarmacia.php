@@ -6,7 +6,7 @@ include "Controladores/db_connect.php";
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Sistema de Gestión de Pedidos - Farmacia - <?php echo $row['Licencia']?> - Sucursal <?php echo $row['Nombre_Sucursal']?></title>
+    <title>Sistema de Gestión de Pedidos - <?php echo $row['Licencia']?> - Sucursal <?php echo $row['Nombre_Sucursal']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
     
@@ -512,7 +512,7 @@ include "Controladores/db_connect.php";
                     <div class="d-flex justify-content-between align-items-center">
                         <h2 class="page-title">
                             <i class="fas fa-shopping-cart me-3"></i>
-                            Sistema de Gestión de Pedidos - Farmacia
+                            Sistema de Gestión de Pedidos
                         </h2>
                         <button class="btn btn-light btn-modern" id="btnNuevoPedido">
                             <i class="fas fa-plus me-2"></i>Nuevo Pedido
@@ -657,6 +657,8 @@ include "Controladores/db_connect.php";
             </div>
         </div>
     </div>
+    
+    <!-- Modal para nuevo pedido (ELIMINADO - Usar modal persistente) -->
     
     <!-- Modal de Detalle del Pedido -->
     <div class="modal fade" id="modalDetallePedido" tabindex="-1">
