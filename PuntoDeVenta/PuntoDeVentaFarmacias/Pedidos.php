@@ -943,6 +943,27 @@ include "Controladores/db_connect.php";
                 guardarPedido();
             });
             
+            // Filtros
+            document.getElementById('btnAplicarFiltros').addEventListener('click', function() {
+                cargarPedidos();
+            });
+            
+            document.getElementById('btnLimpiarFiltros').addEventListener('click', function() {
+                document.getElementById('filtro-estado').value = '';
+                document.getElementById('filtro-fecha-inicio').value = '';
+                document.getElementById('filtro-fecha-fin').value = '';
+                document.getElementById('busqueda').value = '';
+                cargarPedidos();
+            });
+            
+            // Búsqueda en tiempo real
+            document.getElementById('busqueda').addEventListener('input', function() {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    cargarPedidos();
+                }, 500);
+            });
+            
             // Funciones
             function buscarProductos() {
                 const busqueda = document.getElementById('busqueda-producto-nuevo').value;
@@ -951,21 +972,62 @@ include "Controladores/db_connect.php";
                     return;
                 }
                 
-                // Simular búsqueda de productos
+                // Mostrar loading
                 const resultados = document.getElementById('resultados-busqueda-nuevo');
-                resultados.innerHTML = `
-                    <div class="producto-card" data-producto='{"id": 1, "nombre": "Producto de prueba", "precio": 100, "stock": 50}'>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Producto de prueba</h6>
-                                <small class="text-muted">Precio: $100.00 | Stock: 50</small>
+                resultados.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div><p class="mt-2">Buscando productos...</p></div>';
+                
+                // Realizar búsqueda real
+                const formData = new FormData();
+                formData.append('query', busqueda);
+                
+                fetch('api/buscar_productos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarResultadosBusqueda(data.productos);
+                    } else {
+                        resultados.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultados.innerHTML = '<div class="alert alert-danger">Error al buscar productos</div>';
+                });
+            }
+            
+            function mostrarResultadosBusqueda(productos) {
+                const resultados = document.getElementById('resultados-busqueda-nuevo');
+                
+                if (productos.length === 0) {
+                    resultados.innerHTML = '<div class="alert alert-info">No se encontraron productos</div>';
+                    return;
+                }
+                
+                let html = '';
+                productos.forEach(producto => {
+                    const stockClass = producto.stock_status === 'bajo' ? 'text-warning' : 
+                                     producto.stock_status === 'agotado' ? 'text-danger' : 'text-success';
+                    
+                    html += `
+                        <div class="producto-card" data-producto='${JSON.stringify(producto)}'>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${producto.nombre}</h6>
+                                    <small class="text-muted">Precio: $${producto.precio.toFixed(2)} | Stock: <span class="${stockClass}">${producto.existencias}</span></small>
+                                    ${producto.codigo_barras ? `<br><small class="text-muted">Código: ${producto.codigo_barras}</small>` : ''}
+                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="agregarProducto(this)">
+                                    <i class="fas fa-plus"></i> Agregar
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-primary" onclick="agregarProducto(this)">
-                                <i class="fas fa-plus"></i> Agregar
-                            </button>
                         </div>
-                    </div>
-                `;
+                    `;
+                });
+                
+                resultados.innerHTML = html;
             }
             
             function agregarProducto(boton) {
@@ -1067,17 +1129,125 @@ include "Controladores/db_connect.php";
                 const observaciones = document.getElementById('observaciones-pedido-nuevo').value;
                 const prioridad = document.getElementById('prioridad-pedido-nuevo').value;
                 
-                // Simular guardado
-                console.log('Guardando pedido:', {
-                    productos: productosPedido,
-                    observaciones: observaciones,
-                    prioridad: prioridad,
-                    total: totalPrecio
+                // Mostrar loading
+                const btnGuardar = document.getElementById('btnGuardarPedidoNuevo');
+                const textoOriginal = btnGuardar.innerHTML;
+                btnGuardar.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
+                btnGuardar.disabled = true;
+                
+                // Preparar datos para envío
+                const formData = new FormData();
+                formData.append('productos', JSON.stringify(productosPedido));
+                formData.append('observaciones', observaciones);
+                formData.append('prioridad', prioridad);
+                
+                // Realizar guardado
+                fetch('api/guardar_pedido.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Pedido guardado exitosamente\nFolio: ${data.folio}`);
+                        $('#modalNuevoPedido').modal('hide');
+                        limpiarPedido();
+                        cargarEstadisticas();
+                        cargarPedidos();
+                    } else {
+                        alert('Error al guardar pedido: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al guardar pedido');
+                })
+                .finally(() => {
+                    btnGuardar.innerHTML = textoOriginal;
+                    btnGuardar.disabled = false;
+                });
+            }
+            
+            // Funciones para cargar datos
+            function cargarEstadisticas() {
+                fetch('api/estadisticas_pedidos.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('stats-pendientes').textContent = data.estadisticas.pendientes;
+                        document.getElementById('stats-aprobados').textContent = data.estadisticas.aprobados;
+                        document.getElementById('stats-proceso').textContent = data.estadisticas.en_proceso;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estadísticas:', error);
+                });
+            }
+            
+            function cargarPedidos() {
+                const formData = new FormData();
+                formData.append('estado', document.getElementById('filtro-estado').value);
+                formData.append('fecha_inicio', document.getElementById('filtro-fecha-inicio').value);
+                formData.append('fecha_fin', document.getElementById('filtro-fecha-fin').value);
+                formData.append('busqueda', document.getElementById('busqueda').value);
+                
+                fetch('api/listar_pedidos.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        mostrarPedidos(data.pedidos);
+                    } else {
+                        console.error('Error al cargar pedidos:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar pedidos:', error);
+                });
+            }
+            
+            function mostrarPedidos(pedidos) {
+                const container = document.getElementById('lista-pedidos');
+                
+                if (pedidos.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    container.innerHTML = '';
+                    return;
+                }
+                
+                document.getElementById('empty-state').style.display = 'none';
+                
+                let html = '';
+                pedidos.forEach(pedido => {
+                    const estadoClass = `estado-${pedido.estado}`;
+                    const prioridadClass = `prioridad-${pedido.prioridad}`;
+                    
+                    html += `
+                        <div class="pedido-item ${prioridadClass}" onclick="verDetallePedido(${pedido.id})">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${pedido.folio}</h6>
+                                    <small class="text-muted">${pedido.fecha_creacion} | ${pedido.usuario_nombre}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="estado-badge ${estadoClass}">${pedido.estado}</span>
+                                    <br>
+                                    <small class="text-muted">$${pedido.total_estimado.toFixed(2)}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 });
                 
-                alert('Pedido guardado exitosamente');
-                $('#modalNuevoPedido').modal('hide');
-                limpiarPedido();
+                container.innerHTML = html;
+            }
+            
+            function verDetallePedido(pedidoId) {
+                // Implementar modal de detalle del pedido
+                console.log('Ver detalle del pedido:', pedidoId);
+                $('#modalDetallePedido').modal('show');
             }
             
             // Hacer funciones globales para los botones inline
@@ -1085,11 +1255,12 @@ include "Controladores/db_connect.php";
             window.cambiarCantidad = cambiarCantidad;
             window.eliminarProducto = eliminarProducto;
             
-            // Simular carga de datos
+            // Cargar datos iniciales
             setTimeout(function() {
                 document.getElementById('loading-spinner').style.display = 'none';
-                console.log('Datos de pedidos cargados');
-            }, 2000);
+                cargarEstadisticas();
+                cargarPedidos();
+            }, 1000);
         });
     </script>
 </body>
