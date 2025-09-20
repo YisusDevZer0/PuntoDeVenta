@@ -73,16 +73,16 @@ try {
     
     // Obtener productos del pedido
     $sql_productos = "SELECT 
-                        pp.cantidad,
-                        pp.precio_unitario,
-                        pp.subtotal,
-                        pr.Nombre_Producto as producto_nombre,
-                        pr.Codigo_Producto as producto_codigo,
+                        pd.cantidad_solicitada as cantidad,
+                        pd.precio_unitario,
+                        pd.subtotal,
+                        pr.Nombre_Prod as producto_nombre,
+                        pr.Cod_Barra as producto_codigo,
                         pr.Descripcion as producto_descripcion
-                     FROM pedidos_productos pp
-                     LEFT JOIN Productos pr ON pp.producto_id = pr.ID_Producto
-                     WHERE pp.pedido_id = ?
-                     ORDER BY pr.Nombre_Producto";
+                     FROM pedido_detalles pd
+                     LEFT JOIN Productos_POS pr ON pd.producto_id = pr.ID_Prod_POS
+                     WHERE pd.pedido_id = ?
+                     ORDER BY pr.Nombre_Prod";
     
     $stmt_productos = $conn->prepare($sql_productos);
     $stmt_productos->bind_param("i", $pedido_id);
@@ -100,7 +100,7 @@ try {
                         h.fecha_cambio,
                         h.comentario,
                         u.Nombre_Apellidos as usuario_nombre
-                     FROM historial_pedidos h
+                     FROM pedido_historial h
                      LEFT JOIN Usuarios_PV u ON h.usuario_id = u.Id_PvUser
                      WHERE h.pedido_id = ?
                      ORDER BY h.fecha_cambio DESC";

@@ -99,14 +99,14 @@ try {
     // Obtener productos de cada pedido
     foreach ($pedidos as &$pedido) {
         $sql_productos = "SELECT 
-                            pp.cantidad,
-                            pp.precio_unitario,
-                            pp.subtotal,
-                            pr.Nombre_Producto as producto_nombre,
-                            pr.Codigo_Producto as producto_codigo
-                         FROM pedidos_productos pp
-                         LEFT JOIN Productos pr ON pp.producto_id = pr.ID_Producto
-                         WHERE pp.pedido_id = ?";
+                            pd.cantidad_solicitada as cantidad,
+                            pd.precio_unitario,
+                            pd.subtotal,
+                            pr.Nombre_Prod as producto_nombre,
+                            pr.Cod_Barra as producto_codigo
+                         FROM pedido_detalles pd
+                         LEFT JOIN Productos_POS pr ON pd.producto_id = pr.ID_Prod_POS
+                         WHERE pd.pedido_id = ?";
         
         $stmt_productos = $conn->prepare($sql_productos);
         $stmt_productos->bind_param("i", $pedido['id']);
