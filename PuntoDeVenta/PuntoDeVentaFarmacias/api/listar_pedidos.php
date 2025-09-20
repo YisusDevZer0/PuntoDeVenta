@@ -29,8 +29,8 @@ try {
                 u.Nombre_Apellidos as usuario_nombre,
                 s.Nombre_Sucursal as sucursal_nombre
             FROM pedidos p
-            LEFT JOIN usuarios u ON p.usuario_id = u.Id_PvUser
-            LEFT JOIN sucursales s ON p.sucursal_id = s.Id_Sucursal
+            LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+            LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
             WHERE p.sucursal_id = ? 
             AND p.tipo_origen = 'farmacia'";
     

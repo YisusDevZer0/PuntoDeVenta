@@ -1142,12 +1142,22 @@ include "Controladores/db_connect.php";
                 formData.append('prioridad', prioridad);
                 
                 // Realizar guardado
+                console.log('Enviando pedido:', {
+                    productos: productosPedido,
+                    observaciones: observaciones,
+                    prioridad: prioridad
+                });
+                
                 fetch('api/guardar_pedido.php', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de guardar pedido:', response);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Datos de guardar pedido:', data);
                     if (data.success) {
                         alert(`Pedido guardado exitosamente\nFolio: ${data.folio}`);
                         $('#modalNuevoPedido').modal('hide');
@@ -1170,13 +1180,20 @@ include "Controladores/db_connect.php";
             
             // Funciones para cargar datos
             function cargarEstadisticas() {
+                console.log('Cargando estadísticas...');
                 fetch('api/estadisticas_pedidos.php')
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de estadísticas:', response);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Datos de estadísticas:', data);
                     if (data.success) {
                         document.getElementById('stats-pendientes').textContent = data.estadisticas.pendientes;
                         document.getElementById('stats-aprobados').textContent = data.estadisticas.aprobados;
                         document.getElementById('stats-proceso').textContent = data.estadisticas.en_proceso;
+                    } else {
+                        console.error('Error en estadísticas:', data.message);
                     }
                 })
                 .catch(error => {
@@ -1185,6 +1202,7 @@ include "Controladores/db_connect.php";
             }
             
             function cargarPedidos() {
+                console.log('Cargando pedidos...');
                 const formData = new FormData();
                 formData.append('estado', document.getElementById('filtro-estado').value);
                 formData.append('fecha_inicio', document.getElementById('filtro-fecha-inicio').value);
@@ -1195,8 +1213,12 @@ include "Controladores/db_connect.php";
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de pedidos:', response);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Datos de pedidos:', data);
                     if (data.success) {
                         mostrarPedidos(data.pedidos);
                     } else {
@@ -1257,8 +1279,18 @@ include "Controladores/db_connect.php";
             
             // Instalar tablas si no existen y cargar datos iniciales
             function inicializarSistema() {
-                // Primero instalar tablas si es necesario
-                fetch('api/instalar_tablas_pedidos.php')
+                // Primero verificar sesión
+                fetch('api/test_apis.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Verificación de sesión:', data);
+                    if (data.success) {
+                        // Luego instalar tablas si es necesario
+                        return fetch('api/instalar_tablas_pedidos.php');
+                    } else {
+                        throw new Error('Sesión no válida');
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     console.log('Instalación de tablas:', data);
@@ -1268,7 +1300,7 @@ include "Controladores/db_connect.php";
                     document.getElementById('loading-spinner').style.display = 'none';
                 })
                 .catch(error => {
-                    console.error('Error al instalar tablas:', error);
+                    console.error('Error al inicializar sistema:', error);
                     // Intentar cargar datos de todas formas
                     cargarEstadisticas();
                     cargarPedidos();
