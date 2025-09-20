@@ -20,9 +20,10 @@ class ProductosModule {
             console.log('Datos enviados:', { query: query });
             
             const formData = new FormData();
-            formData.append('query', query);
+            formData.append('accion', 'buscar_producto');
+            formData.append('q', query);
             
-            const response = await fetch('api/buscar_productos_simple.php', {
+            const response = await fetch('Controladores/PedidosController.php', {
                 method: 'POST',
                 body: formData
             });
@@ -30,10 +31,10 @@ class ProductosModule {
             const data = await response.json();
             console.log('Respuesta búsqueda:', data);
 
-            if (data.success) {
-                this.mostrarResultadosBusqueda(data.productos, modalId);
+            if (data.status === 'ok') {
+                this.mostrarResultadosBusqueda(data.data, modalId);
             } else {
-                this.mostrarError('Error al buscar productos: ' + (data.message || 'Error desconocido'));
+                this.mostrarError('Error al buscar productos: ' + (data.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en buscarProductos:', error);
@@ -220,14 +221,18 @@ class ProductosModule {
     // Cargar productos con stock bajo con paginación
     async cargarProductosStockBajo() {
         try {
-            const response = await fetch('api/productos_stock_bajo.php', {
-                method: 'POST'
+            const formData = new FormData();
+            formData.append('accion', 'productos_stock_bajo');
+            
+            const response = await fetch('Controladores/PedidosController.php', {
+                method: 'POST',
+                body: formData
             });
             
             const data = await response.json();
 
-            if (data.success) {
-                this.mostrarModalStockBajo(data.productos || []);
+            if (data.status === 'ok') {
+                this.mostrarModalStockBajo(data.data || []);
             } else {
                 this.mostrarError('Error al cargar productos con stock bajo');
             }

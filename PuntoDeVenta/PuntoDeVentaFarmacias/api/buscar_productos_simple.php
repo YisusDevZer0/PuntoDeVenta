@@ -20,8 +20,19 @@ try {
         exit();
     }
     
-    // Obtener sucursal
-    $sucursal = $_SESSION['VentasPos']['Fk_Sucursal'] ?? 1; // Default a 1 si no se encuentra
+    // Obtener información completa del usuario
+    $usuario_id = $_SESSION['VentasPos'];
+    $sql_usuario = "SELECT Fk_Sucursal FROM Usuarios_PV WHERE ID_Usuario = ?";
+    $stmt_usuario = $conn->prepare($sql_usuario);
+    $stmt_usuario->bind_param("i", $usuario_id);
+    $stmt_usuario->execute();
+    $result_usuario = $stmt_usuario->get_result();
+    
+    if ($row_usuario = $result_usuario->fetch_assoc()) {
+        $sucursal = $row_usuario['Fk_Sucursal'];
+    } else {
+        $sucursal = 1; // Default si no se encuentra
+    }
     
     // Buscar productos
     $sql = "SELECT 

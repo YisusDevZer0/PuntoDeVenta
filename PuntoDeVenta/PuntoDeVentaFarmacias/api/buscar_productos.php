@@ -32,14 +32,21 @@ try {
         exit();
     }
     
-    // Obtener la sucursal del usuario desde la sesión
-    $sucursal = $_SESSION['VentasPos']['Fk_Sucursal'] ?? null;
+    // Obtener información completa del usuario
+    $usuario_id = $_SESSION['VentasPos'];
+    $sql_usuario = "SELECT Fk_Sucursal FROM Usuarios_PV WHERE ID_Usuario = ?";
+    $stmt_usuario = $conn->prepare($sql_usuario);
+    $stmt_usuario->bind_param("i", $usuario_id);
+    $stmt_usuario->execute();
+    $result_usuario = $stmt_usuario->get_result();
     
-    if (!$sucursal) {
+    if ($row_usuario = $result_usuario->fetch_assoc()) {
+        $sucursal = $row_usuario['Fk_Sucursal'];
+    } else {
         echo json_encode([
             'success' => false, 
-            'message' => 'Sucursal no encontrada en la sesión',
-            'debug' => ['session' => $_SESSION]
+            'message' => 'Usuario no encontrado en la base de datos',
+            'debug' => ['usuario_id' => $usuario_id]
         ]);
         exit();
     }
