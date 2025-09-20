@@ -36,7 +36,7 @@ try {
             $filtros = [
                 'estado' => $_POST['estado'] ?? '',
                 'prioridad' => $_POST['prioridad'] ?? '',
-                'asignado_a' => $_POST['asignado_a'] ?? ''
+                'fecha' => $_POST['fecha'] ?? ''
             ];
             
             $result = $tareasController->getTareasAsignadas($filtros);
@@ -265,7 +265,7 @@ try {
             $filtros = [
                 'estado' => $_POST['estado'] ?? '',
                 'prioridad' => $_POST['prioridad'] ?? '',
-                'asignado_a' => $_POST['asignado_a'] ?? ''
+                'fecha' => $_POST['fecha'] ?? ''
             ];
             
             error_log("Filtros aplicados: " . json_encode($filtros));

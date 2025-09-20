@@ -48,6 +48,21 @@ class TareasController {
             $types .= "s";
         }
         
+        // Filtro de fecha
+        if (!empty($filtros['fecha'])) {
+            switch ($filtros['fecha']) {
+                case 'hoy':
+                    $sql .= " AND t.fecha_limite = CURDATE()";
+                    break;
+                case 'vencidas':
+                    $sql .= " AND t.fecha_limite < CURDATE() AND t.estado IN ('Por hacer', 'En progreso')";
+                    break;
+                case 'proximas':
+                    $sql .= " AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
+                    break;
+            }
+        }
+        
         $sql .= " ORDER BY 
                     CASE t.prioridad 
                         WHEN 'Alta' THEN 1 

@@ -259,15 +259,12 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="filtroAsignado">Asignado a:</label>
-                        <select id="filtroAsignado" class="form-control">
-                            <option value="">Todos</option>
-                            <?php
-                            $usuarios = $tareasController->getUsuariosDisponibles();
-                            while ($usuario = $usuarios->fetch_assoc()) {
-                                echo "<option value='" . $usuario['Id_PvUser'] . "'>" . $usuario['Nombre_Apellidos'] . "</option>";
-                            }
-                            ?>
+                        <label for="filtroFecha">Fecha Límite:</label>
+                        <select id="filtroFecha" class="form-control">
+                            <option value="">Todas</option>
+                            <option value="hoy">Hoy</option>
+                            <option value="vencidas">Vencidas</option>
+                            <option value="proximas">Próximas (3 días)</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -383,15 +380,9 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                         </div>
                         <div class="form-group">
                             <label for="asignado_a">Asignado a *</label>
-                            <select class="form-control" id="asignado_a" name="asignado_a" required>
-                                <option value="">Seleccionar usuario</option>
-                                <?php
-                                $usuarios = $tareasController->getUsuariosDisponibles();
-                                while ($usuario = $usuarios->fetch_assoc()) {
-                                    echo "<option value='" . $usuario['Id_PvUser'] . "'>" . $usuario['Nombre_Apellidos'] . "</option>";
-                                }
-                                ?>
-                            </select>
+                            <input type="text" class="form-control" id="asignado_a" name="asignado_a" value="<?php echo $row['Nombre_Apellidos']; ?>" readonly>
+                            <input type="hidden" id="asignado_a_id" name="asignado_a_id" value="<?php echo $userId; ?>">
+                            <small class="form-text text-muted">Las tareas se asignan automáticamente a tu usuario.</small>
                         </div>
                     </form>
                 </div>
@@ -493,7 +484,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
             filtrosActuales = {
                 estado: $('#filtroEstado').val(),
                 prioridad: $('#filtroPrioridad').val(),
-                asignado_a: $('#filtroAsignado').val()
+                fecha: $('#filtroFecha').val()
             };
             cargarTareas();
         }
@@ -501,7 +492,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         function limpiarFiltros() {
             $('#filtroEstado').val('');
             $('#filtroPrioridad').val('');
-            $('#filtroAsignado').val('');
+            $('#filtroFecha').val('');
             filtrosActuales = {};
             cargarTareas();
         }
