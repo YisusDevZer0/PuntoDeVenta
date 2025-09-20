@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Búsqueda</title>
+</head>
+<body>
+    <h1>Test de Búsqueda de Productos</h1>
+    <input type="text" id="query" placeholder="Buscar productos..." value="test">
+    <button onclick="buscar()">Buscar</button>
+    <div id="resultado"></div>
+
+    <script>
+        async function buscar() {
+            const query = document.getElementById('query').value;
+            const resultado = document.getElementById('resultado');
+            
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                
+                const response = await fetch('api/buscar_productos.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                resultado.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                resultado.innerHTML = '<p>Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

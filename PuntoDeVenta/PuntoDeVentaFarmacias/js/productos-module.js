@@ -19,9 +19,12 @@ class ProductosModule {
             console.log('Enviando petición a:', 'api/buscar_productos.php');
             console.log('Datos enviados:', { query: query });
             
-            const response = await fetch('api/buscar_productos.php', {
+            const formData = new FormData();
+            formData.append('query', query);
+            
+            const response = await fetch('api/buscar_productos_simple.php', {
                 method: 'POST',
-                body: new FormData().append('query', query)
+                body: formData
             });
             
             const data = await response.json();

@@ -11,40 +11,19 @@ if(!isset($_SESSION['VentasPos'])){
 }
 
 try {
-    // Obtener query de POST o GET
-    $query = '';
-    if (isset($_POST['query'])) {
-        $query = trim($_POST['query']);
-    } elseif (isset($_GET['query'])) {
-        $query = trim($_GET['query']);
-    }
+    // Obtener query
+    $query = $_POST['query'] ?? $_GET['query'] ?? '';
+    $query = trim($query);
     
     if (empty($query)) {
-        echo json_encode([
-            'success' => false, 
-            'message' => 'Término de búsqueda requerido',
-            'debug' => [
-                'POST' => $_POST,
-                'GET' => $_GET,
-                'query_received' => $query
-            ]
-        ]);
+        echo json_encode(['success' => false, 'message' => 'Término de búsqueda requerido']);
         exit();
     }
     
-    // Obtener la sucursal del usuario desde la sesión
-    $sucursal = $_SESSION['VentasPos']['Fk_Sucursal'] ?? null;
+    // Obtener sucursal
+    $sucursal = $_SESSION['VentasPos']['Fk_Sucursal'] ?? 1; // Default a 1 si no se encuentra
     
-    if (!$sucursal) {
-        echo json_encode([
-            'success' => false, 
-            'message' => 'Sucursal no encontrada en la sesión',
-            'debug' => ['session' => $_SESSION]
-        ]);
-        exit();
-    }
-    
-    // Buscar productos en la sucursal del usuario
+    // Buscar productos
     $sql = "SELECT 
                 s.ID_Prod_POS, 
                 s.Nombre_Prod, 
@@ -53,8 +32,7 @@ try {
                 s.Existencias_R,
                 s.Min_Existencia,
                 s.Max_Existencia,
-                p.Precio_Venta,
-                p.Precio_C
+                COALESCE(p.Precio_Venta, 0) as Precio_Venta
             FROM Stock_POS s
             LEFT JOIN Productos_POS p ON s.ID_Prod_POS = p.ID_Prod_POS
             WHERE s.Fk_sucursal = ? 
@@ -78,8 +56,7 @@ try {
             'precio' => floatval($row['Precio_Venta']),
             'existencias' => intval($row['Existencias_R']),
             'min_existencia' => intval($row['Min_Existencia']),
-            'max_existencia' => intval($row['Max_Existencia']),
-            'stock_status' => getStockStatus($row['Existencias_R'], $row['Min_Existencia'])
+            'max_existencia' => intval($row['Max_Existencia'])
         ];
     }
     
@@ -96,16 +73,5 @@ try {
         'success' => false,
         'message' => 'Error en la búsqueda: ' . $e->getMessage()
     ]);
-}
-
-// Función para determinar el estado del stock
-function getStockStatus($existencias, $minExistencia) {
-    if ($existencias <= 0) {
-        return 'agotado';
-    } elseif ($existencias < $minExistencia) {
-        return 'bajo';
-    } else {
-        return 'normal';
-    }
 }
 ?>
