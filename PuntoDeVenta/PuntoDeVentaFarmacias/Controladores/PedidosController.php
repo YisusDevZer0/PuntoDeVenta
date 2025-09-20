@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $stmt = $conn->prepare($sql);
         $like = "%$q%";
-        $stmt->bind_param("ssss", $sucursal_id, $like, $like, $like);
+        $stmt->bind_param("isss", $sucursal_id, $like, $like, $like);
         $stmt->execute();
         $res = $stmt->get_result();
         $productos = [];
