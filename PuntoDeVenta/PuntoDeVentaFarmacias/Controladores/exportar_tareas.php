@@ -3,6 +3,11 @@ include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 include_once "TareasController.php";
 
+// Verificar que las variables del usuario estén disponibles
+if (!isset($row) || !isset($row['Id_PvUser']) || !isset($row['Fk_Sucursal'])) {
+    die('Error: Datos de usuario no disponibles. Debe iniciar sesión.');
+}
+
 // Obtener datos del usuario actual
 $userId = $row['Id_PvUser'];
 $sucursalId = $row['Fk_Sucursal'];

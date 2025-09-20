@@ -4,6 +4,21 @@ include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 include_once "TareasController.php";
 
+// Verificar que las variables del usuario estén disponibles
+if (!isset($row) || !isset($row['Id_PvUser']) || !isset($row['Fk_Sucursal'])) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: Datos de usuario no disponibles. Debe iniciar sesión.',
+        'debug' => [
+            'row_isset' => isset($row),
+            'user_id_isset' => isset($row['Id_PvUser']),
+            'sucursal_id_isset' => isset($row['Fk_Sucursal'])
+        ]
+    ]);
+    exit;
+}
+
 // Obtener datos del usuario actual
 $userId = $row['Id_PvUser'];
 $sucursalId = $row['Fk_Sucursal'];

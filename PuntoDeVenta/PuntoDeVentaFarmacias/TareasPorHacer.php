@@ -2,7 +2,7 @@
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/TareasController.php";
 
-$tareasController = new TareasController($conn, $userId);
+$tareasController = new TareasController($conn, $userId, $sucursalId);
 ?>
 <!DOCTYPE html>
 <html lang="es">
