@@ -903,4 +903,4 @@ include "Controladores/db_connect.php";
     <script src="js/productos-module.js"></script>
     <script src="js/pedidos-modern.js"></script>
 </body>
-</html>
+</html> 
