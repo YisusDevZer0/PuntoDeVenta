@@ -149,17 +149,18 @@ $(document).ready(function () {
 
   $("#TraspasosNotasALMomento").validate({
       rules: {
-          // Validación básica - verificar que haya al menos un artículo en la tabla
+          codbarras: {
+              required: true,
+          },
       },
       messages: {
-          // Mensajes de validación
+          codbarras: {
+              required: "<i class='fas fa-exclamation-triangle' style='color:red'></i> Dato requerido",
+          },
       },
       submitHandler: function () {
-          console.log("Validación del formulario iniciada");
-          
           // Verificar que haya al menos un artículo en la tabla
           if ($('#tablaAgregarArticulos tbody tr').length === 0) {
-              console.log("No hay artículos en la tabla");
               Swal.fire({
                   icon: 'warning',
                   title: 'Sin artículos',
@@ -171,7 +172,6 @@ $(document).ready(function () {
           // Verificar que se haya seleccionado el tipo de movimiento
           const tipoMovimiento = $('#selTipoPago').val();
           if (!tipoMovimiento || tipoMovimiento === '0') {
-              console.log("Tipo de movimiento no seleccionado");
               Swal.fire({
                   icon: 'warning',
                   title: 'Tipo de movimiento requerido',
@@ -183,7 +183,6 @@ $(document).ready(function () {
           // Verificar que se haya seleccionado la sucursal destino
           const sucursalDestino = $('#sucursaldestinoelegida').val();
           if (!sucursalDestino || sucursalDestino === '0') {
-              console.log("Sucursal destino no seleccionada");
               Swal.fire({
                   icon: 'warning',
                   title: 'Sucursal destino requerida',
@@ -192,7 +191,6 @@ $(document).ready(function () {
               return false;
           }
           
-          console.log("Validación exitosa, generando vista previa...");
           generarVistaPreviaYConfirmar();
       }
   });

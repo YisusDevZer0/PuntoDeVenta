@@ -269,7 +269,7 @@ $fechaActual = date('Y-m-d H:i:s');
                           margin-bottom: 5px !important;
                         }
                       </style>
-                      <form action="javascript:void(0)" method="post" id="TraspasosNotasALMomento">
+                      <form action="javascript:void(0)" target="print_popup" method="post" id="TraspasosNotasALMomento">
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
