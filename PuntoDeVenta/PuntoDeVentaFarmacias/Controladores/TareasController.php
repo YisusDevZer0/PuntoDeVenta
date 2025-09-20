@@ -239,5 +239,107 @@ class TareasController {
         
         return $stmt->get_result()->fetch_assoc();
     }
+    
+    /**
+     * Obtener todas las tareas (para administradores o vista general)
+     */
+    public function getTareas($filtros = []) {
+        return $this->getTareasAsignadas($filtros);
+    }
+    
+    /**
+     * Crear una nueva tarea
+     */
+    public function crearTarea($datos) {
+        $sql = "INSERT INTO tareas (titulo, descripcion, prioridad, fecha_limite, estado, asignado_a, creado_por, fecha_creacion) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssssss", 
+            $datos['titulo'],
+            $datos['descripcion'],
+            $datos['prioridad'],
+            $datos['fecha_limite'],
+            $datos['estado'],
+            $datos['asignado_a'],
+            $this->userId
+        );
+        
+        if ($stmt->execute()) {
+            return $this->conn->insert_id;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Actualizar una tarea existente
+     */
+    public function actualizarTarea($id, $datos) {
+        // Verificar que la tarea pertenece al usuario actual
+        if (!$this->verificarPropiedadTarea($id)) {
+            return false;
+        }
+        
+        $sql = "UPDATE tareas SET 
+                    titulo = ?, 
+                    descripcion = ?, 
+                    prioridad = ?, 
+                    fecha_limite = ?, 
+                    estado = ?, 
+                    asignado_a = ?,
+                    fecha_actualizacion = NOW()
+                WHERE id = ? AND asignado_a = ?";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssssssii", 
+            $datos['titulo'],
+            $datos['descripcion'],
+            $datos['prioridad'],
+            $datos['fecha_limite'],
+            $datos['estado'],
+            $datos['asignado_a'],
+            $id,
+            $this->userId
+        );
+        
+        return $stmt->execute();
+    }
+    
+    /**
+     * Eliminar una tarea
+     */
+    public function eliminarTarea($id) {
+        // Verificar que la tarea pertenece al usuario actual
+        if (!$this->verificarPropiedadTarea($id)) {
+            return ['success' => false, 'message' => 'No tienes permisos para eliminar esta tarea'];
+        }
+        
+        $sql = "DELETE FROM tareas WHERE id = ? AND asignado_a = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $id, $this->userId);
+        
+        if ($stmt->execute()) {
+            return ['success' => true, 'message' => 'Tarea eliminada correctamente'];
+        } else {
+            return ['success' => false, 'message' => 'Error al eliminar la tarea'];
+        }
+    }
+    
+    /**
+     * Obtener usuarios disponibles para asignar tareas
+     */
+    public function getUsuariosDisponibles() {
+        $sql = "SELECT Id_PvUser, Nombre_Apellidos 
+                FROM Usuarios_PV 
+                WHERE Estatus = 'Activo' AND Fk_Sucursal = ?
+                ORDER BY Nombre_Apellidos";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $this->sucursalId);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
 }
 ?>

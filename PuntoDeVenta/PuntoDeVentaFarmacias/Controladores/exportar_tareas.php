@@ -3,7 +3,11 @@ include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 include_once "TareasController.php";
 
-$tareasController = new TareasController($conn, $userId);
+// Obtener datos del usuario actual
+$userId = $row['Id_PvUser'];
+$sucursalId = $row['Fk_Sucursal'];
+
+$tareasController = new TareasController($conn, $userId, $sucursalId);
 
 // Obtener filtros de la URL
 $filtros = [];
@@ -12,7 +16,7 @@ if (isset($_GET['filtros'])) {
 }
 
 // Obtener las tareas con los filtros aplicados
-$result = $tareasController->getTareas($filtros);
+$result = $tareasController->getTareasAsignadas($filtros);
 
 // Configurar headers para descarga
 $filename = 'tareas_' . date('Y-m-d_H-i-s') . '.csv';
