@@ -343,8 +343,12 @@ class SistemaPedidos {
                             </button>
                             ${pedido.estado === 'aprobado' ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
-                                        data-toggle="tooltip" title="Descargar Excel">
+                                        data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm descargar-resumen-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Descargar Resumen">
+                                    <i class="fas fa-file-alt"></i>
                                 </button>
                             ` : ''}
                             ${pedido.estado === 'pendiente' ? `
@@ -411,6 +415,12 @@ class SistemaPedidos {
         $('.descargar-excel-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.descargarExcelPedido(pedidoId);
+        });
+
+        // Descargar resumen individual
+        $('.descargar-resumen-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.descargarResumenPedido(pedidoId);
         });
     }
 
@@ -527,6 +537,53 @@ class SistemaPedidos {
         });
     }
 
+    // Función para descargar resumen de un pedido específico con AJAX
+    descargarResumenPedido(pedidoId) {
+        const btnDescargar = $(`.descargar-resumen-pedido[data-pedido-id="${pedidoId}"]`);
+        
+        // Mostrar estado de descarga
+        btnDescargar.html('<i class="fas fa-spinner fa-spin"></i>');
+        btnDescargar.prop('disabled', true);
+        
+        // Usar AJAX para descargar
+        $.ajax({
+            url: 'api/exportar_pedido_resumen.php',
+            method: 'POST',
+            data: { pedido_id: pedidoId },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: (data, status, xhr) => {
+                // Crear blob y descargar
+                const blob = new Blob([data], { 
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                });
+                
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `resumen_pedido_${pedidoId}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                
+                // Mostrar mensaje de éxito
+                this.mostrarExito('Resumen del pedido generado correctamente');
+            },
+            error: (xhr, status, error) => {
+                console.error('Error al descargar resumen del pedido:', error);
+                this.mostrarError('Error al generar el resumen del pedido: ' + error);
+            },
+            complete: () => {
+                // Restaurar botón
+                btnDescargar.html('<i class="fas fa-file-alt"></i>');
+                btnDescargar.prop('disabled', false);
+            }
+        });
+    }
+
     // Funciones auxiliares (simplificadas para el ejemplo)
     mostrarLoading(mostrar) {
         if (mostrar) {
@@ -557,9 +614,130 @@ class SistemaPedidos {
         });
     }
 
-    // Funciones placeholder para compatibilidad
+    // Función para ver detalle del pedido
     async verDetallePedido(pedidoId) {
-        console.log('Ver detalle pedido:', pedidoId);
+        try {
+            const response = await $.get('api/detalles_pedido.php', { id: pedidoId });
+            
+            if (response.success) {
+                this.mostrarModalDetalle(response.data);
+            } else {
+                this.mostrarError('Error al cargar detalles: ' + response.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar detalles:', error);
+            this.mostrarError('Error de conexión al cargar detalles');
+        }
+    }
+
+    // Mostrar modal con detalles del pedido
+    mostrarModalDetalle(datos) {
+        const modal = $('#modalDetallePedido');
+        const body = $('#detallePedidoBody');
+        
+        let html = `
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Folio:</strong> ${datos.pedido.folio}
+                </div>
+                <div class="col-md-6">
+                    <strong>Estado:</strong> <span class="badge bg-${this.getEstadoColor(datos.pedido.estado)}">${datos.pedido.estado}</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Fecha:</strong> ${new Date(datos.pedido.fecha_creacion).toLocaleString()}
+                </div>
+                <div class="col-md-6">
+                    <strong>Prioridad:</strong> <span class="badge bg-${this.getPrioridadColor(datos.pedido.prioridad)}">${datos.pedido.prioridad}</span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Solicitante:</strong> ${datos.pedido.solicitante}
+                </div>
+                <div class="col-md-6">
+                    <strong>Sucursal:</strong> ${datos.pedido.Nombre_Sucursal}
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Total:</strong> $${parseFloat(datos.pedido.total_estimado).toFixed(2)}
+                </div>
+            </div>
+        `;
+        
+        if (datos.pedido.observaciones) {
+            html += `
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <strong>Observaciones:</strong><br>
+                        <p class="text-muted">${datos.pedido.observaciones}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `
+            <h6 class="mt-4 mb-3">Productos del Pedido</h6>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Código de Barras</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        datos.productos.forEach(producto => {
+            html += `
+                <tr>
+                    <td><code>${producto.codigo || 'N/A'}</code></td>
+                    <td>${producto.nombre || 'Encargo'}</td>
+                    <td>${producto.cantidad}</td>
+                    <td>$${parseFloat(producto.precio).toFixed(2)}</td>
+                    <td>$${parseFloat(producto.subtotal).toFixed(2)}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        body.html(html);
+        modal.modal('show');
+    }
+
+    // Obtener color del estado
+    getEstadoColor(estado) {
+        const colores = {
+            'pendiente': 'warning',
+            'aprobado': 'success',
+            'rechazado': 'danger',
+            'en_proceso': 'info',
+            'completado': 'primary',
+            'cancelado': 'secondary'
+        };
+        return colores[estado] || 'secondary';
+    }
+
+    // Obtener color de prioridad
+    getPrioridadColor(prioridad) {
+        const colores = {
+            'baja': 'success',
+            'normal': 'primary',
+            'alta': 'warning',
+            'urgente': 'danger'
+        };
+        return colores[prioridad] || 'secondary';
     }
 
     async confirmarCambiarEstado(pedidoId, estado) {

@@ -78,7 +78,8 @@ try {
                         pd.subtotal,
                         pr.Nombre_Prod as producto_nombre,
                         pr.Cod_Barra as producto_codigo,
-                        pr.Componente_Activo as producto_descripcion
+                        pr.Componente_Activo as producto_descripcion,
+                        pr.Clave_adicional as clave_adicional
                      FROM pedido_detalles pd
                      LEFT JOIN Productos_POS pr ON pd.producto_id = pr.ID_Prod_POS
                      WHERE pd.pedido_id = ?
@@ -193,18 +194,19 @@ try {
     
     // Productos del pedido
     $sheet->setCellValue('A' . $row, 'PRODUCTOS DEL PEDIDO');
-    $sheet->mergeCells('A' . $row . ':F' . $row);
-    $sheet->getStyle('A' . $row . ':F' . $row)->applyFromArray($headerStyle);
+    $sheet->mergeCells('A' . $row . ':G' . $row);
+    $sheet->getStyle('A' . $row . ':G' . $row)->applyFromArray($headerStyle);
     $row++;
     
     // Encabezados de productos
     $productos_headers = [
-        'A' . $row => 'Código',
-        'B' . $row => 'Producto',
-        'C' . $row => 'Descripción',
-        'D' . $row => 'Cantidad',
-        'E' . $row => 'Precio Unitario',
-        'F' . $row => 'Subtotal'
+        'A' . $row => 'Código de Barras',
+        'B' . $row => 'Clave Adicional',
+        'C' . $row => 'Producto',
+        'D' . $row => 'Descripción',
+        'E' . $row => 'Cantidad',
+        'F' . $row => 'Precio Unitario',
+        'G' . $row => 'Subtotal'
     ];
     
     foreach ($productos_headers as $cell => $value) {
@@ -216,24 +218,25 @@ try {
     // Datos de productos
     $total_general = 0;
     foreach ($productos as $producto) {
-        $sheet->setCellValue('A' . $row, $producto['producto_codigo']);
-        $sheet->setCellValue('B' . $row, $producto['producto_nombre']);
-        $sheet->setCellValue('C' . $row, $producto['producto_descripcion']);
-        $sheet->setCellValue('D' . $row, $producto['cantidad']);
-        $sheet->setCellValue('E' . $row, '$' . number_format($producto['precio_unitario'], 2));
-        $sheet->setCellValue('F' . $row, '$' . number_format($producto['subtotal'], 2));
+        $sheet->setCellValue('A' . $row, $producto['producto_codigo'] ?: 'N/A');
+        $sheet->setCellValue('B' . $row, $producto['clave_adicional'] ?: 'N/A');
+        $sheet->setCellValue('C' . $row, $producto['producto_nombre']);
+        $sheet->setCellValue('D' . $row, $producto['producto_descripcion']);
+        $sheet->setCellValue('E' . $row, $producto['cantidad']);
+        $sheet->setCellValue('F' . $row, '$' . number_format($producto['precio_unitario'], 2));
+        $sheet->setCellValue('G' . $row, '$' . number_format($producto['subtotal'], 2));
         
-        $sheet->getStyle('A' . $row . ':F' . $row)->applyFromArray($dataStyle);
+        $sheet->getStyle('A' . $row . ':G' . $row)->applyFromArray($dataStyle);
         $total_general += $producto['subtotal'];
         $row++;
     }
     
     // Total general
     $row++;
-    $sheet->setCellValue('E' . $row, 'TOTAL:');
-    $sheet->getStyle('E' . $row)->applyFromArray($labelStyle);
-    $sheet->setCellValue('F' . $row, '$' . number_format($total_general, 2));
+    $sheet->setCellValue('F' . $row, 'TOTAL:');
     $sheet->getStyle('F' . $row)->applyFromArray($labelStyle);
+    $sheet->setCellValue('G' . $row, '$' . number_format($total_general, 2));
+    $sheet->getStyle('G' . $row)->applyFromArray($labelStyle);
     
     $row += 2;
     
