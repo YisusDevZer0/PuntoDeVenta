@@ -82,8 +82,19 @@ try {
     $sql .= " ORDER BY p.fecha_creacion DESC";
     
     $stmt = $conn->prepare($sql);
-    $stmt->execute($params);
-    $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Bind parameters for mysqli
+    if (!empty($params)) {
+        $types = str_repeat('s', count($params));
+        $stmt->bind_param($types, ...$params);
+    }
+    
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $pedidos = [];
+    while ($row = $result->fetch_assoc()) {
+        $pedidos[] = $row;
+    }
     
     // Obtener productos de cada pedido
     foreach ($pedidos as &$pedido) {

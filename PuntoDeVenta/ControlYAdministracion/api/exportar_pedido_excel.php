@@ -57,8 +57,10 @@ try {
                     WHERE p.id = ?";
     
     $stmt_pedido = $conn->prepare($sql_pedido);
-    $stmt_pedido->execute([$pedido_id]);
-    $pedido = $stmt_pedido->fetch(PDO::FETCH_ASSOC);
+    $stmt_pedido->bind_param("i", $pedido_id);
+    $stmt_pedido->execute();
+    $result_pedido = $stmt_pedido->get_result();
+    $pedido = $result_pedido->fetch_assoc();
     
     if (!$pedido) {
         http_response_code(404);
@@ -80,8 +82,13 @@ try {
                      ORDER BY pr.Nombre_Producto";
     
     $stmt_productos = $conn->prepare($sql_productos);
-    $stmt_productos->execute([$pedido_id]);
-    $productos = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
+    $stmt_productos->bind_param("i", $pedido_id);
+    $stmt_productos->execute();
+    $result_productos = $stmt_productos->get_result();
+    $productos = [];
+    while ($row = $result_productos->fetch_assoc()) {
+        $productos[] = $row;
+    }
     
     // Obtener historial de cambios
     $sql_historial = "SELECT 
@@ -89,15 +96,20 @@ try {
                         h.estado_nuevo,
                         h.fecha_cambio,
                         h.comentario,
-                        u.nombre as usuario_nombre
+                        u.Nombre_Apellidos as usuario_nombre
                      FROM historial_pedidos h
-                     LEFT JOIN usuarios u ON h.usuario_id = u.id
+                     LEFT JOIN Usuarios_PV u ON h.usuario_id = u.Id_PvUser
                      WHERE h.pedido_id = ?
                      ORDER BY h.fecha_cambio DESC";
     
     $stmt_historial = $conn->prepare($sql_historial);
-    $stmt_historial->execute([$pedido_id]);
-    $historial = $stmt_historial->fetchAll(PDO::FETCH_ASSOC);
+    $stmt_historial->bind_param("i", $pedido_id);
+    $stmt_historial->execute();
+    $result_historial = $stmt_historial->get_result();
+    $historial = [];
+    while ($row = $result_historial->fetch_assoc()) {
+        $historial[] = $row;
+    }
     
     // Generar archivo Excel
     $spreadsheet = new Spreadsheet();
