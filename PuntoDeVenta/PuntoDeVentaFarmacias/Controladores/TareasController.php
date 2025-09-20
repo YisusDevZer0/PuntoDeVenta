@@ -239,11 +239,10 @@ class TareasController {
     private function verificarPropiedadTarea($tareaId) {
         $sql = "SELECT COUNT(*) as count 
                 FROM Tareas t
-                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
-                WHERE t.id = ? AND t.asignado_a = ? AND u.Fk_Sucursal = ?";
+                WHERE t.id = ? AND (t.asignado_a = ? OR t.creado_por = ?)";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $tareaId, $this->userId, $this->sucursalId);
+        $stmt->bind_param("iii", $tareaId, $this->userId, $this->userId);
         $stmt->execute();
         
         $result = $stmt->get_result()->fetch_assoc();
@@ -301,11 +300,10 @@ class TareasController {
                     SUM(CASE WHEN estado = 'Cancelada' THEN 1 ELSE 0 END) as canceladas,
                     SUM(CASE WHEN fecha_limite < CURDATE() AND estado IN ('Por hacer', 'En progreso') THEN 1 ELSE 0 END) as vencidas
                 FROM Tareas t
-                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
-                WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?";
+                WHERE (t.asignado_a = ? OR t.creado_por = ?)";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->bind_param("ii", $this->userId, $this->userId);
         $stmt->execute();
         
         return $stmt->get_result()->fetch_assoc();
