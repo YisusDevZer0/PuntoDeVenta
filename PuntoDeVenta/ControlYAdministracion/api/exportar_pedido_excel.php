@@ -47,11 +47,11 @@ try {
                         p.total_estimado,
                         p.observaciones,
                         p.prioridad,
-                        u.nombre as usuario_nombre,
-                        s.nombre as sucursal_nombre
+                        u.Nombre_Apellidos as usuario_nombre,
+                        s.Nombre_Sucursal as sucursal_nombre
                     FROM pedidos p
-                    LEFT JOIN usuarios u ON p.usuario_id = u.id
-                    LEFT JOIN sucursales s ON p.sucursal_id = s.id
+                    LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+                    LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
                     WHERE p.id = ?";
     
     $stmt_pedido = $conn->prepare($sql_pedido);
@@ -69,13 +69,13 @@ try {
                         pp.cantidad,
                         pp.precio_unitario,
                         pp.subtotal,
-                        pr.nombre as producto_nombre,
-                        pr.codigo as producto_codigo,
-                        pr.descripcion as producto_descripcion
+                        pr.Nombre_Producto as producto_nombre,
+                        pr.Codigo_Producto as producto_codigo,
+                        pr.Descripcion as producto_descripcion
                      FROM pedidos_productos pp
-                     LEFT JOIN productos pr ON pp.producto_id = pr.id
+                     LEFT JOIN Productos pr ON pp.producto_id = pr.ID_Producto
                      WHERE pp.pedido_id = ?
-                     ORDER BY pr.nombre";
+                     ORDER BY pr.Nombre_Producto";
     
     $stmt_productos = $conn->prepare($sql_productos);
     $stmt_productos->execute([$pedido_id]);

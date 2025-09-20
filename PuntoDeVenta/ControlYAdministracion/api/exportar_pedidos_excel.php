@@ -44,11 +44,11 @@ try {
                 p.total_estimado,
                 p.observaciones,
                 p.prioridad,
-                u.nombre as usuario_nombre,
-                s.nombre as sucursal_nombre
+                u.Nombre_Apellidos as usuario_nombre,
+                s.Nombre_Sucursal as sucursal_nombre
             FROM pedidos p
-            LEFT JOIN usuarios u ON p.usuario_id = u.id
-            LEFT JOIN sucursales s ON p.sucursal_id = s.id
+            LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+            LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
             WHERE 1=1";
     
     $params = [];
