@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ORDER BY (s.Min_Existencia - s.Existencias_R) DESC";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $sucursal_id);
+        $stmt->bind_param("i", $sucursal_id);
         $stmt->execute();
         $res = $stmt->get_result();
         $productos = [];
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $stmt = $conn->prepare($sql);
         $like = "%$busqueda%";
-        $stmt->bind_param("sssss", $sucursal_id, $sucursal_id, $like, $like, $like);
+        $stmt->bind_param("iisss", $sucursal_id, $sucursal_id, $like, $like, $like);
         $stmt->execute();
         $res = $stmt->get_result();
         $encargos = [];
