@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Búsqueda Directa</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Test de Búsqueda de Productos</h1>
+    <input type="text" id="busqueda" placeholder="Buscar productos...">
+    <button onclick="buscar()">Buscar</button>
+    <div id="resultados"></div>
+
+    <script>
+    function buscar() {
+        const query = document.getElementById('busqueda').value;
+        
+        console.log('Buscando:', query);
+        console.log('URL:', 'Controladores/PedidosController.php');
+        
+        $.post('Controladores/PedidosController.php', {
+            accion: 'buscar_producto',
+            q: query
+        }).done(function(response) {
+            console.log('Respuesta:', response);
+            document.getElementById('resultados').innerHTML = '<pre>' + JSON.stringify(response, null, 2) + '</pre>';
+        }).fail(function(xhr, status, error) {
+            console.error('Error:', error);
+            document.getElementById('resultados').innerHTML = '<p style="color: red;">Error: ' + error + '</p>';
+        });
+    }
+    </script>
+</body>
+</html>
