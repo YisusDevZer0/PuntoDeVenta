@@ -20,8 +20,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-// Verificar que el usuario esté autenticado
-if (!isset($_SESSION['usuario_id'])) {
+// Verificar que el usuario esté autenticado (usando la misma validación que ControladorUsuario.php)
+if (!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])) {
     http_response_code(401);
     echo json_encode(['error' => 'No autorizado']);
     exit;
