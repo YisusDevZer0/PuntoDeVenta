@@ -100,9 +100,8 @@ include "Controladores/db_connect.php";
         }
         
         .pedido-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            border-left-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .estado-badge {
@@ -1220,6 +1219,8 @@ include "Controladores/db_connect.php";
                 .then(data => {
                     console.log('Datos de pedidos:', data);
                     if (data.success) {
+                        // Guardar pedidos en variable global para uso en verDetallePedido
+                        window.pedidosActuales = data.pedidos;
                         mostrarPedidos(data.pedidos);
                     } else {
                         console.error('Error al cargar pedidos:', data.message);
@@ -1246,17 +1247,33 @@ include "Controladores/db_connect.php";
                     const estadoClass = `estado-${pedido.estado}`;
                     const prioridadClass = `prioridad-${pedido.prioridad}`;
                     
+                    // Formatear fecha
+                    const fecha = new Date(pedido.fecha_creacion);
+                    const fechaFormateada = fecha.toLocaleDateString('es-ES');
+                    const tiempoTranscurrido = calcularTiempoTranscurrido(fecha);
+                    
                     html += `
                         <div class="pedido-item ${prioridadClass}" onclick="verDetallePedido(${pedido.id})">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h6 class="mb-1">${pedido.folio}</h6>
-                                    <small class="text-muted">${pedido.fecha_creacion} | ${pedido.usuario_nombre}</small>
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <h6 class="mb-1 fw-bold">${pedido.folio}</h6>
+                                    <small class="text-muted">${fechaFormateada} | ${tiempoTranscurrido}</small>
                                 </div>
-                                <div class="text-end">
+                                <div class="col-md-2">
                                     <span class="estado-badge ${estadoClass}">${pedido.estado}</span>
                                     <br>
-                                    <small class="text-muted">$${pedido.total_estimado.toFixed(2)}</small>
+                                    <span class="prioridad-badge ${prioridadClass}">${pedido.prioridad}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted">${pedido.usuario_nombre}</small>
+                                </div>
+                                <div class="col-md-2">
+                                    <small class="text-muted">Productos: <strong>0</strong></small><br>
+                                    <small class="text-muted">Unidades: <strong>0</strong></small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <h6 class="mb-0 text-success">$${pedido.total_estimado.toFixed(2)}</h6>
+                                    <small class="text-muted">${pedido.sucursal_nombre || 'Farmacia'}</small>
                                 </div>
                             </div>
                         </div>
@@ -1266,10 +1283,53 @@ include "Controladores/db_connect.php";
                 container.innerHTML = html;
             }
             
+            function calcularTiempoTranscurrido(fecha) {
+                const ahora = new Date();
+                const diffMs = ahora - fecha;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                
+                if (diffDays > 0) {
+                    return `${diffDays} día(s)`;
+                } else if (diffHours > 0) {
+                    return `${diffHours} hora(s)`;
+                } else if (diffMins > 0) {
+                    return `${diffMins} minuto(s)`;
+                } else {
+                    return 'Recién creado';
+                }
+            }
+            
             function verDetallePedido(pedidoId) {
-                // Implementar modal de detalle del pedido
                 console.log('Ver detalle del pedido:', pedidoId);
-                $('#modalDetallePedido').modal('show');
+                
+                // Buscar el pedido en la lista actual
+                const pedidos = window.pedidosActuales || [];
+                const pedido = pedidos.find(p => p.id == pedidoId);
+                
+                if (pedido) {
+                    // Llenar el modal con los datos del pedido
+                    document.getElementById('detalle-pedido-folio').textContent = pedido.folio;
+                    document.getElementById('detalle-pedido-estado').innerHTML = `<span class="estado-badge estado-${pedido.estado}">${pedido.estado}</span>`;
+                    document.getElementById('detalle-pedido-fecha').textContent = new Date(pedido.fecha_creacion).toLocaleString('es-ES');
+                    document.getElementById('detalle-pedido-usuario').textContent = pedido.usuario_nombre;
+                    document.getElementById('detalle-pedido-sucursal').textContent = pedido.sucursal_nombre || 'Farmacia';
+                    document.getElementById('detalle-pedido-total').textContent = `$${pedido.total_estimado.toFixed(2)}`;
+                    document.getElementById('detalle-pedido-observaciones').textContent = pedido.observaciones || 'Sin observaciones';
+                    
+                    // Limpiar tabla de productos
+                    document.getElementById('detalle-productos-tbody').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Cargando productos...</td></tr>';
+                    
+                    // Mostrar el modal
+                    $('#modalDetallePedido').modal('show');
+                    
+                    // Aquí podrías hacer una llamada AJAX para obtener los detalles completos del pedido
+                    // Por ahora solo mostramos la información básica
+                    document.getElementById('detalle-productos-tbody').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Detalles de productos no disponibles en modo consulta</td></tr>';
+                } else {
+                    alert('No se pudo encontrar el pedido seleccionado');
+                }
             }
             
             // Hacer funciones globales para los botones inline
