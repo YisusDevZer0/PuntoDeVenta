@@ -262,16 +262,14 @@ class TareasController {
                     t.estado,
                     DATEDIFF(CURDATE(), t.fecha_limite) as dias_vencida
                 FROM Tareas t
-                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
-                WHERE t.asignado_a = ? 
-                AND u.Fk_Sucursal = ?
+                WHERE (t.asignado_a = ? OR t.creado_por = ?)
                 AND t.estado IN ('Por hacer', 'En progreso')
                 AND t.fecha_limite IS NOT NULL
                 AND t.fecha_limite < CURDATE()
                 ORDER BY t.fecha_limite ASC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->bind_param("ii", $this->userId, $this->userId);
         $stmt->execute();
         
         return $stmt->get_result();
