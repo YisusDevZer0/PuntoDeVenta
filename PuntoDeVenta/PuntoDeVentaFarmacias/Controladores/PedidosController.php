@@ -7,14 +7,16 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificar que el usuario esté autenticado usando el sistema de farmacia
-if (!isset($_SESSION['VentasPos'])) {
+// Verificar que el usuario esté autenticado usando el sistema existente
+if (!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])) {
     echo json_encode(['status' => 'error', 'msg' => 'Usuario no autenticado']);
     exit;
 }
 
+// Determinar el ID de usuario según la sesión activa
+$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+
 // Obtener datos del usuario
-$userId = $_SESSION['VentasPos'];
 $sql = "SELECT
     Usuarios_PV.Id_PvUser,
     Usuarios_PV.Nombre_Apellidos,
@@ -65,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $stmt = $conn->prepare($sql);
         $like = "%$q%";
-        $stmt->bind_param("isss", $sucursal_id, $like, $like, $like);
+        $stmt->bind_param("ssss", $sucursal_id, $like, $like, $like);
         $stmt->execute();
         $res = $stmt->get_result();
         $productos = [];
@@ -96,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ORDER BY (s.Min_Existencia - s.Existencias_R) DESC";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $sucursal_id);
+        $stmt->bind_param("s", $sucursal_id);
         $stmt->execute();
         $res = $stmt->get_result();
         $productos = [];
@@ -138,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $stmt = $conn->prepare($sql);
         $like = "%$busqueda%";
-        $stmt->bind_param("iisss", $sucursal_id, $sucursal_id, $like, $like, $like);
+        $stmt->bind_param("sssss", $sucursal_id, $sucursal_id, $like, $like, $like);
         $stmt->execute();
         $res = $stmt->get_result();
         $encargos = [];
@@ -174,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $prioridad = $_POST['prioridad'] ?? 'normal';
             
             $sql = "INSERT INTO pedidos (folio, sucursal_id, usuario_id, observaciones, prioridad, tipo_origen) 
-                    VALUES (?, ?, ?, ?, ?, 'farmacia')";
+                    VALUES (?, ?, ?, ?, ?, 'admin')";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("siiss", $folio, $sucursal_id, $usuario_id, $observaciones, $prioridad);
             $stmt->execute();
@@ -516,4 +518,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 echo json_encode(['status' => 'error', 'msg' => 'Acción no válida']);
-?>
+?> 

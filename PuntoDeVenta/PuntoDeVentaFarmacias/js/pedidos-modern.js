@@ -173,7 +173,7 @@ class SistemaPedidos {
             // Ctrl/Cmd + N para nuevo pedido
             if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
                 e.preventDefault();
-                this.abrirModalNuevoPedido();
+                this.abrirModalSimple();
             }
             
             // Ctrl/Cmd + R para refrescar
@@ -249,28 +249,23 @@ class SistemaPedidos {
         try {
             this.mostrarLoading(true);
             
-            const formData = new FormData();
-            formData.append('estado', $('#filtro-estado').val());
-            formData.append('fecha_inicio', $('#filtro-fecha-inicio').val());
-            formData.append('fecha_fin', $('#filtro-fecha-fin').val());
-            formData.append('busqueda', $('#busqueda').val());
-            
-            const response = await fetch('api/listar_pedidos.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'listar_pedidos',
+                busqueda: $('#busqueda').val(),
+                filtro_estado: $('#filtro-estado').val(),
+                filtro_fecha_inicio: $('#filtro-fecha-inicio').val(),
+                filtro_fecha_fin: $('#filtro-fecha-fin').val()
             });
-            
-            const data = await response.json();
 
-            if (data.success) {
-                this.pedidos = data.pedidos || [];
+            if (response.status === 'ok') {
+                this.pedidos = response.data || [];
                 this.renderizarPedidos();
                 this.cargarEstadisticas();
                 
                 // Disparar evento para animaciones
                 $(document).trigger('pedidosLoaded');
             } else {
-                this.mostrarError('Error al cargar pedidos: ' + (data.message || 'Error desconocido'));
+                this.mostrarError('Error al cargar pedidos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en cargarPedidos:', error);
@@ -330,14 +325,14 @@ class SistemaPedidos {
                         <small class="text-muted">${pedido.usuario_nombre || 'N/A'}</small>
                     </div>
                     <div class="col-md-2">
-                        <strong class="text-dark">0</strong> productos
+                        <strong class="text-dark">${pedido.total_productos || 0}</strong> productos
                         <br>
-                        <small class="text-muted">0 unidades</small>
+                        <small class="text-muted">${pedido.total_cantidad || 0} unidades</small>
                     </div>
                     <div class="col-md-2">
                         <strong class="text-dark">$${parseFloat(pedido.total_estimado || 0).toFixed(2)}</strong>
                         <br>
-                        <small class="text-muted">${pedido.sucursal_nombre || 'Farmacia'}</small>
+                        <small class="text-muted">${pedido.Nombre_Sucursal}</small>
                     </div>
                     <div class="col-md-3">
                         <div class="btn-group" role="group">
@@ -345,6 +340,20 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
+                            ${pedido.estado === 'pendiente' ? `
+                                <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Aprobar pedido">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm rechazar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Rechazar pedido">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button class="btn btn-outline-warning btn-sm eliminar-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Eliminar pedido">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -372,22 +381,35 @@ class SistemaPedidos {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.verDetallePedido(pedidoId);
         });
+
+        // Aprobar pedido
+        $('.aprobar-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.confirmarCambiarEstado(pedidoId, 'aprobado');
+        });
+
+        // Rechazar pedido
+        $('.rechazar-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.confirmarCambiarEstado(pedidoId, 'rechazado');
+        });
+
+        // Eliminar pedido
+        $('.eliminar-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.confirmarEliminarPedido(pedidoId);
+        });
     }
 
     async verDetallePedido(pedidoId) {
         try {
-            const formData = new FormData();
-            formData.append('pedido_id', pedidoId);
-            
-            const response = await fetch('api/detalle_pedido.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'detalle_pedido',
+                pedido_id: pedidoId
             });
-            
-            const data = await response.json();
 
-            if (data.success) {
-                this.mostrarModalDetalle(data);
+            if (response.status === 'ok') {
+                this.mostrarModalDetalle(response);
             } else {
                 this.mostrarError('Error al cargar detalle del pedido');
             }
@@ -398,57 +420,148 @@ class SistemaPedidos {
 
     mostrarModalDetalle(data) {
         const pedido = data.pedido;
-        const detalles = data.detalles || [];
-        const historial = data.historial || [];
+        const detalles = data.detalles;
+        const historial = data.historial;
 
         let detallesHtml = '';
-        if (detalles.length > 0) {
-            detalles.forEach(detalle => {
-                detallesHtml += `
-                    <tr>
-                        <td>${detalle.nombre_producto || 'N/A'}</td>
-                        <td>${detalle.cantidad_solicitada || 0}</td>
-                        <td>$${parseFloat(detalle.precio_unitario || 0).toFixed(2)}</td>
-                        <td>$${parseFloat(detalle.subtotal || 0).toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-        } else {
-            detallesHtml = '<tr><td colspan="4" class="text-center text-muted">No hay detalles disponibles</td></tr>';
-        }
+        detalles.forEach(detalle => {
+            detallesHtml += `
+                <tr>
+                    <td>${detalle.Nombre_Prod}</td>
+                    <td>${detalle.cantidad_solicitada}</td>
+                    <td>$${parseFloat(detalle.precio_unitario).toFixed(2)}</td>
+                    <td>$${parseFloat(detalle.subtotal).toFixed(2)}</td>
+                </tr>
+            `;
+        });
 
         let historialHtml = '';
-        if (historial.length > 0) {
-            historial.forEach(hist => {
-                const fecha = new Date(hist.fecha_cambio).toLocaleString('es-ES');
-                historialHtml += `
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content">
-                            <h6 class="mb-1">${hist.estado_anterior || 'Nuevo'} → ${hist.estado_nuevo}</h6>
-                            <p class="mb-1 small text-muted">${fecha}</p>
-                            <p class="mb-0 small">${hist.comentario || 'Sin comentarios'}</p>
-                            <small class="text-muted">Por: ${hist.usuario_nombre || 'Sistema'}</small>
-                        </div>
+        historial.forEach(hist => {
+            const fecha = new Date(hist.fecha_cambio).toLocaleString('es-ES');
+            historialHtml += `
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h6 class="mb-1">${hist.estado_anterior || 'Nuevo'} → ${hist.estado_nuevo}</h6>
+                        <p class="mb-1 small text-muted">${fecha}</p>
+                        <p class="mb-0 small">${hist.comentario || 'Sin comentarios'}</p>
+                        <small class="text-muted">Por: ${hist.usuario_nombre || 'Sistema'}</small>
                     </div>
-                `;
-            });
-        } else {
-            historialHtml = '<p class="text-muted">No hay historial disponible</p>';
-        }
+                </div>
+            `;
+        });
 
         $('#detalle-pedido-folio').text(pedido.folio);
-        $('#detalle-pedido-estado').html(`<span class="badge estado-${pedido.estado}">${pedido.estado}</span>`);
+        $('#detalle-pedido-estado').text(pedido.estado);
         $('#detalle-pedido-fecha').text(new Date(pedido.fecha_creacion).toLocaleString('es-ES'));
-        $('#detalle-pedido-usuario').text(pedido.usuario_nombre || 'N/A');
-        $('#detalle-pedido-sucursal').text(pedido.sucursal_nombre || 'Farmacia');
-        $('#detalle-pedido-total').text(`$${parseFloat(pedido.total_estimado || 0).toFixed(2)}`);
+        $('#detalle-pedido-usuario').text(pedido.usuario_nombre);
+        $('#detalle-pedido-sucursal').text(pedido.Nombre_Sucursal);
+        $('#detalle-pedido-total').text(`$${parseFloat(pedido.total_estimado).toFixed(2)}`);
         $('#detalle-pedido-observaciones').text(pedido.observaciones || 'Sin observaciones');
         
         $('#detalle-productos-tbody').html(detallesHtml);
         $('#detalle-historial').html(historialHtml);
 
         $('#modalDetallePedido').modal('show');
+    }
+
+    // Confirmación mejorada para cambiar estado
+    async confirmarCambiarEstado(pedidoId, nuevoEstado) {
+        const estados = {
+            'aprobado': {
+                title: '¿Aprobar pedido?',
+                text: '¿Estás seguro de que quieres aprobar este pedido?',
+                icon: 'question',
+                confirmButtonColor: '#28a745'
+            },
+            'rechazado': {
+                title: '¿Rechazar pedido?',
+                text: '¿Estás seguro de que quieres rechazar este pedido?',
+                icon: 'warning',
+                confirmButtonColor: '#dc3545'
+            }
+        };
+
+        const config = estados[nuevoEstado] || {
+            title: '¿Confirmar cambio?',
+            text: '¿Estás seguro de que quieres cambiar el estado?',
+            icon: 'question'
+        };
+
+        const result = await Swal.fire({
+            title: config.title,
+            text: config.text,
+            icon: config.icon,
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: config.confirmButtonColor,
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.cambiarEstadoPedido(pedidoId, nuevoEstado);
+        }
+    }
+
+    async cambiarEstadoPedido(pedidoId, nuevoEstado) {
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'cambiar_estado',
+                pedido_id: pedidoId,
+                nuevo_estado: nuevoEstado,
+                comentario: `Estado cambiado a ${nuevoEstado}`
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarExito('Estado actualizado correctamente');
+                this.cargarPedidos();
+            } else {
+                this.mostrarError('Error al actualizar estado: ' + response.msg);
+            }
+        } catch (error) {
+            this.mostrarError('Error de conexión');
+        }
+    }
+
+    // Confirmación mejorada para eliminar pedido
+    async confirmarEliminarPedido(pedidoId) {
+        const result = await Swal.fire({
+            title: '¿Eliminar pedido?',
+            text: 'Esta acción no se puede deshacer. ¿Estás seguro?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.eliminarPedido(pedidoId);
+        }
+    }
+
+    async eliminarPedido(pedidoId) {
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'eliminar_pedido',
+                pedido_id: pedidoId
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarExito('Pedido eliminado correctamente');
+                this.cargarPedidos();
+            } else {
+                this.mostrarError('Error al eliminar pedido: ' + response.msg);
+            }
+        } catch (error) {
+            this.mostrarError('Error de conexión');
+        }
     }
 
     // Funciones del modal nuevo pedido
@@ -466,23 +579,18 @@ class SistemaPedidos {
         try {
             this.mostrarLoading(true);
             
-            const formData = new FormData();
-            formData.append('estado', $('#filtro-estado').val());
-            formData.append('fecha_inicio', $('#filtro-fecha-inicio').val());
-            formData.append('fecha_fin', $('#filtro-fecha-fin').val());
-            formData.append('busqueda', $('#busqueda').val());
-            
-            const response = await fetch('api/listar_pedidos.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'listar_pedidos',
+                busqueda: $('#busqueda').val(),
+                filtro_estado: $('#filtro-estado').val(),
+                filtro_fecha_inicio: $('#filtro-fecha-inicio').val(),
+                filtro_fecha_fin: $('#filtro-fecha-fin').val()
             });
-            
-            const data = await response.json();
 
-            if (data.success) {
-                this.renderizarPedidosEnModal(data.pedidos || []);
+            if (response.status === 'ok') {
+                this.renderizarPedidosEnModal(response.data || []);
             } else {
-                this.mostrarError('Error al cargar pedidos: ' + (data.message || 'Error desconocido'));
+                this.mostrarError('Error al cargar pedidos: ' + (response.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en cargarPedidosEnModal:', error);
@@ -515,6 +623,81 @@ class SistemaPedidos {
         container.html(html);
         this.setupPedidoEventListeners();
     }
+
+    async buscarProductosSimple() {
+        const query = $('#busqueda-producto-simple').val().trim();
+        
+        if (query.length < 3) {
+            this.mostrarError('Ingresa al menos 3 caracteres para buscar');
+            return;
+        }
+
+        try {
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'buscar_producto',
+                q: query
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarResultadosBusquedaSimple(response.data);
+            } else {
+                this.mostrarError('Error al buscar productos: ' + (response.msg || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error en buscarProductosSimple:', error);
+            this.mostrarError('Error de conexión');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Confirmación para guardar pedido
+    async confirmarGuardarPedido() {
+        if (this.productosSeleccionados.length === 0) {
+            this.mostrarError('Debes agregar al menos un producto al pedido');
+            return;
+        }
+
+        const observaciones = $('#observaciones-pedido-simple').val().trim();
+        const prioridad = $('#prioridad-pedido-simple').val();
+
+        const result = await Swal.fire({
+            title: '¿Confirmar pedido?',
+            html: `
+                <div class="text-left">
+                    <p><strong>Productos:</strong> ${this.productosSeleccionados.length}</p>
+                    <p><strong>Cantidad total:</strong> ${this.productosSeleccionados.reduce((sum, p) => sum + p.cantidad, 0)}</p>
+                    <p><strong>Total estimado:</strong> $${this.productosSeleccionados.reduce((sum, p) => sum + (p.precio * p.cantidad), 0).toFixed(2)}</p>
+                    <p><strong>Prioridad:</strong> ${prioridad}</p>
+                    ${observaciones ? `<p><strong>Observaciones:</strong> ${observaciones}</p>` : ''}
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar pedido',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+
+        // Solo ejecutar si se confirma
+        if (result.isConfirmed) {
+            await this.guardarPedidoSimple(observaciones, prioridad);
+        }
+    }
+
+
 
     // Funciones para el modal nuevo pedido
     async confirmarGuardarPedidoNuevo() {
@@ -556,26 +739,20 @@ class SistemaPedidos {
     async guardarPedidoNuevo(observaciones, prioridad) {
         try {
             const productos = this.productosModule ? this.productosModule.getProductosSeleccionados() : [];
-            
-            const formData = new FormData();
-            formData.append('productos', JSON.stringify(productos));
-            formData.append('observaciones', observaciones);
-            formData.append('prioridad', prioridad);
-            
-            const response = await fetch('api/guardar_pedido.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'crear_pedido',
+                productos: JSON.stringify(productos),
+                observaciones: observaciones,
+                prioridad: prioridad
             });
-            
-            const data = await response.json();
 
-            if (data.success) {
+            if (response.status === 'ok') {
                 this.mostrarExito('Pedido creado exitosamente');
                 $('#modalNuevoPedido').modal('hide');
                 this.limpiarPedidoNuevo();
                 this.cargarPedidos();
             } else {
-                this.mostrarError('Error al crear pedido: ' + data.message);
+                this.mostrarError('Error al crear pedido: ' + response.msg);
             }
         } catch (error) {
             console.error('Error en guardarPedidoNuevo:', error);
@@ -623,6 +800,8 @@ class SistemaPedidos {
         }
     }
 
+
+
     aplicarFiltros() {
         this.cargarPedidos();
     }
@@ -637,15 +816,33 @@ class SistemaPedidos {
 
     async cargarEstadisticas() {
         try {
-            const response = await fetch('api/estadisticas_pedidos.php');
-            const data = await response.json();
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'estadisticas'
+            });
 
-            if (data.success) {
-                const stats = data.estadisticas;
-                $('#stats-pendientes').text(stats.pendientes || 0);
-                $('#stats-aprobados').text(stats.aprobados || 0);
-                $('#stats-proceso').text(stats.en_proceso || 0);
-                $('#stats-total').text(`$${(stats.total_monto || 0).toFixed(2)}`);
+            if (response.status === 'ok') {
+                const stats = response.data || [];
+                let pendientes = 0, aprobados = 0, proceso = 0, total = 0;
+
+                stats.forEach(stat => {
+                    switch(stat.estado) {
+                        case 'pendiente':
+                            pendientes = stat.total;
+                            break;
+                        case 'aprobado':
+                            aprobados = stat.total;
+                            break;
+                        case 'proceso':
+                            proceso = stat.total;
+                            break;
+                    }
+                    total += parseFloat(stat.total_valor || 0);
+                });
+
+                $('#stats-pendientes').text(pendientes);
+                $('#stats-aprobados').text(aprobados);
+                $('#stats-proceso').text(proceso);
+                $('#stats-total').text(`$${total.toFixed(2)}`);
             }
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
@@ -661,36 +858,28 @@ class SistemaPedidos {
     }
 
     mostrarExito(mensaje) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                title: '¡Éxito!',
-                text: mensaje,
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false,
-                toast: true,
-                position: 'top-end'
-            });
-        } else {
-            alert(mensaje);
-        }
+        Swal.fire({
+            title: '¡Éxito!',
+            text: mensaje,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        });
     }
 
     mostrarError(mensaje) {
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                title: 'Error',
-                text: mensaje,
-                icon: 'error',
-                confirmButtonText: 'OK'
-            });
-        } else {
-            alert('Error: ' + mensaje);
-        }
+        Swal.fire({
+            title: 'Error',
+            text: mensaje,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }
 }
 
 // Inicializar cuando el DOM esté listo
 $(document).ready(() => {
     window.sistemaPedidos = new SistemaPedidos();
-});
+}); 

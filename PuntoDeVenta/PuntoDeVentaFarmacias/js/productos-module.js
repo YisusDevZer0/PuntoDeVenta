@@ -16,25 +16,22 @@ class ProductosModule {
         }
 
         try {
-            console.log('Enviando petición a:', 'api/buscar_productos.php');
-            console.log('Datos enviados:', { query: query });
+            console.log('Enviando petición a:', 'Controladores/PedidosController.php');
+            console.log('Datos enviados:', { accion: 'buscar_producto', q: query });
             
-            const formData = new FormData();
-            formData.append('accion', 'buscar_producto');
-            formData.append('q', query);
-            
-            const response = await fetch('Controladores/PedidosController.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'buscar_producto',
+                q: query
             });
-            
-            const data = await response.json();
-            console.log('Respuesta búsqueda:', data);
 
-            if (data.status === 'ok') {
-                this.mostrarResultadosBusqueda(data.data, modalId);
+            console.log('Respuesta búsqueda:', response);
+            console.log('Tipo de respuesta:', typeof response);
+
+            // Manejar la respuesta (jQuery ya parsea JSON automáticamente)
+            if (response && response.status === 'ok') {
+                this.mostrarResultadosBusqueda(response.data, modalId);
             } else {
-                this.mostrarError('Error al buscar productos: ' + (data.msg || 'Error desconocido'));
+                this.mostrarError('Error al buscar productos: ' + (response?.msg || 'Error desconocido'));
             }
         } catch (error) {
             console.error('Error en buscarProductos:', error);
@@ -55,8 +52,8 @@ class ProductosModule {
         let html = '<h6>Resultados de búsqueda:</h6><div class="row">';
         
         productos.forEach(producto => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.id);
-            const stockClass = producto.existencias < producto.min_existencia ? 'text-danger' : 'text-success';
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
+            const stockClass = producto.Existencias_R < producto.Min_Existencia ? 'text-danger' : 'text-success';
             
             html += `
                 <div class="col-md-6 mb-2">
@@ -64,18 +61,18 @@ class ProductosModule {
                          data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${producto.nombre}</h6>
+                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
                                 <p class="mb-1 small text-muted">
-                                    Código: ${producto.codigo_barras || 'N/A'} | 
-                                    Clave: ${producto.clave_adicional || 'N/A'}
+                                    Código: ${producto.Cod_Barra || 'N/A'} | 
+                                    Clave: ${producto.Clave_adicional || 'N/A'}
                                 </p>
                                 <p class="mb-1 small">
-                                    Stock: <span class="${stockClass}">${producto.existencias}</span> | 
-                                    Mín: ${producto.min_existencia} | 
-                                    Máx: ${producto.max_existencia}
+                                    Stock: <span class="${stockClass}">${producto.Existencias_R}</span> | 
+                                    Mín: ${producto.Min_Existencia} | 
+                                    Máx: ${producto.Max_Existencia}
                                 </p>
                                 <p class="mb-0 small">
-                                    <strong>Precio: $${parseFloat(producto.precio || 0).toFixed(2)}</strong>
+                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
                                 </p>
                             </div>
                             <div class="ms-2">
@@ -99,7 +96,7 @@ class ProductosModule {
             const producto = card.data('producto');
             
             // Verificar que el producto sea válido
-            if (!producto || !producto.id) {
+            if (!producto || !producto.ID_Prod_POS) {
                 console.error('Producto inválido:', producto);
                 this.mostrarError('Error al obtener datos del producto');
                 return;
@@ -114,20 +111,20 @@ class ProductosModule {
         console.log('Agregando producto:', producto, modalId);
         
         // Verificar si ya está agregado
-        if (this.productosSeleccionados.some(p => p.id === producto.id)) {
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
             this.mostrarError('Este producto ya está en el pedido');
             return;
         }
 
         // Agregar al array
         this.productosSeleccionados.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            codigo: producto.codigo_barras,
-            precio: parseFloat(producto.precio || 0),
+            id: producto.ID_Prod_POS,
+            nombre: producto.Nombre_Prod,
+            codigo: producto.Cod_Barra,
+            precio: parseFloat(producto.Precio_Venta || 0),
             cantidad: 1,
-            stock: producto.existencias,
-            min_stock: producto.min_existencia
+            stock: producto.Existencias_R,
+            min_stock: producto.Min_Existencia
         });
 
         console.log('Productos seleccionados después de agregar:', this.productosSeleccionados);
@@ -221,18 +218,12 @@ class ProductosModule {
     // Cargar productos con stock bajo con paginación
     async cargarProductosStockBajo() {
         try {
-            const formData = new FormData();
-            formData.append('accion', 'productos_stock_bajo');
-            
-            const response = await fetch('Controladores/PedidosController.php', {
-                method: 'POST',
-                body: formData
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'productos_stock_bajo'
             });
-            
-            const data = await response.json();
 
-            if (data.status === 'ok') {
-                this.mostrarModalStockBajo(data.data || []);
+            if (response.status === 'ok') {
+                this.mostrarModalStockBajo(response.data || []);
             } else {
                 this.mostrarError('Error al cargar productos con stock bajo');
             }
@@ -255,7 +246,7 @@ class ProductosModule {
 
         let html = '<div class="row">';
         productosPagina.forEach(producto => {
-            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.id);
+            const yaSeleccionado = this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS);
             
             html += `
                 <div class="col-md-6 mb-2">
@@ -263,16 +254,16 @@ class ProductosModule {
                          data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${producto.nombre}</h6>
+                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
                                 <p class="mb-1 small text-muted">
-                                    Código: ${producto.codigo_barras || 'N/A'}
+                                    Código: ${producto.Cod_Barra || 'N/A'}
                                 </p>
                                 <p class="mb-1 small text-danger">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    Stock: ${producto.existencias} | Mín: ${producto.min_existencia}
+                                    Stock: ${producto.Existencias_R} | Mín: ${producto.Min_Existencia}
                                 </p>
                                 <p class="mb-0 small">
-                                    <strong>Precio: $${parseFloat(producto.precio || 0).toFixed(2)}</strong>
+                                    <strong>Precio: $${parseFloat(producto.Precio_Venta || 0).toFixed(2)}</strong>
                                 </p>
                             </div>
                             <div class="ms-2">
@@ -320,7 +311,7 @@ class ProductosModule {
             const producto = card.data('producto');
             
             // Verificar que el producto sea válido
-            if (!producto || !producto.id) {
+            if (!producto || !producto.ID_Prod_POS) {
                 console.error('Producto inválido:', producto);
                 this.mostrarError('Error al obtener datos del producto');
                 return;
@@ -352,20 +343,20 @@ class ProductosModule {
         console.log('Agregando producto desde stock bajo:', producto);
         
         // Verificar si ya está agregado
-        if (this.productosSeleccionados.some(p => p.id === producto.id)) {
+        if (this.productosSeleccionados.some(p => p.id === producto.ID_Prod_POS)) {
             this.mostrarError('Este producto ya está en el pedido');
             return;
         }
 
         // Agregar al array
         this.productosSeleccionados.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            codigo: producto.codigo_barras,
-            precio: parseFloat(producto.precio || 0),
+            id: producto.ID_Prod_POS,
+            nombre: producto.Nombre_Prod,
+            codigo: producto.Cod_Barra,
+            precio: parseFloat(producto.Precio_Venta || 0),
             cantidad: 1,
-            stock: producto.existencias,
-            min_stock: producto.min_existencia
+            stock: producto.Existencias_R,
+            min_stock: producto.Min_Existencia
         });
 
         console.log('Productos seleccionados después de agregar desde stock bajo:', this.productosSeleccionados);
@@ -463,4 +454,4 @@ class ProductosModule {
 }
 
 // Crear instancia global
-const productosModule = new ProductosModule();
+const productosModule = new ProductosModule(); 
