@@ -1,9 +1,18 @@
 <?php
+// Habilitar reporte de errores para debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Iniciar sesión si no está iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 include_once "../Controladores/ControladorUsuario.php";
 include "../Controladores/db_connect.php";
 
 // Cargar PhpSpreadsheet
-require_once '../../vendor/autoload.php';
+require_once '../../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -272,7 +281,22 @@ try {
     $writer->save('php://output');
     
 } catch (Exception $e) {
+    // Log del error para debugging
+    error_log("Error en exportar_pedidos_excel.php: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    
     http_response_code(500);
-    echo json_encode(['error' => 'Error al generar Excel: ' . $e->getMessage()]);
+    
+    // En modo desarrollo, mostrar más detalles del error
+    if (ini_get('display_errors')) {
+        echo json_encode([
+            'error' => 'Error al generar Excel: ' . $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    } else {
+        echo json_encode(['error' => 'Error al generar Excel. Contacta al administrador.']);
+    }
 }
 ?>
