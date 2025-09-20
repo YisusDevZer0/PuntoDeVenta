@@ -7,14 +7,14 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Verificar que el usuario esté autenticado usando el sistema existente
-if (!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])) {
+// Verificar que el usuario esté autenticado usando el sistema de PuntoDeVentaFarmacias
+if (!isset($_SESSION['VentasPos'])) {
     echo json_encode(['status' => 'error', 'msg' => 'Usuario no autenticado']);
     exit;
 }
 
-// Determinar el ID de usuario según la sesión activa
-$userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
+// Obtener el ID de usuario de la sesión de VentasPos
+$userId = $_SESSION['VentasPos'];
 
 // Obtener datos del usuario
 $sql = "SELECT
