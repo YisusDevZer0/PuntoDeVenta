@@ -8,6 +8,9 @@ include_once "TareasController.php";
 $userId = $row['Id_PvUser'];
 $sucursalId = $row['Fk_Sucursal'];
 
+// Debug: Verificar datos del usuario
+error_log("Usuario ID: " . $userId . ", Sucursal ID: " . $sucursalId);
+
 $tareasController = new TareasController($conn, $userId, $sucursalId);
 
 $accion = $_POST['accion'] ?? '';
@@ -132,16 +135,29 @@ try {
                 'asignado_a' => $_POST['asignado_a'] ?? ''
             ];
             
+            error_log("Filtros aplicados: " . json_encode($filtros));
+            
             $tareas = $tareasController->getTareasAsignadas($filtros);
             $data = [];
             
-            while ($row = $tareas->fetch_assoc()) {
-                $data[] = $row;
+            if ($tareas) {
+                while ($row = $tareas->fetch_assoc()) {
+                    $data[] = $row;
+                }
+                error_log("Tareas encontradas: " . count($data));
+            } else {
+                error_log("Error en la consulta de tareas");
             }
             
             echo json_encode([
                 'success' => true,
-                'data' => $data
+                'data' => $data,
+                'debug' => [
+                    'userId' => $userId,
+                    'sucursalId' => $sucursalId,
+                    'filtros' => $filtros,
+                    'totalTareas' => count($data)
+                ]
             ]);
             break;
     }

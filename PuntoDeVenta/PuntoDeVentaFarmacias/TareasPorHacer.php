@@ -180,22 +180,18 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         }
     </style>
 
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
     <?php include "header.php"; ?>
 </head>
 <body>
-    <!-- Spinner End -->
-    <?php include_once "Menu.php" ?>
+        <!-- Spinner End -->
+        <?php include_once "Menu.php" ?>
 
-    <!-- Content Start -->
-    <div class="content">
-        <!-- Navbar Start -->
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
         <?php include "navbar.php"; ?>
-        <!-- Navbar End -->
-        
+            <!-- Navbar End -->
+
         <div class="container-fluid">
             <h1 class="h3 mb-4 text-gray-800">Mis Tareas - <?php echo $row['Nombre_Apellidos']; ?></h1>
             
@@ -289,13 +285,33 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     </div>
                 </div>
             </div>
-            
+                  
             <!-- Tabla de tareas -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Mis Tareas Asignadas</h6>
                 </div>
                 <div class="card-body">
+                    <!-- Mensaje cuando no hay tareas -->
+                    <div id="mensaje-sin-tareas" class="text-center py-5" style="display: none;">
+                        <div class="mb-4">
+                            <i class="fas fa-tasks fa-4x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted">¡No tienes tareas asignadas!</h4>
+                        <p class="text-muted">Cuando te asignen tareas, aparecerán aquí para que puedas gestionarlas.</p>
+                        <div class="mt-4">
+                            <button class="btn btn-primary" onclick="cargarTareas()">
+                                <i class="fas fa-refresh"></i> Actualizar
+                            </button>
+                            <a href="test_tareas.php" class="btn btn-info" target="_blank">
+                                <i class="fas fa-bug"></i> Verificar Base de Datos
+                            </a>
+                            <a href="crear_tabla_tareas.php" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Crear Tabla de Tareas
+                            </a>
+                        </div>
+                    </div>
+                    
                     <div class="table-responsive">
                         <table class="table table-bordered" id="tablaTareas" width="100%" cellspacing="0">
                             <thead>
@@ -329,13 +345,13 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
     <div id="loading-overlay">
         <div class="loader"></div>
         <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
+</div>
     
-    <script>
+<script>
         var tablaTareas;
         var filtrosActuales = {};
         
-        $(document).ready(function() {
+   $(document).ready(function() {
             inicializarTabla();
             cargarTareas();
         });
@@ -350,7 +366,29 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     "data": function(d) {
                         return $.extend(d, filtrosActuales);
                     },
-                    "dataSrc": "data"
+                    "dataSrc": function(json) {
+                        console.log('Respuesta del servidor:', json);
+                        if (json.success && json.data) {
+                            // Mostrar/ocultar mensaje de sin tareas
+                            if (json.data.length === 0) {
+                                $('#mensaje-sin-tareas').show();
+                            } else {
+                                $('#mensaje-sin-tareas').hide();
+                            }
+                            return json.data;
+                        } else {
+                            console.error('Error en la respuesta:', json);
+                            $('#mensaje-sin-tareas').show();
+                            return [];
+                        }
+                    },
+                    "error": function(xhr, error, thrown) {
+                        console.error('Error AJAX:', xhr, error, thrown);
+                        ocultarLoading();
+                        $('#mensaje-sin-tareas').show();
+                        $('#mensaje-sin-tareas h4').text('Error al cargar las tareas');
+                        $('#mensaje-sin-tareas p').text('Hubo un problema al conectar con el servidor. Verifica la conexión a la base de datos.');
+                    }
                 },
                 "columns": [
                     {"data": "id"},
@@ -397,13 +435,27 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     }
                 ],
                 "order": [[3, "asc"], [4, "asc"]],
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-                },
                 "createdRow": function(row, data, dataIndex) {
                     // Marcar tareas vencidas
                     if (data.fecha_limite && new Date(data.fecha_limite) < new Date()) {
                         $(row).addClass('tarea-vencida');
+                    }
+                },
+                "language": {
+                    "emptyTable": "No tienes tareas asignadas en este momento",
+                    "zeroRecords": "No se encontraron tareas que coincidan con los filtros",
+                    "loadingRecords": "Cargando tareas...",
+                    "processing": "Procesando...",
+                    "lengthMenu": "Mostrar _MENU_ tareas por página",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ tareas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 tareas",
+                    "infoFiltered": "(filtrado de _MAX_ tareas totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
                     }
                 }
             });
@@ -411,7 +463,9 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         
         function cargarTareas() {
             mostrarLoading("Cargando tareas...");
-            tablaTareas.ajax.reload(function() {
+            console.log('Cargando tareas...');
+            tablaTareas.ajax.reload(function(json) {
+                console.log('Tareas cargadas:', json);
                 ocultarLoading();
             });
         }
