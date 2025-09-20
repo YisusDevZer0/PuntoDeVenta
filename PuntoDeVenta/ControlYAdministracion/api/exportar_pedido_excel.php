@@ -43,10 +43,12 @@ try {
                         p.folio,
                         p.estado,
                         p.fecha_creacion,
-                        p.fecha_actualizacion,
+                        p.fecha_aprobacion,
+                        p.fecha_completado,
                         p.total_estimado,
                         p.observaciones,
                         p.prioridad,
+                        p.tipo_origen,
                         u.Nombre_Apellidos as usuario_nombre,
                         s.Nombre_Sucursal as sucursal_nombre
                     FROM pedidos p
