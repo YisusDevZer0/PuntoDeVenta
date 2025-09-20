@@ -28,7 +28,7 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Obtener ID del pedido
-$pedido_id = $_GET['pedido_id'] ?? '';
+$pedido_id = $_REQUEST['pedido_id'] ?? '';
 
 if (empty($pedido_id)) {
     http_response_code(400);

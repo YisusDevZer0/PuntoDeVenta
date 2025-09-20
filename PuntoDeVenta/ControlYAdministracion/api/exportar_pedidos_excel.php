@@ -28,10 +28,10 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 // Obtener parámetros de filtro
-$filtro_estado = $_GET['estado'] ?? '';
-$filtro_fecha_inicio = $_GET['fecha_inicio'] ?? '';
-$filtro_fecha_fin = $_GET['fecha_fin'] ?? '';
-$busqueda = $_GET['busqueda'] ?? '';
+$filtro_estado = $_REQUEST['estado'] ?? '';
+$filtro_fecha_inicio = $_REQUEST['fecha_inicio'] ?? '';
+$filtro_fecha_fin = $_REQUEST['fecha_fin'] ?? '';
+$busqueda = $_REQUEST['busqueda'] ?? '';
 
 try {
     // Construir la consulta SQL con filtros

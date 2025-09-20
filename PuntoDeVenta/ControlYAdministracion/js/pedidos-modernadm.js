@@ -978,6 +978,112 @@ class SistemaPedidos {
             btnDescargar.prop('disabled', false);
         }
     }
+
+    // Función para descargar Excel general
+    async descargarExcel() {
+        try {
+            const btnDescargar = $('#btnDescargarExcel');
+            const iconoOriginal = btnDescargar.html();
+            
+            // Mostrar estado de descarga
+            btnDescargar.addClass('downloading');
+            btnDescargar.html('<i class="fas fa-spinner fa-spin me-2"></i>Generando Excel...');
+            btnDescargar.prop('disabled', true);
+            
+            // Obtener filtros actuales
+            const filtros = {
+                estado: $('#filtro-estado').val(),
+                fecha_inicio: $('#filtro-fecha-inicio').val(),
+                fecha_fin: $('#filtro-fecha-fin').val(),
+                busqueda: $('#busqueda').val()
+            };
+            
+            // Crear URL con parámetros
+            const params = new URLSearchParams();
+            Object.keys(filtros).forEach(key => {
+                if (filtros[key]) {
+                    params.append(key, filtros[key]);
+                }
+            });
+            
+            const url = `api/exportar_pedidos_excel.php?${params.toString()}`;
+            
+            // Verificar si hay pedidos para exportar
+            if (this.pedidos && this.pedidos.length === 0) {
+                this.mostrarError('No hay pedidos para exportar. Ajusta los filtros e intenta nuevamente.');
+                return;
+            }
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pedidos_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular un pequeño delay para mostrar el estado de carga
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Ejecutar descarga
+            link.click();
+            document.body.removeChild(link);
+            
+            // Mostrar mensaje de éxito
+            this.mostrarExito(`Archivo Excel generado correctamente (${this.pedidos ? this.pedidos.length : 0} pedidos)`);
+            
+        } catch (error) {
+            console.error('Error al descargar Excel:', error);
+            this.mostrarError('Error al generar el archivo Excel');
+        } finally {
+            // Restaurar botón
+            const btnDescargar = $('#btnDescargarExcel');
+            btnDescargar.removeClass('downloading');
+            btnDescargar.html('<i class="fas fa-file-excel me-2"></i>Descargar Excel');
+            btnDescargar.prop('disabled', false);
+        }
+    }
+
+    // Función para descargar Excel de un pedido específico
+    async descargarExcelPedido(pedidoId) {
+        try {
+            // Encontrar el botón específico y mostrar estado de carga
+            const btnDescargar = $(`.descargar-excel-pedido[data-pedido-id="${pedidoId}"]`);
+            const iconoOriginal = btnDescargar.html();
+            
+            // Mostrar estado de descarga
+            btnDescargar.html('<i class="fas fa-spinner fa-spin"></i>');
+            btnDescargar.prop('disabled', true);
+            
+            // Crear URL para descarga individual
+            const url = `api/exportar_pedido_excel.php?pedido_id=${pedidoId}`;
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pedido_${pedidoId}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular un pequeño delay para mostrar el estado de carga
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Ejecutar descarga
+            link.click();
+            document.body.removeChild(link);
+            
+            // Mostrar mensaje de éxito
+            this.mostrarExito('Archivo Excel del pedido generado correctamente');
+            
+        } catch (error) {
+            console.error('Error al descargar Excel del pedido:', error);
+            this.mostrarError('Error al generar el archivo Excel del pedido');
+        } finally {
+            // Restaurar botón
+            const btnDescargar = $(`.descargar-excel-pedido[data-pedido-id="${pedidoId}"]`);
+            btnDescargar.html('<i class="fas fa-file-excel"></i>');
+            btnDescargar.prop('disabled', false);
+        }
+    }
 }
 
 // Inicializar cuando el DOM esté listo
