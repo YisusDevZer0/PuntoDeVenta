@@ -78,7 +78,7 @@ try {
                         pd.subtotal,
                         pr.Nombre_Prod as producto_nombre,
                         pr.Cod_Barra as producto_codigo,
-                        pr.Descripcion as producto_descripcion
+                        pr.Componente_Activo as producto_descripcion
                      FROM pedido_detalles pd
                      LEFT JOIN Productos_POS pr ON pd.producto_id = pr.ID_Prod_POS
                      WHERE pd.pedido_id = ?
