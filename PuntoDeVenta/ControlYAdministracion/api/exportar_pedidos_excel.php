@@ -72,7 +72,7 @@ try {
     }
     
     if (!empty($busqueda)) {
-        $sql .= " AND (p.folio LIKE ? OR p.observaciones LIKE ? OR u.nombre LIKE ?)";
+        $sql .= " AND (p.folio LIKE ? OR p.observaciones LIKE ? OR u.Nombre_Apellidos LIKE ?)";
         $searchTerm = "%$busqueda%";
         $params[] = $searchTerm;
         $params[] = $searchTerm;
@@ -102,15 +102,20 @@ try {
                             pp.cantidad,
                             pp.precio_unitario,
                             pp.subtotal,
-                            pr.nombre as producto_nombre,
-                            pr.codigo as producto_codigo
+                            pr.Nombre_Producto as producto_nombre,
+                            pr.Codigo_Producto as producto_codigo
                          FROM pedidos_productos pp
-                         LEFT JOIN productos pr ON pp.producto_id = pr.id
+                         LEFT JOIN Productos pr ON pp.producto_id = pr.ID_Producto
                          WHERE pp.pedido_id = ?";
         
         $stmt_productos = $conn->prepare($sql_productos);
-        $stmt_productos->execute([$pedido['id']]);
-        $pedido['productos'] = $stmt_productos->fetchAll(PDO::FETCH_ASSOC);
+        $stmt_productos->bind_param("i", $pedido['id']);
+        $stmt_productos->execute();
+        $result_productos = $stmt_productos->get_result();
+        $pedido['productos'] = [];
+        while ($row = $result_productos->fetch_assoc()) {
+            $pedido['productos'][] = $row;
+        }
     }
     
     // Generar archivo Excel usando PhpSpreadsheet
