@@ -93,6 +93,7 @@ class SistemaPedidos {
         $('#btnRefresh').on('click', () => this.cargarPedidos());
         $('#btnStockBajo').on('click', () => this.mostrarProductosStockBajo());
         $('#btnListadoPedidos').on('click', () => this.abrirModalListadoPedidos());
+        $('#btnDescargarExcel').on('click', () => this.descargarExcel());
         $('#btnAplicarFiltros').on('click', () => this.aplicarFiltros());
         $('#btnLimpiarFiltros').on('click', () => this.limpiarFiltros());
         $('#btnCrearPrimerPedido').on('click', () => this.abrirModalNuevoPedido());
@@ -876,6 +877,70 @@ class SistemaPedidos {
             icon: 'error',
             confirmButtonText: 'OK'
         });
+    }
+
+    // Función para descargar Excel
+    async descargarExcel() {
+        try {
+            const btnDescargar = $('#btnDescargarExcel');
+            const iconoOriginal = btnDescargar.html();
+            
+            // Mostrar estado de descarga
+            btnDescargar.addClass('downloading');
+            btnDescargar.html('<i class="fas fa-spinner fa-spin me-2"></i>Generando Excel...');
+            btnDescargar.prop('disabled', true);
+            
+            // Obtener filtros actuales
+            const filtros = {
+                estado: $('#filtro-estado').val(),
+                fecha_inicio: $('#filtro-fecha-inicio').val(),
+                fecha_fin: $('#filtro-fecha-fin').val(),
+                busqueda: $('#busqueda').val()
+            };
+            
+            // Crear URL con parámetros
+            const params = new URLSearchParams();
+            Object.keys(filtros).forEach(key => {
+                if (filtros[key]) {
+                    params.append(key, filtros[key]);
+                }
+            });
+            
+            const url = `api/exportar_pedidos_excel.php?${params.toString()}`;
+            
+            // Verificar si hay pedidos para exportar
+            if (this.pedidos && this.pedidos.length === 0) {
+                this.mostrarError('No hay pedidos para exportar. Ajusta los filtros e intenta nuevamente.');
+                return;
+            }
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pedidos_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular un pequeño delay para mostrar el estado de carga
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Ejecutar descarga
+            link.click();
+            document.body.removeChild(link);
+            
+            // Mostrar mensaje de éxito
+            this.mostrarExito(`Archivo Excel generado correctamente (${this.pedidos ? this.pedidos.length : 0} pedidos)`);
+            
+        } catch (error) {
+            console.error('Error al descargar Excel:', error);
+            this.mostrarError('Error al generar el archivo Excel');
+        } finally {
+            // Restaurar botón
+            const btnDescargar = $('#btnDescargarExcel');
+            btnDescargar.removeClass('downloading');
+            btnDescargar.html('<i class="fas fa-file-excel me-2"></i>Descargar Excel');
+            btnDescargar.prop('disabled', false);
+        }
     }
 }
 

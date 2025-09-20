@@ -430,6 +430,53 @@ include "Controladores/db_connect.php";
             border-color: #007bff;
         }
 
+        /* Estilos específicos para el botón de descarga Excel */
+        #btnDescargarExcel {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #btnDescargarExcel:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+
+        #btnDescargarExcel:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        #btnDescargarExcel i {
+            transition: transform 0.3s ease;
+        }
+
+        #btnDescargarExcel:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Efecto de pulso para el botón de descarga */
+        #btnDescargarExcel.downloading {
+            animation: pulse-download 1.5s infinite;
+        }
+
+        @keyframes pulse-download {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Tooltip personalizado para el botón */
+        #btnDescargarExcel[data-toggle="tooltip"] {
+            position: relative;
+        }
+
         /* Efectos hover mejorados */
         .pedido-item:hover {
             transform: translateY(-2px);
@@ -556,6 +603,10 @@ include "Controladores/db_connect.php";
                             </button>
                             <button class="btn btn-info" id="btnListadoPedidos">
                                 <i class="fas fa-list me-2"></i>Listado
+                            </button>
+                            <button class="btn btn-success" id="btnDescargarExcel" 
+                                    data-toggle="tooltip" title="Descargar listado de pedidos en formato Excel">
+                                <i class="fas fa-file-excel me-2"></i>Descargar Excel
                             </button>
                             <button class="btn btn-secondary" id="btnRefresh">
                                 <i class="fas fa-sync-alt me-2"></i>Actualizar
