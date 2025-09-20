@@ -125,7 +125,7 @@ try {
                 'prioridad' => $_POST['prioridad'] ?? 'Media',
                 'fecha_limite' => $_POST['fecha_limite'] ?? null,
                 'estado' => $_POST['estado'] ?? 'Por hacer',
-                'asignado_a' => $_POST['asignado_a'] ?? ''
+                'asignado_a' => $_POST['asignado_a_id'] ?? $userId
             ];
             
             // Validaciones
