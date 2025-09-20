@@ -281,7 +281,8 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                 </div>
             </div>
             
-            <!-- Botones de acción -->
+            <!-- Botones de acción - Solo para administradores -->
+            <?php if ($row['Tipo_Usuario'] === 'Administrador'): ?>
             <div class="row mb-3">
                 <div class="col-md-12">
                     <button type="button" class="btn btn-success" onclick="abrirModalNuevaTarea()">
@@ -292,6 +293,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                     </button>
                 </div>
             </div>
+            <?php endif; ?>
             
             <!-- Tabla de tareas -->
             <div class="card shadow mb-4">
@@ -411,9 +413,12 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         });
         
         function inicializarTabla() {
+            var esAdministrador = <?php echo ($row['Tipo_Usuario'] === 'Administrador') ? 'true' : 'false'; ?>;
+            
             tablaTareas = $('#tablaTareas').DataTable({
                 "processing": true,
                 "serverSide": false,
+                "searching": esAdministrador, // Solo administradores pueden buscar
                 "ajax": {
                     "url": "Controladores/ArrayTareas.php",
                     "type": "POST",
@@ -447,15 +452,35 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                     {
                         "data": null,
                         "render": function(data, type, row) {
+                            var esAdministrador = <?php echo ($row['Tipo_Usuario'] === 'Administrador') ? 'true' : 'false'; ?>;
                             var botones = '';
-                            botones += '<button class="btn btn-sm btn-info btn-accion" onclick="editarTarea(' + row.id + ')" title="Editar"><i class="fas fa-edit"></i></button>';
-                            if (row.estado !== 'Completada') {
-                                botones += '<button class="btn btn-sm btn-success btn-accion" onclick="cambiarEstado(' + row.id + ', \'Completada\')" title="Marcar como completada"><i class="fas fa-check"></i></button>';
+                            
+                            // Para tareas completadas o canceladas, solo mostrar botón Ver
+                            if (row.estado === 'Completada' || row.estado === 'Cancelada') {
+                                botones += '<button class="btn btn-sm btn-info btn-accion" onclick="verTarea(' + row.id + ')" title="Ver detalles"><i class="fas fa-eye"></i></button>';
+                            } else {
+                                // Para tareas activas, mostrar botones de gestión
+                                if (esAdministrador) {
+                                    botones += '<button class="btn btn-sm btn-info btn-accion" onclick="editarTarea(' + row.id + ')" title="Editar"><i class="fas fa-edit"></i></button>';
+                                }
+                                
+                                // Botones de cambio de estado para todos los usuarios
+                                if (row.estado === 'Por hacer') {
+                                    botones += '<button class="btn btn-sm btn-warning btn-accion" onclick="cambiarEstado(' + row.id + ', \'En progreso\')" title="Marcar en progreso"><i class="fas fa-play"></i></button>';
+                                }
+                                if (row.estado !== 'Completada') {
+                                    botones += '<button class="btn btn-sm btn-success btn-accion" onclick="cambiarEstado(' + row.id + ', \'Completada\')" title="Marcar como completada"><i class="fas fa-check"></i></button>';
+                                }
+                                if (row.estado !== 'Cancelada') {
+                                    botones += '<button class="btn btn-sm btn-secondary btn-accion" onclick="cambiarEstado(' + row.id + ', \'Cancelada\')" title="Marcar como cancelada"><i class="fas fa-times"></i></button>';
+                                }
+                                
+                                // Solo administradores pueden eliminar
+                                if (esAdministrador) {
+                                    botones += '<button class="btn btn-sm btn-danger btn-accion" onclick="eliminarTarea(' + row.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                                }
                             }
-                            if (row.estado === 'Por hacer') {
-                                botones += '<button class="btn btn-sm btn-warning btn-accion" onclick="cambiarEstado(' + row.id + ', \'En progreso\')" title="Marcar en progreso"><i class="fas fa-play"></i></button>';
-                            }
-                            botones += '<button class="btn btn-sm btn-danger btn-accion" onclick="eliminarTarea(' + row.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button>';
+                            
                             return botones;
                         }
                     }
@@ -498,10 +523,67 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         }
         
         function abrirModalNuevaTarea() {
+            var esAdministrador = <?php echo ($row['Tipo_Usuario'] === 'Administrador') ? 'true' : 'false'; ?>;
+            
+            if (!esAdministrador) {
+                Swal.fire('Acceso Denegado', 'Solo los administradores pueden crear nuevas tareas', 'warning');
+                return;
+            }
+            
             $('#modalTareaLabel').text('Nueva Tarea');
             $('#formTarea')[0].reset();
             $('#tareaId').val('');
+            
+            // Habilitar todos los campos para nueva tarea
+            $('#titulo').prop('readonly', false);
+            $('#descripcion').prop('readonly', false);
+            $('#prioridad').prop('disabled', false);
+            $('#fecha_limite').prop('readonly', false);
+            $('#estado').prop('disabled', false);
+            $('#asignado_a').prop('readonly', false);
+            
+            $('#modalTarea .modal-footer').show(); // Mostrar botones de guardar/cancelar
             $('#modalTarea').modal('show');
+        }
+        
+        function verTarea(id) {
+            mostrarLoading("Cargando datos de la tarea...");
+            $.ajax({
+                url: 'Controladores/ArrayTareas.php',
+                type: 'POST',
+                data: {accion: 'obtener', id: id},
+                success: function(response) {
+                    ocultarLoading();
+                    if (response.success) {
+                        var tarea = response.data;
+                        $('#tareaId').val(tarea.id);
+                        $('#titulo').val(tarea.titulo);
+                        $('#descripcion').val(tarea.descripcion);
+                        $('#prioridad').val(tarea.prioridad);
+                        $('#fecha_limite').val(tarea.fecha_limite);
+                        $('#estado').val(tarea.estado);
+                        $('#asignado_a_id').val(tarea.asignado_a);
+                        
+                        // Deshabilitar todos los campos para modo solo lectura
+                        $('#titulo').prop('readonly', true);
+                        $('#descripcion').prop('readonly', true);
+                        $('#prioridad').prop('disabled', true);
+                        $('#fecha_limite').prop('readonly', true);
+                        $('#estado').prop('disabled', true);
+                        $('#asignado_a').prop('readonly', true);
+                        
+                        $('#modalTareaLabel').text('Ver Tarea');
+                        $('#modalTarea .modal-footer').hide(); // Ocultar botones de guardar/cancelar
+                        $('#modalTarea').modal('show');
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    ocultarLoading();
+                    Swal.fire('Error', 'Error al cargar los datos de la tarea', 'error');
+                }
+            });
         }
         
         function editarTarea(id) {
@@ -521,7 +603,17 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                         $('#fecha_limite').val(tarea.fecha_limite);
                         $('#estado').val(tarea.estado);
                         $('#asignado_a_id').val(tarea.asignado_a);
+                        
+                        // Habilitar todos los campos para modo edición
+                        $('#titulo').prop('readonly', false);
+                        $('#descripcion').prop('readonly', false);
+                        $('#prioridad').prop('disabled', false);
+                        $('#fecha_limite').prop('readonly', false);
+                        $('#estado').prop('disabled', false);
+                        $('#asignado_a').prop('readonly', false);
+                        
                         $('#modalTareaLabel').text('Editar Tarea');
+                        $('#modalTarea .modal-footer').show(); // Mostrar botones de guardar/cancelar
                         $('#modalTarea').modal('show');
                     } else {
                         Swal.fire('Error', response.message, 'error');
@@ -643,6 +735,13 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         }
         
         function exportarTareas() {
+            var esAdministrador = <?php echo ($row['Tipo_Usuario'] === 'Administrador') ? 'true' : 'false'; ?>;
+            
+            if (!esAdministrador) {
+                Swal.fire('Acceso Denegado', 'Solo los administradores pueden exportar tareas', 'warning');
+                return;
+            }
+            
             mostrarLoading("Exportando tareas...");
             var filtros = JSON.stringify(filtrosActuales);
             window.location.href = 'Controladores/exportar_tareas.php?filtros=' + encodeURIComponent(filtros);
