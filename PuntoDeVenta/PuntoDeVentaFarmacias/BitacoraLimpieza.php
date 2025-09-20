@@ -147,7 +147,7 @@ $bitacoras = $controller->obtenerBitacoras();
                     </div>
 
                     <!-- Tabla de bitácoras -->
-                    <div id="tabla-bitacoras">
+                    <div id="tabla-bitacoras" style="display: block;">
                         <div class="alert alert-warning mb-3">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             <strong>Bitácoras Asignadas:</strong> Estas bitácoras han sido creadas por el administrador. Seleccione una para completar los datos de limpieza.
@@ -236,18 +236,32 @@ $bitacoras = $controller->obtenerBitacoras();
 <script>
    $(document).ready(function() {
         // Inicializar DataTable para bitácoras con filtros personalizados
-        const tablaBitacoras = $('#tablaBitacoras').DataTable({
-            "paging": true,
-            "searching": false, // Deshabilitamos la búsqueda nativa para usar la personalizada
-            "info": true,
-            "responsive": true,
-            "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-            },
-            "columnDefs": [
-                { "orderable": false, "targets": 8 } // Columna de acciones
-            ]
-        });
+        let tablaBitacoras;
+        
+        function inicializarTablaBitacoras() {
+            if ($.fn.DataTable.isDataTable('#tablaBitacoras')) {
+                $('#tablaBitacoras').DataTable().destroy();
+            }
+            
+            tablaBitacoras = $('#tablaBitacoras').DataTable({
+                "paging": true,
+                "searching": false, // Deshabilitamos la búsqueda nativa para usar la personalizada
+                "info": true,
+                "responsive": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": 8 } // Columna de acciones
+                ],
+                "initComplete": function() {
+                    console.log('DataTable de bitácoras inicializado correctamente');
+                }
+            });
+        }
+        
+        // Inicializar la tabla al cargar la página
+        inicializarTablaBitacoras();
 
         // Filtros personalizados
         $('#buscarBitacora').on('keyup', function() {
@@ -287,10 +301,39 @@ $bitacoras = $controller->obtenerBitacoras();
 
         // Mostrar/ocultar vistas
         $('#btnVerBitacoras').click(function() {
+            console.log('Botón Ver Bitácoras presionado');
+            
+            // Cambiar el texto del botón para indicar que está procesando
+            const btnOriginal = $(this).html();
+            $(this).html('<i class="fas fa-spinner fa-spin me-1"></i>Cargando...');
+            $(this).prop('disabled', true);
+            
+            // Mostrar tabla de bitácoras
             $('#tabla-bitacoras').show();
             $('#tabla-limpieza').hide();
             $('#selector-bitacora').hide();
             $('#btnAgregarElemento').hide();
+            
+            // Reinicializar la tabla si es necesario
+            setTimeout(function() {
+                if (typeof tablaBitacoras !== 'undefined') {
+                    tablaBitacoras.columns.adjust().draw();
+                } else {
+                    inicializarTablaBitacoras();
+                }
+                
+                // Restaurar el botón
+                $('#btnVerBitacoras').html(btnOriginal);
+                $('#btnVerBitacoras').prop('disabled', false);
+                
+                // Scroll hacia la tabla
+                $('html, body').animate({
+                    scrollTop: $('#tabla-bitacoras').offset().top - 100
+                }, 500);
+                
+                // Mostrar mensaje de confirmación
+                mostrarMensajeGuardado('success', 'Bitácoras cargadas correctamente');
+            }, 100);
         });
 
         // Mostrar información de la bitácora seleccionada
