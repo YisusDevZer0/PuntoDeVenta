@@ -6,12 +6,11 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8">
     <title>Mis Tareas - <?php echo $row['Licencia']?> - <?php echo $row['Nombre_Sucursal']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-   
+    
     <style>
         /* Estilos para el loading */
         #loading-overlay {
@@ -183,15 +182,10 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
     <?php include "header.php"; ?>
 </head>
 <body>
-        <!-- Spinner End -->
-        <?php include_once "Menu.php" ?>
-
-        <!-- Content Start -->
-        <div class="content">
-            <!-- Navbar Start -->
+    <?php include_once "Menu.php"; ?>
+    <div class="content">
         <?php include "navbar.php"; ?>
-            <!-- Navbar End -->
-
+        
         <div class="container-fluid">
             <h1 class="h3 mb-4 text-gray-800">Mis Tareas - <?php echo $row['Nombre_Apellidos']; ?></h1>
             
@@ -285,7 +279,7 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     </div>
                 </div>
             </div>
-                  
+            
             <!-- Tabla de tareas -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -345,18 +339,20 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
     <div id="loading-overlay">
         <div class="loader"></div>
         <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-</div>
+    </div>
     
-<script>
+    <script>
         var tablaTareas;
         var filtrosActuales = {};
         
-   $(document).ready(function() {
+        $(document).ready(function() {
+            console.log('Documento listo, inicializando tabla...');
             inicializarTabla();
             cargarTareas();
         });
         
         function inicializarTabla() {
+            console.log('Inicializando DataTable...');
             tablaTareas = $('#tablaTareas').DataTable({
                 "processing": true,
                 "serverSide": false,
@@ -459,15 +455,21 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     }
                 }
             });
+            console.log('DataTable inicializado correctamente');
         }
         
         function cargarTareas() {
             mostrarLoading("Cargando tareas...");
             console.log('Cargando tareas...');
-            tablaTareas.ajax.reload(function(json) {
-                console.log('Tareas cargadas:', json);
+            if (tablaTareas) {
+                tablaTareas.ajax.reload(function(json) {
+                    console.log('Tareas cargadas:', json);
+                    ocultarLoading();
+                });
+            } else {
+                console.error('Tabla no inicializada');
                 ocultarLoading();
-            });
+            }
         }
         
         function aplicarFiltros() {
@@ -635,5 +637,4 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         }
     </script>
 </body>
-
 </html>
