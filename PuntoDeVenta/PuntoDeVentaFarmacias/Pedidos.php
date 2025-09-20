@@ -16,8 +16,12 @@ include "Controladores/db_connect.php";
     
     <style>
         /* Estilos homologados con el resto de la aplicación */
+        body {
+            background-color: #f8f9fa;
+        }
+        
         .pedidos-container {
-            background: #FFFFFF;
+            background: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
         }
@@ -100,8 +104,9 @@ include "Controladores/db_connect.php";
         }
         
         .pedido-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-left-color: #007bff;
         }
         
         .estado-badge {
