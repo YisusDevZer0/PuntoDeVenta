@@ -520,7 +520,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                         $('#prioridad').val(tarea.prioridad);
                         $('#fecha_limite').val(tarea.fecha_limite);
                         $('#estado').val(tarea.estado);
-                        $('#asignado_a').val(tarea.asignado_a);
+                        $('#asignado_a_id').val(tarea.asignado_a);
                         $('#modalTareaLabel').text('Editar Tarea');
                         $('#modalTarea').modal('show');
                     } else {
