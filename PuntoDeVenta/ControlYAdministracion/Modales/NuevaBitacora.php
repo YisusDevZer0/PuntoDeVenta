@@ -8,13 +8,22 @@
             <div class="modal-body">
                 <form id="formNuevaBitacora">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="sucursal_id" class="form-label">Sucursal <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sucursal_id" name="sucursal_id" required>
+                                    <option value="">-- Seleccione una sucursal --</option>
+                                    <!-- Las opciones se cargarán dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="area" class="form-label">Área <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="area" name="area" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="semana" class="form-label">Semana <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="semana" name="semana" required>

@@ -99,6 +99,11 @@ try {
     <meta content="" name="keywords">
     <meta content="" name="description">
     
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
+    
     <?php include "header.php";?>
 </head>
 <body>
@@ -151,7 +156,7 @@ try {
                                 <select class="form-select" id="filtroSucursal">
                                     <option value="">Todas las sucursales</option>
                                     <?php foreach($sucursales as $sucursal): ?>
-                                        <option value="<?php echo $sucursal['ID_Sucursal']; ?>">
+                                        <option value="<?php echo $sucursal['ID_Sucursal']; ?>" <?php echo ($filtros['sucursal'] == $sucursal['ID_Sucursal']) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($sucursal['Nombre_Sucursal']); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -162,7 +167,7 @@ try {
                                 <select class="form-select" id="filtroArea">
                                     <option value="">Todas las áreas</option>
                                     <?php foreach($areas as $area): ?>
-                                        <option value="<?php echo htmlspecialchars($area); ?>">
+                                        <option value="<?php echo htmlspecialchars($area); ?>" <?php echo ($filtros['area'] == $area) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($area); ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -170,11 +175,11 @@ try {
                             </div>
                             <div class="col-md-3">
                                 <label for="filtroFechaInicio" class="form-label">Fecha Inicio:</label>
-                                <input type="date" class="form-control" id="filtroFechaInicio">
+                                <input type="date" class="form-control" id="filtroFechaInicio" value="<?php echo $filtros['fecha_inicio']; ?>">
                             </div>
                             <div class="col-md-3">
                                 <label for="filtroFechaFin" class="form-label">Fecha Fin:</label>
-                                <input type="date" class="form-control" id="filtroFechaFin">
+                                <input type="date" class="form-control" id="filtroFechaFin" value="<?php echo $filtros['fecha_fin']; ?>">
                             </div>
                         </div>
 

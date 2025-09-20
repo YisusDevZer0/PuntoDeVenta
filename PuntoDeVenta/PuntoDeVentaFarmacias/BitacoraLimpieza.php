@@ -33,18 +33,21 @@ $bitacoras = $controller->obtenerBitacoras();
             <div class="container-fluid pt-4 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-                    <h6 class="mb-4" style="color:#0172b6;">Bitácora y control de limpieza de <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
+                    <h6 class="mb-4" style="color:#0172b6;">Registro de Limpieza - <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
                     
-                    <!-- Botones de acción -->
+                    <!-- Instrucciones para el usuario -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Instrucciones:</strong> Seleccione una bitácora asignada para completar los datos de limpieza. Marque con ✓ las tareas que haya realizado. Los cambios se guardan automáticamente.
+                    </div>
+                    
+                    <!-- Botones de acción simplificados -->
                     <div class="text-center mb-4">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalNuevaBitacora">
-                            <i class="fas fa-plus"></i> Nueva Bitácora
-                        </button>
                         <button type="button" class="btn btn-success" id="btnAgregarElemento" style="display:none;">
                             <i class="fas fa-plus"></i> Agregar Elemento
                         </button>
                         <button type="button" class="btn btn-info" id="btnVerBitacoras">
-                            <i class="fas fa-list"></i> Ver Bitácoras
+                            <i class="fas fa-list"></i> Ver Bitácoras Asignadas
                         </button>
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ModalRecordatoriosLimpieza">
                             <i class="fas fa-bell"></i> Recordatorios
@@ -53,10 +56,10 @@ $bitacoras = $controller->obtenerBitacoras();
 
                     <!-- Selector de bitácora -->
                     <div class="row mb-4" id="selector-bitacora" style="display:none;">
-                        <div class="col-md-6">
-                            <label for="selectBitacora" class="form-label">Seleccionar Bitácora:</label>
+                        <div class="col-md-8">
+                            <label for="selectBitacora" class="form-label">Seleccionar Bitácora para Completar Datos:</label>
                             <select class="form-select" id="selectBitacora">
-                                <option value="">-- Seleccione una bitácora --</option>
+                                <option value="">-- Seleccione una bitácora para trabajar --</option>
                                 <?php foreach($bitacoras as $bitacora): ?>
                                     <option value="<?php echo $bitacora['id_bitacora']; ?>">
                                         <?php echo $bitacora['area'] . ' - ' . $bitacora['semana'] . ' (' . $bitacora['fecha_inicio'] . ' a ' . $bitacora['fecha_fin'] . ')'; ?>
@@ -64,14 +67,23 @@ $bitacoras = $controller->obtenerBitacoras();
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" id="btnAplicarFiltros">
+                                <i class="fas fa-search me-2"></i>Buscar Bitácoras
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Tabla de elementos de limpieza -->
                     <div id="tabla-limpieza" style="display:none;">
+                        <div class="alert alert-success mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Registro de Limpieza:</strong> Marque con ✓ las tareas de limpieza que haya completado. Los cambios se guardan automáticamente.
+                        </div>
                         <table id="tablaElementos" class="table table-bordered table-striped" style="width:100%">
                             <thead class="table-primary">
                                 <tr>
-                                    <th>Elemento</th>
+                                    <th>Elemento de Limpieza</th>
                                     <th>Lunes M</th>
                                     <th>Lunes V</th>
                                     <th>Martes M</th>
@@ -97,6 +109,10 @@ $bitacoras = $controller->obtenerBitacoras();
 
                     <!-- Tabla de bitácoras -->
                     <div id="tabla-bitacoras">
+                        <div class="alert alert-warning mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Bitácoras Asignadas:</strong> Estas bitácoras han sido creadas por el administrador. Seleccione una para completar los datos de limpieza.
+                        </div>
                         <table id="tablaBitacoras" class="table table-bordered table-striped" style="width:100%">
                             <thead class="table-primary">
                                 <tr>
@@ -108,9 +124,9 @@ $bitacoras = $controller->obtenerBitacoras();
                                     <th>Responsable</th>
                                     <th>Supervisor</th>
                                     <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <?php foreach($bitacoras as $bitacora): ?>
                                 <tr>
                                     <td><?php echo $bitacora['id_bitacora']; ?></td>
@@ -121,21 +137,15 @@ $bitacoras = $controller->obtenerBitacoras();
                                     <td><?php echo $bitacora['responsable']; ?></td>
                                     <td><?php echo $bitacora['supervisor']; ?></td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary btn-editar-bitacora" data-id="<?php echo $bitacora['id_bitacora']; ?>">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-success btn-ver-elementos" data-id="<?php echo $bitacora['id_bitacora']; ?>">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger btn-eliminar-bitacora" data-id="<?php echo $bitacora['id_bitacora']; ?>">
-                                            <i class="fas fa-trash"></i>
+                                        <button class="btn btn-sm btn-success btn-ver-elementos" data-id="<?php echo $bitacora['id_bitacora']; ?>" title="Completar Datos de Limpieza">
+                                            <i class="fas fa-edit me-1"></i>Trabajar
                                         </button>
                                     </td>
-            </tr>
+                                </tr>
                                 <?php endforeach; ?>
-        </tbody>
-    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
             </div>
         </div>
     </div>

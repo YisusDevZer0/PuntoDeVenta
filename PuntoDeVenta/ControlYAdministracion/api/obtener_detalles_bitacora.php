@@ -18,12 +18,12 @@ try {
     
     // Crear controlador y obtener detalles
     $controller = new BitacoraLimpiezaAdminController($conn);
-    $bitacora = $controller->obtenerDetallesBitacora($id_bitacora);
+    $detalles = $controller->obtenerDetallesBitacora($id_bitacora);
     
-    if ($bitacora) {
+    if ($detalles) {
         echo json_encode([
             'success' => true,
-            'data' => $bitacora
+            'data' => $detalles
         ]);
     } else {
         throw new Exception('Bitácora no encontrada');

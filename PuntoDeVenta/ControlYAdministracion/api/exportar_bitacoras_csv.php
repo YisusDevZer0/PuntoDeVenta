@@ -36,6 +36,10 @@ try {
     fclose($output);
     
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    // En caso de error, mostrar mensaje
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<h3>Error al exportar datos</h3>';
+    echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';
+    echo '<a href="javascript:history.back()">Volver</a>';
 }
 ?>
