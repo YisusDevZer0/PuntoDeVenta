@@ -358,10 +358,10 @@ class TareasController {
                     estado = ?, 
                     asignado_a = ?,
                     fecha_actualizacion = NOW()
-                WHERE id = ? AND asignado_a = ?";
+                WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssssssii", 
+        $stmt->bind_param("ssssssiii", 
             $datos['titulo'],
             $datos['descripcion'],
             $datos['prioridad'],
@@ -369,6 +369,7 @@ class TareasController {
             $datos['estado'],
             $datos['asignado_a'],
             $id,
+            $this->userId,
             $this->userId
         );
         
