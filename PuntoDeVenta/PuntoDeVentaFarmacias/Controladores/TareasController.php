@@ -14,9 +14,9 @@ class TareasController {
      * Obtener tareas asignadas al usuario actual de la sucursal actual
      */
     public function getTareasAsignadas($filtros = []) {
-        $where = "WHERE (t.asignado_a = ? OR t.creado_por = ?)";
-        $params = [$this->userId, $this->userId];
-        $types = "ii";
+        $where = "WHERE t.asignado_a = ?";
+        $params = [$this->userId];
+        $types = "i";
         
         // Aplicar filtros
         if (!empty($filtros['estado'])) {
@@ -147,11 +147,11 @@ class TareasController {
                     t.estado,
                     COUNT(*) as cantidad
                 FROM Tareas t
-                WHERE (t.asignado_a = ? OR t.creado_por = ?)
+                WHERE t.asignado_a = ?
                 GROUP BY t.estado";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->userId);
+        $stmt->bind_param("i", $this->userId);
         $stmt->execute();
         
         return $stmt->get_result();
@@ -168,14 +168,14 @@ class TareasController {
                     t.prioridad,
                     t.estado
                 FROM Tareas t
-                WHERE (t.asignado_a = ? OR t.creado_por = ?)
+                WHERE t.asignado_a = ?
                 AND t.estado IN ('Por hacer', 'En progreso')
                 AND t.fecha_limite IS NOT NULL
                 AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
                 ORDER BY t.fecha_limite ASC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->userId);
+        $stmt->bind_param("i", $this->userId);
         $stmt->execute();
         
         return $stmt->get_result();
@@ -192,10 +192,10 @@ class TareasController {
         
         $sql = "UPDATE Tareas 
                 SET estado = ?, fecha_actualizacion = NOW() 
-                WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
+                WHERE id = ? AND asignado_a = ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("siii", $nuevoEstado, $tareaId, $this->userId, $this->userId);
+        $stmt->bind_param("sii", $nuevoEstado, $tareaId, $this->userId);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Estado actualizado correctamente'];
@@ -224,10 +224,10 @@ class TareasController {
                 FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
-                WHERE t.id = ? AND (t.asignado_a = ? OR t.creado_por = ?)";
+                WHERE t.id = ? AND t.asignado_a = ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $tareaId, $this->userId, $this->userId);
+        $stmt->bind_param("ii", $tareaId, $this->userId);
         $stmt->execute();
         
         return $stmt->get_result()->fetch_assoc();
@@ -239,10 +239,10 @@ class TareasController {
     private function verificarPropiedadTarea($tareaId) {
         $sql = "SELECT COUNT(*) as count 
                 FROM Tareas t
-                WHERE t.id = ? AND (t.asignado_a = ? OR t.creado_por = ?)";
+                WHERE t.id = ? AND t.asignado_a = ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $tareaId, $this->userId, $this->userId);
+        $stmt->bind_param("ii", $tareaId, $this->userId);
         $stmt->execute();
         
         $result = $stmt->get_result()->fetch_assoc();
@@ -261,14 +261,14 @@ class TareasController {
                     t.estado,
                     DATEDIFF(CURDATE(), t.fecha_limite) as dias_vencida
                 FROM Tareas t
-                WHERE (t.asignado_a = ? OR t.creado_por = ?)
+                WHERE t.asignado_a = ?
                 AND t.estado IN ('Por hacer', 'En progreso')
                 AND t.fecha_limite IS NOT NULL
                 AND t.fecha_limite < CURDATE()
                 ORDER BY t.fecha_limite ASC";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->userId);
+        $stmt->bind_param("i", $this->userId);
         $stmt->execute();
         
         return $stmt->get_result();
@@ -300,10 +300,10 @@ class TareasController {
                     SUM(CASE WHEN estado = 'Cancelada' THEN 1 ELSE 0 END) as canceladas,
                     SUM(CASE WHEN fecha_limite < CURDATE() AND estado IN ('Por hacer', 'En progreso') THEN 1 ELSE 0 END) as vencidas
                 FROM Tareas t
-                WHERE (t.asignado_a = ? OR t.creado_por = ?)";
+                WHERE t.asignado_a = ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->userId);
+        $stmt->bind_param("i", $this->userId);
         $stmt->execute();
         
         return $stmt->get_result()->fetch_assoc();
@@ -358,10 +358,10 @@ class TareasController {
                     estado = ?, 
                     asignado_a = ?,
                     fecha_actualizacion = NOW()
-                WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
+                WHERE id = ? AND asignado_a = ?";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssssssiii", 
+        $stmt->bind_param("ssssssii", 
             $datos['titulo'],
             $datos['descripcion'],
             $datos['prioridad'],
@@ -369,7 +369,6 @@ class TareasController {
             $datos['estado'],
             $datos['asignado_a'],
             $id,
-            $this->userId,
             $this->userId
         );
         
@@ -385,9 +384,9 @@ class TareasController {
             return ['success' => false, 'message' => 'No tienes permisos para eliminar esta tarea'];
         }
         
-        $sql = "DELETE FROM Tareas WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
+        $sql = "DELETE FROM Tareas WHERE id = ? AND asignado_a = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iii", $id, $this->userId, $this->userId);
+        $stmt->bind_param("ii", $id, $this->userId);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Tarea eliminada correctamente'];
