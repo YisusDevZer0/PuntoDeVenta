@@ -30,12 +30,72 @@ class TareasController {
                 FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
-                WHERE t.asignado_a = ? AND u_asignado.Fk_Sucursal = ?";
+                WHERE t.asignado_a = ?";
         
-        $params = [$this->userId, $this->sucursalId];
-        $types = "ii";
+        $params = [$this->userId];
+        $types = "i";
         
         // Aplicar filtros
+        if (!empty($filtros['estado'])) {
+            $sql .= " AND t.estado = ?";
+            $params[] = $filtros['estado'];
+            $types .= "s";
+        }
+        
+        if (!empty($filtros['prioridad'])) {
+            $sql .= " AND t.prioridad = ?";
+            $params[] = $filtros['prioridad'];
+            $types .= "s";
+        }
+        
+        $sql .= " ORDER BY 
+                    CASE t.prioridad 
+                        WHEN 'Alta' THEN 1 
+                        WHEN 'Media' THEN 2 
+                        WHEN 'Baja' THEN 3 
+                    END,
+                    t.fecha_limite ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        
+        return $stmt->get_result();
+    }
+    
+    /**
+     * Obtener tareas asignadas al usuario actual con filtro de sucursal opcional
+     */
+    public function getTareasAsignadasConSucursal($filtros = []) {
+        $sql = "SELECT 
+                    t.id,
+                    t.titulo,
+                    t.descripcion,
+                    t.prioridad,
+                    t.fecha_limite,
+                    t.estado,
+                    t.asignado_a,
+                    t.creado_por,
+                    t.fecha_creacion,
+                    t.fecha_actualizacion,
+                    u_asignado.Nombre_Apellidos as asignado_nombre,
+                    u_creador.Nombre_Apellidos as creador_nombre
+                FROM Tareas t
+                LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
+                LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
+                WHERE t.asignado_a = ?";
+        
+        $params = [$this->userId];
+        $types = "i";
+        
+        // Filtro opcional de sucursal
+        if (isset($filtros['filtrar_por_sucursal']) && $filtros['filtrar_por_sucursal']) {
+            $sql .= " AND u_asignado.Fk_Sucursal = ?";
+            $params[] = $this->sucursalId;
+            $types .= "i";
+        }
+        
+        // Aplicar otros filtros
         if (!empty($filtros['estado'])) {
             $sql .= " AND t.estado = ?";
             $params[] = $filtros['estado'];
