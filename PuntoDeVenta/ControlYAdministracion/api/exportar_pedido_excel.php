@@ -36,6 +36,9 @@ if (empty($pedido_id)) {
     exit;
 }
 
+// Convertir a entero para el binding
+$pedido_id = (int)$pedido_id;
+
 try {
     // Obtener información del pedido
     $sql_pedido = "SELECT 
