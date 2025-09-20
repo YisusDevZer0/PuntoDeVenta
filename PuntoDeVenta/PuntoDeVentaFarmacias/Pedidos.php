@@ -581,9 +581,40 @@ include "Controladores/db_connect.php";
                 }, 500);
             });
             
+            // Función para probar la conexión
+            function probarConexion() {
+                console.log('Probando conexión...');
+                fetch('api/test_connection.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Resultado de conexión:', data);
+                    if (!data.success) {
+                        alert('Error de conexión: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al probar conexión:', error);
+                    alert('Error al probar conexión');
+                });
+            }
+            
+            // Función para instalar tablas si no existen
+            function instalarTablas() {
+                fetch('api/instalar_tablas_pedidos.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Tablas verificadas:', data);
+                })
+                .catch(error => {
+                    console.error('Error al verificar tablas:', error);
+                });
+            }
+            
             // Cargar datos iniciales
             setTimeout(function() {
                 document.getElementById('loading-spinner').style.display = 'none';
+                probarConexion();
+                instalarTablas();
                 cargarEstadisticas();
                 cargarPedidos();
             }, 1000);
@@ -622,13 +653,13 @@ include "Controladores/db_connect.php";
                             <div class="card-body p-2">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="mb-1">${producto.Nombre_Prod}</h6>
-                                        <small class="text-muted">Código: ${producto.Cod_Barra}</small>
+                                        <h6 class="mb-1">${producto.nombre}</h6>
+                                        <small class="text-muted">Código: ${producto.codigo_barras}</small>
                                         <br>
-                                        <small class="text-success">$${producto.Precio_Venta}</small>
-                                        <small class="text-muted"> | Stock: ${producto.Existencias_R}</small>
+                                        <small class="text-success">$${producto.precio}</small>
+                                        <small class="text-muted"> | Stock: ${producto.existencias}</small>
                                     </div>
-                                    <button class="btn btn-primary btn-sm" onclick="agregarProducto(${producto.ID_Prod_POS}, '${producto.Nombre_Prod}', ${producto.Precio_Venta})">
+                                    <button class="btn btn-primary btn-sm" onclick="agregarProducto(${producto.id}, '${producto.nombre}', ${producto.precio})">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -723,6 +754,10 @@ include "Controladores/db_connect.php";
                 const observaciones = $('#observaciones-pedido-nuevo').val();
                 const prioridad = $('#prioridad-pedido-nuevo').val();
                 
+                console.log('Guardando pedido con productos:', productosPedido);
+                console.log('Observaciones:', observaciones);
+                console.log('Prioridad:', prioridad);
+                
                 const btnGuardar = $('#btnGuardarPedidoNuevo');
                 const textoOriginal = btnGuardar.html();
                 btnGuardar.html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
@@ -739,6 +774,7 @@ include "Controladores/db_connect.php";
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Respuesta de guardar pedido:', data);
                     if (data.success) {
                         alert('Pedido guardado exitosamente\nFolio: ' + data.folio);
                         $('#modalNuevoPedido').modal('hide');
@@ -769,13 +805,17 @@ include "Controladores/db_connect.php";
             }
             
             function cargarEstadisticas() {
+                console.log('Cargando estadísticas...');
                 fetch('api/estadisticas_pedidos.php')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Respuesta de estadísticas:', data);
                     if (data.success) {
                         $('#stats-pendientes').text(data.estadisticas.pendientes);
                         $('#stats-aprobados').text(data.estadisticas.aprobados);
                         $('#stats-proceso').text(data.estadisticas.en_proceso);
+                    } else {
+                        console.error('Error en estadísticas:', data.message);
                     }
                 })
                 .catch(error => {
@@ -784,6 +824,7 @@ include "Controladores/db_connect.php";
             }
             
             function cargarPedidos() {
+                console.log('Cargando pedidos...');
                 const formData = new FormData();
                 formData.append('estado', $('#filtro-estado').val());
                 formData.append('fecha_inicio', $('#filtro-fecha-inicio').val());
@@ -796,14 +837,17 @@ include "Controladores/db_connect.php";
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Respuesta de pedidos:', data);
                     if (data.success) {
                         mostrarPedidos(data.pedidos);
                     } else {
                         console.error('Error al cargar pedidos:', data.message);
+                        alert('Error al cargar pedidos: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error al cargar pedidos:', error);
+                    alert('Error al cargar pedidos');
                 });
             }
             
@@ -819,6 +863,9 @@ include "Controladores/db_connect.php";
                 $('#empty-state').hide();
                 container.show();
                 
+                // Guardar pedidos para la función verDetallePedido
+                window.pedidosActuales = pedidos;
+                
                 let html = '';
                 pedidos.forEach(pedido => {
                     const estadoClass = `estado-${pedido.estado}`;
@@ -829,7 +876,7 @@ include "Controladores/db_connect.php";
                     const tiempoTranscurrido = calcularTiempoTranscurrido(fecha);
                     
                     html += `
-                        <div class="pedido-item ${prioridadClass}" onclick="verDetallePedido(${pedido.id})">
+                        <div class="pedido-item ${prioridadClass}">
                             <div class="row align-items-center">
                                 <div class="col-md-3">
                                     <h6 class="mb-1 fw-bold">${pedido.folio}</h6>
@@ -843,13 +890,14 @@ include "Controladores/db_connect.php";
                                 <div class="col-md-3">
                                     <small class="text-muted">${pedido.usuario_nombre}</small>
                                 </div>
-                                <div class="col-md-2">
-                                    <small class="text-muted">Productos: <strong>0</strong></small><br>
-                                    <small class="text-muted">Unidades: <strong>0</strong></small>
-                                </div>
                                 <div class="col-md-2 text-end">
                                     <h6 class="mb-0 text-success">$${pedido.total_estimado.toFixed(2)}</h6>
                                     <small class="text-muted">${pedido.sucursal_nombre || 'Farmacia'}</small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-primary btn-sm" onclick="verDetallePedido(${pedido.id})">
+                                        <i class="fas fa-eye me-1"></i>Ver
+                                    </button>
                                 </div>
                             </div>
                         </div>
