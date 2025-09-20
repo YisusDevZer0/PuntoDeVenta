@@ -537,11 +537,11 @@ include "Controladores/db_connect.php";
                         <h4 id="stats-proceso">0</h4>
                         <p class="mb-0">En Proceso</p>
                     </div>
-                    <div class="stats-card stats-total">
+                    <!-- <div class="stats-card stats-total">
                         <i class="fas fa-dollar-sign fa-2x mb-2"></i>
                         <h4 id="stats-total">$0</h4>
                         <p class="mb-0">Total Estimado</p>
-                    </div>
+                    </div> -->
                 </div>
                 
                 <!-- Barra de acciones -->
