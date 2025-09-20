@@ -30,7 +30,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energía</a>
                             <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitácora de limpieza</a>
-                            <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
+                            <a href="MisTareas" class="dropdown-item"><i class="fa-solid fa-list"></i>Mis Tareas</a>
                             <!-- <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-message"></i>Mensajes</a>
                             <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-bell"></i>Crear recordatorios</a> -->
                         </div>
