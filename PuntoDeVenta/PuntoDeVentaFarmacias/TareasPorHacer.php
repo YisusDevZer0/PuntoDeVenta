@@ -2,13 +2,13 @@
 include_once "Controladores/ControladorUsuario.php";
 include_once "Controladores/TareasController.php";
 
-$tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucursal']);
+$tareasController = new TareasController($conn, $userId);
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Mis Tareas - <?php echo $row['Licencia']?> - <?php echo $row['Nombre_Sucursal']?></title>
+    <title>Tareas por Hacer - <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     
     <style>
@@ -187,15 +187,15 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         <?php include "navbar.php"; ?>
         
         <div class="container-fluid">
-            <h1 class="h3 mb-4 text-gray-800">Mis Tareas - <?php echo $row['Nombre_Apellidos']; ?></h1>
+            <h1 class="h3 mb-4 text-gray-800">Tareas por Hacer</h1>
             
             <!-- Estadísticas -->
             <div class="row mb-4">
                 <?php
                 $estadisticas = $tareasController->getEstadisticas();
                 $stats = [];
-                while ($row_stats = $estadisticas->fetch_assoc()) {
-                    $stats[$row_stats['estado']] = $row_stats['cantidad'];
+                while ($row = $estadisticas->fetch_assoc()) {
+                    $stats[$row['estado']] = $row['cantidad'];
                 }
                 ?>
                 <div class="col-xl-3 col-md-6 mb-4">
@@ -259,6 +259,18 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                         </select>
                     </div>
                     <div class="col-md-3">
+                        <label for="filtroAsignado">Asignado a:</label>
+                        <select id="filtroAsignado" class="form-control">
+                            <option value="">Todos</option>
+                            <?php
+                            $usuarios = $tareasController->getUsuariosDisponibles();
+                            while ($usuario = $usuarios->fetch_assoc()) {
+                                echo "<option value='" . $usuario['Id_PvUser'] . "'>" . $usuario['Nombre_Apellidos'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
                         <label>&nbsp;</label>
                         <div>
                             <button type="button" class="btn btn-primary" onclick="aplicarFiltros()">
@@ -269,43 +281,27 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                             </button>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <label>&nbsp;</label>
-                        <div>
-                            <button type="button" class="btn btn-info" onclick="exportarTareas()">
-                                <i class="fas fa-download"></i> Exportar
-                            </button>
-                        </div>
-                    </div>
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-success" onclick="abrirModalNuevaTarea()">
+                        <i class="fas fa-plus"></i> Nueva Tarea
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="exportarTareas()">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
                 </div>
             </div>
             
             <!-- Tabla de tareas -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Mis Tareas Asignadas</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Lista de Tareas</h6>
                 </div>
                 <div class="card-body">
-                    <!-- Mensaje cuando no hay tareas -->
-                    <div id="mensaje-sin-tareas" class="text-center py-5" style="display: none;">
-                        <div class="mb-4">
-                            <i class="fas fa-tasks fa-4x text-muted"></i>
-                        </div>
-                        <h4 class="text-muted">¡No tienes tareas asignadas!</h4>
-                        <p class="text-muted">Cuando te asignen tareas, aparecerán aquí para que puedas gestionarlas.</p>
-                        <div class="mt-4">
-                            <button class="btn btn-primary" onclick="cargarTareas()">
-                                <i class="fas fa-refresh"></i> Actualizar
-                            </button>
-                            <a href="test_tareas.php" class="btn btn-info" target="_blank">
-                                <i class="fas fa-bug"></i> Verificar Base de Datos
-                            </a>
-                            <a href="crear_tabla_tareas.php" class="btn btn-success">
-                                <i class="fas fa-plus"></i> Crear Tabla de Tareas
-                            </a>
-                        </div>
-                    </div>
-                    
                     <div class="table-responsive">
                         <table class="table table-bordered" id="tablaTareas" width="100%" cellspacing="0">
                             <thead>
@@ -316,6 +312,7 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                                     <th>Prioridad</th>
                                     <th>Fecha Límite</th>
                                     <th>Estado</th>
+                                    <th>Asignado a</th>
                                     <th>Creado por</th>
                                     <th>Fecha Creación</th>
                                     <th>Acciones</th>
@@ -329,12 +326,84 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
             </div>
         </div>
     </div>
-         
-    <!-- Footer Start -->
-    <?php 
-    include "Modales/Modales_Errores.php";
-    include "Modales/Modales_Referencias.php";
-    include "Footer.php"; ?>
+    
+    <!-- Modal para nueva/editar tarea -->
+    <div class="modal fade" id="modalTarea" tabindex="-1" role="dialog" aria-labelledby="modalTareaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTareaLabel">Nueva Tarea</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formTarea">
+                        <input type="hidden" id="tareaId" name="tareaId">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="titulo">Título *</label>
+                                    <input type="text" class="form-control" id="titulo" name="titulo" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="prioridad">Prioridad *</label>
+                                    <select class="form-control" id="prioridad" name="prioridad" required>
+                                        <option value="Baja">Baja</option>
+                                        <option value="Media" selected>Media</option>
+                                        <option value="Alta">Alta</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="fecha_limite">Fecha Límite</label>
+                                    <input type="date" class="form-control" id="fecha_limite" name="fecha_limite">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="estado">Estado *</label>
+                                    <select class="form-control" id="estado" name="estado" required>
+                                        <option value="Por hacer" selected>Por hacer</option>
+                                        <option value="En progreso">En progreso</option>
+                                        <option value="Completada">Completada</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="asignado_a">Asignado a *</label>
+                            <select class="form-control" id="asignado_a" name="asignado_a" required>
+                                <option value="">Seleccionar usuario</option>
+                                <?php
+                                $usuarios = $tareasController->getUsuariosDisponibles();
+                                while ($usuario = $usuarios->fetch_assoc()) {
+                                    echo "<option value='" . $usuario['Id_PvUser'] . "'>" . $usuario['Nombre_Apellidos'] . "</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarTarea()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <?php include "Footer.php"; ?>
     
     <div id="loading-overlay">
         <div class="loader"></div>
@@ -346,13 +415,11 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         var filtrosActuales = {};
         
         $(document).ready(function() {
-            console.log('Documento listo, inicializando tabla...');
             inicializarTabla();
             cargarTareas();
         });
         
         function inicializarTabla() {
-            console.log('Inicializando DataTable...');
             tablaTareas = $('#tablaTareas').DataTable({
                 "processing": true,
                 "serverSide": false,
@@ -362,29 +429,7 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     "data": function(d) {
                         return $.extend(d, filtrosActuales);
                     },
-                    "dataSrc": function(json) {
-                        console.log('Respuesta del servidor:', json);
-                        if (json.success && json.data) {
-                            // Mostrar/ocultar mensaje de sin tareas
-                            if (json.data.length === 0) {
-                                $('#mensaje-sin-tareas').show();
-                            } else {
-                                $('#mensaje-sin-tareas').hide();
-                            }
-                            return json.data;
-                        } else {
-                            console.error('Error en la respuesta:', json);
-                            $('#mensaje-sin-tareas').show();
-                            return [];
-                        }
-                    },
-                    "error": function(xhr, error, thrown) {
-                        console.error('Error AJAX:', xhr, error, thrown);
-                        ocultarLoading();
-                        $('#mensaje-sin-tareas').show();
-                        $('#mensaje-sin-tareas h4').text('Error al cargar las tareas');
-                        $('#mensaje-sin-tareas p').text('Hubo un problema al conectar con el servidor. Verifica la conexión a la base de datos.');
-                    }
+                    "dataSrc": "data"
                 },
                 "columns": [
                     {"data": "id"},
@@ -405,77 +450,50 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                             return '<span class="badge badge-estado badge-' + clase + '">' + data + '</span>';
                         }
                     },
+                    {"data": "asignado_nombre"},
                     {"data": "creador_nombre"},
                     {"data": "fecha_creacion"},
                     {
                         "data": null,
                         "render": function(data, type, row) {
                             var botones = '';
-                            
-                            // Botón para ver detalles
-                            botones += '<button class="btn btn-sm btn-info btn-accion" onclick="verDetalles(' + row.id + ')" title="Ver detalles"><i class="fas fa-eye"></i></button>';
-                            
-                            // Botones según el estado
+                            botones += '<button class="btn btn-sm btn-info btn-accion" onclick="editarTarea(' + row.id + ')" title="Editar"><i class="fas fa-edit"></i></button>';
+                            if (row.estado !== 'Completada') {
+                                botones += '<button class="btn btn-sm btn-success btn-accion" onclick="cambiarEstado(' + row.id + ', \'Completada\')" title="Marcar como completada"><i class="fas fa-check"></i></button>';
+                            }
                             if (row.estado === 'Por hacer') {
                                 botones += '<button class="btn btn-sm btn-warning btn-accion" onclick="cambiarEstado(' + row.id + ', \'En progreso\')" title="Marcar en progreso"><i class="fas fa-play"></i></button>';
-                                botones += '<button class="btn btn-sm btn-success btn-accion" onclick="cambiarEstado(' + row.id + ', \'Completada\')" title="Marcar como completada"><i class="fas fa-check"></i></button>';
-                            } else if (row.estado === 'En progreso') {
-                                botones += '<button class="btn btn-sm btn-success btn-accion" onclick="cambiarEstado(' + row.id + ', \'Completada\')" title="Marcar como completada"><i class="fas fa-check"></i></button>';
-                                botones += '<button class="btn btn-sm btn-secondary btn-accion" onclick="cambiarEstado(' + row.id + ', \'Por hacer\')" title="Volver a por hacer"><i class="fas fa-undo"></i></button>';
-                            } else if (row.estado === 'Completada') {
-                                botones += '<button class="btn btn-sm btn-warning btn-accion" onclick="cambiarEstado(' + row.id + ', \'En progreso\')" title="Marcar en progreso"><i class="fas fa-play"></i></button>';
                             }
-                            
+                            botones += '<button class="btn btn-sm btn-danger btn-accion" onclick="eliminarTarea(' + row.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button>';
                             return botones;
                         }
                     }
                 ],
                 "order": [[3, "asc"], [4, "asc"]],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
                 "createdRow": function(row, data, dataIndex) {
                     // Marcar tareas vencidas
                     if (data.fecha_limite && new Date(data.fecha_limite) < new Date()) {
                         $(row).addClass('tarea-vencida');
                     }
-                },
-                "language": {
-                    "emptyTable": "No tienes tareas asignadas en este momento",
-                    "zeroRecords": "No se encontraron tareas que coincidan con los filtros",
-                    "loadingRecords": "Cargando tareas...",
-                    "processing": "Procesando...",
-                    "lengthMenu": "Mostrar _MENU_ tareas por página",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ tareas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 tareas",
-                    "infoFiltered": "(filtrado de _MAX_ tareas totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
                 }
             });
-            console.log('DataTable inicializado correctamente');
         }
         
         function cargarTareas() {
             mostrarLoading("Cargando tareas...");
-            console.log('Cargando tareas...');
-            if (tablaTareas) {
-                tablaTareas.ajax.reload(function(json) {
-                    console.log('Tareas cargadas:', json);
-                    ocultarLoading();
-                });
-            } else {
-                console.error('Tabla no inicializada');
+            tablaTareas.ajax.reload(function() {
                 ocultarLoading();
-            }
+            });
         }
         
         function aplicarFiltros() {
             filtrosActuales = {
                 estado: $('#filtroEstado').val(),
-                prioridad: $('#filtroPrioridad').val()
+                prioridad: $('#filtroPrioridad').val(),
+                asignado_a: $('#filtroAsignado').val()
             };
             cargarTareas();
         }
@@ -483,12 +501,20 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         function limpiarFiltros() {
             $('#filtroEstado').val('');
             $('#filtroPrioridad').val('');
+            $('#filtroAsignado').val('');
             filtrosActuales = {};
             cargarTareas();
         }
         
-        function verDetalles(id) {
-            mostrarLoading("Cargando detalles de la tarea...");
+        function abrirModalNuevaTarea() {
+            $('#modalTareaLabel').text('Nueva Tarea');
+            $('#formTarea')[0].reset();
+            $('#tareaId').val('');
+            $('#modalTarea').modal('show');
+        }
+        
+        function editarTarea(id) {
+            mostrarLoading("Cargando datos de la tarea...");
             $.ajax({
                 url: 'Controladores/ArrayTareas.php',
                 type: 'POST',
@@ -497,92 +523,65 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                     ocultarLoading();
                     if (response.success) {
                         var tarea = response.data;
-                        var detalles = `
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Detalles de la Tarea #${tarea.id}</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong>Título:</strong><br>
-                                            ${tarea.titulo}
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong>Prioridad:</strong><br>
-                                            <span class="badge badge-prioridad badge-${tarea.prioridad.toLowerCase()}">${tarea.prioridad}</span>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong>Estado:</strong><br>
-                                            <span class="badge badge-estado badge-${tarea.estado.toLowerCase().replace(' ', '-')}">${tarea.estado}</span>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong>Fecha Límite:</strong><br>
-                                            ${tarea.fecha_limite || 'Sin fecha límite'}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <strong>Descripción:</strong><br>
-                                            ${tarea.descripcion || 'Sin descripción'}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <strong>Creado por:</strong><br>
-                                            ${tarea.creador_nombre}
-                                        </div>
-                                        <div class="col-md-6">
-                                            <strong>Fecha de creación:</strong><br>
-                                            ${tarea.fecha_creacion}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        Swal.fire({
-                            title: 'Detalles de la Tarea',
-                            html: detalles,
-                            width: '800px',
-                            showCloseButton: true,
-                            showConfirmButton: false
-                        });
+                        $('#tareaId').val(tarea.id);
+                        $('#titulo').val(tarea.titulo);
+                        $('#descripcion').val(tarea.descripcion);
+                        $('#prioridad').val(tarea.prioridad);
+                        $('#fecha_limite').val(tarea.fecha_limite);
+                        $('#estado').val(tarea.estado);
+                        $('#asignado_a').val(tarea.asignado_a);
+                        $('#modalTareaLabel').text('Editar Tarea');
+                        $('#modalTarea').modal('show');
                     } else {
                         Swal.fire('Error', response.message, 'error');
                     }
                 },
                 error: function() {
                     ocultarLoading();
-                    Swal.fire('Error', 'Error al cargar los detalles de la tarea', 'error');
+                    Swal.fire('Error', 'Error al cargar los datos de la tarea', 'error');
+                }
+            });
+        }
+        
+        function guardarTarea() {
+            var formData = new FormData($('#formTarea')[0]);
+            var tareaId = $('#tareaId').val();
+            
+            if (tareaId) {
+                formData.append('accion', 'actualizar');
+                formData.append('id', tareaId);
+            } else {
+                formData.append('accion', 'crear');
+            }
+            
+            mostrarLoading("Guardando tarea...");
+            $.ajax({
+                url: 'Controladores/ArrayTareas.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    ocultarLoading();
+                    if (response.success) {
+                        Swal.fire('Éxito', response.message, 'success');
+                        $('#modalTarea').modal('hide');
+                        cargarTareas();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    ocultarLoading();
+                    Swal.fire('Error', 'Error al guardar la tarea', 'error');
                 }
             });
         }
         
         function cambiarEstado(id, nuevoEstado) {
-            var mensaje = '';
-            switch(nuevoEstado) {
-                case 'En progreso':
-                    mensaje = '¿Deseas marcar esta tarea como "En progreso"?';
-                    break;
-                case 'Completada':
-                    mensaje = '¿Deseas marcar esta tarea como "Completada"?';
-                    break;
-                case 'Por hacer':
-                    mensaje = '¿Deseas volver a marcar esta tarea como "Por hacer"?';
-                    break;
-                default:
-                    mensaje = '¿Deseas cambiar el estado de esta tarea?';
-            }
-            
             Swal.fire({
                 title: '¿Confirmar cambio?',
-                text: mensaje,
+                text: '¿Deseas cambiar el estado de la tarea a "' + nuevoEstado + '"?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, cambiar',
@@ -603,10 +602,6 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                             if (response.success) {
                                 Swal.fire('Éxito', response.message, 'success');
                                 cargarTareas();
-                                // Recargar la página para actualizar las estadísticas
-                                setTimeout(function() {
-                                    location.reload();
-                                }, 1500);
                             } else {
                                 Swal.fire('Error', response.message, 'error');
                             }
@@ -614,6 +609,42 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
                         error: function() {
                             ocultarLoading();
                             Swal.fire('Error', 'Error al cambiar el estado', 'error');
+                        }
+                    });
+                }
+            });
+        }
+        
+        function eliminarTarea(id) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción no se puede deshacer",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    mostrarLoading("Eliminando tarea...");
+                    $.ajax({
+                        url: 'Controladores/ArrayTareas.php',
+                        type: 'POST',
+                        data: {
+                            accion: 'eliminar',
+                            id: id
+                        },
+                        success: function(response) {
+                            ocultarLoading();
+                            if (response.success) {
+                                Swal.fire('Éxito', response.message, 'success');
+                                cargarTareas();
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            ocultarLoading();
+                            Swal.fire('Error', 'Error al eliminar la tarea', 'error');
                         }
                     });
                 }
@@ -637,4 +668,4 @@ $tareasController = new TareasController($conn, $row['Id_PvUser'], $row['Fk_Sucu
         }
     </script>
 </body>
-</html>
+</html> 
