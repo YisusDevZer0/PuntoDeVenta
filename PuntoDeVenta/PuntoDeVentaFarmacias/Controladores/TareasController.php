@@ -190,12 +190,12 @@ class TareasController {
             return ['success' => false, 'message' => 'No tienes permisos para modificar esta tarea'];
         }
         
-        $sql = "UPDATE tareas 
+        $sql = "UPDATE Tareas 
                 SET estado = ?, fecha_actualizacion = NOW() 
-                WHERE id = ? AND asignado_a = ?";
+                WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sii", $nuevoEstado, $tareaId, $this->userId);
+        $stmt->bind_param("siii", $nuevoEstado, $tareaId, $this->userId, $this->userId);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Estado actualizado correctamente'];
@@ -224,10 +224,10 @@ class TareasController {
                 FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
-                WHERE t.id = ? AND t.asignado_a = ?";
+                WHERE t.id = ? AND (t.asignado_a = ? OR t.creado_por = ?)";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $tareaId, $this->userId);
+        $stmt->bind_param("iii", $tareaId, $this->userId, $this->userId);
         $stmt->execute();
         
         return $stmt->get_result()->fetch_assoc();
@@ -384,9 +384,9 @@ class TareasController {
             return ['success' => false, 'message' => 'No tienes permisos para eliminar esta tarea'];
         }
         
-        $sql = "DELETE FROM Tareas WHERE id = ? AND asignado_a = ?";
+        $sql = "DELETE FROM Tareas WHERE id = ? AND (asignado_a = ? OR creado_por = ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $id, $this->userId);
+        $stmt->bind_param("iii", $id, $this->userId, $this->userId);
         
         if ($stmt->execute()) {
             return ['success' => true, 'message' => 'Tarea eliminada correctamente'];
