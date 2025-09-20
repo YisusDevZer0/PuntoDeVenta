@@ -82,7 +82,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="StockSucursal" class="dropdown-item"><i class="fa-solid fa-dolly"></i>Stock</a>
                             <a href="StockInsumos" class="dropdown-item"><i class="fa-solid fa-box"></i>Stock de insumos</a>
-                            <a href="Pedidos" class="dropdown-item"><i class="fa-solid fa-shopping-cart"></i>Gestión de Pedidos</a>
+                            <a href="PedidosFarmacia" class="dropdown-item"><i class="fa-solid fa-shopping-cart"></i>Gestión de Pedidos</a>
                             <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-clipboard-list"></i>Conteo diario</a>
                             <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Devoluciones</a>
                             <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-calendar-xmark"></i>Caducados</a>
