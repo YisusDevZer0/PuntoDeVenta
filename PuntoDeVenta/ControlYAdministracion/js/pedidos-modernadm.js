@@ -341,10 +341,12 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
-                                    data-toggle="tooltip" title="Descargar Excel">
-                                <i class="fas fa-file-excel"></i>
-                            </button>
+                            ${pedido.estado === 'aprobado' ? `
+                                <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Descargar Excel">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                            ` : ''}
                             ${pedido.estado === 'pendiente' ? `
                                 <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Aprobar pedido">
