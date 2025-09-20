@@ -1015,7 +1015,7 @@ include "Controladores/db_connect.php";
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="js/productos-module.js"></script>
-    <script src="js/pedidos-modern.js"></script>
+    <script src="js/productos-moduleadm.js"></script>
+    <script src="js/pedidos-modernadm.js"></script>
 </body>
 </html> 
