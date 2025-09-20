@@ -1255,12 +1255,29 @@ include "Controladores/db_connect.php";
             window.cambiarCantidad = cambiarCantidad;
             window.eliminarProducto = eliminarProducto;
             
-            // Cargar datos iniciales
-            setTimeout(function() {
-                document.getElementById('loading-spinner').style.display = 'none';
-                cargarEstadisticas();
-                cargarPedidos();
-            }, 1000);
+            // Instalar tablas si no existen y cargar datos iniciales
+            function inicializarSistema() {
+                // Primero instalar tablas si es necesario
+                fetch('api/instalar_tablas_pedidos.php')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Instalación de tablas:', data);
+                    // Luego cargar datos
+                    cargarEstadisticas();
+                    cargarPedidos();
+                    document.getElementById('loading-spinner').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error al instalar tablas:', error);
+                    // Intentar cargar datos de todas formas
+                    cargarEstadisticas();
+                    cargarPedidos();
+                    document.getElementById('loading-spinner').style.display = 'none';
+                });
+            }
+            
+            // Inicializar sistema
+            setTimeout(inicializarSistema, 1000);
         });
     </script>
 </body>

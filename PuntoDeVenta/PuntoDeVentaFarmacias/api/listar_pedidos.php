@@ -5,7 +5,7 @@ include_once "../Controladores/ControladorUsuario.php";
 
 // Verificar sesión
 session_start();
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+if(!isset($_SESSION['VentasPos'])){
     echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
     exit();
 }
