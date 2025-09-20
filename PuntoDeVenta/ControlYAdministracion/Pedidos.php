@@ -477,6 +477,70 @@ include "Controladores/db_connect.php";
             position: relative;
         }
 
+        /* Estilos para botón de descarga Excel individual */
+        .descargar-excel-pedido {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: 1px solid #28a745;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .descargar-excel-pedido:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+            border-color: #1e7e34;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .descargar-excel-pedido:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
+        }
+
+        .descargar-excel-pedido:disabled {
+            background: #6c757d;
+            border-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .descargar-excel-pedido i {
+            transition: transform 0.3s ease;
+        }
+
+        .descargar-excel-pedido:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Efecto de pulso para el botón individual */
+        .descargar-excel-pedido.downloading {
+            animation: pulse-download-individual 1.5s infinite;
+        }
+
+        @keyframes pulse-download-individual {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Mejoras en el grupo de botones */
+        .btn-group .descargar-excel-pedido {
+            margin-left: 2px;
+            margin-right: 2px;
+        }
+
+        /* Responsive para botones individuales */
+        @media (max-width: 768px) {
+            .btn-group .descargar-excel-pedido {
+                font-size: 12px;
+                padding: 4px 8px;
+            }
+        }
+
         /* Efectos hover mejorados */
         .pedido-item:hover {
             transform: translateY(-2px);

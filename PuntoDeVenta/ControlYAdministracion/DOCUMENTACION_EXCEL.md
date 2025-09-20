@@ -1,15 +1,27 @@
 # Funcionalidad de Exportación a Excel - Sistema de Pedidos
 
 ## Descripción
-Se ha implementado una funcionalidad completa para exportar el listado de pedidos a formato Excel (.xlsx) con filtros aplicables y formato profesional.
+Se ha implementado una funcionalidad completa para exportar pedidos a formato Excel (.xlsx) con dos modalidades:
+1. **Exportación general**: Todo el listado de pedidos con filtros aplicables
+2. **Exportación individual**: Un pedido específico con información detallada
 
 ## Características Implementadas
 
-### 1. Botón de Descarga Excel
+### 1. Botones de Descarga Excel
+
+#### A) Botón General
 - **Ubicación**: Barra de acciones principal del sistema de pedidos
 - **Estilo**: Botón verde con gradiente y efectos hover
 - **Icono**: FontAwesome file-excel
 - **Tooltip**: "Descargar listado de pedidos en formato Excel"
+- **Función**: Exporta todos los pedidos con filtros aplicados
+
+#### B) Botón Individual
+- **Ubicación**: En cada pedido individual (grupo de botones de acción)
+- **Estilo**: Botón verde más pequeño con efectos hover
+- **Icono**: FontAwesome file-excel
+- **Tooltip**: "Descargar Excel"
+- **Función**: Exporta únicamente el pedido seleccionado
 
 ### 2. Filtros Aplicables
 La exportación respeta todos los filtros activos:
@@ -18,23 +30,16 @@ La exportación respeta todos los filtros activos:
 - **Búsqueda**: texto libre que busca en folio, observaciones y usuario
 
 ### 3. Contenido del Excel
-El archivo Excel generado incluye:
 
-#### Encabezados principales:
-- Folio del pedido
-- Estado (con colores)
-- Fecha de creación
-- Usuario
-- Sucursal
-- Total estimado
-- Prioridad
-- Observaciones
-- Lista de productos
+#### A) Exportación General
+- **Encabezados principales**: Folio, Estado, Fecha, Usuario, Sucursal, Total, Prioridad, Observaciones, Productos
+- **Información adicional**: Filtros aplicados, fecha de generación, total de pedidos
 
-#### Información adicional:
-- Filtros aplicados al momento de la exportación
-- Fecha y hora de generación
-- Total de pedidos exportados
+#### B) Exportación Individual
+- **Información del pedido**: Folio, estado, fecha, usuario, sucursal, total, prioridad, observaciones
+- **Productos detallados**: Código, nombre, descripción, cantidad, precio unitario, subtotal
+- **Historial de cambios**: Estados anteriores, fechas de cambio, usuarios, comentarios
+- **Metadatos**: Fecha de generación, usuario que generó el archivo
 
 ### 4. Formato y Estilos
 - **Encabezados**: Fondo azul con texto blanco y bordes
@@ -56,10 +61,16 @@ El archivo Excel generado incluye:
 - Estados de carga y feedback al usuario
 
 ### 3. `api/exportar_pedidos_excel.php` (NUEVO)
-- Endpoint para generar archivo Excel
+- Endpoint para generar archivo Excel general
 - Consulta SQL con filtros aplicables
 - Generación de archivo usando PhpSpreadsheet
 - Headers HTTP para descarga automática
+
+### 4. `api/exportar_pedido_excel.php` (NUEVO)
+- Endpoint para generar archivo Excel individual
+- Consulta SQL específica para un pedido
+- Información detallada del pedido y productos
+- Historial de cambios incluido
 
 ## Dependencias Requeridas
 
@@ -81,15 +92,26 @@ El endpoint asume las siguientes tablas:
 ## Uso
 
 ### Para el Usuario Final
+
+#### Exportación General
 1. Aplicar filtros deseados (opcional)
-2. Hacer clic en "Descargar Excel"
+2. Hacer clic en "Descargar Excel" en la barra principal
 3. El archivo se descarga automáticamente
 4. El nombre del archivo incluye la fecha: `pedidos_YYYY-MM-DD.xlsx`
 
+#### Exportación Individual
+1. Localizar el pedido deseado en la lista
+2. Hacer clic en el botón verde de Excel (📊) en ese pedido
+3. El archivo se descarga automáticamente
+4. El nombre del archivo incluye el folio: `pedido_FOLIO_YYYY-MM-DD.xlsx`
+
 ### Para Desarrolladores
 ```javascript
-// Llamar la función de descarga programáticamente
+// Llamar la función de descarga general programáticamente
 sistemaPedidos.descargarExcel();
+
+// Llamar la función de descarga individual programáticamente
+sistemaPedidos.descargarExcelPedido(pedidoId);
 ```
 
 ## Personalización

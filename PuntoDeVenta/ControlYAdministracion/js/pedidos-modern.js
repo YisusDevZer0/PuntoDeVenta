@@ -341,6 +341,10 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
+                            <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
+                                    data-toggle="tooltip" title="Descargar Excel">
+                                <i class="fas fa-file-excel"></i>
+                            </button>
                             ${pedido.estado === 'pendiente' ? `
                                 <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Aprobar pedido">
@@ -399,6 +403,12 @@ class SistemaPedidos {
         $('.eliminar-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.confirmarEliminarPedido(pedidoId);
+        });
+
+        // Descargar Excel individual
+        $('.descargar-excel-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.descargarExcelPedido(pedidoId);
         });
     }
 
@@ -939,6 +949,48 @@ class SistemaPedidos {
             const btnDescargar = $('#btnDescargarExcel');
             btnDescargar.removeClass('downloading');
             btnDescargar.html('<i class="fas fa-file-excel me-2"></i>Descargar Excel');
+            btnDescargar.prop('disabled', false);
+        }
+    }
+
+    // Función para descargar Excel de un pedido específico
+    async descargarExcelPedido(pedidoId) {
+        try {
+            // Encontrar el botón específico y mostrar estado de carga
+            const btnDescargar = $(`.descargar-excel-pedido[data-pedido-id="${pedidoId}"]`);
+            const iconoOriginal = btnDescargar.html();
+            
+            // Mostrar estado de descarga
+            btnDescargar.html('<i class="fas fa-spinner fa-spin"></i>');
+            btnDescargar.prop('disabled', true);
+            
+            // Crear URL para descarga individual
+            const url = `api/exportar_pedido_excel.php?pedido_id=${pedidoId}`;
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `pedido_${pedidoId}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular un pequeño delay para mostrar el estado de carga
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            // Ejecutar descarga
+            link.click();
+            document.body.removeChild(link);
+            
+            // Mostrar mensaje de éxito
+            this.mostrarExito('Archivo Excel del pedido generado correctamente');
+            
+        } catch (error) {
+            console.error('Error al descargar Excel del pedido:', error);
+            this.mostrarError('Error al generar el archivo Excel del pedido');
+        } finally {
+            // Restaurar botón
+            const btnDescargar = $(`.descargar-excel-pedido[data-pedido-id="${pedidoId}"]`);
+            btnDescargar.html('<i class="fas fa-file-excel"></i>');
             btnDescargar.prop('disabled', false);
         }
     }
