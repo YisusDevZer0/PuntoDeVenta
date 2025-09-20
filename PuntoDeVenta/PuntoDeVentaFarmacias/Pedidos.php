@@ -6,7 +6,7 @@ include "Controladores/db_connect.php";
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Consulta de Pedidos - <?php echo $row['Licencia']?> - Sucursal <?php echo $row['Nombre_Sucursal']?></title>
+    <title>Gestión de Pedidos - <?php echo $row['Licencia']?> - Sucursal <?php echo $row['Nombre_Sucursal']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
     
@@ -498,16 +498,18 @@ include "Controladores/db_connect.php";
                 <div class="page-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h2 class="page-title">
-                            <i class="fas fa-eye me-3"></i>
-                            Consulta de Pedidos
-                            <span class="info-badge ms-3">Solo Lectura</span>
+                            <i class="fas fa-shopping-cart me-3"></i>
+                            Gestión de Pedidos
                         </h2>
                         <div class="d-flex align-items-center">
                             <span class="text-light me-3">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Modo de consulta - Sin permisos de edición
+                                <i class="fas fa-building me-2"></i>
+                                Sucursal: <?php echo $row['Nombre_Sucursal']?>
                             </span>
-                            <button class="btn btn-light btn-modern" id="btnRefresh">
+                            <button class="btn btn-light btn-modern" id="btnNuevoPedido">
+                                <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                            </button>
+                            <button class="btn btn-light btn-modern ms-2" id="btnRefresh">
                                 <i class="fas fa-sync-alt me-2"></i>Actualizar
                             </button>
                         </div>
@@ -531,21 +533,19 @@ include "Controladores/db_connect.php";
                         <h4 id="stats-proceso">0</h4>
                         <p class="mb-0">En Proceso</p>
                     </div>
-                    <div class="stats-card stats-total">
-                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-                        <h4 id="stats-total">$0</h4>
-                        <p class="mb-0">Total Estimado</p>
-                    </div>
                 </div>
                 
-                <!-- Barra de acciones (solo consulta) -->
+                <!-- Barra de acciones -->
                 <div class="action-buttons mb-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex gap-2">
+                            <button class="btn btn-primary" id="btnNuevoPedido">
+                                <i class="fas fa-plus me-2"></i>Nuevo Pedido
+                            </button>
                             <button class="btn btn-info" id="btnStockBajo">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Stock Bajo
                             </button>
-                            <button class="btn btn-primary" id="btnListadoPedidos">
+                            <button class="btn btn-secondary" id="btnListadoPedidos">
                                 <i class="fas fa-list me-2"></i>Listado Completo
                             </button>
                             <button class="btn btn-secondary" id="btnRefresh">
@@ -553,11 +553,11 @@ include "Controladores/db_connect.php";
                             </button>
                         </div>
                         
-                        <!-- Información de permisos -->
+                        <!-- Información de sucursal -->
                         <div class="d-flex align-items-center">
                             <div class="info-badge">
-                                <i class="fas fa-eye me-1"></i>
-                                Solo Consulta
+                                <i class="fas fa-building me-1"></i>
+                                <?php echo $row['Nombre_Sucursal']?>
                             </div>
                         </div>
                     </div>
@@ -618,7 +618,7 @@ include "Controladores/db_connect.php";
                                 </h5>
                                 <div class="info-badge">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Hacer clic para ver detalles
+                                    Hacer clic para ver detalles - Solo lectura después de creado
                                 </div>
                             </div>
                             
@@ -637,10 +637,9 @@ include "Controladores/db_connect.php";
                                 <i class="fas fa-inbox"></i>
                                 <h4>No hay pedidos</h4>
                                 <p>No se encontraron pedidos con los filtros aplicados</p>
-                                <div class="info-badge mt-3">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Contacte al administrador para crear pedidos
-                                </div>
+                                <button class="btn btn-primary btn-modern mt-3" id="btnCrearPrimerPedido">
+                                    <i class="fas fa-plus me-2"></i>Crear Primer Pedido
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -657,7 +656,6 @@ include "Controladores/db_connect.php";
                     <h5 class="modal-title">
                         <i class="fas fa-eye me-2"></i>
                         Detalle del Pedido
-                        <span class="info-badge ms-2">Solo Lectura</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -701,7 +699,7 @@ include "Controladores/db_connect.php";
                     </div>
                     
                     <div class="row mt-3">
-                        <div class="col-12">
+            <div class="col-12">
                             <h6>Historial de Cambios</h6>
                             <div class="timeline" id="detalle-historial">
                             </div>
@@ -758,6 +756,120 @@ include "Controladores/db_connect.php";
             </div>
         </div>
     </div>
+
+    <!-- Modal para Nuevo Pedido -->
+    <div class="modal fade" id="modalNuevoPedido" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Crear Nuevo Pedido
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Columna izquierda: Búsqueda -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-search me-2"></i>
+                                        Buscar Productos
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="busqueda-producto-nuevo" 
+                                               placeholder="Buscar productos...">
+                                        <button class="btn btn-primary" type="button" id="btnBuscarProductoNuevo">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="resultados-busqueda-nuevo">
+                                        <p class="text-muted text-center">
+                                            <i class="fas fa-search fa-2x mb-2"></i><br>
+                                            Busca productos para agregar al pedido
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna derecha: Productos del pedido -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-list me-2"></i>
+                                        Productos del Pedido
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="productos-pedido-nuevo" class="productos-container">
+                                        <div class="text-center text-muted py-4">
+                                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                            <p>Busca productos para agregar al pedido</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Resumen del pedido -->
+                                    <div class="mt-3 p-3 bg-light rounded">
+                                        <h6>Resumen del Pedido</h6>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <small class="text-muted">Productos:</small><br>
+                                                <strong id="total-productos-nuevo">0</strong>
+                                            </div>
+                                            <div class="col-6">
+                                                <small class="text-muted">Cantidad total:</small><br>
+                                                <strong id="total-cantidad-nuevo">0</strong>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <small class="text-muted">Total estimado:</small><br>
+                                                <strong id="total-precio-nuevo">$0.00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Observaciones y prioridad -->
+                    <div class="row mt-3">
+                        <div class="col-md-8">
+                            <label for="observaciones-pedido-nuevo" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones-pedido-nuevo" rows="3" 
+                                      placeholder="Observaciones del pedido..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="prioridad-pedido-nuevo" class="form-label">Prioridad</label>
+                            <select class="form-select" id="prioridad-pedido-nuevo">
+                                <option value="baja">Baja</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnLimpiarPedidoNuevo">
+                        <i class="fas fa-trash me-2"></i>Limpiar
+                    </button>
+                    <button type="button" class="btn btn-success" id="btnGuardarPedidoNuevo">
+                        <i class="fas fa-save me-2"></i>Guardar Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <?php include "Footer.php"; ?>
     
@@ -774,32 +886,208 @@ include "Controladores/db_connect.php";
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
-        // Script específico para modo solo consulta
+        // Script para gestión de pedidos
         document.addEventListener('DOMContentLoaded', function() {
-            // Deshabilitar funcionalidades de edición
-            console.log('Modo de consulta activado - Sin permisos de edición');
+            console.log('Sistema de gestión de pedidos activado');
             
-            // Mostrar mensaje informativo
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Modo de Consulta',
-                    text: 'Está en modo de solo lectura. No puede crear, editar o autorizar pedidos.',
-                    icon: 'info',
-                    confirmButtonText: 'Entendido',
-                    timer: 3000,
-                    timerProgressBar: true
-                });
-            }
+            // Variables globales
+            let productosPedido = [];
+            let totalProductos = 0;
+            let totalCantidad = 0;
+            let totalPrecio = 0;
             
-            // Funcionalidad básica de consulta
+            // Event listeners
             document.getElementById('btnRefresh').addEventListener('click', function() {
                 location.reload();
             });
             
-            // Simular carga de datos (aquí se conectaría con la API real)
+            // Botón nuevo pedido
+            document.getElementById('btnNuevoPedido').addEventListener('click', function() {
+                $('#modalNuevoPedido').modal('show');
+            });
+            
+            // Botón crear primer pedido
+            document.getElementById('btnCrearPrimerPedido').addEventListener('click', function() {
+                $('#modalNuevoPedido').modal('show');
+            });
+            
+            // Botón listado de pedidos
+            document.getElementById('btnListadoPedidos').addEventListener('click', function() {
+                $('#modalListadoPedidos').modal('show');
+            });
+            
+            // Botón stock bajo
+            document.getElementById('btnStockBajo').addEventListener('click', function() {
+                $('#modalStockBajo').modal('show');
+            });
+            
+            // Botón buscar producto
+            document.getElementById('btnBuscarProductoNuevo').addEventListener('click', function() {
+                buscarProductos();
+            });
+            
+            // Enter en búsqueda de productos
+            document.getElementById('busqueda-producto-nuevo').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    buscarProductos();
+                }
+            });
+            
+            // Botón limpiar pedido
+            document.getElementById('btnLimpiarPedidoNuevo').addEventListener('click', function() {
+                limpiarPedido();
+            });
+            
+            // Botón guardar pedido
+            document.getElementById('btnGuardarPedidoNuevo').addEventListener('click', function() {
+                guardarPedido();
+            });
+            
+            // Funciones
+            function buscarProductos() {
+                const busqueda = document.getElementById('busqueda-producto-nuevo').value;
+                if (busqueda.trim() === '') {
+                    alert('Por favor ingrese un término de búsqueda');
+                    return;
+                }
+                
+                // Simular búsqueda de productos
+                const resultados = document.getElementById('resultados-busqueda-nuevo');
+                resultados.innerHTML = `
+                    <div class="producto-card" data-producto='{"id": 1, "nombre": "Producto de prueba", "precio": 100, "stock": 50}'>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">Producto de prueba</h6>
+                                <small class="text-muted">Precio: $100.00 | Stock: 50</small>
+                            </div>
+                            <button class="btn btn-sm btn-primary" onclick="agregarProducto(this)">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function agregarProducto(boton) {
+                const productoCard = boton.closest('.producto-card');
+                const productoData = JSON.parse(productoCard.dataset.producto);
+                
+                // Verificar si ya existe
+                const existe = productosPedido.find(p => p.id === productoData.id);
+                if (existe) {
+                    existe.cantidad += 1;
+                } else {
+                    productosPedido.push({
+                        ...productoData,
+                        cantidad: 1
+                    });
+                }
+                
+                actualizarResumen();
+                actualizarListaProductos();
+            }
+            
+            function actualizarListaProductos() {
+                const container = document.getElementById('productos-pedido-nuevo');
+                
+                if (productosPedido.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                            <p>Busca productos para agregar al pedido</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                productosPedido.forEach((producto, index) => {
+                    html += `
+                        <div class="producto-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${producto.nombre}</h6>
+                                    <small class="text-muted">Precio: $${producto.precio.toFixed(2)} | Cantidad: ${producto.cantidad}</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="cambiarCantidad(${index}, -1)">-</button>
+                                    <span class="mx-2">${producto.cantidad}</span>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="cambiarCantidad(${index}, 1)">+</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarProducto(${index})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+            
+            function cambiarCantidad(index, cambio) {
+                productosPedido[index].cantidad += cambio;
+                if (productosPedido[index].cantidad <= 0) {
+                    productosPedido.splice(index, 1);
+                }
+                actualizarResumen();
+                actualizarListaProductos();
+            }
+            
+            function eliminarProducto(index) {
+                productosPedido.splice(index, 1);
+                actualizarResumen();
+                actualizarListaProductos();
+            }
+            
+            function actualizarResumen() {
+                totalProductos = productosPedido.length;
+                totalCantidad = productosPedido.reduce((sum, p) => sum + p.cantidad, 0);
+                totalPrecio = productosPedido.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+                
+                document.getElementById('total-productos-nuevo').textContent = totalProductos;
+                document.getElementById('total-cantidad-nuevo').textContent = totalCantidad;
+                document.getElementById('total-precio-nuevo').textContent = `$${totalPrecio.toFixed(2)}`;
+            }
+            
+            function limpiarPedido() {
+                productosPedido = [];
+                document.getElementById('observaciones-pedido-nuevo').value = '';
+                document.getElementById('prioridad-pedido-nuevo').value = 'normal';
+                actualizarResumen();
+                actualizarListaProductos();
+            }
+            
+            function guardarPedido() {
+                if (productosPedido.length === 0) {
+                    alert('Debe agregar al menos un producto al pedido');
+                    return;
+                }
+                
+                const observaciones = document.getElementById('observaciones-pedido-nuevo').value;
+                const prioridad = document.getElementById('prioridad-pedido-nuevo').value;
+                
+                // Simular guardado
+                console.log('Guardando pedido:', {
+                    productos: productosPedido,
+                    observaciones: observaciones,
+                    prioridad: prioridad,
+                    total: totalPrecio
+                });
+                
+                alert('Pedido guardado exitosamente');
+                $('#modalNuevoPedido').modal('hide');
+                limpiarPedido();
+            }
+            
+            // Hacer funciones globales para los botones inline
+            window.agregarProducto = agregarProducto;
+            window.cambiarCantidad = cambiarCantidad;
+            window.eliminarProducto = eliminarProducto;
+            
+            // Simular carga de datos
             setTimeout(function() {
                 document.getElementById('loading-spinner').style.display = 'none';
-                // Aquí se cargarían los datos reales
                 console.log('Datos de pedidos cargados');
             }, 2000);
         });
