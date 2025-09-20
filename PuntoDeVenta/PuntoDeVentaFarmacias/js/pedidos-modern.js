@@ -340,20 +340,6 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${pedido.estado === 'pendiente' ? `
-                                <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
-                                        data-toggle="tooltip" title="Aprobar pedido">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-outline-danger btn-sm rechazar-pedido" data-pedido-id="${pedido.id}"
-                                        data-toggle="tooltip" title="Rechazar pedido">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <button class="btn btn-outline-warning btn-sm eliminar-pedido" data-pedido-id="${pedido.id}"
-                                        data-toggle="tooltip" title="Eliminar pedido">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -380,24 +366,6 @@ class SistemaPedidos {
         $('.ver-detalle').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.verDetallePedido(pedidoId);
-        });
-
-        // Aprobar pedido
-        $('.aprobar-pedido').on('click', (e) => {
-            const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.confirmarCambiarEstado(pedidoId, 'aprobado');
-        });
-
-        // Rechazar pedido
-        $('.rechazar-pedido').on('click', (e) => {
-            const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.confirmarCambiarEstado(pedidoId, 'rechazado');
-        });
-
-        // Eliminar pedido
-        $('.eliminar-pedido').on('click', (e) => {
-            const pedidoId = $(e.currentTarget).data('pedido-id');
-            this.confirmarEliminarPedido(pedidoId);
         });
     }
 
@@ -465,104 +433,6 @@ class SistemaPedidos {
         $('#modalDetallePedido').modal('show');
     }
 
-    // Confirmación mejorada para cambiar estado
-    async confirmarCambiarEstado(pedidoId, nuevoEstado) {
-        const estados = {
-            'aprobado': {
-                title: '¿Aprobar pedido?',
-                text: '¿Estás seguro de que quieres aprobar este pedido?',
-                icon: 'question',
-                confirmButtonColor: '#28a745'
-            },
-            'rechazado': {
-                title: '¿Rechazar pedido?',
-                text: '¿Estás seguro de que quieres rechazar este pedido?',
-                icon: 'warning',
-                confirmButtonColor: '#dc3545'
-            }
-        };
-
-        const config = estados[nuevoEstado] || {
-            title: '¿Confirmar cambio?',
-            text: '¿Estás seguro de que quieres cambiar el estado?',
-            icon: 'question'
-        };
-
-        const result = await Swal.fire({
-            title: config.title,
-            text: config.text,
-            icon: config.icon,
-            showCancelButton: true,
-            confirmButtonText: 'Sí, confirmar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: config.confirmButtonColor,
-            cancelButtonColor: '#6c757d',
-            reverseButtons: true
-        });
-
-        // Solo ejecutar si se confirma
-        if (result.isConfirmed) {
-            await this.cambiarEstadoPedido(pedidoId, nuevoEstado);
-        }
-    }
-
-    async cambiarEstadoPedido(pedidoId, nuevoEstado) {
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'cambiar_estado',
-                pedido_id: pedidoId,
-                nuevo_estado: nuevoEstado,
-                comentario: `Estado cambiado a ${nuevoEstado}`
-            });
-
-            if (response.status === 'ok') {
-                this.mostrarExito('Estado actualizado correctamente');
-                this.cargarPedidos();
-            } else {
-                this.mostrarError('Error al actualizar estado: ' + response.msg);
-            }
-        } catch (error) {
-            this.mostrarError('Error de conexión');
-        }
-    }
-
-    // Confirmación mejorada para eliminar pedido
-    async confirmarEliminarPedido(pedidoId) {
-        const result = await Swal.fire({
-            title: '¿Eliminar pedido?',
-            text: 'Esta acción no se puede deshacer. ¿Estás seguro?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            reverseButtons: true
-        });
-
-        // Solo ejecutar si se confirma
-        if (result.isConfirmed) {
-            await this.eliminarPedido(pedidoId);
-        }
-    }
-
-    async eliminarPedido(pedidoId) {
-        try {
-            const response = await $.post('Controladores/PedidosController.php', {
-                accion: 'eliminar_pedido',
-                pedido_id: pedidoId
-            });
-
-            if (response.status === 'ok') {
-                this.mostrarExito('Pedido eliminado correctamente');
-                this.cargarPedidos();
-            } else {
-                this.mostrarError('Error al eliminar pedido: ' + response.msg);
-            }
-        } catch (error) {
-            this.mostrarError('Error de conexión');
-        }
-    }
 
     // Funciones del modal nuevo pedido
     abrirModalNuevoPedido() {

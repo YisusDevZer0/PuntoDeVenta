@@ -660,18 +660,6 @@ class SistemaPedidos {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     // Confirmación para guardar pedido
     async confirmarGuardarPedido() {
         if (this.productosSeleccionados.length === 0) {
@@ -707,8 +695,6 @@ class SistemaPedidos {
             await this.guardarPedidoSimple(observaciones, prioridad);
         }
     }
-
-
 
     // Funciones para el modal nuevo pedido
     async confirmarGuardarPedidoNuevo() {
@@ -811,8 +797,6 @@ class SistemaPedidos {
         }
     }
 
-
-
     aplicarFiltros() {
         this.cargarPedidos();
     }
@@ -889,7 +873,7 @@ class SistemaPedidos {
         });
     }
 
-    // Función para descargar Excel
+    // Función para descargar Excel general
     async descargarExcel() {
         try {
             const btnDescargar = $('#btnDescargarExcel');
@@ -999,4 +983,4 @@ class SistemaPedidos {
 // Inicializar cuando el DOM esté listo
 $(document).ready(() => {
     window.sistemaPedidos = new SistemaPedidos();
-}); 
+});
