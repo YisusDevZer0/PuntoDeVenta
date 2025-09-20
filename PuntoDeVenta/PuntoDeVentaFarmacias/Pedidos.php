@@ -1258,7 +1258,7 @@ include "Controladores/db_connect.php";
                     const tiempoTranscurrido = calcularTiempoTranscurrido(fecha);
                     
                     html += `
-                        <div class="pedido-item ${prioridadClass}" onclick="verDetallePedido(${pedido.id})">
+                        <div class="pedido-item ${prioridadClass}">
                             <div class="row align-items-center">
                                 <div class="col-md-3">
                                     <h6 class="mb-1 fw-bold">${pedido.folio}</h6>
@@ -1272,13 +1272,14 @@ include "Controladores/db_connect.php";
                                 <div class="col-md-3">
                                     <small class="text-muted">${pedido.usuario_nombre}</small>
                                 </div>
-                                <div class="col-md-2">
-                                    <small class="text-muted">Productos: <strong>0</strong></small><br>
-                                    <small class="text-muted">Unidades: <strong>0</strong></small>
-                                </div>
                                 <div class="col-md-2 text-end">
                                     <h6 class="mb-0 text-success">$${pedido.total_estimado.toFixed(2)}</h6>
                                     <small class="text-muted">${pedido.sucursal_nombre || 'Farmacia'}</small>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button class="btn btn-primary btn-sm" onclick="verDetallePedido(${pedido.id})">
+                                        <i class="fas fa-eye me-1"></i>Ver
+                                    </button>
                                 </div>
                             </div>
                         </div>
