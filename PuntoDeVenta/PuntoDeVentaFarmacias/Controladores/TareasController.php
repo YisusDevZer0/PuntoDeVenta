@@ -27,7 +27,7 @@ class TareasController {
                     t.fecha_actualizacion,
                     u_asignado.Nombre_Apellidos as asignado_nombre,
                     u_creador.Nombre_Apellidos as creador_nombre
-                FROM tareas t
+                FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
                 WHERE t.asignado_a = ? AND u_asignado.Fk_Sucursal = ?";
@@ -70,7 +70,7 @@ class TareasController {
         $sql = "SELECT 
                     t.estado,
                     COUNT(*) as cantidad
-                FROM tareas t
+                FROM Tareas t
                 INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
                 WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?
                 GROUP BY t.estado";
@@ -92,7 +92,7 @@ class TareasController {
                     t.fecha_limite,
                     t.prioridad,
                     t.estado
-                FROM tareas t
+                FROM Tareas t
                 INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
                 WHERE t.asignado_a = ? 
                 AND u.Fk_Sucursal = ?
@@ -148,7 +148,7 @@ class TareasController {
                     t.fecha_actualizacion,
                     u_asignado.Nombre_Apellidos as asignado_nombre,
                     u_creador.Nombre_Apellidos as creador_nombre
-                FROM tareas t
+                FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
                 WHERE t.id = ? AND t.asignado_a = ?";
@@ -165,7 +165,7 @@ class TareasController {
      */
     private function verificarPropiedadTarea($tareaId) {
         $sql = "SELECT COUNT(*) as count 
-                FROM tareas t
+                FROM Tareas t
                 INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
                 WHERE t.id = ? AND t.asignado_a = ? AND u.Fk_Sucursal = ?";
         
@@ -188,7 +188,7 @@ class TareasController {
                     t.prioridad,
                     t.estado,
                     DATEDIFF(CURDATE(), t.fecha_limite) as dias_vencida
-                FROM tareas t
+                FROM Tareas t
                 INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
                 WHERE t.asignado_a = ? 
                 AND u.Fk_Sucursal = ?
@@ -229,7 +229,7 @@ class TareasController {
                     SUM(CASE WHEN estado = 'Por hacer' THEN 1 ELSE 0 END) as por_hacer,
                     SUM(CASE WHEN estado = 'Cancelada' THEN 1 ELSE 0 END) as canceladas,
                     SUM(CASE WHEN fecha_limite < CURDATE() AND estado IN ('Por hacer', 'En progreso') THEN 1 ELSE 0 END) as vencidas
-                FROM tareas t
+                FROM Tareas t
                 INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
                 WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?";
         
@@ -251,7 +251,7 @@ class TareasController {
      * Crear una nueva tarea
      */
     public function crearTarea($datos) {
-        $sql = "INSERT INTO tareas (titulo, descripcion, prioridad, fecha_limite, estado, asignado_a, creado_por, fecha_creacion) 
+        $sql = "INSERT INTO Tareas (titulo, descripcion, prioridad, fecha_limite, estado, asignado_a, creado_por, fecha_creacion) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
         
         $stmt = $this->conn->prepare($sql);
@@ -281,7 +281,7 @@ class TareasController {
             return false;
         }
         
-        $sql = "UPDATE tareas SET 
+        $sql = "UPDATE Tareas SET 
                     titulo = ?, 
                     descripcion = ?, 
                     prioridad = ?, 
@@ -315,7 +315,7 @@ class TareasController {
             return ['success' => false, 'message' => 'No tienes permisos para eliminar esta tarea'];
         }
         
-        $sql = "DELETE FROM tareas WHERE id = ? AND asignado_a = ?";
+        $sql = "DELETE FROM Tareas WHERE id = ? AND asignado_a = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $id, $this->userId);
         
