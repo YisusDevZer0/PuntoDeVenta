@@ -14,6 +14,38 @@ class TareasController {
      * Obtener tareas asignadas al usuario actual de la sucursal actual
      */
     public function getTareasAsignadas($filtros = []) {
+        $where = "WHERE (t.asignado_a = ? OR t.creado_por = ?)";
+        $params = [$this->userId, $this->userId];
+        $types = "ii";
+        
+        // Aplicar filtros
+        if (!empty($filtros['estado'])) {
+            $where .= " AND t.estado = ?";
+            $params[] = $filtros['estado'];
+            $types .= "s";
+        }
+        
+        if (!empty($filtros['prioridad'])) {
+            $where .= " AND t.prioridad = ?";
+            $params[] = $filtros['prioridad'];
+            $types .= "s";
+        }
+        
+        // Filtro de fecha
+        if (!empty($filtros['fecha'])) {
+            switch ($filtros['fecha']) {
+                case 'hoy':
+                    $where .= " AND t.fecha_limite = CURDATE()";
+                    break;
+                case 'vencidas':
+                    $where .= " AND t.fecha_limite < CURDATE() AND t.estado IN ('Por hacer', 'En progreso')";
+                    break;
+                case 'proximas':
+                    $where .= " AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
+                    break;
+            }
+        }
+        
         $sql = "SELECT 
                     t.id,
                     t.titulo,
@@ -30,46 +62,15 @@ class TareasController {
                 FROM Tareas t
                 LEFT JOIN Usuarios_PV u_asignado ON t.asignado_a = u_asignado.Id_PvUser
                 LEFT JOIN Usuarios_PV u_creador ON t.creado_por = u_creador.Id_PvUser
-                WHERE t.asignado_a = ?";
-        
-        $params = [$this->userId];
-        $types = "i";
-        
-        // Aplicar filtros
-        if (!empty($filtros['estado'])) {
-            $sql .= " AND t.estado = ?";
-            $params[] = $filtros['estado'];
-            $types .= "s";
-        }
-        
-        if (!empty($filtros['prioridad'])) {
-            $sql .= " AND t.prioridad = ?";
-            $params[] = $filtros['prioridad'];
-            $types .= "s";
-        }
-        
-        // Filtro de fecha
-        if (!empty($filtros['fecha'])) {
-            switch ($filtros['fecha']) {
-                case 'hoy':
-                    $sql .= " AND t.fecha_limite = CURDATE()";
-                    break;
-                case 'vencidas':
-                    $sql .= " AND t.fecha_limite < CURDATE() AND t.estado IN ('Por hacer', 'En progreso')";
-                    break;
-                case 'proximas':
-                    $sql .= " AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
-                    break;
-            }
-        }
-        
-        $sql .= " ORDER BY 
+                $where
+                ORDER BY 
                     CASE t.prioridad 
                         WHEN 'Alta' THEN 1 
                         WHEN 'Media' THEN 2 
                         WHEN 'Baja' THEN 3 
                     END,
-                    t.fecha_limite ASC";
+                    t.fecha_limite ASC,
+                    t.fecha_creacion DESC";
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param($types, ...$params);
@@ -146,12 +147,11 @@ class TareasController {
                     t.estado,
                     COUNT(*) as cantidad
                 FROM Tareas t
-                INNER JOIN Usuarios_PV u ON t.asignado_a = u.Id_PvUser
-                WHERE t.asignado_a = ? AND u.Fk_Sucursal = ?
+                WHERE (t.asignado_a = ? OR t.creado_por = ?)
                 GROUP BY t.estado";
         
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ii", $this->userId, $this->sucursalId);
+        $stmt->bind_param("ii", $this->userId, $this->userId);
         $stmt->execute();
         
         return $stmt->get_result();
