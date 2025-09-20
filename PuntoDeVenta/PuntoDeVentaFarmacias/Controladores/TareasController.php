@@ -31,20 +31,6 @@ class TareasController {
             $types .= "s";
         }
         
-        // Filtro de fecha
-        if (!empty($filtros['fecha'])) {
-            switch ($filtros['fecha']) {
-                case 'hoy':
-                    $where .= " AND t.fecha_limite = CURDATE()";
-                    break;
-                case 'vencidas':
-                    $where .= " AND t.fecha_limite < CURDATE() AND t.estado IN ('Por hacer', 'En progreso')";
-                    break;
-                case 'proximas':
-                    $where .= " AND t.fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
-                    break;
-            }
-        }
         
         $sql = "SELECT 
                     t.id,

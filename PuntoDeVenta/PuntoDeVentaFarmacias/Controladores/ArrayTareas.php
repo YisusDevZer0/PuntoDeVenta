@@ -35,8 +35,7 @@ try {
         case 'listar':
             $filtros = [
                 'estado' => $_POST['estado'] ?? '',
-                'prioridad' => $_POST['prioridad'] ?? '',
-                'fecha' => $_POST['fecha'] ?? ''
+                'prioridad' => $_POST['prioridad'] ?? ''
             ];
             
             $result = $tareasController->getTareasAsignadas($filtros);
@@ -264,8 +263,7 @@ try {
             // Obtener todas las tareas con filtros
             $filtros = [
                 'estado' => $_POST['estado'] ?? '',
-                'prioridad' => $_POST['prioridad'] ?? '',
-                'fecha' => $_POST['fecha'] ?? ''
+                'prioridad' => $_POST['prioridad'] ?? ''
             ];
             
             error_log("Filtros aplicados: " . json_encode($filtros));

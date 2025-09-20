@@ -239,7 +239,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
             <!-- Filtros -->
             <div class="filtros-container">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="filtroEstado">Estado:</label>
                         <select id="filtroEstado" class="form-control">
                             <option value="">Todos</option>
@@ -249,7 +249,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                             <option value="Cancelada">Cancelada</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="filtroPrioridad">Prioridad:</label>
                         <select id="filtroPrioridad" class="form-control">
                             <option value="">Todas</option>
@@ -258,16 +258,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
                             <option value="Baja">Baja</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="filtroFecha">Fecha Límite:</label>
-                        <select id="filtroFecha" class="form-control">
-                            <option value="">Todas</option>
-                            <option value="hoy">Hoy</option>
-                            <option value="vencidas">Vencidas</option>
-                            <option value="proximas">Próximas (3 días)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label>&nbsp;</label>
                         <div>
                             <button type="button" class="btn btn-primary" onclick="aplicarFiltros()">
@@ -508,8 +499,7 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         function aplicarFiltros() {
             filtrosActuales = {
                 estado: $('#filtroEstado').val(),
-                prioridad: $('#filtroPrioridad').val(),
-                fecha: $('#filtroFecha').val()
+                prioridad: $('#filtroPrioridad').val()
             };
             cargarTareas();
         }
@@ -517,7 +507,6 @@ $tareasController = new TareasController($conn, $userId, $sucursalId);
         function limpiarFiltros() {
             $('#filtroEstado').val('');
             $('#filtroPrioridad').val('');
-            $('#filtroFecha').val('');
             filtrosActuales = {};
             cargarTareas();
         }
