@@ -341,7 +341,7 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${pedido.estado === 'aprobado' ? `
+                            ${(pedido.estado === 'aprobado' || pedido.estado === 'completado') ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
