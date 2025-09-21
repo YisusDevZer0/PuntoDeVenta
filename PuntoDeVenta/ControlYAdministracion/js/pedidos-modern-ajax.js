@@ -616,26 +616,39 @@ class SistemaPedidos {
 
     // Función para ver detalle del pedido
     async verDetallePedido(pedidoId) {
+        console.log('=== INICIO verDetallePedido ===');
+        console.log('Pedido ID:', pedidoId);
+        
         try {
-            console.log('Buscando detalles para pedido ID:', pedidoId);
+            console.log('Haciendo petición AJAX...');
             const response = await $.get('api/detalles_pedido.php', { id: pedidoId });
-            console.log('Respuesta del API:', response);
+            console.log('Respuesta recibida:', response);
             
-            if (response.success) {
+            if (response && response.success) {
+                console.log('Respuesta exitosa, mostrando modal...');
                 this.mostrarModalDetalle(response.data);
             } else {
-                this.mostrarError('Error al cargar detalles: ' + response.message);
+                console.error('Respuesta no exitosa:', response);
+                this.mostrarError('Error al cargar detalles: ' + (response?.message || 'Respuesta inválida'));
             }
         } catch (error) {
-            console.error('Error al cargar detalles:', error);
-            this.mostrarError('Error de conexión al cargar detalles');
+            console.error('Error en la petición:', error);
+            this.mostrarError('Error de conexión al cargar detalles: ' + error.message);
         }
+        
+        console.log('=== FIN verDetallePedido ===');
     }
 
     // Mostrar modal con detalles del pedido
     mostrarModalDetalle(datos) {
+        console.log('=== INICIO mostrarModalDetalle ===');
+        console.log('Datos recibidos:', datos);
+        
         const modal = $('#modalDetallePedido');
         const body = $('#detallePedidoBody');
+        
+        console.log('Modal encontrado:', modal.length > 0);
+        console.log('Body encontrado:', body.length > 0);
         
         let html = `
             <div class="row mb-3">
