@@ -131,7 +131,9 @@ try {
     
     echo json_encode([
         'success' => true,
-        'pedido' => $pedido
+        'data' => [
+            'pedido' => $pedido
+        ]
     ]);
     
 } catch (Exception $e) {
