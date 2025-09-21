@@ -728,7 +728,9 @@ class SistemaPedidos {
         `;
         
         body.html(html);
+        console.log('HTML generado y mostrando modal...');
         modal.modal('show');
+        console.log('=== FIN mostrarModalDetalle ===');
     }
 
     // Obtener color del estado
