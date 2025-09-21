@@ -17,6 +17,9 @@ try {
         exit();
     }
     
+    // Log para depuración
+    error_log("Buscando pedido ID: " . $pedidoId);
+    
     // Obtener información del pedido usando tabla existente
     $sql = "SELECT 
                 p.id,
@@ -40,9 +43,12 @@ try {
     $pedido = $result->fetch_assoc();
     
     if (!$pedido) {
+        error_log("Pedido no encontrado para ID: " . $pedidoId);
         echo json_encode(['success' => false, 'message' => 'Pedido no encontrado']);
         exit();
     }
+    
+    error_log("Pedido encontrado: " . json_encode($pedido));
     
     // Obtener productos del pedido usando tabla existente
     $sqlDetalle = "SELECT 

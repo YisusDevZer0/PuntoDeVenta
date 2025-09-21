@@ -617,7 +617,9 @@ class SistemaPedidos {
     // Función para ver detalle del pedido
     async verDetallePedido(pedidoId) {
         try {
+            console.log('Buscando detalles para pedido ID:', pedidoId);
             const response = await $.get('api/detalles_pedido.php', { id: pedidoId });
+            console.log('Respuesta del API:', response);
             
             if (response.success) {
                 this.mostrarModalDetalle(response.data);
