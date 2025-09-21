@@ -343,8 +343,12 @@ class SistemaPedidos {
                             </button>
                             ${pedido.estado === 'aprobado' ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
-                                        data-toggle="tooltip" title="Descargar Excel">
+                                        data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm descargar-resumen-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Descargar Resumen">
+                                    <i class="fas fa-file-alt"></i>
                                 </button>
                             ` : ''}
                             ${pedido.estado === 'pendiente' ? `
@@ -411,6 +415,12 @@ class SistemaPedidos {
         $('.descargar-excel-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.descargarExcelPedido(pedidoId);
+        });
+
+        // Descargar resumen individual
+        $('.descargar-resumen-pedido').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.descargarResumenPedido(pedidoId);
         });
     }
 
@@ -1084,6 +1094,59 @@ class SistemaPedidos {
             const btnDescargar = $(`.descargar-excel-pedido[data-pedido-id="${pedidoId}"]`);
             btnDescargar.html('<i class="fas fa-file-excel"></i>');
             btnDescargar.prop('disabled', false);
+        }
+    }
+
+    // Función para descargar resumen de un pedido específico
+    async descargarResumenPedido(pedidoId) {
+        try {
+            const btnDescargar = $(`.descargar-resumen-pedido[data-pedido-id="${pedidoId}"]`);
+            
+            // Mostrar estado de descarga
+            btnDescargar.html('<i class="fas fa-spinner fa-spin"></i>');
+            btnDescargar.prop('disabled', true);
+            
+            // Usar AJAX para descargar
+            $.ajax({
+                url: 'api/exportar_pedido_resumen.php',
+                method: 'POST',
+                data: { pedido_id: pedidoId },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: (data, status, xhr) => {
+                    // Crear blob y descargar
+                    const blob = new Blob([data], { 
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                    });
+                    
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `resumen_pedido_${pedidoId}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                    
+                    // Mostrar mensaje de éxito
+                    this.mostrarExito('Resumen del pedido generado correctamente');
+                },
+                error: (xhr, status, error) => {
+                    console.error('Error al descargar resumen del pedido:', error);
+                    this.mostrarError('Error al generar el resumen del pedido: ' + error);
+                },
+                complete: () => {
+                    // Restaurar botón
+                    btnDescargar.html('<i class="fas fa-file-alt"></i>');
+                    btnDescargar.prop('disabled', false);
+                }
+            });
+            
+        } catch (error) {
+            console.error('Error al descargar resumen del pedido:', error);
+            this.mostrarError('Error al generar el resumen del pedido');
         }
     }
 }
