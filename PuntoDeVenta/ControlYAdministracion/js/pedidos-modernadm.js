@@ -450,6 +450,7 @@ class SistemaPedidos {
         detalles.forEach(detalle => {
             detallesHtml += `
                 <tr>
+                    <td><code>${detalle.Cod_Barra || 'N/A'}</code></td>
                     <td>${detalle.Nombre_Prod}</td>
                     <td>${detalle.cantidad_solicitada}</td>
                     <td>$${parseFloat(detalle.precio_unitario).toFixed(2)}</td>

@@ -515,6 +515,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['status' => 'ok', 'data' => $sucursales]);
         exit;
     }
+    
+    // Obtener detalle de un pedido específico
+    if ($accion === 'detalle_pedido') {
+        $pedido_id = $_POST['pedido_id'] ?? 0;
+        
+        try {
+            // Obtener información del pedido
+            $sql_pedido = "SELECT 
+                            p.id,
+                            p.folio,
+                            p.fecha_creacion,
+                            p.estado,
+                            p.prioridad,
+                            p.observaciones,
+                            p.total_estimado,
+                            u.Nombre_Apellidos as usuario_nombre,
+                            s.Nombre_Sucursal
+                        FROM pedidos p
+                        LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+                        LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
+                        WHERE p.id = ? AND p.tipo_origen = 'admin'";
+            
+            $stmt = $conn->prepare($sql_pedido);
+            $stmt->bind_param("i", $pedido_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $pedido = $result->fetch_assoc();
+            
+            if (!$pedido) {
+                echo json_encode(['status' => 'error', 'msg' => 'Pedido no encontrado']);
+                exit;
+            }
+            
+            // Obtener productos del pedido
+            $sql_detalles = "SELECT 
+                                pd.id,
+                                pd.cantidad_solicitada,
+                                pd.precio_unitario,
+                                pd.subtotal,
+                                pr.Nombre_Prod,
+                                pr.Cod_Barra,
+                                pr.Componente_Activo
+                            FROM pedido_detalles pd
+                            LEFT JOIN Productos_POS pr ON pd.producto_id = pr.ID_Prod_POS
+                            WHERE pd.pedido_id = ?";
+            
+            $stmt2 = $conn->prepare($sql_detalles);
+            $stmt2->bind_param("i", $pedido_id);
+            $stmt2->execute();
+            $result2 = $stmt2->get_result();
+            $detalles = [];
+            while ($row = $result2->fetch_assoc()) {
+                $detalles[] = $row;
+            }
+            
+            // Obtener historial del pedido
+            $sql_historial = "SELECT 
+                                ph.fecha_cambio,
+                                ph.estado_anterior,
+                                ph.estado_nuevo,
+                                ph.comentario,
+                                u.Nombre_Apellidos as usuario_nombre
+                            FROM pedido_historial ph
+                            LEFT JOIN Usuarios_PV u ON ph.usuario_id = u.Id_PvUser
+                            WHERE ph.pedido_id = ?
+                            ORDER BY ph.fecha_cambio DESC";
+            
+            $stmt3 = $conn->prepare($sql_historial);
+            $stmt3->bind_param("i", $pedido_id);
+            $stmt3->execute();
+            $result3 = $stmt3->get_result();
+            $historial = [];
+            while ($row = $result3->fetch_assoc()) {
+                $historial[] = $row;
+            }
+            
+            echo json_encode([
+                'status' => 'ok',
+                'pedido' => $pedido,
+                'detalles' => $detalles,
+                'historial' => $historial
+            ]);
+            
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'msg' => 'Error al obtener detalle: ' . $e->getMessage()]);
+        }
+        exit;
+    }
 }
 
 echo json_encode(['status' => 'error', 'msg' => 'Acción no válida']);

@@ -1005,14 +1005,76 @@ include "Controladores/db_connect.php";
     
     <!-- Modal de Detalle de Pedido -->
     <div class="modal fade" id="modalDetallePedido" tabindex="-1" aria-labelledby="modalDetallePedidoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalDetallePedidoLabel">Detalle del Pedido</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body" id="detallePedidoBody">
-                    <!-- Aquí se cargan los detalles del pedido vía JS -->
+                <div class="modal-body">
+                    <!-- Información del pedido -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Información General</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Folio:</strong></td>
+                                    <td id="detalle-pedido-folio">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Estado:</strong></td>
+                                    <td id="detalle-pedido-estado">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fecha:</strong></td>
+                                    <td id="detalle-pedido-fecha">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Usuario:</strong></td>
+                                    <td id="detalle-pedido-usuario">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sucursal:</strong></td>
+                                    <td id="detalle-pedido-sucursal">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total:</strong></td>
+                                    <td id="detalle-pedido-total">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Observaciones:</strong></td>
+                                    <td id="detalle-pedido-observaciones">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Productos del pedido -->
+                    <h6>Productos del Pedido</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Código de Barras</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detalle-productos-tbody">
+                                <!-- Aquí se cargan los productos -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Historial de cambios -->
+                    <div class="mt-4">
+                        <h6>Historial de Cambios</h6>
+                        <div id="detalle-historial">
+                            <!-- Aquí se carga el historial -->
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
