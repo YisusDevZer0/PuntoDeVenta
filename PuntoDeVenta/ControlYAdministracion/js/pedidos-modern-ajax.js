@@ -387,9 +387,19 @@ class SistemaPedidos {
     }
 
     setupPedidoEventListeners() {
+        console.log('Configurando event listeners...');
+        console.log('Botones ver-detalle encontrados:', $('.ver-detalle').length);
+        
         // Ver detalle
         $('.ver-detalle').on('click', (e) => {
+            console.log('Click en botón ver detalle');
             const pedidoId = $(e.currentTarget).data('pedido-id');
+            console.log('Pedido ID del botón:', pedidoId);
+            
+            // Prueba simple primero
+            alert('Botón clickeado! Pedido ID: ' + pedidoId);
+            
+            // Luego llamar a la función real
             this.verDetallePedido(pedidoId);
         });
 
