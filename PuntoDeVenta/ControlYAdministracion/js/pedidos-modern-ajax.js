@@ -387,19 +387,9 @@ class SistemaPedidos {
     }
 
     setupPedidoEventListeners() {
-        console.log('Configurando event listeners...');
-        console.log('Botones ver-detalle encontrados:', $('.ver-detalle').length);
-        
         // Ver detalle
         $('.ver-detalle').on('click', (e) => {
-            console.log('Click en botón ver detalle');
             const pedidoId = $(e.currentTarget).data('pedido-id');
-            console.log('Pedido ID del botón:', pedidoId);
-            
-            // Prueba simple primero
-            alert('Botón clickeado! Pedido ID: ' + pedidoId);
-            
-            // Luego llamar a la función real
             this.verDetallePedido(pedidoId);
         });
 
@@ -626,39 +616,35 @@ class SistemaPedidos {
 
     // Función para ver detalle del pedido
     async verDetallePedido(pedidoId) {
-        console.log('=== INICIO verDetallePedido ===');
-        console.log('Pedido ID:', pedidoId);
-        
         try {
-            console.log('Haciendo petición AJAX...');
             const response = await $.get('api/detalles_pedido.php', { id: pedidoId });
-            console.log('Respuesta recibida:', response);
             
             if (response && response.success) {
-                console.log('Respuesta exitosa, mostrando modal...');
                 this.mostrarModalDetalle(response.data);
             } else {
-                console.error('Respuesta no exitosa:', response);
                 this.mostrarError('Error al cargar detalles: ' + (response?.message || 'Respuesta inválida'));
             }
         } catch (error) {
-            console.error('Error en la petición:', error);
-            this.mostrarError('Error de conexión al cargar detalles: ' + error.message);
+            console.error('Error al cargar detalles:', error);
+            this.mostrarError('Error de conexión al cargar detalles');
         }
-        
-        console.log('=== FIN verDetallePedido ===');
     }
 
     // Mostrar modal con detalles del pedido
     mostrarModalDetalle(datos) {
-        console.log('=== INICIO mostrarModalDetalle ===');
-        console.log('Datos recibidos:', datos);
-        
         const modal = $('#modalDetallePedido');
         const body = $('#detallePedidoBody');
         
-        console.log('Modal encontrado:', modal.length > 0);
-        console.log('Body encontrado:', body.length > 0);
+        // Verificar que los datos estén completos
+        if (!datos || !datos.pedido) {
+            this.mostrarError('Error: Datos del pedido incompletos');
+            return;
+        }
+        
+        if (!datos.pedido.productos || !Array.isArray(datos.pedido.productos)) {
+            this.mostrarError('Error: Lista de productos no válida');
+            return;
+        }
         
         let html = `
             <div class="row mb-3">
@@ -719,7 +705,7 @@ class SistemaPedidos {
                     <tbody>
         `;
         
-        datos.productos.forEach(producto => {
+        datos.pedido.productos.forEach(producto => {
             html += `
                 <tr>
                     <td><code>${producto.codigo || 'N/A'}</code></td>
@@ -738,9 +724,7 @@ class SistemaPedidos {
         `;
         
         body.html(html);
-        console.log('HTML generado y mostrando modal...');
         modal.modal('show');
-        console.log('=== FIN mostrarModalDetalle ===');
     }
 
     // Obtener color del estado
