@@ -373,6 +373,44 @@ include "Controladores/db_connect.php";
             }
         }
         
+        /* Estilos para el modal de cambio de sucursal */
+        #FiltroEspecifico .modal-content {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        #FiltroEspecifico .modal-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            padding: 20px 25px;
+        }
+        
+        #FiltroEspecifico .modal-body {
+            background: #f8f9fa;
+            padding: 30px 25px;
+        }
+        
+        #FiltroEspecifico .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        #FiltroEspecifico .input-group-text {
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            color: #6c757d;
+        }
+        
+        #FiltroEspecifico .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        #FiltroEspecifico .close:hover {
+            opacity: 1 !important;
+        }
+        
         /* Scrollbar personalizado */
         ::-webkit-scrollbar {
             width: 8px;
@@ -1102,55 +1140,82 @@ include "Controladores/db_connect.php";
     </div>
 
     <!-- Modal de cambio de sucursal -->
-    <div class="modal fade bd-example-modal-xl" id="FiltroEspecifico" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-notify modal-success">
-            <div class="modal-content">
-                <div class="text-center">
-                    <div class="modal-header" style="background-color: #ef7980 !important;">
-                        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Cambiar de sucursal</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true" class="white-text">&times;</span>
-                        </button>
-                    </div>
-                    
-                    <div class="modal-body">
-                        <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
-                            <div class="row">
-                                <div class="col">
-                                    <label for="exampleFormControlInput1">Sucursal Actual</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control" disabled readonly value="<?php echo $row['Nombre_Sucursal']?>">
+    <div class="modal fade" id="FiltroEspecifico" tabindex="-1" role="dialog" aria-labelledby="modalSucursalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); border: none;">
+                <!-- Header con gradiente azul acorde al módulo -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); border-radius: 12px 12px 0 0; border: none; padding: 20px 25px;">
+                    <h5 class="modal-title" style="color: white; font-weight: 600; font-size: 1.25rem; margin: 0;">
+                        <i class="fas fa-exchange-alt me-2"></i>Cambiar de Sucursal
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8; font-size: 1.5rem;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <!-- Body con diseño moderno -->
+                <div class="modal-body" style="padding: 30px 25px; background: #f8f9fa;">
+                    <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
+                        <div class="row">
+                            <!-- Sucursal Actual -->
+                            <div class="col-md-6 mb-4">
+                                <label for="sucursal-actual" style="color: #495057; font-weight: 600; margin-bottom: 8px; display: block;">
+                                    <i class="fas fa-building me-2" style="color: #6c757d;"></i>Sucursal Actual
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="background: #e9ecef; border: 1px solid #ced4da; border-right: none;">
+                                            <i class="fas fa-hospital" style="color: #6c757d;"></i>
+                                        </span>
                                     </div>
-                                </div>
-                                
-                                <div class="col">
-                                    <label for="exampleFormControlInput1">Sucursal a elegir</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
-                                        </div>
-                                        <select id="sucursal" class="form-control" name="Sucursal" required>
-                                            <option value="">Seleccione una Sucursal:</option>
-                                            <?php 
-                                            $query = $conn->query("SELECT ID_Sucursal,Nombre_Sucursal,Licencia FROM Sucursales WHERE Licencia='".$row['Licencia']."'");
-                                            while ($valores = mysqli_fetch_array($query)) {
-                                                echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    
-                                    <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
+                                    <input type="text" id="sucursal-actual" class="form-control" disabled readonly 
+                                           value="<?php echo $row['Nombre_Sucursal']?>" 
+                                           style="border: 1px solid #ced4da; border-left: none; background: #f8f9fa; color: #495057; font-weight: 500;">
                                 </div>
                             </div>
-                            <button type="submit" id="submit_registroarea" value="Guardar" class="btn btn-success">
-                                Aplicar cambio de sucursal <i class="fas fa-exchange-alt"></i>
+                            
+                            <!-- Sucursal a elegir -->
+                            <div class="col-md-6 mb-4">
+                                <label for="sucursal" style="color: #495057; font-weight: 600; margin-bottom: 8px; display: block;">
+                                    <i class="fas fa-map-marker-alt me-2" style="color: #28a745;"></i>Sucursal a Elegir
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" style="background: #e9ecef; border: 1px solid #ced4da; border-right: none;">
+                                            <i class="fas fa-hospital" style="color: #6c757d;"></i>
+                                        </span>
+                                    </div>
+                                    <select id="sucursal" class="form-control" name="Sucursal" required 
+                                            style="border: 1px solid #ced4da; border-left: none; background: white;">
+                                        <option value="">Seleccione una Sucursal</option>
+                                        <?php 
+                                        $query = $conn->query("SELECT ID_Sucursal,Nombre_Sucursal,Licencia FROM Sucursales WHERE Licencia='".$row['Licencia']."'");
+                                        while ($valores = mysqli_fetch_array($query)) {
+                                            echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botón de acción con estilo del módulo -->
+                        <div class="text-center mt-4">
+                            <button type="submit" id="submit_registroarea" class="btn btn-lg" 
+                                    style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+                                           border: none; 
+                                           border-radius: 8px; 
+                                           padding: 12px 30px; 
+                                           font-weight: 600; 
+                                           color: white; 
+                                           box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+                                           transition: all 0.3s ease;">
+                                <i class="fas fa-exchange-alt me-2"></i>Aplicar Cambio de Sucursal
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                        
+                        <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
+                    </form>
                 </div>
             </div>
         </div>
