@@ -662,7 +662,7 @@ include "Controladores/db_connect.php";
                             <!-- <button class="btn btn-primary" id="btnNuevoPedido">
                                 <i class="fas fa-plus me-2"></i>Nuevo Pedido
                             </button> -->
-                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico">
+                            <button type="button" class="btn btn-sm btn-success" onclick="$('#FiltroEspecifico').modal('show');">
                                 <i class="fas fa-clinic-medical me-2"></i>Cambiar de sucursal
                             </button>
                             <button class="btn btn-warning" id="btnStockBajo">
@@ -1102,11 +1102,78 @@ include "Controladores/db_connect.php";
     </div>
 
     <!-- Modal de cambio de sucursal -->
-    <?php include 'Modales/FiltraEspecificamenteInventarios.php'; ?>
+    <div class="modal fade bd-example-modal-xl" id="FiltroEspecifico" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-notify modal-success">
+            <div class="modal-content">
+                <div class="text-center">
+                    <div class="modal-header" style="background-color: #ef7980 !important;">
+                        <h5 class="modal-title" style="color:white;" id="exampleModalLabel">Cambiar de sucursal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="white-text">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <form action="javascript:void(0)" method="post" id="CambiaDeSucursal">
+                            <div class="row">
+                                <div class="col">
+                                    <label for="exampleFormControlInput1">Sucursal Actual</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" disabled readonly value="<?php echo $row['Nombre_Sucursal']?>">
+                                    </div>
+                                </div>
+                                
+                                <div class="col">
+                                    <label for="exampleFormControlInput1">Sucursal a elegir</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="Tarjeta2"><i class="far fa-hospital"></i></span>
+                                        </div>
+                                        <select id="sucursal" class="form-control" name="Sucursal" required>
+                                            <option value="">Seleccione una Sucursal:</option>
+                                            <?php 
+                                            $query = $conn->query("SELECT ID_Sucursal,Nombre_Sucursal,Licencia FROM Sucursales WHERE Licencia='".$row['Licencia']."'");
+                                            while ($valores = mysqli_fetch_array($query)) {
+                                                echo '<option value="'.$valores["ID_Sucursal"].'">'.$valores["Nombre_Sucursal"].'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    
+                                    <input type="text" name="user" hidden value="<?php echo $row['Id_PvUser']?>">
+                                </div>
+                            </div>
+                            <button type="submit" id="submit_registroarea" value="Guardar" class="btn btn-success">
+                                Aplicar cambio de sucursal <i class="fas fa-exchange-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
  
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/productos-moduleadm.js"></script>
     <script src="js/pedidos-modernadm.js"></script>
+    
+    <!-- Script simple para verificar modal -->
+    <script>
+    $(document).ready(function() {
+        console.log('jQuery cargado correctamente');
+        console.log('Modal disponible:', $('#FiltroEspecifico').length > 0);
+        
+        // Verificar que el modal esté disponible
+        if ($('#FiltroEspecifico').length === 0) {
+            console.error('Modal FiltroEspecifico no encontrado');
+        } else {
+            console.log('Modal FiltroEspecifico encontrado');
+        }
+    });
+    </script>
 </body>
 </html> 
