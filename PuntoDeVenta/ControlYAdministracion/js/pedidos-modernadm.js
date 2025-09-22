@@ -304,6 +304,7 @@ class SistemaPedidos {
         const estadoClass = `estado-${pedido.estado}`;
         const prioridadClass = `prioridad-${pedido.prioridad}`;
         
+        
         // Calcular tiempo transcurrido
         const tiempoTranscurrido = this.calcularTiempoTranscurrido(pedido.fecha_creacion);
         
@@ -341,7 +342,7 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${(pedido.estado === 'aprobado' || pedido.estado === 'completado') ? `
+                            ${pedido.estado === 'aprobado' ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
