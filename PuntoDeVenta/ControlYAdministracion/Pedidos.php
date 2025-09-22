@@ -1005,7 +1005,7 @@ include "Controladores/db_connect.php";
     </div>
     
     <?php include "Footer.php"; 
-    include ("Modales/FiltraEspecificamenteInventarios.php");
+   
     ?>
     
     <!-- Modal de Detalle de Pedido -->
@@ -1087,6 +1087,9 @@ include "Controladores/db_connect.php";
             </div>
         </div>
     </div>
+    
+    <!-- Modal de cambio de sucursal -->
+    <?php include 'Modales/FiltraEspecificamenteInventarios.php'; ?>
     
     <!-- Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">
