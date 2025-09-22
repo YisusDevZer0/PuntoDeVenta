@@ -121,29 +121,8 @@ try {
         ]
     ];
     
-    // Información del pedido
+    // Iniciar desde la fila 1 directamente con los productos
     $row = 1;
-    $sheet->setCellValue('A' . $row, 'RESUMEN DEL PEDIDO');
-    $sheet->mergeCells('A' . $row . ':E' . $row);
-    $sheet->getStyle('A' . $row . ':E' . $row)->applyFromArray($headerStyle);
-    $row++;
-    
-    $info_pedido = [
-        'Folio' => $pedido['folio'],
-        'Estado' => ucfirst(str_replace('_', ' ', $pedido['estado'])),
-        'Fecha' => date('d/m/Y H:i', strtotime($pedido['fecha_creacion'])),
-        'Usuario' => $pedido['usuario_nombre'],
-        'Sucursal' => $pedido['sucursal_nombre'],
-        'Total' => '$' . number_format($pedido['total_estimado'], 2)
-    ];
-    
-    foreach ($info_pedido as $label => $value) {
-        $sheet->setCellValue('A' . $row, $label . ':');
-        $sheet->setCellValue('B' . $row, $value);
-        $row++;
-    }
-    
-    $row += 2;
     
     // Productos del pedido
     $sheet->setCellValue('A' . $row, 'PRODUCTOS DEL PEDIDO');
@@ -169,7 +148,10 @@ try {
     // Datos de productos
     $total_general = 0;
     foreach ($productos as $producto) {
+        // Configurar código de barras como texto para evitar notación científica
         $sheet->setCellValue('A' . $row, $producto['producto_codigo'] ?: 'N/A');
+        $sheet->getStyle('A' . $row)->getNumberFormat()->setFormatCode('@'); // Formato de texto
+        
         $sheet->setCellValue('B' . $row, $producto['producto_nombre']);
         $sheet->setCellValue('C' . $row, $producto['cantidad']);
         $sheet->setCellValue('D' . $row, '$' . number_format($producto['precio_unitario'], 2));
