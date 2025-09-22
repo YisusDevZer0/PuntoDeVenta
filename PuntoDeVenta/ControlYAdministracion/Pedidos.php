@@ -659,9 +659,9 @@ include "Controladores/db_connect.php";
                 <div class="action-buttons mb-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex gap-2">
-                            <button class="btn btn-primary" id="btnNuevoPedido">
+                            <!-- <button class="btn btn-primary" id="btnNuevoPedido">
                                 <i class="fas fa-plus me-2"></i>Nuevo Pedido
-                            </button>
+                            </button> -->
                             <button class="btn btn-warning" id="btnStockBajo">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Stock Bajo
                             </button>
