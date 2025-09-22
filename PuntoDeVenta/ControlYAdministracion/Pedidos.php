@@ -662,6 +662,9 @@ include "Controladores/db_connect.php";
                             <!-- <button class="btn btn-primary" id="btnNuevoPedido">
                                 <i class="fas fa-plus me-2"></i>Nuevo Pedido
                             </button> -->
+                            <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
+ Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
+</button>
                             <button class="btn btn-warning" id="btnStockBajo">
                                 <i class="fas fa-exclamation-triangle me-2"></i>Stock Bajo
                             </button>
@@ -1001,7 +1004,9 @@ include "Controladores/db_connect.php";
         </div>
     </div>
     
-    <?php include "Footer.php"; ?>
+    <?php include "Footer.php"; 
+    include ("Modales/FiltraEspecificamenteInventarios.php");
+    ?>
     
     <!-- Modal de Detalle de Pedido -->
     <div class="modal fade" id="modalDetallePedido" tabindex="-1" aria-labelledby="modalDetallePedidoLabel" aria-hidden="true">
@@ -1093,6 +1098,7 @@ include "Controladores/db_connect.php";
         </div>
     </div>
 
+ 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js/productos-moduleadm.js"></script>

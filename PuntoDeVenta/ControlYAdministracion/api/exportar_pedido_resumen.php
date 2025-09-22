@@ -175,9 +175,12 @@ try {
     $sheet->getColumnDimension('D')->setWidth(15);
     $sheet->getColumnDimension('E')->setWidth(15);
     
-    // Configurar headers para descarga
+    // Configurar headers para descarga con nombre de sucursal
+    $sucursal_nombre = str_replace(' ', '_', $pedido['sucursal_nombre']);
+    $filename = 'resumen_pedido_' . $pedido['folio'] . '_' . $sucursal_nombre . '_' . date('Y-m-d') . '.xlsx';
+    
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment; filename="resumen_pedido_' . $pedido_id . '_' . date('Y-m-d') . '.xlsx"');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
     header('Cache-Control: max-age=0');
     
     // Crear el archivo Excel

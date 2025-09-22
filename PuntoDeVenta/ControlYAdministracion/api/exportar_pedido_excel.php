@@ -286,8 +286,9 @@ try {
     $sheet->getColumnDimension('E')->setWidth(18);
     $sheet->getColumnDimension('F')->setWidth(18);
     
-    // Configurar headers para descarga
-    $filename = 'pedido_' . $pedido['folio'] . '_' . date('Y-m-d_H-i-s') . '.xlsx';
+    // Configurar headers para descarga con nombre de sucursal
+    $sucursal_nombre = str_replace(' ', '_', $pedido['sucursal_nombre']);
+    $filename = 'pedido_' . $pedido['folio'] . '_' . $sucursal_nombre . '_' . date('Y-m-d_H-i-s') . '.xlsx';
     
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="' . $filename . '"');

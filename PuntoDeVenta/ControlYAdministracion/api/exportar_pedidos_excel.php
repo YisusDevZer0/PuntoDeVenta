@@ -288,7 +288,7 @@ try {
     $sheet->setCellValue('A' . ($infoRow + 1), 'Total de pedidos: ' . count($pedidos));
     
     // Configurar headers para descarga
-    $filename = 'pedidos_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'pedidos_generales_' . date('Y-m-d_H-i-s') . '.xlsx';
     
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
