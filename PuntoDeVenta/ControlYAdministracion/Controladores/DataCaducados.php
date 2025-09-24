@@ -308,8 +308,22 @@ tabla = $('#Caducados').DataTable({
 
 // Cargar datos iniciales
 $(document).ready(function() {
+    console.log('DataCaducados cargado');
     cargarEstadisticas();
     cargarSucursales();
+    
+    // Verificar que las funciones estén disponibles
+    console.log('Funciones disponibles:', {
+        abrirModalDetallesLote: typeof abrirModalDetallesLote,
+        abrirModalActualizarCaducidad: typeof abrirModalActualizarCaducidad,
+        abrirModalTransferirLote: typeof abrirModalTransferirLote
+    });
+    
+    // Test de funciones
+    window.testModales = function() {
+        console.log('Probando modales...');
+        abrirModalDetallesLote(1);
+    };
 });
 
 // Eventos para modales
@@ -356,44 +370,30 @@ function cargarSucursalesConfiguracion() {
 
 // Funciones para abrir modales
 function abrirModalDetallesLote(idLote) {
-    // Mostrar loading
-    Swal.fire({
-        title: 'Cargando detalles...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+    console.log('Abriendo modal detalles para lote:', idLote);
     
-    // Cargar detalles del lote
-    $.get(`api/obtener_detalles_lote.php?id=${idLote}`, function(data) {
-        Swal.close();
-        
-        if (data.success) {
-            mostrarDetallesLote(data.lote);
-            mostrarHistorialLote(data.historial);
-            
-            // Mostrar modal
-            var myModal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
-            myModal.show();
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.error || 'Error al cargar los detalles'
-            });
-        }
-    }).fail(function() {
-        Swal.close();
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error de conexión al cargar los detalles'
+    // Mostrar modal directamente
+    var myModal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
+    myModal.show();
+    
+    // Cargar datos después de abrir el modal
+    setTimeout(() => {
+        $.get(`api/obtener_detalles_lote.php?id=${idLote}`, function(data) {
+            if (data.success) {
+                mostrarDetallesLote(data.lote);
+                mostrarHistorialLote(data.historial);
+            } else {
+                console.error('Error al cargar detalles:', data.error);
+            }
+        }).fail(function() {
+            console.error('Error de conexión al cargar detalles');
         });
-    });
+    }, 300);
 }
 
 function abrirModalActualizarCaducidad(idLote, datosLote) {
+    console.log('Abriendo modal actualizar para lote:', idLote, datosLote);
+    
     try {
         const datos = JSON.parse(datosLote);
         
@@ -421,19 +421,18 @@ function abrirModalActualizarCaducidad(idLote, datosLote) {
         document.getElementById('motivoActualizacion').value = '';
         document.getElementById('observacionesActualizacion').value = '';
         
-        // Mostrar modal
-        var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
-        myModal.show();
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al procesar los datos del lote'
-        });
+        console.error('Error al procesar datos:', error);
     }
+    
+    // Mostrar modal
+    var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
+    myModal.show();
 }
 
 function abrirModalTransferirLote(idLote, datosLote) {
+    console.log('Abriendo modal transferir para lote:', idLote, datosLote);
+    
     try {
         const datos = JSON.parse(datosLote);
         
@@ -466,57 +465,77 @@ function abrirModalTransferirLote(idLote, datosLote) {
         document.getElementById('motivoTransferencia').value = '';
         document.getElementById('observacionesTransferencia').value = '';
         
-        // Mostrar modal
-        var myModal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
-        myModal.show();
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al procesar los datos del lote'
-        });
+        console.error('Error al procesar datos:', error);
     }
+    
+    // Mostrar modal
+    var myModal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
+    myModal.show();
 }
 
 // Funciones auxiliares para los modales
 function mostrarDetallesLote(lote) {
-    document.getElementById('detCodBarra').textContent = lote.cod_barra;
-    document.getElementById('detNombreProducto').textContent = lote.nombre_producto;
-    document.getElementById('detLote').textContent = lote.lote;
-    document.getElementById('detFechaCaducidad').textContent = lote.fecha_caducidad;
-    document.getElementById('detFechaIngreso').textContent = lote.fecha_registro;
-    document.getElementById('detCantidadInicial').textContent = lote.cantidad_inicial;
-    document.getElementById('detCantidadActual').textContent = lote.cantidad_actual;
-    document.getElementById('detSucursal').textContent = lote.sucursal;
-    document.getElementById('detEstado').textContent = lote.estado;
-    document.getElementById('detUsuarioRegistro').textContent = lote.usuario_registro;
-    document.getElementById('detProveedor').textContent = lote.proveedor || 'Sin proveedor';
-    document.getElementById('detPrecioCompra').textContent = lote.precio_compra ? '$' + lote.precio_compra : 'No especificado';
-    document.getElementById('detPrecioVenta').textContent = '$' + lote.precio_venta;
-    document.getElementById('detObservaciones').textContent = lote.observaciones || 'Sin observaciones';
+    console.log('Mostrando detalles del lote:', lote);
+    
+    // Llenar información del lote
+    const detallesHtml = `
+        <div class="col-md-6">
+            <strong>Código de Barra:</strong> ${lote.cod_barra}<br>
+            <strong>Producto:</strong> ${lote.nombre_producto}<br>
+            <strong>Lote:</strong> ${lote.lote}<br>
+            <strong>Fecha de Caducidad:</strong> ${lote.fecha_caducidad}<br>
+            <strong>Fecha de Ingreso:</strong> ${lote.fecha_registro}
+        </div>
+        <div class="col-md-6">
+            <strong>Cantidad Inicial:</strong> ${lote.cantidad_inicial}<br>
+            <strong>Cantidad Actual:</strong> ${lote.cantidad_actual}<br>
+            <strong>Sucursal:</strong> ${lote.sucursal}<br>
+            <strong>Proveedor:</strong> ${lote.proveedor || 'Sin proveedor'}<br>
+            <strong>Precio Compra:</strong> ${lote.precio_compra ? '$' + lote.precio_compra : 'No especificado'}<br>
+            <strong>Precio Venta:</strong> $${lote.precio_venta}
+        </div>
+    `;
+    
+    document.getElementById('detallesLoteInfo').innerHTML = detallesHtml;
+    
+    // Mostrar estado
+    const estadoHtml = `
+        <div class="mb-2">
+            <strong>Estado:</strong> <span class="badge bg-success">${lote.estado}</span>
+        </div>
+        <div class="mb-2">
+            <strong>Días Restantes:</strong> ${lote.dias_restantes} días
+        </div>
+        <div class="mb-2">
+            <strong>Observaciones:</strong> ${lote.observaciones || 'Sin observaciones'}
+        </div>
+    `;
+    
+    document.getElementById('estadoLote').innerHTML = estadoHtml;
 }
 
 function mostrarHistorialLote(historial) {
-    const tbody = document.getElementById('detHistorialBody');
+    console.log('Mostrando historial:', historial);
+    
+    const tbody = document.getElementById('historialLote');
     tbody.innerHTML = '';
     
     if (historial.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No hay movimientos registrados</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay movimientos registrados</td></tr>';
         return;
     }
     
     historial.forEach(movimiento => {
         const row = `
             <tr>
-                <td>${movimiento.tipo_movimiento}</td>
-                <td>${movimiento.cantidad_anterior}</td>
-                <td>${movimiento.cantidad_nueva}</td>
-                <td>${movimiento.fecha_caducidad_anterior || '-'}</td>
-                <td>${movimiento.fecha_caducidad_nueva || '-'}</td>
-                <td>${movimiento.sucursal_origen || '-'}</td>
-                <td>${movimiento.sucursal_destino || '-'}</td>
-                <td>${movimiento.usuario_movimiento}</td>
                 <td>${movimiento.fecha_movimiento}</td>
+                <td><span class="badge bg-info">${movimiento.tipo_movimiento}</span></td>
+                <td>
+                    ${movimiento.cantidad_anterior !== null ? `Cantidad: ${movimiento.cantidad_anterior} → ${movimiento.cantidad_nueva}` : ''}
+                    ${movimiento.fecha_caducidad_anterior ? `Fecha: ${movimiento.fecha_caducidad_anterior} → ${movimiento.fecha_caducidad_nueva}` : ''}
+                </td>
+                <td>${movimiento.usuario_movimiento}</td>
                 <td>${movimiento.observaciones || '-'}</td>
             </tr>
         `;
