@@ -354,19 +354,191 @@ function cargarSucursalesConfiguracion() {
     });
 }
 
-// Funciones para abrir modales (se implementarán en los archivos de modales)
+// Funciones para abrir modales
 function abrirModalDetallesLote(idLote) {
-    // Implementar en DetallesLote.php
-    console.log('Abrir detalles del lote:', idLote);
+    // Mostrar loading
+    Swal.fire({
+        title: 'Cargando detalles...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Cargar detalles del lote
+    $.get(`api/obtener_detalles_lote.php?id=${idLote}`, function(data) {
+        Swal.close();
+        
+        if (data.success) {
+            mostrarDetallesLote(data.lote);
+            mostrarHistorialLote(data.historial);
+            
+            // Mostrar modal
+            var myModal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
+            myModal.show();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error || 'Error al cargar los detalles'
+            });
+        }
+    }).fail(function() {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error de conexión al cargar los detalles'
+        });
+    });
 }
 
 function abrirModalActualizarCaducidad(idLote, datosLote) {
-    // Implementar en ActualizarCaducidad.php
-    console.log('Abrir actualizar caducidad:', idLote, datosLote);
+    try {
+        const datos = JSON.parse(datosLote);
+        
+        // Llenar información del lote
+        document.getElementById('idLoteActualizar').value = idLote;
+        document.getElementById('infoLoteActual').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Producto:</strong> ${datos.nombre_producto}<br>
+                    <strong>Código:</strong> ${datos.cod_barra}<br>
+                    <strong>Lote:</strong> ${datos.lote}
+                </div>
+                <div class="col-md-6">
+                    <strong>Fecha Actual:</strong> ${datos.fecha_caducidad}<br>
+                    <strong>Cantidad:</strong> ${datos.cantidad_actual}<br>
+                    <strong>Sucursal:</strong> ${datos.sucursal}
+                </div>
+            </div>
+        `;
+        
+        // Establecer fecha actual como valor por defecto
+        document.getElementById('fechaCaducidadNueva').value = datos.fecha_caducidad;
+        
+        // Limpiar otros campos
+        document.getElementById('motivoActualizacion').value = '';
+        document.getElementById('observacionesActualizacion').value = '';
+        
+        // Mostrar modal
+        var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
+        myModal.show();
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al procesar los datos del lote'
+        });
+    }
 }
 
 function abrirModalTransferirLote(idLote, datosLote) {
-    // Implementar en TransferirLote.php
-    console.log('Abrir transferir lote:', idLote, datosLote);
+    try {
+        const datos = JSON.parse(datosLote);
+        
+        // Llenar información del lote origen
+        document.getElementById('idLoteTransferir').value = idLote;
+        document.getElementById('infoLoteOrigen').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Producto:</strong> ${datos.nombre_producto}<br>
+                    <strong>Código:</strong> ${datos.cod_barra}<br>
+                    <strong>Lote:</strong> ${datos.lote}
+                </div>
+                <div class="col-md-6">
+                    <strong>Fecha Caducidad:</strong> ${datos.fecha_caducidad}<br>
+                    <strong>Cantidad Disponible:</strong> ${datos.cantidad_actual}<br>
+                    <strong>Sucursal Actual:</strong> ${datos.sucursal}
+                </div>
+            </div>
+        `;
+        
+        // Establecer cantidad máxima
+        document.getElementById('cantidadDisponible').textContent = datos.cantidad_actual;
+        document.getElementById('cantidadTransferir').max = datos.cantidad_actual;
+        document.getElementById('cantidadTransferir').value = 1;
+        
+        // Cargar sucursales destino (excluyendo la actual)
+        cargarSucursalesDestino(datos.sucursal_id || 1);
+        
+        // Limpiar otros campos
+        document.getElementById('motivoTransferencia').value = '';
+        document.getElementById('observacionesTransferencia').value = '';
+        
+        // Mostrar modal
+        var myModal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
+        myModal.show();
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al procesar los datos del lote'
+        });
+    }
+}
+
+// Funciones auxiliares para los modales
+function mostrarDetallesLote(lote) {
+    document.getElementById('detCodBarra').textContent = lote.cod_barra;
+    document.getElementById('detNombreProducto').textContent = lote.nombre_producto;
+    document.getElementById('detLote').textContent = lote.lote;
+    document.getElementById('detFechaCaducidad').textContent = lote.fecha_caducidad;
+    document.getElementById('detFechaIngreso').textContent = lote.fecha_registro;
+    document.getElementById('detCantidadInicial').textContent = lote.cantidad_inicial;
+    document.getElementById('detCantidadActual').textContent = lote.cantidad_actual;
+    document.getElementById('detSucursal').textContent = lote.sucursal;
+    document.getElementById('detEstado').textContent = lote.estado;
+    document.getElementById('detUsuarioRegistro').textContent = lote.usuario_registro;
+    document.getElementById('detProveedor').textContent = lote.proveedor || 'Sin proveedor';
+    document.getElementById('detPrecioCompra').textContent = lote.precio_compra ? '$' + lote.precio_compra : 'No especificado';
+    document.getElementById('detPrecioVenta').textContent = '$' + lote.precio_venta;
+    document.getElementById('detObservaciones').textContent = lote.observaciones || 'Sin observaciones';
+}
+
+function mostrarHistorialLote(historial) {
+    const tbody = document.getElementById('detHistorialBody');
+    tbody.innerHTML = '';
+    
+    if (historial.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No hay movimientos registrados</td></tr>';
+        return;
+    }
+    
+    historial.forEach(movimiento => {
+        const row = `
+            <tr>
+                <td>${movimiento.tipo_movimiento}</td>
+                <td>${movimiento.cantidad_anterior}</td>
+                <td>${movimiento.cantidad_nueva}</td>
+                <td>${movimiento.fecha_caducidad_anterior || '-'}</td>
+                <td>${movimiento.fecha_caducidad_nueva || '-'}</td>
+                <td>${movimiento.sucursal_origen || '-'}</td>
+                <td>${movimiento.sucursal_destino || '-'}</td>
+                <td>${movimiento.usuario}</td>
+                <td>${movimiento.fecha_movimiento}</td>
+                <td>${movimiento.observaciones || '-'}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+function cargarSucursalesDestino(sucursalOrigen) {
+    $.get("api/obtener_sucursales.php", function(data) {
+        if (data.success) {
+            const select = document.getElementById('sucursalDestino');
+            select.innerHTML = '<option value="">Seleccionar sucursal destino</option>';
+            
+            data.sucursales.forEach(sucursal => {
+                if (sucursal.id != sucursalOrigen) {
+                    const option = document.createElement('option');
+                    option.value = sucursal.id;
+                    option.textContent = sucursal.nombre;
+                    select.appendChild(option);
+                }
+            });
+        }
+    });
 }
 </script>

@@ -254,4 +254,88 @@ function guardarTransferencia() {
         });
     });
 }
+
+function guardarTransferencia() {
+    const form = document.getElementById('formTransferirLote');
+    const formData = new FormData(form);
+    
+    // Validar campos requeridos
+    if (!formData.get('sucursalDestino') || !formData.get('cantidadTransferir') || !formData.get('motivoTransferencia')) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos requeridos',
+            text: 'Por favor completa todos los campos obligatorios'
+        });
+        return;
+    }
+    
+    const cantidadTransferir = parseInt(formData.get('cantidadTransferir'));
+    const cantidadDisponible = parseInt(document.getElementById('cantidadDisponible').textContent);
+    
+    if (cantidadTransferir <= 0 || cantidadTransferir > cantidadDisponible) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Cantidad inválida',
+            text: 'La cantidad debe ser mayor a 0 y no exceder la cantidad disponible'
+        });
+        return;
+    }
+    
+    // Mostrar loading
+    Swal.fire({
+        title: 'Procesando transferencia...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Preparar datos
+    const datos = {
+        id_lote: formData.get('idLote'),
+        sucursal_destino: formData.get('sucursalDestino'),
+        cantidad_transferir: cantidadTransferir,
+        motivo: formData.get('motivoTransferencia'),
+        observaciones: formData.get('observacionesTransferencia'),
+        usuario_movimiento: <?php echo isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1; ?>
+    };
+    
+    fetch('api/transferir_lote.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(response => response.json())
+    .then(data => {
+        Swal.close();
+        
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Transferencia realizada',
+                text: data.message
+            }).then(() => {
+                // Cerrar modal y recargar datos
+                bootstrap.Modal.getInstance(document.getElementById('modalTransferirLote')).hide();
+                tabla.ajax.reload();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error
+            });
+        }
+    })
+    .catch(error => {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al procesar la transferencia: ' + error.message
+        });
+    });
+}
 </script>
