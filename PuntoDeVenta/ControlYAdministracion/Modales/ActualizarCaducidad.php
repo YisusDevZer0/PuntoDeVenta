@@ -57,36 +57,6 @@
 </div>
 
 <script>
-function abrirModalActualizarCaducidad(idLote, datosLote) {
-    // Llenar información del lote
-    document.getElementById('idLoteActualizar').value = idLote;
-    document.getElementById('infoLoteActual').innerHTML = `
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
-                <strong>Código:</strong> ${datosLote.cod_barra}<br>
-                <strong>Lote:</strong> ${datosLote.lote}
-            </div>
-            <div class="col-md-6">
-                <strong>Fecha Actual:</strong> ${datosLote.fecha_caducidad}<br>
-                <strong>Cantidad:</strong> ${datosLote.cantidad_actual}<br>
-                <strong>Sucursal:</strong> ${datosLote.sucursal}
-            </div>
-        </div>
-    `;
-    
-    // Establecer fecha actual como valor por defecto
-    document.getElementById('fechaCaducidadNueva').value = datosLote.fecha_caducidad;
-    
-    // Limpiar otros campos
-    document.getElementById('motivoActualizacion').value = '';
-    document.getElementById('observacionesActualizacion').value = '';
-    
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
-    modal.show();
-}
-
 function guardarActualizacionCaducidad() {
     const form = document.getElementById('formActualizarCaducidad');
     const formData = new FormData(form);
@@ -138,8 +108,7 @@ function guardarActualizacionCaducidad() {
             }).then(() => {
                 // Cerrar modal y recargar datos
                 bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad')).hide();
-                cargarProductosCaducados();
-                cargarEstadisticas();
+                tabla.ajax.reload();
             });
         } else {
             Swal.fire({

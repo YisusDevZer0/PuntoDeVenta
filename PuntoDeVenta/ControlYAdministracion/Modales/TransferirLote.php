@@ -79,40 +79,6 @@
 </div>
 
 <script>
-function abrirModalTransferirLote(idLote, datosLote) {
-    // Llenar información del lote origen
-    document.getElementById('idLoteTransferir').value = idLote;
-    document.getElementById('infoLoteOrigen').innerHTML = `
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
-                <strong>Código:</strong> ${datosLote.cod_barra}<br>
-                <strong>Lote:</strong> ${datosLote.lote}
-            </div>
-            <div class="col-md-6">
-                <strong>Fecha Caducidad:</strong> ${datosLote.fecha_caducidad}<br>
-                <strong>Cantidad Disponible:</strong> ${datosLote.cantidad_actual}<br>
-                <strong>Sucursal Actual:</strong> ${datosLote.sucursal}
-            </div>
-        </div>
-    `;
-    
-    // Establecer cantidad máxima
-    document.getElementById('cantidadDisponible').textContent = datosLote.cantidad_actual;
-    document.getElementById('cantidadTransferir').max = datosLote.cantidad_actual;
-    document.getElementById('cantidadTransferir').value = 1;
-    
-    // Cargar sucursales destino (excluyendo la actual)
-    cargarSucursalesDestino(datosLote.sucursal_id);
-    
-    // Limpiar otros campos
-    document.getElementById('motivoTransferencia').value = '';
-    document.getElementById('observacionesTransferencia').value = '';
-    
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
-    modal.show();
-}
 
 function cargarSucursalesDestino(sucursalOrigen) {
     fetch('api/obtener_sucursales.php')

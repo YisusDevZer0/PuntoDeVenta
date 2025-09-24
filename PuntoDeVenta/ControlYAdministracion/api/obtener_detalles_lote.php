@@ -38,7 +38,7 @@ try {
                         fecha_caducidad_nueva,
                         sucursal_origen,
                         sucursal_destino,
-                        usuario,
+                        usuario_movimiento,
                         fecha_movimiento,
                         observaciones
                     FROM caducados_historial

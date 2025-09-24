@@ -515,7 +515,7 @@ function mostrarHistorialLote(historial) {
                 <td>${movimiento.fecha_caducidad_nueva || '-'}</td>
                 <td>${movimiento.sucursal_origen || '-'}</td>
                 <td>${movimiento.sucursal_destino || '-'}</td>
-                <td>${movimiento.usuario}</td>
+                <td>${movimiento.usuario_movimiento}</td>
                 <td>${movimiento.fecha_movimiento}</td>
                 <td>${movimiento.observaciones || '-'}</td>
             </tr>
