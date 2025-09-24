@@ -119,6 +119,7 @@ include "Controladores/db_connect.php";
         .estado-en_proceso { background: #17a2b8; color: white; }
         .estado-completado { background: #6f42c1; color: white; }
         .estado-cancelado { background: #6c757d; color: white; }
+        .estado-traspaso_generado { background: #fd7e14; color: white; }
         
         .prioridad-badge {
             padding: 3px 8px;
@@ -809,6 +810,7 @@ include "Controladores/db_connect.php";
                                         <option value="en_proceso">En Proceso</option>
                                         <option value="completado">Completado</option>
                                         <option value="cancelado">Cancelado</option>
+                                        <option value="traspaso_generado">Traspaso Generado</option>
                                     </select>
                                 </div>
                                 <div class="col-md-2">

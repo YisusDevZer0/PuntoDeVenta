@@ -1,12 +1,14 @@
 <!-- Modal para Detalles del Lote -->
-<div class="modal fade" id="modalDetallesLote" tabindex="-1" aria-labelledby="modalDetallesLoteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+<div class="modal fade" id="modalDetallesLote" tabindex="-1" role="dialog" aria-labelledby="modalDetallesLoteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalDetallesLoteLabel">
-                    <i class="fa-solid fa-info-circle me-2"></i>Detalles del Lote
+                    <i class="fa fa-info-circle mr-2"></i>Detalles del Lote
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <!-- Información principal del lote -->
@@ -67,14 +69,14 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-times me-1"></i>Cerrar
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times mr-1"></i>Cerrar
                 </button>
                 <button type="button" class="btn btn-warning" onclick="abrirModalActualizarCaducidad()">
-                    <i class="fa-solid fa-edit me-1"></i>Actualizar Fecha
+                    <i class="fa fa-edit mr-1"></i>Actualizar Fecha
                 </button>
                 <button type="button" class="btn btn-primary" onclick="abrirModalTransferirLote()">
-                    <i class="fa-solid fa-truck me-1"></i>Transferir
+                    <i class="fa fa-truck mr-1"></i>Transferir
                 </button>
             </div>
         </div>

@@ -372,6 +372,24 @@ class SistemaPedidos {
                                         data-toggle="tooltip" title="Descargar Resumen">
                                     <i class="fas fa-file-alt"></i>
                                 </button>
+                                <button class="btn btn-outline-warning btn-sm generar-traspaso" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Generar Traspaso">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                            ` : ''}
+                            ${pedido.estado === 'traspaso_generado' ? `
+                                <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Descargar Excel Detallado">
+                                    <i class="fas fa-file-excel"></i>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm descargar-resumen-pedido" data-pedido-id="${pedido.id}"
+                                        data-toggle="tooltip" title="Descargar Resumen">
+                                    <i class="fas fa-file-alt"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" disabled
+                                        data-toggle="tooltip" title="Traspaso ya generado">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
                             ` : ''}
                             ${pedido.estado === 'pendiente' ? `
                                 <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
@@ -443,6 +461,12 @@ class SistemaPedidos {
         $('.descargar-resumen-pedido').on('click', (e) => {
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.descargarResumenPedido(pedidoId);
+        });
+
+        // Generar traspaso
+        $('.generar-traspaso').on('click', (e) => {
+            const pedidoId = $(e.currentTarget).data('pedido-id');
+            this.confirmarGenerarTraspaso(pedidoId);
         });
     }
 
@@ -1269,6 +1293,81 @@ class SistemaPedidos {
         } catch (error) {
             console.error('Error al descargar resumen del pedido:', error);
             this.mostrarError('Error al generar el resumen del pedido');
+        }
+    }
+
+    // Función para confirmar la generación de traspaso
+    async confirmarGenerarTraspaso(pedidoId) {
+        try {
+            // Obtener detalles del pedido primero
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'detalle_pedido',
+                pedido_id: pedidoId
+            });
+
+            if (response.status !== 'ok') {
+                this.mostrarError('Error al obtener detalles del pedido');
+                return;
+            }
+
+            const pedido = response.pedido;
+            const detalles = response.detalles;
+
+            // Mostrar modal de confirmación con detalles del traspaso
+            const result = await Swal.fire({
+                title: '¿Generar Traspaso?',
+                html: `
+                    <div class="text-left">
+                        <p><strong>Folio del Pedido:</strong> ${pedido.folio}</p>
+                        <p><strong>Productos:</strong> ${detalles.length}</p>
+                        <p><strong>Total:</strong> $${parseFloat(pedido.total_estimado).toFixed(2)}</p>
+                        <p><strong>Sucursal Origen:</strong> ${pedido.Nombre_Sucursal}</p>
+                        <br>
+                        <p class="text-warning"><i class="fas fa-exclamation-triangle"></i> 
+                        Esta acción generará un traspaso automático con todos los productos del pedido.</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, generar traspaso',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#ffc107',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                width: '500px'
+            });
+
+            if (result.isConfirmed) {
+                await this.generarTraspaso(pedidoId, detalles);
+            }
+        } catch (error) {
+            console.error('Error en confirmarGenerarTraspaso:', error);
+            this.mostrarError('Error al procesar la solicitud');
+        }
+    }
+
+    // Función para generar el traspaso
+    async generarTraspaso(pedidoId, detalles) {
+        try {
+            this.mostrarLoading(true);
+            
+            const response = await $.post('Controladores/PedidosController.php', {
+                accion: 'generar_traspaso',
+                pedido_id: pedidoId,
+                productos: JSON.stringify(detalles)
+            });
+
+            if (response.status === 'ok') {
+                this.mostrarExito('Traspaso generado exitosamente');
+                this.cargarPedidos(); // Recargar la lista para mostrar el nuevo estado
+            } else {
+                this.mostrarError('Error al generar traspaso: ' + (response.msg || 'Error desconocido'));
+            }
+        } catch (error) {
+            console.error('Error en generarTraspaso:', error);
+            this.mostrarError('Error de conexión al generar traspaso');
+        } finally {
+            this.mostrarLoading(false);
         }
     }
 }

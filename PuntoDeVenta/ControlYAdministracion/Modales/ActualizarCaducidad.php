@@ -1,12 +1,14 @@
 <!-- Modal para Actualizar Caducidad -->
-<div class="modal fade" id="modalActualizarCaducidad" tabindex="-1" aria-labelledby="modalActualizarCaducidadLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="modalActualizarCaducidad" tabindex="-1" role="dialog" aria-labelledby="modalActualizarCaducidadLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalActualizarCaducidadLabel">
-                    <i class="fa-solid fa-calendar-edit me-2"></i>Actualizar Fecha de Caducidad
+                    <i class="fa fa-calendar-edit mr-2"></i>Actualizar Fecha de Caducidad
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="formActualizarCaducidad">
@@ -14,7 +16,7 @@
                     
                     <!-- Información del lote actual -->
                     <div class="alert alert-info">
-                        <h6><i class="fa-solid fa-info-circle me-2"></i>Información del Lote</h6>
+                        <h6><i class="fa fa-info-circle mr-2"></i>Información del Lote</h6>
                         <div id="infoLoteActual">
                             <!-- Se llenará dinámicamente -->
                         </div>
@@ -27,7 +29,7 @@
                     
                     <div class="mb-3">
                         <label for="motivoActualizacion" class="form-label">Motivo de la Actualización *</label>
-                        <select class="form-select" id="motivoActualizacion" name="motivoActualizacion" required>
+                        <select class="form-control" id="motivoActualizacion" name="motivoActualizacion" required>
                             <option value="">Seleccionar motivo</option>
                             <option value="correccion_error">Corrección de error</option>
                             <option value="actualizacion_proveedor">Actualización del proveedor</option>
@@ -43,11 +45,11 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-times me-1"></i>Cancelar
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times mr-1"></i>Cancelar
                 </button>
                 <button type="button" class="btn btn-warning" onclick="guardarActualizacionCaducidad()">
-                    <i class="fa-solid fa-save me-1"></i>Actualizar Fecha
+                    <i class="fa fa-save mr-1"></i>Actualizar Fecha
                 </button>
             </div>
         </div>

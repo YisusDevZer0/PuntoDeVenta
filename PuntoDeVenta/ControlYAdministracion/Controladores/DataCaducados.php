@@ -233,6 +233,10 @@ $(document).ready(function() {
     cargarEstadisticas();
     cargarSucursales();
     cargarProductosCaducados();
+    
+    // Hacer las funciones globales para que funcionen desde los botones
+    window.abrirModalRegistrarLote = abrirModalRegistrarLote;
+    window.abrirModalConfiguracion = abrirModalConfiguracion;
 });
 
 function cargarEstadisticas() {
@@ -396,24 +400,179 @@ function generarBotonesAccion(producto) {
     `;
 }
 
-// Funciones para abrir modales (se implementarán en los archivos de modales)
+// Funciones para abrir modales
 function abrirModalRegistrarLote() {
-    // Implementar en RegistrarLote.php
+    // Limpiar formulario
+    if (document.getElementById('formRegistrarLote')) {
+        document.getElementById('formRegistrarLote').reset();
+    }
+    if (document.getElementById('infoProducto')) {
+        document.getElementById('infoProducto').style.display = 'none';
+    }
+    
+    // Cargar sucursales
+    cargarSucursalesModal();
+    
+    // Mostrar modal
+    $('#modalRegistrarLote').modal('show');
 }
 
 function abrirModalActualizarCaducidad(idLote, datosLote) {
-    // Implementar en ActualizarCaducidad.php
+    // Llenar información del lote
+    document.getElementById('idLoteActualizar').value = idLote;
+    document.getElementById('infoLoteActual').innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
+                <strong>Código:</strong> ${datosLote.cod_barra}<br>
+                <strong>Lote:</strong> ${datosLote.lote}
+            </div>
+            <div class="col-md-6">
+                <strong>Fecha Actual:</strong> ${datosLote.fecha_caducidad}<br>
+                <strong>Cantidad:</strong> ${datosLote.cantidad_actual}<br>
+                <strong>Sucursal:</strong> ${datosLote.sucursal}
+            </div>
+        </div>
+    `;
+    
+    // Establecer fecha actual como valor por defecto
+    document.getElementById('fechaCaducidadNueva').value = datosLote.fecha_caducidad;
+    
+    // Limpiar otros campos
+    document.getElementById('motivoActualizacion').value = '';
+    document.getElementById('observacionesActualizacion').value = '';
+    
+    // Mostrar modal
+    $('#modalActualizarCaducidad').modal('show');
 }
 
 function abrirModalTransferirLote(idLote, datosLote) {
-    // Implementar en TransferirLote.php
+    // Llenar información del lote origen
+    document.getElementById('idLoteTransferir').value = idLote;
+    document.getElementById('infoLoteOrigen').innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
+                <strong>Código:</strong> ${datosLote.cod_barra}<br>
+                <strong>Lote:</strong> ${datosLote.lote}
+            </div>
+            <div class="col-md-6">
+                <strong>Fecha Caducidad:</strong> ${datosLote.fecha_caducidad}<br>
+                <strong>Cantidad Disponible:</strong> ${datosLote.cantidad_actual}<br>
+                <strong>Sucursal Actual:</strong> ${datosLote.sucursal}
+            </div>
+        </div>
+    `;
+    
+    // Establecer cantidad máxima
+    document.getElementById('cantidadDisponible').textContent = datosLote.cantidad_actual;
+    document.getElementById('cantidadTransferir').max = datosLote.cantidad_actual;
+    document.getElementById('cantidadTransferir').value = 1;
+    
+    // Cargar sucursales destino (excluyendo la actual)
+    cargarSucursalesDestino(datosLote.sucursal_id);
+    
+    // Limpiar otros campos
+    document.getElementById('motivoTransferencia').value = '';
+    document.getElementById('observacionesTransferencia').value = '';
+    
+    // Mostrar modal
+    $('#modalTransferirLote').modal('show');
 }
 
 function abrirModalDetallesLote(idLote) {
-    // Implementar en DetallesLote.php
+    // Mostrar loading
+    Swal.fire({
+        title: 'Cargando detalles...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Cargar detalles del lote
+    $.get(`api/obtener_detalles_lote.php?id=${idLote}`, function(data) {
+        Swal.close();
+        
+        if (data.success) {
+            mostrarDetallesLote(data.lote);
+            mostrarHistorialLote(data.historial);
+            
+            // Mostrar modal
+            $('#modalDetallesLote').modal('show');
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error
+            });
+        }
+    }).fail(function() {
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar los detalles'
+        });
+    });
 }
 
 function abrirModalConfiguracion() {
-    // Implementar en ConfiguracionCaducados.php
+    // Cargar sucursales
+    cargarSucursalesConfiguracion();
+    
+    // Mostrar modal
+    $('#modalConfiguracionCaducados').modal('show');
+}
+
+// Funciones auxiliares
+function cargarSucursalesModal() {
+    $.get("api/obtener_sucursales.php", function(data) {
+        if (data.success) {
+            const select = document.getElementById('sucursal');
+            select.innerHTML = '<option value="">Seleccionar sucursal</option>';
+            
+            data.sucursales.forEach(sucursal => {
+                const option = document.createElement('option');
+                option.value = sucursal.id;
+                option.textContent = sucursal.nombre;
+                select.appendChild(option);
+            });
+        }
+    });
+}
+
+function cargarSucursalesConfiguracion() {
+    $.get("api/obtener_sucursales.php", function(data) {
+        if (data.success) {
+            const select = document.getElementById('sucursalConfig');
+            select.innerHTML = '<option value="">Seleccionar sucursal</option>';
+            
+            data.sucursales.forEach(sucursal => {
+                const option = document.createElement('option');
+                option.value = sucursal.id;
+                option.textContent = sucursal.nombre;
+                select.appendChild(option);
+            });
+        }
+    });
+}
+
+function cargarSucursalesDestino(sucursalOrigen) {
+    $.get("api/obtener_sucursales.php", function(data) {
+        if (data.success) {
+            const select = document.getElementById('sucursalDestino');
+            select.innerHTML = '<option value="">Seleccionar sucursal destino</option>';
+            
+            data.sucursales.forEach(sucursal => {
+                if (sucursal.id != sucursalOrigen) {
+                    const option = document.createElement('option');
+                    option.value = sucursal.id;
+                    option.textContent = sucursal.nombre;
+                    select.appendChild(option);
+                }
+            });
+        }
+    });
 }
 </script>

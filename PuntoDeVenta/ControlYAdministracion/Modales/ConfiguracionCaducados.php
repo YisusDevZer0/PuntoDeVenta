@@ -1,12 +1,14 @@
 <!-- Modal para Configuración de Caducados -->
-<div class="modal fade" id="modalConfiguracionCaducados" tabindex="-1" aria-labelledby="modalConfiguracionCaducadosLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalConfiguracionCaducados" tabindex="-1" role="dialog" aria-labelledby="modalConfiguracionCaducadosLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalConfiguracionCaducadosLabel">
-                    <i class="fa-solid fa-cog me-2"></i>Configuración de Alertas de Caducidad
+                    <i class="fa fa-cog mr-2"></i>Configuración de Alertas de Caducidad
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="formConfiguracionCaducados">
@@ -16,7 +18,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="sucursalConfig" class="form-label">Sucursal *</label>
-                                <select class="form-select" id="sucursalConfig" name="sucursalConfig" required>
+                                <select class="form-control" id="sucursalConfig" name="sucursalConfig" required>
                                     <option value="">Seleccionar sucursal</option>
                                 </select>
                             </div>
@@ -113,11 +115,11 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-times me-1"></i>Cancelar
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times mr-1"></i>Cancelar
                 </button>
                 <button type="button" class="btn btn-primary" onclick="guardarConfiguracion()">
-                    <i class="fa-solid fa-save me-1"></i>Guardar Configuración
+                    <i class="fa fa-save mr-1"></i>Guardar Configuración
                 </button>
             </div>
         </div>
@@ -130,8 +132,7 @@ function abrirModalConfiguracion() {
     cargarSucursalesConfiguracion();
     
     // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('modalConfiguracionCaducados'));
-    modal.show();
+    $('#modalConfiguracionCaducados').modal('show');
 }
 
 function cargarSucursalesConfiguracion() {
@@ -249,7 +250,7 @@ function guardarConfiguracion() {
                 text: data.message
             }).then(() => {
                 // Cerrar modal
-                bootstrap.Modal.getInstance(document.getElementById('modalConfiguracionCaducados')).hide();
+                $('#modalConfiguracionCaducados').modal('hide');
             });
         } else {
             Swal.fire({

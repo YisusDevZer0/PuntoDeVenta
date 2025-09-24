@@ -1,12 +1,14 @@
 <!-- Modal para Registrar Lote -->
-<div class="modal fade" id="modalRegistrarLote" tabindex="-1" aria-labelledby="modalRegistrarLoteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalRegistrarLote" tabindex="-1" role="dialog" aria-labelledby="modalRegistrarLoteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalRegistrarLoteLabel">
-                    <i class="fa-solid fa-plus-circle me-2"></i>Registrar Nuevo Lote
+                    <i class="fa fa-plus-circle mr-2"></i>Registrar Nuevo Lote
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form id="formRegistrarLote">
@@ -17,16 +19,16 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="codigoBarra" name="codigoBarra" required>
                                     <button class="btn btn-outline-secondary" type="button" onclick="buscarProducto()">
-                                        <i class="fa-solid fa-search"></i>
+                                        <i class="fa fa-search"></i>
                                     </button>
                                 </div>
-                                <div class="form-text">Escanea o ingresa el código de barras del producto</div>
+                                <small class="form-text text-muted">Escanea o ingresa el código de barras del producto</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="sucursal" class="form-label">Sucursal *</label>
-                                <select class="form-select" id="sucursal" name="sucursal" required>
+                                <select class="form-control" id="sucursal" name="sucursal" required>
                                     <option value="">Seleccionar sucursal</option>
                                 </select>
                             </div>
@@ -38,7 +40,7 @@
                             <div class="mb-3">
                                 <label for="lote" class="form-label">Número de Lote *</label>
                                 <input type="text" class="form-control" id="lote" name="lote" required>
-                                <div class="form-text">Ingresa el número de lote del producto</div>
+                                <small class="form-text text-muted">Ingresa el número de lote del producto</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -81,7 +83,7 @@
                                     <span class="input-group-text">$</span>
                                     <input type="number" class="form-control" id="precioVenta" name="precioVenta" step="0.01" min="0" readonly>
                                 </div>
-                                <div class="form-text">Precio automático del sistema</div>
+                                <small class="form-text text-muted">Precio automático del sistema</small>
                             </div>
                         </div>
                     </div>
@@ -99,11 +101,11 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa-solid fa-times me-1"></i>Cancelar
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fa fa-times mr-1"></i>Cancelar
                 </button>
                 <button type="button" class="btn btn-primary" onclick="guardarLote()">
-                    <i class="fa-solid fa-save me-1"></i>Registrar Lote
+                    <i class="fa fa-save mr-1"></i>Registrar Lote
                 </button>
             </div>
         </div>
@@ -120,8 +122,7 @@ function abrirModalRegistrarLote() {
     cargarSucursalesModal();
     
     // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('modalRegistrarLote'));
-    modal.show();
+    $('#modalRegistrarLote').modal('show');
 }
 
 function buscarProducto() {
@@ -242,7 +243,7 @@ function guardarLote() {
                 text: data.message
             }).then(() => {
                 // Cerrar modal y recargar datos
-                bootstrap.Modal.getInstance(document.getElementById('modalRegistrarLote')).hide();
+                $('#modalRegistrarLote').modal('hide');
                 cargarProductosCaducados();
                 cargarEstadisticas();
             });

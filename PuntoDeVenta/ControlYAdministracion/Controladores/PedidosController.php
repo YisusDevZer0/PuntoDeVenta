@@ -644,6 +644,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     }
+    
+    // Generar traspaso desde pedido
+    if ($accion === 'generar_traspaso') {
+        $pedido_id = $_POST['pedido_id'] ?? 0;
+        $productos = json_decode($_POST['productos'], true);
+        
+        try {
+            $conn->begin_transaction();
+            
+            // Verificar que el pedido esté aprobado
+            $sql_check = "SELECT estado, folio, sucursal_id FROM pedidos WHERE id = ?";
+            $stmt = $conn->prepare($sql_check);
+            $stmt->bind_param("i", $pedido_id);
+            $stmt->execute();
+            $pedido = $stmt->get_result()->fetch_assoc();
+            
+            if (!$pedido) {
+                throw new Exception('Pedido no encontrado');
+            }
+            
+            if ($pedido['estado'] !== 'aprobado') {
+                throw new Exception('Solo se pueden generar traspasos de pedidos aprobados');
+            }
+            
+            // Generar folio único para el traspaso
+            $fecha_actual = date('Ymd');
+            $sql_count = "SELECT COUNT(*) as total FROM TraspasosYNotasC WHERE Folio_Ticket LIKE ?";
+            $stmt_count = $conn->prepare($sql_count);
+            $folio_pattern = "TRP{$fecha_actual}%";
+            $stmt_count->bind_param("s", $folio_pattern);
+            $stmt_count->execute();
+            $count = $stmt_count->get_result()->fetch_assoc()['total'];
+            $folio_traspaso = "TRP{$fecha_actual}" . str_pad($count + 1, 4, '0', STR_PAD_LEFT);
+            
+            // Insertar productos en la tabla de traspasos
+            $sql_insert = "INSERT INTO TraspasosYNotasC (
+                Folio_Ticket, Cod_Barra, Nombre_Prod, Cantidad, 
+                Fk_sucursal, Fk_SucursalDestino, Total_VentaG, Pc, 
+                TipoDeMov, Fecha_venta, Estatus, Sistema, 
+                AgregadoPor, ID_H_O_D
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt_insert = $conn->prepare($sql_insert);
+            
+            foreach ($productos as $producto) {
+                $stmt_insert->bind_param("sssiiissssssss",
+                    $folio_traspaso,
+                    $producto['Cod_Barra'],
+                    $producto['Nombre_Prod'],
+                    $producto['cantidad_solicitada'],
+                    $pedido['sucursal_id'], // Sucursal origen
+                    $pedido['sucursal_id'], // Por defecto misma sucursal (se puede modificar)
+                    $producto['subtotal'],
+                    $producto['precio_unitario'],
+                    'Traspaso',
+                    date('Y-m-d'),
+                    'Generado',
+                    'POSVENTAS',
+                    $row['Nombre_Apellidos'],
+                    'Doctor Pez'
+                );
+                $stmt_insert->execute();
+            }
+            
+            // Actualizar estado del pedido a 'traspaso_generado'
+            $sql_update = "UPDATE pedidos SET estado = 'traspaso_generado' WHERE id = ?";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->bind_param("i", $pedido_id);
+            $stmt_update->execute();
+            
+            // Registrar en historial
+            $sql_hist = "INSERT INTO pedido_historial (pedido_id, usuario_id, estado_anterior, estado_nuevo, comentario) 
+                        VALUES (?, ?, 'aprobado', 'traspaso_generado', 'Traspaso generado automáticamente')";
+            $stmt_hist = $conn->prepare($sql_hist);
+            $stmt_hist->bind_param("ii", $pedido_id, $usuario_id);
+            $stmt_hist->execute();
+            
+            $conn->commit();
+            echo json_encode([
+                'status' => 'ok', 
+                'msg' => 'Traspaso generado exitosamente',
+                'folio_traspaso' => $folio_traspaso
+            ]);
+            
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo json_encode(['status' => 'error', 'msg' => 'Error al generar traspaso: ' . $e->getMessage()]);
+        }
+        exit;
+    }
 }
 
 echo json_encode(['status' => 'error', 'msg' => 'Acción no válida']);
