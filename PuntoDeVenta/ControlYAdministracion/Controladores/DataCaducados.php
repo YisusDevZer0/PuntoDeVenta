@@ -189,23 +189,20 @@
             
             <!-- Tabla de Productos -->
             <div class="table-responsive">
-                <table class="table table-striped" id="Caducados">
+                <table class="order-column" id="Caducados">
                     <thead>
                         <tr>
-                            <th>Código</th>
-                            <th>Producto</th>
-                            <th>Lote</th>
-                            <th>Fecha Caducidad</th>
-                            <th>Cantidad</th>
-                            <th>Sucursal</th>
-                            <th>Estado</th>
-                            <th>Alerta</th>
-                            <th>Acciones</th>
+                            <th style="background-color:#ef7980 !important;">Código</th>
+                            <th style="background-color:#ef7980 !important;">Producto</th>
+                            <th style="background-color:#ef7980 !important;">Lote</th>
+                            <th style="background-color:#ef7980 !important;">Fecha Caducidad</th>
+                            <th style="background-color:#ef7980 !important;">Cantidad</th>
+                            <th style="background-color:#ef7980 !important;">Sucursal</th>
+                            <th style="background-color:#ef7980 !important;">Estado</th>
+                            <th style="background-color:#ef7980 !important;">Alerta</th>
+                            <th style="background-color:#ef7980 !important;">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody-caducados">
-                        <!-- Los datos se cargarán dinámicamente -->
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -213,25 +210,15 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    // Inicializar DataTable
-    $('#Caducados').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
-        },
-        "pageLength": 25,
-        "order": [[ 3, "asc" ]], // Ordenar por fecha de caducidad
-        "columnDefs": [
-            { "orderable": false, "targets": 8 } // Deshabilitar ordenamiento en columna de acciones
-        ]
-    });
-    
-    // Cargar datos iniciales
-    cargarEstadisticas();
-    cargarSucursales();
-    cargarProductosCaducados();
-});
+function mostrarCargando() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+}
 
+function ocultarCargando() {
+    document.getElementById('loading-overlay').style.display = 'none';
+}
+
+// Cargar estadísticas
 function cargarEstadisticas() {
     $.get("api/productos_caducados_simple.php", function(data) {
         if (data.success) {
@@ -239,20 +226,11 @@ function cargarEstadisticas() {
             $("#contador-6-meses").text(data.estadisticas.alerta_6_meses || 0);
             $("#contador-9-meses").text(data.estadisticas.alerta_9_meses || 0);
             $("#contador-total").text(data.estadisticas.total || 0);
-            
-            // Mostrar mensaje si las tablas no existen
-            if (data.estadisticas.mensaje) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Configuración requerida',
-                    text: data.estadisticas.mensaje,
-                    confirmButtonText: 'Entendido'
-                });
-            }
         }
     });
 }
 
+// Cargar sucursales para filtros
 function cargarSucursales() {
     $.get("api/obtener_sucursales.php", function(data) {
         if (data.success) {
@@ -266,126 +244,75 @@ function cargarSucursales() {
     });
 }
 
-function cargarProductosCaducados() {
-    $.get("api/productos_caducados_simple.php", function(data) {
-        if (data.success) {
-            mostrarProductosEnTabla(data.productos);
-        }
-    });
-}
-
+// Aplicar filtros
 function aplicarFiltros() {
-    cargarProductosCaducados();
+    tabla.ajax.reload();
 }
 
-function mostrarProductosEnTabla(productos) {
-    const tbody = $("#tbody-caducados");
-    tbody.empty();
-    
-    if (productos.length === 0) {
-        tbody.append(`
-            <tr>
-                <td colspan="9" class="text-center text-muted py-4">
-                    <i class="fa fa-inbox fa-2x mb-2"></i><br>
-                    No hay productos que coincidan con los filtros
-                </td>
-            </tr>
-        `);
-        return;
-    }
-    
-    productos.forEach(producto => {
-        const row = generarFilaProducto(producto);
-        tbody.append(row);
-    });
-    
-    // Refrescar DataTable
-    $('#Caducados').DataTable().destroy();
-    $('#Caducados').DataTable({
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"
+// Inicializar DataTable
+tabla = $('#Caducados').DataTable({
+    "bProcessing": true,
+    "ordering": true,
+    "stateSave": true,
+    "bAutoWidth": false,
+    "order": [[ 3, "asc" ]], // Ordenar por fecha de caducidad
+    "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayCaducados.php",
+    "aoColumns": [
+        { mData: 'cod_barra' },
+        { mData: 'nombre_producto' },
+        { mData: 'lote' },
+        { mData: 'fecha_caducidad' },
+        { mData: 'cantidad_actual' },
+        { mData: 'sucursal' },
+        { mData: 'estado' },
+        { mData: 'alerta' },
+        { mData: 'acciones' }
+    ],
+    "lengthMenu": [[20, 50, 100, 250, -1], [20, 50, 100, 250, "Todos"]],
+    "language": {
+        "lengthMenu": "Mostrar _MENU_ registros",
+        "sPaginationType": "extStyle",
+        "zeroRecords": "No se encontraron resultados",
+        "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+        "sSearch": "Buscar:",
+        "paginate": {
+            "first": '<i class="fas fa-angle-double-left"></i>',
+            "last": '<i class="fas fa-angle-double-right"></i>',
+            "next": '<i class="fas fa-angle-right"></i>',
+            "previous": '<i class="fas fa-angle-left"></i>'
         },
-        "pageLength": 25,
-        "order": [[ 3, "asc" ]],
-        "columnDefs": [
-            { "orderable": false, "targets": 8 }
-        ]
-    });
-}
+        "processing": function () {
+            mostrarCargando();
+        }
+    },
+    "initComplete": function() {
+        ocultarCargando();
+    },
+    "buttons": [
+        {
+            extend: 'excelHtml5',
+            text: 'Exportar a Excel <i class="fas fa-file-excel"></i>',
+            titleAttr: 'Exportar a Excel',
+            title: 'Control de Caducados',
+            className: 'btn btn-success',
+            exportOptions: {
+                columns: ':visible'
+            }
+        }
+    ],
+    "dom": '<"d-flex justify-content-between"lf>rtip',
+    "responsive": true
+});
 
-function generarFilaProducto(producto) {
-    const estadoBadge = generarBadgeEstado(producto.estado);
-    const alertaBadge = generarBadgeAlerta(producto.tipo_alerta, producto.dias_restantes);
-    const acciones = generarBotonesAccion(producto);
-    
-    return `
-        <tr>
-            <td><code>${producto.cod_barra}</code></td>
-            <td>
-                <div class="fw-bold">${producto.nombre_producto}</div>
-                <small class="text-muted">${producto.proveedor || 'Sin proveedor'}</small>
-            </td>
-            <td><span class="badge bg-secondary">${producto.lote}</span></td>
-            <td>
-                <div class="fw-bold ${producto.dias_restantes < 0 ? 'text-danger' : ''}">${producto.fecha_caducidad}</div>
-                <small class="text-muted">${producto.dias_restantes} días</small>
-            </td>
-            <td>
-                <span class="badge bg-primary">${producto.cantidad_actual}</span>
-            </td>
-            <td>${producto.sucursal}</td>
-            <td>${estadoBadge}</td>
-            <td>${alertaBadge}</td>
-            <td>${acciones}</td>
-        </tr>
-    `;
-}
+// Cargar datos iniciales
+$(document).ready(function() {
+    cargarEstadisticas();
+    cargarSucursales();
+});
 
-function generarBadgeEstado(estado) {
-    const estados = {
-        'activo': { class: 'bg-success', text: 'Activo' },
-        'agotado': { class: 'bg-warning', text: 'Agotado' },
-        'vencido': { class: 'bg-danger', text: 'Vencido' },
-        'retirado': { class: 'bg-secondary', text: 'Retirado' }
-    };
-    
-    const estadoInfo = estados[estado] || { class: 'bg-secondary', text: estado };
-    return `<span class="badge ${estadoInfo.class}">${estadoInfo.text}</span>`;
-}
-
-function generarBadgeAlerta(tipoAlerta, diasRestantes) {
-    if (diasRestantes < 0) {
-        return '<span class="badge bg-danger">VENCIDO</span>';
-    }
-    
-    const alertas = {
-        '3_meses': { class: 'bg-warning', text: '3 MESES' },
-        '6_meses': { class: 'bg-danger', text: '6 MESES' },
-        '9_meses': { class: 'bg-info', text: '9 MESES' },
-        'normal': { class: 'bg-success', text: 'NORMAL' }
-    };
-    
-    const alertaInfo = alertas[tipoAlerta] || { class: 'bg-secondary', text: tipoAlerta };
-    return `<span class="badge ${alertaInfo.class}">${alertaInfo.text}</span>`;
-}
-
-function generarBotonesAccion(producto) {
-    return `
-        <div class="btn-group" role="group">
-            <button class="btn btn-sm btn-outline-info" onclick="abrirModalDetallesLote(${producto.id_lote})" title="Ver detalles">
-                <i class="fa fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-warning" onclick="abrirModalActualizarCaducidad(${producto.id_lote}, '${JSON.stringify(producto).replace(/"/g, '&quot;')}')" title="Actualizar fecha">
-                <i class="fa fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-primary" onclick="abrirModalTransferirLote(${producto.id_lote}, '${JSON.stringify(producto).replace(/"/g, '&quot;')}')" title="Transferir">
-                <i class="fa fa-truck"></i>
-            </button>
-        </div>
-    `;
-}
-
-// Eventos para cuando se abren los modales
+// Eventos para modales
 $('#modalRegistrarLote').on('show.bs.modal', function () {
     cargarSucursalesModal();
 });
@@ -394,7 +321,7 @@ $('#modalConfiguracionCaducados').on('show.bs.modal', function () {
     cargarSucursalesConfiguracion();
 });
 
-// Funciones auxiliares
+// Funciones auxiliares para modales
 function cargarSucursalesModal() {
     $.get("api/obtener_sucursales.php", function(data) {
         if (data.success) {
@@ -425,5 +352,21 @@ function cargarSucursalesConfiguracion() {
             });
         }
     });
+}
+
+// Funciones para abrir modales (se implementarán en los archivos de modales)
+function abrirModalDetallesLote(idLote) {
+    // Implementar en DetallesLote.php
+    console.log('Abrir detalles del lote:', idLote);
+}
+
+function abrirModalActualizarCaducidad(idLote, datosLote) {
+    // Implementar en ActualizarCaducidad.php
+    console.log('Abrir actualizar caducidad:', idLote, datosLote);
+}
+
+function abrirModalTransferirLote(idLote, datosLote) {
+    // Implementar en TransferirLote.php
+    console.log('Abrir transferir lote:', idLote, datosLote);
 }
 </script>
