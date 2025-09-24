@@ -71,9 +71,6 @@
                     <button class="btn btn-secondary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalConfiguracionCaducados">
                         <i class="fa fa-cog me-1"></i>Configuración
                     </button>
-                    <!-- <a href="instalar_caducados.php" class="btn btn-warning btn-sm">
-                        <i class="fa fa-database me-1"></i>Instalar Módulo
-                    </a> -->
                 </div>
             </div>
             
@@ -233,9 +230,6 @@ $(document).ready(function() {
     cargarEstadisticas();
     cargarSucursales();
     cargarProductosCaducados();
-    
-    // Los modales ahora se abren automáticamente con data-bs-toggle
-    // No necesitamos funciones JavaScript adicionales
 });
 
 function cargarEstadisticas() {
@@ -278,14 +272,6 @@ function cargarProductosCaducados() {
             mostrarProductosEnTabla(data.productos);
         }
     });
-}
-
-function obtenerFiltros() {
-    return {
-        sucursal: $("#filtro-sucursal").val(),
-        estado: $("#filtro-estado").val(),
-        tipo_alerta: $("#filtro-alerta").val()
-    };
 }
 
 function aplicarFiltros() {
@@ -399,109 +385,6 @@ function generarBotonesAccion(producto) {
     `;
 }
 
-// Los modales se abren automáticamente con Bootstrap 5
-// Funciones de carga de datos para los modales
-
-function abrirModalActualizarCaducidad(idLote, datosLote) {
-    // Llenar información del lote
-    document.getElementById('idLoteActualizar').value = idLote;
-    document.getElementById('infoLoteActual').innerHTML = `
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
-                <strong>Código:</strong> ${datosLote.cod_barra}<br>
-                <strong>Lote:</strong> ${datosLote.lote}
-            </div>
-            <div class="col-md-6">
-                <strong>Fecha Actual:</strong> ${datosLote.fecha_caducidad}<br>
-                <strong>Cantidad:</strong> ${datosLote.cantidad_actual}<br>
-                <strong>Sucursal:</strong> ${datosLote.sucursal}
-            </div>
-        </div>
-    `;
-    
-    // Establecer fecha actual como valor por defecto
-    document.getElementById('fechaCaducidadNueva').value = datosLote.fecha_caducidad;
-    
-    // Limpiar otros campos
-    document.getElementById('motivoActualizacion').value = '';
-    document.getElementById('observacionesActualizacion').value = '';
-    
-    // Mostrar modal
-    $('#modalActualizarCaducidad').modal('show');
-}
-
-function abrirModalTransferirLote(idLote, datosLote) {
-    // Llenar información del lote origen
-    document.getElementById('idLoteTransferir').value = idLote;
-    document.getElementById('infoLoteOrigen').innerHTML = `
-        <div class="row">
-            <div class="col-md-6">
-                <strong>Producto:</strong> ${datosLote.nombre_producto}<br>
-                <strong>Código:</strong> ${datosLote.cod_barra}<br>
-                <strong>Lote:</strong> ${datosLote.lote}
-            </div>
-            <div class="col-md-6">
-                <strong>Fecha Caducidad:</strong> ${datosLote.fecha_caducidad}<br>
-                <strong>Cantidad Disponible:</strong> ${datosLote.cantidad_actual}<br>
-                <strong>Sucursal Actual:</strong> ${datosLote.sucursal}
-            </div>
-        </div>
-    `;
-    
-    // Establecer cantidad máxima
-    document.getElementById('cantidadDisponible').textContent = datosLote.cantidad_actual;
-    document.getElementById('cantidadTransferir').max = datosLote.cantidad_actual;
-    document.getElementById('cantidadTransferir').value = 1;
-    
-    // Cargar sucursales destino (excluyendo la actual)
-    cargarSucursalesDestino(datosLote.sucursal_id);
-    
-    // Limpiar otros campos
-    document.getElementById('motivoTransferencia').value = '';
-    document.getElementById('observacionesTransferencia').value = '';
-    
-    // Mostrar modal
-    $('#modalTransferirLote').modal('show');
-}
-
-function abrirModalDetallesLote(idLote) {
-    // Mostrar loading
-    Swal.fire({
-        title: 'Cargando detalles...',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
-    
-    // Cargar detalles del lote
-    $.get(`api/obtener_detalles_lote.php?id=${idLote}`, function(data) {
-        Swal.close();
-        
-        if (data.success) {
-            mostrarDetallesLote(data.lote);
-            mostrarHistorialLote(data.historial);
-            
-            // Mostrar modal
-            $('#modalDetallesLote').modal('show');
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: data.error
-            });
-        }
-    }).fail(function() {
-        Swal.close();
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al cargar los detalles'
-        });
-    });
-}
-
 // Eventos para cuando se abren los modales
 $('#modalRegistrarLote').on('show.bs.modal', function () {
     cargarSucursalesModal();
@@ -539,24 +422,6 @@ function cargarSucursalesConfiguracion() {
                 option.value = sucursal.id;
                 option.textContent = sucursal.nombre;
                 select.appendChild(option);
-            });
-        }
-    });
-}
-
-function cargarSucursalesDestino(sucursalOrigen) {
-    $.get("api/obtener_sucursales.php", function(data) {
-        if (data.success) {
-            const select = document.getElementById('sucursalDestino');
-            select.innerHTML = '<option value="">Seleccionar sucursal destino</option>';
-            
-            data.sucursales.forEach(sucursal => {
-                if (sucursal.id != sucursalOrigen) {
-                    const option = document.createElement('option');
-                    option.value = sucursal.id;
-                    option.textContent = sucursal.nombre;
-                    select.appendChild(option);
-                }
             });
         }
     });
