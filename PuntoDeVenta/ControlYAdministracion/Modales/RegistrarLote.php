@@ -224,14 +224,35 @@ function guardarLote() {
         usuario_registro: <?php echo isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1; ?>
     };
     
-    fetch('api/registrar_lote.php', {
+    // Crear FormData para envío
+    const formDataToSend = new FormData();
+    formDataToSend.append('codigoBarra', datos.cod_barra);
+    formDataToSend.append('sucursal', datos.sucursal_id);
+    formDataToSend.append('lote', datos.lote);
+    formDataToSend.append('fechaCaducidad', datos.fecha_caducidad);
+    formDataToSend.append('cantidad', datos.cantidad);
+    formDataToSend.append('proveedor', datos.proveedor);
+    formDataToSend.append('precioCompra', datos.precio_compra);
+    formDataToSend.append('observaciones', datos.observaciones);
+    formDataToSend.append('usuarioRegistro', datos.usuario_registro);
+    
+    fetch('api/registrar_lote_simple.php', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(datos)
+        body: formDataToSend
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error de red: ' + response.status);
+        }
+        return response.text().then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Error parsing JSON:', text);
+                throw new Error('Error al procesar la respuesta del servidor');
+            }
+        });
+    })
     .then(data => {
         Swal.close();
         

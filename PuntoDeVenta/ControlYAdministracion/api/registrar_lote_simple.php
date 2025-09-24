@@ -1,21 +1,6 @@
 <?php
-// Habilitar visualización de errores para debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
-
 include_once "../dbconect.php";
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Método no permitido']);
-    exit;
-}
 
 try {
     // Obtener datos del formulario
@@ -30,6 +15,12 @@ try {
     // Validar datos requeridos
     if (empty($cod_barra) || empty($lote) || empty($fecha_caducidad) || $cantidad <= 0 || $sucursal_id <= 0) {
         throw new Exception('Todos los campos son requeridos');
+    }
+    
+    // Verificar si las tablas existen
+    $checkTable = $con->query("SHOW TABLES LIKE 'productos_lotes_caducidad'");
+    if ($checkTable->num_rows === 0) {
+        throw new Exception('Las tablas del módulo de caducados no han sido creadas. Ejecute el script SQL primero.');
     }
     
     // Buscar el producto en Stock_POS
@@ -59,30 +50,24 @@ try {
         throw new Exception('Ya existe un lote activo con este código en la sucursal');
     }
     
-    // Insertar nuevo lote
+    // Insertar el nuevo lote
     $sql_insert = "INSERT INTO productos_lotes_caducidad 
                    (folio_stock, cod_barra, nombre_producto, lote, fecha_caducidad, fecha_ingreso, 
-                    cantidad_inicial, cantidad_actual, sucursal_id, proveedor, precio_compra, precio_venta, 
+                    cantidad_inicial, cantidad_actual, sucursal_id, precio_compra, precio_venta, 
                     estado, usuario_registro, observaciones) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'activo', ?, ?)";
+                   VALUES (?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, ?, ?, 'activo', ?, ?)";
     
     $stmt_insert = $con->prepare($sql_insert);
-    $fecha_ingreso = date('Y-m-d');
-    $proveedor = $_POST['proveedor'] ?? null;
-    $precio_compra = $_POST['precioCompra'] ?? null;
-    
-    $stmt_insert->bind_param("isssssiiisssis", 
+    $stmt_insert->bind_param("issssiiddiis", 
         $producto['Folio_Prod_Stock'],
         $cod_barra,
         $producto['Nombre_Prod'],
         $lote,
         $fecha_caducidad,
-        $fecha_ingreso,
         $cantidad,
         $cantidad,
         $sucursal_id,
-        $proveedor,
-        $precio_compra,
+        $producto['Precio_C'],
         $producto['Precio_Venta'],
         $usuario_registro,
         $observaciones
@@ -91,45 +76,13 @@ try {
     if ($stmt_insert->execute()) {
         $id_lote = $con->insert_id;
         
-        // Registrar en historial
-        $sql_historial = "INSERT INTO caducados_historial 
-                         (id_lote, tipo_movimiento, cantidad_nueva, fecha_caducidad_nueva, 
-                          sucursal_origen, usuario_movimiento, observaciones) 
-                         VALUES (?, 'registro', ?, ?, ?, ?, ?)";
-        
-        $stmt_historial = $con->prepare($sql_historial);
-        $observaciones_historial = "Registro inicial del lote: " . $data['lote'];
-        $stmt_historial->bind_param("iisiiis", 
-            $id_lote,
-            $data['cantidad'],
-            $data['fecha_caducidad'],
-            $data['sucursal_id'],
-            $data['usuario_registro'],
-            $observaciones_historial
-        );
-        $stmt_historial->execute();
-        
-        // Actualizar stock en Stock_POS si es necesario
-        $sql_update_stock = "UPDATE Stock_POS 
-                             SET Lote = ?, Fecha_Caducidad = ?, Existencias_R = Existencias_R + ? 
-                             WHERE Folio_Prod_Stock = ?";
-        $stmt_update_stock = $con->prepare($sql_update_stock);
-        $stmt_update_stock->bind_param("ssii", 
-            $data['lote'], 
-            $data['fecha_caducidad'], 
-            $data['cantidad'],
-            $producto['Folio_Prod_Stock']
-        );
-        $stmt_update_stock->execute();
-        
         echo json_encode([
             'success' => true,
             'message' => 'Lote registrado exitosamente',
             'id_lote' => $id_lote
         ]);
-        
     } else {
-        throw new Exception('Error al registrar el lote: ' . $con->error);
+        throw new Exception('Error al insertar el lote: ' . $con->error);
     }
     
 } catch (Exception $e) {
@@ -138,7 +91,5 @@ try {
         'success' => false,
         'error' => $e->getMessage()
     ]);
-} finally {
-    // No cerrar la conexión aquí para evitar problemas
 }
 ?>
