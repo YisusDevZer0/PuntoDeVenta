@@ -2,13 +2,11 @@
 <div class="modal fade" id="modalTransferirLote" tabindex="-1" role="dialog" aria-labelledby="modalTransferirLoteLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="modalTransferirLoteLabel">
-                    <i class="fa fa-truck mr-2"></i>Transferir Lote
+                    <i class="fa fa-truck me-2"></i>Transferir Lote
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="formTransferirLote">
@@ -26,7 +24,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="sucursalDestino" class="form-label">Sucursal Destino *</label>
-                                <select class="form-control" id="sucursalDestino" name="sucursalDestino" required>
+                                <select class="form-select" id="sucursalDestino" name="sucursalDestino" required>
                                     <option value="">Seleccionar sucursal destino</option>
                                 </select>
                             </div>
@@ -42,7 +40,7 @@
                     
                     <div class="mb-3">
                         <label for="motivoTransferencia" class="form-label">Motivo de la Transferencia *</label>
-                        <select class="form-control" id="motivoTransferencia" name="motivoTransferencia" required>
+                        <select class="form-select" id="motivoTransferencia" name="motivoTransferencia" required>
                             <option value="">Seleccionar motivo</option>
                             <option value="redistribucion">Redistribución de inventario</option>
                             <option value="demanda_sucursal">Demanda de la sucursal</option>
@@ -66,14 +64,14 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fa fa-times mr-1"></i>Cancelar
-                </button>
-                <button type="button" class="btn btn-primary" onclick="guardarTransferencia()">
-                    <i class="fa fa-truck mr-1"></i>Transferir Lote
-                </button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fa fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarTransferencia()">
+                        <i class="fa fa-truck me-1"></i>Transferir Lote
+                    </button>
+                </div>
         </div>
     </div>
 </div>

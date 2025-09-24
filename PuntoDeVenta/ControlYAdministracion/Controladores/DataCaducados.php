@@ -306,6 +306,11 @@ tabla = $('#Caducados').DataTable({
     "responsive": true
 });
 
+// Hacer las funciones globales
+window.abrirModalDetallesLote = abrirModalDetallesLote;
+window.abrirModalActualizarCaducidad = abrirModalActualizarCaducidad;
+window.abrirModalTransferirLote = abrirModalTransferirLote;
+
 // Cargar datos iniciales
 $(document).ready(function() {
     console.log('DataCaducados cargado');
@@ -314,9 +319,9 @@ $(document).ready(function() {
     
     // Verificar que las funciones estén disponibles
     console.log('Funciones disponibles:', {
-        abrirModalDetallesLote: typeof abrirModalDetallesLote,
-        abrirModalActualizarCaducidad: typeof abrirModalActualizarCaducidad,
-        abrirModalTransferirLote: typeof abrirModalTransferirLote
+        abrirModalDetallesLote: typeof window.abrirModalDetallesLote,
+        abrirModalActualizarCaducidad: typeof window.abrirModalActualizarCaducidad,
+        abrirModalTransferirLote: typeof window.abrirModalTransferirLote
     });
     
     // Test de funciones
