@@ -6,6 +6,12 @@ class SistemaPedidos {
         this.modalAbierto = false;
         this.pedidoEnProceso = false;
         
+        // Variables de paginación
+        this.paginaActual = 1;
+        this.porPagina = 10;
+        this.totalPaginas = 0;
+        this.totalRegistros = 0;
+        
         // Usar el módulo de productos
         this.productosModule = productosModule;
         
@@ -246,21 +252,36 @@ class SistemaPedidos {
         }
     }
 
-    async cargarPedidos() {
+    async cargarPedidos(pagina = null) {
         try {
             this.mostrarLoading(true);
+            
+            // Usar página específica o la actual
+            const paginaACargar = pagina || this.paginaActual;
             
             const response = await $.post('Controladores/PedidosController.php', {
                 accion: 'listar_pedidos',
                 busqueda: $('#busqueda').val(),
                 filtro_estado: $('#filtro-estado').val(),
                 filtro_fecha_inicio: $('#filtro-fecha-inicio').val(),
-                filtro_fecha_fin: $('#filtro-fecha-fin').val()
+                filtro_fecha_fin: $('#filtro-fecha-fin').val(),
+                pagina: paginaACargar,
+                por_pagina: this.porPagina
             });
 
             if (response.status === 'ok') {
                 this.pedidos = response.data || [];
+                
+                // Actualizar información de paginación
+                if (response.paginacion) {
+                    this.paginaActual = response.paginacion.pagina_actual;
+                    this.totalPaginas = response.paginacion.total_paginas;
+                    this.totalRegistros = response.paginacion.total_registros;
+                    this.porPagina = response.paginacion.por_pagina;
+                }
+                
                 this.renderizarPedidos();
+                this.renderizarPaginacion();
                 this.cargarEstadisticas();
                 
                 // Disparar evento para animaciones
@@ -811,7 +832,106 @@ class SistemaPedidos {
         }
     }
 
+    renderizarPaginacion() {
+        const container = $('#paginacion-container');
+        if (!container.length) return;
+        
+        if (this.totalPaginas <= 1) {
+            container.hide();
+            return;
+        }
+        
+        container.show();
+        
+        let html = `
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="pagination-info">
+                    <small class="text-muted">
+                        Mostrando ${this.pedidos.length} de ${this.totalRegistros} pedidos
+                    </small>
+                </div>
+                <nav aria-label="Paginación de pedidos">
+                    <ul class="pagination pagination-sm mb-0">
+        `;
+        
+        // Botón anterior
+        const anteriorDisabled = this.paginaActual <= 1 ? 'disabled' : '';
+        html += `
+            <li class="page-item ${anteriorDisabled}">
+                <button class="page-link" ${anteriorDisabled ? 'disabled' : ''} data-pagina="${this.paginaActual - 1}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </li>
+        `;
+        
+        // Calcular rango de páginas a mostrar
+        const inicio = Math.max(1, this.paginaActual - 2);
+        const fin = Math.min(this.totalPaginas, this.paginaActual + 2);
+        
+        // Página 1 si no está en el rango
+        if (inicio > 1) {
+            html += `
+                <li class="page-item">
+                    <button class="page-link" data-pagina="1">1</button>
+                </li>
+            `;
+            if (inicio > 2) {
+                html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+        }
+        
+        // Páginas del rango
+        for (let i = inicio; i <= fin; i++) {
+            const activa = i === this.paginaActual ? 'active' : '';
+            html += `
+                <li class="page-item ${activa}">
+                    <button class="page-link" data-pagina="${i}">${i}</button>
+                </li>
+            `;
+        }
+        
+        // Última página si no está en el rango
+        if (fin < this.totalPaginas) {
+            if (fin < this.totalPaginas - 1) {
+                html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+            html += `
+                <li class="page-item">
+                    <button class="page-link" data-pagina="${this.totalPaginas}">${this.totalPaginas}</button>
+                </li>
+            `;
+        }
+        
+        // Botón siguiente
+        const siguienteDisabled = this.paginaActual >= this.totalPaginas ? 'disabled' : '';
+        html += `
+            <li class="page-item ${siguienteDisabled}">
+                <button class="page-link" ${siguienteDisabled ? 'disabled' : ''} data-pagina="${this.paginaActual + 1}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </li>
+        `;
+        
+        html += `
+                    </ul>
+                </nav>
+            </div>
+        `;
+        
+        container.html(html);
+        
+        // Event listeners para los botones de paginación
+        container.find('.page-link').on('click', (e) => {
+            e.preventDefault();
+            const pagina = parseInt($(e.currentTarget).data('pagina'));
+            if (pagina && pagina !== this.paginaActual) {
+                this.cargarPedidos(pagina);
+            }
+        });
+    }
+
     aplicarFiltros() {
+        this.paginaActual = 1; // Resetear a la primera página
         this.cargarPedidos();
     }
 

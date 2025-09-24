@@ -635,6 +635,51 @@ include "Controladores/db_connect.php";
             border-radius: 12px;
         }
         
+        /* Estilos para paginación */
+        .pagination {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .pagination .page-link {
+            border: 1px solid #e9ecef;
+            color: var(--primary);
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+        }
+        
+        .pagination-info {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        /* Mejoras en la paginación */
+        .pagination-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
         /* Responsive mejorado */
         @media (max-width: 768px) {
             .action-buttons .d-flex {
@@ -644,6 +689,18 @@ include "Controladores/db_connect.php";
             
             #carrito-indicador {
                 margin-top: 1rem;
+            }
+            
+            .pagination {
+                font-size: 0.875rem;
+            }
+            
+            .pagination .page-link {
+                padding: 6px 10px;
+            }
+            
+            .pagination-info {
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -745,7 +802,7 @@ include "Controladores/db_connect.php";
                                 <div class="col-md-2">
                                     <label class="form-label">Estado</label>
                                     <select class="form-control" id="filtro-estado">
-                                        <option value="">Todos</option>
+                                        <option value="">Todos (excepto aprobados)</option>
                                         <option value="pendiente">Pendiente</option>
                                         <option value="aprobado">Aprobado</option>
                                         <option value="rechazado">Rechazado</option>
@@ -797,6 +854,11 @@ include "Controladores/db_connect.php";
                             
                             <div id="lista-pedidos">
                                 <!-- Los pedidos se cargarán aquí dinámicamente -->
+                            </div>
+                            
+                            <!-- Controles de paginación -->
+                            <div id="paginacion-container" class="mt-4" style="display: none;">
+                                <!-- La paginación se generará dinámicamente -->
                             </div>
                             
                             <div id="empty-state" class="empty-state" style="display: none;">

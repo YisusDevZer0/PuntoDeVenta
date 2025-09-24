@@ -228,6 +228,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filtro_fecha_fin = $_POST['filtro_fecha_fin'] ?? '';
         $busqueda = $_POST['busqueda'] ?? '';
         
+        // Parámetros de paginación
+        $pagina = intval($_POST['pagina'] ?? 1);
+        $por_pagina = intval($_POST['por_pagina'] ?? 10);
+        $offset = ($pagina - 1) * $por_pagina;
+        
         $where_conditions = [];
         $params = [];
         $types = '';
@@ -241,11 +246,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $types .= 'i';
         }
         
-        // Filtro por estado
+        // Filtro por estado - por defecto excluir aprobados
         if (!empty($filtro_estado)) {
             $where_conditions[] = "p.estado = ?";
             $params[] = $filtro_estado;
             $types .= 's';
+        } else {
+            // Por defecto, excluir pedidos aprobados
+            $where_conditions[] = "p.estado != 'aprobado'";
         }
         
         // Filtro por fecha
@@ -273,6 +281,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
         
+        // Primero obtener el total de registros para la paginación
+        $sql_count = "SELECT COUNT(DISTINCT p.id) as total
+                     FROM pedidos p
+                     LEFT JOIN Sucursales s ON p.sucursal_id = s.ID_Sucursal
+                     LEFT JOIN Usuarios_PV u ON p.usuario_id = u.Id_PvUser
+                     LEFT JOIN pedido_detalles pd ON p.id = pd.pedido_id
+                     $where_clause";
+        
+        $stmt_count = $conn->prepare($sql_count);
+        if (!empty($params)) {
+            $stmt_count->bind_param($types, ...$params);
+        }
+        $stmt_count->execute();
+        $total_registros = $stmt_count->get_result()->fetch_assoc()['total'];
+        $total_paginas = ceil($total_registros / $por_pagina);
+        
+        // Consulta principal con paginación
         $sql = "SELECT 
                     p.id,
                     p.folio,
@@ -293,7 +318,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 LEFT JOIN pedido_detalles pd ON p.id = pd.pedido_id
                 $where_clause
                 GROUP BY p.id
-                ORDER BY p.fecha_creacion DESC";
+                ORDER BY p.fecha_creacion DESC
+                LIMIT ? OFFSET ?";
+        
+        $params[] = $por_pagina;
+        $params[] = $offset;
+        $types .= 'ii';
         
         $stmt = $conn->prepare($sql);
         if (!empty($params)) {
@@ -307,7 +337,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pedidos[] = $pedido;
         }
         
-        echo json_encode(['status' => 'ok', 'data' => $pedidos]);
+        echo json_encode([
+            'status' => 'ok', 
+            'data' => $pedidos,
+            'paginacion' => [
+                'pagina_actual' => $pagina,
+                'total_paginas' => $total_paginas,
+                'total_registros' => $total_registros,
+                'por_pagina' => $por_pagina,
+                'desde' => $offset + 1,
+                'hasta' => min($offset + $por_pagina, $total_registros)
+            ]
+        ]);
         exit;
     }
     
