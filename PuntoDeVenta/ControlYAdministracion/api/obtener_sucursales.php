@@ -4,11 +4,11 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../Consultas/db_connect.php";
+include_once "../dbconect.php";
 
 try {
     $sql = "SELECT ID_Sucursal as id, Nombre_Sucursal as nombre FROM Sucursales ORDER BY Nombre_Sucursal ASC";
-    $stmt = $conn->prepare($sql);
+    $stmt = $con->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
     
@@ -29,8 +29,8 @@ try {
         'error' => $e->getMessage()
     ]);
 } finally {
-    if (isset($conn)) {
-        $conn->close();
+    if (isset($con)) {
+        $con->close();
     }
 }
 ?>

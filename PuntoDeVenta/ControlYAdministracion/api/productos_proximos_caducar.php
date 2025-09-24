@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../Consultas/db_connect.php";
+include_once "../dbconect.php";
 
 try {
     $sucursal = isset($_GET['sucursal']) ? (int)$_GET['sucursal'] : null;
@@ -74,7 +74,7 @@ try {
     
     $sql .= " ORDER BY plc.fecha_caducidad ASC, plc.nombre_producto ASC";
     
-    $stmt = $conn->prepare($sql);
+    $stmt = $con->prepare($sql);
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
     }
@@ -115,7 +115,7 @@ try {
         $sql_stats .= " AND sucursal_id = ?";
     }
     
-    $stmt_stats = $conn->prepare($sql_stats);
+    $stmt_stats = $con->prepare($sql_stats);
     if ($sucursal) {
         $stmt_stats->bind_param("i", $sucursal);
     }
@@ -135,8 +135,8 @@ try {
         'error' => $e->getMessage()
     ]);
 } finally {
-    if (isset($conn)) {
-        $conn->close();
+    if (isset($con)) {
+        $con->close();
     }
 }
 ?>

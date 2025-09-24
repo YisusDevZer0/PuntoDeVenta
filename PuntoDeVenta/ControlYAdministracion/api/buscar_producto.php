@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../Consultas/db_connect.php";
+include_once "../dbconect.php";
 
 try {
     $codigo = isset($_GET['codigo']) ? $_GET['codigo'] : '';
@@ -27,7 +27,7 @@ try {
             LEFT JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
             WHERE sp.Cod_Barra = ? AND sp.Fk_sucursal = ?";
     
-    $stmt = $conn->prepare($sql);
+    $stmt = $con->prepare($sql);
     $stmt->bind_param("si", $codigo, $sucursal);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -59,8 +59,8 @@ try {
         'error' => $e->getMessage()
     ]);
 } finally {
-    if (isset($conn)) {
-        $conn->close();
+    if (isset($con)) {
+        $con->close();
     }
 }
 ?>

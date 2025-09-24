@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../Consultas/db_connect.php";
+include_once "../dbconect.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -31,7 +31,7 @@ try {
     $sql_producto = "SELECT sp.Folio_Prod_Stock, sp.Nombre_Prod, sp.Precio_Venta, sp.Precio_C 
                      FROM Stock_POS sp 
                      WHERE sp.Cod_Barra = ? AND sp.Fk_sucursal = ?";
-    $stmt_producto = $conn->prepare($sql_producto);
+    $stmt_producto = $con->prepare($sql_producto);
     $stmt_producto->bind_param("si", $data['cod_barra'], $data['sucursal_id']);
     $stmt_producto->execute();
     $result_producto = $stmt_producto->get_result();
@@ -45,7 +45,7 @@ try {
     // Verificar si ya existe un lote con el mismo código
     $sql_verificar = "SELECT id_lote FROM productos_lotes_caducidad 
                       WHERE cod_barra = ? AND lote = ? AND sucursal_id = ? AND estado != 'retirado'";
-    $stmt_verificar = $conn->prepare($sql_verificar);
+    $stmt_verificar = $con->prepare($sql_verificar);
     $stmt_verificar->bind_param("ssi", $data['cod_barra'], $data['lote'], $data['sucursal_id']);
     $stmt_verificar->execute();
     $result_verificar = $stmt_verificar->get_result();
@@ -61,7 +61,7 @@ try {
                     estado, usuario_registro, observaciones) 
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'activo', ?, ?)";
     
-    $stmt_insert = $conn->prepare($sql_insert);
+    $stmt_insert = $con->prepare($sql_insert);
     $fecha_ingreso = date('Y-m-d');
     $proveedor = $data['proveedor'] ?? null;
     $precio_compra = $data['precio_compra'] ?? null;
@@ -85,7 +85,7 @@ try {
     );
     
     if ($stmt_insert->execute()) {
-        $id_lote = $conn->insert_id;
+        $id_lote = $con->insert_id;
         
         // Registrar en historial
         $sql_historial = "INSERT INTO caducados_historial 
@@ -93,7 +93,7 @@ try {
                           sucursal_origen, usuario_movimiento, observaciones) 
                          VALUES (?, 'registro', ?, ?, ?, ?, ?)";
         
-        $stmt_historial = $conn->prepare($sql_historial);
+        $stmt_historial = $con->prepare($sql_historial);
         $observaciones_historial = "Registro inicial del lote: " . $data['lote'];
         $stmt_historial->bind_param("iisiiis", 
             $id_lote,
@@ -109,7 +109,7 @@ try {
         $sql_update_stock = "UPDATE Stock_POS 
                              SET Lote = ?, Fecha_Caducidad = ?, Existencias_R = Existencias_R + ? 
                              WHERE Folio_Prod_Stock = ?";
-        $stmt_update_stock = $conn->prepare($sql_update_stock);
+        $stmt_update_stock = $con->prepare($sql_update_stock);
         $stmt_update_stock->bind_param("ssii", 
             $data['lote'], 
             $data['fecha_caducidad'], 
@@ -125,7 +125,7 @@ try {
         ]);
         
     } else {
-        throw new Exception('Error al registrar el lote: ' . $conn->error);
+        throw new Exception('Error al registrar el lote: ' . $con->error);
     }
     
 } catch (Exception $e) {
@@ -135,8 +135,8 @@ try {
         'error' => $e->getMessage()
     ]);
 } finally {
-    if (isset($conn)) {
-        $conn->close();
+    if (isset($con)) {
+        $con->close();
     }
 }
 ?>
