@@ -246,14 +246,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $types .= 'i';
         }
         
-        // Filtro por estado - por defecto excluir aprobados
+        // Filtro por estado - solo aplicar si se especifica un estado
         if (!empty($filtro_estado)) {
             $where_conditions[] = "p.estado = ?";
             $params[] = $filtro_estado;
             $types .= 's';
-        } else {
-            // Por defecto, excluir pedidos aprobados
-            $where_conditions[] = "p.estado != 'aprobado'";
         }
         
         // Filtro por fecha

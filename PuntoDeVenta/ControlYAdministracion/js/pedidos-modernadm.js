@@ -325,6 +325,16 @@ class SistemaPedidos {
         const estadoClass = `estado-${pedido.estado}`;
         const prioridadClass = `prioridad-${pedido.prioridad}`;
         
+        // Debug: Log del estado del pedido
+        console.log('Estado del pedido:', pedido.estado, 'ID:', pedido.id);
+        
+        // Limpiar el estado para evitar problemas con espacios
+        const estadoLimpio = pedido.estado ? pedido.estado.trim() : '';
+        
+        // Debug: Verificar si el estado es aprobado
+        if (estadoLimpio === 'aprobado') {
+            console.log('Pedido aprobado encontrado, debería mostrar botón de traspaso');
+        }
         
         // Calcular tiempo transcurrido
         const tiempoTranscurrido = this.calcularTiempoTranscurrido(pedido.fecha_creacion);
@@ -363,7 +373,7 @@ class SistemaPedidos {
                                     data-toggle="tooltip" title="Ver detalle">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${pedido.estado === 'aprobado' ? `
+                            ${(estadoLimpio === 'aprobado') ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
@@ -377,7 +387,7 @@ class SistemaPedidos {
                                     <i class="fas fa-exchange-alt"></i>
                                 </button>
                             ` : ''}
-                            ${pedido.estado === 'traspaso_generado' ? `
+                            ${(estadoLimpio === 'traspaso_generado') ? `
                                 <button class="btn btn-outline-success btn-sm descargar-excel-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Descargar Excel Detallado">
                                     <i class="fas fa-file-excel"></i>
@@ -391,7 +401,7 @@ class SistemaPedidos {
                                     <i class="fas fa-check-circle"></i>
                                 </button>
                             ` : ''}
-                            ${pedido.estado === 'pendiente' ? `
+                            ${(estadoLimpio === 'pendiente') ? `
                                 <button class="btn btn-outline-success btn-sm aprobar-pedido" data-pedido-id="${pedido.id}"
                                         data-toggle="tooltip" title="Aprobar pedido">
                                     <i class="fas fa-check"></i>
@@ -465,6 +475,7 @@ class SistemaPedidos {
 
         // Generar traspaso
         $('.generar-traspaso').on('click', (e) => {
+            console.log('Botón de generar traspaso clickeado');
             const pedidoId = $(e.currentTarget).data('pedido-id');
             this.confirmarGenerarTraspaso(pedidoId);
         });

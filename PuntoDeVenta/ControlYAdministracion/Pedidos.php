@@ -121,6 +121,28 @@ include "Controladores/db_connect.php";
         .estado-cancelado { background: #6c757d; color: white; }
         .estado-traspaso_generado { background: #fd7e14; color: white; }
         
+        /* Estilos específicos para el botón de generar traspaso */
+        .generar-traspaso {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+            border-color: #ffc107;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .generar-traspaso:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #e67e00 100%);
+            border-color: #e0a800;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+        
+        .generar-traspaso:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(255, 193, 7, 0.3);
+        }
+        
         .prioridad-badge {
             padding: 3px 8px;
             border-radius: 12px;
@@ -803,7 +825,7 @@ include "Controladores/db_connect.php";
                                 <div class="col-md-2">
                                     <label class="form-label">Estado</label>
                                     <select class="form-control" id="filtro-estado">
-                                        <option value="">Todos (excepto aprobados)</option>
+                                        <option value="">Todos los estados</option>
                                         <option value="pendiente">Pendiente</option>
                                         <option value="aprobado">Aprobado</option>
                                         <option value="rechazado">Rechazado</option>

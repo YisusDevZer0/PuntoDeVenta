@@ -65,10 +65,10 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h6 class="mb-0" style="color:#0172b6;">Control de Caducados</h6>
                 <div>
-                    <button class="btn btn-primary btn-sm me-2" onclick="abrirModalRegistrarLote()">
+                    <button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalRegistrarLote">
                         <i class="fa fa-plus me-1"></i>Registrar Lote
                     </button>
-                    <button class="btn btn-secondary btn-sm me-2" onclick="abrirModalConfiguracion()">
+                    <button class="btn btn-secondary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalConfiguracionCaducados">
                         <i class="fa fa-cog me-1"></i>Configuración
                     </button>
                     <a href="instalar_caducados.php" class="btn btn-warning btn-sm">
@@ -234,9 +234,8 @@ $(document).ready(function() {
     cargarSucursales();
     cargarProductosCaducados();
     
-    // Hacer las funciones globales para que funcionen desde los botones
-    window.abrirModalRegistrarLote = abrirModalRegistrarLote;
-    window.abrirModalConfiguracion = abrirModalConfiguracion;
+    // Los modales ahora se abren automáticamente con data-bs-toggle
+    // No necesitamos funciones JavaScript adicionales
 });
 
 function cargarEstadisticas() {
@@ -400,22 +399,8 @@ function generarBotonesAccion(producto) {
     `;
 }
 
-// Funciones para abrir modales
-function abrirModalRegistrarLote() {
-    // Limpiar formulario
-    if (document.getElementById('formRegistrarLote')) {
-        document.getElementById('formRegistrarLote').reset();
-    }
-    if (document.getElementById('infoProducto')) {
-        document.getElementById('infoProducto').style.display = 'none';
-    }
-    
-    // Cargar sucursales
-    cargarSucursalesModal();
-    
-    // Mostrar modal
-    $('#modalRegistrarLote').modal('show');
-}
+// Los modales se abren automáticamente con Bootstrap 5
+// Funciones de carga de datos para los modales
 
 function abrirModalActualizarCaducidad(idLote, datosLote) {
     // Llenar información del lote
@@ -517,13 +502,14 @@ function abrirModalDetallesLote(idLote) {
     });
 }
 
-function abrirModalConfiguracion() {
-    // Cargar sucursales
+// Eventos para cuando se abren los modales
+$('#modalRegistrarLote').on('show.bs.modal', function () {
+    cargarSucursalesModal();
+});
+
+$('#modalConfiguracionCaducados').on('show.bs.modal', function () {
     cargarSucursalesConfiguracion();
-    
-    // Mostrar modal
-    $('#modalConfiguracionCaducados').modal('show');
-}
+});
 
 // Funciones auxiliares
 function cargarSucursalesModal() {
