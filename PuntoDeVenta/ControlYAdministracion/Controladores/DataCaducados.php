@@ -71,9 +71,9 @@
                     <button class="btn btn-secondary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalConfiguracionCaducados">
                         <i class="fa fa-cog me-1"></i>Configuración
                     </button>
-                    <a href="instalar_caducados.php" class="btn btn-warning btn-sm">
+                    <!-- <a href="instalar_caducados.php" class="btn btn-warning btn-sm">
                         <i class="fa fa-database me-1"></i>Instalar Módulo
-                    </a>
+                    </a> -->
                 </div>
             </div>
             
