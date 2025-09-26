@@ -107,8 +107,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             break;
             
         case 'procesar_devolucion':
-            if (empty($_SESSION['devolucion_temp'])) {
+            $productos_json = $_POST['productos'] ?? '';
+            if (empty($productos_json)) {
                 $response['message'] = 'No hay productos para procesar';
+                echo json_encode($response);
+                exit;
+            }
+            
+            $productos = json_decode($productos_json, true);
+            if (!$productos || count($productos) === 0) {
+                $response['message'] = 'No hay productos válidos para procesar';
                 echo json_encode($response);
                 exit;
             }
@@ -122,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             try {
                 // Crear registro de devolución
                 $sql = "INSERT INTO Devoluciones (folio, sucursal_id, usuario_id, fecha, estatus, observaciones_generales) 
-                        VALUES (?, ?, ?, NOW(), 'pendiente', ?)";
+                        VALUES (?, ?, ?, NOW(), 'procesada', ?)";
                 $stmt = $conn->prepare($sql);
                 $observaciones_generales = $_POST['observaciones_generales'] ?? '';
                 $stmt->bind_param("siis", $folio_devolucion, $sucursal_id, $usuario_id, $observaciones_generales);
@@ -130,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $devolucion_id = $conn->insert_id;
                 
                 // Procesar cada producto
-                foreach ($_SESSION['devolucion_temp'] as $item) {
+                foreach ($productos as $item) {
                     $producto = $item['producto'];
                     
                     // Insertar detalle de devolución
@@ -141,24 +149,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param("iississssd", 
                         $devolucion_id, 
-                        $producto['ID_Prod_POS'], 
+                        $producto['id'], 
                         $item['codigo_barras'], 
-                        $producto['Nombre_Prod'], 
+                        $producto['nombre'], 
                         $item['cantidad'], 
                         $item['tipo_devolucion'], 
                         $item['observaciones'], 
-                        $producto['Lote'], 
-                        $producto['Fecha_Caducidad'], 
-                        $producto['Precio_Venta']
+                        $producto['lote'], 
+                        $producto['fecha_caducidad'], 
+                        $producto['precio_venta']
                     );
                     $stmt->execute();
                     
                     // Actualizar stock (reducir existencias)
                     $sql = "UPDATE Stock_POS 
                             SET Existencias_R = Existencias_R - ? 
-                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?";
+                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("iiss", $item['cantidad'], $producto['ID_Prod_POS'], $sucursal_id, $producto['Lote']);
+                    $stmt->bind_param("iii", $item['cantidad'], $producto['id'], $sucursal_id);
                     $stmt->execute();
                     
                     // Registrar en log de stock
@@ -169,9 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $stmt->bind_param("siis", $item['codigo_barras'], $sucursal_id, $item['cantidad'], $mensaje);
                     $stmt->execute();
                 }
-                
-                // Limpiar sesión temporal
-                unset($_SESSION['devolucion_temp']);
                 
                 $conn->commit();
                 $response['success'] = true;
@@ -297,24 +302,37 @@ function getDevolucionDetalle($devolucion_id) {
                         </div>
                     </div>
                     
-                    <!-- Scanner de Productos -->
-                    <div id="scanner-section" class="scanner-container" style="display: none;">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h4><i class="fa-solid fa-qrcode me-2"></i>Escáner de Productos</h4>
-                                <p class="mb-3">Escanea o ingresa el código de barras del producto a devolver</p>
-                                <div class="input-group">
-                                    <input type="text" id="codigo-barras" class="form-control form-control-lg" 
-                                           placeholder="Código de barras o escanea aquí..." autofocus>
-                                    <button class="btn btn-light" onclick="buscarProducto()">
-                                        <i class="fa-solid fa-search"></i>
-                                    </button>
+                    <!-- Búsqueda de Productos -->
+                    <div id="busqueda-section" class="search-container" style="display: none;">
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><i class="fa-solid fa-search me-2"></i>Buscar Productos</h4>
+                                <p class="mb-3">Busca productos por código de barras o nombre</p>
+                                
+                                <!-- Barra de búsqueda -->
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <div class="input-group">
+                                            <input type="text" id="busqueda-producto" class="form-control form-control-lg" 
+                                                   placeholder="Código de barras o nombre del producto..." autofocus>
+                                            <button class="btn btn-primary" onclick="buscarProductos()">
+                                                <i class="fa-solid fa-search me-1"></i>Buscar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select id="tipo-busqueda" class="form-select form-select-lg">
+                                            <option value="ambos">Código y Nombre</option>
+                                            <option value="codigo">Solo Código</option>
+                                            <option value="nombre">Solo Nombre</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <button class="btn btn-scanner" onclick="activarCamara()">
-                                    <i class="fa-solid fa-camera me-2"></i>Activar Cámara
-                                </button>
+                                
+                                <!-- Resultados de búsqueda -->
+                                <div id="resultados-busqueda" class="row" style="display: none;">
+                                    <!-- Los productos se mostrarán aquí -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -494,65 +512,122 @@ function getDevolucionDetalle($devolucion_id) {
         $(document).ready(function() {
             cargarDevoluciones();
             
-            // Enter en código de barras
-            $('#codigo-barras').on('keypress', function(e) {
+            // Enter en búsqueda de productos
+            $('#busqueda-producto').on('keypress', function(e) {
                 if (e.which === 13) {
-                    buscarProducto();
+                    buscarProductos();
                 }
             });
         });
         
         // Mostrar nueva devolución
         function mostrarNuevaDevolucion() {
-            $('#scanner-section').show();
+            $('#busqueda-section').show();
             $('#productos-lista').show();
             $('#lista-devoluciones').hide();
-            $('#codigo-barras').focus();
+            $('#busqueda-producto').focus();
         }
         
-        // Buscar producto
-        function buscarProducto() {
-            const codigoBarras = $('#codigo-barras').val().trim();
-            if (!codigoBarras) {
-                alert('Ingrese un código de barras');
+        // Buscar productos
+        function buscarProductos() {
+            const busqueda = $('#busqueda-producto').val().trim();
+            const tipo = $('#tipo-busqueda').val();
+            
+            if (!busqueda) {
+                alert('Ingrese un término de búsqueda');
+                return;
+            }
+            
+            if (busqueda.length < 2) {
+                alert('Ingrese al menos 2 caracteres para buscar');
                 return;
             }
             
             $.ajax({
-                url: 'Devoluciones.php',
-                method: 'POST',
+                url: 'api/buscar_producto_devolucion.php',
+                method: 'GET',
                 data: {
-                    action: 'buscar_producto',
-                    codigo_barras: codigoBarras
+                    q: busqueda,
+                    tipo: tipo
                 },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        mostrarModalProducto(response.producto);
+                        mostrarResultadosBusqueda(response.productos);
                     } else {
-                        alert(response.message);
+                        alert(response.error);
                     }
                 },
                 error: function() {
-                    alert('Error al buscar producto');
+                    alert('Error al buscar productos');
                 }
             });
         }
         
+        // Mostrar resultados de búsqueda
+        function mostrarResultadosBusqueda(productos) {
+            const container = $('#resultados-busqueda');
+            container.empty();
+            
+            if (productos.length === 0) {
+                container.html('<div class="alert alert-warning text-center">No se encontraron productos</div>');
+                container.show();
+                return;
+            }
+            
+            productos.forEach(function(producto) {
+                const html = `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card producto-card" onclick="seleccionarProducto(${JSON.stringify(producto).replace(/"/g, '&quot;')})">
+                            <div class="card-body">
+                                <h6 class="card-title">${producto.nombre}</h6>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <strong>Código:</strong> ${producto.codigo}<br>
+                                        <strong>Stock:</strong> ${producto.stock}<br>
+                                        <strong>Precio:</strong> $${producto.precio_venta}<br>
+                                        ${producto.lote ? `<strong>Lote:</strong> ${producto.lote}<br>` : ''}
+                                        ${producto.fecha_caducidad ? `<strong>Caducidad:</strong> ${producto.fecha_caducidad}` : ''}
+                                    </small>
+                                </p>
+                                <button class="btn btn-sm btn-primary w-100">
+                                    <i class="fa-solid fa-plus me-1"></i>Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.append(html);
+            });
+            
+            container.show();
+        }
+        
+        // Seleccionar producto
+        function seleccionarProducto(producto) {
+            window.productoSeleccionado = producto;
+            mostrarModalProducto(producto);
+        }
+        
         // Mostrar modal de producto
         function mostrarModalProducto(producto) {
-            $('#modal-codigo-barras').val(producto.Cod_Barra);
+            $('#modal-codigo-barras').val(producto.codigo);
             $('#modal-cantidad').val(1);
             $('#modal-tipo-devolucion').val('');
             $('#modal-observaciones').val('');
             
+            // Limpiar información anterior
+            $('#modalProducto .modal-body .alert').remove();
+            
             // Mostrar información del producto
             const info = `
                 <div class="alert alert-info">
-                    <h6>${producto.Nombre_Prod}</h6>
-                    <p class="mb-1"><strong>Lote:</strong> ${producto.Lote}</p>
-                    <p class="mb-1"><strong>Caducidad:</strong> ${producto.Fecha_Caducidad}</p>
-                    <p class="mb-0"><strong>Existencias:</strong> ${producto.Existencias_R}</p>
+                    <h6>${producto.nombre}</h6>
+                    <p class="mb-1"><strong>Código:</strong> ${producto.codigo}</p>
+                    <p class="mb-1"><strong>Stock:</strong> ${producto.stock}</p>
+                    <p class="mb-1"><strong>Precio:</strong> $${producto.precio_venta}</p>
+                    ${producto.lote ? `<p class="mb-1"><strong>Lote:</strong> ${producto.lote}</p>` : ''}
+                    ${producto.fecha_caducidad ? `<p class="mb-0"><strong>Caducidad:</strong> ${producto.fecha_caducidad}</p>` : ''}
                 </div>
             `;
             $('#modalProducto .modal-body').prepend(info);
@@ -572,31 +647,40 @@ function getDevolucionDetalle($devolucion_id) {
                 return;
             }
             
-            $.ajax({
-                url: 'Devoluciones.php',
-                method: 'POST',
-                data: {
-                    action: 'agregar_producto',
-                    codigo_barras: codigoBarras,
-                    cantidad: cantidad,
-                    tipo_devolucion: tipoDevolucion,
-                    observaciones: observaciones
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        $('#modalProducto').modal('hide');
-                        $('#codigo-barras').val('');
-                        cargarProductosDevolucion();
-                        actualizarTotales();
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function() {
-                    alert('Error al agregar producto');
-                }
-            });
+            // Obtener datos del producto desde la sesión temporal
+            const productoData = window.productoSeleccionado;
+            if (!productoData) {
+                alert('Error: No se encontraron los datos del producto');
+                return;
+            }
+            
+            // Agregar a la lista local
+            const itemKey = codigoBarras + '_' + (productoData.lote || 'default');
+            const item = {
+                codigo_barras: codigoBarras,
+                producto: productoData,
+                cantidad: cantidad,
+                tipo_devolucion: tipoDevolucion,
+                observaciones: observaciones
+            };
+            
+            if (!window.productosDevolucion) {
+                window.productosDevolucion = [];
+            }
+            
+            // Verificar si ya existe
+            const existingIndex = window.productosDevolucion.findIndex(p => p.codigo_barras === codigoBarras && p.producto.lote === productoData.lote);
+            if (existingIndex >= 0) {
+                window.productosDevolucion[existingIndex].cantidad += cantidad;
+            } else {
+                window.productosDevolucion.push(item);
+            }
+            
+            $('#modalProducto').modal('hide');
+            $('#busqueda-producto').val('');
+            $('#resultados-busqueda').hide();
+            mostrarProductos(window.productosDevolucion);
+            actualizarTotales();
         }
         
         // Cargar productos en devolución
@@ -621,7 +705,7 @@ function getDevolucionDetalle($devolucion_id) {
             const container = $('#productos-container');
             container.empty();
             
-            if (productos.length === 0) {
+            if (!productos || productos.length === 0) {
                 container.html('<div class="alert alert-info text-center">No hay productos agregados</div>');
                 return;
             }
@@ -629,13 +713,14 @@ function getDevolucionDetalle($devolucion_id) {
             productos.forEach(function(item, index) {
                 const producto = item.producto;
                 const tipoDevolucion = getTipoDevolucionTexto(item.tipo_devolucion);
+                const itemKey = item.codigo_barras + '_' + (producto.lote || 'default');
                 
                 const html = `
-                    <div class="product-item" data-key="${item.codigo_barras}_${producto.Lote}">
+                    <div class="product-item" data-key="${itemKey}">
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <h6 class="mb-1">${producto.Nombre_Prod}</h6>
-                                <small class="text-muted">Código: ${item.codigo_barras} | Lote: ${producto.Lote}</small>
+                                <h6 class="mb-1">${producto.nombre}</h6>
+                                <small class="text-muted">Código: ${item.codigo_barras} | Lote: ${producto.lote || 'N/A'}</small>
                             </div>
                             <div class="col-md-2">
                                 <span class="badge tipo-badge bg-${getTipoColor(item.tipo_devolucion)}">${tipoDevolucion}</span>
@@ -643,12 +728,13 @@ function getDevolucionDetalle($devolucion_id) {
                             <div class="col-md-2">
                                 <div class="input-group">
                                     <input type="number" class="form-control cantidad-input" 
-                                           value="${item.cantidad}" min="1" max="${producto.Existencias_R}">
+                                           value="${item.cantidad}" min="1" max="${producto.stock}"
+                                           onchange="actualizarCantidadLocal('${itemKey}', this.value)">
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
                                 <button class="btn btn-sm btn-outline-danger" 
-                                        onclick="eliminarProducto('${item.codigo_barras}_${producto.Lote}')">
+                                        onclick="eliminarProductoLocal('${itemKey}')">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -694,70 +780,58 @@ function getDevolucionDetalle($devolucion_id) {
             return colores[tipo] || 'secondary';
         }
         
-        // Actualizar cantidad
-        function actualizarCantidad(itemKey, nuevaCantidad) {
-            $.ajax({
-                url: 'Devoluciones.php',
-                method: 'POST',
-                data: {
-                    action: 'actualizar_cantidad',
-                    item_key: itemKey,
-                    cantidad: nuevaCantidad
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        actualizarTotales();
-                    } else {
-                        alert(response.message);
-                    }
-                }
+        // Actualizar cantidad localmente
+        function actualizarCantidadLocal(itemKey, nuevaCantidad) {
+            if (!window.productosDevolucion) return;
+            
+            const item = window.productosDevolucion.find(p => {
+                const key = p.codigo_barras + '_' + (p.producto.lote || 'default');
+                return key === itemKey;
             });
+            
+            if (item) {
+                item.cantidad = parseInt(nuevaCantidad);
+                actualizarTotales();
+            }
         }
         
-        // Eliminar producto
-        function eliminarProducto(itemKey) {
+        // Eliminar producto localmente
+        function eliminarProductoLocal(itemKey) {
             if (confirm('¿Está seguro de eliminar este producto?')) {
-                $.ajax({
-                    url: 'Devoluciones.php',
-                    method: 'POST',
-                    data: {
-                        action: 'eliminar_producto',
-                        item_key: itemKey
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            cargarProductosDevolucion();
-                            actualizarTotales();
-                        } else {
-                            alert(response.message);
-                        }
-                    }
+                if (!window.productosDevolucion) return;
+                
+                window.productosDevolucion = window.productosDevolucion.filter(p => {
+                    const key = p.codigo_barras + '_' + (p.producto.lote || 'default');
+                    return key !== itemKey;
                 });
+                
+                mostrarProductos(window.productosDevolucion);
+                actualizarTotales();
             }
         }
         
         // Actualizar totales
         function actualizarTotales() {
-            $.ajax({
-                url: 'Devoluciones.php',
-                method: 'POST',
-                data: {
-                    action: 'obtener_totales'
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        $('#total-productos').text(response.total_productos);
-                        $('#total-unidades').text(response.total_unidades);
-                    }
-                }
-            });
+            if (!window.productosDevolucion) {
+                $('#total-productos').text('0');
+                $('#total-unidades').text('0');
+                return;
+            }
+            
+            const totalProductos = window.productosDevolucion.length;
+            const totalUnidades = window.productosDevolucion.reduce((sum, item) => sum + item.cantidad, 0);
+            
+            $('#total-productos').text(totalProductos);
+            $('#total-unidades').text(totalUnidades);
         }
         
         // Procesar devolución
         function procesarDevolucion() {
+            if (!window.productosDevolucion || window.productosDevolucion.length === 0) {
+                alert('No hay productos para procesar');
+                return;
+            }
+            
             const observaciones = $('#observaciones-generales').val();
             
             if (confirm('¿Está seguro de procesar esta devolución?')) {
@@ -766,7 +840,8 @@ function getDevolucionDetalle($devolucion_id) {
                     method: 'POST',
                     data: {
                         action: 'procesar_devolucion',
-                        observaciones_generales: observaciones
+                        observaciones_generales: observaciones,
+                        productos: JSON.stringify(window.productosDevolucion)
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -788,21 +863,13 @@ function getDevolucionDetalle($devolucion_id) {
         // Cancelar devolución
         function cancelarDevolucion() {
             if (confirm('¿Está seguro de cancelar la devolución actual?')) {
-                $.ajax({
-                    url: 'Devoluciones.php',
-                    method: 'POST',
-                    data: {
-                        action: 'cancelar_devolucion'
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        $('#scanner-section').hide();
-                        $('#productos-lista').hide();
-                        $('#lista-devoluciones').show();
-                        $('#codigo-barras').val('');
-                        $('#observaciones-generales').val('');
-                    }
-                });
+                window.productosDevolucion = [];
+                $('#busqueda-section').hide();
+                $('#productos-lista').hide();
+                $('#lista-devoluciones').show();
+                $('#busqueda-producto').val('');
+                $('#observaciones-generales').val('');
+                $('#resultados-busqueda').hide();
             }
         }
         
@@ -967,12 +1034,40 @@ function getDevolucionDetalle($devolucion_id) {
     </script>
 
     <style>
-        .scanner-container {
+        .search-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
             padding: 2rem;
             color: white;
             margin-bottom: 2rem;
+        }
+        
+        .producto-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .producto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        
+        .producto-card .card-body {
+            padding: 1rem;
+        }
+        
+        .producto-card .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .producto-card .card-text {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
         }
         .product-item {
             border: 1px solid #dee2e6;
