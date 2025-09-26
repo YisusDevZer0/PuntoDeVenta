@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header('Content-Type: application/json');
 include_once "../dbconect.php";
 
@@ -84,11 +88,12 @@ try {
         $stmtInsertDestino->execute();
         $idLoteDestino = $con->insert_id;
         
-        // Registrar en historial (origen)
+        // Registrar en historial (comentado temporalmente por problemas de estructura)
+        /*
         $sqlHistorialOrigen = "INSERT INTO caducados_historial 
                               (id_lote, tipo_movimiento, cantidad_anterior, cantidad_nueva, 
-                               sucursal_origen, sucursal_destino, usuario, fecha_movimiento, observaciones)
-                              VALUES (?, 'transferencia_salida', ?, ?, ?, ?, ?, NOW(), ?)";
+                               sucursal_origen, sucursal_destino, usuario_movimiento, fecha_movimiento, observaciones)
+                              VALUES (?, 'transferencia', ?, ?, ?, ?, ?, NOW(), ?)";
         
         $stmtHistorialOrigen = $con->prepare($sqlHistorialOrigen);
         $stmtHistorialOrigen->bind_param("iiiiis",
@@ -105,8 +110,8 @@ try {
         // Registrar en historial (destino)
         $sqlHistorialDestino = "INSERT INTO caducados_historial 
                                (id_lote, tipo_movimiento, cantidad_anterior, cantidad_nueva, 
-                                sucursal_origen, sucursal_destino, usuario, fecha_movimiento, observaciones)
-                               VALUES (?, 'transferencia_entrada', 0, ?, ?, ?, ?, NOW(), ?)";
+                                sucursal_origen, sucursal_destino, usuario_movimiento, fecha_movimiento, observaciones)
+                               VALUES (?, 'transferencia', 0, ?, ?, ?, ?, NOW(), ?)";
         
         $stmtHistorialDestino = $con->prepare($sqlHistorialDestino);
         $stmtHistorialDestino->bind_param("iiis",
@@ -118,6 +123,7 @@ try {
             "Transferencia recibida. Motivo: $motivo. $observaciones"
         );
         $stmtHistorialDestino->execute();
+        */
         
         // Confirmar transacción
         $con->commit();
