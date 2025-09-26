@@ -66,6 +66,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitacora de limpieza</a>
                     <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Lista de tareas</a>
                     <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-comments"></i>Mensajes</a>
+                    <a href="Devoluciones" class="dropdown-item"><i class="fa-solid fa-undo"></i>Devoluciones</a>
                 </div>
             </div>
             
