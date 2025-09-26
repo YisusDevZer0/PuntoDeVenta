@@ -71,9 +71,27 @@ function abrirModalActualizarCaducidad(idLote, datosLote) {
     
     try {
         const datos = JSON.parse(datosLote);
+        console.log('Datos parseados:', datos);
+        
+        // Verificar que los elementos existan
+        const idLoteElement = document.getElementById('idLoteActualizar');
+        const fechaElement = document.getElementById('fechaCaducidadNueva');
+        const motivoElement = document.getElementById('motivoActualizacion');
+        
+        console.log('Elementos encontrados:', {
+            idLoteElement: !!idLoteElement,
+            fechaElement: !!fechaElement,
+            motivoElement: !!motivoElement
+        });
+        
+        if (!idLoteElement || !fechaElement || !motivoElement) {
+            console.error('Elementos del formulario no encontrados');
+            Swal.fire('Error', 'Error al cargar el formulario', 'error');
+            return;
+        }
         
         // Llenar información del lote
-        document.getElementById('idLoteActualizar').value = idLote;
+        idLoteElement.value = idLote;
         document.getElementById('infoLoteActual').innerHTML = `
             <div class="row">
                 <div class="col-md-6">
@@ -90,19 +108,36 @@ function abrirModalActualizarCaducidad(idLote, datosLote) {
         `;
         
         // Establecer fecha actual como valor por defecto
-        document.getElementById('fechaCaducidadNueva').value = datos.fecha_caducidad;
+        fechaElement.value = datos.fecha_caducidad;
         
         // Limpiar otros campos
-        document.getElementById('motivoActualizacion').value = '';
+        motivoElement.value = '';
         document.getElementById('observacionesActualizacion').value = '';
+        
+        console.log('Valores establecidos:', {
+            idLote: idLoteElement.value,
+            fecha: fechaElement.value,
+            motivo: motivoElement.value
+        });
         
     } catch (error) {
         console.error('Error al procesar datos:', error);
+        Swal.fire('Error', 'Error al procesar los datos del lote', 'error');
+        return;
     }
     
     // Mostrar modal
     var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
     myModal.show();
+    
+    // Esperar a que el modal esté completamente visible
+    setTimeout(() => {
+        console.log('Verificando valores después de abrir modal:', {
+            idLote: document.getElementById('idLoteActualizar').value,
+            fecha: document.getElementById('fechaCaducidadNueva').value,
+            motivo: document.getElementById('motivoActualizacion').value
+        });
+    }, 500);
 }
 
 function abrirModalTransferirLote(idLote, datosLote) {
@@ -242,7 +277,14 @@ function guardarActualizacionCaducidad() {
     const motivo = document.getElementById('motivoActualizacion').value;
     const observaciones = document.getElementById('observacionesActualizacion').value;
     
-    if (!fechaNueva || !motivo) {
+    console.log('Datos del formulario:', {
+        idLote: idLote,
+        fechaNueva: fechaNueva,
+        motivo: motivo,
+        observaciones: observaciones
+    });
+    
+    if (!idLote || !fechaNueva || !motivo) {
         Swal.fire('Error', 'Por favor completa todos los campos requeridos', 'error');
         return;
     }
