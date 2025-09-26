@@ -68,20 +68,31 @@ try {
                         VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, 'activo', ?, ?)";
     
     $stmtInsertDestino = $con->prepare($sqlInsertDestino);
+    // Asegurar que los valores no sean null
+    $folioStock = $loteActual['folio_stock'] ?? 0;
+    $codBarra = $loteActual['cod_barra'] ?? '';
+    $nombreProducto = $loteActual['nombre_producto'] ?? '';
+    $loteTransfer = $loteActual['lote'] . '_TRANSFER';
+    $fechaCaducidad = $loteActual['fecha_caducidad'] ?? date('Y-m-d');
+    $proveedor = $loteActual['proveedor'] ?? null;
+    $precioCompra = $loteActual['precio_compra'] ?? null;
+    $precioVenta = $loteActual['precio_venta'] ?? 0;
+    $observacionesTransfer = "Transferencia: $observaciones";
+    
     $stmtInsertDestino->bind_param("issssiiisssis",
-        $loteActual['folio_stock'],
-        $loteActual['cod_barra'],
-        $loteActual['nombre_producto'],
-        $loteActual['lote'] . '_TRANSFER',
-        $loteActual['fecha_caducidad'],
+        $folioStock,
+        $codBarra,
+        $nombreProducto,
+        $loteTransfer,
+        $fechaCaducidad,
         $cantidadTransferir,
         $cantidadTransferir,
         $sucursalDestino,
-        $loteActual['proveedor'],
-        $loteActual['precio_compra'],
-        $loteActual['precio_venta'],
+        $proveedor,
+        $precioCompra,
+        $precioVenta,
         $usuarioMovimiento,
-        "Transferencia: $observaciones"
+        $observacionesTransfer
     );
     
     if (!$stmtInsertDestino->execute()) {
