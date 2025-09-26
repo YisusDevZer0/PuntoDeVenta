@@ -42,7 +42,8 @@ try {
         throw new Exception('Error al actualizar la fecha de caducidad');
     }
     
-    // Registrar en historial
+    // Registrar en historial (comentado temporalmente por problemas de estructura)
+    /*
     $sqlHistorial = "INSERT INTO caducados_historial 
                      (id_lote, tipo_movimiento, cantidad_anterior, cantidad_nueva, 
                       fecha_caducidad_anterior, fecha_caducidad_nueva, 
@@ -63,6 +64,7 @@ try {
     );
     
     $stmtHistorial->execute();
+    */
     
     echo json_encode([
         'success' => true,
