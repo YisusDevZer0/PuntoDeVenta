@@ -1,25 +1,6 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-// Verificar sesión
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    header("Location: Expiro.php");
-    exit();
-}
-
-// Asegurar que $row esté disponible
-if (!isset($row) || empty($row)) {
-    // Si $row no está disponible, incluir nuevamente el controlador
-    include_once "Controladores/ControladorUsuario.php";
-}
-
-// Verificar nuevamente después de incluir el controlador
-if (!isset($row) || empty($row)) {
-    error_log("Error: Variable \$row no está definida después de cargar ControladorUsuario.php");
-    // Redirigir a página de error o mostrar mensaje
-    die("Error: No se pudo cargar la información del usuario. Contacte al administrador.");
-}
-
 // Obtener datos del usuario
 $usuario_id = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1;
 $sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;

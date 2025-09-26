@@ -6,25 +6,6 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 include_once "../Controladores/ControladorUsuario.php";
 
-// Verificar sesión
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'No autorizado']);
-    exit;
-}
-
-// Asegurar que $row esté disponible
-if (!isset($row) || empty($row)) {
-    include_once "../Controladores/ControladorUsuario.php";
-}
-
-// Verificar nuevamente después de incluir el controlador
-if (!isset($row) || empty($row)) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error: No se pudo cargar la información del usuario']);
-    exit;
-}
-
 $usuario_id = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1;
 $sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;
 $tipo_usuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
