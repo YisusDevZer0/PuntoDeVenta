@@ -134,17 +134,29 @@ function generarBadgeAlerta($tipoAlerta, $diasRestantes) {
 }
 
 function generarBotonesAccion($row) {
-    $productoJson = htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8');
+    // Crear un array con solo los datos necesarios para evitar problemas de escape
+    $datosLote = [
+        'id_lote' => $row['id_lote'],
+        'cod_barra' => $row['cod_barra'],
+        'nombre_producto' => $row['nombre_producto'],
+        'lote' => $row['lote'],
+        'fecha_caducidad' => $row['fecha_caducidad'],
+        'cantidad_actual' => $row['cantidad_actual'],
+        'sucursal' => $row['sucursal'],
+        'sucursal_id' => $row['sucursal_id'] ?? 1
+    ];
+    
+    $productoJson = htmlspecialchars(json_encode($datosLote), ENT_QUOTES, 'UTF-8');
     
     return "
         <div class='btn-group' role='group'>
             <button class='btn btn-sm btn-outline-info' onclick='abrirModalDetallesLote({$row['id_lote']})' title='Ver detalles'>
                 <i class='fa fa-eye'></i>
             </button>
-            <button class='btn btn-sm btn-outline-warning' onclick='abrirModalActualizarCaducidad({$row['id_lote']}, \"$productoJson\")' title='Actualizar fecha'>
+            <button class='btn btn-sm btn-outline-warning' onclick='abrirModalActualizarCaducidad({$row['id_lote']}, `$productoJson`)' title='Actualizar fecha'>
                 <i class='fa fa-edit'></i>
             </button>
-            <button class='btn btn-sm btn-outline-primary' onclick='abrirModalTransferirLote({$row['id_lote']}, \"$productoJson\")' title='Transferir'>
+            <button class='btn btn-sm btn-outline-primary' onclick='abrirModalTransferirLote({$row['id_lote']}, `$productoJson`)' title='Transferir'>
                 <i class='fa fa-truck'></i>
             </button>
         </div>
