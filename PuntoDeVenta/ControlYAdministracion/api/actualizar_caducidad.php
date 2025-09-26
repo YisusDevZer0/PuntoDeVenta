@@ -46,8 +46,8 @@ try {
     $sqlHistorial = "INSERT INTO caducados_historial 
                      (id_lote, tipo_movimiento, cantidad_anterior, cantidad_nueva, 
                       fecha_caducidad_anterior, fecha_caducidad_nueva, 
-                      sucursal_origen, sucursal_destino, usuario, fecha_movimiento, observaciones)
-                     VALUES (?, 'actualizacion_caducidad', ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+                      sucursal_origen, sucursal_destino, usuario_movimiento, fecha_movimiento, observaciones)
+                     VALUES (?, 'actualizacion', ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
     
     $stmtHistorial = $con->prepare($sqlHistorial);
     $stmtHistorial->bind_param("iisssssis",
