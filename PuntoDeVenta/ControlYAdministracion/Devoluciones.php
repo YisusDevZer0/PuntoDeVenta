@@ -9,12 +9,10 @@ $tipo_usuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 // Verificar permisos
 $isAdmin = ($tipo_usuario == 'Administrador' || $tipo_usuario == 'MKT');
 
-// Incluir el menú
-include 'Menu.php';
-
-// Obtener parámetros de la URL
-$action = $_GET['action'] ?? 'list';
-$devolucion_id = $_GET['id'] ?? null;
+// Definir variable para identificar la página actual
+$currentPage = 'devoluciones';
+$showDashboard = false;
+$disabledAttr = $isAdmin ? '' : 'disabled';
 
 // Función para obtener tipos de devolución
 function getTiposDevolucion() {
@@ -32,7 +30,7 @@ function getTiposDevolucion() {
     ];
 }
 
-// Función para obtener productos por código de barras
+// Función para buscar producto
 function buscarProducto($codigo_barras, $sucursal_id) {
     global $conn;
     
@@ -49,25 +47,6 @@ function buscarProducto($codigo_barras, $sucursal_id) {
     $result = $stmt->get_result();
     
     return $result->fetch_assoc();
-}
-
-// Función para obtener ventas recientes del producto
-function getVentasRecientes($codigo_barras, $sucursal_id, $limite = 10) {
-    global $conn;
-    
-    $sql = "SELECT v.*, c.Nombre_Sucursal
-            FROM Ventas_POSV2 v
-            LEFT JOIN Sucursales c ON v.Fk_sucursal = c.ID_Sucursal
-            WHERE v.Cod_Barra = ? AND v.Fk_sucursal = ?
-            ORDER BY v.Fecha_venta DESC
-            LIMIT ?";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sii", $codigo_barras, $sucursal_id, $limite);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 // Procesar acciones
@@ -216,7 +195,7 @@ function getDevoluciones($sucursal_id, $fecha_inicio = null, $fecha_fin = null, 
     
     $sql = "SELECT d.*, u.Nombre_Apellidos as usuario_nombre, s.Nombre_Sucursal
             FROM Devoluciones d
-            LEFT JOIN Usuarios u ON d.usuario_id = u.ID_Usuario
+            LEFT JOIN Usuarios_PV u ON d.usuario_id = u.Id_PvUser
             LEFT JOIN Sucursales s ON d.sucursal_id = s.ID_Sucursal
             WHERE 1=1";
     
@@ -272,97 +251,40 @@ function getDevolucionDetalle($devolucion_id) {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-$currentPage = 'devoluciones';
-$showDashboard = false;
-$disabledAttr = $isAdmin ? '' : 'disabled';
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Devoluciones - Doctor Pez</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        .scanner-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            padding: 2rem;
-            color: white;
-            margin-bottom: 2rem;
-        }
-        .product-item {
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-        .product-item:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-        .tipo-badge {
-            font-size: 0.8rem;
-            padding: 0.3rem 0.6rem;
-        }
-        .cantidad-input {
-            width: 80px;
-        }
-        .total-section {
-            background: #e3f2fd;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-top: 1rem;
-        }
-        .btn-scanner {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            border: none;
-            color: white;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn-scanner:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-        }
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .status-badge {
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-        }
-        .status-pendiente { background-color: #ffc107; color: #000; }
-        .status-procesada { background-color: #28a745; color: #fff; }
-        .status-cancelada { background-color: #dc3545; color: #fff; }
-    </style>
+    <meta charset="utf-8">
+    <title>Sistema de Devoluciones - <?php echo $row['Licencia']?></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+   
+    <?php include "header.php";?>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0">
-                <?php include 'Menu.php'; ?>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10">
-                <div class="container-fluid py-4">
+    <!-- Spinner End -->
+    <?php include_once "Menu.php" ?>
+
+    <!-- Content Start -->
+    <div class="content">
+        <!-- Navbar Start -->
+        <?php include "navbar.php";?>
+        <!-- Navbar End -->
+
+        <!-- Table Start -->
+        <div class="container-fluid pt-4 px-4">
+            <div class="col-12">
+                <div class="bg-light rounded h-100 p-4">
+                    <h6 class="mb-4" style="color:#0172b6;">Sistema de Devoluciones - <?php echo $row['Licencia']?></h6>
                     
-                    <!-- Header -->
+                    <!-- Header con botones -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2><i class="fa-solid fa-undo me-2"></i>Sistema de Devoluciones</h2>
                         <div class="btn-group">
@@ -488,6 +410,7 @@ $disabledAttr = $isAdmin ? '' : 'disabled';
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -720,8 +643,7 @@ $disabledAttr = $isAdmin ? '' : 'disabled';
                             <div class="col-md-2">
                                 <div class="input-group">
                                     <input type="number" class="form-control cantidad-input" 
-                                           value="${item.cantidad}" min="1" max="${producto.Existencias_R}"
-                                           onchange="actualizarCantidad('${item.codigo_barras}_${producto.Lote}', this.value)">
+                                           value="${item.cantidad}" min="1" max="${producto.Existencias_R}">
                                 </div>
                             </div>
                             <div class="col-md-2 text-end">
@@ -1043,5 +965,74 @@ $disabledAttr = $isAdmin ? '' : 'disabled';
             return new Date(fecha).toLocaleDateString('es-ES');
         }
     </script>
+
+    <style>
+        .scanner-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        .product-item {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .product-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .tipo-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+        .cantidad-input {
+            width: 80px;
+        }
+        .total-section {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .btn-scanner {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-scanner:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+        }
+        .status-pendiente { background-color: #ffc107; color: #000; }
+        .status-procesada { background-color: #28a745; color: #fff; }
+        .status-cancelada { background-color: #dc3545; color: #fff; }
+    </style>
+
+    <!-- Footer Start -->
+    <?php include "footer.php";?>
+
 </body>
 </html>
