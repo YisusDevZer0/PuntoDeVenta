@@ -4,19 +4,23 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type');
 
-session_start();
-require_once '../../Consultas/db_connect.php';
+include_once "../Controladores/ControladorUsuario.php";
 
-// Verificar autenticación
-if (!isset($_SESSION['usuario_id'])) {
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'No autorizado']);
     exit;
 }
 
-$usuario_id = $_SESSION['usuario_id'];
-$sucursal_id = $_SESSION['sucursal_id'] ?? 1;
-$tipo_usuario = $_SESSION['tipo_usuario'] ?? 'Usuario';
+// Asegurar que $row esté disponible
+if (!isset($row)) {
+    include_once "../Controladores/ControladorUsuario.php";
+}
+
+$usuario_id = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1;
+$sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;
+$tipo_usuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 
 // Función para obtener tipos de devolución
 function getTiposDevolucion() {

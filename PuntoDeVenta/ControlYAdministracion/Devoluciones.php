@@ -1,18 +1,22 @@
 <?php
-session_start();
-require_once '../Consultas/db_connect.php';
-require_once '../Consultas/ValidadorUsuario.php';
+include_once "Controladores/ControladorUsuario.php";
 
-// Verificar autenticación
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../index.php');
+// Verificar sesión
+if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
+    header("Location: Expiro.php");
     exit();
 }
 
+// Asegurar que $row esté disponible
+if (!isset($row)) {
+    // Si $row no está disponible, incluir nuevamente el controlador
+    include_once "Controladores/ControladorUsuario.php";
+}
+
 // Obtener datos del usuario
-$usuario_id = $_SESSION['usuario_id'];
-$sucursal_id = $_SESSION['sucursal_id'] ?? 1;
-$tipo_usuario = $_SESSION['tipo_usuario'] ?? 'Usuario';
+$usuario_id = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1;
+$sucursal_id = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 1;
+$tipo_usuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : 'Usuario';
 
 // Verificar permisos
 $isAdmin = ($tipo_usuario == 'Administrador' || $tipo_usuario == 'MKT');
