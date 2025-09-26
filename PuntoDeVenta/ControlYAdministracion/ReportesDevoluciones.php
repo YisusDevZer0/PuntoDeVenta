@@ -8,8 +8,14 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 }
 
 // Asegurar que $row esté disponible
-if (!isset($row)) {
+if (!isset($row) || empty($row)) {
     include_once "Controladores/ControladorUsuario.php";
+}
+
+// Verificar nuevamente después de incluir el controlador
+if (!isset($row) || empty($row)) {
+    error_log("Error: Variable \$row no está definida después de cargar ControladorUsuario.php en ReportesDevoluciones.php");
+    die("Error: No se pudo cargar la información del usuario. Contacte al administrador.");
 }
 
 // Obtener datos del usuario

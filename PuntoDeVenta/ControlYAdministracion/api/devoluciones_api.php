@@ -14,8 +14,15 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
 }
 
 // Asegurar que $row esté disponible
-if (!isset($row)) {
+if (!isset($row) || empty($row)) {
     include_once "../Controladores/ControladorUsuario.php";
+}
+
+// Verificar nuevamente después de incluir el controlador
+if (!isset($row) || empty($row)) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error: No se pudo cargar la información del usuario']);
+    exit;
 }
 
 $usuario_id = isset($row['Id_PvUser']) ? $row['Id_PvUser'] : 1;
