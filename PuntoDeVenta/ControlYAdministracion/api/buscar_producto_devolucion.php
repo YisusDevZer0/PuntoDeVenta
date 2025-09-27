@@ -25,12 +25,9 @@ try {
                 sp.Precio_C,
                 sp.Existencias_R,
                 sp.Fk_sucursal,
-                s.Nombre_Sucursal,
-                plc.Lote,
-                plc.Fecha_Caducidad
+                s.Nombre_Sucursal
             FROM Stock_POS sp
             LEFT JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
-            LEFT JOIN productos_lotes_caducidad plc ON sp.ID_Prod_POS = plc.ID_Prod_POS AND sp.Fk_sucursal = plc.Fk_sucursal
             WHERE sp.Fk_sucursal = ? AND sp.Existencias_R > 0";
     
     $params = [$sucursal_id];
@@ -66,8 +63,8 @@ try {
             'stock' => $row['Existencias_R'],
             'sucursal_id' => $row['Fk_sucursal'],
             'sucursal_nombre' => $row['Nombre_Sucursal'],
-            'lote' => $row['Lote'],
-            'fecha_caducidad' => $row['Fecha_Caducidad']
+            'lote' => null,
+            'fecha_caducidad' => null
         ];
     }
     
