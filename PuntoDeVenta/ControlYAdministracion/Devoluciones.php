@@ -308,13 +308,53 @@ function getDevolucionDetalle($devolucion_id) {
                             <h5><i class="fa-solid fa-search me-2"></i>Buscar Productos</h5>
                             <p class="mb-3">Escanea o ingresa el código de barras del producto a devolver</p>
                             
-                            <div class="form-group mb-3">
-                                <label for="codigoEscaneado" class="form-label">
-                                    <i class="fas fa-barcode me-1"></i>
-                                    <span>Producto</span>
-                                </label>
-                                <input type="text" class="form-control" name="codigoEscaneado" id="codigoEscaneado" 
-                                       placeholder="Código de barras o nombre del producto..." autofocus>
+                            <!-- Información del Usuario y Sucursal -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Usuario:</label>
+                                    <input type="text" class="form-control" value="<?php echo $row['Nombre_Apellidos']; ?>" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Sucursal:</label>
+                                    <input type="text" class="form-control" value="<?php echo $row['Nombre_Sucursal']; ?>" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha:</label>
+                                    <input type="text" class="form-control" value="<?php echo date('Y-m-d H:i:s'); ?>" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label for="codigoEscaneado" class="form-label">
+                                            <i class="fas fa-barcode me-1"></i>
+                                            <span>Producto</span>
+                                        </label>
+                                        <input type="text" class="form-control" name="codigoEscaneado" id="codigoEscaneado" 
+                                               placeholder="Código de barras o nombre del producto..." autofocus>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="tipo-devolucion-default" class="form-label">
+                                            <i class="fa-solid fa-tag me-1"></i>
+                                            <span>Tipo de Devolución por Defecto</span>
+                                        </label>
+                                        <select id="tipo-devolucion-default" class="form-select">
+                                            <option value="no_facturado">Producto no facturado</option>
+                                            <option value="danado_recibir">Dañado al recibir</option>
+                                            <option value="proximo_caducar">Próximo a caducar</option>
+                                            <option value="caducado">Caducado</option>
+                                            <option value="danado_roto">Dañado/Roto</option>
+                                            <option value="solicitado_admin">Solicitado por administración</option>
+                                            <option value="error_etiquetado">Error en etiquetado</option>
+                                            <option value="defectuoso">Defectuoso</option>
+                                            <option value="sobrante">Sobrante</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -589,6 +629,9 @@ function getDevolucionDetalle($devolucion_id) {
                 return;
             }
             
+            // Obtener el tipo de devolución seleccionado
+            const tipoDevolucionSeleccionado = $('#tipo-devolucion-default').val() || 'no_facturado';
+            
             // Agregar nuevo producto
             const nuevoProducto = {
                 codigo_barras: producto.codigo,
@@ -603,7 +646,7 @@ function getDevolucionDetalle($devolucion_id) {
                     fecha_caducidad: producto.fecha_caducidad || null
                 },
                 cantidad: 1,
-                tipo_devolucion: 'Producto no facturado', // Valor por defecto
+                tipo_devolucion: tipoDevolucionSeleccionado,
                 observaciones: ''
             };
             
@@ -735,7 +778,18 @@ function getDevolucionDetalle($devolucion_id) {
                                 <small class="text-muted">Código: ${item.codigo_barras} | Lote: ${producto.lote || 'N/A'}</small>
                             </div>
                             <div class="col-md-2">
-                                <span class="badge tipo-badge bg-${getTipoColor(item.tipo_devolucion)}">${tipoDevolucion}</span>
+                                <select class="form-select form-select-sm" onchange="actualizarTipoDevolucionLocal('${itemKey}', this.value)">
+                                    <option value="no_facturado" ${item.tipo_devolucion === 'no_facturado' ? 'selected' : ''}>No Facturado</option>
+                                    <option value="danado_recibir" ${item.tipo_devolucion === 'danado_recibir' ? 'selected' : ''}>Dañado al Recibir</option>
+                                    <option value="proximo_caducar" ${item.tipo_devolucion === 'proximo_caducar' ? 'selected' : ''}>Próximo a Caducar</option>
+                                    <option value="caducado" ${item.tipo_devolucion === 'caducado' ? 'selected' : ''}>Caducado</option>
+                                    <option value="danado_roto" ${item.tipo_devolucion === 'danado_roto' ? 'selected' : ''}>Dañado/Roto</option>
+                                    <option value="solicitado_admin" ${item.tipo_devolucion === 'solicitado_admin' ? 'selected' : ''}>Solicitado por Admin</option>
+                                    <option value="error_etiquetado" ${item.tipo_devolucion === 'error_etiquetado' ? 'selected' : ''}>Error en Etiquetado</option>
+                                    <option value="defectuoso" ${item.tipo_devolucion === 'defectuoso' ? 'selected' : ''}>Defectuoso</option>
+                                    <option value="sobrante" ${item.tipo_devolucion === 'sobrante' ? 'selected' : ''}>Sobrante</option>
+                                    <option value="otro" ${item.tipo_devolucion === 'otro' ? 'selected' : ''}>Otro</option>
+                                </select>
                             </div>
                             <div class="col-md-2">
                                 <div class="input-group">
@@ -804,6 +858,20 @@ function getDevolucionDetalle($devolucion_id) {
             if (item) {
                 item.cantidad = parseInt(nuevaCantidad);
                 actualizarTotales();
+            }
+        }
+        
+        // Actualizar tipo de devolución localmente
+        function actualizarTipoDevolucionLocal(itemKey, nuevoTipo) {
+            if (!window.productosDevolucion) return;
+            
+            const item = window.productosDevolucion.find(p => {
+                const key = p.codigo_barras + '_' + (p.producto.lote || 'default');
+                return key === itemKey;
+            });
+            
+            if (item) {
+                item.tipo_devolucion = nuevoTipo;
             }
         }
         
