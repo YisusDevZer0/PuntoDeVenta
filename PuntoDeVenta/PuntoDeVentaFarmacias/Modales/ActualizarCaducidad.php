@@ -1,42 +1,39 @@
-<!-- Modal Actualizar Caducidad -->
-<div class="modal fade" id="modalActualizarCaducidad" tabindex="-1" aria-labelledby="modalActualizarCaducidadLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Modal para Actualizar Caducidad -->
+<div class="modal fade" id="modalActualizarCaducidad" tabindex="-1" role="dialog" aria-labelledby="modalActualizarCaducidadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-warning text-white">
                 <h5 class="modal-title" id="modalActualizarCaducidadLabel">
-                    <i class="fa fa-edit me-2"></i>Actualizar Fecha de Caducidad
+                    <i class="fa fa-calendar-edit me-2"></i>Actualizar Fecha de Caducidad
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="idLoteActualizar" name="idLoteActualizar">
-                
-                <!-- Información del lote actual -->
-                <div class="alert alert-info">
-                    <h6>Información del Lote Actual:</h6>
-                    <div id="infoLoteActual"></div>
-                </div>
-                
                 <form id="formActualizarCaducidad">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="fechaCaducidadNueva" class="form-label">Nueva Fecha de Caducidad *</label>
-                                <input type="date" class="form-control" id="fechaCaducidadNueva" name="fechaCaducidadNueva" required>
-                            </div>
+                    <input type="hidden" id="idLoteActualizar" name="idLote">
+                    
+                    <!-- Información del lote actual -->
+                    <div class="alert alert-info">
+                        <h6><i class="fa fa-info-circle mr-2"></i>Información del Lote</h6>
+                        <div id="infoLoteActual">
+                            <!-- Se llenará dinámicamente -->
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="motivoActualizacion" class="form-label">Motivo de Actualización *</label>
-                                <select class="form-select" id="motivoActualizacion" name="motivoActualizacion" required>
-                                    <option value="">Seleccionar motivo</option>
-                                    <option value="error_registro">Error en registro inicial</option>
-                                    <option value="correccion_fecha">Corrección de fecha</option>
-                                    <option value="extencion_plazo">Extensión de plazo</option>
-                                    <option value="otro">Otro</option>
-                                </select>
-                            </div>
-                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="fechaCaducidadNueva" class="form-label">Nueva Fecha de Caducidad *</label>
+                        <input type="date" class="form-control" id="fechaCaducidadNueva" name="fechaCaducidadNueva" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivoActualizacion" class="form-label">Motivo de la Actualización *</label>
+                        <select class="form-select" id="motivoActualizacion" name="motivoActualizacion" required>
+                            <option value="">Seleccionar motivo</option>
+                            <option value="correccion_error">Corrección de error</option>
+                            <option value="actualizacion_proveedor">Actualización del proveedor</option>
+                            <option value="revision_inventario">Revisión de inventario</option>
+                            <option value="otro">Otro</option>
+                        </select>
                     </div>
                     
                     <div class="mb-3">
@@ -59,49 +56,75 @@
 
 <script>
 function guardarActualizacionCaducidad() {
-    const idLote = document.getElementById('idLoteActualizar').value;
-    const fechaNueva = document.getElementById('fechaCaducidadNueva').value;
-    const motivo = document.getElementById('motivoActualizacion').value;
-    const observaciones = document.getElementById('observacionesActualizacion').value;
+    const form = document.getElementById('formActualizarCaducidad');
+    const formData = new FormData(form);
     
-    if (!idLote || !fechaNueva || !motivo) {
-        Swal.fire('Error', 'Por favor completa todos los campos requeridos', 'error');
+    // Validar campos requeridos
+    if (!formData.get('fechaCaducidadNueva') || !formData.get('motivoActualizacion')) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos requeridos',
+            text: 'Por favor completa todos los campos obligatorios'
+        });
         return;
     }
     
-    const data = {
-        id_lote: idLote,
-        fecha_caducidad_nueva: fechaNueva,
-        motivo: motivo,
-        observaciones: observaciones,
-        usuario_movimiento: 1 // ID del usuario actual
+    // Mostrar loading
+    Swal.fire({
+        title: 'Actualizando fecha de caducidad...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Preparar datos
+    const datos = {
+        id_lote: formData.get('idLote'),
+        fecha_caducidad_nueva: formData.get('fechaCaducidadNueva'),
+        motivo: formData.get('motivoActualizacion'),
+        observaciones: formData.get('observacionesActualizacion'),
+        usuario_movimiento: 1
     };
     
     fetch('api/actualizar_caducidad.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(datos)
     })
     .then(response => response.json())
     .then(data => {
+        Swal.close();
+        
         if (data.success) {
-            Swal.fire('Éxito', data.message, 'success');
-            // Cerrar modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad'));
-            modal.hide();
-            // Recargar tabla
-            if (typeof tabla !== 'undefined') {
-                tabla.ajax.reload();
-            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Fecha actualizada',
+                text: data.message
+            }).then(() => {
+                // Cerrar modal y recargar datos
+                bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad')).hide();
+                if (typeof tabla !== 'undefined') {
+                    tabla.ajax.reload();
+                }
+            });
         } else {
-            Swal.fire('Error', data.error, 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.error
+            });
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        Swal.fire('Error', 'Error de conexión', 'error');
+        Swal.close();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al actualizar la fecha: ' + error.message
+        });
     });
 }
 </script>
