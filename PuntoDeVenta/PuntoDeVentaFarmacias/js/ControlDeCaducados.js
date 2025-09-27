@@ -13,9 +13,8 @@ function abrirModalRegistrarLote() {
     // Cargar sucursales
     cargarSucursalesModal();
     
-    // Mostrar modal usando Bootstrap 5
-    var myModal = new bootstrap.Modal(document.getElementById('modalRegistrarLote'));
-    myModal.show();
+    // Mostrar modal usando jQuery
+    $('#modalRegistrarLote').modal('show');
 }
 
 // Función para cargar sucursales en el modal
@@ -180,7 +179,7 @@ function guardarLote() {
                 text: data.message
             }).then(() => {
                 // Cerrar modal y recargar datos
-                bootstrap.Modal.getInstance(document.getElementById('modalRegistrarLote')).hide();
+                $('#modalRegistrarLote').modal('hide');
                 if (typeof tabla !== 'undefined') {
                     tabla.ajax.reload();
                 }

@@ -192,7 +192,7 @@ function guardarTransferencia() {
                 text: data.message
             }).then(() => {
                 // Cerrar modal y recargar datos
-                bootstrap.Modal.getInstance(document.getElementById('modalTransferirLote')).hide();
+                $('#modalTransferirLote').modal('hide');
                 if (typeof tabla !== 'undefined') {
                     tabla.ajax.reload();
                 }

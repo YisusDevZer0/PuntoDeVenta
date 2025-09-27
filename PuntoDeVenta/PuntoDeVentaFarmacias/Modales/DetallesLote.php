@@ -106,8 +106,7 @@ function abrirModalDetallesLote(idLote) {
                 mostrarHistorialLote(data.historial);
                 
                 // Mostrar modal
-                const modal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
-                modal.show();
+                $('#modalDetallesLote').modal('show');
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -306,7 +305,7 @@ function formatearFecha(fecha) {
 function abrirModalActualizarCaducidad() {
     if (loteActual) {
         // Cerrar modal actual
-        bootstrap.Modal.getInstance(document.getElementById('modalDetallesLote')).hide();
+        $('#modalDetallesLote').modal('hide');
         
         // Abrir modal de actualización
         setTimeout(() => {
@@ -318,7 +317,7 @@ function abrirModalActualizarCaducidad() {
 function abrirModalTransferirLote() {
     if (loteActual) {
         // Cerrar modal actual
-        bootstrap.Modal.getInstance(document.getElementById('modalDetallesLote')).hide();
+        $('#modalDetallesLote').modal('hide');
         
         // Abrir modal de transferencia
         setTimeout(() => {

@@ -105,7 +105,7 @@ function guardarActualizacionCaducidad() {
                 text: data.message
             }).then(() => {
                 // Cerrar modal y recargar datos
-                bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad')).hide();
+                $('#modalActualizarCaducidad').modal('hide');
                 if (typeof tabla !== 'undefined') {
                     tabla.ajax.reload();
                 }

@@ -48,8 +48,7 @@ function abrirModalDetallesLote(idLote) {
     console.log('Abriendo modal detalles para lote:', idLote);
     
     // Mostrar modal directamente
-    var myModal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
-    myModal.show();
+    $('#modalDetallesLote').modal('show');
     
     // Cargar datos después de abrir el modal
     setTimeout(() => {
@@ -127,8 +126,7 @@ function abrirModalActualizarCaducidad(idLote, datosLote) {
     }
     
     // Mostrar modal
-    var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
-    myModal.show();
+    $('#modalActualizarCaducidad').modal('show');
     
     // Esperar a que el modal esté completamente visible
     setTimeout(() => {
@@ -180,8 +178,7 @@ function abrirModalTransferirLote(idLote, datosLote) {
     }
     
     // Mostrar modal
-    var myModal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
-    myModal.show();
+    $('#modalTransferirLote').modal('show');
 }
 
 function mostrarDetallesLote(lote) {
@@ -309,8 +306,7 @@ function guardarActualizacionCaducidad() {
         if (data.success) {
             Swal.fire('Éxito', data.message, 'success');
             // Cerrar modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad'));
-            modal.hide();
+            $('#modalActualizarCaducidad').modal('hide');
             // Recargar tabla
             if (typeof tabla !== 'undefined') {
                 tabla.ajax.reload();
@@ -359,8 +355,7 @@ function guardarTransferencia() {
         if (data.success) {
             Swal.fire('Éxito', data.message, 'success');
             // Cerrar modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById('modalTransferirLote'));
-            modal.hide();
+            $('#modalTransferirLote').modal('hide');
             // Recargar tabla
             if (typeof tabla !== 'undefined') {
                 tabla.ajax.reload();
