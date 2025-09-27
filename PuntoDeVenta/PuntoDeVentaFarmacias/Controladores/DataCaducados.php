@@ -248,22 +248,25 @@ function aplicarFiltros() {
 
 // Inicializar DataTable
 tabla = $('#Caducados').DataTable({
-    "bProcessing": true,
+    "processing": true,
     "ordering": true,
     "stateSave": true,
-    "bAutoWidth": false,
+    "autoWidth": false,
     "order": [[ 3, "asc" ]], // Ordenar por fecha de caducidad
-    "sAjaxSource": "Controladores/ArrayCaducados.php",
-    "aoColumns": [
-        { mData: 'cod_barra' },
-        { mData: 'nombre_producto' },
-        { mData: 'lote' },
-        { mData: 'fecha_caducidad' },
-        { mData: 'cantidad_actual' },
-        { mData: 'sucursal' },
-        { mData: 'estado' },
-        { mData: 'alerta' },
-        { mData: 'acciones' }
+    "ajax": {
+        "url": "Controladores/ArrayCaducados.php",
+        "type": "GET"
+    },
+    "columns": [
+        { "data": "cod_barra" },
+        { "data": "nombre_producto" },
+        { "data": "lote" },
+        { "data": "fecha_caducidad" },
+        { "data": "cantidad_actual" },
+        { "data": "sucursal" },
+        { "data": "estado" },
+        { "data": "alerta" },
+        { "data": "acciones" }
     ],
     "lengthMenu": [[20, 50, 100, 250, -1], [20, 50, 100, 250, "Todos"]],
     "language": {
