@@ -543,7 +543,7 @@ function getDevolucionDetalle($devolucion_id) {
             $('#codigoEscaneado').focus();
         }
         
-        // Buscar artículo (igual que en RealizarVentas.php)
+        // Buscar artículo (igual que en RealizarVentas.php y RealizarTraspasos.php)
         function buscarArticulo(codigoEscaneado) {
             var formData = new FormData();
             formData.append('codigoEscaneado', codigoEscaneado);
@@ -559,20 +559,8 @@ function getDevolucionDetalle($devolucion_id) {
                     if ($.isEmptyObject(data)) {
                         alert('Producto no encontrado');
                     } else if (data.codigo || data.descripcion) {
-                        // Convertir al formato esperado para devoluciones
-                        const productoConvertido = {
-                            id: data.id,
-                            codigo: data.codigo,
-                            nombre: data.descripcion,
-                            precio_venta: data.precio,
-                            precio_compra: data.precio_compra || data.precio,
-                            stock: data.stock || 0,
-                            sucursal_id: <?php echo $sucursal_id; ?>,
-                            sucursal_nombre: '<?php echo $row['Nombre_Sucursal']; ?>',
-                            lote: data.lote || null,
-                            fecha_caducidad: data.fecha_caducidad || null
-                        };
-                        mostrarModalProducto(productoConvertido);
+                        // Agregar directamente a la lista de devoluciones (sin modal)
+                        agregarProductoDevolucion(data);
                     }
                     limpiarCampo();
                 },
@@ -580,6 +568,52 @@ function getDevolucionDetalle($devolucion_id) {
                     alert('Error en la búsqueda');
                 }
             });
+        }
+        
+        // Agregar producto a devoluciones (sin modal, directo como en RealizarVentas.php)
+        function agregarProductoDevolucion(producto) {
+            if (!producto || (!producto.id && !producto.descripcion)) {
+                alert('El producto no es válido');
+                return;
+            }
+            
+            // Verificar si ya existe en la lista
+            const existingIndex = window.productosDevolucion ? 
+                window.productosDevolucion.findIndex(p => p.codigo_barras === producto.codigo) : -1;
+            
+            if (existingIndex >= 0) {
+                // Si ya existe, incrementar cantidad
+                window.productosDevolucion[existingIndex].cantidad += 1;
+                mostrarProductos(window.productosDevolucion);
+                actualizarTotales();
+                return;
+            }
+            
+            // Agregar nuevo producto
+            const nuevoProducto = {
+                codigo_barras: producto.codigo,
+                producto: {
+                    id: producto.id,
+                    codigo: producto.codigo,
+                    nombre: producto.descripcion,
+                    precio_venta: producto.precio,
+                    precio_compra: producto.precio_compra || producto.precio,
+                    stock: producto.stock || 0,
+                    lote: producto.lote || null,
+                    fecha_caducidad: producto.fecha_caducidad || null
+                },
+                cantidad: 1,
+                tipo_devolucion: 'Producto no facturado', // Valor por defecto
+                observaciones: ''
+            };
+            
+            if (!window.productosDevolucion) {
+                window.productosDevolucion = [];
+            }
+            
+            window.productosDevolucion.push(nuevoProducto);
+            mostrarProductos(window.productosDevolucion);
+            actualizarTotales();
         }
         
         // Limpiar campo de búsqueda
