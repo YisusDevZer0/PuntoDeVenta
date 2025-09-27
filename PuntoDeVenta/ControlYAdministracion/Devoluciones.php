@@ -188,6 +188,88 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $response['message'] = 'Error al procesar devolución: ' . $e->getMessage();
             }
             break;
+            
+        case 'obtener_devoluciones_procesar':
+            $devoluciones = getDevoluciones($sucursal_id, $fecha_inicio, $fecha_fin, $estatus);
+            $response['success'] = true;
+            $response['devoluciones'] = $devoluciones;
+            break;
+            
+        case 'obtener_detalles_devolucion':
+            $devolucion_id = intval($_POST['devolucion_id']);
+            $devolucion = getDevolucionById($devolucion_id);
+            $detalles = getDevolucionDetalle($devolucion_id);
+            
+            if ($devolucion) {
+                $response['success'] = true;
+                $response['devolucion'] = $devolucion;
+                $response['detalles'] = $detalles;
+            } else {
+                $response['message'] = 'Devolución no encontrada';
+            }
+            break;
+            
+        case 'aprobar_devolucion':
+            $devolucion_id = intval($_POST['devolucion_id']);
+            $sql = "UPDATE Devoluciones SET estatus = 'aprobada' WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $devolucion_id);
+            
+            if ($stmt->execute()) {
+                $response['success'] = true;
+                $response['message'] = 'Devolución aprobada correctamente';
+            } else {
+                $response['message'] = 'Error al aprobar devolución';
+            }
+            break;
+            
+        case 'revertir_devolucion':
+            $devolucion_id = intval($_POST['devolucion_id']);
+            
+            $conn->begin_transaction();
+            try {
+                // Obtener detalles de la devolución
+                $detalles = getDevolucionDetalle($devolucion_id);
+                
+                // Restaurar stock
+                foreach ($detalles as $detalle) {
+                    $sql = "UPDATE Stock_POS 
+                            SET Existencias_R = Existencias_R + ? 
+                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("iii", $detalle['cantidad'], $detalle['producto_id'], $sucursal_id);
+                    $stmt->execute();
+                }
+                
+                // Cambiar estatus
+                $sql = "UPDATE Devoluciones SET estatus = 'revertida' WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $devolucion_id);
+                $stmt->execute();
+                
+                $conn->commit();
+                $response['success'] = true;
+                $response['message'] = 'Devolución revertida correctamente';
+                
+            } catch (Exception $e) {
+                $conn->rollback();
+                $response['message'] = 'Error al revertir devolución: ' . $e->getMessage();
+            }
+            break;
+            
+        case 'cancelar_devolucion':
+            $devolucion_id = intval($_POST['devolucion_id']);
+            $sql = "UPDATE Devoluciones SET estatus = 'cancelada' WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $devolucion_id);
+            
+            if ($stmt->execute()) {
+                $response['success'] = true;
+                $response['message'] = 'Devolución cancelada correctamente';
+            } else {
+                $response['message'] = 'Error al cancelar devolución';
+            }
+            break;
     }
     
     echo json_encode($response);
@@ -256,6 +338,23 @@ function getDevolucionDetalle($devolucion_id) {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+// Obtener devolución por ID
+function getDevolucionById($devolucion_id) {
+    global $conn;
+    
+    $sql = "SELECT d.*, u.Nombre_Apellidos as usuario_nombre, s.Nombre_Sucursal
+            FROM Devoluciones d
+            LEFT JOIN Usuarios_PV u ON d.usuario_id = u.Id_PvUser
+            LEFT JOIN Sucursales s ON d.sucursal_id = s.ID_Sucursal
+            WHERE d.id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $devolucion_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_assoc();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -295,6 +394,9 @@ function getDevolucionDetalle($devolucion_id) {
                         <div class="btn-group">
                             <button class="btn btn-primary" onclick="mostrarNuevaDevolucion()">
                                 <i class="fa-solid fa-plus me-1"></i>Nueva Devolución
+                            </button>
+                            <button class="btn btn-success" onclick="mostrarProcesarDevoluciones()">
+                                <i class="fa-solid fa-cogs me-1"></i>Procesar Devoluciones
                             </button>
                             <button class="btn btn-outline-primary" onclick="mostrarReportes()">
                                 <i class="fa-solid fa-chart-bar me-1"></i>Reportes
@@ -390,6 +492,52 @@ function getDevolucionDetalle($devolucion_id) {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Procesar Devoluciones -->
+                    <div id="procesar-devoluciones" class="card" style="display: none;">
+                        <div class="card-header">
+                            <h5><i class="fa-solid fa-cogs me-2"></i>Procesar Devoluciones Pendientes</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Filtrar por Estatus:</label>
+                                    <select id="filtro-procesar" class="form-select">
+                                        <option value="procesada">Procesadas</option>
+                                        <option value="pendiente">Pendientes</option>
+                                        <option value="cancelada">Canceladas</option>
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha Inicio:</label>
+                                    <input type="date" id="fecha-procesar-inicio" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha Fin:</label>
+                                    <input type="date" id="fecha-procesar-fin" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Folio</th>
+                                            <th>Fecha</th>
+                                            <th>Usuario</th>
+                                            <th>Productos</th>
+                                            <th>Estatus</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-procesar-devoluciones">
+                                        <!-- Los datos se cargarán aquí -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -580,7 +728,17 @@ function getDevolucionDetalle($devolucion_id) {
             $('#busqueda-section').show();
             $('#productos-lista').show();
             $('#lista-devoluciones').hide();
+            $('#procesar-devoluciones').hide();
             $('#codigoEscaneado').focus();
+        }
+        
+        // Mostrar procesar devoluciones
+        function mostrarProcesarDevoluciones() {
+            $('#busqueda-section').hide();
+            $('#productos-lista').hide();
+            $('#lista-devoluciones').hide();
+            $('#procesar-devoluciones').show();
+            cargarDevolucionesProcesar();
         }
         
         // Buscar artículo (igual que en RealizarVentas.php y RealizarTraspasos.php)
@@ -976,6 +1134,71 @@ function getDevolucionDetalle($devolucion_id) {
             });
         }
         
+        // Cargar devoluciones para procesar
+        function cargarDevolucionesProcesar() {
+            const fechaInicio = $('#fecha-procesar-inicio').val();
+            const fechaFin = $('#fecha-procesar-fin').val();
+            const estatus = $('#filtro-procesar').val();
+            
+            $.ajax({
+                url: 'Devoluciones.php',
+                method: 'POST',
+                data: {
+                    action: 'obtener_devoluciones_procesar',
+                    fecha_inicio: fechaInicio,
+                    fecha_fin: fechaFin,
+                    estatus: estatus
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        mostrarDevolucionesProcesar(response.devoluciones);
+                    }
+                }
+            });
+        }
+        
+        // Mostrar devoluciones para procesar
+        function mostrarDevolucionesProcesar(devoluciones) {
+            const tbody = $('#tabla-procesar-devoluciones');
+            tbody.empty();
+            
+            if (devoluciones.length === 0) {
+                tbody.html('<tr><td colspan="6" class="text-center">No hay devoluciones para procesar</td></tr>');
+                return;
+            }
+            
+            devoluciones.forEach(function(devolucion) {
+                const estatusClass = `status-${devolucion.estatus}`;
+                const html = `
+                    <tr>
+                        <td><strong>${devolucion.folio}</strong></td>
+                        <td>${formatearFecha(devolucion.fecha)}</td>
+                        <td>${devolucion.usuario_nombre || 'N/A'}</td>
+                        <td>${devolucion.total_productos || 0}</td>
+                        <td><span class="badge status-badge ${estatusClass}">${devolucion.estatus}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info me-1" onclick="verDetallesProcesar(${devolucion.id})">
+                                <i class="fa-solid fa-eye"></i> Ver
+                            </button>
+                            ${devolucion.estatus === 'procesada' ? 
+                                `<button class="btn btn-sm btn-warning me-1" onclick="revertirDevolucion(${devolucion.id})">
+                                    <i class="fa-solid fa-undo"></i> Revertir
+                                </button>` : 
+                                `<button class="btn btn-sm btn-success me-1" onclick="aprobarDevolucion(${devolucion.id})">
+                                    <i class="fa-solid fa-check"></i> Aprobar
+                                </button>`
+                            }
+                            <button class="btn btn-sm btn-danger" onclick="cancelarDevolucionProcesar(${devolucion.id})">
+                                <i class="fa-solid fa-times"></i> Cancelar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(html);
+            });
+        }
+        
         // Mostrar devoluciones en tabla
         function mostrarDevoluciones(devoluciones) {
             const tbody = $('#tabla-devoluciones');
@@ -1109,6 +1332,95 @@ function getDevolucionDetalle($devolucion_id) {
         // Formatear fecha
         function formatearFecha(fecha) {
             return new Date(fecha).toLocaleDateString('es-ES');
+        }
+        
+        // Ver detalles para procesar
+        function verDetallesProcesar(devolucionId) {
+            $.ajax({
+                url: 'Devoluciones.php',
+                method: 'POST',
+                data: {
+                    action: 'obtener_detalles_devolucion',
+                    devolucion_id: devolucionId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        mostrarModalDetallesProcesar(response.devolucion, response.detalles);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+        
+        // Aprobar devolución
+        function aprobarDevolucion(devolucionId) {
+            if (confirm('¿Está seguro de aprobar esta devolución?')) {
+                $.ajax({
+                    url: 'Devoluciones.php',
+                    method: 'POST',
+                    data: {
+                        action: 'aprobar_devolucion',
+                        devolucion_id: devolucionId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Devolución aprobada correctamente');
+                            cargarDevolucionesProcesar();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Revertir devolución
+        function revertirDevolucion(devolucionId) {
+            if (confirm('¿Está seguro de revertir esta devolución? Esto restaurará el stock.')) {
+                $.ajax({
+                    url: 'Devoluciones.php',
+                    method: 'POST',
+                    data: {
+                        action: 'revertir_devolucion',
+                        devolucion_id: devolucionId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Devolución revertida correctamente');
+                            cargarDevolucionesProcesar();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Cancelar devolución
+        function cancelarDevolucionProcesar(devolucionId) {
+            if (confirm('¿Está seguro de cancelar esta devolución?')) {
+                $.ajax({
+                    url: 'Devoluciones.php',
+                    method: 'POST',
+                    data: {
+                        action: 'cancelar_devolucion',
+                        devolucion_id: devolucionId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Devolución cancelada correctamente');
+                            cargarDevolucionesProcesar();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
         }
     </script>
 
