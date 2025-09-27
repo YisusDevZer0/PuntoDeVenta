@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 include_once "../dbconect.php";
 
 try {
-    $sql = "SELECT id, nombre FROM Sucursales WHERE estado = 'activo' ORDER BY nombre";
+    $sql = "SELECT id, Nombre as nombre FROM Sucursales WHERE estado = 'activo' ORDER BY Nombre";
     $result = $con->query($sql);
     
     if (!$result) {

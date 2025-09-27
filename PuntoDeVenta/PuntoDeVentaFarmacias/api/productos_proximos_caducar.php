@@ -22,7 +22,7 @@ try {
                 plc.precio_venta,
                 plc.fecha_registro,
                 plc.observaciones,
-                s.nombre as sucursal,
+                s.Nombre as sucursal,
                 DATEDIFF(plc.fecha_caducidad, CURDATE()) as dias_restantes
             FROM productos_lotes_caducidad plc
             LEFT JOIN Sucursales s ON plc.sucursal_id = s.id
