@@ -18,10 +18,9 @@ try {
                 plc.precio_venta,
                 plc.fecha_registro,
                 plc.observaciones,
-                s.Nombre as sucursal,
+                CONCAT('Sucursal ', plc.sucursal_id) as sucursal,
                 DATEDIFF(plc.fecha_caducidad, CURDATE()) as dias_restantes
             FROM productos_lotes_caducidad plc
-            LEFT JOIN Sucursales s ON plc.sucursal_id = s.id
             WHERE plc.estado = 'activo' 
             AND plc.cantidad_actual > 0
             ORDER BY plc.fecha_caducidad ASC";

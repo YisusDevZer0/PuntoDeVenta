@@ -385,4 +385,3 @@ function guardarTransferencia() {
             include "Modales/DetallesLote.php";
             include "Modales/Modales_Errores.php";
             include "footer.php";?>
-
