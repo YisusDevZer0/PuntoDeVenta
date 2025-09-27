@@ -510,7 +510,7 @@ function getDevolucionDetalle($devolucion_id) {
             $('#codigoEscaneado').focus();
         }
         
-        // Buscar artículo (simplificado como en RealizarTraspasos.php)
+        // Buscar artículo usando el controlador existente
         function buscarArticulo() {
             const codigoEscaneado = $('#codigoEscaneado').val().trim();
             if (!codigoEscaneado) {
@@ -519,18 +519,30 @@ function getDevolucionDetalle($devolucion_id) {
             }
             
             $.ajax({
-                url: 'api/buscar_producto_devolucion.php',
-                method: 'GET',
+                url: 'api/buscar_productos.php',
+                method: 'POST',
                 data: {
-                    q: codigoEscaneado,
-                    tipo: 'ambos'
+                    query: codigoEscaneado
                 },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success && response.productos.length > 0) {
                         // Si hay productos, mostrar el primero directamente
                         const producto = response.productos[0];
-                        mostrarModalProducto(producto);
+                        // Convertir al formato esperado
+                        const productoConvertido = {
+                            id: producto.ID_Prod_POS,
+                            codigo: producto.Cod_Barra,
+                            nombre: producto.Nombre_Prod,
+                            precio_venta: producto.Precio_Venta,
+                            precio_compra: producto.Precio_C,
+                            stock: producto.Existencias_R,
+                            sucursal_id: response.sucursal,
+                            sucursal_nombre: 'Sucursal Actual',
+                            lote: null,
+                            fecha_caducidad: null
+                        };
+                        mostrarModalProducto(productoConvertido);
                     } else {
                         alert('Producto no encontrado');
                     }
