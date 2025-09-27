@@ -491,13 +491,46 @@ function getDevolucionDetalle($devolucion_id) {
         let scannerActivo = false;
         
         // Inicializar página
+        var isScannerInput = false;
+
         $(document).ready(function() {
             cargarDevoluciones();
             
-            // Enter en búsqueda de productos
-            $('#codigoEscaneado').on('keypress', function(e) {
-                if (e.which === 13) {
-                    buscarArticulo();
+            // Enter en búsqueda de productos (igual que RealizarVentas.php)
+            $('#codigoEscaneado').keyup(function (event) {
+                if (event.which === 13) { // Verifica si la tecla presionada es "Enter"
+                    if (!isScannerInput) { // Verifica si el evento no viene del escáner
+                        var codigoEscaneado = $('#codigoEscaneado').val();
+                        buscarArticulo(codigoEscaneado);
+                        event.preventDefault(); // Evita que el formulario se envíe al presionar "Enter"
+                    }
+                    isScannerInput = false; // Restablece la bandera del escáner
+                }
+            });
+            
+            // Autocompletado (igual que RealizarVentas.php)
+            $('#codigoEscaneado').autocomplete({
+                source: function (request, response) {
+                    // Realiza una solicitud AJAX para obtener los resultados de autocompletado
+                    $.ajax({
+                        url: 'Controladores/autocompletadoAdministrativo.php',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3, // Especifica la cantidad mínima de caracteres para activar el autocompletado
+                select: function (event, ui) {
+                    // Cuando se selecciona un resultado del autocompletado, llamar a la función buscarArticulo() con el código seleccionado
+                    var codigoEscaneado = ui.item.value;
+                    isScannerInput = true; // Establece la bandera del escáner
+                    $('#codigoEscaneado').val(codigoEscaneado);
+                    buscarArticulo(codigoEscaneado);
                 }
             });
         });
@@ -510,47 +543,49 @@ function getDevolucionDetalle($devolucion_id) {
             $('#codigoEscaneado').focus();
         }
         
-        // Buscar artículo usando el controlador existente
-        function buscarArticulo() {
-            const codigoEscaneado = $('#codigoEscaneado').val().trim();
-            if (!codigoEscaneado) {
-                alert('Ingrese un código de barras o nombre del producto');
-                return;
-            }
-            
+        // Buscar artículo (igual que en RealizarVentas.php)
+        function buscarArticulo(codigoEscaneado) {
+            var formData = new FormData();
+            formData.append('codigoEscaneado', codigoEscaneado);
+
             $.ajax({
-                url: 'api/buscar_productos.php',
-                method: 'POST',
-                data: {
-                    query: codigoEscaneado
-                },
+                url: "Controladores/escaner_articulo_administrativo.php",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 dataType: 'json',
-                success: function(response) {
-                    if (response.success && response.productos.length > 0) {
-                        // Si hay productos, mostrar el primero directamente
-                        const producto = response.productos[0];
-                        // Convertir al formato esperado
+                success: function (data) {
+                    if ($.isEmptyObject(data)) {
+                        alert('Producto no encontrado');
+                    } else if (data.codigo || data.descripcion) {
+                        // Convertir al formato esperado para devoluciones
                         const productoConvertido = {
-                            id: producto.ID_Prod_POS,
-                            codigo: producto.Cod_Barra,
-                            nombre: producto.Nombre_Prod,
-                            precio_venta: producto.Precio_Venta,
-                            precio_compra: producto.Precio_C,
-                            stock: producto.Existencias_R,
-                            sucursal_id: response.sucursal,
-                            sucursal_nombre: 'Sucursal Actual',
-                            lote: null,
-                            fecha_caducidad: null
+                            id: data.id,
+                            codigo: data.codigo,
+                            nombre: data.descripcion,
+                            precio_venta: data.precio,
+                            precio_compra: data.precio_compra || data.precio,
+                            stock: data.stock || 0,
+                            sucursal_id: <?php echo $sucursal_id; ?>,
+                            sucursal_nombre: '<?php echo $row['Nombre_Sucursal']; ?>',
+                            lote: data.lote || null,
+                            fecha_caducidad: data.fecha_caducidad || null
                         };
                         mostrarModalProducto(productoConvertido);
-                    } else {
-                        alert('Producto no encontrado');
                     }
+                    limpiarCampo();
                 },
-                error: function() {
-                    alert('Error al buscar producto');
+                error: function (data) {
+                    alert('Error en la búsqueda');
                 }
             });
+        }
+        
+        // Limpiar campo de búsqueda
+        function limpiarCampo() {
+            $('#codigoEscaneado').val('');
+            $('#codigoEscaneado').focus();
         }
         
         // Mostrar modal de producto
