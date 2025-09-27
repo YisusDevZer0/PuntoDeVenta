@@ -31,6 +31,7 @@
                             <a href="RegistrosdeEnergia" class="dropdown-item"><i class="fa-solid fa-lightbulb"></i>Registro de energía</a>
                             <a href="BitacoraLimpieza" class="dropdown-item"><i class="fa-solid fa-broom"></i>Bitácora de limpieza</a>
                             <a href="TareasPorHacer" class="dropdown-item"><i class="fa-solid fa-list"></i>Mis Tareas</a>
+                            <a href="Devoluciones" class="dropdown-item"><i class="fa-solid fa-undo"></i>Devoluciones</a>
                             <!-- <a href="Mensajes" class="dropdown-item"><i class="fa-solid fa-message"></i>Mensajes</a>
                             <a href="Recordatorios" class="dropdown-item"><i class="fa-solid fa-bell"></i>Crear recordatorios</a> -->
                         </div>
@@ -85,7 +86,7 @@
                             <a href="PedidosFarmacia" class="dropdown-item"><i class="fa-solid fa-shopping-cart"></i>Gestión de Pedidos</a>
                             <a href="ConteoDiario" class="dropdown-item"><i class="fa-solid fa-clipboard-list"></i>Conteo diario</a>
                             <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Devoluciones</a>
-                            <a href="Cotizaciones" class="dropdown-item"><i class="fa-solid fa-calendar-xmark"></i>Caducados</a>
+                            <a href="Caducados" class="dropdown-item"><i class="fa-solid fa-calendar-xmark"></i>Caducados</a>
                         </div>
                     </div>
 
