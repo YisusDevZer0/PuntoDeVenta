@@ -303,36 +303,18 @@ function getDevolucionDetalle($devolucion_id) {
                     </div>
                     
                     <!-- Búsqueda de Productos -->
-                    <div id="busqueda-section" class="search-container" style="display: none;">
-                        <div class="row">
-                            <div class="col-12">
-                                <h4><i class="fa-solid fa-search me-2"></i>Buscar Productos</h4>
-                                <p class="mb-3">Busca productos por código de barras o nombre</p>
-                                
-                                <!-- Barra de búsqueda -->
-                                <div class="row mb-3">
-                                    <div class="col-md-8">
-                                        <div class="input-group">
-                                            <input type="text" id="busqueda-producto" class="form-control form-control-lg" 
-                                                   placeholder="Código de barras o nombre del producto..." autofocus>
-                                            <button class="btn btn-primary" onclick="buscarProductos()">
-                                                <i class="fa-solid fa-search me-1"></i>Buscar
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select id="tipo-busqueda" class="form-select form-select-lg">
-                                            <option value="ambos">Código y Nombre</option>
-                                            <option value="codigo">Solo Código</option>
-                                            <option value="nombre">Solo Nombre</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <!-- Resultados de búsqueda -->
-                                <div id="resultados-busqueda" class="row" style="display: none;">
-                                    <!-- Los productos se mostrarán aquí -->
-                                </div>
+                    <div id="busqueda-section" class="card" style="display: none;">
+                        <div class="card-body">
+                            <h5><i class="fa-solid fa-search me-2"></i>Buscar Productos</h5>
+                            <p class="mb-3">Escanea o ingresa el código de barras del producto a devolver</p>
+                            
+                            <div class="form-group mb-3">
+                                <label for="codigoEscaneado" class="form-label">
+                                    <i class="fas fa-barcode me-1"></i>
+                                    <span>Producto</span>
+                                </label>
+                                <input type="text" class="form-control" name="codigoEscaneado" id="codigoEscaneado" 
+                                       placeholder="Código de barras o nombre del producto..." autofocus>
                             </div>
                         </div>
                     </div>
@@ -513,9 +495,9 @@ function getDevolucionDetalle($devolucion_id) {
             cargarDevoluciones();
             
             // Enter en búsqueda de productos
-            $('#busqueda-producto').on('keypress', function(e) {
+            $('#codigoEscaneado').on('keypress', function(e) {
                 if (e.which === 13) {
-                    buscarProductos();
+                    buscarArticulo();
                 }
             });
         });
@@ -525,21 +507,14 @@ function getDevolucionDetalle($devolucion_id) {
             $('#busqueda-section').show();
             $('#productos-lista').show();
             $('#lista-devoluciones').hide();
-            $('#busqueda-producto').focus();
+            $('#codigoEscaneado').focus();
         }
         
-        // Buscar productos
-        function buscarProductos() {
-            const busqueda = $('#busqueda-producto').val().trim();
-            const tipo = $('#tipo-busqueda').val();
-            
-            if (!busqueda) {
-                alert('Ingrese un término de búsqueda');
-                return;
-            }
-            
-            if (busqueda.length < 2) {
-                alert('Ingrese al menos 2 caracteres para buscar');
+        // Buscar artículo (simplificado como en RealizarTraspasos.php)
+        function buscarArticulo() {
+            const codigoEscaneado = $('#codigoEscaneado').val().trim();
+            if (!codigoEscaneado) {
+                alert('Ingrese un código de barras o nombre del producto');
                 return;
             }
             
@@ -547,66 +522,23 @@ function getDevolucionDetalle($devolucion_id) {
                 url: 'api/buscar_producto_devolucion.php',
                 method: 'GET',
                 data: {
-                    q: busqueda,
-                    tipo: tipo
+                    q: codigoEscaneado,
+                    tipo: 'ambos'
                 },
                 dataType: 'json',
                 success: function(response) {
-                    if (response.success) {
-                        mostrarResultadosBusqueda(response.productos);
+                    if (response.success && response.productos.length > 0) {
+                        // Si hay productos, mostrar el primero directamente
+                        const producto = response.productos[0];
+                        mostrarModalProducto(producto);
                     } else {
-                        alert(response.error);
+                        alert('Producto no encontrado');
                     }
                 },
                 error: function() {
-                    alert('Error al buscar productos');
+                    alert('Error al buscar producto');
                 }
             });
-        }
-        
-        // Mostrar resultados de búsqueda
-        function mostrarResultadosBusqueda(productos) {
-            const container = $('#resultados-busqueda');
-            container.empty();
-            
-            if (productos.length === 0) {
-                container.html('<div class="alert alert-warning text-center">No se encontraron productos</div>');
-                container.show();
-                return;
-            }
-            
-            productos.forEach(function(producto) {
-                const html = `
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="card producto-card" onclick="seleccionarProducto(${JSON.stringify(producto).replace(/"/g, '&quot;')})">
-                            <div class="card-body">
-                                <h6 class="card-title">${producto.nombre}</h6>
-                                <p class="card-text">
-                                    <small class="text-muted">
-                                        <strong>Código:</strong> ${producto.codigo}<br>
-                                        <strong>Stock:</strong> ${producto.stock}<br>
-                                        <strong>Precio:</strong> $${producto.precio_venta}<br>
-                                        ${producto.lote ? `<strong>Lote:</strong> ${producto.lote}<br>` : ''}
-                                        ${producto.fecha_caducidad ? `<strong>Caducidad:</strong> ${producto.fecha_caducidad}` : ''}
-                                    </small>
-                                </p>
-                                <button class="btn btn-sm btn-primary w-100">
-                                    <i class="fa-solid fa-plus me-1"></i>Agregar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.append(html);
-            });
-            
-            container.show();
-        }
-        
-        // Seleccionar producto
-        function seleccionarProducto(producto) {
-            window.productoSeleccionado = producto;
-            mostrarModalProducto(producto);
         }
         
         // Mostrar modal de producto
@@ -677,8 +609,7 @@ function getDevolucionDetalle($devolucion_id) {
             }
             
             $('#modalProducto').modal('hide');
-            $('#busqueda-producto').val('');
-            $('#resultados-busqueda').hide();
+            $('#codigoEscaneado').val('');
             mostrarProductos(window.productosDevolucion);
             actualizarTotales();
         }
@@ -867,9 +798,8 @@ function getDevolucionDetalle($devolucion_id) {
                 $('#busqueda-section').hide();
                 $('#productos-lista').hide();
                 $('#lista-devoluciones').show();
-                $('#busqueda-producto').val('');
+                $('#codigoEscaneado').val('');
                 $('#observaciones-generales').val('');
-                $('#resultados-busqueda').hide();
             }
         }
         
@@ -1034,52 +964,12 @@ function getDevolucionDetalle($devolucion_id) {
     </script>
 
     <style>
-        .search-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            padding: 2rem;
-            color: white;
-            margin-bottom: 2rem;
-        }
-        
-        .producto-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .producto-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-color: #007bff;
-        }
-        
-        .producto-card .card-body {
-            padding: 1rem;
-        }
-        
-        .producto-card .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-        
-        .producto-card .card-text {
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
         .product-item {
             border: 1px solid #dee2e6;
             border-radius: 10px;
             padding: 1rem;
             margin-bottom: 1rem;
             background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-        .product-item:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
         }
         .tipo-badge {
             font-size: 0.8rem;
@@ -1093,28 +983,6 @@ function getDevolucionDetalle($devolucion_id) {
             border-radius: 10px;
             padding: 1.5rem;
             margin-top: 1rem;
-        }
-        .btn-scanner {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            border: none;
-            color: white;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .btn-scanner:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-        }
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .table-responsive {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .status-badge {
             font-size: 0.8rem;
