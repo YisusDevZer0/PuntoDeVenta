@@ -65,7 +65,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h6 class="mb-0" style="color:#0172b6;">Control de Caducados</h6>
                 <div>
-                    <button class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalRegistrarLote">
+                    <button class="btn btn-primary btn-sm me-2" onclick="abrirModalRegistrarLote()">
                         <i class="fa fa-plus me-1"></i>Registrar Lote
                     </button>
                 </div>
