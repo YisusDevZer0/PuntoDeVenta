@@ -48,7 +48,8 @@ function abrirModalDetallesLote(idLote) {
     console.log('Abriendo modal detalles para lote:', idLote);
     
     // Mostrar modal directamente
-    $('#modalDetallesLote').modal('show');
+    var myModal = new bootstrap.Modal(document.getElementById('modalDetallesLote'));
+    myModal.show();
     
     // Cargar datos después de abrir el modal
     setTimeout(() => {
@@ -126,7 +127,8 @@ function abrirModalActualizarCaducidad(idLote, datosLote) {
     }
     
     // Mostrar modal
-    $('#modalActualizarCaducidad').modal('show');
+    var myModal = new bootstrap.Modal(document.getElementById('modalActualizarCaducidad'));
+    myModal.show();
     
     // Esperar a que el modal esté completamente visible
     setTimeout(() => {
@@ -178,7 +180,8 @@ function abrirModalTransferirLote(idLote, datosLote) {
     }
     
     // Mostrar modal
-    $('#modalTransferirLote').modal('show');
+    var myModal = new bootstrap.Modal(document.getElementById('modalTransferirLote'));
+    myModal.show();
 }
 
 function mostrarDetallesLote(lote) {
@@ -306,7 +309,8 @@ function guardarActualizacionCaducidad() {
         if (data.success) {
             Swal.fire('Éxito', data.message, 'success');
             // Cerrar modal
-            $('#modalActualizarCaducidad').modal('hide');
+            var modal = bootstrap.Modal.getInstance(document.getElementById('modalActualizarCaducidad'));
+            modal.hide();
             // Recargar tabla
             if (typeof tabla !== 'undefined') {
                 tabla.ajax.reload();
@@ -355,7 +359,8 @@ function guardarTransferencia() {
         if (data.success) {
             Swal.fire('Éxito', data.message, 'success');
             // Cerrar modal
-            $('#modalTransferirLote').modal('hide');
+            var modal = bootstrap.Modal.getInstance(document.getElementById('modalTransferirLote'));
+            modal.hide();
             // Recargar tabla
             if (typeof tabla !== 'undefined') {
                 tabla.ajax.reload();
@@ -378,5 +383,6 @@ function guardarTransferencia() {
             include "Modales/ActualizarCaducidad.php";
             include "Modales/TransferirLote.php";
             include "Modales/DetallesLote.php";
+            include "Modales/ConfiguracionCaducados.php";
             include "Modales/Modales_Errores.php";
             include "footer.php";?>
