@@ -255,6 +255,7 @@ $(document).ready(function () {
     function validarFormulario() {
         var clienteInput = $("#clienteInput");
         var errores = [];
+        var valorCliente = null;
 
         // Verificar que el elemento existe
         if (clienteInput.length === 0) {
@@ -262,7 +263,7 @@ $(document).ready(function () {
             errores.push("No se encontró el campo de cliente en el formulario");
         } else {
             // Validación del cliente - manejar casos undefined/null
-            var valorCliente = clienteInput.val();
+            valorCliente = clienteInput.val();
             if (!valorCliente || valorCliente === "" || valorCliente.trim() === "") {
                 errores.push("El nombre del cliente es obligatorio y no puede estar vacío");
             } else if (valorCliente.trim().length < 2) {
