@@ -166,7 +166,7 @@ try {
             $values[] = $_POST["AnaquelSeleccionado"][$i];
             $values[] = $_POST["RepisaSeleccionada"][$i];
             
-            $valueTypes .= 'ssssddiiissssss'; // Tipos correctos: s=string, d=double, i=integer
+            $valueTypes .= 'ssssddiiisssssss'; // Tipos correctos: s=string, d=double, i=integer (16 caracteres para 16 campos)
         }
     }
     
@@ -210,7 +210,26 @@ try {
     
     // Verificar que los tipos de datos coincidan con los valores
     if (strlen($valueTypes) !== count($values)) {
-        throw new Exception("Error de tipos de datos: se esperaban " . strlen($valueTypes) . " parámetros pero se proporcionaron " . count($values));
+        logServerError('error_tipos_datos', "Discrepancia en tipos de datos", [
+            'tipos_length' => strlen($valueTypes),
+            'values_count' => count($values),
+            'value_types' => $valueTypes,
+            'sample_values' => array_slice($values, 0, 5)
+        ]);
+        throw new Exception("Error de tipos de datos: se esperaban " . strlen($valueTypes) . " parámetros pero se proporcionaron " . count($values) . ". Tipos: '$valueTypes'");
+    }
+    
+    // Verificar que cada registro tenga exactamente 16 campos
+    $expectedFieldsPerRecord = 16;
+    $totalExpectedParams = $ProContador * $expectedFieldsPerRecord;
+    if (count($values) !== $totalExpectedParams) {
+        logServerError('error_campos_registro', "Discrepancia en campos por registro", [
+            'registros_procesados' => $ProContador,
+            'campos_esperados_por_registro' => $expectedFieldsPerRecord,
+            'total_parametros_esperados' => $totalExpectedParams,
+            'total_valores_recibidos' => count($values)
+        ]);
+        throw new Exception("Error en estructura de datos: se esperaban $totalExpectedParams parámetros ($ProContador registros × $expectedFieldsPerRecord campos) pero se recibieron " . count($values));
     }
     
     $stmt = mysqli_prepare($conn, $query);
