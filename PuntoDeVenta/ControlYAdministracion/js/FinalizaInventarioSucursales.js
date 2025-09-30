@@ -256,11 +256,18 @@ $(document).ready(function () {
         var clienteInput = $("#clienteInput");
         var errores = [];
 
-        // Validación del cliente
-        if (clienteInput.val() === "" || clienteInput.val().trim() === "") {
-            errores.push("El nombre del cliente es obligatorio y no puede estar vacío");
-        } else if (clienteInput.val().trim().length < 2) {
-            errores.push("El nombre del cliente debe tener al menos 2 caracteres");
+        // Verificar que el elemento existe
+        if (clienteInput.length === 0) {
+            console.warn('⚠️ Elemento #clienteInput no encontrado');
+            errores.push("No se encontró el campo de cliente en el formulario");
+        } else {
+            // Validación del cliente - manejar casos undefined/null
+            var valorCliente = clienteInput.val();
+            if (!valorCliente || valorCliente === "" || valorCliente.trim() === "") {
+                errores.push("El nombre del cliente es obligatorio y no puede estar vacío");
+            } else if (valorCliente.trim().length < 2) {
+                errores.push("El nombre del cliente debe tener al menos 2 caracteres");
+            }
         }
 
         // Validación de otros campos si existen
@@ -270,14 +277,15 @@ $(document).ready(function () {
             var valor = campo.val();
             var nombre = campo.attr('name') || campo.attr('id') || 'campo';
             
-            if (!valor || valor.trim() === '') {
+            // Manejar casos undefined/null de manera segura
+            if (!valor || (typeof valor === 'string' && valor.trim() === '')) {
                 errores.push(`El campo "${nombre}" es obligatorio`);
             }
         });
 
         if (errores.length > 0) {
             logError('validacion_formulario', errores.join('; '), {
-                clienteInput: clienteInput.val(),
+                clienteInput: valorCliente || 'undefined/null',
                 camposRequeridos: camposRequeridos.length
             });
             
