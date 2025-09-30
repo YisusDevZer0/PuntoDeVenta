@@ -98,9 +98,17 @@ try {
     }
     
     $contador = count($_POST["IdBasedatos"]);
+    
+    // Verificar límites de memoria y procesamiento
+    if ($contador > 1000) {
+        throw new Exception("Demasiados registros para procesar de una vez. Máximo permitido: 1000, recibidos: $contador");
+    }
+    
     logServerError('inicio_proceso', "Iniciando procesamiento de $contador registros", [
         'campos_recibidos' => array_keys($_POST),
-        'tamaño_datos' => array_map('count', $_POST)
+        'tamaño_datos' => array_map('count', $_POST),
+        'memoria_inicial' => memory_get_usage(true),
+        'memoria_peak_inicial' => memory_get_peak_usage(true)
     ]);
     
     // Validar que todos los arrays tengan el mismo tamaño
@@ -189,19 +197,55 @@ try {
     
     logServerError('ejecutando_consulta', "Ejecutando inserción de $ProContador registros", [
         'query_length' => strlen($query),
-        'values_count' => count($values)
+        'values_count' => count($values),
+        'value_types_length' => strlen($valueTypes),
+        'placeholders_count' => count($placeholders),
+        'memoria_antes_consulta' => memory_get_usage(true)
     ]);
+    
+    // Verificar que la consulta no sea demasiado larga
+    if (strlen($query) > 1000000) { // 1MB
+        throw new Exception('La consulta SQL es demasiado larga. Reduce la cantidad de registros a procesar.');
+    }
+    
+    // Verificar que los tipos de datos coincidan con los valores
+    if (strlen($valueTypes) !== count($values)) {
+        throw new Exception("Error de tipos de datos: se esperaban " . strlen($valueTypes) . " parámetros pero se proporcionaron " . count($values));
+    }
     
     $stmt = mysqli_prepare($conn, $query);
     
     if (!$stmt) {
-        throw new Exception('Error al preparar la consulta SQL: ' . mysqli_error($conn));
+        $error = mysqli_error($conn);
+        logServerError('error_preparacion_sql', $error, [
+            'query_preview' => substr($query, 0, 500) . '...',
+            'query_length' => strlen($query)
+        ]);
+        throw new Exception('Error al preparar la consulta SQL: ' . $error);
     }
     
-    // Enlazar parámetros
-    if (!mysqli_stmt_bind_param($stmt, $valueTypes, ...$values)) {
+    // Enlazar parámetros con validación adicional
+    try {
+        $bindResult = mysqli_stmt_bind_param($stmt, $valueTypes, ...$values);
+        if (!$bindResult) {
+            $error = mysqli_stmt_error($stmt);
+            mysqli_stmt_close($stmt);
+            logServerError('error_bind_param', $error, [
+                'value_types' => $valueTypes,
+                'values_count' => count($values),
+                'sample_values' => array_slice($values, 0, 5) // Primeros 5 valores para debugging
+            ]);
+            throw new Exception('Error al enlazar parámetros de la consulta: ' . $error);
+        }
+    } catch (Error $bindError) {
         mysqli_stmt_close($stmt);
-        throw new Exception('Error al enlazar parámetros de la consulta: ' . mysqli_stmt_error($stmt));
+        logServerError('error_fatal_bind', $bindError->getMessage(), [
+            'value_types' => $valueTypes,
+            'values_count' => count($values),
+            'sample_values' => array_slice($values, 0, 5),
+            'memoria_en_error' => memory_get_usage(true)
+        ]);
+        throw new Exception('Error fatal al enlazar parámetros: ' . $bindError->getMessage());
     }
     
     // Ejecutar consulta
@@ -244,25 +288,69 @@ try {
         'timestamp' => date('Y-m-d H:i:s')
     ];
 } catch (Error $e) {
-    logServerError('error_fatal', $e->getMessage(), [
+    $errorDetails = [
         'archivo' => $e->getFile(),
         'linea' => $e->getLine(),
-        'trace' => $e->getTraceAsString()
-    ]);
+        'trace' => $e->getTraceAsString(),
+        'tipo_error' => get_class($e),
+        'codigo_error' => $e->getCode(),
+        'datos_post' => $_POST,
+        'memoria_usada' => memory_get_usage(true),
+        'memoria_peak' => memory_get_peak_usage(true)
+    ];
+    
+    logServerError('error_fatal', $e->getMessage(), $errorDetails);
+    
+    // En modo desarrollo, mostrar más detalles
+    $isDevelopment = (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) || 
+                     (isset($_SERVER['SERVER_NAME']) && strpos($_SERVER['SERVER_NAME'], 'localhost') !== false);
     
     $response = [
         'status' => 'error',
-        'message' => 'Error interno del servidor. Contacta al administrador.',
+        'message' => $isDevelopment ? 
+            'Error fatal del servidor: ' . $e->getMessage() : 
+            'Error interno del servidor. Contacta al administrador.',
         'code' => 'FATAL_ERROR',
-        'timestamp' => date('Y-m-d H:i:s')
+        'timestamp' => date('Y-m-d H:i:s'),
+        'debug_info' => $isDevelopment ? $errorDetails : null
     ];
 } finally {
     // Cerrar conexión si está abierta
     if (isset($conn) && $conn) {
         mysqli_close($conn);
     }
+    
+    // Log final de memoria
+    logServerError('final_proceso', "Proceso completado", [
+        'memoria_final' => memory_get_usage(true),
+        'memoria_peak_final' => memory_get_peak_usage(true)
+    ]);
 }
 
-// Enviar respuesta JSON
-echo json_encode($response, JSON_UNESCAPED_UNICODE);
+// Enviar respuesta JSON con manejo de errores
+try {
+    $jsonResponse = json_encode($response, JSON_UNESCAPED_UNICODE);
+    if ($jsonResponse === false) {
+        // Si hay error en JSON, enviar respuesta básica
+        $fallbackResponse = [
+            'status' => 'error',
+            'message' => 'Error al generar respuesta JSON',
+            'code' => 'JSON_ERROR',
+            'timestamp' => date('Y-m-d H:i:s')
+        ];
+        echo json_encode($fallbackResponse);
+    } else {
+        echo $jsonResponse;
+    }
+} catch (Error $jsonError) {
+    // Error fatal al generar JSON
+    logServerError('error_fatal_json', $jsonError->getMessage(), [
+        'response_data' => $response,
+        'json_error' => json_last_error_msg()
+    ]);
+    
+    // Respuesta de emergencia
+    http_response_code(500);
+    echo '{"status":"error","message":"Error interno del servidor","code":"FATAL_JSON_ERROR"}';
+}
 ?>
