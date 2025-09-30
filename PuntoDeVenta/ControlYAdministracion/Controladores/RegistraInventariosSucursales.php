@@ -1,6 +1,8 @@
 <?php
-// Limpiar cualquier output previo
-ob_clean();
+// Limpiar cualquier output previo y configurar buffer
+while (ob_get_level()) {
+    ob_end_clean();
+}
 
 // Configurar headers para JSON y manejo de errores
 header('Content-Type: application/json; charset=utf-8');
@@ -352,52 +354,17 @@ try {
     ]);
 }
 
-// Enviar respuesta JSON con manejo de errores
-try {
-    // Limpiar cualquier output previo
-    if (ob_get_level()) {
-        ob_clean();
-    }
-    
-    $jsonResponse = json_encode($response, JSON_UNESCAPED_UNICODE);
-    if ($jsonResponse === false) {
-        // Si hay error en JSON, enviar respuesta básica
-        $fallbackResponse = [
-            'status' => 'error',
-            'message' => 'Error al generar respuesta JSON',
-            'code' => 'JSON_ERROR',
-            'timestamp' => date('Y-m-d H:i:s'),
-            'json_error' => json_last_error_msg()
-        ];
-        
-        logServerError('error_json_encode', 'Error al codificar JSON', [
-            'response' => $response,
-            'json_error' => json_last_error_msg()
-        ]);
-        
-        echo json_encode($fallbackResponse, JSON_UNESCAPED_UNICODE);
-    } else {
-        // Verificar que la respuesta JSON sea válida
-        $testDecode = json_decode($jsonResponse, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Error('JSON generado no es válido: ' . json_last_error_msg());
-        }
-        
-        echo $jsonResponse;
-    }
-} catch (Error $jsonError) {
-    // Error fatal al generar JSON
-    logServerError('error_fatal_json', $jsonError->getMessage(), [
-        'response_data' => $response,
-        'json_error' => json_last_error_msg()
-    ]);
-    
-    // Limpiar output y enviar respuesta de emergencia
-    if (ob_get_level()) {
-        ob_clean();
-    }
-    
-    http_response_code(500);
-    echo '{"status":"error","message":"Error interno del servidor","code":"FATAL_JSON_ERROR","timestamp":"' . date('Y-m-d H:i:s') . '"}';
+// Enviar respuesta JSON
+$jsonResponse = json_encode($response, JSON_UNESCAPED_UNICODE);
+if ($jsonResponse === false) {
+    $fallbackResponse = [
+        'status' => 'error',
+        'message' => 'Error al generar respuesta JSON',
+        'code' => 'JSON_ERROR',
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+    echo json_encode($fallbackResponse, JSON_UNESCAPED_UNICODE);
+} else {
+    echo $jsonResponse;
 }
 ?>

@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    console.log('🚀 FinalizaInventarioSucursales.js v2.0 cargado correctamente');
+    
     // Función para logging de errores
     function logError(context, error, additionalData = {}) {
         const timestamp = new Date().toISOString();
@@ -323,49 +325,36 @@ $(document).ready(function () {
                     cache: false,
                     timeout: 30000, // 30 segundos de timeout
                     success: function (data) {
-                        try {
-                            // Verificar si data ya es un objeto o si necesita ser parseado
-                            var response;
-                            if (typeof data === 'string') {
+                        console.log('📥 Respuesta recibida del servidor:', data);
+                        console.log('🔍 Tipo de datos:', typeof data);
+                        
+                        // Procesar la respuesta de manera segura
+                        var response;
+                        
+                        if (typeof data === 'string') {
+                            try {
                                 response = JSON.parse(data);
-                            } else if (typeof data === 'object' && data !== null) {
-                                response = data;
-                            } else {
-                                throw new Error('Tipo de respuesta no válido: ' + typeof data);
+                            } catch (e) {
+                                console.error('❌ Error parseando JSON:', e);
+                                mostrarErrorDetallado('Error de formato', 'La respuesta del servidor no es JSON válido', data);
+                                return;
                             }
+                        } else if (typeof data === 'object' && data !== null) {
+                            response = data;
+                        } else {
+                            console.error('❌ Tipo de respuesta no válido:', typeof data);
+                            mostrarErrorDetallado('Error de respuesta', 'Tipo de respuesta no válido: ' + typeof data, data);
+                            return;
+                        }
 
-                            logError('respuesta_recibida', 'Respuesta del servidor procesada', {
-                                response: response,
-                                dataType: typeof data
-                            });
+                        console.log('✅ Respuesta procesada:', response);
 
-                            if (response.status === 'success') {
-                                logError('operacion_exitosa', 'Inventario registrado correctamente', {
-                                    response: response
-                                });
-                                
-                                mostrarExito(response);
-                            } else {
-                                logError('error_servidor', response.message || 'Error desconocido del servidor', {
-                                    response: response,
-                                    data: data
-                                });
-                                
-                                // Mostrar mensaje de error específico según el tipo
-                                mostrarErrorEspecifico(response);
-                            }
-                        } catch (parseError) {
-                            logError('error_parseo_json', parseError.message, {
-                                data: data,
-                                dataType: typeof data,
-                                parseError: parseError
-                            });
-                            
-                            mostrarErrorDetallado(
-                                'Error de formato de respuesta',
-                                'El servidor devolvió una respuesta en formato incorrecto',
-                                `Error de parsing: ${parseError.message}\nTipo de datos: ${typeof data}\nRespuesta del servidor: ${typeof data === 'string' ? data.substring(0, 500) : JSON.stringify(data).substring(0, 500)}...`
-                            );
+                        if (response.status === 'success') {
+                            console.log('🎉 Operación exitosa');
+                            mostrarExito(response);
+                        } else {
+                            console.log('❌ Error del servidor:', response.message);
+                            mostrarErrorEspecifico(response);
                         }
                     },
                     error: function (xhr, status, error) {

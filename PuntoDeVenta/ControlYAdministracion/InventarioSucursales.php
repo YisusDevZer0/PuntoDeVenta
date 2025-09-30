@@ -1121,7 +1121,7 @@ function eliminarFila(element) {
 <!-- Control Sidebar -->
 
 <script src="js/RealizaCambioDeSucursalPorFiltro.js"></script>
-  <script src="js/FinalizaInventarioSucursales.js"></script>
+  <script src="js/FinalizaInventarioSucursales.js?v=<?php echo time(); ?>"></script>
 <!-- Main Footer -->
 <?php
 
