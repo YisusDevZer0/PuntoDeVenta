@@ -1,6 +1,12 @@
 <?php
+// Limpiar cualquier output previo
+ob_clean();
+
 // Configurar headers para JSON y manejo de errores
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // No mostrar errores en pantalla, solo en logs
 
@@ -348,6 +354,11 @@ try {
 
 // Enviar respuesta JSON con manejo de errores
 try {
+    // Limpiar cualquier output previo
+    if (ob_get_level()) {
+        ob_clean();
+    }
+    
     $jsonResponse = json_encode($response, JSON_UNESCAPED_UNICODE);
     if ($jsonResponse === false) {
         // Si hay error en JSON, enviar respuesta básica
@@ -355,10 +366,23 @@ try {
             'status' => 'error',
             'message' => 'Error al generar respuesta JSON',
             'code' => 'JSON_ERROR',
-            'timestamp' => date('Y-m-d H:i:s')
+            'timestamp' => date('Y-m-d H:i:s'),
+            'json_error' => json_last_error_msg()
         ];
-        echo json_encode($fallbackResponse);
+        
+        logServerError('error_json_encode', 'Error al codificar JSON', [
+            'response' => $response,
+            'json_error' => json_last_error_msg()
+        ]);
+        
+        echo json_encode($fallbackResponse, JSON_UNESCAPED_UNICODE);
     } else {
+        // Verificar que la respuesta JSON sea válida
+        $testDecode = json_decode($jsonResponse, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Error('JSON generado no es válido: ' . json_last_error_msg());
+        }
+        
         echo $jsonResponse;
     }
 } catch (Error $jsonError) {
@@ -368,8 +392,12 @@ try {
         'json_error' => json_last_error_msg()
     ]);
     
-    // Respuesta de emergencia
+    // Limpiar output y enviar respuesta de emergencia
+    if (ob_get_level()) {
+        ob_clean();
+    }
+    
     http_response_code(500);
-    echo '{"status":"error","message":"Error interno del servidor","code":"FATAL_JSON_ERROR"}';
+    echo '{"status":"error","message":"Error interno del servidor","code":"FATAL_JSON_ERROR","timestamp":"' . date('Y-m-d H:i:s') . '"}';
 }
 ?>

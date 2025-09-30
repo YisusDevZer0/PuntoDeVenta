@@ -324,7 +324,20 @@ $(document).ready(function () {
                     timeout: 30000, // 30 segundos de timeout
                     success: function (data) {
                         try {
-                            var response = JSON.parse(data);
+                            // Verificar si data ya es un objeto o si necesita ser parseado
+                            var response;
+                            if (typeof data === 'string') {
+                                response = JSON.parse(data);
+                            } else if (typeof data === 'object' && data !== null) {
+                                response = data;
+                            } else {
+                                throw new Error('Tipo de respuesta no válido: ' + typeof data);
+                            }
+
+                            logError('respuesta_recibida', 'Respuesta del servidor procesada', {
+                                response: response,
+                                dataType: typeof data
+                            });
 
                             if (response.status === 'success') {
                                 logError('operacion_exitosa', 'Inventario registrado correctamente', {
@@ -344,13 +357,14 @@ $(document).ready(function () {
                         } catch (parseError) {
                             logError('error_parseo_json', parseError.message, {
                                 data: data,
+                                dataType: typeof data,
                                 parseError: parseError
                             });
                             
                             mostrarErrorDetallado(
                                 'Error de formato de respuesta',
                                 'El servidor devolvió una respuesta en formato incorrecto',
-                                `Error de parsing: ${parseError.message}\nRespuesta del servidor: ${data.substring(0, 500)}...`
+                                `Error de parsing: ${parseError.message}\nTipo de datos: ${typeof data}\nRespuesta del servidor: ${typeof data === 'string' ? data.substring(0, 500) : JSON.stringify(data).substring(0, 500)}...`
                             );
                         }
                     },
