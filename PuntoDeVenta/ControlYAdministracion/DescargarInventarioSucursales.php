@@ -1,9 +1,10 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Deshabilitar la visualización de errores para evitar contaminar el CSV
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
 
-header('Content-Type: text/csv');
+header('Content-Type: text/csv; charset=UTF-8');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
 include("Controladores/db_connect.php");
@@ -53,7 +54,7 @@ if (!$output) {
 fputcsv($output, [
     'Cod_Barra',  'Nombre_Prod','Existencias_R', 'Anaquel','Repisa','Precio_Venta', 'Nom_Serv', 'Tipo',
     'Proveedor1', 'Proveedor2', 'Sucursal','Ultimo inventario por','Fecha ultimo inventario'
-]);
+], ',', '"', '\\');
 
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
@@ -73,7 +74,7 @@ while ($fila = $result->fetch_assoc()) {
         $fila["FechaUltimoInventario"],
        
       
-    ]);
+    ], ',', '"', '\\');
 }
 
 fclose($output);
