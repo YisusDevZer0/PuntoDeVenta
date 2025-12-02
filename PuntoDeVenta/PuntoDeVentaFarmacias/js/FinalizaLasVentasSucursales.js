@@ -1,5 +1,13 @@
 $(document).ready(function () {
   console.log("Document is ready"); 
+  
+  // Prevenir recarga de página globalmente para debug
+  window.addEventListener('beforeunload', function(e) {
+    console.log("=== INTENTO DE RECARGA DETECTADO ===");
+    console.trace("Stack trace de la recarga:");
+    // NO prevenir la recarga, solo loguear para debug
+  });
+  
   var valoresTabla = [];
   var boletaTotal = 0;
   var cambiocliente = "";
@@ -140,7 +148,9 @@ $(document).ready(function () {
   }
 
   function submitForm() {
+    console.log("=== SUBMIT FORM INICIADO ===");
     console.log("Submitting form...");
+    console.log("TicketRifa antes de enviar:", TicketRifa);
     $.ajax({
       type: 'POST',
       url: "Controladores/RegistroDeVentasSucursales.php",
@@ -155,8 +165,9 @@ $(document).ready(function () {
           Swal.fire({
             icon: 'success',
             title: 'Venta realizada con éxito',
-            showConfirmButton: false,
-            timer: 2000,
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            // timer: 2000, // COMENTADO PARA DEBUG - NO SE CERRARÁ AUTOMÁTICAMENTE
             didOpen: () => {
               Swal.showLoading();
               setTimeout(() => {
@@ -235,6 +246,14 @@ $(document).ready(function () {
     return false;
   }
 
+  // Prevenir el submit por defecto del formulario
+  $("#VentasAlmomento").on('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("=== PREVENCIÓN DE RECARGA ===");
+    return false;
+  });
+
   $("#VentasAlmomento").validate({
     rules: {
       CodBarras: {
@@ -255,12 +274,14 @@ $(document).ready(function () {
         },
       },
     },
-    submitHandler: function () {
-      console.log("Form submitted handler");
+    submitHandler: function (form) {
+      console.log("=== FORM SUBMITTED HANDLER ===");
+      console.log("Preveniendo recarga de página...");
       validarFormulario();
       var ticket = $("#Folio_Ticket").val();
-      console.log(ticket);
+      console.log("Ticket a validar:", ticket);
       validarTicket(ticket);
+      return false; // Prevenir submit tradicional
     },
   });
 });
