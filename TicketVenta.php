@@ -64,25 +64,13 @@ function fechaCastellano ($fecha) {
         $ClienteInputValue = $_POST["ClienteInputValue"];
         $FormaPagoSeleccionada = $_POST["FormaPagoSeleccionada"];
         
-        // Recibir FolioRifa con validación
         $FolioParticipacion = isset($_POST["TicketRifa"]) && !empty($_POST["TicketRifa"]) 
             ? $_POST["TicketRifa"] 
             : "N/A";
             
         $Vendedor = isset($_POST["Vendedor"]) ? $_POST["Vendedor"] : "Vendedor";
-        $HoraImpresion = date("H:i:s"); // Formato Hora:Minutos:Segundos
-        $ValoresTabla = json_decode($_POST["ValoresTabla"], true); // Decodifica el JSON a un array asociativo
-        
-        // Debug: Guardar los valores recibidos en un archivo de log
-        $debug_data = "=== POST RECIBIDO " . date("Y-m-d H:i:s") . " ===\n";
-        $debug_data .= "TicketVal: " . $NumberTicket . "\n";
-        $debug_data .= "TicketRifa: " . $FolioParticipacion . "\n";
-        $debug_data .= "BoletaTotal: " . $BoletaTotal . "\n";
-        $debug_data .= "ClienteInputValue: " . $ClienteInputValue . "\n";
-        $debug_data .= "FormaPagoSeleccionada: " . $FormaPagoSeleccionada . "\n";
-        $debug_data .= "Vendedor: " . $Vendedor . "\n";
-        $debug_data .= "POST completo: " . print_r($_POST, true) . "\n\n";
-        file_put_contents("debug_ticket.log", $debug_data, FILE_APPEND);
+        $HoraImpresion = date("H:i:s");
+        $ValoresTabla = json_decode($_POST["ValoresTabla"], true);
 
         // CONTINUAR CON LA IMPRESIÓN (no enviar respuesta aún)
     } else {
@@ -299,15 +287,6 @@ $printer -> text("CAMBIO: $CambioCliente \n");
 $printer->text("Le atendio $Vendedor\n");
 $printer -> feed(1);
 
-// Debug: Guardar en log si el folio existe
-$debug_folio = "=== DEBUG FOLIO " . date("Y-m-d H:i:s") . " ===\n";
-$debug_folio .= "FolioParticipacion valor: '" . $FolioParticipacion . "'\n";
-$debug_folio .= "Es vacio: " . (empty($FolioParticipacion) ? "SI" : "NO") . "\n";
-$debug_folio .= "Es N/A: " . ($FolioParticipacion === "N/A" ? "SI" : "NO") . "\n";
-$debug_folio .= "Condicion if: " . (($FolioParticipacion && $FolioParticipacion !== "N/A") ? "TRUE - SE IMPRIME" : "FALSE - NO SE IMPRIME") . "\n\n";
-file_put_contents("debug_ticket.log", $debug_folio, FILE_APPEND);
-
-// Imprimir QR y folio de rifa solo si existe
 if ($FolioParticipacion && $FolioParticipacion !== "N/A") {
     $printer->bitImageColumnFormat($qrtema); 
     $printer -> setEmphasis(true);
@@ -317,9 +296,6 @@ if ($FolioParticipacion && $FolioParticipacion !== "N/A") {
     $printer -> selectPrintMode();
     $printer -> setEmphasis(false);
     $printer -> feed(1);
-} else {
-    // Si no hay folio, imprimir mensaje para debug
-    $printer->text("(Sin folio de participacion)\n");
 }
 // $printer->bitImageColumnFormat($logo3); 
 // $printer->text("Saluda - Centro Médico Familiar \n");
@@ -348,10 +324,6 @@ $printer->pulse();
 	la conexión con la impresora. Recuerda incluir esto al final de todos los archivos
 */
 $printer->close();
-
-// Enviar respuesta de éxito al final (después de imprimir)
-$response = array("status" => "success", "message" => "Ticket impreso exitosamente. Folio Rifa: " . $FolioParticipacion);
-echo json_encode($response);
 
 /* A wrapper to do organise item names & prices into columns */
 

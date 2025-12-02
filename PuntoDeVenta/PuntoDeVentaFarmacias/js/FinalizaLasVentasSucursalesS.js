@@ -1,7 +1,4 @@
 $(document).ready(function () {
-  console.log("Document is ready"); 
-  
-  
   var valoresTabla = [];
   var boletaTotal = 0;
   var cambiocliente = "";
@@ -163,24 +160,18 @@ $(document).ready(function () {
                   showConfirmButton: false,
                 });
 
-                 // SOLUCIÓN SIMPLE Y DIRECTA: Construir el folio con el prefijo del ticket + número de la tabla
-                 var folioNumero = $("input[name='NumeroDeTickeRifa[]']").first().val() || "1";
-                 var prefijoTicket = TicketVal.substring(0, 3); // Extraer TEA de TEA9852
-                 var folioRifaFinal = prefijoTicket + folioNumero; // TEA + 15 = TEA15
-                 
-                 console.log("=== FOLIO RIFA FINAL ===");
-                 console.log("Folio número tabla:", folioNumero);
-                 console.log("Prefijo del ticket:", prefijoTicket);
-                 console.log(">>> FOLIO RIFA ENVIADO:", folioRifaFinal);
+                var folioNumero = $("input[name='NumeroDeTickeRifa[]']").first().val() || "1";
+                var prefijoTicket = TicketVal.substring(0, 3);
+                var folioRifaFinal = prefijoTicket + folioNumero;
                 
-                 var encodedValoresTabla = encodeURIComponent(JSON.stringify(valoresTabla));
-                 var encodedBoletaTotal = encodeURIComponent(boletaTotal);
-                 var encodedCambioCliente = encodeURIComponent(cambiocliente);
-                 var encodedClienteInputValue = encodeURIComponent(clienteInputValue);
-                 var encodedFormaPagoSeleccionada = encodeURIComponent(formaPagoSeleccionada);
-                 var encodedTicketVal = encodeURIComponent(TicketVal);
-                 var encodedTicketRifa = encodeURIComponent(folioRifaFinal);
-                 var encodedVendedor = encodeURIComponent(Vendedor);
+                var encodedValoresTabla = encodeURIComponent(JSON.stringify(valoresTabla));
+                var encodedBoletaTotal = encodeURIComponent(boletaTotal);
+                var encodedCambioCliente = encodeURIComponent(cambiocliente);
+                var encodedClienteInputValue = encodeURIComponent(clienteInputValue);
+                var encodedFormaPagoSeleccionada = encodeURIComponent(formaPagoSeleccionada);
+                var encodedTicketVal = encodeURIComponent(TicketVal);
+                var encodedTicketRifa = encodeURIComponent(folioRifaFinal);
+                var encodedVendedor = encodeURIComponent(Vendedor);
 
                 var data = 'BoletaTotal=' + encodedBoletaTotal +
                            '&CambioCliente=' + encodedCambioCliente +
@@ -191,27 +182,15 @@ $(document).ready(function () {
                            '&Vendedor=' + encodedVendedor +
                            '&ValoresTabla=' + encodedValoresTabla;
 
-                 // Debug: Mostrar datos enviados
-                 console.log("=== DATOS ENVIADOS AL TICKET ===");
-                 console.log("TicketVal:", TicketVal);
-                 console.log(">>> TicketRifa ENVIADO:", folioRifaFinal);
-                 console.log("Vendedor:", Vendedor);
-                 console.log("BoletaTotal:", boletaTotal);
-
                 $.ajax({
                   type: 'POST',
                   url: 'http://localhost/ticket/TicketVenta.php',
                   data: data,
                   success: function(response) {
-                    console.log("=== RESPUESTA DEL SERVIDOR ===");
-                    console.log("Response from ticket generation:", response);
-                    setTimeout(function() {
-                      location.reload(); // Recargar después de 2 segundos para ver los logs
-                    }, 2000);
+                    location.reload();
                   },
                   error: function(error) {
-                    console.error("=== ERROR EN LA PETICIÓN ===");
-                    console.error("Error generating ticket:", error);
+                    location.reload();
                   }
                 });
 

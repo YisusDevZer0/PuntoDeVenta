@@ -19,12 +19,4 @@ if ($RifaResult && isset($RifaResult['FolioNumerico']) && $RifaResult['FolioNume
 }
 
 $totalmontoRifa = $montoRifa + 1;
-
-// Debug: Guardar en log para verificar
-$debug = "=== FOLIO RIFA DEBUG " . date("Y-m-d H:i:s") . " ===\n";
-$debug .= "Último FolioRifa en BD: " . ($RifaResult ? $RifaResult['FolioRifa'] : 'ninguno') . "\n";
-$debug .= "FolioNumerico: " . ($RifaResult && isset($RifaResult['FolioNumerico']) ? $RifaResult['FolioNumerico'] : 'ninguno') . "\n";
-$debug .= "montoRifa: " . $montoRifa . "\n";
-$debug .= "totalmontoRifa (siguiente): " . $totalmontoRifa . "\n\n";
-file_put_contents(__DIR__ . "/../../debug_folio_rifa.log", $debug, FILE_APPEND);
 ?>
