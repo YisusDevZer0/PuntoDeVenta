@@ -202,6 +202,7 @@ $(document).ready(function () {
                   success: function(response) {
                     console.log("=== RESPUESTA DEL SERVIDOR ===");
                     console.log("Response from ticket generation:", response);
+                    console.log("Response from ticket generation:", response);
                     // location.reload(); // COMENTADO PARA VALIDAR LOS DATOS
                     console.log("Recarga deshabilitada para validación");
                   },
