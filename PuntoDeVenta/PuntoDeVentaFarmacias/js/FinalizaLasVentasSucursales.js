@@ -63,7 +63,7 @@ $(document).ready(function () {
           clienteInputValue = $('#clienteInput').val();
           formaPagoSeleccionada = $('#selTipoPago option:selected').text();
           TicketVal = $("#Folio_Ticket").val();
-          TicketRifa = $("#Folio_Ticket_folioRifa").val();
+          TicketRifa = $("#FolioRifaConPrefijo").val();
           Vendedor = $("#VendedorFarma").val();
 
           var mensajeConfirmacion = '<div class="dataTable">';
