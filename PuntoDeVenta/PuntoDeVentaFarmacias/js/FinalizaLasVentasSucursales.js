@@ -6,6 +6,7 @@ $(document).ready(function () {
   var clienteInputValue = "";
   var formaPagoSeleccionada = "";
   var TicketVal = "";
+  var TicketRifa = "";
   var Vendedor = "";
 
   function validarFormulario() {
@@ -62,6 +63,7 @@ $(document).ready(function () {
           clienteInputValue = $('#clienteInput').val();
           formaPagoSeleccionada = $('#selTipoPago option:selected').text();
           TicketVal = $("#Folio_Ticket").val();
+          TicketRifa = $("#Folio_Ticket_folioRifa").val();
           Vendedor = $("#VendedorFarma").val();
 
           var mensajeConfirmacion = '<div class="dataTable">';
@@ -170,6 +172,7 @@ $(document).ready(function () {
                 var encodedClienteInputValue = encodeURIComponent(clienteInputValue);
                 var encodedFormaPagoSeleccionada = encodeURIComponent(formaPagoSeleccionada);
                 var encodedTicketVal = encodeURIComponent(TicketVal);
+                var encodedTicketRifa = encodeURIComponent(TicketRifa);
                 var encodedVendedor = encodeURIComponent(Vendedor);
 
                 var data = 'BoletaTotal=' + encodedBoletaTotal +
@@ -177,6 +180,7 @@ $(document).ready(function () {
                            '&ClienteInputValue=' + encodedClienteInputValue +
                            '&FormaPagoSeleccionada=' + encodedFormaPagoSeleccionada +
                            '&TicketVal=' + encodedTicketVal +
+                           '&TicketRifa=' + encodedTicketRifa +
                            '&Vendedor=' + encodedVendedor +
                            '&ValoresTabla=' + encodedValoresTabla;
 
