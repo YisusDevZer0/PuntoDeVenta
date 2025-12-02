@@ -64,6 +64,7 @@ $(document).ready(function () {
           formaPagoSeleccionada = $('#selTipoPago option:selected').text();
           TicketVal = $("#Folio_Ticket").val();
           TicketRifa = $("#FolioRifaConPrefijo").val();
+          console.log("FolioRifa valor:", TicketRifa); // Debug
           Vendedor = $("#VendedorFarma").val();
 
           var mensajeConfirmacion = '<div class="dataTable">';

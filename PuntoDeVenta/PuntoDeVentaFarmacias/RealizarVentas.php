@@ -4,7 +4,7 @@ include_once "Controladores/ControladorUsuario.php";
 include "Controladores/SumadeFolioTicketsNuevo.php";
 include "Controladores/SumadeFolioRifas.php";
 include("Controladores/db_connect.php");
-$primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
+$primeras_tres_letras = strtoupper(substr($row['Nombre_Sucursal'], 0, 3));
 
 
 // Concatenar las primeras 3 letras con el valor de $totalmonto
