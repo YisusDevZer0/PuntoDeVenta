@@ -2,6 +2,7 @@
 include_once "Controladores/ControladorUsuario.php";
  include "Controladores/ConsultaCaja.php";
 include "Controladores/SumadeFolioTicketsNuevo.php";
+include "Controladores/SumadeFolioRifas.php";
 include("Controladores/db_connect.php");
 $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
 
@@ -191,6 +192,17 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 <div class="input-group mb-3">
 
   <input type="text" class="form-control "  style="font-size: 0.75rem !important;" value="<?php echo $ValorCaja['Fecha_Apertura'] ?> "readonly>
+
+</div>
+</div>
+
+<div class="col">
+
+<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Folio rifa</label>
+<div class="input-group mb-3">
+
+ <!-- Con prefijo de sucursal (ej: MAM45) -->
+<input type="text" class="form-control" style="font-size: 0.75rem !important;" value="<?php echo $primeras_tres_letras . $totalmonto; ?>" readonly>
 
 </div>
 </div>
