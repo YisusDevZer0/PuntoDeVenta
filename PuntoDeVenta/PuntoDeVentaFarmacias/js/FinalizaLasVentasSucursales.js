@@ -185,15 +185,28 @@ $(document).ready(function () {
                            '&Vendedor=' + encodedVendedor +
                            '&ValoresTabla=' + encodedValoresTabla;
 
+                // Debug: Mostrar todos los datos que se envían
+                console.log("=== DATOS ENVIADOS AL TICKET ===");
+                console.log("TicketVal:", TicketVal);
+                console.log("TicketRifa:", TicketRifa);
+                console.log("BoletaTotal:", boletaTotal);
+                console.log("ClienteInputValue:", clienteInputValue);
+                console.log("FormaPagoSeleccionada:", formaPagoSeleccionada);
+                console.log("Vendedor:", Vendedor);
+                console.log("Data completo:", data);
+
                 $.ajax({
                   type: 'POST',
                   url: 'http://localhost/ticket/TicketVenta.php',
                   data: data,
                   success: function(response) {
+                    console.log("=== RESPUESTA DEL SERVIDOR ===");
                     console.log("Response from ticket generation:", response);
-                    location.reload();
+                    // location.reload(); // COMENTADO PARA VALIDAR LOS DATOS
+                    console.log("Recarga deshabilitada para validación");
                   },
                   error: function(error) {
+                    console.error("=== ERROR EN LA PETICIÓN ===");
                     console.error("Error generating ticket:", error);
                   }
                 });
