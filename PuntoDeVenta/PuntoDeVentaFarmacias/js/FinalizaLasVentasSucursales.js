@@ -71,8 +71,21 @@ $(document).ready(function () {
           clienteInputValue = $('#clienteInput').val();
           formaPagoSeleccionada = $('#selTipoPago option:selected').text();
           TicketVal = $("#Folio_Ticket").val();
-          TicketRifa = $("#FolioRifaConPrefijo").val();
-          console.log("FolioRifa valor:", TicketRifa); // Debug
+          
+          // Obtener el folio con prefijo del input oculto que está FUERA de la tabla
+          var folioNumero = $("input[name='NumeroDeTickeRifa[]']").first().val();
+          var folioGlobal = $("#FolioRifaGlobal").val();
+          var folioConPrefijo = $("#FolioRifaConPrefijo").val();
+          
+          console.log("=== DEBUG FOLIO RIFA ===");
+          console.log("Folio desde tabla (número):", folioNumero);
+          console.log("Folio global:", folioGlobal);
+          console.log("Folio con prefijo:", folioConPrefijo);
+          
+          // Usar el folio con prefijo para imprimir (ej: TEA1)
+          TicketRifa = folioConPrefijo || folioNumero || "1";
+          console.log("TicketRifa final:", TicketRifa);
+          
           Vendedor = $("#VendedorFarma").val();
 
           var mensajeConfirmacion = '<div class="dataTable">';

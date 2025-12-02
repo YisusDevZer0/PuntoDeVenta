@@ -270,6 +270,12 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
                         <!-- Input oculto para el folio de rifa (disponible siempre) -->
                         <input type="hidden" id="FolioRifaGlobal" value="<?php echo $totalmontoRifa; ?>">
                         <input type="hidden" id="FolioRifaConPrefijo" value="<?php echo $primeras_tres_letras . $totalmontoRifa; ?>">
+                        <script>
+                        // Debug: Verificar valores en consola
+                        console.log("=== DEBUG INPUTS OCULTOS ===");
+                        console.log("FolioRifaGlobal:", "<?php echo $totalmontoRifa; ?>");
+                        console.log("FolioRifaConPrefijo:", "<?php echo $primeras_tres_letras . $totalmontoRifa; ?>");
+                        </script>
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
