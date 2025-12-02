@@ -1,6 +1,15 @@
 $(document).ready(function () {
   console.log("Document is ready"); 
   
+  // Debug: Verificar inputs ocultos al cargar
+  setTimeout(function() {
+    console.log("=== VERIFICACIÓN INICIAL DE INPUTS ===");
+    console.log("Input #FolioRifaGlobal existe:", $("#FolioRifaGlobal").length > 0);
+    console.log("Valor #FolioRifaGlobal:", $("#FolioRifaGlobal").val());
+    console.log("Input #FolioRifaConPrefijo existe:", $("#FolioRifaConPrefijo").length > 0);
+    console.log("Valor #FolioRifaConPrefijo:", $("#FolioRifaConPrefijo").val());
+  }, 1000);
+  
   // Prevenir recarga de página globalmente para debug
   window.addEventListener('beforeunload', function(e) {
     console.log("=== INTENTO DE RECARGA DETECTADO ===");
@@ -178,9 +187,8 @@ $(document).ready(function () {
           Swal.fire({
             icon: 'success',
             title: 'Venta realizada con éxito',
-            showConfirmButton: true,
-            confirmButtonText: 'OK',
-            // timer: 2000, // COMENTADO PARA DEBUG - NO SE CERRARÁ AUTOMÁTICAMENTE
+            showConfirmButton: false,
+            timer: 2000,
             didOpen: () => {
               Swal.showLoading();
               setTimeout(() => {
@@ -226,9 +234,9 @@ $(document).ready(function () {
                   success: function(response) {
                     console.log("=== RESPUESTA DEL SERVIDOR ===");
                     console.log("Response from ticket generation:", response);
-                    console.log("Response from ticket generation:", response);
-                    // location.reload(); // COMENTADO PARA VALIDAR LOS DATOS
-                    console.log("Recarga deshabilitada para validación");
+                    setTimeout(function() {
+                      location.reload(); // Recargar después de 2 segundos para ver los logs
+                    }, 2000);
                   },
                   error: function(error) {
                     console.error("=== ERROR EN LA PETICIÓN ===");
