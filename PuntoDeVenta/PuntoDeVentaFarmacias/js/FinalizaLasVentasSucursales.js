@@ -199,13 +199,38 @@ $(document).ready(function () {
                   showConfirmButton: false,
                 });
 
+                // Capturar TicketRifa JUSTO ANTES de enviar al ticket
+                var folioConPrefijo = $("#FolioRifaConPrefijo").val();
+                var folioNumero = $("input[name='NumeroDeTickeRifa[]']").first().val();
+                var folioGlobal = $("#FolioRifaGlobal").val();
+                
+                // Si el input con prefijo existe y tiene valor, usarlo
+                // Si no, construir el folio agregando el prefijo de 3 letras del ticket
+                var folioRifaActual;
+                if (folioConPrefijo && folioConPrefijo !== "") {
+                  folioRifaActual = folioConPrefijo; // Ya tiene prefijo (ej: TEA14)
+                } else if (folioNumero && folioNumero !== "") {
+                  // Extraer las primeras 3 letras del ticket y agregar el número
+                  var prefijoTicket = TicketVal ? TicketVal.substring(0, 3) : "TEA";
+                  folioRifaActual = prefijoTicket + folioNumero; // Construir (ej: TEA + 14 = TEA14)
+                } else {
+                  folioRifaActual = "TEA1"; // Valor por defecto
+                }
+                
+                console.log("=== CAPTURA FINAL FOLIO RIFA ===");
+                console.log("FolioRifaConPrefijo input:", folioConPrefijo);
+                console.log("NumeroDeTickeRifa[] tabla:", folioNumero);
+                console.log("FolioRifaGlobal:", folioGlobal);
+                console.log("TicketVal para extraer prefijo:", TicketVal);
+                console.log("folioRifaActual FINAL:", folioRifaActual);
+                
                 var encodedValoresTabla = encodeURIComponent(JSON.stringify(valoresTabla));
                 var encodedBoletaTotal = encodeURIComponent(boletaTotal);
                 var encodedCambioCliente = encodeURIComponent(cambiocliente);
                 var encodedClienteInputValue = encodeURIComponent(clienteInputValue);
                 var encodedFormaPagoSeleccionada = encodeURIComponent(formaPagoSeleccionada);
                 var encodedTicketVal = encodeURIComponent(TicketVal);
-                var encodedTicketRifa = encodeURIComponent(TicketRifa);
+                var encodedTicketRifa = encodeURIComponent(folioRifaActual); // Usar el valor recién capturado
                 var encodedVendedor = encodeURIComponent(Vendedor);
 
                 var data = 'BoletaTotal=' + encodedBoletaTotal +
@@ -220,7 +245,9 @@ $(document).ready(function () {
                 // Debug: Mostrar todos los datos que se envían
                 console.log("=== DATOS ENVIADOS AL TICKET ===");
                 console.log("TicketVal:", TicketVal);
-                console.log("TicketRifa:", TicketRifa);
+                console.log("TicketRifa (variable anterior):", TicketRifa);
+                console.log("folioRifaActual (usado):", folioRifaActual);
+                console.log("encodedTicketRifa:", encodedTicketRifa);
                 console.log("BoletaTotal:", boletaTotal);
                 console.log("ClienteInputValue:", clienteInputValue);
                 console.log("FormaPagoSeleccionada:", formaPagoSeleccionada);
