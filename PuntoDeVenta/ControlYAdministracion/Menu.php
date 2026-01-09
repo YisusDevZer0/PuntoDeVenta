@@ -56,7 +56,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="AperturarCajaV2" class="dropdown-item"><i class="fa-solid fa-cash-register"></i> Apertura de caja</a>
                     <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
                     <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
-                    <a href="GeneracionDePagosDeServicios" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Pago de servicios</a>
+                    <a href="GeneracionDePagosDeServicios" class="dropdown-item"><i class="fa-solid fa-money-check-dollar"></i>Pago de servicios</a>
                 </div>
             </div>
             

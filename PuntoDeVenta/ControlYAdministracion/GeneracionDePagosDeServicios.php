@@ -48,7 +48,7 @@ if (!$ValorCaja) {
 
 <head>
     <meta charset="utf-8">
-    <title>Administracion de encargos de <?php echo $row['Licencia'] ?></title>
+    <title>Pagos de servicios <?php echo $row['Licencia'] ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <div id="loading-overlay">
@@ -78,11 +78,11 @@ if (!$ValorCaja) {
         <div class="container-fluid pt-4 px-8">
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
-                    <h6 class="mb-4">Encargos  de <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
+                    <h6 class="mb-4">Pago de servicios <?php echo $row['Licencia'] ?> Sucursal <?php echo $row['Nombre_Sucursal'] ?></h6>
                     <div class="text-center">
                         <?php if ($ValorCaja['ID_Caja'] != '0'): ?>
                             <button data-id="<?php echo $ValorCaja["ID_Caja"]; ?>" class="btn-editcaja btn btn-success">
-                                Nuevo encargo </button>
+                                Nuevo pago de servicio </button>
                         <?php else: ?>
                             <button class="btn btn-secondary" disabled>
                                 No hay caja activa </button>
@@ -109,7 +109,7 @@ if (!$ValorCaja) {
                 var id = $(this).data("id");
                 // Validar que el ID sea válido
                 if (id && id != '0') {
-                    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarEncargo.php", {
+                    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarPagoDeServicio.php", {
                         id: id
                     }, function(data) {
                         $("#FormCajas").html(data);
