@@ -95,7 +95,7 @@ if (!$ValorCaja) {
             </div>
         </div>
     </div>
-    <script src="js/Encargos.js"></script>
+    <script src="js/PagosDeServicios.js"></script>
 
     <!-- Footer Start -->
     <?php
@@ -113,11 +113,11 @@ if (!$ValorCaja) {
                         id: id
                     }, function(data) {
                         $("#FormCajas").html(data);
-                        $("#TitulosCajas").html("Registrar encargo");
+                        $("#TitulosCajas").html("Registrar pago de servicio");
                     });
                     $('#ModalEdDele').modal('show');
                 } else {
-                    alert("No hay caja activa para registrar encargos. Debe abrir una caja primero.");
+                    alert("No hay caja activa para registrar pagos de servicios. Debe abrir una caja primero.");
                 }
             });
 
