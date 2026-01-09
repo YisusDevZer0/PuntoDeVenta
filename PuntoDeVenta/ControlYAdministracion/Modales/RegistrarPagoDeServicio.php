@@ -48,8 +48,8 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
     
     $stmt_ticket = $conn->prepare($sql_ticket);
     if ($stmt_ticket) {
-        $patron = $primeras_tres_letras . 'ENC-%';
-        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEAENC-"
+        $patron = $primeras_tres_letras . 'SER-%';
+        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEASER-"
         $stmt_ticket->bind_param("isi", $Especialistas->Sucursal, $patron, $posicion);
         $stmt_ticket->execute();
         $result_ticket = $stmt_ticket->get_result();
@@ -76,8 +76,21 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
         $siguiente_numero = 1;
     }
     
-    // Formato correcto: TEAENC-0001 (4 dígitos con ceros a la izquierda)
-    $NumTicket = $primeras_tres_letras . 'ENC-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
+    // Formato correcto: TEASER-0001 (4 dígitos con ceros a la izquierda)
+    $NumTicket = $primeras_tres_letras . 'SER-' . str_pad($siguiente_numero, 4, '0', STR_PAD_LEFT);
+    
+    // Cargar lista de servicios desde ListadoServicios
+    $sql_servicios = "SELECT `Servicio_ID`, `Servicio`, `Estado`, `Agregado_Por`, `Agregadoel`, `Sistema`, `Licencia` 
+                      FROM `ListadoServicios` 
+                      WHERE 1 
+                      ORDER BY `Servicio` ASC";
+    $result_servicios = $conn->query($sql_servicios);
+    $servicios = [];
+    if ($result_servicios && $result_servicios->num_rows > 0) {
+        while ($row_servicio = $result_servicios->fetch_assoc()) {
+            $servicios[] = $row_servicio;
+        }
+    }
 } else {
     // Si no se encuentra la caja, mostrar error
     echo '<p class="alert alert-danger">Error: No se encontró la caja especificada o la sucursal no tiene nombre válido</p>';
@@ -86,46 +99,47 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
 ?>
 
 <?php if ($Especialistas) : ?>
-    <form action="javascript:void(0)" method="post" id="RegistrarEncargoForm" class="mb-3">
+    <form action="javascript:void(0)" method="post" id="RegistrarPagoDeServicioForm" class="mb-3">
         <div class="row">
             <!-- Primera columna -->
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="nombre_paciente" class="form-label">Nombre del Paciente:</label>
-                    <input type="text" name="nombre_paciente" id="nombre_paciente" class="form-control" placeholder="Escriba el nombre del paciente" required>
+                    <label for="cliente" class="form-label">Cliente:</label>
+                    <input type="text" name="cliente" id="cliente" class="form-control" placeholder="Escriba el nombre del cliente" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="medicamento" class="form-label">Medicamento:</label>
-                    <input type="text" name="medicamento" id="medicamento" class="form-control" required>
+                    <label for="servicio_id" class="form-label">Servicio:</label>
+                    <select class="form-control form-select form-select-sm" name="servicio_id" id="servicio_id" required>
+                        <option value="">Seleccione un servicio</option>
+                        <?php if (!empty($servicios)) : ?>
+                            <?php foreach ($servicios as $servicio) : ?>
+                                <option value="<?php echo htmlspecialchars($servicio['Servicio_ID']); ?>">
+                                    <?php echo htmlspecialchars($servicio['Servicio']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <option value="" disabled>No hay servicios disponibles</option>
+                        <?php endif; ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">
-                    <label for="cantidad" class="form-label">Cantidad:</label>
-                    <input type="number" name="cantidad" id="cantidad" class="form-control" required>
+                    <label for="monto" class="form-label">Monto:</label>
+                    <input type="number" step="0.01" name="monto" id="monto" class="form-control" placeholder="0.00" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="precioventa" class="form-label">Precio de Venta:</label>
-                    <input type="number" step="0.01" name="precioventa" id="precioventa" class="form-control" required>
+                    <label for="fecha_pago" class="form-label">Fecha de Pago:</label>
+                    <input type="date" name="fecha_pago" id="fecha_pago" class="form-control" value="<?php echo $fecha_actual; ?>" required>
                 </div>
             </div>
 
             <!-- Segunda columna -->
             <div class="col-md-6">
                 <div class="mb-3">
-                    <label for="fecha_encargo" class="form-label">Fecha de Encargo:</label>
-                    <input type="date" name="fecha_encargo" id="fecha_encargo" class="form-control" value="<?php echo $fecha_actual; ?>" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="costo" class="form-label">Costo:</label>
-                    <input type="number" step="0.01" name="costo" id="costo" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="abono_parcial" class="form-label">Abono realizado:</label>
-                    <input type="number" step="0.01" name="abono_parcial" id="abono_parcial" class="form-control" value="0.00" required>
+                    <label for="observaciones" class="form-label">Observaciones:</label>
+                    <textarea name="observaciones" id="observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales (opcional)"></textarea>
                 </div>
 
                 <div class="mb-3" style="display: none;">
@@ -138,7 +152,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                 <!-- Select de forma de pago -->
                 <div class="mb-3">
                     <label for="forma_pago" class="form-label">Forma de pago:</label>
-                    <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPagoEncargo" required>
+                    <select class="form-control form-select form-select-sm" aria-label=".form-select-sm example" id="selTipoPagoServicio" required>
                         <option value="0">Seleccione el Tipo de Pago</option>
                         <option value="Efectivo">Efectivo</option>
                         <option value="Credito">Credito</option>
@@ -148,7 +162,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                         <option value="Tarjeta">Tarjeta</option>
                         <option value="Transferencia">Transferencia</option>
                     </select>
-                    <input type="hidden" name="FormaDePago" id="FormaDePagoEncargo" value="">
+                    <input type="hidden" name="FormaDePago" id="FormaDePagoServicio" value="">
                 </div>
             </div>
         </div>
@@ -157,29 +171,52 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
         <input type="hidden" name="Fk_Caja" id="ID_Caja" value="<?php echo $Especialistas->ID_Caja; ?>">
         <input type="hidden" name="Empleado" id="empleado" value="<?php echo $row['Nombre_Apellidos']; ?>">
         <input type="hidden" name="Fk_Sucursal" id="sucursal" value="<?php echo $Especialistas->Sucursal; ?>">
-        <input type="hidden" name="estado" id="estado" value="Pendiente">
 
         <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary">Registrar Encargo</button>
+            <button type="submit" class="btn btn-primary">Registrar Pago de Servicio</button>
         </div>
     </form>
 
     <script>
     $(document).ready(function() {
         // Actualizar el input oculto con el valor del select
-        $('#selTipoPagoEncargo').on('change', function() {
-            $('#FormaDePagoEncargo').val($(this).val());
+        $('#selTipoPagoServicio').on('change', function() {
+            $('#FormaDePagoServicio').val($(this).val());
         });
         // Inicializar el valor por defecto
-        $('#FormaDePagoEncargo').val($('#selTipoPagoEncargo').val());
+        $('#FormaDePagoServicio').val($('#selTipoPagoServicio').val());
 
         // Manejar el envío del formulario
-        $('#RegistrarEncargoForm').on('submit', function(e) {
+        $('#RegistrarPagoDeServicioForm').on('submit', function(e) {
             e.preventDefault();
+            
+            // Validar que se haya seleccionado un servicio
+            if (!$('#servicio_id').val()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Servicio requerido',
+                    text: 'Por favor seleccione un servicio',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#dc3545'
+                });
+                return false;
+            }
+            
+            // Validar que se haya seleccionado una forma de pago válida
+            if ($('#selTipoPagoServicio').val() === '0' || !$('#selTipoPagoServicio').val()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Forma de pago requerida',
+                    text: 'Por favor seleccione una forma de pago',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#dc3545'
+                });
+                return false;
+            }
             
             // Mostrar indicador de carga con SweetAlert
             Swal.fire({
-                title: 'Guardando encargo...',
+                title: 'Guardando pago de servicio...',
                 text: 'Por favor espere',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -206,19 +243,19 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                     if (response.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Encargo registrado exitosamente!',
+                            title: '¡Pago de servicio registrado exitosamente!',
                             text: 'Ticket: ' + response.NumTicket,
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#28a745'
                         }).then((result) => {
-                            $('#editModal').modal('hide');
+                            $('#ModalEdDele').modal('hide');
                             // Recargar la página o actualizar la lista
                             location.reload();
                         });
                     } else {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error al registrar encargo',
+                            title: 'Error al registrar pago de servicio',
                             text: response.message,
                             confirmButtonText: 'Aceptar',
                             confirmButtonColor: '#dc3545'
