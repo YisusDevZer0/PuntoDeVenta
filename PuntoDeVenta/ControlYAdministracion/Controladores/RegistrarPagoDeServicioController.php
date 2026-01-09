@@ -63,45 +63,45 @@ try {
         $stmt_servicio->close();
     }
 
+    // Validar que se obtuvo el nombre del servicio
+    if (empty($nombre_servicio)) {
+        echo json_encode(['success' => false, 'message' => 'No se encontró el servicio seleccionado']);
+        exit;
+    }
+
+    // Estado por defecto para el pago de servicio
+    $estado = 'Pagado';
+
     // Preparar la consulta SQL para insertar en PagosServicios
-    // Asumiendo que la tabla tiene campos similares a encargos pero adaptados para servicios
+    // Estructura real: id, nombre_paciente, Servicio, estado, costo, NumTicket, Fk_Sucursal, Fk_Caja, Empleado, FormaDePago
     $sql = "INSERT INTO PagosServicios (
-                Cliente,
-                Servicio_ID,
-                Nombre_Servicio,
-                Monto,
-                Fecha_Pago,
-                Observaciones,
+                nombre_paciente,
+                Servicio,
+                estado,
+                costo,
                 NumTicket,
+                Fk_Sucursal,
                 Fk_Caja,
                 Empleado,
-                Fk_Sucursal,
-                FormaDePago,
-                Fecha_Registro,
-                AgregadoPor,
-                AgregadoEl
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NOW())";
+                FormaDePago
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     error_log("SQL preparado: $sql");
 
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        // 12 parámetros: Cliente(s), Servicio_ID(i), Nombre_Servicio(s), Monto(d), 
-        // Fecha_Pago(s), Observaciones(s), NumTicket(s), Fk_Caja(i), Empleado(s), 
-        // Fk_Sucursal(i), FormaDePago(s), AgregadoPor(s)
-        $stmt->bind_param("sisdsssissis", 
+        // 9 parámetros: nombre_paciente(s), Servicio(s), estado(s), costo(d), 
+        // NumTicket(s), Fk_Sucursal(i), Fk_Caja(i), Empleado(s), FormaDePago(s)
+        $stmt->bind_param("ssdssiiss", 
             $cliente,
-            $servicio_id,
             $nombre_servicio,
+            $estado,
             $monto,
-            $fecha_pago,
-            $observaciones,
             $NumTicket,
+            $Fk_Sucursal,
             $Fk_Caja,
             $Empleado,
-            $Fk_Sucursal,
-            $FormaDePago,
-            $Empleado
+            $FormaDePago
         );
 
         if ($stmt->execute()) {
@@ -143,26 +143,35 @@ try {
             }
         }
         
-        // Fallback si la preparación falla - intentar con estructura mínima
+        // Validar que se obtuvo el nombre del servicio
+        if (empty($nombre_servicio)) {
+            echo json_encode(['success' => false, 'message' => 'No se encontró el servicio seleccionado']);
+            exit;
+        }
+        
+        // Estado por defecto para el pago de servicio
+        $estado = 'Pagado';
+        
+        // Fallback si la preparación falla - usar estructura correcta de la tabla
         $sql_fallback = "INSERT INTO PagosServicios (
-                            Cliente,
-                            Servicio_ID,
-                            Monto,
-                            Fecha_Pago,
+                            nombre_paciente,
+                            Servicio,
+                            estado,
+                            costo,
                             NumTicket,
+                            Fk_Sucursal,
                             Fk_Caja,
                             Empleado,
-                            Fk_Sucursal,
                             FormaDePago
                         ) VALUES (
                             '" . mysqli_real_escape_string($conn, $cliente) . "',
-                            $servicio_id,
+                            '" . mysqli_real_escape_string($conn, $nombre_servicio) . "',
+                            '" . mysqli_real_escape_string($conn, $estado) . "',
                             $monto,
-                            '" . mysqli_real_escape_string($conn, $fecha_pago) . "',
                             '" . mysqli_real_escape_string($conn, $NumTicket) . "',
+                            $Fk_Sucursal,
                             $Fk_Caja,
                             '" . mysqli_real_escape_string($conn, $Empleado) . "',
-                            $Fk_Sucursal,
                             '" . mysqli_real_escape_string($conn, $FormaDePago) . "'
                         )";
 
