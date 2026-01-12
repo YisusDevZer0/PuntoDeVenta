@@ -266,7 +266,7 @@ tabla = $('#PagosServicios').DataTable({
 // Para personalizar el estilo del botón de Excel
 
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Sin botones de impresión ni descarga
 "responsive": true
 });
 
