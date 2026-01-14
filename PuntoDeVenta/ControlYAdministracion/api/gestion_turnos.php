@@ -91,17 +91,41 @@ try {
                 throw new Exception('No se pudo generar el folio del turno');
             }
             
-            // Crear turno con límite de 50 productos
-            $sql_insert = "INSERT INTO Inventario_Turnos (
-                Folio_Turno, Fk_sucursal, Usuario_Inicio, Usuario_Actual,
-                Fecha_Turno, Estado, Limite_Productos
-            ) VALUES (?, ?, ?, ?, CURDATE(), 'activo', 50)";
-            
-            $stmt_insert = $conn->prepare($sql_insert);
-            if (!$stmt_insert) {
-                throw new Exception('Error al preparar la inserción: ' . $conn->error);
+            // Verificar si existe la columna Limite_Productos
+            $sql_check_col = "SELECT COUNT(*) as existe FROM INFORMATION_SCHEMA.COLUMNS 
+                             WHERE TABLE_SCHEMA = DATABASE() 
+                             AND TABLE_NAME = 'Inventario_Turnos' 
+                             AND COLUMN_NAME = 'Limite_Productos'";
+            $result_check = $conn->query($sql_check_col);
+            $col_exists = false;
+            if ($result_check) {
+                $row_check = $result_check->fetch_assoc();
+                $col_exists = ($row_check['existe'] > 0);
             }
-            $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
+            
+            // Crear turno con o sin límite según exista la columna
+            if ($col_exists) {
+                $sql_insert = "INSERT INTO Inventario_Turnos (
+                    Folio_Turno, Fk_sucursal, Usuario_Inicio, Usuario_Actual,
+                    Fecha_Turno, Estado, Limite_Productos
+                ) VALUES (?, ?, ?, ?, CURDATE(), 'activo', 50)";
+                $stmt_insert = $conn->prepare($sql_insert);
+                if (!$stmt_insert) {
+                    throw new Exception('Error al preparar la inserción: ' . $conn->error);
+                }
+                $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
+            } else {
+                $sql_insert = "INSERT INTO Inventario_Turnos (
+                    Folio_Turno, Fk_sucursal, Usuario_Inicio, Usuario_Actual,
+                    Fecha_Turno, Estado
+                ) VALUES (?, ?, ?, ?, CURDATE(), 'activo')";
+                $stmt_insert = $conn->prepare($sql_insert);
+                if (!$stmt_insert) {
+                    throw new Exception('Error al preparar la inserción: ' . $conn->error);
+                }
+                $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
+            }
+            
             $stmt_insert->execute();
             
             if ($stmt_insert->error) {

@@ -243,3 +243,25 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
+
+-- =====================================================
+-- ACTUALIZACIÓN: Agregar columna Limite_Productos si no existe
+-- =====================================================
+-- Ejecutar este bloque si la tabla ya existe y necesita la columna
+SET @dbname = DATABASE();
+SET @tablename = 'Inventario_Turnos';
+SET @columnname = 'Limite_Productos';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_SCHEMA = @dbname)
+      AND (TABLE_NAME = @tablename)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT "La columna ya existe" as Mensaje',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' INT(11) NOT NULL DEFAULT 50 AFTER Productos_Completados')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
