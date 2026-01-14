@@ -37,26 +37,77 @@ try {
                 throw new Exception('Ya tienes un turno activo');
             }
             
-            // Generar folio
+            // Generar folio usando el procedimiento almacenado
             $sql_folio = "CALL sp_generar_folio_turno(?, @folio)";
             $stmt_folio = $conn->prepare($sql_folio);
+            if (!$stmt_folio) {
+                throw new Exception('Error al preparar la consulta del folio');
+            }
             $stmt_folio->bind_param("i", $sucursal);
             $stmt_folio->execute();
             $stmt_folio->close();
             
+            // Obtener el folio generado
             $result_folio = $conn->query("SELECT @folio as folio");
+            if (!$result_folio) {
+                throw new Exception('Error al obtener el folio generado');
+            }
             $folio_data = $result_folio->fetch_assoc();
-            $folio = $folio_data['folio'];
+            $folio = isset($folio_data['folio']) ? $folio_data['folio'] : null;
             
-            // Crear turno
+            // Si no se generó el folio, crear uno manualmente
+            if (empty($folio)) {
+                // Obtener código de sucursal
+                $sql_suc = "SELECT Nombre_Sucursal FROM Sucursales WHERE ID_Sucursal = ? LIMIT 1";
+                $stmt_suc = $conn->prepare($sql_suc);
+                $stmt_suc->bind_param("i", $sucursal);
+                $stmt_suc->execute();
+                $suc_data = $stmt_suc->get_result()->fetch_assoc();
+                $stmt_suc->close();
+                
+                $sucursal_cod = 'SUC';
+                if ($suc_data && !empty($suc_data['Nombre_Sucursal'])) {
+                    $sucursal_cod = strtoupper(substr($suc_data['Nombre_Sucursal'], 0, 3));
+                } else {
+                    $sucursal_cod = str_pad($sucursal, 3, '0', STR_PAD_LEFT);
+                }
+                
+                // Obtener siguiente secuencial
+                $sql_sec = "SELECT COUNT(*) + 1 as secuencial FROM Inventario_Turnos 
+                           WHERE Fk_sucursal = ? AND DATE(Fecha_Turno) = CURDATE()";
+                $stmt_sec = $conn->prepare($sql_sec);
+                $stmt_sec->bind_param("i", $sucursal);
+                $stmt_sec->execute();
+                $sec_data = $stmt_sec->get_result()->fetch_assoc();
+                $stmt_sec->close();
+                
+                $secuencial = $sec_data ? str_pad($sec_data['secuencial'], 3, '0', STR_PAD_LEFT) : '001';
+                $fecha = date('Ymd');
+                $folio = "INV-{$sucursal_cod}-{$fecha}-{$secuencial}";
+            }
+            
+            // Validar que el folio no esté vacío
+            if (empty($folio)) {
+                throw new Exception('No se pudo generar el folio del turno');
+            }
+            
+            // Crear turno con límite de 50 productos
             $sql_insert = "INSERT INTO Inventario_Turnos (
                 Folio_Turno, Fk_sucursal, Usuario_Inicio, Usuario_Actual,
-                Fecha_Turno, Estado
-            ) VALUES (?, ?, ?, ?, CURDATE(), 'activo')";
+                Fecha_Turno, Estado, Limite_Productos
+            ) VALUES (?, ?, ?, ?, CURDATE(), 'activo', 50)";
             
             $stmt_insert = $conn->prepare($sql_insert);
+            if (!$stmt_insert) {
+                throw new Exception('Error al preparar la inserción: ' . $conn->error);
+            }
             $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
             $stmt_insert->execute();
+            
+            if ($stmt_insert->error) {
+                throw new Exception('Error al insertar turno: ' . $stmt_insert->error);
+            }
+            
             $id_turno = $conn->insert_id;
             $stmt_insert->close();
             
@@ -182,6 +233,20 @@ try {
             
             if ($id_turno <= 0 || $id_producto <= 0) {
                 throw new Exception('Datos inválidos');
+            }
+            
+            // Verificar límite de 50 productos por turno
+            $sql_contar = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_contar = $conn->prepare($sql_contar);
+            $stmt_contar->bind_param("i", $id_turno);
+            $stmt_contar->execute();
+            $contar_data = $stmt_contar->get_result()->fetch_assoc();
+            $stmt_contar->close();
+            
+            $total_productos = $contar_data ? (int)$contar_data['total'] : 0;
+            if ($total_productos >= 50) {
+                throw new Exception('Has alcanzado el límite de 50 productos por turno. Finaliza o libera algunos productos para agregar más.');
             }
             
             // Verificar que el producto no esté bloqueado por otro usuario

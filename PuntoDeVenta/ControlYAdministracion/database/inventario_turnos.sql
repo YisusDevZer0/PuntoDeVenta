@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `Inventario_Turnos` (
   `Estado` enum('activo','pausado','finalizado','cancelado') NOT NULL DEFAULT 'activo',
   `Total_Productos` int(11) NOT NULL DEFAULT 0,
   `Productos_Completados` int(11) NOT NULL DEFAULT 0,
+  `Limite_Productos` int(11) NOT NULL DEFAULT 50,
   `Observaciones` text DEFAULT NULL,
   PRIMARY KEY (`ID_Turno`),
   UNIQUE KEY `idx_folio` (`Folio_Turno`),
@@ -228,7 +229,17 @@ BEGIN
     WHERE Fk_sucursal = p_sucursal_id
       AND DATE(Fecha_Turno) = CURDATE();
     
+    -- Si no se encontró sucursal, usar código por defecto
+    IF v_sucursal_cod IS NULL OR v_sucursal_cod = '' THEN
+        SET v_sucursal_cod = LPAD(p_sucursal_id, 3, '0');
+    END IF;
+    
     -- Generar folio
     SET p_folio = CONCAT('INV-', UPPER(v_sucursal_cod), '-', v_fecha, '-', LPAD(v_secuencial, 3, '0'));
+    
+    -- Validar que el folio no esté vacío
+    IF p_folio IS NULL OR p_folio = '' THEN
+        SET p_folio = CONCAT('INV-', LPAD(p_sucursal_id, 3, '0'), '-', v_fecha, '-', LPAD(v_secuencial, 3, '0'));
+    END IF;
 END$$
 DELIMITER ;

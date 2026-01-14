@@ -119,8 +119,11 @@ if ($stmt_turno) {
                             <div class="col-md-3">
                                 <strong>Progreso:</strong> 
                                 <?php 
-                                $porcentaje = $turno_activo['Total_Productos'] > 0 
-                                    ? round(($turno_activo['Productos_Completados'] / $turno_activo['Total_Productos']) * 100, 2) 
+                                $limite_productos = isset($turno_activo['Limite_Productos']) ? $turno_activo['Limite_Productos'] : 50;
+                                $total_seleccionados = $turno_activo['Total_Productos'];
+                                $completados = $turno_activo['Productos_Completados'];
+                                $porcentaje = $total_seleccionados > 0 
+                                    ? round(($completados / $total_seleccionados) * 100, 2) 
                                     : 0;
                                 ?>
                                 <div class="progress mt-1">
@@ -128,7 +131,10 @@ if ($stmt_turno) {
                                         <?php echo $porcentaje; ?>%
                                     </div>
                                 </div>
-                                <small><?php echo $turno_activo['Productos_Completados']; ?> / <?php echo $turno_activo['Total_Productos']; ?> productos</small>
+                                <small>
+                                    <?php echo $completados; ?> / <?php echo $total_seleccionados; ?> completados
+                                    (Máx: <?php echo $limite_productos; ?> productos)
+                                </small>
                             </div>
                             <div class="col-md-3">
                                 <strong>Usuario:</strong> <?php echo $turno_activo['Usuario_Actual']; ?><br>
