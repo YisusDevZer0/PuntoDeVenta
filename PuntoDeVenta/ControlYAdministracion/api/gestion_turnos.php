@@ -20,6 +20,46 @@ try {
     $conn->begin_transaction();
     
     switch ($accion) {
+        case 'verificar_turno':
+            // Verificar si hay un turno activo que no se detectó
+            // Primero intentar con LIKE
+            $sql_verificar = "SELECT * FROM Inventario_Turnos 
+                             WHERE Fk_sucursal = ? 
+                             AND Estado IN ('activo', 'pausado')
+                             AND Fecha_Turno = CURDATE()
+                             AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
+                             ORDER BY Hora_Inicio DESC 
+                             LIMIT 1";
+            $stmt_ver = $conn->prepare($sql_verificar);
+            $usuario_pattern = "%" . $usuario . "%";
+            $stmt_ver->bind_param("iss", $sucursal, $usuario_pattern, $usuario_pattern);
+            $stmt_ver->execute();
+            $turno_encontrado = $stmt_ver->get_result()->fetch_assoc();
+            $stmt_ver->close();
+            
+            // Si no se encontró, intentar exacto
+            if (!$turno_encontrado) {
+                $sql_exacto = "SELECT * FROM Inventario_Turnos 
+                              WHERE Fk_sucursal = ? 
+                              AND Estado IN ('activo', 'pausado')
+                              AND Fecha_Turno = CURDATE()
+                              AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
+                              ORDER BY Hora_Inicio DESC 
+                              LIMIT 1";
+                $stmt_exacto = $conn->prepare($sql_exacto);
+                $stmt_exacto->bind_param("iss", $sucursal, $usuario, $usuario);
+                $stmt_exacto->execute();
+                $turno_encontrado = $stmt_exacto->get_result()->fetch_assoc();
+                $stmt_exacto->close();
+            }
+            
+            if ($turno_encontrado) {
+                echo json_encode(['success' => true, 'turno' => $turno_encontrado]);
+            } else {
+                echo json_encode(['success' => false, 'turno' => null]);
+            }
+            break;
+            
         case 'iniciar':
             // Verificar si ya hay un turno activo
             $sql_verificar = "SELECT ID_Turno FROM Inventario_Turnos 

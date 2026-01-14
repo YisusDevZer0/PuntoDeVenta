@@ -2,21 +2,47 @@
 include_once "Controladores/ControladorUsuario.php";
 
 // Verificar si hay un turno activo para el usuario
+$nombre_usuario = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
+$sucursal_id = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
+
+// Consulta más flexible para detectar turnos activos
 $sql_turno_activo = "SELECT * FROM Inventario_Turnos 
-                     WHERE Usuario_Actual = ? 
-                     AND Fk_sucursal = ? 
+                     WHERE Fk_sucursal = ? 
                      AND Estado IN ('activo', 'pausado')
                      AND Fecha_Turno = CURDATE()
+                     AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
                      ORDER BY Hora_Inicio DESC 
                      LIMIT 1";
 $stmt_turno = $conn->prepare($sql_turno_activo);
 $turno_activo = null;
-if ($stmt_turno) {
-    $stmt_turno->bind_param("si", $row['Nombre_Apellidos'], $row['Fk_sucursal']);
+
+if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
+    // Usar LIKE para manejar variaciones en el nombre
+    $usuario_pattern = "%" . $nombre_usuario . "%";
+    $stmt_turno->bind_param("iss", $sucursal_id, $usuario_pattern, $usuario_pattern);
     $stmt_turno->execute();
     $result_turno = $stmt_turno->get_result();
     $turno_activo = $result_turno->fetch_assoc();
     $stmt_turno->close();
+    
+    // Si no se encontró con LIKE, intentar búsqueda exacta también
+    if (!$turno_activo) {
+        $sql_turno_exacto = "SELECT * FROM Inventario_Turnos 
+                            WHERE Fk_sucursal = ? 
+                            AND Estado IN ('activo', 'pausado')
+                            AND Fecha_Turno = CURDATE()
+                            AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
+                            ORDER BY Hora_Inicio DESC 
+                            LIMIT 1";
+        $stmt_exacto = $conn->prepare($sql_turno_exacto);
+        if ($stmt_exacto) {
+            $stmt_exacto->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
+            $stmt_exacto->execute();
+            $result_exacto = $stmt_exacto->get_result();
+            $turno_activo = $result_exacto->fetch_assoc();
+            $stmt_exacto->close();
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -145,11 +171,21 @@ if ($stmt_turno) {
                     <?php endif; ?>
                     
                     <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Buscar producto:</label>
-                            <input type="text" class="form-control" id="buscar-producto" placeholder="Código de barras o nombre">
+                        <div class="col-md-5">
+                            <label class="form-label">
+                                <i class="fa-solid fa-barcode me-2"></i>Buscar producto (código o nombre):
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text" style="background-color: #ef7980; color: white;">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input type="text" class="form-control" id="buscar-producto" 
+                                       placeholder="Escribe código de barras o nombre del producto..." 
+                                       autocomplete="off">
+                            </div>
+                            <small class="form-text text-muted">Comienza a escribir para buscar productos automáticamente</small>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">Filtrar por estado:</label>
                             <select class="form-select" id="filtro-estado-producto">
                                 <option value="">Todos</option>
@@ -159,13 +195,28 @@ if ($stmt_turno) {
                             </select>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
-                            <button type="button" class="btn btn-secondary w-100" id="btn-limpiar-filtros">
+                            <button type="button" class="btn btn-secondary me-2" id="btn-limpiar-filtros">
                                 <i class="fa-solid fa-eraser me-2"></i>Limpiar Filtros
+                            </button>
+                            <button type="button" class="btn btn-info" id="btn-refrescar-productos" title="Refrescar lista">
+                                <i class="fa-solid fa-rotate"></i>
                             </button>
                         </div>
                     </div>
                     
-                    <div id="DataInventarioTurnos"></div>
+                    <div id="DataInventarioTurnos">
+                        <?php if ($turno_activo): ?>
+                            <div class="alert alert-info">
+                                <i class="fa-solid fa-info-circle me-2"></i>
+                                Cargando productos del inventario...
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-info text-center">
+                                <i class="fa-solid fa-info-circle me-2"></i>
+                                No hay un turno activo. Inicia un nuevo turno para comenzar.
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -194,9 +245,40 @@ if ($stmt_turno) {
     <script>
         var turnoActivo = <?php echo $turno_activo ? json_encode($turno_activo) : 'null'; ?>;
         
+        // Debug: mostrar información del turno
+        console.log('Turno activo:', turnoActivo);
+        
         $(document).ready(function() {
-            if (turnoActivo) {
-                CargarProductosTurno(turnoActivo.ID_Turno);
+            if (turnoActivo && turnoActivo.ID_Turno) {
+                console.log('Cargando productos para turno:', turnoActivo.ID_Turno);
+                // Crear tabla si no existe
+                if ($('#tablaInventarioTurnos').length === 0) {
+                    $('#DataInventarioTurnos').html(`
+                        <table id="tablaInventarioTurnos" class="table table-striped table-hover">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    `);
+                }
+                // Esperar un momento para asegurar que el DOM esté listo
+                setTimeout(function() {
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                }, 300);
+            } else {
+                console.log('No hay turno activo. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
+                // Verificar si hay turnos pero no se detectaron
+                $.ajax({
+                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                    type: 'POST',
+                    data: { accion: 'verificar_turno' },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success && response.turno) {
+                            console.log('Turno encontrado después de verificar:', response.turno);
+                            location.reload();
+                        }
+                    }
+                });
             }
             
             // Iniciar turno
@@ -227,20 +309,118 @@ if ($stmt_turno) {
                 verHistorialTurnos();
             });
             
-            // Filtros
-            $('#buscar-producto, #filtro-estado-producto').on('change keyup', function() {
-                if (turnoActivo) {
+            // Configurar autocomplete para búsqueda activa
+            if (turnoActivo && turnoActivo.ID_Turno) {
+                $('#buscar-producto').autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AutocompleteInventarioTurnos.php',
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                term: request.term,
+                                id_turno: turnoActivo.ID_Turno
+                            },
+                            success: function(data) {
+                                response(data);
+                            },
+                            error: function() {
+                                response([]);
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function(event, ui) {
+                        event.preventDefault();
+                        // Si el producto no está bloqueado, seleccionarlo automáticamente
+                        if (!ui.item.bloqueado) {
+                            seleccionarProductoDesdeBusqueda(ui.item.id, ui.item.codigo);
+                        } else {
+                            Swal.fire('Producto bloqueado', 'Este producto está siendo contado por otro usuario', 'warning');
+                        }
+                        $(this).val('');
+                        return false;
+                    },
+                    focus: function(event, ui) {
+                        event.preventDefault();
+                        $(this).val(ui.item.label);
+                        return false;
+                    }
+                }).autocomplete("instance")._renderItem = function(ul, item) {
+                    var clase = item.bloqueado ? 'text-danger' : 'text-success';
+                    var icono = item.bloqueado ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-check"></i>';
+                    return $("<li>")
+                        .append("<div class='" + clase + "'>" + icono + " " + item.label + " (Stock: " + item.existencias + ")</div>")
+                        .appendTo(ul);
+                };
+                
+                // También actualizar tabla mientras se escribe (con debounce)
+                $('#buscar-producto').on('keyup', function() {
+                    clearTimeout(buscarTimeout);
+                    buscarTimeout = setTimeout(function() {
+                        if (turnoActivo && turnoActivo.ID_Turno) {
+                            CargarProductosTurno(turnoActivo.ID_Turno);
+                        }
+                    }, 800);
+                });
+            }
+            
+            // Filtro de estado (inmediato)
+            $('#filtro-estado-producto').on('change', function() {
+                if (turnoActivo && turnoActivo.ID_Turno) {
                     CargarProductosTurno(turnoActivo.ID_Turno);
                 }
             });
             
+            // Limpiar filtros
             $('#btn-limpiar-filtros').on('click', function() {
+                clearTimeout(buscarTimeout);
                 $('#buscar-producto').val('');
                 $('#filtro-estado-producto').val('');
-                if (turnoActivo) {
+                if (turnoActivo && turnoActivo.ID_Turno) {
                     CargarProductosTurno(turnoActivo.ID_Turno);
                 }
             });
+            
+            // Refrescar productos
+            $('#btn-refrescar-productos').on('click', function() {
+                if (turnoActivo && turnoActivo.ID_Turno) {
+                    $('#buscar-producto').val('');
+                    $('#filtro-estado-producto').val('');
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                }
+            });
+            
+            // Función para seleccionar producto desde búsqueda
+            window.seleccionarProductoDesdeBusqueda = function(idProducto, codigo) {
+                if (!turnoActivo || !turnoActivo.ID_Turno) {
+                    Swal.fire('Error', 'No hay un turno activo', 'error');
+                    return;
+                }
+                
+                $.ajax({
+                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                    type: 'POST',
+                    data: {
+                        accion: 'seleccionar_producto',
+                        id_turno: turnoActivo.ID_Turno,
+                        id_producto: idProducto,
+                        cod_barra: codigo
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // No mostrar alerta, solo actualizar la tabla
+                            CargarProductosTurno(turnoActivo.ID_Turno);
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Error al comunicarse con el servidor', 'error');
+                    }
+                });
+            };
         });
     </script>
 
