@@ -471,12 +471,31 @@ function limpiarCampoBusqueda() {
     $('#buscar-producto').focus();
 }
 
+// Flag para evitar múltiples inicializaciones
+var busquedaInicializada = false;
+
 // Inicializar sistema de búsqueda activa cuando el documento esté listo
 $(document).ready(function() {
-    // Esperar a que el turno esté definido
+    // Esperar a que el turno esté definido y evitar múltiples inicializaciones
     setTimeout(function() {
+        // Verificar que no se haya inicializado ya
+        if (busquedaInicializada) {
+            console.log('Sistema de búsqueda ya inicializado, saltando...');
+            return;
+        }
+        
         if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
             var campoBusqueda = $('#buscar-producto');
+            
+            // Verificar que el campo exista
+            if (campoBusqueda.length === 0) {
+                console.warn('Campo de búsqueda no encontrado');
+                return;
+            }
+            
+            // Marcar como inicializado ANTES de configurar
+            busquedaInicializada = true;
+            console.log('Inicializando sistema de búsqueda activa...');
             
             // Configurar autocomplete (similar a InventarioSucursales)
             campoBusqueda.autocomplete({
@@ -520,13 +539,18 @@ $(document).ready(function() {
                     .appendTo(ul);
             };
             
-            // Procesar buffer de escaneo cada 5ms
-            setInterval(function() {
-                procesarBufferEscaneo();
+            // Procesar buffer de escaneo cada 5ms (solo si hay un turno activo)
+            var intervaloEscaneo = setInterval(function() {
+                if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
+                    procesarBufferEscaneo();
+                } else {
+                    // Si no hay turno activo, detener el intervalo
+                    clearInterval(intervaloEscaneo);
+                }
             }, scanInterval);
             
-            // Detectar entrada desde teclado o escáner
-            campoBusqueda.on('keyup', function(event) {
+            // Detectar entrada desde teclado o escáner (usar off para evitar duplicados)
+            campoBusqueda.off('keyup').on('keyup', function(event) {
                 var valor = $(this).val();
                 var tiempoActual = Date.now();
                 
@@ -552,27 +576,42 @@ $(document).ready(function() {
                 }
             });
             
-            // Enfocar automáticamente el campo
+            // Enfocar automáticamente el campo (solo una vez)
             campoBusqueda.focus();
             
-            // Detectar cuando el campo pierde el foco y recuperarlo si está vacío (para escaneo continuo)
-            campoBusqueda.on('blur', function() {
+            // Detectar cuando el campo pierde el foco y recuperarlo si está vacío (usar off para evitar duplicados)
+            campoBusqueda.off('blur').on('blur', function() {
                 setTimeout(function() {
-                    if (campoBusqueda.val() === '') {
+                    if (campoBusqueda.val() === '' && campoBusqueda.is(':visible')) {
                         campoBusqueda.focus();
                     }
                 }, 100);
             });
             
-            // Limpiar filtros también limpia el buffer
-            $('#btn-limpiar-filtros').on('click', function() {
+            // Limpiar filtros también limpia el buffer (usar off para evitar duplicados)
+            $('#btn-limpiar-filtros').off('click').on('click', function() {
                 scanBuffer = '';
+                clearTimeout(buscarTimeout);
+                $('#buscar-producto').val('');
+                $('#filtro-estado-producto').val('');
+                if (turnoActivo && turnoActivo.ID_Turno) {
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                }
             });
             
-            // Refrescar productos también limpia el buffer
-            $('#btn-refrescar-productos').on('click', function() {
+            // Refrescar productos también limpia el buffer (usar off para evitar duplicados)
+            $('#btn-refrescar-productos').off('click').on('click', function() {
                 scanBuffer = '';
+                if (turnoActivo && turnoActivo.ID_Turno) {
+                    $('#buscar-producto').val('');
+                    $('#filtro-estado-producto').val('');
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                }
             });
+            
+            console.log('Sistema de búsqueda inicializado correctamente');
+        } else {
+            console.log('No hay turno activo, sistema de búsqueda no se inicializará');
         }
     }, 500);
 });

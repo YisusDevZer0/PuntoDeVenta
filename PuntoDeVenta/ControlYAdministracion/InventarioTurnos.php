@@ -266,104 +266,40 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
                 }, 300);
             } else {
                 console.log('No hay turno activo. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
-                // Verificar si hay turnos pero no se detectaron
-                $.ajax({
-                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
-                    type: 'POST',
-                    data: { accion: 'verificar_turno' },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success && response.turno) {
-                            console.log('Turno encontrado después de verificar:', response.turno);
-                            location.reload();
-                        }
-                    }
-                });
+                // NO verificar automáticamente para evitar bucles infinitos
+                // Si necesitas verificar un turno, hazlo manualmente con el botón
             }
             
-            // Iniciar turno
-            $('#btn-iniciar-turno').on('click', function() {
+            // Iniciar turno (usar off para evitar duplicados)
+            $('#btn-iniciar-turno').off('click').on('click', function() {
                 iniciarTurno();
             });
             
-            // Pausar turno
-            $('#btn-pausar-turno').on('click', function() {
+            // Pausar turno (usar off para evitar duplicados)
+            $('#btn-pausar-turno').off('click').on('click', function() {
                 var idTurno = $(this).data('turno');
                 pausarTurno(idTurno);
             });
             
-            // Reanudar turno
-            $('#btn-reanudar-turno').on('click', function() {
+            // Reanudar turno (usar off para evitar duplicados)
+            $('#btn-reanudar-turno').off('click').on('click', function() {
                 var idTurno = $(this).data('turno');
                 reanudarTurno(idTurno);
             });
             
-            // Finalizar turno
-            $('#btn-finalizar-turno').on('click', function() {
+            // Finalizar turno (usar off para evitar duplicados)
+            $('#btn-finalizar-turno').off('click').on('click', function() {
                 var idTurno = $(this).data('turno');
                 finalizarTurno(idTurno);
             });
             
-            // Ver historial
-            $('#btn-ver-historial').on('click', function() {
+            // Ver historial (usar off para evitar duplicados)
+            $('#btn-ver-historial').off('click').on('click', function() {
                 verHistorialTurnos();
             });
             
-            // Configurar autocomplete para búsqueda activa
-            if (turnoActivo && turnoActivo.ID_Turno) {
-                $('#buscar-producto').autocomplete({
-                    source: function(request, response) {
-                        $.ajax({
-                            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AutocompleteInventarioTurnos.php',
-                            type: 'GET',
-                            dataType: 'json',
-                            data: {
-                                term: request.term,
-                                id_turno: turnoActivo.ID_Turno
-                            },
-                            success: function(data) {
-                                response(data);
-                            },
-                            error: function() {
-                                response([]);
-                            }
-                        });
-                    },
-                    minLength: 2,
-                    select: function(event, ui) {
-                        event.preventDefault();
-                        // Si el producto no está bloqueado, seleccionarlo automáticamente
-                        if (!ui.item.bloqueado) {
-                            seleccionarProductoDesdeBusqueda(ui.item.id, ui.item.codigo);
-                        } else {
-                            Swal.fire('Producto bloqueado', 'Este producto está siendo contado por otro usuario', 'warning');
-                        }
-                        $(this).val('');
-                        return false;
-                    },
-                    focus: function(event, ui) {
-                        event.preventDefault();
-                        $(this).val(ui.item.label);
-                        return false;
-                    }
-                }).autocomplete("instance")._renderItem = function(ul, item) {
-                    var clase = item.bloqueado ? 'text-danger' : 'text-success';
-                    var icono = item.bloqueado ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-check"></i>';
-                    return $("<li>")
-                        .append("<div class='" + clase + "'>" + icono + " " + item.label + " (Stock: " + item.existencias + ")</div>")
-                        .appendTo(ul);
-                };
-                
-                // También actualizar tabla mientras se escribe (con debounce)
-                $('#buscar-producto').on('keyup', function() {
-                    clearTimeout(buscarTimeout);
-                    buscarTimeout = setTimeout(function() {
-                        if (turnoActivo && turnoActivo.ID_Turno) {
-                            CargarProductosTurno(turnoActivo.ID_Turno);
-                        }
-                    }, 800);
-                });
-            }
+            // El sistema de búsqueda activa se inicializa en InventarioTurnos.js
+            // No duplicar aquí para evitar conflictos
             
             // Filtro de estado (inmediato)
             $('#filtro-estado-producto').on('change', function() {
