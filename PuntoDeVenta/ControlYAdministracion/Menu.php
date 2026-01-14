@@ -162,7 +162,9 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="ProductosGenerales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-dolly"></i>Historico general </a>
                     <a href="Stocks" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-house-medical-flag"></i>Stocks </a>
+                    <a href="GestionLotesCaducidades" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-check"></i>Gestión de Lotes y Caducidades</a>
                     <a href="Caducados" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-calendar-times"></i>Control de Caducados</a>
+                    <a href="InventarioTurnos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-clipboard-list"></i>Inventario por Turnos</a>
                     <a href="Proveedores" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck-field"></i>Proveedores </a> 
                     <a href="Servicios" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-staff-snake"></i>Servicios </a>
                     <a href="Marcas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-staff-snake"></i>Marcas </a>

@@ -125,8 +125,15 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                 </div>
 
                 <div class="mb-3">
-                    <label for="monto" class="form-label">Monto:</label>
+                    <label for="monto" class="form-label">Costo:</label>
                     <input type="number" step="0.01" name="monto" id="monto" class="form-control" placeholder="0.00" required>
+                    <small class="form-text text-muted" id="costo-variable-msg" style="display: none;">Costo variable - Puede modificar el valor</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="comision" class="form-label">Comisión:</label>
+                    <input type="number" step="0.01" name="comision" id="comision" class="form-control" placeholder="0.00" readonly>
+                    <small class="form-text text-muted">Comisión del servicio (solo lectura)</small>
                 </div>
 
                 <div class="mb-3">
@@ -185,6 +192,74 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
         });
         // Inicializar el valor por defecto
         $('#FormaDePagoServicio').val($('#selTipoPagoServicio').val());
+
+        // Cargar datos del servicio cuando se seleccione
+        $('#servicio_id').on('change', function() {
+            var servicioId = $(this).val();
+            
+            if (!servicioId) {
+                // Limpiar campos si no hay servicio seleccionado
+                $('#monto').val('');
+                $('#comision').val('');
+                $('#costo-variable-msg').hide();
+                return;
+            }
+            
+            // Hacer petición AJAX para obtener los datos del servicio
+            $.ajax({
+                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ObtenerDatosServicio.php',
+                type: 'POST',
+                data: { servicio_id: servicioId },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success && response.servicio) {
+                        var servicio = response.servicio;
+                        var costo = parseFloat(servicio.Costo) || 0;
+                        var comision = parseFloat(servicio.Comision) || 0;
+                        var esVariable = servicio.CostoVariable === 'S' || servicio.CostoVariable === 's';
+                        
+                        // Establecer el costo (si es variable, permitir edición, si no, mostrar el valor predeterminado)
+                        if (costo > 0) {
+                            $('#monto').val(costo.toFixed(2));
+                        } else {
+                            $('#monto').val('');
+                        }
+                        
+                        // Si el costo es variable, permitir edición y mostrar mensaje
+                        if (esVariable) {
+                            $('#monto').prop('readonly', false);
+                            $('#costo-variable-msg').show();
+                        } else {
+                            // Si no es variable pero el costo es 0, permitir edición
+                            if (costo <= 0) {
+                                $('#monto').prop('readonly', false);
+                                $('#costo-variable-msg').hide();
+                            } else {
+                                // Si tiene costo fijo, permitir edición también (por si necesita ajustar)
+                                $('#monto').prop('readonly', false);
+                                $('#costo-variable-msg').hide();
+                            }
+                        }
+                        
+                        // Establecer la comisión (solo lectura)
+                        $('#comision').val(comision.toFixed(2));
+                    } else {
+                        // Si no se encuentra el servicio, limpiar campos
+                        $('#monto').val('');
+                        $('#comision').val('');
+                        $('#costo-variable-msg').hide();
+                        console.error('Error al obtener datos del servicio:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la petición AJAX:', error);
+                    // En caso de error, permitir que el usuario ingrese el costo manualmente
+                    $('#monto').prop('readonly', false);
+                    $('#comision').val('');
+                    $('#costo-variable-msg').hide();
+                }
+            });
+        });
 
         // Manejar el envío del formulario
         $('#RegistrarPagoDeServicioForm').on('submit', function(e) {

@@ -1,66 +1,46 @@
 <?php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
+header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../dbconect.php";
+include_once "../db_connect.php";
 
-try {
-    $codigo = isset($_GET['codigo']) ? $_GET['codigo'] : '';
-    $sucursal = isset($_GET['sucursal']) ? (int)$_GET['sucursal'] : 0;
-    
-    if (empty($codigo) || $sucursal <= 0) {
-        throw new Exception('Código de barras y sucursal son requeridos');
-    }
-    
-    $sql = "SELECT 
-                sp.Folio_Prod_Stock,
-                sp.Cod_Barra,
-                sp.Nombre_Prod as nombre,
-                sp.Precio_Venta as precio_venta,
-                sp.Precio_C as precio_compra,
-                sp.Existencias_R as stock,
-                sp.Fk_sucursal,
-                s.Nombre_Sucursal as sucursal_nombre
-            FROM Stock_POS sp
-            LEFT JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
-            WHERE sp.Cod_Barra = ? AND sp.Fk_sucursal = ?";
-    
-    $stmt = $con->prepare($sql);
-    $stmt->bind_param("si", $codigo, $sucursal);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 0) {
-        throw new Exception('Producto no encontrado en la sucursal especificada');
-    }
-    
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    exit;
+}
+
+$cod_barra = isset($_POST['cod_barra']) ? trim($_POST['cod_barra']) : '';
+
+if (empty($cod_barra)) {
+    echo json_encode(['success' => false, 'message' => 'Código de barras requerido']);
+    exit;
+}
+
+$sql = "SELECT ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal 
+        FROM Stock_POS 
+        WHERE Cod_Barra = ? 
+        LIMIT 1";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $cod_barra);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
     $producto = $result->fetch_assoc();
-    
     echo json_encode([
         'success' => true,
-        'producto' => [
-            'folio_stock' => $producto['Folio_Prod_Stock'],
-            'codigo' => $producto['Cod_Barra'],
-            'nombre' => $producto['nombre'],
-            'precio_venta' => $producto['precio_venta'],
-            'precio_compra' => $producto['precio_compra'],
-            'stock' => $producto['stock'],
-            'sucursal_id' => $producto['Fk_sucursal'],
-            'sucursal_nombre' => $producto['sucursal_nombre']
-        ]
+        'producto' => $producto
     ]);
-    
-} catch (Exception $e) {
-    http_response_code(400);
+} else {
     echo json_encode([
         'success' => false,
-        'error' => $e->getMessage()
+        'message' => 'Producto no encontrado'
     ]);
-} finally {
-    if (isset($con)) {
-        $con->close();
-    }
 }
+
+$stmt->close();
+$conn->close();
 ?>
