@@ -299,40 +299,167 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
                 verHistorialTurnos();
             });
             
-            // El sistema de búsqueda activa se inicializa en InventarioTurnos.js
-            // No duplicar aquí para evitar conflictos
+            // Inicializar autocomplete EXACTAMENTE como en InventarioSucursales
+            $('#buscar-producto').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: 'Controladores/AutocompleteInventarioTurnos.php',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            term: request.term,
+                            id_turno: (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0
+                        },
+                        success: function (data) {
+                            response(data);
+                        },
+                        error: function() {
+                            response([]);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    event.preventDefault();
+                    var codigo = ui.item.value || ui.item.codigo;
+                    // Si hay turno activo, buscar y seleccionar producto
+                    if (turnoActivo && turnoActivo.ID_Turno && typeof buscarYSeleccionarProducto === 'function') {
+                        buscarYSeleccionarProducto(codigo);
+                    } else {
+                        // Solo actualizar la tabla con la búsqueda
+                        var idTurno = (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                        $('#buscar-producto').val(codigo);
+                        CargarProductosTurno(idTurno);
+                    }
+                    return false;
+                }
+            });
             
-            // Estos event listeners se manejan en InventarioTurnos.js para evitar duplicados
+            // Actualizar tabla mientras se escribe (con debounce)
+            $('#buscar-producto').on('keyup', function() {
+                clearTimeout(buscarTimeout);
+                buscarTimeout = setTimeout(function() {
+                    var idTurno = (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                    CargarProductosTurno(idTurno);
+                }, 500);
+            });
             
-            // Función para seleccionar producto desde búsqueda
-            window.seleccionarProductoDesdeBusqueda = function(idProducto, codigo) {
-                if (!turnoActivo || !turnoActivo.ID_Turno) {
-                    Swal.fire('Error', 'No hay un turno activo', 'error');
+            // Filtro de estado
+            $('#filtro-estado-producto').off('change').on('change', function() {
+                var idTurno = (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                CargarProductosTurno(idTurno);
+            });
+            
+            // Limpiar filtros
+            $('#btn-limpiar-filtros').off('click').on('click', function() {
+                clearTimeout(buscarTimeout);
+                $('#buscar-producto').val('');
+                $('#filtro-estado-producto').val('');
+                var idTurno = (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                CargarProductosTurno(idTurno);
+            });
+            
+            // Refrescar productos
+            $('#btn-refrescar-productos').off('click').on('click', function() {
+                $('#buscar-producto').val('');
+                $('#filtro-estado-producto').val('');
+                var idTurno = (turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                CargarProductosTurno(idTurno);
+            });
+            
+            // Función para buscar y seleccionar producto (disponible globalmente)
+            window.buscarYSeleccionarProducto = function(codigo) {
+                if (!codigo || codigo.trim() === '') {
                     return;
                 }
                 
+                if (!turnoActivo || !turnoActivo.ID_Turno) {
+                    Swal.fire('Error', 'No hay un turno activo. Inicia un turno primero.', 'error');
+                    return;
+                }
+                
+                // Buscar producto primero
+                var formData = new FormData();
+                formData.append('codigo', codigo.trim());
+                formData.append('id_turno', turnoActivo.ID_Turno);
+                
                 $.ajax({
-                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaEscanerInventarioTurnos.php',
                     type: 'POST',
-                    data: {
-                        accion: 'seleccionar_producto',
-                        id_turno: turnoActivo.ID_Turno,
-                        id_producto: idProducto,
-                        cod_barra: codigo
-                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(response) {
-                        if (response.success) {
-                            // No mostrar alerta, solo actualizar la tabla
-                            CargarProductosTurno(turnoActivo.ID_Turno);
+                        if (response.success && response.producto) {
+                            // Verificar si está bloqueado
+                            if (response.bloqueado_por_otro) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Producto bloqueado',
+                                    text: 'Este producto está siendo contado por: ' + response.usuario_bloqueador,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                $('#buscar-producto').val('').focus();
+                                return;
+                            }
+                            
+                            // Seleccionar el producto
+                            $.ajax({
+                                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                                type: 'POST',
+                                data: {
+                                    accion: 'seleccionar_producto',
+                                    id_turno: turnoActivo.ID_Turno,
+                                    id_producto: response.producto.id,
+                                    cod_barra: response.producto.codigo
+                                },
+                                dataType: 'json',
+                                success: function(resp) {
+                                    if (resp.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Producto agregado',
+                                            text: response.producto.nombre,
+                                            timer: 1500,
+                                            showConfirmButton: false,
+                                            toast: true,
+                                            position: 'top-end'
+                                        });
+                                        CargarProductosTurno(turnoActivo.ID_Turno);
+                                        $('#buscar-producto').val('').focus();
+                                    } else {
+                                        Swal.fire('Error', resp.message, 'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Error', 'Error al comunicarse con el servidor', 'error');
+                                }
+                            });
                         } else {
-                            Swal.fire('Error', response.message, 'error');
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Producto no encontrado',
+                                text: response.message || 'No se encontró el producto',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            $('#buscar-producto').val('').focus();
                         }
                     },
                     error: function() {
-                        Swal.fire('Error', 'Error al comunicarse con el servidor', 'error');
+                        Swal.fire('Error', 'Error al buscar el producto', 'error');
+                        $('#buscar-producto').val('').focus();
                     }
                 });
+            };
+            
+            // Función para seleccionar producto desde búsqueda (compatibilidad)
+            window.seleccionarProductoDesdeBusqueda = function(idProducto, codigo) {
+                if (codigo) {
+                    buscarYSeleccionarProducto(codigo);
+                }
             };
         });
     </script>
