@@ -422,13 +422,33 @@ try {
                 throw new Exception('Turno no encontrado');
             }
             
+            // Obtener el límite de productos del turno
+            $limite_productos = isset($turno['Limite_Productos']) ? (int)$turno['Limite_Productos'] : 50;
+            
+            // Contar productos completados
+            $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                               WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_completados);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $stmt_comp->close();
+            
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            
+            // Validar que se hayan completado todos los productos requeridos
+            if ($productos_completados < $limite_productos) {
+                throw new Exception("No puedes finalizar el turno. Has completado {$productos_completados} de {$limite_productos} productos requeridos. Debes completar todos los productos antes de finalizar.");
+            }
+            
             // Actualizar turno
             $sql_update = "UPDATE Inventario_Turnos SET
                 Estado = 'finalizado',
-                Hora_Finalizacion = NOW()
+                Hora_Finalizacion = NOW(),
+                Productos_Completados = ?
             WHERE ID_Turno = ?";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("i", $id_turno);
+            $stmt_update->bind_param("ii", $productos_completados, $id_turno);
             $stmt_update->execute();
             $stmt_update->close();
             

@@ -203,10 +203,34 @@ function reanudarTurno(idTurno) {
 
 // Finalizar turno
 function finalizarTurno(idTurno) {
+    // Primero verificar cuántos productos están completados
+    if (!turnoActivo || !turnoActivo.ID_Turno) {
+        Swal.fire('Error', 'No hay un turno activo', 'error');
+        return;
+    }
+    
+    var limite_productos = turnoActivo.Limite_Productos || 50;
+    var productos_completados = turnoActivo.Productos_Completados || 0;
+    
+    // Verificar si se han completado todos los productos requeridos
+    if (productos_completados < limite_productos) {
+        Swal.fire({
+            title: 'No se puede finalizar el turno',
+            html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + limite_productos + '</strong> productos requeridos.</p>' +
+                  '<p>Debes completar todos los productos antes de poder finalizar el turno.</p>',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#3085d6'
+        });
+        return;
+    }
+    
+    // Si se han completado todos, mostrar confirmación
     Swal.fire({
         title: '¿Finalizar el turno?',
-        text: 'Una vez finalizado, no podrás agregar más productos',
-        icon: 'warning',
+        html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + limite_productos + '</strong> productos.</p>' +
+              '<p>Una vez finalizado, no podrás agregar más productos.</p>',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
@@ -230,6 +254,13 @@ function finalizarTurno(idTurno) {
                     } else {
                         Swal.fire('Error', response.message, 'error');
                     }
+                },
+                error: function(xhr) {
+                    var errorMsg = 'Error al comunicarse con el servidor';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Error', errorMsg, 'error');
                 }
             });
         }
