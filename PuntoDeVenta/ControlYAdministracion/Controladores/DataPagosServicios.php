@@ -228,7 +228,6 @@ tabla = $('#PagosServicios').DataTable({
   { mData: 'Servicio' },
   { mData: 'Costo' },
   { mData: 'FormaDePago' },
-  { mData: 'Estado' },
   { mData: 'Sucursal' },
   { mData: 'Empleado' },
   { mData: 'Acciones' }
