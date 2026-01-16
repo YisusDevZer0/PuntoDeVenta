@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $accion = isset($_POST['accion']) ? $_POST['accion'] : '';
+// IMPORTANTE: No usar trim() para que coincida exactamente con lo guardado en la BD
 $usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Sistema';
 $sucursal = isset($row['Fk_sucursal']) ? (int)$row['Fk_sucursal'] : 0;
 

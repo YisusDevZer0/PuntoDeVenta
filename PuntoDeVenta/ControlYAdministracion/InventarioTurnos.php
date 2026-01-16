@@ -2,69 +2,55 @@
 include_once "Controladores/ControladorUsuario.php";
 
 // Verificar si hay un turno activo para el usuario
-$nombre_usuario = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
+// IMPORTANTE: Usar EXACTAMENTE la misma lógica que gestion_turnos.php
+$nombre_usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : ''; // SIN trim para coincidir con gestion_turnos.php
 $sucursal_id = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
 
 $turno_activo = null;
 
 if ($sucursal_id > 0) {
-    // Primero intentar buscar por usuario (múltiples métodos)
+    // Usar la MISMA consulta que gestion_turnos.php usa para verificar turno existente
+    // Esto asegura consistencia entre ambas verificaciones
+    
+    // Primero: Buscar por Usuario_Actual (igual que gestion_turnos.php)
     if (!empty($nombre_usuario)) {
-        // Método 1: LIKE con patrón
         $sql_turno_activo = "SELECT * FROM Inventario_Turnos 
-                             WHERE Fk_sucursal = ? 
+                             WHERE Usuario_Actual = ? 
+                             AND Fk_sucursal = ? 
                              AND Estado IN ('activo', 'pausado')
-                             AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
-                             ORDER BY Hora_Inicio DESC 
+                             ORDER BY Hora_Inicio DESC
                              LIMIT 1";
         $stmt_turno = $conn->prepare($sql_turno_activo);
+        
         if ($stmt_turno) {
-            $usuario_pattern = "%" . $nombre_usuario . "%";
-            $stmt_turno->bind_param("iss", $sucursal_id, $usuario_pattern, $usuario_pattern);
+            $stmt_turno->bind_param("si", $nombre_usuario, $sucursal_id);
             $stmt_turno->execute();
             $result_turno = $stmt_turno->get_result();
             $turno_activo = $result_turno->fetch_assoc();
             $stmt_turno->close();
         }
-        
-        // Método 2: Búsqueda exacta si no se encontró
-        if (!$turno_activo) {
-            $sql_turno_exacto = "SELECT * FROM Inventario_Turnos 
-                                WHERE Fk_sucursal = ? 
-                                AND Estado IN ('activo', 'pausado')
-                                AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
-                                ORDER BY Hora_Inicio DESC 
-                                LIMIT 1";
-            $stmt_exacto = $conn->prepare($sql_turno_exacto);
-            if ($stmt_exacto) {
-                $stmt_exacto->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
-                $stmt_exacto->execute();
-                $result_exacto = $stmt_exacto->get_result();
-                $turno_activo = $result_exacto->fetch_assoc();
-                $stmt_exacto->close();
-            }
-        }
-        
-        // Método 3: Búsqueda sin distinguir mayúsculas/minúsculas
-        if (!$turno_activo) {
-            $sql_turno_case = "SELECT * FROM Inventario_Turnos 
-                              WHERE Fk_sucursal = ? 
-                              AND Estado IN ('activo', 'pausado')
-                              AND (LOWER(Usuario_Actual) = LOWER(?) OR LOWER(Usuario_Inicio) = LOWER(?))
-                              ORDER BY Hora_Inicio DESC 
-                              LIMIT 1";
-            $stmt_case = $conn->prepare($sql_turno_case);
-            if ($stmt_case) {
-                $stmt_case->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
-                $stmt_case->execute();
-                $result_case = $stmt_case->get_result();
-                $turno_activo = $result_case->fetch_assoc();
-                $stmt_case->close();
-            }
+    }
+    
+    // Segundo: Si no se encontró, buscar por Usuario_Inicio
+    if (!$turno_activo && !empty($nombre_usuario)) {
+        $sql_turno_inicio = "SELECT * FROM Inventario_Turnos 
+                            WHERE Usuario_Inicio = ? 
+                            AND Fk_sucursal = ? 
+                            AND Estado IN ('activo', 'pausado')
+                            ORDER BY Hora_Inicio DESC
+                            LIMIT 1";
+        $stmt_inicio = $conn->prepare($sql_turno_inicio);
+        if ($stmt_inicio) {
+            $stmt_inicio->bind_param("si", $nombre_usuario, $sucursal_id);
+            $stmt_inicio->execute();
+            $result_inicio = $stmt_inicio->get_result();
+            $turno_activo = $result_inicio->fetch_assoc();
+            $stmt_inicio->close();
         }
     }
     
-    // Si aún no se encontró, buscar cualquier turno activo en la sucursal (último recurso)
+    // Tercero: Si aún no se encontró, buscar cualquier turno activo en la sucursal
+    // Esto es útil si el nombre de usuario tiene variaciones o espacios
     if (!$turno_activo) {
         $sql_turno_sucursal = "SELECT * FROM Inventario_Turnos 
                               WHERE Fk_sucursal = ? 
@@ -78,6 +64,32 @@ if ($sucursal_id > 0) {
             $result_sucursal = $stmt_sucursal->get_result();
             $turno_activo = $result_sucursal->fetch_assoc();
             $stmt_sucursal->close();
+        }
+    }
+    
+    // DEBUG: Si no se encontró turno, consultar todos los turnos activos para debug
+    if (!$turno_activo && $sucursal_id > 0) {
+        $sql_debug = "SELECT ID_Turno, Folio_Turno, Usuario_Actual, Usuario_Inicio, Estado, Fk_sucursal 
+                     FROM Inventario_Turnos 
+                     WHERE Fk_sucursal = ? 
+                     AND Estado IN ('activo', 'pausado')
+                     ORDER BY Hora_Inicio DESC";
+        $stmt_debug = $conn->prepare($sql_debug);
+        if ($stmt_debug) {
+            $stmt_debug->bind_param("i", $sucursal_id);
+            $stmt_debug->execute();
+            $result_debug = $stmt_debug->get_result();
+            $turnos_debug = [];
+            while ($row_debug = $result_debug->fetch_assoc()) {
+                $turnos_debug[] = $row_debug;
+            }
+            $stmt_debug->close();
+            
+            // Guardar en variable JavaScript para debug
+            if (!empty($turnos_debug)) {
+                echo "<script>console.log('DEBUG: Turnos encontrados en BD:', " . json_encode($turnos_debug) . ");</script>";
+                echo "<script>console.log('DEBUG: Usuario buscado:', " . json_encode($nombre_usuario) . ");</script>";
+            }
         }
     }
 }
@@ -282,8 +294,16 @@ if ($sucursal_id > 0) {
     <script>
         var turnoActivo = <?php echo $turno_activo ? json_encode($turno_activo) : 'null'; ?>;
         
-        // Debug: mostrar información del turno
-        console.log('Turno activo:', turnoActivo);
+        // Debug: mostrar información del turno y usuario
+        console.log('=== DEBUG TURNO ===');
+        console.log('Usuario buscado:', '<?php echo addslashes($nombre_usuario); ?>');
+        console.log('Sucursal:', <?php echo $sucursal_id; ?>);
+        console.log('Turno encontrado:', turnoActivo);
+        if (turnoActivo) {
+            console.log('Usuario_Actual en BD:', turnoActivo.Usuario_Actual);
+            console.log('Usuario_Inicio en BD:', turnoActivo.Usuario_Inicio);
+        }
+        console.log('==================');
         
         $(document).ready(function() {
             // Crear tabla siempre, incluso sin turno activo
