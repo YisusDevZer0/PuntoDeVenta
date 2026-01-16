@@ -11,9 +11,13 @@ var tiempoUltimoEscaneo = 0;
 // Función para cargar productos del turno (0 = sin turno, mostrar disponibles)
 function CargarProductosTurno(idTurno) {
     // Permitir idTurno = 0 para mostrar productos sin turno activo
-    if (idTurno === undefined || idTurno === null) {
-        console.error('ID de turno inválido:', idTurno);
-        return;
+    // Convertir a número y validar
+    idTurno = parseInt(idTurno) || 0;
+    
+    // Solo validar si es undefined o null, NO si es 0
+    if (idTurno === undefined || idTurno === null || isNaN(idTurno)) {
+        console.warn('ID de turno inválido, usando 0:', idTurno);
+        idTurno = 0;
     }
     
     var buscar = $('#buscar-producto').val();
