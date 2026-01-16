@@ -5,40 +5,79 @@ include_once "Controladores/ControladorUsuario.php";
 $nombre_usuario = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
 $sucursal_id = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
 
-// Consulta más flexible para detectar turnos activos (SIN restricción de fecha)
-$sql_turno_activo = "SELECT * FROM Inventario_Turnos 
-                     WHERE Fk_sucursal = ? 
-                     AND Estado IN ('activo', 'pausado')
-                     AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
-                     ORDER BY Hora_Inicio DESC 
-                     LIMIT 1";
-$stmt_turno = $conn->prepare($sql_turno_activo);
 $turno_activo = null;
 
-if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
-    // Usar LIKE para manejar variaciones en el nombre
-    $usuario_pattern = "%" . $nombre_usuario . "%";
-    $stmt_turno->bind_param("iss", $sucursal_id, $usuario_pattern, $usuario_pattern);
-    $stmt_turno->execute();
-    $result_turno = $stmt_turno->get_result();
-    $turno_activo = $result_turno->fetch_assoc();
-    $stmt_turno->close();
+if ($sucursal_id > 0) {
+    // Primero intentar buscar por usuario (múltiples métodos)
+    if (!empty($nombre_usuario)) {
+        // Método 1: LIKE con patrón
+        $sql_turno_activo = "SELECT * FROM Inventario_Turnos 
+                             WHERE Fk_sucursal = ? 
+                             AND Estado IN ('activo', 'pausado')
+                             AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
+                             ORDER BY Hora_Inicio DESC 
+                             LIMIT 1";
+        $stmt_turno = $conn->prepare($sql_turno_activo);
+        if ($stmt_turno) {
+            $usuario_pattern = "%" . $nombre_usuario . "%";
+            $stmt_turno->bind_param("iss", $sucursal_id, $usuario_pattern, $usuario_pattern);
+            $stmt_turno->execute();
+            $result_turno = $stmt_turno->get_result();
+            $turno_activo = $result_turno->fetch_assoc();
+            $stmt_turno->close();
+        }
+        
+        // Método 2: Búsqueda exacta si no se encontró
+        if (!$turno_activo) {
+            $sql_turno_exacto = "SELECT * FROM Inventario_Turnos 
+                                WHERE Fk_sucursal = ? 
+                                AND Estado IN ('activo', 'pausado')
+                                AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
+                                ORDER BY Hora_Inicio DESC 
+                                LIMIT 1";
+            $stmt_exacto = $conn->prepare($sql_turno_exacto);
+            if ($stmt_exacto) {
+                $stmt_exacto->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
+                $stmt_exacto->execute();
+                $result_exacto = $stmt_exacto->get_result();
+                $turno_activo = $result_exacto->fetch_assoc();
+                $stmt_exacto->close();
+            }
+        }
+        
+        // Método 3: Búsqueda sin distinguir mayúsculas/minúsculas
+        if (!$turno_activo) {
+            $sql_turno_case = "SELECT * FROM Inventario_Turnos 
+                              WHERE Fk_sucursal = ? 
+                              AND Estado IN ('activo', 'pausado')
+                              AND (LOWER(Usuario_Actual) = LOWER(?) OR LOWER(Usuario_Inicio) = LOWER(?))
+                              ORDER BY Hora_Inicio DESC 
+                              LIMIT 1";
+            $stmt_case = $conn->prepare($sql_turno_case);
+            if ($stmt_case) {
+                $stmt_case->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
+                $stmt_case->execute();
+                $result_case = $stmt_case->get_result();
+                $turno_activo = $result_case->fetch_assoc();
+                $stmt_case->close();
+            }
+        }
+    }
     
-    // Si no se encontró con LIKE, intentar búsqueda exacta también
+    // Si aún no se encontró, buscar cualquier turno activo en la sucursal (último recurso)
     if (!$turno_activo) {
-        $sql_turno_exacto = "SELECT * FROM Inventario_Turnos 
-                            WHERE Fk_sucursal = ? 
-                            AND Estado IN ('activo', 'pausado')
-                            AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
-                            ORDER BY Hora_Inicio DESC 
-                            LIMIT 1";
-        $stmt_exacto = $conn->prepare($sql_turno_exacto);
-        if ($stmt_exacto) {
-            $stmt_exacto->bind_param("iss", $sucursal_id, $nombre_usuario, $nombre_usuario);
-            $stmt_exacto->execute();
-            $result_exacto = $stmt_exacto->get_result();
-            $turno_activo = $result_exacto->fetch_assoc();
-            $stmt_exacto->close();
+        $sql_turno_sucursal = "SELECT * FROM Inventario_Turnos 
+                              WHERE Fk_sucursal = ? 
+                              AND Estado IN ('activo', 'pausado')
+                              ORDER BY Hora_Inicio DESC 
+                              LIMIT 1";
+        $stmt_sucursal = $conn->prepare($sql_turno_sucursal);
+        if ($stmt_sucursal) {
+            $stmt_sucursal->bind_param("i", $sucursal_id);
+            $stmt_sucursal->execute();
+            $result_sucursal = $stmt_sucursal->get_result();
+            $turno_activo = $result_sucursal->fetch_assoc();
+            $stmt_sucursal->close();
         }
     }
 }
@@ -264,11 +303,32 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
                     CargarProductosTurno(turnoActivo.ID_Turno);
                 }, 300);
             } else {
-                console.log('No hay turno activo. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
-                // Cargar productos disponibles sin turno
-                setTimeout(function() {
-                    CargarProductosTurno(0); // 0 indica sin turno
-                }, 300);
+                console.log('No hay turno activo detectado. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
+                // Intentar verificar si hay un turno que no se detectó
+                $.ajax({
+                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                    type: 'POST',
+                    data: { accion: 'verificar_turno' },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success && response.turno) {
+                            console.log('Turno encontrado después de verificar:', response.turno);
+                            // Recargar la página para mostrar el turno
+                            location.reload();
+                        } else {
+                            // Cargar productos disponibles sin turno
+                            setTimeout(function() {
+                                CargarProductosTurno(0); // 0 indica sin turno
+                            }, 300);
+                        }
+                    },
+                    error: function() {
+                        // Cargar productos disponibles sin turno
+                        setTimeout(function() {
+                            CargarProductosTurno(0);
+                        }, 300);
+                    }
+                });
             }
             
             // Iniciar turno (usar off para evitar duplicados)

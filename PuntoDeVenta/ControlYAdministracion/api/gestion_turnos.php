@@ -22,33 +22,74 @@ try {
     switch ($accion) {
         case 'verificar_turno':
             // Verificar si hay un turno activo que no se detectó (SIN restricción de fecha)
-            // Primero intentar con LIKE
-            $sql_verificar = "SELECT * FROM Inventario_Turnos 
-                             WHERE Fk_sucursal = ? 
-                             AND Estado IN ('activo', 'pausado')
-                             AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
-                             ORDER BY Hora_Inicio DESC 
-                             LIMIT 1";
-            $stmt_ver = $conn->prepare($sql_verificar);
-            $usuario_pattern = "%" . $usuario . "%";
-            $stmt_ver->bind_param("iss", $sucursal, $usuario_pattern, $usuario_pattern);
-            $stmt_ver->execute();
-            $turno_encontrado = $stmt_ver->get_result()->fetch_assoc();
-            $stmt_ver->close();
+            $turno_encontrado = null;
             
-            // Si no se encontró, intentar exacto
-            if (!$turno_encontrado) {
-                $sql_exacto = "SELECT * FROM Inventario_Turnos 
-                              WHERE Fk_sucursal = ? 
-                              AND Estado IN ('activo', 'pausado')
-                              AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
-                              ORDER BY Hora_Inicio DESC 
-                              LIMIT 1";
-                $stmt_exacto = $conn->prepare($sql_exacto);
-                $stmt_exacto->bind_param("iss", $sucursal, $usuario, $usuario);
-                $stmt_exacto->execute();
-                $turno_encontrado = $stmt_exacto->get_result()->fetch_assoc();
-                $stmt_exacto->close();
+            if (!empty($usuario) && $sucursal > 0) {
+                // Método 1: LIKE con patrón
+                $sql_verificar = "SELECT * FROM Inventario_Turnos 
+                                 WHERE Fk_sucursal = ? 
+                                 AND Estado IN ('activo', 'pausado')
+                                 AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
+                                 ORDER BY Hora_Inicio DESC 
+                                 LIMIT 1";
+                $stmt_ver = $conn->prepare($sql_verificar);
+                if ($stmt_ver) {
+                    $usuario_pattern = "%" . $usuario . "%";
+                    $stmt_ver->bind_param("iss", $sucursal, $usuario_pattern, $usuario_pattern);
+                    $stmt_ver->execute();
+                    $turno_encontrado = $stmt_ver->get_result()->fetch_assoc();
+                    $stmt_ver->close();
+                }
+                
+                // Método 2: Búsqueda exacta
+                if (!$turno_encontrado) {
+                    $sql_exacto = "SELECT * FROM Inventario_Turnos 
+                                  WHERE Fk_sucursal = ? 
+                                  AND Estado IN ('activo', 'pausado')
+                                  AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
+                                  ORDER BY Hora_Inicio DESC 
+                                  LIMIT 1";
+                    $stmt_exacto = $conn->prepare($sql_exacto);
+                    if ($stmt_exacto) {
+                        $stmt_exacto->bind_param("iss", $sucursal, $usuario, $usuario);
+                        $stmt_exacto->execute();
+                        $turno_encontrado = $stmt_exacto->get_result()->fetch_assoc();
+                        $stmt_exacto->close();
+                    }
+                }
+                
+                // Método 3: Sin distinguir mayúsculas/minúsculas
+                if (!$turno_encontrado) {
+                    $sql_case = "SELECT * FROM Inventario_Turnos 
+                                WHERE Fk_sucursal = ? 
+                                AND Estado IN ('activo', 'pausado')
+                                AND (LOWER(Usuario_Actual) = LOWER(?) OR LOWER(Usuario_Inicio) = LOWER(?))
+                                ORDER BY Hora_Inicio DESC 
+                                LIMIT 1";
+                    $stmt_case = $conn->prepare($sql_case);
+                    if ($stmt_case) {
+                        $stmt_case->bind_param("iss", $sucursal, $usuario, $usuario);
+                        $stmt_case->execute();
+                        $turno_encontrado = $stmt_case->get_result()->fetch_assoc();
+                        $stmt_case->close();
+                    }
+                }
+            }
+            
+            // Método 4: Cualquier turno activo en la sucursal (último recurso)
+            if (!$turno_encontrado && $sucursal > 0) {
+                $sql_sucursal = "SELECT * FROM Inventario_Turnos 
+                                WHERE Fk_sucursal = ? 
+                                AND Estado IN ('activo', 'pausado')
+                                ORDER BY Hora_Inicio DESC 
+                                LIMIT 1";
+                $stmt_sucursal = $conn->prepare($sql_sucursal);
+                if ($stmt_sucursal) {
+                    $stmt_sucursal->bind_param("i", $sucursal);
+                    $stmt_sucursal->execute();
+                    $turno_encontrado = $stmt_sucursal->get_result()->fetch_assoc();
+                    $stmt_sucursal->close();
+                }
             }
             
             if ($turno_encontrado) {
