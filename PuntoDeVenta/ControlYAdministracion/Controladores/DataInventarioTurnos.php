@@ -7,13 +7,65 @@ include_once "ControladorUsuario.php";
 $id_turno = isset($_GET['id_turno']) ? (int)$_GET['id_turno'] : 0;
 $buscar = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
 $filtro_estado = isset($_GET['estado']) ? $_GET['estado'] : '';
+$sucursal_usuario = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
 
+// Si no hay turno, mostrar productos disponibles de la sucursal
 if ($id_turno <= 0) {
+    // Consulta simple para productos disponibles sin turno
+    $sql = "SELECT 
+        sp.ID_Prod_POS,
+        sp.Cod_Barra,
+        sp.Nombre_Prod,
+        sp.Existencias_R,
+        s.Nombre_Sucursal,
+        'disponible' as Estado_Producto
+    FROM Stock_POS sp
+    INNER JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
+    WHERE sp.Fk_sucursal = ?";
+    
+    $params = [$sucursal_usuario];
+    $types = "i";
+    
+    if (!empty($buscar)) {
+        $sql .= " AND (sp.Cod_Barra LIKE ? OR sp.Nombre_Prod LIKE ?)";
+        $buscar_param = "%$buscar%";
+        $params[] = $buscar_param;
+        $params[] = $buscar_param;
+        $types .= "ss";
+    }
+    
+    $sql .= " ORDER BY sp.Nombre_Prod ASC LIMIT 500";
+    
+    $stmt = $conn->prepare($sql);
+    $data = [];
+    
+    if ($stmt && $sucursal_usuario > 0) {
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        while ($fila = $result->fetch_assoc()) {
+            $data[] = [
+                "Cod_Barra" => $fila["Cod_Barra"],
+                "Nombre_Prod" => $fila["Nombre_Prod"],
+                "Existencias_R" => number_format($fila["Existencias_R"]),
+                "Existencias_Fisicas" => '-',
+                "Diferencia" => '-',
+                "Estado" => '<span class="badge bg-info">Disponible (Sin turno activo)</span>',
+                "Sucursal" => $fila["Nombre_Sucursal"],
+                "Acciones" => '<button class="btn btn-sm btn-secondary" disabled><i class="fa-solid fa-info-circle"></i> Inicia un turno para seleccionar</button>',
+                "clase_fila" => 'producto-disponible'
+            ];
+        }
+        
+        $stmt->close();
+    }
+    
     echo json_encode([
         "sEcho" => 1,
-        "iTotalRecords" => 0,
-        "iTotalDisplayRecords" => 0,
-        "aaData" => []
+        "iTotalRecords" => count($data),
+        "iTotalDisplayRecords" => count($data),
+        "aaData" => $data
     ]);
     exit;
 }

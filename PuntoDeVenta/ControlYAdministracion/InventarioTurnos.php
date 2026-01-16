@@ -247,25 +247,28 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
         console.log('Turno activo:', turnoActivo);
         
         $(document).ready(function() {
+            // Crear tabla siempre, incluso sin turno activo
+            if ($('#tablaInventarioTurnos').length === 0) {
+                $('#DataInventarioTurnos').html(`
+                    <table id="tablaInventarioTurnos" class="table table-striped table-hover">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                `);
+            }
+            
             if (turnoActivo && turnoActivo.ID_Turno) {
                 console.log('Cargando productos para turno:', turnoActivo.ID_Turno);
-                // Crear tabla si no existe
-                if ($('#tablaInventarioTurnos').length === 0) {
-                    $('#DataInventarioTurnos').html(`
-                        <table id="tablaInventarioTurnos" class="table table-striped table-hover">
-                            <thead></thead>
-                            <tbody></tbody>
-                        </table>
-                    `);
-                }
                 // Esperar un momento para asegurar que el DOM esté listo
                 setTimeout(function() {
                     CargarProductosTurno(turnoActivo.ID_Turno);
                 }, 300);
             } else {
                 console.log('No hay turno activo. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
-                // NO verificar automáticamente para evitar bucles infinitos
-                // Si necesitas verificar un turno, hazlo manualmente con el botón
+                // Cargar productos disponibles sin turno
+                setTimeout(function() {
+                    CargarProductosTurno(0); // 0 indica sin turno
+                }, 300);
             }
             
             // Iniciar turno (usar off para evitar duplicados)
@@ -299,31 +302,7 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
             // El sistema de búsqueda activa se inicializa en InventarioTurnos.js
             // No duplicar aquí para evitar conflictos
             
-            // Filtro de estado (inmediato)
-            $('#filtro-estado-producto').on('change', function() {
-                if (turnoActivo && turnoActivo.ID_Turno) {
-                    CargarProductosTurno(turnoActivo.ID_Turno);
-                }
-            });
-            
-            // Limpiar filtros
-            $('#btn-limpiar-filtros').on('click', function() {
-                clearTimeout(buscarTimeout);
-                $('#buscar-producto').val('');
-                $('#filtro-estado-producto').val('');
-                if (turnoActivo && turnoActivo.ID_Turno) {
-                    CargarProductosTurno(turnoActivo.ID_Turno);
-                }
-            });
-            
-            // Refrescar productos
-            $('#btn-refrescar-productos').on('click', function() {
-                if (turnoActivo && turnoActivo.ID_Turno) {
-                    $('#buscar-producto').val('');
-                    $('#filtro-estado-producto').val('');
-                    CargarProductosTurno(turnoActivo.ID_Turno);
-                }
-            });
+            // Estos event listeners se manejan en InventarioTurnos.js para evitar duplicados
             
             // Función para seleccionar producto desde búsqueda
             window.seleccionarProductoDesdeBusqueda = function(idProducto, codigo) {

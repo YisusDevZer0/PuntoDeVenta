@@ -8,9 +8,10 @@ var isScannerInput = false;
 var ultimoEscaneo = null;
 var tiempoUltimoEscaneo = 0;
 
-// Función para cargar productos del turno
+// Función para cargar productos del turno (0 = sin turno, mostrar disponibles)
 function CargarProductosTurno(idTurno) {
-    if (!idTurno || idTurno <= 0) {
+    // Permitir idTurno = 0 para mostrar productos sin turno activo
+    if (idTurno === undefined || idTurno === null) {
         console.error('ID de turno inválido:', idTurno);
         return;
     }
@@ -19,7 +20,7 @@ function CargarProductosTurno(idTurno) {
     var estado = $('#filtro-estado-producto').val();
     
     var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataInventarioTurnos.php';
-    var params = ['id_turno=' + idTurno];
+    var params = ['id_turno=' + (idTurno || 0)];
     
     if (buscar && buscar.trim() !== '') {
         params.push('buscar=' + encodeURIComponent(buscar.trim()));
@@ -484,19 +485,21 @@ $(document).ready(function() {
             return;
         }
         
-        if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
-            var campoBusqueda = $('#buscar-producto');
-            
-            // Verificar que el campo exista
-            if (campoBusqueda.length === 0) {
-                console.warn('Campo de búsqueda no encontrado');
-                return;
-            }
-            
-            // Marcar como inicializado ANTES de configurar
-            busquedaInicializada = true;
-            console.log('Inicializando sistema de búsqueda activa...');
-            
+        var campoBusqueda = $('#buscar-producto');
+        
+        // Verificar que el campo exista
+        if (campoBusqueda.length === 0) {
+            console.warn('Campo de búsqueda no encontrado');
+            return;
+        }
+        
+        var idTurnoActual = (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+        
+        // Marcar como inicializado ANTES de configurar
+        busquedaInicializada = true;
+        console.log('Inicializando sistema de búsqueda activa... Turno:', idTurnoActual);
+        
+        if (idTurnoActual > 0) {
             // Configurar autocomplete (similar a InventarioSucursales)
             campoBusqueda.autocomplete({
                 source: function(request, response) {
@@ -506,7 +509,7 @@ $(document).ready(function() {
                         dataType: 'json',
                         data: {
                             term: request.term,
-                            id_turno: turnoActivo.ID_Turno
+                            id_turno: idTurnoActual
                         },
                         success: function(data) {
                             response(data);
@@ -569,9 +572,8 @@ $(document).ready(function() {
                 if (valor.length >= 2 && (tiempoActual - tiempoUltimoEscaneo) > 300) {
                     clearTimeout(buscarTimeout);
                     buscarTimeout = setTimeout(function() {
-                        if (turnoActivo && turnoActivo.ID_Turno) {
-                            CargarProductosTurno(turnoActivo.ID_Turno);
-                        }
+                        var idTurno = (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                        CargarProductosTurno(idTurno);
                     }, 500);
                 }
             });
@@ -602,16 +604,25 @@ $(document).ready(function() {
             // Refrescar productos también limpia el buffer (usar off para evitar duplicados)
             $('#btn-refrescar-productos').off('click').on('click', function() {
                 scanBuffer = '';
-                if (turnoActivo && turnoActivo.ID_Turno) {
-                    $('#buscar-producto').val('');
-                    $('#filtro-estado-producto').val('');
-                    CargarProductosTurno(turnoActivo.ID_Turno);
-                }
+                var idTurno = (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) ? turnoActivo.ID_Turno : 0;
+                $('#buscar-producto').val('');
+                $('#filtro-estado-producto').val('');
+                CargarProductosTurno(idTurno);
             });
             
             console.log('Sistema de búsqueda inicializado correctamente');
         } else {
-            console.log('No hay turno activo, sistema de búsqueda no se inicializará');
+            // Inicializar búsqueda básica sin turno activo
+            campoBusqueda.on('keyup', function(event) {
+                var valor = $(this).val();
+                if (valor.length >= 2) {
+                    clearTimeout(buscarTimeout);
+                    buscarTimeout = setTimeout(function() {
+                        CargarProductosTurno(0);
+                    }, 500);
+                }
+            });
+            console.log('Sistema de búsqueda básico inicializado (sin turno activo)');
         }
     }, 500);
 });
