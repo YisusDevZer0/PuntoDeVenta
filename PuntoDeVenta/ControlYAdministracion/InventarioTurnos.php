@@ -5,11 +5,10 @@ include_once "Controladores/ControladorUsuario.php";
 $nombre_usuario = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
 $sucursal_id = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
 
-// Consulta más flexible para detectar turnos activos
+// Consulta más flexible para detectar turnos activos (SIN restricción de fecha)
 $sql_turno_activo = "SELECT * FROM Inventario_Turnos 
                      WHERE Fk_sucursal = ? 
                      AND Estado IN ('activo', 'pausado')
-                     AND Fecha_Turno = CURDATE()
                      AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
                      ORDER BY Hora_Inicio DESC 
                      LIMIT 1";
@@ -30,7 +29,6 @@ if ($stmt_turno && !empty($nombre_usuario) && $sucursal_id > 0) {
         $sql_turno_exacto = "SELECT * FROM Inventario_Turnos 
                             WHERE Fk_sucursal = ? 
                             AND Estado IN ('activo', 'pausado')
-                            AND Fecha_Turno = CURDATE()
                             AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
                             ORDER BY Hora_Inicio DESC 
                             LIMIT 1";

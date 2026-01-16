@@ -21,12 +21,11 @@ try {
     
     switch ($accion) {
         case 'verificar_turno':
-            // Verificar si hay un turno activo que no se detectó
+            // Verificar si hay un turno activo que no se detectó (SIN restricción de fecha)
             // Primero intentar con LIKE
             $sql_verificar = "SELECT * FROM Inventario_Turnos 
                              WHERE Fk_sucursal = ? 
                              AND Estado IN ('activo', 'pausado')
-                             AND Fecha_Turno = CURDATE()
                              AND (Usuario_Actual LIKE ? OR Usuario_Inicio LIKE ?)
                              ORDER BY Hora_Inicio DESC 
                              LIMIT 1";
@@ -42,7 +41,6 @@ try {
                 $sql_exacto = "SELECT * FROM Inventario_Turnos 
                               WHERE Fk_sucursal = ? 
                               AND Estado IN ('activo', 'pausado')
-                              AND Fecha_Turno = CURDATE()
                               AND (Usuario_Actual = ? OR Usuario_Inicio = ?)
                               ORDER BY Hora_Inicio DESC 
                               LIMIT 1";
@@ -61,12 +59,11 @@ try {
             break;
             
         case 'iniciar':
-            // Verificar si ya hay un turno activo
+            // Verificar si ya hay un turno activo (SIN restricción de fecha)
             $sql_verificar = "SELECT ID_Turno FROM Inventario_Turnos 
                              WHERE Usuario_Actual = ? 
                              AND Fk_sucursal = ? 
-                             AND Estado IN ('activo', 'pausado')
-                             AND Fecha_Turno = CURDATE()";
+                             AND Estado IN ('activo', 'pausado')";
             $stmt_ver = $conn->prepare($sql_verificar);
             $stmt_ver->bind_param("si", $usuario, $sucursal);
             $stmt_ver->execute();
@@ -74,7 +71,7 @@ try {
             $stmt_ver->close();
             
             if ($turno_existente) {
-                throw new Exception('Ya tienes un turno activo');
+                throw new Exception('Ya tienes un turno activo o pausado. Reanúdalo o finalízalo antes de crear uno nuevo.');
             }
             
             // Generar folio usando el procedimiento almacenado
@@ -205,17 +202,44 @@ try {
                 throw new Exception('Turno no válido para pausar');
             }
             
-            // Actualizar turno
+            // Contar productos actuales antes de pausar
+            $sql_contar = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_contar = $conn->prepare($sql_contar);
+            $stmt_contar->bind_param("i", $id_turno);
+            $stmt_contar->execute();
+            $contar_data = $stmt_contar->get_result()->fetch_assoc();
+            $total_productos = $contar_data ? (int)$contar_data['total'] : 0;
+            $stmt_contar->close();
+            
+            // Contar productos completados
+            $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                               WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_completados);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            $stmt_comp->close();
+            
+            // Actualizar turno con datos actualizados
             $sql_update = "UPDATE Inventario_Turnos SET
                 Estado = 'pausado',
-                Hora_Pausa = NOW()
+                Hora_Pausa = NOW(),
+                Total_Productos = ?,
+                Productos_Completados = ?
             WHERE ID_Turno = ?";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("i", $id_turno);
+            $stmt_update->bind_param("iii", $total_productos, $productos_completados, $id_turno);
             $stmt_update->execute();
             $stmt_update->close();
             
-            echo json_encode(['success' => true, 'message' => 'Turno pausado correctamente']);
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Turno pausado correctamente. Todos los datos han sido guardados.',
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
             break;
             
         case 'reanudar':
@@ -236,17 +260,43 @@ try {
                 throw new Exception('Turno no válido para reanudar');
             }
             
-            // Actualizar turno
+            // Recalcular contadores antes de reanudar
+            $sql_contar = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_contar = $conn->prepare($sql_contar);
+            $stmt_contar->bind_param("i", $id_turno);
+            $stmt_contar->execute();
+            $contar_data = $stmt_contar->get_result()->fetch_assoc();
+            $total_productos = $contar_data ? (int)$contar_data['total'] : 0;
+            $stmt_contar->close();
+            
+            $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                               WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_completados);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            $stmt_comp->close();
+            
+            // Actualizar turno con datos actualizados
             $sql_update = "UPDATE Inventario_Turnos SET
                 Estado = 'activo',
-                Hora_Reanudacion = NOW()
+                Hora_Reanudacion = NOW(),
+                Total_Productos = ?,
+                Productos_Completados = ?
             WHERE ID_Turno = ?";
             $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("i", $id_turno);
+            $stmt_update->bind_param("iii", $total_productos, $productos_completados, $id_turno);
             $stmt_update->execute();
             $stmt_update->close();
             
-            echo json_encode(['success' => true, 'message' => 'Turno reanudado correctamente']);
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Turno reanudado correctamente',
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
             break;
             
         case 'finalizar':
@@ -299,18 +349,20 @@ try {
                 throw new Exception('Datos inválidos');
             }
             
-            // Verificar límite de 50 productos por turno
-            $sql_contar = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
-                          WHERE ID_Turno = ? AND Estado != 'liberado'";
-            $stmt_contar = $conn->prepare($sql_contar);
-            $stmt_contar->bind_param("i", $id_turno);
-            $stmt_contar->execute();
-            $contar_data = $stmt_contar->get_result()->fetch_assoc();
-            $stmt_contar->close();
+            // Obtener el límite de productos del turno
+            $sql_limite = "SELECT Limite_Productos, Total_Productos FROM Inventario_Turnos WHERE ID_Turno = ?";
+            $stmt_limite = $conn->prepare($sql_limite);
+            $stmt_limite->bind_param("i", $id_turno);
+            $stmt_limite->execute();
+            $limite_data = $stmt_limite->get_result()->fetch_assoc();
+            $stmt_limite->close();
             
-            $total_productos = $contar_data ? (int)$contar_data['total'] : 0;
-            if ($total_productos >= 50) {
-                throw new Exception('Has alcanzado el límite de 50 productos por turno. Finaliza o libera algunos productos para agregar más.');
+            $limite_productos = isset($limite_data['Limite_Productos']) ? (int)$limite_data['Limite_Productos'] : 50;
+            $total_productos = isset($limite_data['Total_Productos']) ? (int)$limite_data['Total_Productos'] : 0;
+            
+            // Verificar límite de productos por turno
+            if ($total_productos >= $limite_productos) {
+                throw new Exception("Has alcanzado el límite de {$limite_productos} productos por turno. Finaliza o libera algunos productos para agregar más.");
             }
             
             // Verificar que el producto no esté bloqueado por otro usuario
