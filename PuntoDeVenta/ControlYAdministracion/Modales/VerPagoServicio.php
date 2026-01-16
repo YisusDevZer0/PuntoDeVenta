@@ -11,12 +11,11 @@ if (!isset($_POST["id"]) || empty($_POST["id"])) {
 $pago_id = intval($_POST["id"]);
 $pago = null;
 
-// Consulta para obtener los detalles del pago con información relacionada
+// Consulta para obtener los detalles del pago con información relacionada, incluyendo comisión
 $sql = "SELECT 
     ps.`id`, 
     ps.`nombre_paciente`, 
     ps.`Servicio`, 
-    ps.`estado`, 
     ps.`costo`, 
     ps.`NumTicket`, 
     ps.`Fk_Sucursal`, 
@@ -24,13 +23,16 @@ $sql = "SELECT
     ps.`Empleado`,
     ps.`FormaDePago`,
     s.`Nombre_Sucursal`,
-    c.`ID_Caja`
+    c.`ID_Caja`,
+    ls.`Comision`
 FROM 
     PagosServicios ps
 JOIN 
     Sucursales s ON ps.`Fk_Sucursal` = s.`ID_Sucursal`
 LEFT JOIN 
     Cajas c ON ps.`Fk_Caja` = c.`ID_Caja`
+LEFT JOIN
+    ListadoServicios ls ON ps.`Servicio` = ls.`Servicio`
 WHERE 
     ps.`id` = ?";
 
@@ -62,11 +64,11 @@ if (!$pago) {
     </div>
 
     <div class="row">
-        <!-- Información del Cliente y Servicio -->
-        <div class="col-md-6">
+        <!-- Sección 1: Cliente -->
+        <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Información del Cliente</h6>
+                    <h6 class="mb-0"><i class="fas fa-user me-2"></i>Cliente</h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
@@ -75,31 +77,13 @@ if (!$pago) {
                     </div>
                 </div>
             </div>
-
-            <div class="card mb-3">
-                <div class="card-header bg-info text-white">
-                    <h6 class="mb-0"><i class="fas fa-concierge-bell me-2"></i>Información del Servicio</h6>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Servicio:</label>
-                        <p class="form-control-plaintext"><?php echo htmlspecialchars($pago['Servicio']); ?></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Estado:</label>
-                        <span class="badge bg-<?php echo $pago['estado'] === 'Pagado' ? 'success' : 'warning'; ?>">
-                            <?php echo htmlspecialchars($pago['estado'] ?? 'N/A'); ?>
-                        </span>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <!-- Información del Pago y Ubicación -->
-        <div class="col-md-6">
+        <!-- Sección 2: Pago y Comisión -->
+        <div class="col-md-4">
             <div class="card mb-3">
                 <div class="card-header bg-success text-white">
-                    <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Información del Pago</h6>
+                    <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Pago y Comisión</h6>
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
@@ -110,8 +94,14 @@ if (!$pago) {
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Costo:</label>
-                        <p class="form-control-plaintext fs-4 text-success fw-bold">
+                        <p class="form-control-plaintext fs-5 text-success fw-bold">
                             $<?php echo number_format($pago['costo'], 2); ?>
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Comisión:</label>
+                        <p class="form-control-plaintext fs-5 text-info fw-bold">
+                            $<?php echo number_format($pago['Comision'] ?? 0.00, 2); ?>
                         </p>
                     </div>
                     <div class="mb-3">
@@ -122,12 +112,19 @@ if (!$pago) {
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Sección 3: Datos del Servicio -->
+        <div class="col-md-4">
             <div class="card mb-3">
-                <div class="card-header bg-warning text-dark">
-                    <h6 class="mb-0"><i class="fas fa-building me-2"></i>Información de Ubicación</h6>
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-concierge-bell me-2"></i>Datos del Servicio</h6>
                 </div>
                 <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Servicio:</label>
+                        <p class="form-control-plaintext"><?php echo htmlspecialchars($pago['Servicio']); ?></p>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Sucursal:</label>
                         <p class="form-control-plaintext"><?php echo htmlspecialchars($pago['Nombre_Sucursal']); ?></p>
