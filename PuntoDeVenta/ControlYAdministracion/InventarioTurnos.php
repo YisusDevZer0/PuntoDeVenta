@@ -4,7 +4,16 @@ include_once "Controladores/ControladorUsuario.php";
 // Verificar si hay un turno activo para el usuario
 // IMPORTANTE: Usar EXACTAMENTE la misma lógica que gestion_turnos.php
 $nombre_usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : ''; // SIN trim para coincidir con gestion_turnos.php
-$sucursal_id = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
+
+// Obtener sucursal - intentar múltiples formas (mayúscula, minúscula, sesión)
+$sucursal_id = 0;
+if (isset($row['Fk_Sucursal']) && $row['Fk_Sucursal'] > 0) {
+    $sucursal_id = (int)$row['Fk_Sucursal'];
+} elseif (isset($row['Fk_sucursal']) && $row['Fk_sucursal'] > 0) {
+    $sucursal_id = (int)$row['Fk_sucursal'];
+} elseif (isset($_SESSION['Fk_Sucursal']) && $_SESSION['Fk_Sucursal'] > 0) {
+    $sucursal_id = (int)$_SESSION['Fk_Sucursal'];
+}
 
 $turno_activo = null;
 
@@ -298,10 +307,13 @@ if ($sucursal_id > 0) {
         console.log('=== DEBUG TURNO ===');
         console.log('Usuario buscado:', '<?php echo addslashes($nombre_usuario); ?>');
         console.log('Sucursal:', <?php echo $sucursal_id; ?>);
+        console.log('Fk_Sucursal en row:', <?php echo isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 'null'; ?>);
+        console.log('Fk_Sucursal en SESSION:', <?php echo isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : 'null'; ?>);
         console.log('Turno encontrado:', turnoActivo);
         if (turnoActivo) {
             console.log('Usuario_Actual en BD:', turnoActivo.Usuario_Actual);
             console.log('Usuario_Inicio en BD:', turnoActivo.Usuario_Inicio);
+            console.log('Fk_sucursal en BD:', turnoActivo.Fk_sucursal);
         }
         console.log('==================');
         

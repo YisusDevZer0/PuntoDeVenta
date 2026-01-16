@@ -15,7 +15,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $accion = isset($_POST['accion']) ? $_POST['accion'] : '';
 // IMPORTANTE: No usar trim() para que coincida exactamente con lo guardado en la BD
 $usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Sistema';
-$sucursal = isset($row['Fk_sucursal']) ? (int)$row['Fk_sucursal'] : 0;
+
+// Obtener sucursal - intentar múltiples formas (mayúscula, minúscula, sesión)
+$sucursal = 0;
+if (isset($row['Fk_Sucursal']) && $row['Fk_Sucursal'] > 0) {
+    $sucursal = (int)$row['Fk_Sucursal'];
+} elseif (isset($row['Fk_sucursal']) && $row['Fk_sucursal'] > 0) {
+    $sucursal = (int)$row['Fk_sucursal'];
+} elseif (isset($_SESSION['Fk_Sucursal']) && $_SESSION['Fk_Sucursal'] > 0) {
+    $sucursal = (int)$_SESSION['Fk_Sucursal'];
+}
+
+// DEBUG: Verificar valores obtenidos
+error_log("DEBUG gestion_turnos - Usuario: " . $usuario . ", Sucursal: " . $sucursal . ", Accion: " . $accion);
+error_log("DEBUG gestion_turnos - row[Fk_Sucursal]: " . (isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : 'NO EXISTE'));
+error_log("DEBUG gestion_turnos - row[Fk_sucursal]: " . (isset($row['Fk_sucursal']) ? $row['Fk_sucursal'] : 'NO EXISTE'));
+error_log("DEBUG gestion_turnos - SESSION[Fk_Sucursal]: " . (isset($_SESSION['Fk_Sucursal']) ? $_SESSION['Fk_Sucursal'] : 'NO EXISTE'));
 
 try {
     $conn->begin_transaction();
@@ -101,6 +116,16 @@ try {
             break;
             
         case 'iniciar':
+            // Validar que la sucursal sea válida
+            if ($sucursal <= 0) {
+                throw new Exception('Error: No se pudo obtener la sucursal. Sucursal: ' . $sucursal);
+            }
+            
+            // Validar que el usuario sea válido
+            if (empty($usuario)) {
+                throw new Exception('Error: No se pudo obtener el usuario.');
+            }
+            
             // Verificar si ya hay un turno activo (SIN restricción de fecha)
             $sql_verificar = "SELECT ID_Turno FROM Inventario_Turnos 
                              WHERE Usuario_Actual = ? 
@@ -182,6 +207,15 @@ try {
                 $col_exists = ($row_check['existe'] > 0);
             }
             
+            // Validar nuevamente antes de insertar
+            if ($sucursal <= 0) {
+                throw new Exception('Error: La sucursal no es válida antes de insertar. Sucursal: ' . $sucursal);
+            }
+            
+            if (empty($usuario)) {
+                throw new Exception('Error: El usuario no es válido antes de insertar.');
+            }
+            
             // Crear turno con o sin límite según exista la columna
             if ($col_exists) {
                 $sql_insert = "INSERT INTO Inventario_Turnos (
@@ -192,7 +226,12 @@ try {
                 if (!$stmt_insert) {
                     throw new Exception('Error al preparar la inserción: ' . $conn->error);
                 }
-                $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
+                // IMPORTANTE: Verificar que $sucursal sea un entero válido
+                $sucursal_int = (int)$sucursal;
+                if ($sucursal_int <= 0) {
+                    throw new Exception('Error: La sucursal debe ser un número mayor a 0. Valor recibido: ' . $sucursal);
+                }
+                $stmt_insert->bind_param("siss", $folio, $sucursal_int, $usuario, $usuario);
             } else {
                 $sql_insert = "INSERT INTO Inventario_Turnos (
                     Folio_Turno, Fk_sucursal, Usuario_Inicio, Usuario_Actual,
@@ -202,16 +241,40 @@ try {
                 if (!$stmt_insert) {
                     throw new Exception('Error al preparar la inserción: ' . $conn->error);
                 }
-                $stmt_insert->bind_param("siss", $folio, $sucursal, $usuario, $usuario);
+                // IMPORTANTE: Verificar que $sucursal sea un entero válido
+                $sucursal_int = (int)$sucursal;
+                if ($sucursal_int <= 0) {
+                    throw new Exception('Error: La sucursal debe ser un número mayor a 0. Valor recibido: ' . $sucursal);
+                }
+                $stmt_insert->bind_param("siss", $folio, $sucursal_int, $usuario, $usuario);
             }
             
             $stmt_insert->execute();
             
             if ($stmt_insert->error) {
-                throw new Exception('Error al insertar turno: ' . $stmt_insert->error);
+                throw new Exception('Error al insertar turno: ' . $stmt_insert->error . ' - Sucursal usada: ' . $sucursal_int);
             }
             
             $id_turno = $conn->insert_id;
+            
+            // Verificar que el turno se insertó correctamente con la sucursal
+            $sql_verificar_insert = "SELECT ID_Turno, Fk_sucursal, Usuario_Actual FROM Inventario_Turnos WHERE ID_Turno = ?";
+            $stmt_ver_ins = $conn->prepare($sql_verificar_insert);
+            $stmt_ver_ins->bind_param("i", $id_turno);
+            $stmt_ver_ins->execute();
+            $turno_insertado = $stmt_ver_ins->get_result()->fetch_assoc();
+            $stmt_ver_ins->close();
+            
+            if (!$turno_insertado) {
+                throw new Exception('Error: El turno no se insertó correctamente');
+            }
+            
+            if ($turno_insertado['Fk_sucursal'] != $sucursal_int) {
+                throw new Exception('Error: La sucursal no se guardó correctamente. Esperada: ' . $sucursal_int . ', Guardada: ' . $turno_insertado['Fk_sucursal']);
+            }
+            
+            error_log("DEBUG: Turno creado - ID: " . $id_turno . ", Sucursal: " . $turno_insertado['Fk_sucursal'] . ", Usuario: " . $turno_insertado['Usuario_Actual']);
+            
             $stmt_insert->close();
             
             // Registrar en historial
