@@ -326,7 +326,7 @@ $('#PagosServicios').on('draw.dt', function() {
 <th>Servicio</th>
 <th>Costo</th>
 <th>Forma de Pago</th>
-<th>Estado</th>
+
 <th>Sucursal</th>
 <th>Empleado</th>
 <th>Acciones</th>

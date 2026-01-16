@@ -11,7 +11,6 @@ $sql = "SELECT
     ps.`id`, 
     ps.`nombre_paciente`, 
     ps.`Servicio`, 
-    ps.`estado`, 
     ps.`costo`, 
     ps.`NumTicket`, 
     ps.`Fk_Sucursal`, 
@@ -50,24 +49,6 @@ while ($fila = $result->fetch_assoc()) {
     // Definir el estilo del estado
     $estado_estilo = '';
     $estado_leyenda = '';
-    switch ($fila["estado"]) {
-        case 'Pendiente':
-            $estado_estilo = 'background-color: #ffc107; color: white; padding: 5px; border-radius: 5px;';
-            $estado_leyenda = 'Pendiente';
-            break;
-        case 'Pagado':
-            $estado_estilo = 'background-color: #28a745; color: white; padding: 5px; border-radius: 5px;';
-            $estado_leyenda = 'Pagado';
-            break;
-        case 'Cancelado':
-            $estado_estilo = 'background-color: #dc3545; color: white; padding: 5px; border-radius: 5px;';
-            $estado_leyenda = 'Cancelado';
-            break;
-        default:
-            $estado_estilo = 'background-color: #6c757d; color: white; padding: 5px; border-radius: 5px;';
-            $estado_leyenda = $fila["estado"];
-            break;
-    }
     
     // Construir el array de datos
     $data[] = [
@@ -77,7 +58,6 @@ while ($fila = $result->fetch_assoc()) {
         "Servicio" => $fila["Servicio"],
         "Costo" => '$' . number_format($fila["costo"], 2),
         "FormaDePago" => $fila["FormaDePago"],
-        "Estado" => "<div style=\"$estado_estilo\">$estado_leyenda</div>",
         "Sucursal" => $fila["Nombre_Sucursal"],
         "Empleado" => $fila["Empleado"],
         "Caja" => $fila["ID_Caja"],
