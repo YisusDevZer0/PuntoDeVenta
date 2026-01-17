@@ -460,9 +460,10 @@ try {
             
             $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
             
-            // Validar que se hayan completado todos los productos seleccionados (no el límite máximo)
-            if ($total_productos > 0 && $productos_completados < $total_productos) {
-                throw new Exception("No puedes finalizar el turno. Has completado {$productos_completados} de {$total_productos} productos seleccionados. Debes completar todos los productos seleccionados antes de finalizar.");
+            // El turno solo se cierra cuando tenga 50 productos contados (completados)
+            $limite_requerido = isset($turno['Limite_Productos']) ? (int)$turno['Limite_Productos'] : 50;
+            if ($productos_completados < $limite_requerido) {
+                throw new Exception("No puedes finalizar el turno. Debes tener {$limite_requerido} productos contados. Tienes {$productos_completados} de {$limite_requerido}.");
             }
             
             // Actualizar turno

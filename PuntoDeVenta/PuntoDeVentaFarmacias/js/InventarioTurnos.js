@@ -222,13 +222,15 @@ function finalizarTurno(idTurno) {
             if (response.success) {
                 var total_productos = response.total_productos || 0;
                 var productos_completados = response.productos_completados || 0;
+                var limite_requerido = turnoActivo.Limite_Productos || 50;
                 
-                // Verificar si se han completado todos los productos seleccionados
-                if (total_productos > 0 && productos_completados < total_productos) {
+                // El turno solo se cierra cuando tenga 50 productos contados
+                if (productos_completados < limite_requerido) {
                     Swal.fire({
                         title: 'No se puede finalizar el turno',
-                        html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + total_productos + '</strong> productos seleccionados.</p>' +
-                              '<p>Debes completar todos los productos seleccionados antes de poder finalizar el turno.</p>',
+                        html: '<p>Debes tener <strong>' + limite_requerido + '</strong> productos contados.</p>' +
+                              '<p>Tienes <strong>' + productos_completados + '</strong> de ' + limite_requerido + '.</p>' +
+                              '<p>Cuenta los productos pendientes antes de finalizar.</p>',
                         icon: 'warning',
                         confirmButtonText: 'Entendido',
                         confirmButtonColor: '#3085d6'
@@ -236,56 +238,49 @@ function finalizarTurno(idTurno) {
                     return;
                 }
                 
-                // Si se han completado todos, mostrar confirmación
                 confirmarFinalizarTurno(idTurno, total_productos, productos_completados);
             } else {
-                // Si no hay respuesta, usar los datos del turno activo
-                var total_productos = turnoActivo.Total_Productos || 0;
                 var productos_completados = turnoActivo.Productos_Completados || 0;
-                
-                if (total_productos > 0 && productos_completados < total_productos) {
+                var limite_requerido = turnoActivo.Limite_Productos || 50;
+                if (productos_completados < limite_requerido) {
                     Swal.fire({
                         title: 'No se puede finalizar el turno',
-                        html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + total_productos + '</strong> productos seleccionados.</p>' +
-                              '<p>Debes completar todos los productos seleccionados antes de poder finalizar el turno.</p>',
+                        html: '<p>Debes tener ' + limite_requerido + ' productos contados. Tienes ' + productos_completados + '.</p>',
                         icon: 'warning',
                         confirmButtonText: 'Entendido',
                         confirmButtonColor: '#3085d6'
                     });
                     return;
                 }
-                
-                confirmarFinalizarTurno(idTurno, total_productos, productos_completados);
+                confirmarFinalizarTurno(idTurno, turnoActivo.Total_Productos || 0, productos_completados);
             }
         },
         error: function() {
-            // Si hay error, usar los datos del turno activo directamente
-            var total_productos = turnoActivo.Total_Productos || 0;
             var productos_completados = turnoActivo.Productos_Completados || 0;
-            
-            if (total_productos > 0 && productos_completados < total_productos) {
+            var limite_requerido = turnoActivo.Limite_Productos || 50;
+            if (productos_completados < limite_requerido) {
                 Swal.fire({
                     title: 'No se puede finalizar el turno',
-                    html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + total_productos + '</strong> productos seleccionados.</p>' +
-                          '<p>Debes completar todos los productos seleccionados antes de poder finalizar el turno.</p>',
+                    html: '<p>Debes tener ' + limite_requerido + ' productos contados. Tienes ' + productos_completados + '.</p>',
                     icon: 'warning',
                     confirmButtonText: 'Entendido',
                     confirmButtonColor: '#3085d6'
                 });
                 return;
             }
-            
-            confirmarFinalizarTurno(idTurno, total_productos, productos_completados);
+            confirmarFinalizarTurno(idTurno, turnoActivo.Total_Productos || 0, productos_completados);
         }
     });
 }
 
-// Función auxiliar para confirmar finalización
+// Función auxiliar para confirmar finalización (solo se llama cuando ya hay 50 contados)
 function confirmarFinalizarTurno(idTurno, total_productos, productos_completados) {
+    var html = '<p>Has completado <strong>' + productos_completados + '</strong> productos contados.</p>' +
+               '<p>Una vez finalizado, no podrás agregar más productos.</p>';
+    
     Swal.fire({
         title: '¿Finalizar el turno?',
-        html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + total_productos + '</strong> productos seleccionados.</p>' +
-              '<p>Una vez finalizado, no podrás agregar más productos.</p>',
+        html: html,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
