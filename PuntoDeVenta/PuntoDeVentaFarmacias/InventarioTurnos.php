@@ -215,9 +215,11 @@ if ($sucursal_id > 0) {
                                         <?php echo $porcentaje; ?>%
                                     </div>
                                 </div>
-                                <small>
+                                <small class="texto-progreso">
                                     <?php echo $completados; ?> / <?php echo $total_seleccionados; ?> completados
-                                    (Máx: <?php echo $limite_productos; ?> productos)
+                                    <?php if ($limite_productos > 0): ?>
+                                        (Máx: <?php echo $limite_productos; ?> productos)
+                                    <?php endif; ?>
                                 </small>
                             </div>
                             <div class="col-md-3">
@@ -248,6 +250,7 @@ if ($sucursal_id > 0) {
                             <select class="form-select" id="filtro-estado-producto">
                                 <option value="">Todos</option>
                                 <option value="disponible">Disponibles</option>
+                                <option value="en_proceso">En proceso</option>
                                 <option value="bloqueado">Bloqueados</option>
                                 <option value="completado">Completados</option>
                             </select>

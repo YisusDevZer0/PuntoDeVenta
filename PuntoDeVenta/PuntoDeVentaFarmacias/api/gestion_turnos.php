@@ -438,8 +438,16 @@ try {
                 throw new Exception('Turno no encontrado');
             }
             
-            // Obtener el límite de productos del turno
-            $limite_productos = isset($turno['Limite_Productos']) ? (int)$turno['Limite_Productos'] : 50;
+            // Contar productos totales seleccionados (no liberados)
+            $sql_total = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_total = $conn->prepare($sql_total);
+            $stmt_total->bind_param("i", $id_turno);
+            $stmt_total->execute();
+            $total_data = $stmt_total->get_result()->fetch_assoc();
+            $stmt_total->close();
+            
+            $total_productos = $total_data ? (int)$total_data['total'] : 0;
             
             // Contar productos completados
             $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
@@ -452,9 +460,9 @@ try {
             
             $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
             
-            // Validar que se hayan completado todos los productos requeridos
-            if ($productos_completados < $limite_productos) {
-                throw new Exception("No puedes finalizar el turno. Has completado {$productos_completados} de {$limite_productos} productos requeridos. Debes completar todos los productos antes de finalizar.");
+            // Validar que se hayan completado todos los productos seleccionados (no el límite máximo)
+            if ($total_productos > 0 && $productos_completados < $total_productos) {
+                throw new Exception("No puedes finalizar el turno. Has completado {$productos_completados} de {$total_productos} productos seleccionados. Debes completar todos los productos seleccionados antes de finalizar.");
             }
             
             // Actualizar turno
@@ -578,6 +586,41 @@ try {
             echo json_encode(['success' => true, 'message' => 'Producto seleccionado correctamente']);
             break;
             
+        case 'obtener_estado':
+            $id_turno = isset($_POST['id_turno']) ? (int)$_POST['id_turno'] : 0;
+            if ($id_turno <= 0) {
+                throw new Exception('ID de turno inválido');
+            }
+            
+            // Contar productos totales (no liberados)
+            $sql_total = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_total = $conn->prepare($sql_total);
+            $stmt_total->bind_param("i", $id_turno);
+            $stmt_total->execute();
+            $total_data = $stmt_total->get_result()->fetch_assoc();
+            $stmt_total->close();
+            
+            $total_productos = $total_data ? (int)$total_data['total'] : 0;
+            
+            // Contar productos completados
+            $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                               WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_completados);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $stmt_comp->close();
+            
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            
+            echo json_encode([
+                'success' => true,
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
+            break;
+            
         case 'contar_producto':
             $id_registro = isset($_POST['id_registro']) ? (int)$_POST['id_registro'] : 0;
             $existencias_fisicas = isset($_POST['existencias_fisicas']) ? (int)$_POST['existencias_fisicas'] : 0;
@@ -598,6 +641,9 @@ try {
                 throw new Exception('Registro no encontrado');
             }
             
+            // Verificar si ya estaba completado
+            $ya_completado = ($registro['Estado'] == 'completado');
+            
             // Calcular diferencia
             $diferencia = $existencias_fisicas - $registro['Existencias_Sistema'];
             
@@ -614,16 +660,32 @@ try {
             $stmt_update->execute();
             $stmt_update->close();
             
-            // Actualizar contador de completados
-            $sql_completados = "UPDATE Inventario_Turnos SET 
-                Productos_Completados = Productos_Completados + 1 
-            WHERE ID_Turno = ?";
-            $stmt_comp = $conn->prepare($sql_completados);
-            $stmt_comp->bind_param("i", $registro['ID_Turno']);
-            $stmt_comp->execute();
-            $stmt_comp->close();
+            // Actualizar contador de completados solo si no estaba completado antes
+            if (!$ya_completado) {
+                $sql_completados = "UPDATE Inventario_Turnos SET 
+                    Productos_Completados = Productos_Completados + 1 
+                WHERE ID_Turno = ?";
+                $stmt_comp = $conn->prepare($sql_completados);
+                $stmt_comp->bind_param("i", $registro['ID_Turno']);
+                $stmt_comp->execute();
+                $stmt_comp->close();
+            }
             
-            echo json_encode(['success' => true, 'message' => 'Conteo registrado correctamente', 'diferencia' => $diferencia]);
+            // Obtener estado actualizado del turno
+            $sql_estado = "SELECT Total_Productos, Productos_Completados FROM Inventario_Turnos WHERE ID_Turno = ?";
+            $stmt_estado = $conn->prepare($sql_estado);
+            $stmt_estado->bind_param("i", $registro['ID_Turno']);
+            $stmt_estado->execute();
+            $estado_data = $stmt_estado->get_result()->fetch_assoc();
+            $stmt_estado->close();
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Conteo registrado correctamente',
+                'diferencia' => $diferencia,
+                'total_productos' => $estado_data['Total_Productos'] ?? 0,
+                'productos_completados' => $estado_data['Productos_Completados'] ?? 0
+            ]);
             break;
             
         default:

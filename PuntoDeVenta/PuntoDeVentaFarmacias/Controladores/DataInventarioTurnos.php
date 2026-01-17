@@ -152,6 +152,9 @@ if (!empty($filtro_estado)) {
                   AND (ipb.ID_Bloqueo IS NULL OR ipb.Usuario_Bloqueo = ?)";
         $params[] = $turno['Usuario_Actual'];
         $types .= "s";
+    } elseif ($filtro_estado == 'en_proceso') {
+        $sql .= " AND itp.ID_Registro IS NOT NULL 
+                  AND (itp.Estado = 'seleccionado' OR itp.Estado = 'en_conteo')";
     } elseif ($filtro_estado == 'bloqueado') {
         $sql .= " AND ipb.ID_Bloqueo IS NOT NULL AND ipb.Usuario_Bloqueo != ? AND ipb.Estado = 'bloqueado'";
         $params[] = $turno['Usuario_Actual'];
