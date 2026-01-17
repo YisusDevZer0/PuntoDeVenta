@@ -108,7 +108,7 @@ if ($sucursal_id > 0) {
 
 <head>
     <meta charset="utf-8">
-    <title>Inventario por Turnos - <?php echo $row['Licencia']?></title>
+    <title>Conteo Diario por Turnos - <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php";?>
     
@@ -157,7 +157,7 @@ if ($sucursal_id > 0) {
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="mb-0" style="color:#0172b6;">
                             <i class="fa-solid fa-clipboard-list me-2"></i>
-                            Inventario por Turnos Diarios - <?php echo $row['Licencia']?>
+                            Conteo Diario por Turnos Diarios - <?php echo $row['Licencia']?>
                         </h6>
                         <div class="btn-group">
                             <?php if (!$turno_activo): ?>
@@ -266,7 +266,7 @@ if ($sucursal_id > 0) {
                         <?php if ($turno_activo): ?>
                             <div class="alert alert-info">
                                 <i class="fa-solid fa-info-circle me-2"></i>
-                                Cargando productos del inventario...
+                                Cargando productos del conteo diario...
                             </div>
                         <?php else: ?>
                             <div class="alert alert-info text-center">

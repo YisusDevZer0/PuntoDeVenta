@@ -110,7 +110,7 @@ function CargarProductosTurno(idTurno) {
 // Iniciar turno
 function iniciarTurno() {
     Swal.fire({
-        title: '¿Iniciar nuevo turno de inventario?',
+        title: '¿Iniciar nuevo turno de conteo diario?',
         text: 'Se creará un nuevo turno para el día de hoy',
         icon: 'question',
         showCancelButton: true,
