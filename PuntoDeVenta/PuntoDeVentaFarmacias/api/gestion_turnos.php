@@ -583,7 +583,20 @@ try {
             $stmt_total->execute();
             $stmt_total->close();
             
-            echo json_encode(['success' => true, 'message' => 'Producto seleccionado correctamente']);
+            // Obtener estado actualizado del turno para enviar al frontend
+            $sql_estado = "SELECT Total_Productos, Productos_Completados FROM Inventario_Turnos WHERE ID_Turno = ?";
+            $stmt_estado = $conn->prepare($sql_estado);
+            $stmt_estado->bind_param("i", $id_turno);
+            $stmt_estado->execute();
+            $estado_data = $stmt_estado->get_result()->fetch_assoc();
+            $stmt_estado->close();
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Producto seleccionado correctamente',
+                'total_productos' => $estado_data['Total_Productos'] ?? 0,
+                'productos_completados' => $estado_data['Productos_Completados'] ?? 0
+            ]);
             break;
             
         case 'obtener_estado':

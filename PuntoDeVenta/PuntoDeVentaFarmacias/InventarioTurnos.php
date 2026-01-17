@@ -556,6 +556,14 @@ if ($sucursal_id > 0) {
                                 dataType: 'json',
                                 success: function(resp) {
                                     if (resp.success) {
+                                        // Actualizar el estado del turno activo inmediatamente
+                                        if (turnoActivo && resp.total_productos !== undefined) {
+                                            turnoActivo.Total_Productos = resp.total_productos;
+                                            turnoActivo.Productos_Completados = resp.productos_completados || 0;
+                                            // Actualizar la barra de progreso en tiempo real
+                                            actualizarBarraProgreso();
+                                        }
+                                        
                                         Swal.fire({
                                             icon: 'success',
                                             title: 'Producto agregado',

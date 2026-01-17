@@ -345,13 +345,30 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                    if (turnoActivo && turnoActivo.ID_Turno) {
-                        CargarProductosTurno(turnoActivo.ID_Turno);
-                    } else {
-                        location.reload();
-                    }
+                // Actualizar el estado del turno activo inmediatamente
+                if (turnoActivo && response.total_productos !== undefined) {
+                    turnoActivo.Total_Productos = response.total_productos;
+                    turnoActivo.Productos_Completados = response.productos_completados || 0;
+                    // Actualizar la barra de progreso en tiempo real
+                    actualizarBarraProgreso();
+                }
+                
+                // Mostrar notificación rápida sin bloquear
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto agregado',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
                 });
+                
+                // Actualizar tabla de productos
+                if (turnoActivo && turnoActivo.ID_Turno) {
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                } else {
+                    location.reload();
+                }
             } else {
                 Swal.fire('Error', response.message, 'error');
             }
@@ -509,6 +526,14 @@ function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
+                // Actualizar el estado del turno activo inmediatamente
+                if (turnoActivo && response.total_productos !== undefined) {
+                    turnoActivo.Total_Productos = response.total_productos;
+                    turnoActivo.Productos_Completados = response.productos_completados || 0;
+                    // Actualizar la barra de progreso en tiempo real
+                    actualizarBarraProgreso();
+                }
+                
                 // Mostrar notificación rápida y actualizar tabla
                 Swal.fire({
                     icon: 'success',
@@ -570,30 +595,44 @@ function limpiarCampoBusqueda() {
     $('#buscar-producto').focus();
 }
 
-// Función para actualizar la barra de progreso
+// Función para actualizar la barra de progreso en tiempo real
 function actualizarBarraProgreso() {
     if (!turnoActivo || !turnoActivo.ID_Turno) {
         return;
     }
     
-    var total_productos = turnoActivo.Total_Productos || 0;
-    var productos_completados = turnoActivo.Productos_Completados || 0;
+    var total_productos = parseInt(turnoActivo.Total_Productos) || 0;
+    var productos_completados = parseInt(turnoActivo.Productos_Completados) || 0;
     var porcentaje = total_productos > 0 
         ? Math.round((productos_completados / total_productos) * 100) 
         : 0;
     
-    // Actualizar la barra de progreso
+    // Actualizar la barra de progreso visual
     var progressBar = $('.turno-activo .progress-bar');
     if (progressBar.length > 0) {
-        progressBar.css('width', porcentaje + '%').attr('aria-valuenow', porcentaje).text(porcentaje + '%');
+        progressBar.css('width', porcentaje + '%')
+                   .attr('aria-valuenow', porcentaje)
+                   .attr('aria-valuemax', 100)
+                   .text(porcentaje + '%');
         
         // Actualizar el texto de progreso
         var progresoText = productos_completados + ' / ' + total_productos + ' completados';
-        var limite = turnoActivo.Limite_Productos || 0;
+        var limite = parseInt(turnoActivo.Limite_Productos) || 0;
         if (limite > 0) {
             progresoText += ' (Máx: ' + limite + ' productos)';
         }
-        $('.turno-activo .progress').parent().find('small.texto-progreso').text(progresoText);
+        
+        var textoProgreso = $('.turno-activo .progress').parent().find('small.texto-progreso');
+        if (textoProgreso.length > 0) {
+            textoProgreso.text(progresoText);
+        } else {
+            // Si no existe el elemento con la clase, buscar el small después del progress
+            $('.turno-activo .progress').next('small').text(progresoText);
+        }
+        
+        console.log('Progreso actualizado:', productos_completados, '/', total_productos, '(', porcentaje + '%)');
+    } else {
+        console.warn('No se encontró la barra de progreso para actualizar');
     }
 }
 
