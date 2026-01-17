@@ -35,7 +35,36 @@ if ($stmt && $sucursal > 0) {
         $bloqueado_por_otro = false;
         $usuario_actual = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
         
-        if ($id_turno > 0 && !empty($usuario_actual)) {
+        $ya_contado_otro_turno = false;
+        $folio_turno_anterior = null;
+        
+        // Verificar si este producto ya fue contado en OTRO turno (misma sucursal, mismo día)
+        if ($id_turno > 0 && $sucursal > 0) {
+            $sql_ya_contado = "SELECT it.Folio_Turno 
+                              FROM Inventario_Turnos_Productos itp
+                              INNER JOIN Inventario_Turnos it ON itp.ID_Turno = it.ID_Turno
+                              WHERE itp.ID_Prod_POS = ? 
+                                AND itp.Fk_sucursal = ?
+                                AND itp.Estado = 'completado'
+                                AND it.ID_Turno != ?
+                                AND it.Fk_sucursal = ?
+                                AND DATE(it.Fecha_Turno) = CURDATE()
+                              LIMIT 1";
+            $stmt_ya = $conn->prepare($sql_ya_contado);
+            if ($stmt_ya) {
+                $stmt_ya->bind_param("iiii", $producto['ID_Prod_POS'], $sucursal, $id_turno, $sucursal);
+                $stmt_ya->execute();
+                $ya_data = $stmt_ya->get_result()->fetch_assoc();
+                $stmt_ya->close();
+                if ($ya_data) {
+                    $ya_contado_otro_turno = true;
+                    $folio_turno_anterior = $ya_data['Folio_Turno'];
+                }
+            }
+        }
+        
+        // Verificar si está bloqueado por otro usuario en el MISMO turno
+        if ($id_turno > 0 && !empty($usuario_actual) && !$ya_contado_otro_turno) {
             $sql_bloqueo = "SELECT Usuario_Bloqueo 
                            FROM Inventario_Productos_Bloqueados 
                            WHERE ID_Turno = ? 
@@ -67,7 +96,9 @@ if ($stmt && $sucursal > 0) {
                 'existencias' => $producto['Existencias_R']
             ],
             'bloqueado_por_otro' => $bloqueado_por_otro,
-            'usuario_bloqueador' => $bloqueado_por_otro ? $usuario_bloqueador : null
+            'usuario_bloqueador' => $bloqueado_por_otro ? $usuario_bloqueador : null,
+            'ya_contado_otro_turno' => $ya_contado_otro_turno,
+            'folio_turno_anterior' => $folio_turno_anterior
         ]);
     } else {
         header('Content-Type: application/json');

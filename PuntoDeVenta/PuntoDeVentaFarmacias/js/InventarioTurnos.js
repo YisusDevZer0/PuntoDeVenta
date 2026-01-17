@@ -474,13 +474,26 @@ function buscarYSeleccionarProducto(codigo) {
         dataType: 'json',
         success: function(response) {
             if (response.success && response.producto) {
-                // Verificar si está bloqueado por otro usuario
+                // Verificar si está bloqueado por otro usuario en el mismo turno
                 if (response.bloqueado_por_otro) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Producto bloqueado',
                         text: 'Este producto está siendo contado por: ' + response.usuario_bloqueador,
                         timer: 2000,
+                        showConfirmButton: false
+                    });
+                    limpiarCampoBusqueda();
+                    return;
+                }
+                
+                // Verificar si ya fue contado en otro turno hoy (bloqueado para otro turno)
+                if (response.ya_contado_otro_turno) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Producto ya contado',
+                        text: 'Este producto ya fue contado en el turno ' + (response.folio_turno_anterior || '') + ' hoy. No se puede contar el mismo producto en otro turno el mismo día.',
+                        timer: 3500,
                         showConfirmButton: false
                     });
                     limpiarCampoBusqueda();

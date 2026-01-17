@@ -253,6 +253,7 @@ if ($sucursal_id > 0) {
                                 <option value="en_proceso">En proceso</option>
                                 <option value="bloqueado">Bloqueados</option>
                                 <option value="completado">Completados</option>
+                                <option value="ya_contado_otro_turno">Ya contado (otro turno)</option>
                             </select>
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
@@ -530,13 +531,26 @@ if ($sucursal_id > 0) {
                     dataType: 'json',
                     success: function(response) {
                         if (response.success && response.producto) {
-                            // Verificar si está bloqueado
+                            // Verificar si está bloqueado por otro usuario en el mismo turno
                             if (response.bloqueado_por_otro) {
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Producto bloqueado',
                                     text: 'Este producto está siendo contado por: ' + response.usuario_bloqueador,
                                     timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                $('#buscar-producto').val('').focus();
+                                return;
+                            }
+                            
+                            // Verificar si ya fue contado en otro turno hoy
+                            if (response.ya_contado_otro_turno) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Producto ya contado',
+                                    text: 'Este producto ya fue contado en el turno ' + (response.folio_turno_anterior || '') + ' hoy. No se puede contar el mismo producto en otro turno el mismo día.',
+                                    timer: 3500,
                                     showConfirmButton: false
                                 });
                                 $('#buscar-producto').val('').focus();

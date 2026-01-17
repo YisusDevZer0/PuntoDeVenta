@@ -529,6 +529,28 @@ try {
                 throw new Exception('Este producto está siendo contado por otro usuario');
             }
             
+            // Verificar si este producto ya fue contado en OTRO turno (misma sucursal, mismo día)
+            // para evitar que dos turnos distintos cuenten el mismo producto el mismo día
+            $sql_ya_contado = "SELECT it.Folio_Turno 
+                              FROM Inventario_Turnos_Productos itp
+                              INNER JOIN Inventario_Turnos it ON itp.ID_Turno = it.ID_Turno
+                              WHERE itp.ID_Prod_POS = ? 
+                                AND itp.Fk_sucursal = ?
+                                AND itp.Estado = 'completado'
+                                AND it.ID_Turno != ?
+                                AND it.Fk_sucursal = ?
+                                AND DATE(it.Fecha_Turno) = CURDATE()
+                              LIMIT 1";
+            $stmt_ya = $conn->prepare($sql_ya_contado);
+            $stmt_ya->bind_param("iiii", $id_producto, $sucursal, $id_turno, $sucursal);
+            $stmt_ya->execute();
+            $ya_contado = $stmt_ya->get_result()->fetch_assoc();
+            $stmt_ya->close();
+            
+            if ($ya_contado) {
+                throw new Exception('Este producto ya fue contado en el turno ' . $ya_contado['Folio_Turno'] . ' hoy. No se puede contar el mismo producto en otro turno el mismo día.');
+            }
+            
             // Obtener información del producto
             $sql_prod = "SELECT Nombre_Prod, Existencias_R FROM Stock_POS 
                          WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
