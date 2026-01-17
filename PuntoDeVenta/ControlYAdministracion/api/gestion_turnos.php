@@ -610,6 +610,70 @@ try {
             echo json_encode(['success' => true, 'message' => 'Conteo registrado correctamente', 'diferencia' => $diferencia]);
             break;
             
+        case 'liberar_productos_sucursal':
+            // Verificar que el usuario sea administrador
+            $tipoUsuario = isset($row['TipoUsuario']) ? $row['TipoUsuario'] : '';
+            $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
+            
+            if (!$isAdmin) {
+                throw new Exception('No tienes permisos para realizar esta acción. Solo administradores pueden liberar productos contados.');
+            }
+            
+            $sucursal_param = isset($_POST['sucursal']) ? (int)$_POST['sucursal'] : 0;
+            $fecha_desde = isset($_POST['fecha_desde']) ? trim($_POST['fecha_desde']) : '';
+            $fecha_hasta = isset($_POST['fecha_hasta']) ? trim($_POST['fecha_hasta']) : '';
+            
+            if (empty($fecha_desde) || empty($fecha_hasta)) {
+                throw new Exception('Debes especificar el rango de fechas (desde y hasta)');
+            }
+            
+            // Construir query para liberar productos completados
+            $sql_liberar = "UPDATE Inventario_Turnos_Productos itp
+                           INNER JOIN Inventario_Turnos it ON itp.ID_Turno = it.ID_Turno
+                           SET itp.Estado = 'liberado'
+                           WHERE itp.Estado = 'completado'
+                             AND DATE(it.Fecha_Turno) >= ?
+                             AND DATE(it.Fecha_Turno) <= ?";
+            
+            $params_liberar = [$fecha_desde, $fecha_hasta];
+            $types_liberar = "ss";
+            
+            if ($sucursal_param > 0) {
+                $sql_liberar .= " AND it.Fk_sucursal = ?";
+                $params_liberar[] = $sucursal_param;
+                $types_liberar .= "i";
+            }
+            
+            $stmt_liberar = $conn->prepare($sql_liberar);
+            if (!$stmt_liberar) {
+                throw new Exception('Error al preparar la consulta: ' . $conn->error);
+            }
+            
+            $stmt_liberar->bind_param($types_liberar, ...$params_liberar);
+            $stmt_liberar->execute();
+            $productos_liberados = $stmt_liberar->affected_rows;
+            $stmt_liberar->close();
+            
+            // Registrar en el historial (si existe)
+            $sql_historial = "INSERT INTO Inventario_Turnos_Historial 
+                             (ID_Turno, Folio_Turno, Accion, Usuario, Observaciones)
+                             VALUES (0, 'SISTEMA', 'liberacion_masiva', ?, ?)";
+            $observaciones = "Liberación masiva de productos contados. Sucursal: " . ($sucursal_param > 0 ? $sucursal_param : 'Todas') . 
+                           ", Fechas: " . $fecha_desde . " a " . $fecha_hasta . ", Productos liberados: " . $productos_liberados;
+            $stmt_hist = $conn->prepare($sql_historial);
+            if ($stmt_hist) {
+                $stmt_hist->bind_param("ss", $usuario, $observaciones);
+                $stmt_hist->execute();
+                $stmt_hist->close();
+            }
+            
+            echo json_encode([
+                'success' => true,
+                'message' => 'Productos liberados correctamente',
+                'productos_liberados' => $productos_liberados
+            ]);
+            break;
+            
         default:
             throw new Exception('Acción no válida');
     }
