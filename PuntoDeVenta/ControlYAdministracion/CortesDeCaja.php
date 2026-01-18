@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Cortes de caja de  <?php echo $row['Licencia']?></title>
+    <title>Cortes de caja de <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
     <div id="loading-overlay">
@@ -32,29 +32,29 @@ include_once "Controladores/ControladorUsuario.php";
 
             <!-- Table Start -->
           
-            <div class="container-fluid pt-4 px-4">
+            <div class="container-fluid pt-4 px-8">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4">Cortes de caja de <?php echo $row['Licencia']?></h6>
+            <h6 class="mb-4" style="color:#0172b6;">Cortes de caja <?php echo $row['Licencia']?> Sucursal <?php echo $row['Nombre_Sucursal']?></h6>
            
             <div id="FCajas"></div>
-            </div></div></div></div>
+            </div></div></div>
+            </div>
             
             <script src="js/CortesDeCajaRealizados.js"></script>
 
             <!-- Footer Start -->
             <?php 
-            include "Modales/NuevoFondoDeCaja.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
 
 <script>
    $(document).ready(function() {
-    // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
+    // Delegación de eventos para el botón "btn-MostrarElCorte"
     $(document).on("click", ".btn-MostrarElCorte", function() {
-      console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
+        console.log("Botón de mostrar corte clickeado para el ID:", id);
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/MuestraElCorteDeCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Mostrando el desglose del corte");
@@ -63,14 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
         $('#ModalEdDele').modal('show');
     });
 
-    
-
-   
-
 });
-
-
-
 
 </script>
 
