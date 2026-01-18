@@ -176,12 +176,14 @@ $(document).ready(function() {
     // Cargar datos iniciales
     CargarSucursales();
     CargarUsuarios();
-    CargarProductosContados();
     
-    // Establecer fecha de hoy por defecto
-    const hoy = new Date().toISOString().split('T')[0];
-    $('#fechaDesde').val(hoy);
-    $('#fechaHasta').val(hoy);
+    // NO establecer fechas por defecto - dejar vacías para mostrar todos los registros
+    // Si el usuario quiere filtrar por fecha, puede seleccionarlas manualmente
+    
+    // Cargar productos después de un pequeño delay para asegurar que los selects están cargados
+    setTimeout(function() {
+        CargarProductosContados();
+    }, 300);
 });
 </script>
 

@@ -25,6 +25,9 @@ $usuario_param = isset($_GET['usuario']) ? $_GET['usuario'] : '';
 $fecha_desde = isset($_GET['fecha_desde']) ? trim($_GET['fecha_desde']) : '';
 $fecha_hasta = isset($_GET['fecha_hasta']) ? trim($_GET['fecha_hasta']) : '';
 
+// Log para debug (remover en producción si es necesario)
+// error_log("DataGestionConteos - Parámetros recibidos: sucursal=" . $sucursal_param . ", usuario=" . $usuario_param . ", fecha_desde=" . $fecha_desde . ", fecha_hasta=" . $fecha_hasta);
+
 // Validar y convertir sucursal
 $sucursal = 0;
 if (!empty($sucursal_param) && $sucursal_param !== '' && $sucursal_param !== '0') {
@@ -37,7 +40,8 @@ if (!empty($usuario_param) && $usuario_param !== '') {
     $usuario = trim($usuario_param);
 }
 
-// Construir consulta para productos contados (completados)
+// Construir consulta para productos contados (completados o liberados que fueron contados)
+// Incluimos 'liberado' porque son productos que fueron completados y luego liberados
 $sql = "SELECT 
     itp.ID_Registro,
     itp.ID_Turno,
@@ -61,7 +65,8 @@ $sql = "SELECT
 FROM Inventario_Turnos_Productos itp
 INNER JOIN Inventario_Turnos it ON itp.ID_Turno = it.ID_Turno
 INNER JOIN Sucursales s ON itp.Fk_sucursal = s.ID_Sucursal
-WHERE itp.Estado = 'completado'";
+WHERE (itp.Estado = 'completado' OR itp.Estado = 'liberado')
+  AND itp.Existencias_Fisicas IS NOT NULL";
 
 $params = [];
 $types = "";
@@ -100,11 +105,54 @@ $sin_diferencias = 0;
 $con_diferencias = 0;
 $usuarios_unicos = [];
 
+if (!$stmt) {
+    // Si hay error en la preparación, devolver mensaje de error
+    $results = [
+        "success" => false,
+        "message" => "Error al preparar la consulta: " . $conn->error,
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "estadisticas" => [
+            "total_productos" => 0,
+            "sin_diferencias" => 0,
+            "con_diferencias" => 0,
+            "usuarios_activos" => 0
+        ]
+    ];
+    echo json_encode($results);
+    $conn->close();
+    exit;
+}
+
 if ($stmt) {
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
     }
-    $stmt->execute();
+    
+    if (!$stmt->execute()) {
+        // Si hay error en la ejecución
+        $results = [
+            "success" => false,
+            "message" => "Error al ejecutar la consulta: " . $stmt->error,
+            "sEcho" => 1,
+            "iTotalRecords" => 0,
+            "iTotalDisplayRecords" => 0,
+            "aaData" => [],
+            "estadisticas" => [
+                "total_productos" => 0,
+                "sin_diferencias" => 0,
+                "con_diferencias" => 0,
+                "usuarios_activos" => 0
+            ]
+        ];
+        echo json_encode($results);
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+    
     $result = $stmt->get_result();
     
     while ($fila = $result->fetch_assoc()) {

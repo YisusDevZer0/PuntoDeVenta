@@ -4,9 +4,13 @@ include("db_connect.php");
 include_once "ControladorUsuario.php";
 
 // Consulta para obtener usuarios únicos que han realizado conteos
+// Incluimos 'completado' y 'liberado' (productos que fueron contados y luego liberados)
 $sql = "SELECT DISTINCT Usuario_Selecciono 
         FROM Inventario_Turnos_Productos 
-        WHERE Estado = 'completado'
+        WHERE (Estado = 'completado' OR Estado = 'liberado')
+          AND Usuario_Selecciono IS NOT NULL
+          AND Usuario_Selecciono != ''
+          AND Existencias_Fisicas IS NOT NULL
         ORDER BY Usuario_Selecciono ASC";
 
 $stmt = $conn->prepare($sql);
