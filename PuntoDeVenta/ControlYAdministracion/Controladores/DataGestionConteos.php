@@ -20,10 +20,22 @@ if (!isset($conn)) {
 }
 
 // Obtener parámetros de filtros
-$sucursal = isset($_GET['sucursal']) ? (int)$_GET['sucursal'] : 0;
-$usuario = isset($_GET['usuario']) ? trim($_GET['usuario']) : '';
+$sucursal_param = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+$usuario_param = isset($_GET['usuario']) ? $_GET['usuario'] : '';
 $fecha_desde = isset($_GET['fecha_desde']) ? trim($_GET['fecha_desde']) : '';
 $fecha_hasta = isset($_GET['fecha_hasta']) ? trim($_GET['fecha_hasta']) : '';
+
+// Validar y convertir sucursal
+$sucursal = 0;
+if (!empty($sucursal_param) && $sucursal_param !== '' && $sucursal_param !== '0') {
+    $sucursal = (int)$sucursal_param;
+}
+
+// Validar usuario
+$usuario = '';
+if (!empty($usuario_param) && $usuario_param !== '') {
+    $usuario = trim($usuario_param);
+}
 
 // Construir consulta para productos contados (completados)
 $sql = "SELECT 
@@ -84,6 +96,9 @@ $sql .= " ORDER BY it.Fecha_Turno DESC, itp.Fecha_Conteo DESC LIMIT 1000";
 // Ejecutar consulta
 $stmt = $conn->prepare($sql);
 $data = [];
+$sin_diferencias = 0;
+$con_diferencias = 0;
+$usuarios_unicos = [];
 
 if ($stmt) {
     if (!empty($params)) {
@@ -93,14 +108,29 @@ if ($stmt) {
     $result = $stmt->get_result();
     
     while ($fila = $result->fetch_assoc()) {
-        $tiene_diferencia = abs((int)$fila['Diferencia']) > 0;
+        // Calcular estadísticas antes de formatear
+        $diferencia_valor = (int)$fila['Diferencia'];
+        $tiene_diferencia = abs($diferencia_valor) > 0;
+        
+        if ($tiene_diferencia) {
+            $con_diferencias++;
+        } else {
+            $sin_diferencias++;
+        }
+        
+        // Agregar usuario único
+        if (!empty($fila['Usuario_Selecciono']) && !in_array($fila['Usuario_Selecciono'], $usuarios_unicos)) {
+            $usuarios_unicos[] = $fila['Usuario_Selecciono'];
+        }
+        
+        // Formatear datos para la tabla
         $clase_fila = $tiene_diferencia ? 'producto-con-diferencia' : 'producto-sin-diferencia';
         
         $badge_diferencia = '';
         if ($tiene_diferencia) {
-            $color = (int)$fila['Diferencia'] > 0 ? 'success' : 'danger';
-            $signo = (int)$fila['Diferencia'] > 0 ? '+' : '';
-            $badge_diferencia = '<span class="badge bg-' . $color . '">' . $signo . number_format($fila['Diferencia']) . '</span>';
+            $color = $diferencia_valor > 0 ? 'success' : 'danger';
+            $signo = $diferencia_valor > 0 ? '+' : '';
+            $badge_diferencia = '<span class="badge bg-' . $color . '">' . $signo . number_format($diferencia_valor) . '</span>';
         } else {
             $badge_diferencia = '<span class="badge bg-success">Sin diferencia</span>';
         }
@@ -124,36 +154,8 @@ if ($stmt) {
     $stmt->close();
 }
 
-// Calcular estadísticas
+// Calcular total de productos
 $total_productos = count($data);
-$sin_diferencias = 0;
-$con_diferencias = 0;
-$usuarios_unicos = [];
-
-// Volver a ejecutar para estadísticas (solo si hay datos)
-if ($total_productos > 0) {
-    $stmt_stats = $conn->prepare($sql);
-    if ($stmt_stats) {
-        if (!empty($params)) {
-            $stmt_stats->bind_param($types, ...$params);
-        }
-        $stmt_stats->execute();
-        $result_stats = $stmt_stats->get_result();
-        
-        while ($fila = $result_stats->fetch_assoc()) {
-            if (abs((int)$fila['Diferencia']) == 0) {
-                $sin_diferencias++;
-            } else {
-                $con_diferencias++;
-            }
-            
-            if (!in_array($fila['Usuario_Selecciono'], $usuarios_unicos)) {
-                $usuarios_unicos[] = $fila['Usuario_Selecciono'];
-            }
-        }
-        $stmt_stats->close();
-    }
-}
 
 // Construir respuesta JSON
 $results = [

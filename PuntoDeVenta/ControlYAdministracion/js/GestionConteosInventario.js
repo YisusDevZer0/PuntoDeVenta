@@ -34,12 +34,30 @@ function CargarUsuarios() {
 
 // Cargar productos contados
 function CargarProductosContados() {
-    var filtros = {
-        sucursal: $('#filtroSucursal').val() || '',
-        usuario: $('#filtroUsuario').val() || '',
-        fecha_desde: $('#fechaDesde').val() || '',
-        fecha_hasta: $('#fechaHasta').val() || ''
-    };
+    // Obtener valores de los filtros
+    var sucursal = $('#filtroSucursal').val();
+    var usuario = $('#filtroUsuario').val();
+    var fecha_desde = $('#fechaDesde').val();
+    var fecha_hasta = $('#fechaHasta').val();
+    
+    // Construir objeto de filtros (solo incluir valores no vacíos)
+    var filtros = {};
+    
+    if (sucursal && sucursal !== '' && sucursal !== '0') {
+        filtros.sucursal = sucursal;
+    }
+    
+    if (usuario && usuario !== '') {
+        filtros.usuario = usuario;
+    }
+    
+    if (fecha_desde && fecha_desde !== '') {
+        filtros.fecha_desde = fecha_desde;
+    }
+    
+    if (fecha_hasta && fecha_hasta !== '') {
+        filtros.fecha_hasta = fecha_hasta;
+    }
     
     $.ajax({
         url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataGestionConteos.php',
@@ -115,8 +133,11 @@ function CargarProductosContados() {
                 $('#tablaProductosContados').html('<div class="alert alert-info">No se encontraron productos contados.</div>');
             }
         },
-        error: function() {
-            $('#tablaProductosContados').html('<div class="alert alert-danger">Error al cargar los datos. Por favor, intenta nuevamente.</div>');
+        error: function(xhr, status, error) {
+            console.error('Error al cargar datos:', error);
+            console.error('Status:', status);
+            console.error('Response:', xhr.responseText);
+            $('#tablaProductosContados').html('<div class="alert alert-danger">Error al cargar los datos. Por favor, intenta nuevamente.<br><small>' + error + '</small></div>');
         }
     });
 }
