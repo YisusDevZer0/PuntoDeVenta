@@ -1,7 +1,10 @@
 <?php
-// Habilitar reporte de errores para debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Iniciar buffer de salida para evitar que cualquier output previo interfiera con los headers
+ob_start();
+
+// Desactivar errores antes de headers para evitar problemas con la descarga
+error_reporting(0);
+ini_set('display_errors', 0);
 
 include("db_connect.php");
 include("ControladorUsuario.php");
@@ -104,6 +107,9 @@ try {
     }
     
     $result = $stmt->get_result();
+    
+    // Limpiar cualquier output previo antes de enviar headers
+    ob_end_clean();
     
     // Configurar headers para descarga Excel
     header('Content-Type: application/vnd.ms-excel');
@@ -261,6 +267,12 @@ try {
     $conn->close();
     
 } catch (Exception $e) {
+    // Limpiar buffer antes de mostrar error
+    ob_end_clean();
+    
+    // Headers para mostrar error como HTML
+    header('Content-Type: text/html; charset=utf-8');
+    
     echo '<html><body>';
     echo '<h3>Error al generar el reporte</h3>';
     echo '<p>' . htmlspecialchars($e->getMessage()) . '</p>';

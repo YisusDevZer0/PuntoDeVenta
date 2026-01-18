@@ -253,43 +253,39 @@ function ExportarConteosInventario() {
     var fecha_desde = $('#fechaDesde').val() || '';
     var fecha_hasta = $('#fechaHasta').val() || '';
     
-    // Construir URL con parámetros
-    var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarGestionConteos.php?';
-    var params = [];
+    // Construir objeto con filtros
+    var filtros = {};
     
     if (sucursal && sucursal !== '' && sucursal !== '0') {
-        params.push('sucursal=' + encodeURIComponent(sucursal));
+        filtros.sucursal = sucursal;
     }
     
-    if (usuario && usuario !== '') {
-        params.push('usuario=' + encodeURIComponent(usuario));
+    if (usuario && usuario !== '' && usuario !== null) {
+        filtros.usuario = usuario;
     }
     
-    if (fecha_desde) {
-        params.push('fecha_desde=' + encodeURIComponent(fecha_desde));
+    if (fecha_desde && fecha_desde !== '') {
+        filtros.fecha_desde = fecha_desde;
     }
     
-    if (fecha_hasta) {
-        params.push('fecha_hasta=' + encodeURIComponent(fecha_hasta));
+    if (fecha_hasta && fecha_hasta !== '') {
+        filtros.fecha_hasta = fecha_hasta;
     }
     
-    url += params.join('&');
+    // Crear URL con parámetros usando URLSearchParams
+    const params = new URLSearchParams(filtros);
+    const url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarGestionConteos.php?' + params.toString();
     
-    // Mostrar loading
-    $('#loading-overlay').show();
-    $('#loading-text').text('Generando archivo Excel...');
+    console.log('Exportando reporte a Excel. URL:', url);
+    console.log('Filtros aplicados:', filtros);
     
-    // Crear un iframe temporal para la descarga
-    var iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = url;
-    document.body.appendChild(iframe);
+    // Abrir en nueva ventana para descargar (método más confiable)
+    var ventana = window.open(url, '_blank');
     
-    // Ocultar loading después de un tiempo
-    setTimeout(function() {
-        $('#loading-overlay').hide();
-        document.body.removeChild(iframe);
-    }, 3000);
+    // Si el navegador bloquea la ventana emergente, mostrar mensaje
+    if (!ventana || ventana.closed || typeof ventana.closed == 'undefined') {
+        alert('Por favor, permite las ventanas emergentes en tu navegador para descargar el archivo Excel.');
+    }
 }
 
 // Liberar productos contados por sucursal y rango de fechas
