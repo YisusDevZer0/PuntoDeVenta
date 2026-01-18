@@ -381,18 +381,40 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                                 url: 'http://localhost/ticket/TicketPagoServicio.php',
                                 data: ticketDataString,
                                 success: function(ticketResponse) {
-                                    console.log("Ticket enviado correctamente:", ticketResponse);
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: '¡Pago registrado y ticket generado!',
-                                        text: 'Ticket: ' + response.NumTicket,
-                                        confirmButtonText: 'Aceptar',
-                                        confirmButtonColor: '#28a745'
-                                    }).then((result) => {
-                                        $('#ModalEdDele').modal('hide');
-                                        // Recargar la página o actualizar la lista
-                                        location.reload();
-                                    });
+                                    // Verificar si la respuesta contiene errores de PHP
+                                    if (typeof ticketResponse === 'string' && (
+                                        ticketResponse.includes('Fatal error') || 
+                                        ticketResponse.includes('Warning') || 
+                                        ticketResponse.includes('failed to open stream') ||
+                                        ticketResponse.includes('No such file or directory') ||
+                                        ticketResponse.includes('Failed to copy file to printer')
+                                    )) {
+                                        // Hay un error en la impresión, mostrar alert
+                                        console.error("Error al imprimir ticket:", ticketResponse);
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Pago registrado, pero hubo un problema al imprimir el ticket',
+                                            text: 'El pago se guardó correctamente (Ticket: ' + response.NumTicket + '), pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
+                                            confirmButtonText: 'Aceptar',
+                                            confirmButtonColor: '#ffc107'
+                                        }).then((result) => {
+                                            $('#ModalEdDele').modal('hide');
+                                            location.reload();
+                                        });
+                                    } else {
+                                        console.log("Ticket enviado correctamente:", ticketResponse);
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Pago registrado y ticket generado!',
+                                            text: 'Ticket: ' + response.NumTicket,
+                                            confirmButtonText: 'Aceptar',
+                                            confirmButtonColor: '#28a745'
+                                        }).then((result) => {
+                                            $('#ModalEdDele').modal('hide');
+                                            // Recargar la página o actualizar la lista
+                                            location.reload();
+                                        });
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     console.error("Error al generar ticket:", error);
@@ -400,8 +422,8 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                                     // Aún así mostrar éxito si el registro fue exitoso
                                     Swal.fire({
                                         icon: 'warning',
-                                        title: 'Pago registrado, pero hubo un problema con el ticket',
-                                        text: 'El pago se guardó correctamente. Ticket: ' + response.NumTicket,
+                                        title: 'Pago registrado, pero hubo un problema al imprimir el ticket',
+                                        text: 'El pago se guardó correctamente (Ticket: ' + response.NumTicket + '), pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
                                         confirmButtonText: 'Aceptar',
                                         confirmButtonColor: '#ffc107'
                                     }).then((result) => {

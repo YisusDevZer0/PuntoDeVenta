@@ -81,24 +81,57 @@ $(document).ready(function () {
                                     data: $(form).serialize(),
                                     cache: false,
                                     success: function (ticketResponse) {
-                                        console.log("Datos enviados al ticket correctamente:", ticketResponse);
+                                        // Verificar si la respuesta contiene errores de PHP
+                                        if (typeof ticketResponse === 'string' && (
+                                            ticketResponse.includes('Fatal error') || 
+                                            ticketResponse.includes('Warning') || 
+                                            ticketResponse.includes('failed to open stream') ||
+                                            ticketResponse.includes('No such file or directory') ||
+                                            ticketResponse.includes('Failed to copy file to printer')
+                                        )) {
+                                            // Hay un error en la impresión, mostrar alert
+                                            console.error("Error al imprimir ticket:", ticketResponse);
+                                            Swal.fire({
+                                                icon: 'warning',
+                                                title: 'Corte realizado, pero hubo un problema al imprimir el ticket',
+                                                text: 'El corte se guardó correctamente, pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
+                                                confirmButtonText: 'Aceptar',
+                                                confirmButtonColor: '#ffc107'
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    location.reload();
+                                                }, 1500);
+                                            });
+                                        } else {
+                                            console.log("Datos enviados al ticket correctamente:", ticketResponse);
+                                            // Mostrar mensaje de éxito
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'El corte se ha realizado con éxito!',
+                                                showConfirmButton: false,
+                                                timer: 2000,
+                                                didOpen: () => {
+                                                    setTimeout(() => {
+                                                        location.reload();
+                                                    }, 1500);
+                                                },
+                                            });
+                                        }
                                     },
                                     error: function (xhr, status, error) {
-                                        console.log("Error al generar el ticket:", xhr.responseText);
+                                        console.error("Error al generar el ticket:", xhr.responseText);
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Corte realizado, pero hubo un problema al imprimir el ticket',
+                                            text: 'El corte se guardó correctamente, pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
+                                            confirmButtonText: 'Aceptar',
+                                            confirmButtonColor: '#ffc107'
+                                        }).then(() => {
+                                            setTimeout(() => {
+                                                location.reload();
+                                            }, 1500);
+                                        });
                                     }
-                                });
-
-                                // Mostrar mensaje de éxito
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'El corte se ha realizado con éxito!',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    didOpen: () => {
-                                        setTimeout(() => {
-                                         
-                                        }, 1500);
-                                    },
                                 });
                             } else {
                                 Swal.fire({
