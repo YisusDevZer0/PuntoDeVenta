@@ -22,13 +22,18 @@ function CargarUsuarios() {
             if (data && data.length > 0) {
                 var options = '<option value="">Todos los usuarios</option>';
                 $.each(data, function(i, usuario) {
-                    options += '<option value="' + usuario.Usuario_Selecciono + '">' + usuario.Usuario_Selecciono + '</option>';
+                    // Escapar el valor para HTML y mantener exactamente como viene de la BD
+                    var usuarioValor = $('<div>').text(usuario.Usuario_Selecciono || '').html();
+                    var usuarioTexto = usuario.Usuario_Selecciono || '';
+                    options += '<option value="' + usuarioValor + '">' + usuarioTexto + '</option>';
                 });
                 $('#filtroUsuario').html(options);
+            } else {
+                console.warn('No se encontraron usuarios en la respuesta');
             }
         }, 'json')
-        .fail(function() {
-            console.error('Error al cargar usuarios');
+        .fail(function(xhr, status, error) {
+            console.error('Error al cargar usuarios:', error, xhr.responseText);
         });
 }
 
@@ -47,7 +52,7 @@ function CargarProductosContados() {
         filtros.sucursal = sucursal;
     }
     
-    if (usuario && usuario !== '') {
+    if (usuario && usuario !== '' && usuario !== null) {
         filtros.usuario = usuario;
     }
     

@@ -34,10 +34,11 @@ if (!empty($sucursal_param) && $sucursal_param !== '' && $sucursal_param !== '0'
     $sucursal = (int)$sucursal_param;
 }
 
-// Validar usuario
+// Validar usuario - IMPORTANTE: NO usar trim() para que coincida exactamente con lo guardado en la BD
+// El nombre de usuario se guarda tal cual, sin trim, para mantener consistencia
 $usuario = '';
 if (!empty($usuario_param) && $usuario_param !== '') {
-    $usuario = trim($usuario_param);
+    $usuario = $usuario_param; // Sin trim() para coincidir exactamente con la BD
 }
 
 // Construir consulta para productos contados (completados o liberados que fueron contados)
@@ -79,7 +80,9 @@ if ($sucursal > 0) {
 }
 
 if (!empty($usuario)) {
-    $sql .= " AND itp.Usuario_Selecciono = ?";
+    // Usar comparación con TRIM para manejar posibles espacios al inicio/final
+    // Tanto en la BD como en el parámetro
+    $sql .= " AND TRIM(itp.Usuario_Selecciono) = TRIM(?)";
     $params[] = $usuario;
     $types .= "s";
 }

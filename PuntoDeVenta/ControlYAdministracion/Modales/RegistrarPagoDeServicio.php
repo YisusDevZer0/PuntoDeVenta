@@ -316,16 +316,100 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                     console.log('Respuesta recibida:', response);
                     
                     if (response.success) {
+                        // Obtener los datos del formulario para enviar al ticket
+                        var NumTicket = $('#NumTicket').val();
+                        var cliente = $('#cliente').val();
+                        var servicioNombre = $('#servicio_id option:selected').text();
+                        var monto = $('#monto').val();
+                        var formaDePago = $('#FormaDePagoServicio').val();
+                        var empleado = $('#empleado').val();
+                        
+                        // Preparar datos para el ticket (similar a como se hace en ventas)
+                        var ticketData = {
+                            TicketVal: NumTicket,
+                            ClienteInputValue: cliente,
+                            ServicioNombre: servicioNombre,
+                            BoletaTotal: monto,
+                            FormaPagoSeleccionada: formaDePago,
+                            Vendedor: empleado,
+                            TipoTicket: 'PagoServicio' // Identificador para diferenciar el tipo de ticket
+                        };
+                        
+                        // Codificar los datos
+                        var encodedTicketVal = encodeURIComponent(NumTicket);
+                        var encodedClienteInputValue = encodeURIComponent(cliente);
+                        var encodedServicioNombre = encodeURIComponent(servicioNombre);
+                        var encodedBoletaTotal = encodeURIComponent(monto);
+                        var encodedFormaPagoSeleccionada = encodeURIComponent(formaDePago);
+                        var encodedVendedor = encodeURIComponent(empleado);
+                        var encodedTipoTicket = encodeURIComponent('PagoServicio');
+                        
+                        var ticketDataString = 'TicketVal=' + encodedTicketVal +
+                                             '&ClienteInputValue=' + encodedClienteInputValue +
+                                             '&ServicioNombre=' + encodedServicioNombre +
+                                             '&BoletaTotal=' + encodedBoletaTotal +
+                                             '&FormaPagoSeleccionada=' + encodedFormaPagoSeleccionada +
+                                             '&Vendedor=' + encodedVendedor +
+                                             '&TipoTicket=' + encodedTipoTicket;
+                        
+                        // Mostrar mensaje de éxito y luego enviar ticket
                         Swal.fire({
                             icon: 'success',
                             title: '¡Pago de servicio registrado exitosamente!',
                             text: 'Ticket: ' + response.NumTicket,
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#28a745'
-                        }).then((result) => {
-                            $('#ModalEdDele').modal('hide');
-                            // Recargar la página o actualizar la lista
-                            location.reload();
+                            showConfirmButton: false,
+                            timer: 2000,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        }).then(() => {
+                            // Enviar datos al ticket por AJAX
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Generando ticket...',
+                                text: 'Por favor espere',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+                            
+                            // Enviar ticket por AJAX (el archivo del ticket aún no está construido, pero el envío funciona)
+                            $.ajax({
+                                type: 'POST',
+                                url: 'http://localhost/ticket/TicketPagoServicio.php',
+                                data: ticketDataString,
+                                success: function(ticketResponse) {
+                                    console.log("Ticket enviado correctamente:", ticketResponse);
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Pago registrado y ticket generado!',
+                                        text: 'Ticket: ' + response.NumTicket,
+                                        confirmButtonText: 'Aceptar',
+                                        confirmButtonColor: '#28a745'
+                                    }).then((result) => {
+                                        $('#ModalEdDele').modal('hide');
+                                        // Recargar la página o actualizar la lista
+                                        location.reload();
+                                    });
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Error al generar ticket:", error);
+                                    console.log("Respuesta del servidor:", xhr.responseText);
+                                    // Aún así mostrar éxito si el registro fue exitoso
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Pago registrado, pero hubo un problema con el ticket',
+                                        text: 'El pago se guardó correctamente. Ticket: ' + response.NumTicket,
+                                        confirmButtonText: 'Aceptar',
+                                        confirmButtonColor: '#ffc107'
+                                    }).then((result) => {
+                                        $('#ModalEdDele').modal('hide');
+                                        location.reload();
+                                    });
+                                }
+                            });
                         });
                     } else {
                         Swal.fire({
