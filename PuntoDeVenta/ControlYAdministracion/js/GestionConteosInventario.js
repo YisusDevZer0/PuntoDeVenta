@@ -245,6 +245,53 @@ function mostrarModalLiberarProductos() {
     });
 }
 
+// Exportar reporte a Excel
+function ExportarConteosInventario() {
+    // Obtener valores de los filtros actuales
+    var sucursal = $('#filtroSucursal').val() || '';
+    var usuario = $('#filtroUsuario').val() || '';
+    var fecha_desde = $('#fechaDesde').val() || '';
+    var fecha_hasta = $('#fechaHasta').val() || '';
+    
+    // Construir URL con parámetros
+    var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarGestionConteos.php?';
+    var params = [];
+    
+    if (sucursal && sucursal !== '' && sucursal !== '0') {
+        params.push('sucursal=' + encodeURIComponent(sucursal));
+    }
+    
+    if (usuario && usuario !== '') {
+        params.push('usuario=' + encodeURIComponent(usuario));
+    }
+    
+    if (fecha_desde) {
+        params.push('fecha_desde=' + encodeURIComponent(fecha_desde));
+    }
+    
+    if (fecha_hasta) {
+        params.push('fecha_hasta=' + encodeURIComponent(fecha_hasta));
+    }
+    
+    url += params.join('&');
+    
+    // Mostrar loading
+    $('#loading-overlay').show();
+    $('#loading-text').text('Generando archivo Excel...');
+    
+    // Crear un iframe temporal para la descarga
+    var iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    
+    // Ocultar loading después de un tiempo
+    setTimeout(function() {
+        $('#loading-overlay').hide();
+        document.body.removeChild(iframe);
+    }, 3000);
+}
+
 // Liberar productos contados por sucursal y rango de fechas
 function liberarProductosSucursal(sucursal, fechaDesde, fechaHasta) {
     $.ajax({

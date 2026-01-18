@@ -62,6 +62,9 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                             <button class="btn btn-primary btn-sm" onclick="CargarProductosContados()">
                                 <i class="fa-solid fa-refresh me-1"></i>Actualizar
                             </button>
+                            <button class="btn btn-success btn-sm" onclick="ExportarConteosInventario()">
+                                <i class="fa-solid fa-file-excel me-1"></i>Exportar Excel
+                            </button>
                             <?php if ($isAdmin): ?>
                             <button class="btn btn-warning btn-sm" id="btn-liberar-productos" onclick="mostrarModalLiberarProductos()">
                                 <i class="fa-solid fa-unlock me-1"></i>Liberar Productos Contados
