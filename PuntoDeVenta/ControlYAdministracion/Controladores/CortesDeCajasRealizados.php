@@ -201,11 +201,12 @@
   }
 
 
-tabla = $('#Clientes').DataTable({
+// Variable global para la tabla
+var tabla = $('#Clientes').DataTable({
 
  "bProcessing": true,
  "ordering": true,
- "stateSave":true,
+ "stateSave": false, // Desactivar para que siempre recargue con filtros
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeCajasCortes.php",
@@ -216,10 +217,24 @@ tabla = $('#Clientes').DataTable({
      var sucursal = $('#filtro_sucursal').val();
      var cajero = $('#filtro_cajero').val();
      
-     if (fecha_inicio) aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
-     if (fecha_fin) aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
-     if (sucursal) aoData.push( { "name": "sucursal", "value": sucursal } );
-     if (cajero) aoData.push( { "name": "cajero", "value": cajero } );
+     // Limpiar parámetros anteriores
+     aoData = aoData.filter(function(item) {
+         return !['fecha_inicio', 'fecha_fin', 'sucursal', 'cajero'].includes(item.name);
+     });
+     
+     // Agregar los parámetros de filtro
+     if (fecha_inicio && fecha_inicio.trim() !== '') {
+         aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
+     }
+     if (fecha_fin && fecha_fin.trim() !== '') {
+         aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
+     }
+     if (sucursal && sucursal.trim() !== '') {
+         aoData.push( { "name": "sucursal", "value": sucursal } );
+     }
+     if (cajero && cajero.trim() !== '') {
+         aoData.push( { "name": "cajero", "value": cajero } );
+     }
      
      $.ajax( {
          "dataType": 'json',
@@ -267,6 +282,30 @@ tabla = $('#Clientes').DataTable({
 "initComplete": function() {
   // Al completar la inicialización de la tabla, ocultar el mensaje de carga
   ocultarCargando();
+  
+  // Calcular estadísticas después de cargar
+  if (typeof calcularEstadisticas === 'function') {
+    calcularEstadisticas();
+  }
+  
+  // Contador para cajas abiertas
+  var cajasAbiertasCount = 0;
+  tabla.rows().every(function () {
+      var data = this.data();
+      if (data.Estatus && data.Estatus.includes("Abierta")) {
+          cajasAbiertasCount++;
+      }
+  });
+  
+  // Mostrar alerta si hay más de una caja abierta
+  if (cajasAbiertasCount >= 2) {
+      Swal.fire({
+          icon: 'warning',
+          title: '¡Advertencia!',
+          text: 'Existen dos o más cajas abiertas.',
+          confirmButtonText: 'Entendido'
+      });
+  }
 },
 // Para personalizar el estilo del botón de Excel
 // "buttons": [
@@ -285,26 +324,6 @@ tabla = $('#Clientes').DataTable({
 "dom": '<"d-flex justify-content-between">rtip', // Modificar la disposición aquí
 "responsive": true
 });
-// Contador para cajas abiertas
-var cajasAbiertasCount = 0;
-
-// Recorrer los datos de la tabla
-tabla.rows().every(function () {
-    var data = this.data();
-    if (data.Estatus.includes("Abierta")) {
-        cajasAbiertasCount++;
-    }
-});
-
-// Mostrar alerta si hay más de una caja abierta
-if (cajasAbiertasCount >= 2) {
-    Swal.fire({
-        icon: 'warning',
-        title: '¡Advertencia!',
-        text: 'Existen dos o más cajas abiertas.',
-        confirmButtonText: 'Entendido'
-    });
-}
 </script>
 <div class="text-center">
   <div class="table-responsive">

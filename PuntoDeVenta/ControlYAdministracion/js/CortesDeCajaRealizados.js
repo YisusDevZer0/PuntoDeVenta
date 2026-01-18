@@ -67,14 +67,27 @@ function calcularEstadisticas() {
     }, 500);
 }
 
+// Variable para debounce del input de texto
+var timeoutFiltro = null;
+
+// Función para filtrar datos automáticamente con debounce para el input de texto
+function debounceFiltrar() {
+    clearTimeout(timeoutFiltro);
+    timeoutFiltro = setTimeout(function() {
+        filtrarDatos();
+    }, 500); // Esperar 500ms después de que el usuario deje de escribir
+}
+
 // Función para filtrar datos
 function filtrarDatos() {
     // Si la tabla ya existe, recargarla con los nuevos filtros
     if ($('#Clientes').length > 0 && $.fn.DataTable.isDataTable('#Clientes')) {
-        $('#Clientes').DataTable().ajax.reload();
-        calcularEstadisticas();
+        var tabla = $('#Clientes').DataTable();
+        tabla.ajax.reload(function(json) {
+            calcularEstadisticas();
+        }, false); // false = mantener la página actual
     } else {
-        // Si no existe, cargar desde cero
+        // Si no existe, recargar todo el contenido
         CargaFCajas();
     }
 }

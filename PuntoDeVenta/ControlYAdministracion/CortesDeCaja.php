@@ -101,20 +101,20 @@ include_once "Controladores/ControladorUsuario.php";
                         <i class="fas fa-calendar me-1"></i> Fecha Inicio
                     </label>
                     <input type="date" id="fecha_inicio" class="form-control"
-                           value="<?php echo date('Y-m-01'); ?>">
+                           value="<?php echo date('Y-m-01'); ?>" onchange="filtrarDatos()">
                 </div>
                 <div class="col-md-3">
                     <label for="fecha_fin" class="form-label">
                         <i class="fas fa-calendar me-1"></i> Fecha Fin
                     </label>
                     <input type="date" id="fecha_fin" class="form-control"
-                           value="<?php echo date('Y-m-d'); ?>">
+                           value="<?php echo date('Y-m-d'); ?>" onchange="filtrarDatos()">
                 </div>
                 <div class="col-md-3">
                     <label for="filtro_sucursal" class="form-label">
                         <i class="fas fa-store me-1"></i> Sucursal
                     </label>
-                    <select id="filtro_sucursal" class="form-control">
+                    <select id="filtro_sucursal" class="form-control" onchange="filtrarDatos()">
                         <option value="">Todas las sucursales</option>
                         <?php
                         include_once "db_connect.php";
@@ -134,7 +134,7 @@ include_once "Controladores/ControladorUsuario.php";
                         <i class="fas fa-user me-1"></i> Cajero
                     </label>
                     <input type="text" id="filtro_cajero" class="form-control" 
-                           placeholder="Buscar por nombre de cajero...">
+                           placeholder="Buscar por nombre de cajero..." onkeyup="debounceFiltrar()">
                 </div>
             </div>
             
