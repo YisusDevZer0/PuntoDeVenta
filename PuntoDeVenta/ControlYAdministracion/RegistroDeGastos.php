@@ -2,6 +2,47 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
+// Obtener el valor de Fk_Sucursal y Nombre_Apellidos
+$fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+$nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
+
+// Consulta segura utilizando una sentencia preparada
+$sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+       Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+       Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+FROM Cajas
+INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
+WHERE Cajas.Sucursal = ? 
+  AND Cajas.Empleado = ? 
+  AND Cajas.Estatus = 'Abierta';";
+
+// Preparar y ejecutar la consulta
+$stmt = $conn->prepare($sql);
+if ($stmt) {
+    $stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $ValorCaja = $result->fetch_assoc();
+    $stmt->close();
+} else {
+    // Si hay error en la preparación, usar consulta directa como fallback
+    $sql_fallback = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
+           Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
+           Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
+    FROM Cajas
+    INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
+    WHERE Cajas.Sucursal = '$fk_sucursal' 
+      AND Cajas.Empleado = '$nombre_apellidos' 
+      AND Cajas.Estatus = 'Abierta'";
+    $result = mysqli_query($conn, $sql_fallback);
+    $ValorCaja = mysqli_fetch_assoc($result);
+}
+
+// Si no hay caja activa, crear un array vacío para evitar errores
+if (!$ValorCaja) {
+    $ValorCaja = array('ID_Caja' => '0');
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -38,7 +79,7 @@ include_once "Controladores/ControladorUsuario.php";
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
             <h6 class="mb-4" style="color:#0172b6;">Registro de gastos <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+            <button type="button" class="btn btn-primary btn-registraGasto" data-id="<?php echo $ValorCaja['ID_Caja']; ?>">
   Agregar nuevo gasto
 </button> <br>
             <div id="DataDeServicios"></div>
@@ -57,10 +98,33 @@ include_once "Controladores/ControladorUsuario.php";
 
 <script>
    $(document).ready(function() {
+    // Manejar el clic del botón para registrar gastos
+    $(document).on("click", ".btn-registraGasto", function() {
+        var id = $(this).data("id");
+        // Validar que el ID sea válido
+        if (id && id != '0') {
+            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", {
+                id: id
+            }, function(data) {
+                $("#FormCajas").html(data);
+                $("#TitulosCajas").html("Registrar nuevo gasto");
+            });
+            $('#ModalEdDele').modal('show');
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No hay caja activa',
+                text: 'No hay caja activa para registrar gastos. Debe abrir una caja primero.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#dc3545'
+            });
+        }
+    });
+
     // Delegación de eventos para el botón "btn-Movimientos" dentro de .dropdown-menu
     $(document).on("click", ".btn-edita", function() {
-      console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
+        console.log("Botón de cancelar clickeado para el ID:", id);
         $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaTipoDeUsuario.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar servicios");
