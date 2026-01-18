@@ -209,6 +209,26 @@ tabla = $('#Clientes').DataTable({
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeCajasCortes.php",
+ "fnServerData": function ( sSource, aoData, fnCallback ) {
+     // Agregar parámetros de filtro a la petición
+     var fecha_inicio = $('#fecha_inicio').val();
+     var fecha_fin = $('#fecha_fin').val();
+     var sucursal = $('#filtro_sucursal').val();
+     var cajero = $('#filtro_cajero').val();
+     
+     if (fecha_inicio) aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
+     if (fecha_fin) aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
+     if (sucursal) aoData.push( { "name": "sucursal", "value": sucursal } );
+     if (cajero) aoData.push( { "name": "cajero", "value": cajero } );
+     
+     $.ajax( {
+         "dataType": 'json',
+         "type": "GET",
+         "url": sSource,
+         "data": aoData,
+         "success": fnCallback
+     } );
+ },
  "aoColumns": [
   { mData: 'IdCaja' },  
   { mData: 'Empleado' },

@@ -3,8 +3,11 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
 
-// Obtener el año actual
-$anio_actual = date('Y');
+// Obtener parámetros de filtro
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
+$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+$cajero = isset($_GET['cajero']) ? $_GET['cajero'] : '';
 
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
@@ -12,13 +15,53 @@ $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucurs
         Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Cajas
         INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
-        WHERE YEAR(Cajas.Fecha_Apertura) = ?"; // Filtrar por el año actual
+        WHERE 1=1";
+
+$params = [];
+$types = "";
+
+// Filtrar por fecha de apertura
+if (!empty($fecha_inicio)) {
+    $sql .= " AND DATE(Cajas.Fecha_Apertura) >= ?";
+    $params[] = $fecha_inicio;
+    $types .= "s";
+}
+
+if (!empty($fecha_fin)) {
+    $sql .= " AND DATE(Cajas.Fecha_Apertura) <= ?";
+    $params[] = $fecha_fin;
+    $types .= "s";
+}
+
+// Filtrar por sucursal
+if (!empty($sucursal)) {
+    $sql .= " AND Cajas.Sucursal = ?";
+    $params[] = $sucursal;
+    $types .= "s";
+}
+
+// Filtrar por cajero (empleado)
+if (!empty($cajero)) {
+    $sql .= " AND Cajas.Empleado LIKE ?";
+    $params[] = '%' . $cajero . '%';
+    $types .= "s";
+}
+
+// Si no hay filtros de fecha, usar año actual como default
+if (empty($fecha_inicio) && empty($fecha_fin)) {
+    $anio_actual = date('Y');
+    $sql .= " AND YEAR(Cajas.Fecha_Apertura) = ?";
+    $params[] = $anio_actual;
+    $types .= "s";
+}
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Vincular parámetros
-$stmt->bind_param("s", $anio_actual);
+// Vincular parámetros si hay alguno
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -111,7 +154,9 @@ while ($fila = $result->fetch_assoc()) {
 }
 
 // Cerrar la declaración
-$stmt->close();
+if ($stmt) {
+    $stmt->close();
+}
 
 // Construir el array de resultados para la respuesta JSON
 $results = [
