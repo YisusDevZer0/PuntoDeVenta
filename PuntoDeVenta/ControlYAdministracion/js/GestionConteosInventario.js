@@ -245,8 +245,8 @@ function mostrarModalLiberarProductos() {
     });
 }
 
-// Exportar reporte a Excel
-function ExportarConteosInventario() {
+// Exportar reporte a Excel - Asegurar que esté en scope global
+window.ExportarConteosInventario = function() {
     // Obtener valores de los filtros actuales
     var sucursal = $('#filtroSucursal').val() || '';
     var usuario = $('#filtroUsuario').val() || '';

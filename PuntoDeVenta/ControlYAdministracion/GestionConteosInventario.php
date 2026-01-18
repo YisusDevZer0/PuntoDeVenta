@@ -14,10 +14,8 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php";?>
     
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
+    <!-- Cargar script antes del contenido para que las funciones estén disponibles -->
+    <script src="js/GestionConteosInventario.js"></script>
     
     <style>
         .card-stat {
@@ -41,6 +39,11 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 </head>
 
 <body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
+    
     <?php include_once "Menu.php" ?>
 
     <!-- Content Start -->
@@ -166,8 +169,6 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             </div>
         </div>
             
-<script src="js/GestionConteosInventario.js"></script>
-
         <!-- Footer Start -->
         <?php 
         include "Modales/Modales_Errores.php";
@@ -176,6 +177,12 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
 
 <script>
 $(document).ready(function() {
+    // Verificar que las funciones estén disponibles
+    if (typeof CargarSucursales === 'undefined') {
+        console.error('Error: CargarSucursales no está definida. Verifique que GestionConteosInventario.js se cargó correctamente.');
+        return;
+    }
+    
     // Cargar datos iniciales
     CargarSucursales();
     CargarUsuarios();
@@ -188,6 +195,14 @@ $(document).ready(function() {
         CargarProductosContados();
     }, 300);
 });
+
+// Asegurar que ExportarConteosInventario esté disponible (respaldo si el JS no se carga)
+if (typeof ExportarConteosInventario === 'undefined') {
+    window.ExportarConteosInventario = function() {
+        alert('El archivo JavaScript no se cargó correctamente. Por favor, recarga la página.');
+        console.error('ExportarConteosInventario no está definida');
+    };
+}
 </script>
 
 </body>
