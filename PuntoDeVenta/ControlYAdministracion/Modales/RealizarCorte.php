@@ -150,6 +150,32 @@ if ($query13 && $query13->num_rows > 0) {
     $Especialistas13 = $query13->fetch_object();
 }
 
+// Consulta 15: Pagos de servicios agrupados por servicio
+$sql15 = "SELECT 
+            ps.Servicio,
+            ls.Comision,
+            COUNT(ps.id) AS Total_Pagos,
+            SUM(ps.costo) AS Total_Costo,
+            SUM(IFNULL(ls.Comision, 0)) AS Total_Comision,
+            SUM(ps.costo + IFNULL(ls.Comision, 0)) AS Total_Con_Comision
+         FROM 
+            PagosServicios ps
+         LEFT JOIN 
+            ListadoServicios ls ON ps.Servicio = ls.Servicio
+         WHERE 
+            ps.Fk_Caja = '$fk_caja' 
+            AND ps.Fk_Sucursal = '$fk_sucursal'
+         GROUP BY 
+            ps.Servicio, ls.Comision";
+
+$query15 = $conn->query($sql15);
+$Especialistas15 = [];
+if ($query15 && $query15->num_rows > 0) {
+    while ($r = $query15->fetch_object()) {
+        $Especialistas15[] = $r;
+    }
+}
+
 
 
 $sql_totales = "SELECT 
@@ -348,6 +374,52 @@ if (!empty($Especialistas14)) {
 } else {
     // Manejar el caso donde $Especialistas14 esté vacío si es necesario
     echo '<p class="alert alert-danger">No se encontraron servicios para mostrar.</p>';
+}
+?>
+
+<?php
+// Desglose de Pagos de Servicios
+if (!empty($Especialistas15)) {
+?>
+<h6 class="text-center mt-4 mb-3">Desglose de Pagos de Servicios</h6>
+<div class="table-responsive">
+    <table id="TotalesPagosServicios" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Cantidad</th>
+                <th>Total Costo</th>
+                <th>Total Comisión</th>
+                <th>Total (Costo + Comisión)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+           $pagosServicios = []; // Array para guardar pagos de servicios
+           foreach ($Especialistas15 as $pagoServicio) {
+               echo '<tr>';
+               echo '<td><input type="text" class="form-control" readonly value="' . htmlspecialchars($pagoServicio->Servicio) . '"></td>';
+               echo '<td><input type="text" class="form-control" readonly value="' . $pagoServicio->Total_Pagos . '"></td>';
+               echo '<td><input type="text" class="form-control" readonly value="$' . number_format($pagoServicio->Total_Costo, 2) . '"></td>';
+               echo '<td><input type="text" class="form-control" readonly value="$' . number_format($pagoServicio->Total_Comision, 2) . '"></td>';
+               echo '<td><input type="text" class="form-control" readonly value="$' . number_format($pagoServicio->Total_Con_Comision, 2) . '"></td>';
+               // Agregar pago de servicio al array
+               $pagosServicios[] = [
+                   'servicio' => $pagoServicio->Servicio,
+                   'cantidad' => $pagoServicio->Total_Pagos,
+                   'total_costo' => $pagoServicio->Total_Costo,
+                   'total_comision' => $pagoServicio->Total_Comision,
+                   'total_con_comision' => $pagoServicio->Total_Con_Comision,
+               ];
+               echo '</tr>';
+           }
+            ?>
+        </tbody>
+    </table>
+</div>
+  <!-- Campo oculto para enviar el array de pagos de servicios -->
+  <input type="hidden" name="pagos_servicios" value='<?php echo json_encode($pagosServicios); ?>'>
+<?php
 }
 ?>
 
