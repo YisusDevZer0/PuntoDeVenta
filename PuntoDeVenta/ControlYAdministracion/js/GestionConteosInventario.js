@@ -93,20 +93,22 @@ function CargarProductosContados() {
                 tabla += '<th>Estado Turno</th>';
                 tabla += '</tr></thead><tbody>';
                 
-                if (response.aaData.length > 0) {
+                var tieneDatos = response.aaData && response.aaData.length > 0;
+                
+                if (tieneDatos) {
                     $.each(response.aaData, function(i, item) {
                         tabla += '<tr class="' + (item.clase_fila || '') + '">';
-                        tabla += '<td>' + item.Folio_Turno + '</td>';
-                        tabla += '<td>' + item.Cod_Barra + '</td>';
-                        tabla += '<td>' + item.Nombre_Producto + '</td>';
-                        tabla += '<td>' + item.Sucursal + '</td>';
-                        tabla += '<td>' + item.Usuario + '</td>';
-                        tabla += '<td>' + item.Existencias_Sistema + '</td>';
-                        tabla += '<td>' + item.Existencias_Fisicas + '</td>';
-                        tabla += '<td>' + item.Diferencia + '</td>';
-                        tabla += '<td>' + item.Fecha_Turno + '</td>';
-                        tabla += '<td>' + item.Fecha_Conteo + '</td>';
-                        tabla += '<td>' + item.Estado_Turno + '</td>';
+                        tabla += '<td>' + (item.Folio_Turno || '') + '</td>';
+                        tabla += '<td>' + (item.Cod_Barra || '') + '</td>';
+                        tabla += '<td>' + (item.Nombre_Producto || '') + '</td>';
+                        tabla += '<td>' + (item.Sucursal || '') + '</td>';
+                        tabla += '<td>' + (item.Usuario || '') + '</td>';
+                        tabla += '<td>' + (item.Existencias_Sistema || '0') + '</td>';
+                        tabla += '<td>' + (item.Existencias_Fisicas || '0') + '</td>';
+                        tabla += '<td>' + (item.Diferencia || '') + '</td>';
+                        tabla += '<td>' + (item.Fecha_Turno || '') + '</td>';
+                        tabla += '<td>' + (item.Fecha_Conteo || '-') + '</td>';
+                        tabla += '<td>' + (item.Estado_Turno || '') + '</td>';
                         tabla += '</tr>';
                     });
                 } else {
@@ -116,18 +118,42 @@ function CargarProductosContados() {
                 tabla += '</tbody></table>';
                 $('#tablaProductosContados').html(tabla);
                 
-                // Inicializar DataTable si está disponible
-                if ($.fn.DataTable) {
-                    if ($.fn.DataTable.isDataTable('#tablaConteos')) {
-                        $('#tablaConteos').DataTable().destroy();
-                    }
-                    $('#tablaConteos').DataTable({
-                        "language": {
-                            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
-                        },
-                        "pageLength": 25,
-                        "order": [[8, "desc"]] // Ordenar por Fecha Turno descendente
-                    });
+                // Inicializar DataTable solo si hay datos
+                if (tieneDatos) {
+                    // Esperar a que el DOM esté listo antes de inicializar DataTable
+                    setTimeout(function() {
+                        // Verificar que la tabla existe en el DOM
+                        var $tabla = $('#tablaConteos');
+                        if ($tabla.length > 0 && $.fn.DataTable) {
+                            // Destruir instancia anterior si existe
+                            try {
+                                if ($.fn.DataTable.isDataTable('#tablaConteos')) {
+                                    $tabla.DataTable().destroy();
+                                }
+                            } catch (e) {
+                                console.warn('Error al destruir DataTable anterior:', e);
+                            }
+                            
+                            // Verificar que la tabla tiene filas válidas (sin colspan)
+                            var filasNormales = $tabla.find('tbody tr:not(:has(td[colspan]))').length;
+                            
+                            if (filasNormales > 0) {
+                                try {
+                                    $tabla.DataTable({
+                                        "language": {
+                                            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                                        },
+                                        "pageLength": 25,
+                                        "order": [[8, "desc"]], // Ordenar por Fecha Turno descendente
+                                        "responsive": true,
+                                        "autoWidth": false
+                                    });
+                                } catch (e) {
+                                    console.error('Error al inicializar DataTable:', e);
+                                }
+                            }
+                        }
+                    }, 100); // Pequeño delay para asegurar que el DOM está listo
                 }
             } else {
                 $('#tablaProductosContados').html('<div class="alert alert-info">No se encontraron productos contados.</div>');
