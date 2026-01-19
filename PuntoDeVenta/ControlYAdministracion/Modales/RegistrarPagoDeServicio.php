@@ -378,7 +378,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                             // Enviar ticket por AJAX (el archivo del ticket aún no está construido, pero el envío funciona)
                             $.ajax({
                                 type: 'POST',
-                                url: 'http://localhost/ticket/TicketPagoServicio.php',
+                                url: 'http://localhost/ticket/TicketCobroServicios.php',
                                 data: ticketDataString,
                                 success: function(ticketResponse) {
                                     // Verificar si la respuesta contiene errores de PHP
