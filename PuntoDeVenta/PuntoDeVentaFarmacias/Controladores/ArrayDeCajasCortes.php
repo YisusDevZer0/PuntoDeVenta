@@ -7,20 +7,58 @@ include_once "ControladorUsuario.php";
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 $nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
 
-// Consulta segura utilizando una sentencia preparada
+// Obtener parámetros de filtro
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
+$sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
+$cajero = isset($_GET['cajero']) ? $_GET['cajero'] : '';
+
 // Consulta segura utilizando una sentencia preparada
 $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucursal,
         Cajas.Estatus, Cajas.CodigoEstatus, Cajas.Turno, Cajas.Asignacion, Cajas.Fecha_Apertura,
         Cajas.Valor_Total_Caja, Cajas.Licencia, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Cajas
         INNER JOIN Sucursales ON Cajas.Sucursal = Sucursales.ID_Sucursal
-        WHERE Cajas.Sucursal = ? AND Cajas.Empleado = ? AND Cajas.Estatus = 'Cerrada'"; // Se añadió la condición de estatus Cerrada
+        WHERE Cajas.Sucursal = ? AND Cajas.Empleado = ? AND Cajas.Estatus = 'Cerrada'";
+
+$params = [];
+$types = "ss";
+
+// Filtrar por fecha de apertura
+if (!empty($fecha_inicio)) {
+    $sql .= " AND DATE(Cajas.Fecha_Apertura) >= ?";
+    $params[] = $fecha_inicio;
+    $types .= "s";
+}
+
+if (!empty($fecha_fin)) {
+    $sql .= " AND DATE(Cajas.Fecha_Apertura) <= ?";
+    $params[] = $fecha_fin;
+    $types .= "s";
+}
+
+// Filtrar por sucursal (si se especifica y es diferente a la del usuario)
+if (!empty($sucursal) && $sucursal != $fk_sucursal) {
+    // Solo permitir si el usuario tiene permisos, por ahora mantener la restricción
+    // $sql .= " AND Cajas.Sucursal = ?";
+    // $params[] = $sucursal;
+    // $types .= "s";
+}
+
+// Filtrar por cajero (empleado)
+if (!empty($cajero)) {
+    $sql .= " AND Cajas.Empleado LIKE ?";
+    $params[] = '%' . $cajero . '%';
+    $types .= "s";
+}
 
 // Preparar la declaración
 $stmt = $conn->prepare($sql);
 
-// Vincular parámetros
-$stmt->bind_param("ss", $fk_sucursal, $nombre_apellidos);
+// Vincular parámetros: primero los obligatorios (sucursal y empleado), luego los filtros
+$bind_params = [$fk_sucursal, $nombre_apellidos];
+$bind_params = array_merge($bind_params, $params);
+$stmt->bind_param($types, ...$bind_params);
 
 // Ejecutar la declaración
 $stmt->execute();
@@ -115,7 +153,9 @@ while ($fila = $result->fetch_assoc()) {
 }
 
 // Cerrar la declaración
-$stmt->close();
+if ($stmt) {
+    $stmt->close();
+}
 
 // Construir el array de resultados para la respuesta JSON
 $results = [

@@ -31,8 +31,6 @@ if (!empty($missingFields)) {
 
     // Decodificar el JSON de servicios
     $servicios = isset($_POST['servicios']) ? json_decode($_POST['servicios'], true) : [];
-    // Decodificar el JSON de gastos
-    $gastos = isset($_POST['gastos']) ? json_decode($_POST['gastos'], true) : [];
 
     // Concatenar servicios en un string
     $serviciosString = '';
@@ -43,54 +41,15 @@ if (!empty($missingFields)) {
     }
     $serviciosString = rtrim($serviciosString, ', '); // Eliminar la última coma y espacio
 
-    // Concatenar gastos en un string
-    $gastosString = '';
-    if (isset($gastos['detalle']) && is_array($gastos['detalle'])) {
-        foreach ($gastos['detalle'] as $gasto) {
-            $concepto = mysqli_real_escape_string($conn, $gasto['concepto']);
-            $importe = mysqli_real_escape_string($conn, $gasto['importe']);
-            $recibe = mysqli_real_escape_string($conn, $gasto['recibe']);
-            $fecha = mysqli_real_escape_string($conn, $gasto['fecha']);
-            $gastosString .= "$concepto: $$importe (Recibe: $recibe, Fecha: $fecha), ";
-        }
-        // Agregar el total al final del string
-        $totalGastos = isset($gastos['total']) ? mysqli_real_escape_string($conn, $gastos['total']) : 0;
-        $gastosString .= "TOTAL GASTOS: $$totalGastos";
-    }
-    $gastosString = rtrim($gastosString, ', '); // Eliminar la última coma y espacio
-
-    // Decodificar el JSON de abonos y encargos
-    $abonos = isset($_POST['abonos']) ? json_decode($_POST['abonos'], true) : [];
-    $encargos = isset($_POST['encargos']) ? json_decode($_POST['encargos'], true) : [];
-
-    // Concatenar abonos en un string
-    $abonosString = '';
-    foreach ($abonos as $abono) {
-        $paciente = mysqli_real_escape_string($conn, $abono['nombre_paciente'] ?? '');
-        $medicamento = mysqli_real_escape_string($conn, $abono['medicamento'] ?? '');
-        $cantidad = mysqli_real_escape_string($conn, $abono['cantidad'] ?? '');
-        $monto = mysqli_real_escape_string($conn, $abono['monto_abonado'] ?? '');
-        $forma = mysqli_real_escape_string($conn, $abono['forma_pago'] ?? '');
-        $empleado = mysqli_real_escape_string($conn, $abono['empleado'] ?? '');
-        $fecha = mysqli_real_escape_string($conn, $abono['fecha_abono'] ?? '');
-        $obs = mysqli_real_escape_string($conn, $abono['observaciones'] ?? '');
-        $abonosString .= "$paciente/$medicamento/$cantidad: $$monto ($forma, $empleado, $fecha, $obs), ";
-    }
-    $abonosString = rtrim($abonosString, ', ');
-
-    // Concatenar encargos en un string
-    $encargosString = '';
-    foreach ($encargos as $encargo) {
-        $paciente = mysqli_real_escape_string($conn, $encargo['nombre_paciente'] ?? '');
-        $medicamento = mysqli_real_escape_string($conn, $encargo['medicamento'] ?? '');
-        $cantidad = mysqli_real_escape_string($conn, $encargo['cantidad'] ?? '');
-        $precio = mysqli_real_escape_string($conn, $encargo['precioventa'] ?? '');
-        $abono = mysqli_real_escape_string($conn, $encargo['abono_parcial'] ?? '');
-        $estado = mysqli_real_escape_string($conn, $encargo['estado'] ?? '');
-        $fecha = mysqli_real_escape_string($conn, $encargo['fecha_encargo'] ?? '');
-        $encargosString .= "$paciente/$medicamento/$cantidad: $$precio (Abono: $$abono, $estado, $fecha), ";
-    }
-    $encargosString = rtrim($encargosString, ', ');
+    // Decodificar y guardar datos del acordeón como JSON
+    $gastos = isset($_POST['gastos']) ? $_POST['gastos'] : '';
+    $abonos = isset($_POST['abonos']) ? $_POST['abonos'] : '';
+    $encargos = isset($_POST['encargos']) ? $_POST['encargos'] : '';
+    
+    // Escapar los JSON strings para evitar problemas con comillas
+    $gastosString = mysqli_real_escape_string($conn, $gastos);
+    $abonosString = mysqli_real_escape_string($conn, $abonos);
+    $encargosString = mysqli_real_escape_string($conn, $encargos);
 
     // Consulta para verificar si ya existe un registro con los mismos valores
     $sql = "SELECT Fk_Caja, Turno FROM Cortes_Cajas_POS WHERE Fk_Caja='$FkCaja' AND Turno='$Turno'";

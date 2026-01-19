@@ -72,6 +72,34 @@ try {
         exit;
     }
 
+    // Verificar y crear tabla historial_abonos_encargos si no existe
+    $sql_check_table = "SHOW TABLES LIKE 'historial_abonos_encargos'";
+    $result_check = $conn->query($sql_check_table);
+    
+    if (!$result_check || $result_check->num_rows == 0) {
+        // Crear la tabla si no existe
+        $sql_create_table = "CREATE TABLE IF NOT EXISTS `historial_abonos_encargos` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `encargo_id` int(11) NOT NULL,
+            `monto_abonado` decimal(10,2) NOT NULL,
+            `forma_pago` varchar(300) NOT NULL,
+            `efectivo_recibido` decimal(10,2) DEFAULT 0.00,
+            `observaciones` text,
+            `fecha_abono` datetime NOT NULL,
+            `empleado` varchar(300) NOT NULL,
+            `sucursal` varchar(300) NOT NULL,
+            PRIMARY KEY (`id`),
+            KEY `idx_encargo_id` (`encargo_id`),
+            KEY `idx_fecha_abono` (`fecha_abono`),
+            KEY `idx_sucursal` (`sucursal`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+        
+        if (!$conn->query($sql_create_table)) {
+            error_log("Error al crear tabla historial_abonos_encargos: " . $conn->error);
+            // No lanzar excepción aquí, solo registrar el error
+        }
+    }
+
     // Iniciar transacción
     $conn->begin_transaction();
 
@@ -96,7 +124,31 @@ try {
         }
         $stmt_update->close();
 
-        // 2. Registrar la venta en la tabla de ventas (si el encargo se pagó completamente)
+        // 2. Registrar el cobro en el historial de abonos
+        // Verificar nuevamente si la tabla existe antes de insertar
+        $sql_check_table2 = "SHOW TABLES LIKE 'historial_abonos_encargos'";
+        $result_check2 = $conn->query($sql_check_table2);
+        
+        if ($result_check2 && $result_check2->num_rows > 0) {
+            $fecha_cobro = date('Y-m-d H:i:s');
+            $sql_historial = "INSERT INTO historial_abonos_encargos (
+                                encargo_id, monto_abonado, forma_pago, efectivo_recibido, 
+                                observaciones, fecha_abono, empleado, sucursal
+                              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            
+            $stmt_historial = $conn->prepare($sql_historial);
+            if ($stmt_historial) {
+                $observaciones_cobro = 'Cobro realizado';
+                $stmt_historial->bind_param("idssssss", 
+                    $encargo_id, $monto_cobro, $forma_pago_cobro, $efectivo_recibido,
+                    $observaciones_cobro, $fecha_cobro, $encargo->Empleado, $encargo->Sucursal
+                );
+                $stmt_historial->execute();
+                $stmt_historial->close();
+            }
+        }
+
+        // 3. Registrar la venta en la tabla de ventas (si el encargo se pagó completamente)
         if ($estado_final === 'Pagado') {
             // Generar folio de ticket para la venta
             $fecha_actual = date('Y-m-d H:i:s');
@@ -130,7 +182,7 @@ try {
             $stmt_venta->close();
         }
 
-        // 3. Actualizar el valor total de la caja (sumar el monto cobrado)
+        // 4. Actualizar el valor total de la caja (sumar el monto cobrado)
         $sql_caja = "UPDATE Cajas 
                      SET Valor_Total_Caja = Valor_Total_Caja + ? 
                      WHERE ID_Caja = ?";

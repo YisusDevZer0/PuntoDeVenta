@@ -456,6 +456,49 @@ try {
             }
         }
 
+        // ================= TABLA DE PAGOS DE SERVICIOS ===================
+        // Consulta de pagos de servicios agrupados por servicio
+        $Especialistas15 = [];
+        $pagosServicios = [];
+
+        // Verificar si la tabla PagosServicios existe
+        $sql_check_pagos = "SHOW TABLES LIKE 'PagosServicios'";
+        $result_check_pagos = $conn->query($sql_check_pagos);
+
+        if ($result_check_pagos && $result_check_pagos->num_rows > 0) {
+            $sql15 = "SELECT 
+                        ps.Servicio,
+                        ls.Comision,
+                        COUNT(ps.id) AS Total_Pagos,
+                        SUM(ps.costo) AS Total_Costo,
+                        SUM(IFNULL(ls.Comision, 0)) AS Total_Comision,
+                        SUM(ps.costo + IFNULL(ls.Comision, 0)) AS Total_Con_Comision
+                     FROM 
+                        PagosServicios ps
+                     LEFT JOIN 
+                        ListadoServicios ls ON ps.Servicio = ls.Servicio
+                     WHERE 
+                        ps.Fk_Caja = '$fk_caja' 
+                        AND ps.Fk_Sucursal = '$fk_sucursal'
+                     GROUP BY 
+                        ps.Servicio, ls.Comision";
+
+            $query15 = $conn->query($sql15);
+            if ($query15 && $query15->num_rows > 0) {
+                while ($r = $query15->fetch_object()) {
+                    $Especialistas15[] = $r;
+                    // Agregar pago de servicio al array
+                    $pagosServicios[] = [
+                        'servicio' => $r->Servicio,
+                        'cantidad' => $r->Total_Pagos,
+                        'total_costo' => $r->Total_Costo,
+                        'total_comision' => $r->Total_Comision,
+                        'total_con_comision' => $r->Total_Con_Comision,
+                    ];
+                }
+            }
+        }
+
         ?>
 
         <!-- Manejo de errores -->
@@ -535,6 +578,8 @@ try {
         <input type="hidden" name="abonos" value='<?= json_encode($abonos_dia) ?>'>
         <!-- Campo oculto con el valor de encargos -->
         <input type="hidden" name="encargos" value='<?= json_encode($encargos_dia) ?>'>
+        <!-- Campo oculto con el valor de pagos de servicios -->
+        <input type="hidden" name="pagos_servicios" value='<?= json_encode($pagosServicios) ?>'>
 
             <!-- Tabla de totales -->
             <div class="text-center">
@@ -711,12 +756,68 @@ try {
                   </div>
                 </div>
               </div>
+              <!-- Sección de Pagos de Servicios -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingPagosServicios">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePagosServicios" aria-expanded="false" aria-controls="collapsePagosServicios">
+                    Pagos de servicios
+                  </button>
+                </h2>
+                <div id="collapsePagosServicios" class="accordion-collapse collapse" aria-labelledby="headingPagosServicios" data-bs-parent="#acordeonCorte">
+                  <div class="accordion-body">
+                    <!-- Tabla de pagos de servicios -->
+                    <div class="table-responsive">
+                      <table id="TablaPagosServicios" class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>Servicio</th>
+                            <th>Cantidad</th>
+                            <th>Total Costo</th>
+                            <th>Total Comisión</th>
+                            <th>Total (Costo + Comisión)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php if (!empty($Especialistas15)): ?>
+                            <?php 
+                            $total_general_costo = 0;
+                            $total_general_comision = 0;
+                            $total_general_con_comision = 0;
+                            foreach ($Especialistas15 as $pagoServicio): 
+                              $total_general_costo += $pagoServicio->Total_Costo;
+                              $total_general_comision += $pagoServicio->Total_Comision;
+                              $total_general_con_comision += $pagoServicio->Total_Con_Comision;
+                            ?>
+                              <tr>
+                                <td><?= htmlspecialchars($pagoServicio->Servicio) ?></td>
+                                <td><?= $pagoServicio->Total_Pagos ?></td>
+                                <td>$<?= number_format($pagoServicio->Total_Costo, 2) ?></td>
+                                <td>$<?= number_format($pagoServicio->Total_Comision, 2) ?></td>
+                                <td>$<?= number_format($pagoServicio->Total_Con_Comision, 2) ?></td>
+                              </tr>
+                            <?php endforeach; ?>
+                            <tr class="table-info">
+                              <td colspan="2"><strong>Total General:</strong></td>
+                              <td><strong>$<?= number_format($total_general_costo, 2) ?></strong></td>
+                              <td><strong>$<?= number_format($total_general_comision, 2) ?></strong></td>
+                              <td><strong>$<?= number_format($total_general_con_comision, 2) ?></strong></td>
+                            </tr>
+                          <?php else: ?>
+                            <tr><td colspan="5" class="text-center">No hay pagos de servicios registrados.</td></tr>
+                          <?php endif; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Campos ocultos y observaciones -->
             <input type="hidden" name="Sistema" value="Ventas">
             <input type="hidden" name="ID_H_O_D" value="DoctorPez">
             <input type="hidden" name="total_gastos" value="<?= $total_gastos ?>">
+            <input type="hidden" name="FechaDelCorte" value="<?= date('Y-m-d') ?>">
             
             <label for="comentarios">Observaciones:</label>
             <textarea class="form-control" id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>

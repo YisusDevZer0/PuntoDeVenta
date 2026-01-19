@@ -201,14 +201,49 @@
   }
 
 
-tabla = $('#Clientes').DataTable({
+// Variable global para la tabla
+var tabla = $('#Clientes').DataTable({
 
  "bProcessing": true,
  "ordering": true,
- "stateSave":true,
+ "stateSave": false, // Desactivar para que siempre recargue con filtros
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeCajasCortes.php",
+ "fnServerData": function ( sSource, aoData, fnCallback ) {
+     // Agregar parámetros de filtro a la petición
+     var fecha_inicio = $('#fecha_inicio').val();
+     var fecha_fin = $('#fecha_fin').val();
+     var sucursal = $('#filtro_sucursal').val();
+     var cajero = $('#filtro_cajero').val();
+     
+     // Limpiar parámetros anteriores
+     aoData = aoData.filter(function(item) {
+         return !['fecha_inicio', 'fecha_fin', 'sucursal', 'cajero'].includes(item.name);
+     });
+     
+     // Agregar los parámetros de filtro
+     if (fecha_inicio && fecha_inicio.trim() !== '') {
+         aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
+     }
+     if (fecha_fin && fecha_fin.trim() !== '') {
+         aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
+     }
+     if (sucursal && sucursal.trim() !== '') {
+         aoData.push( { "name": "sucursal", "value": sucursal } );
+     }
+     if (cajero && cajero.trim() !== '') {
+         aoData.push( { "name": "cajero", "value": cajero } );
+     }
+     
+     $.ajax( {
+         "dataType": 'json',
+         "type": "GET",
+         "url": sSource,
+         "data": aoData,
+         "success": fnCallback
+     } );
+ },
  "aoColumns": [
   { mData: 'IdCaja' },  
   { mData: 'Empleado' },
@@ -247,6 +282,11 @@ tabla = $('#Clientes').DataTable({
 "initComplete": function() {
   // Al completar la inicialización de la tabla, ocultar el mensaje de carga
   ocultarCargando();
+  
+  // Calcular estadísticas después de cargar
+  if (typeof calcularEstadisticas === 'function') {
+    calcularEstadisticas();
+  }
 },
 // Para personalizar el estilo del botón de Excel
 // "buttons": [
