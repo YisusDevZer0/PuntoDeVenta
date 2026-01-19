@@ -38,30 +38,37 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
     // Generar número de ticket automáticamente con formato mejorado
     $fecha_actual = date('Y-m-d');
     
-    // Consulta simplificada para obtener el último número de ticket de esta sucursal
-    $sql_ticket = "SELECT NumTicket 
+    // Consulta para obtener el último número de ticket de esta sucursal
+    // Usamos un método más robusto para extraer el número del ticket
+    $sql_ticket = "SELECT NumTicket, id
                    FROM PagosServicios 
                    WHERE Fk_Sucursal = ? 
                    AND NumTicket LIKE ? 
-                   ORDER BY CAST(SUBSTRING(NumTicket, ?) AS UNSIGNED) DESC 
+                   ORDER BY id DESC 
                    LIMIT 1";
     
     $stmt_ticket = $conn->prepare($sql_ticket);
     if ($stmt_ticket) {
         $patron = $primeras_tres_letras . 'SER-%';
-        $posicion = strlen($primeras_tres_letras) + 4; // Posición después de "TEASER-"
-        $stmt_ticket->bind_param("isi", $Especialistas->Sucursal, $patron, $posicion);
+        $stmt_ticket->bind_param("is", $Especialistas->Sucursal, $patron);
         $stmt_ticket->execute();
         $result_ticket = $stmt_ticket->get_result();
         $row_ticket = $result_ticket->fetch_assoc();
         
-        if ($row_ticket) {
+        if ($row_ticket && !empty($row_ticket['NumTicket'])) {
             // Extraer el número del último ticket
             $ultimo_ticket = $row_ticket['NumTicket'];
-            // Buscar la posición del guión y extraer todo lo que viene después
-            $pos_guion = strpos($ultimo_ticket, '-');
+            // Buscar la última posición del guión y extraer todo lo que viene después
+            $pos_guion = strrpos($ultimo_ticket, '-');
             if ($pos_guion !== false) {
-                $numero_actual = (int)substr($ultimo_ticket, $pos_guion + 1);
+                $numero_str = substr($ultimo_ticket, $pos_guion + 1);
+                // Remover cualquier carácter no numérico al inicio
+                $numero_str = ltrim($numero_str, '0');
+                $numero_actual = (int)$numero_str;
+                // Si después de quitar ceros queda vacío, significa que era "0000" o similar
+                if ($numero_actual == 0 && strlen(substr($ultimo_ticket, $pos_guion + 1)) > 0) {
+                    $numero_actual = (int)substr($ultimo_ticket, $pos_guion + 1);
+                }
             } else {
                 $numero_actual = 0;
             }
