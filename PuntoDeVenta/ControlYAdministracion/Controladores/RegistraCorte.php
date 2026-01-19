@@ -41,6 +41,16 @@ if (!empty($missingFields)) {
     }
     $serviciosString = rtrim($serviciosString, ', '); // Eliminar la última coma y espacio
 
+    // Decodificar y guardar datos del acordeón
+    $gastos = isset($_POST['gastos']) ? $_POST['gastos'] : '';
+    $abonos = isset($_POST['abonos']) ? $_POST['abonos'] : '';
+    $encargos = isset($_POST['encargos']) ? $_POST['encargos'] : '';
+    
+    // Escapar los JSON strings para evitar problemas con comillas
+    $gastosString = mysqli_real_escape_string($conn, $gastos);
+    $abonosString = mysqli_real_escape_string($conn, $abonos);
+    $encargosString = mysqli_real_escape_string($conn, $encargos);
+
     // Consulta para verificar si ya existe un registro con los mismos valores
     $sql = "SELECT Fk_Caja, Turno FROM Cortes_Cajas_POS WHERE Fk_Caja='$FkCaja' AND Turno='$Turno'";
     $resultset = mysqli_query($conn, $sql);
@@ -49,8 +59,8 @@ if (!empty($missingFields)) {
         echo json_encode(array("statusCode" => 250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`) 
-                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', '$TotalTransferencias', NOW(), '$Sistema', '$ID_H_O_D', '$Comentarios', '$serviciosString')";
+        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`, `Gastos`, `Abonos`, `Encargos`) 
+                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', '$TotalTransferencias', NOW(), '$Sistema', '$ID_H_O_D', '$Comentarios', '$serviciosString', '$gastosString', '$abonosString', '$encargosString')";
 
         if (mysqli_query($conn, $sql_insert)) {
             echo json_encode(array("statusCode" => 200)); // Inserción exitosa

@@ -936,6 +936,7 @@ try {
             <input type="hidden" name="Sistema" value="Ventas">
             <input type="hidden" name="ID_H_O_D" value="DoctorPez">
             <input type="hidden" name="total_gastos" value="<?= $total_gastos ?>">
+            <input type="hidden" name="FechaDelCorte" value="<?= date('Y-m-d') ?>">
             
             <label for="comentarios">Observaciones:</label>
             <textarea class="form-control" id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
