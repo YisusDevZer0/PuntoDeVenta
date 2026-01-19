@@ -321,6 +321,8 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                         var cliente = $('#cliente').val();
                         var servicioNombre = $('#servicio_id option:selected').text();
                         var monto = $('#monto').val();
+                        var comision = $('#comision').val() || '0.00';
+                        var observaciones = $('#observaciones').val() || '';
                         var formaDePago = $('#FormaDePagoServicio').val();
                         var empleado = $('#empleado').val();
                         
@@ -329,6 +331,9 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                             TicketVal: NumTicket,
                             ClienteInputValue: cliente,
                             ServicioNombre: servicioNombre,
+                            CostoServicio: monto,
+                            ComisionServicio: comision,
+                            Observaciones: observaciones,
                             BoletaTotal: monto,
                             FormaPagoSeleccionada: formaDePago,
                             Vendedor: empleado,
@@ -339,6 +344,9 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                         var encodedTicketVal = encodeURIComponent(NumTicket);
                         var encodedClienteInputValue = encodeURIComponent(cliente);
                         var encodedServicioNombre = encodeURIComponent(servicioNombre);
+                        var encodedCostoServicio = encodeURIComponent(monto);
+                        var encodedComisionServicio = encodeURIComponent(comision);
+                        var encodedObservaciones = encodeURIComponent(observaciones);
                         var encodedBoletaTotal = encodeURIComponent(monto);
                         var encodedFormaPagoSeleccionada = encodeURIComponent(formaDePago);
                         var encodedVendedor = encodeURIComponent(empleado);
@@ -347,6 +355,9 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                         var ticketDataString = 'TicketVal=' + encodedTicketVal +
                                              '&ClienteInputValue=' + encodedClienteInputValue +
                                              '&ServicioNombre=' + encodedServicioNombre +
+                                             '&CostoServicio=' + encodedCostoServicio +
+                                             '&ComisionServicio=' + encodedComisionServicio +
+                                             '&Observaciones=' + encodedObservaciones +
                                              '&BoletaTotal=' + encodedBoletaTotal +
                                              '&FormaPagoSeleccionada=' + encodedFormaPagoSeleccionada +
                                              '&Vendedor=' + encodedVendedor +
