@@ -193,6 +193,26 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
 
     <script>
     $(document).ready(function() {
+        // Inicializar Select2 en el select de servicios para habilitar búsqueda
+        // Destruir Select2 si ya existe para evitar conflictos
+        if ($('#servicio_id').hasClass('select2-hidden-accessible')) {
+            $('#servicio_id').select2('destroy');
+        }
+        
+        $('#servicio_id').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Seleccione un servicio',
+            allowClear: true,
+            language: {
+                noResults: function() {
+                    return "No se encontraron servicios";
+                },
+                searching: function() {
+                    return "Buscando...";
+                }
+            }
+        });
+
         // Actualizar el input oculto con el valor del select
         $('#selTipoPagoServicio').on('change', function() {
             $('#FormaDePagoServicio').val($(this).val());
