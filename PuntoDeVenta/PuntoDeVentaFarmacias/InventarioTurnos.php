@@ -58,23 +58,8 @@ if ($sucursal_id > 0) {
         }
     }
     
-    // Tercero: Si aún no se encontró, buscar cualquier turno activo en la sucursal
-    // Esto es útil si el nombre de usuario tiene variaciones o espacios
-    if (!$turno_activo) {
-        $sql_turno_sucursal = "SELECT * FROM Inventario_Turnos 
-                              WHERE Fk_sucursal = ? 
-                              AND Estado IN ('activo', 'pausado')
-                              ORDER BY Hora_Inicio DESC 
-                              LIMIT 1";
-        $stmt_sucursal = $conn->prepare($sql_turno_sucursal);
-        if ($stmt_sucursal) {
-            $stmt_sucursal->bind_param("i", $sucursal_id);
-            $stmt_sucursal->execute();
-            $result_sucursal = $stmt_sucursal->get_result();
-            $turno_activo = $result_sucursal->fetch_assoc();
-            $stmt_sucursal->close();
-        }
-    }
+    // IMPORTANTE: NO buscar turnos de otros usuarios, incluso si están pausados
+    // El conteo es por usuario, cada usuario solo debe ver sus propios turnos
     
     // DEBUG: Si no se encontró turno, consultar todos los turnos activos para debug
     if (!$turno_activo && $sucursal_id > 0) {
@@ -224,7 +209,27 @@ if ($sucursal_id > 0) {
                             </div>
                             <div class="col-md-3">
                                 <strong>Usuario:</strong> <?php echo $turno_activo['Usuario_Actual']; ?><br>
-                                <strong>Sucursal:</strong> <?php echo $row['Fk_sucursal']; ?>
+                                <strong>Sucursal:</strong> <?php 
+                                // Obtener nombre de la sucursal
+                                $nombre_sucursal = 'N/A';
+                                if (isset($row['Nombre_Sucursal']) && !empty($row['Nombre_Sucursal'])) {
+                                    $nombre_sucursal = $row['Nombre_Sucursal'];
+                                } else {
+                                    // Si no está en $row, consultarlo de la BD
+                                    $sql_suc = "SELECT Nombre_Sucursal FROM Sucursales WHERE ID_Sucursal = ? LIMIT 1";
+                                    $stmt_suc = $conn->prepare($sql_suc);
+                                    if ($stmt_suc) {
+                                        $stmt_suc->bind_param("i", $sucursal_id);
+                                        $stmt_suc->execute();
+                                        $result_suc = $stmt_suc->get_result();
+                                        if ($suc_data = $result_suc->fetch_assoc()) {
+                                            $nombre_sucursal = $suc_data['Nombre_Sucursal'];
+                                        }
+                                        $stmt_suc->close();
+                                    }
+                                }
+                                echo htmlspecialchars($nombre_sucursal); 
+                                ?>
                             </div>
                         </div>
                     </div>

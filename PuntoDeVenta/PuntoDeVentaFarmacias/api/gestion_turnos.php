@@ -108,21 +108,9 @@ try {
                 }
             }
             
-            // Método 4: Cualquier turno activo en la sucursal (último recurso)
-            if (!$turno_encontrado && $sucursal > 0) {
-                $sql_sucursal = "SELECT * FROM Inventario_Turnos 
-                                WHERE Fk_sucursal = ? 
-                                AND Estado IN ('activo', 'pausado')
-                                ORDER BY Hora_Inicio DESC 
-                                LIMIT 1";
-                $stmt_sucursal = $conn->prepare($sql_sucursal);
-                if ($stmt_sucursal) {
-                    $stmt_sucursal->bind_param("i", $sucursal);
-                    $stmt_sucursal->execute();
-                    $turno_encontrado = $stmt_sucursal->get_result()->fetch_assoc();
-                    $stmt_sucursal->close();
-                }
-            }
+            // IMPORTANTE: NO buscar turnos de otros usuarios, incluso si están pausados
+            // El conteo es por usuario, cada usuario solo debe ver sus propios turnos
+            // El método 4 fue eliminado para evitar que usuarios vean turnos de otros
             
             if ($turno_encontrado) {
                 echo json_encode(['success' => true, 'turno' => $turno_encontrado]);
@@ -192,23 +180,62 @@ try {
                     $sucursal_cod = str_pad($sucursal, 3, '0', STR_PAD_LEFT);
                 }
                 
-                // Obtener siguiente secuencial
-                $sql_sec = "SELECT COUNT(*) + 1 as secuencial FROM Inventario_Turnos 
-                           WHERE Fk_sucursal = ? AND DATE(Fecha_Turno) = CURDATE()";
-                $stmt_sec = $conn->prepare($sql_sec);
-                $stmt_sec->bind_param("i", $sucursal);
-                $stmt_sec->execute();
-                $sec_data = $stmt_sec->get_result()->fetch_assoc();
-                $stmt_sec->close();
+                // Obtener siguiente secuencial y verificar unicidad del folio
+                $intentos = 0;
+                $folio = null;
+                $max_intentos = 100; // Prevenir bucle infinito
                 
-                $secuencial = $sec_data ? str_pad($sec_data['secuencial'], 3, '0', STR_PAD_LEFT) : '001';
-                $fecha = date('Ymd');
-                $folio = "INV-{$sucursal_cod}-{$fecha}-{$secuencial}";
+                while ($intentos < $max_intentos && empty($folio)) {
+                    $sql_sec = "SELECT COUNT(*) + 1 as secuencial FROM Inventario_Turnos 
+                               WHERE Fk_sucursal = ? AND DATE(Fecha_Turno) = CURDATE()";
+                    $stmt_sec = $conn->prepare($sql_sec);
+                    $stmt_sec->bind_param("i", $sucursal);
+                    $stmt_sec->execute();
+                    $sec_data = $stmt_sec->get_result()->fetch_assoc();
+                    $stmt_sec->close();
+                    
+                    $secuencial = $sec_data ? str_pad($sec_data['secuencial'], 3, '0', STR_PAD_LEFT) : '001';
+                    $fecha = date('Ymd');
+                    $folio_tentativo = "INV-{$sucursal_cod}-{$fecha}-{$secuencial}";
+                    
+                    // Verificar que el folio no exista
+                    $sql_verificar_folio = "SELECT ID_Turno FROM Inventario_Turnos WHERE Folio_Turno = ? LIMIT 1";
+                    $stmt_ver_folio = $conn->prepare($sql_verificar_folio);
+                    $stmt_ver_folio->bind_param("s", $folio_tentativo);
+                    $stmt_ver_folio->execute();
+                    $folio_existe = $stmt_ver_folio->get_result()->fetch_assoc();
+                    $stmt_ver_folio->close();
+                    
+                    if (!$folio_existe) {
+                        $folio = $folio_tentativo;
+                    } else {
+                        // Si el folio existe, incrementar el secuencial y volver a intentar
+                        $intentos++;
+                        // Esperar un momento para evitar colisiones en alta concurrencia
+                        usleep(10000); // 10ms
+                    }
+                }
+                
+                if (empty($folio)) {
+                    throw new Exception('No se pudo generar un folio único después de ' . $max_intentos . ' intentos');
+                }
             }
             
             // Validar que el folio no esté vacío
             if (empty($folio)) {
                 throw new Exception('No se pudo generar el folio del turno');
+            }
+            
+            // Verificación final de unicidad antes de insertar
+            $sql_verificar_folio_final = "SELECT ID_Turno FROM Inventario_Turnos WHERE Folio_Turno = ? LIMIT 1";
+            $stmt_ver_folio_final = $conn->prepare($sql_verificar_folio_final);
+            $stmt_ver_folio_final->bind_param("s", $folio);
+            $stmt_ver_folio_final->execute();
+            $folio_existe_final = $stmt_ver_folio_final->get_result()->fetch_assoc();
+            $stmt_ver_folio_final->close();
+            
+            if ($folio_existe_final) {
+                throw new Exception('El folio generado ya existe. Por favor, intenta nuevamente.');
             }
             
             // Verificar si existe la columna Limite_Productos
