@@ -201,6 +201,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                 // Limpiar campos si no hay servicio seleccionado
                 $('#monto').val('');
                 $('#comision').val('');
+                $('#monto').prop('readonly', false);
                 $('#costo-variable-msg').hide();
                 return;
             }
@@ -235,8 +236,8 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                                 $('#monto').prop('readonly', false);
                                 $('#costo-variable-msg').hide();
                             } else {
-                                // Si tiene costo fijo, permitir edición también (por si necesita ajustar)
-                                $('#monto').prop('readonly', false);
+                                // Si tiene costo fijo, bloquear edición completamente
+                                $('#monto').prop('readonly', true);
                                 $('#costo-variable-msg').hide();
                             }
                         }
