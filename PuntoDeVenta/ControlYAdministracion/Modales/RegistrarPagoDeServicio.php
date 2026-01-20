@@ -194,24 +194,34 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
     <script>
     $(document).ready(function() {
         // Inicializar Select2 en el select de servicios para habilitar búsqueda
-        // Destruir Select2 si ya existe para evitar conflictos
-        if ($('#servicio_id').hasClass('select2-hidden-accessible')) {
-            $('#servicio_id').select2('destroy');
+        // Esperar a que el elemento esté disponible y destruir Select2 si ya existe
+        var $servicioSelect = $('#servicio_id');
+        
+        if ($servicioSelect.length && $servicioSelect.hasClass('select2-hidden-accessible')) {
+            try {
+                $servicioSelect.select2('destroy');
+            } catch(e) {
+                // Si hay error al destruir, continuar de todas formas
+                console.log('Select2 ya estaba inicializado');
+            }
         }
         
-        $('#servicio_id').select2({
-            theme: 'bootstrap4',
-            placeholder: 'Seleccione un servicio',
-            allowClear: true,
-            language: {
-                noResults: function() {
-                    return "No se encontraron servicios";
-                },
-                searching: function() {
-                    return "Buscando...";
+        if ($servicioSelect.length) {
+            $servicioSelect.select2({
+                theme: 'bootstrap4',
+                placeholder: 'Seleccione un servicio',
+                allowClear: true,
+                dropdownParent: $('#ModalEdDele'), // Asegurar que el dropdown se muestre correctamente en el modal
+                language: {
+                    noResults: function() {
+                        return "No se encontraron servicios";
+                    },
+                    searching: function() {
+                        return "Buscando...";
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // Actualizar el input oculto con el valor del select
         $('#selTipoPagoServicio').on('change', function() {
