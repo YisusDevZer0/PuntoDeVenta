@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../db_connect.php";
+include_once "../Controladores/db_connect.php";
 include_once "../Controladores/ControladorUsuario.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

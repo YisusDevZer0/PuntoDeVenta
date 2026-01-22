@@ -5,7 +5,7 @@
  */
 
 header('Content-Type: application/json');
-include_once "../db_connect.php";
+include_once "../Controladores/db_connect.php";
 
 /**
  * Descuenta lotes según la cantidad vendida usando FEFO
