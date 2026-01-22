@@ -4,8 +4,29 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-include_once "../Controladores/db_connect.php";
-include_once "../Controladores/ControladorUsuario.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+try {
+    include_once "../Controladores/db_connect.php";
+    
+    if (!isset($conn) || !$conn) {
+        throw new Exception('Error de conexión a la base de datos');
+    }
+    
+    // Intentar incluir ControladorUsuario, pero no fallar si no está disponible
+    $usuario = 'Sistema';
+    if (file_exists("../Controladores/ControladorUsuario.php")) {
+        include_once "../Controladores/ControladorUsuario.php";
+        if (isset($row) && isset($row['Nombre_Apellidos'])) {
+            $usuario = $row['Nombre_Apellidos'];
+        }
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
@@ -20,7 +41,6 @@ try {
     $fecha_caducidad_nueva = isset($_POST['fecha_caducidad_nueva']) ? $_POST['fecha_caducidad_nueva'] : '';
     $cantidad = isset($_POST['cantidad']) ? (int)$_POST['cantidad'] : 0;
     $observaciones = isset($_POST['observaciones']) ? trim($_POST['observaciones']) : '';
-    $usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Sistema';
     
     // Validaciones
     if (empty($cod_barra) || empty($lote_nuevo) || empty($fecha_caducidad_nueva)) {
