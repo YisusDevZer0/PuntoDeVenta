@@ -1,4 +1,18 @@
 <?php
+// Configurar manejo de errores antes de cualquier salida
+register_shutdown_function(function() {
+    $error = error_get_last();
+    if ($error !== NULL && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
+        http_response_code(500);
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error fatal: ' . $error['message'],
+            'error_details' => $error['file'] . ':' . $error['line']
+        ]);
+    }
+});
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
