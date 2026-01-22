@@ -1,19 +1,6 @@
 <?php
 header('Content-Type: application/json');
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // No mostrar errores en producción, solo en JSON
-
-try {
-    include_once "../db_connect.php";
-    
-    if (!isset($conn) || !$conn) {
-        throw new Exception('Error de conexión a la base de datos');
-    }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
-    exit;
-}
+include_once "../Controladores/db_connect.php";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Método no permitido']);
