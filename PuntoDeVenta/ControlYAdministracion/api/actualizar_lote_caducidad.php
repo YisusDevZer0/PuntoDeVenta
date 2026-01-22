@@ -245,7 +245,7 @@ try {
         if (!$stmt_mov) {
             throw new Exception('Error al preparar movimiento nuevo: ' . mysqli_error($conn));
         }
-        mysqli_stmt_bind_param($stmt_mov, "isissis",
+        mysqli_stmt_bind_param($stmt_mov, "isississ",
             $producto['ID_Prod_POS'],
             $cod_barra,
             $producto['Fk_sucursal'],
