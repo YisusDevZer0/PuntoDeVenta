@@ -35,16 +35,20 @@ try {
         exit;
     }
     
-    $conn->begin_transaction();
+    mysqli_begin_transaction($conn);
     
     if ($id_historial > 0) {
         // Actualizar lote existente
         $sql_historial = "SELECT * FROM Historial_Lotes WHERE ID_Historial = ?";
-        $stmt_historial = $conn->prepare($sql_historial);
-        $stmt_historial->bind_param("i", $id_historial);
-        $stmt_historial->execute();
-        $historial_actual = $stmt_historial->get_result()->fetch_assoc();
-        $stmt_historial->close();
+        $stmt_historial = mysqli_prepare($conn, $sql_historial);
+        if (!$stmt_historial) {
+            throw new Exception('Error al preparar consulta: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_historial, "i", $id_historial);
+        mysqli_stmt_execute($stmt_historial);
+        $result_historial = mysqli_stmt_get_result($stmt_historial);
+        $historial_actual = mysqli_fetch_assoc($result_historial);
+        mysqli_stmt_close($stmt_historial);
         
         if (!$historial_actual) {
             throw new Exception('Lote no encontrado');
@@ -57,22 +61,28 @@ try {
             Tipo_Movimiento, Usuario_Modifico, Observaciones
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)";
         
-        $stmt_mov = $conn->prepare($sql_movimiento);
-        $stmt_mov->bind_param(
+        $stmt_mov = mysqli_prepare($conn, $sql_movimiento);
+        if (!$stmt_mov) {
+            throw new Exception('Error al preparar movimiento: ' . mysqli_error($conn));
+        }
+        $cod_barra_historial = $historial_actual['Cod_Barra'] ?? $cod_barra;
+        $cantidad_mov = $cantidad > 0 ? $cantidad : $historial_actual['Existencias'];
+        mysqli_stmt_bind_param(
+            $stmt_mov,
             "isissssis",
             $historial_actual['ID_Prod_POS'],
-            $historial_actual['Cod_Barra'] ?? $cod_barra,
+            $cod_barra_historial,
             $historial_actual['Fk_sucursal'],
             $historial_actual['Lote'],
             $lote_nuevo,
             $historial_actual['Fecha_Caducidad'],
             $fecha_caducidad_nueva,
-            $cantidad > 0 ? $cantidad : $historial_actual['Existencias'],
+            $cantidad_mov,
             $usuario,
             $observaciones
         );
-        $stmt_mov->execute();
-        $stmt_mov->close();
+        mysqli_stmt_execute($stmt_mov);
+        mysqli_stmt_close($stmt_mov);
         
         // Actualizar Historial_Lotes
         $sql_update = "UPDATE Historial_Lotes SET
@@ -84,10 +94,13 @@ try {
         WHERE ID_Historial = ?";
         
         $cantidad_final = $cantidad > 0 ? $cantidad : $historial_actual['Existencias'];
-        $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("ssisi", $lote_nuevo, $fecha_caducidad_nueva, $cantidad_final, $usuario, $id_historial);
-        $stmt_update->execute();
-        $stmt_update->close();
+        $stmt_update = mysqli_prepare($conn, $sql_update);
+        if (!$stmt_update) {
+            throw new Exception('Error al preparar actualización: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_update, "ssisi", $lote_nuevo, $fecha_caducidad_nueva, $cantidad_final, $usuario, $id_historial);
+        mysqli_stmt_execute($stmt_update);
+        mysqli_stmt_close($stmt_update);
         
         // Actualizar Stock_POS si el lote coincide
         $sql_stock = "UPDATE Stock_POS SET
@@ -95,22 +108,29 @@ try {
             Fecha_Caducidad = ?
         WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?";
         
-        $stmt_stock = $conn->prepare($sql_stock);
-        $stmt_stock->bind_param("ssiis", $lote_nuevo, $fecha_caducidad_nueva, 
+        $stmt_stock = mysqli_prepare($conn, $sql_stock);
+        if (!$stmt_stock) {
+            throw new Exception('Error al preparar actualización de stock: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_stock, "ssiis", $lote_nuevo, $fecha_caducidad_nueva, 
             $historial_actual['ID_Prod_POS'], $historial_actual['Fk_sucursal'], 
             $historial_actual['Lote']);
-        $stmt_stock->execute();
-        $stmt_stock->close();
+        mysqli_stmt_execute($stmt_stock);
+        mysqli_stmt_close($stmt_stock);
         
     } else {
         // Crear nuevo lote
         // Primero obtener información del producto
         $sql_producto = "SELECT ID_Prod_POS, Fk_sucursal FROM Stock_POS WHERE Cod_Barra = ? LIMIT 1";
-        $stmt_prod = $conn->prepare($sql_producto);
-        $stmt_prod->bind_param("s", $cod_barra);
-        $stmt_prod->execute();
-        $producto = $stmt_prod->get_result()->fetch_assoc();
-        $stmt_prod->close();
+        $stmt_prod = mysqli_prepare($conn, $sql_producto);
+        if (!$stmt_prod) {
+            throw new Exception('Error al preparar consulta de producto: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_prod, "s", $cod_barra);
+        mysqli_stmt_execute($stmt_prod);
+        $result_prod = mysqli_stmt_get_result($stmt_prod);
+        $producto = mysqli_fetch_assoc($result_prod);
+        mysqli_stmt_close($stmt_prod);
         
         if (!$producto) {
             throw new Exception('Producto no encontrado');
@@ -119,11 +139,15 @@ try {
         // Verificar si ya existe un lote igual
         $sql_existe = "SELECT ID_Historial FROM Historial_Lotes 
                       WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?";
-        $stmt_existe = $conn->prepare($sql_existe);
-        $stmt_existe->bind_param("iis", $producto['ID_Prod_POS'], $producto['Fk_sucursal'], $lote_nuevo);
-        $stmt_existe->execute();
-        $existe = $stmt_existe->get_result()->fetch_assoc();
-        $stmt_existe->close();
+        $stmt_existe = mysqli_prepare($conn, $sql_existe);
+        if (!$stmt_existe) {
+            throw new Exception('Error al preparar verificación: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_existe, "iis", $producto['ID_Prod_POS'], $producto['Fk_sucursal'], $lote_nuevo);
+        mysqli_stmt_execute($stmt_existe);
+        $result_existe = mysqli_stmt_get_result($stmt_existe);
+        $existe = mysqli_fetch_assoc($result_existe);
+        mysqli_stmt_close($stmt_existe);
         
         if ($existe) {
             throw new Exception('Ya existe un lote con ese número');
@@ -135,8 +159,11 @@ try {
             Existencias, Usuario_Modifico
         ) VALUES (?, ?, ?, ?, CURDATE(), ?, ?)";
         
-        $stmt_insert = $conn->prepare($sql_insert);
-        $stmt_insert->bind_param("iissis", 
+        $stmt_insert = mysqli_prepare($conn, $sql_insert);
+        if (!$stmt_insert) {
+            throw new Exception('Error al preparar inserción: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_insert, "iissis", 
             $producto['ID_Prod_POS'], 
             $producto['Fk_sucursal'], 
             $lote_nuevo, 
@@ -144,24 +171,29 @@ try {
             $cantidad,
             $usuario
         );
-        $stmt_insert->execute();
-        $id_historial_nuevo = $conn->insert_id;
-        $stmt_insert->close();
+        mysqli_stmt_execute($stmt_insert);
+        $id_historial_nuevo = mysqli_insert_id($conn);
+        mysqli_stmt_close($stmt_insert);
         
         // Activar automáticamente el control de lotes en Stock_POS para este producto-sucursal
         // Verificar si existe la columna primero (compatibilidad hacia atrás)
         $sql_check_column = "SHOW COLUMNS FROM Stock_POS LIKE 'Control_Lotes_Caducidad'";
-        $result_column = $conn->query($sql_check_column);
-        if ($result_column && $result_column->num_rows > 0) {
+        $result_column = mysqli_query($conn, $sql_check_column);
+        if ($result_column && mysqli_num_rows($result_column) > 0) {
             // La columna existe, actualizar el stock de este producto en esta sucursal
             $sql_activar = "UPDATE Stock_POS 
                            SET Control_Lotes_Caducidad = 1 
                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ? 
                            AND (Control_Lotes_Caducidad IS NULL OR Control_Lotes_Caducidad = 0)";
-            $stmt_activar = $conn->prepare($sql_activar);
-            $stmt_activar->bind_param("ii", $producto['ID_Prod_POS'], $producto['Fk_sucursal']);
-            $stmt_activar->execute();
-            $stmt_activar->close();
+            $stmt_activar = mysqli_prepare($conn, $sql_activar);
+            if ($stmt_activar) {
+                mysqli_stmt_bind_param($stmt_activar, "ii", $producto['ID_Prod_POS'], $producto['Fk_sucursal']);
+                mysqli_stmt_execute($stmt_activar);
+                mysqli_stmt_close($stmt_activar);
+            }
+        }
+        if ($result_column) {
+            mysqli_free_result($result_column);
         }
         
         // Registrar movimiento
@@ -170,8 +202,11 @@ try {
             Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones
         ) VALUES (?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)";
         
-        $stmt_mov = $conn->prepare($sql_movimiento);
-        $stmt_mov->bind_param("isissis",
+        $stmt_mov = mysqli_prepare($conn, $sql_movimiento);
+        if (!$stmt_mov) {
+            throw new Exception('Error al preparar movimiento nuevo: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_mov, "isissis",
             $producto['ID_Prod_POS'],
             $cod_barra,
             $producto['Fk_sucursal'],
@@ -181,17 +216,20 @@ try {
             $usuario,
             $observaciones
         );
-        $stmt_mov->execute();
-        $stmt_mov->close();
+        mysqli_stmt_execute($stmt_mov);
+        mysqli_stmt_close($stmt_mov);
     }
     
-    $conn->commit();
+    mysqli_commit($conn);
     echo json_encode(['success' => true, 'message' => 'Lote actualizado correctamente']);
     
 } catch (Exception $e) {
-    $conn->rollback();
+    mysqli_rollback($conn);
+    http_response_code(500);
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 
-$conn->close();
+if (isset($conn) && $conn) {
+    mysqli_close($conn);
+}
 ?>

@@ -21,7 +21,7 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
     global $conn;
     
     try {
-        $conn->begin_transaction();
+        mysqli_begin_transaction($conn);
         
         $cantidad_restante = $cantidad_vendida;
         $lotes_utilizados = [];
@@ -46,13 +46,16 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
                         END,
                         Fecha_Caducidad ASC";
         
-        $stmt_lotes = $conn->prepare($sql_lotes);
-        $stmt_lotes->bind_param("ii", $id_prod_pos, $sucursal);
-        $stmt_lotes->execute();
-        $result_lotes = $stmt_lotes->get_result();
+        $stmt_lotes = mysqli_prepare($conn, $sql_lotes);
+        if (!$stmt_lotes) {
+            throw new Exception('Error al preparar consulta de lotes: ' . mysqli_error($conn));
+        }
+        mysqli_stmt_bind_param($stmt_lotes, "ii", $id_prod_pos, $sucursal);
+        mysqli_stmt_execute($stmt_lotes);
+        $result_lotes = mysqli_stmt_get_result($stmt_lotes);
         
         // Descontar de cada lote hasta cubrir la cantidad vendida
-        while (($lote = $result_lotes->fetch_assoc()) && $cantidad_restante > 0) {
+        while (($lote = mysqli_fetch_assoc($result_lotes)) && $cantidad_restante > 0) {
             $cantidad_a_descontar = min($cantidad_restante, $lote['Existencias']);
             $nueva_existencia = $lote['Existencias'] - $cantidad_a_descontar;
             
@@ -63,10 +66,13 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
                               Fecha_Registro = NOW()
                           WHERE ID_Historial = ?";
             
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("isi", $nueva_existencia, $usuario, $lote['ID_Historial']);
-            $stmt_update->execute();
-            $stmt_update->close();
+            $stmt_update = mysqli_prepare($conn, $sql_update);
+            if (!$stmt_update) {
+                throw new Exception('Error al preparar actualización: ' . mysqli_error($conn));
+            }
+            mysqli_stmt_bind_param($stmt_update, "isi", $nueva_existencia, $usuario, $lote['ID_Historial']);
+            mysqli_stmt_execute($stmt_update);
+            mysqli_stmt_close($stmt_update);
             
             // Registrar descuento en tabla de auditoría
             $sql_descuento = "INSERT INTO Lotes_Descuentos_Ventas (
@@ -75,8 +81,12 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
                                 Existencias_Antes, Existencias_Despues, Usuario_Venta, Tipo_Descuento
                               ) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'automatico')";
             
-            $stmt_descuento = $conn->prepare($sql_descuento);
-            $stmt_descuento->bind_param(
+            $stmt_descuento = mysqli_prepare($conn, $sql_descuento);
+            if (!$stmt_descuento) {
+                throw new Exception('Error al preparar descuento: ' . mysqli_error($conn));
+            }
+            mysqli_stmt_bind_param(
+                $stmt_descuento,
                 "sississssss",
                 $folio_ticket,
                 $id_prod_pos,
@@ -89,8 +99,8 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
                 $nueva_existencia,
                 $usuario
             );
-            $stmt_descuento->execute();
-            $stmt_descuento->close();
+            mysqli_stmt_execute($stmt_descuento);
+            mysqli_stmt_close($stmt_descuento);
             
             $lotes_utilizados[] = [
                 'lote' => $lote['Lote'],
@@ -102,14 +112,14 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
             $cantidad_restante -= $cantidad_a_descontar;
         }
         
-        $stmt_lotes->close();
+        mysqli_stmt_close($stmt_lotes);
         
         // Si no se pudo cubrir toda la cantidad, hacer rollback
         if ($cantidad_restante > 0) {
             throw new Exception("No hay suficiente stock en lotes. Faltan $cantidad_restante unidades.");
         }
         
-        $conn->commit();
+        mysqli_commit($conn);
         
         return [
             'success' => true,
@@ -118,7 +128,7 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         ];
         
     } catch (Exception $e) {
-        $conn->rollback();
+        mysqli_rollback($conn);
         return [
             'success' => false,
             'error' => $e->getMessage()
