@@ -16,6 +16,7 @@ if (empty($cod_barra)) {
 
 try {
     // Buscar producto en Stock_POS
+    // Nota: El control de lotes es por producto-sucursal (Stock_POS), no solo por producto
     $sql = "SELECT 
                 sp.ID_Prod_POS,
                 sp.Cod_Barra,
@@ -23,7 +24,8 @@ try {
                 sp.Fk_sucursal,
                 sp.Existencias_R,
                 s.Nombre_Sucursal,
-                COALESCE(SUM(hl.Existencias), 0) as Total_Lotes
+                COALESCE(SUM(hl.Existencias), 0) as Total_Lotes,
+                COALESCE(sp.Control_Lotes_Caducidad, 0) as Control_Lotes_Caducidad
             FROM Stock_POS sp
             INNER JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
             LEFT JOIN Historial_Lotes hl ON sp.ID_Prod_POS = hl.ID_Prod_POS 

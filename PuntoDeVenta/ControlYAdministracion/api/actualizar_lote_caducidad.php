@@ -148,6 +148,22 @@ try {
         $id_historial_nuevo = $conn->insert_id;
         $stmt_insert->close();
         
+        // Activar automáticamente el control de lotes en Stock_POS para este producto-sucursal
+        // Verificar si existe la columna primero (compatibilidad hacia atrás)
+        $sql_check_column = "SHOW COLUMNS FROM Stock_POS LIKE 'Control_Lotes_Caducidad'";
+        $result_column = $conn->query($sql_check_column);
+        if ($result_column && $result_column->num_rows > 0) {
+            // La columna existe, actualizar el stock de este producto en esta sucursal
+            $sql_activar = "UPDATE Stock_POS 
+                           SET Control_Lotes_Caducidad = 1 
+                           WHERE ID_Prod_POS = ? AND Fk_sucursal = ? 
+                           AND (Control_Lotes_Caducidad IS NULL OR Control_Lotes_Caducidad = 0)";
+            $stmt_activar = $conn->prepare($sql_activar);
+            $stmt_activar->bind_param("ii", $producto['ID_Prod_POS'], $producto['Fk_sucursal']);
+            $stmt_activar->execute();
+            $stmt_activar->close();
+        }
+        
         // Registrar movimiento
         $sql_movimiento = "INSERT INTO Gestion_Lotes_Movimientos (
             ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo,

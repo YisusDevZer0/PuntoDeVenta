@@ -144,10 +144,14 @@ $(document).ready(function() {
                     $('#fk_sucursal').val(producto.Fk_sucursal);
                     $('#nombre_producto').val(producto.Nombre_Prod);
                     $('#div-info-producto').show();
+                    var controlLotes = producto.Control_Lotes_Caducidad == 1 ? 
+                        '<span class="badge bg-success ms-2">Requiere Control de Lotes</span>' : 
+                        '<span class="badge bg-secondary ms-2">No Requiere Control de Lotes</span>';
+                    
                     $('#info-producto').html(
                         '<i class="fa-solid fa-check text-success"></i> ' +
                         'Producto encontrado - Stock actual: ' + producto.Existencias_R + 
-                        ' | Total en lotes: ' + producto.Total_Lotes
+                        ' | Total en lotes: ' + producto.Total_Lotes + controlLotes
                     );
                     
                     // Mostrar lotes existentes

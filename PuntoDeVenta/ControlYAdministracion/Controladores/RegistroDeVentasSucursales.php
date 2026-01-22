@@ -77,18 +77,50 @@ if ($ProContador != 0) {
             $lotes_descontados = 0;
             
             foreach ($ventas_info as $venta) {
-                // Verificar primero si el producto tiene lotes registrados
-                $sql_check_lotes = "SELECT COUNT(*) as total FROM Historial_Lotes 
-                                   WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Existencias > 0";
-                $stmt_check = mysqli_prepare($conn, $sql_check_lotes);
-                mysqli_stmt_bind_param($stmt_check, "ii", $venta['id_prod_pos'], $venta['sucursal']);
-                mysqli_stmt_execute($stmt_check);
-                $result_check = mysqli_stmt_get_result($stmt_check);
-                $check_row = mysqli_fetch_assoc($result_check);
-                mysqli_stmt_close($stmt_check);
+                // Verificar si el producto en esta sucursal requiere control de lotes y caducidad
+                // NOTA: El control es por PRODUCTO-SUCURSAL (Stock_POS), no solo por producto
+                // porque diferentes sucursales pueden manejar el mismo producto diferente
+                // (ej: farmacia requiere lotes, tienda general puede no requerirlos)
+                $sql_check = "SELECT COALESCE(Control_Lotes_Caducidad, 0) as requiere_lotes
+                              FROM Stock_POS 
+                              WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
+                $stmt_check = mysqli_prepare($conn, $sql_check);
                 
-                // Solo intentar descontar si hay lotes registrados
-                if ($check_row['total'] > 0) {
+                $debe_descontar = false;
+                if ($stmt_check) {
+                    mysqli_stmt_bind_param($stmt_check, "ii", $venta['id_prod_pos'], $venta['sucursal']);
+                    if (mysqli_stmt_execute($stmt_check)) {
+                        $result_check = mysqli_stmt_get_result($stmt_check);
+                        $check_row = mysqli_fetch_assoc($result_check);
+                        mysqli_stmt_close($stmt_check);
+                        
+                        if ($check_row) {
+                            // Campo existe: usar el valor del campo
+                            $debe_descontar = ($check_row['requiere_lotes'] == 1);
+                        }
+                    } else {
+                        // Si falla, el campo probablemente no existe (compatibilidad)
+                        mysqli_stmt_close($stmt_check);
+                    }
+                }
+                
+                // Si el campo no existe o es 0, verificar compatibilidad: ¿tiene lotes en esta sucursal?
+                if (!$debe_descontar) {
+                    $sql_check_lotes = "SELECT COUNT(*) as tiene_lotes 
+                                       FROM Historial_Lotes 
+                                       WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Existencias > 0";
+                    $stmt_check_lotes = mysqli_prepare($conn, $sql_check_lotes);
+                    if ($stmt_check_lotes) {
+                        mysqli_stmt_bind_param($stmt_check_lotes, "ii", $venta['id_prod_pos'], $venta['sucursal']);
+                        mysqli_stmt_execute($stmt_check_lotes);
+                        $result_check_lotes = mysqli_stmt_get_result($stmt_check_lotes);
+                        $check_lotes = mysqli_fetch_assoc($result_check_lotes);
+                        mysqli_stmt_close($stmt_check_lotes);
+                        $debe_descontar = ($check_lotes && $check_lotes['tiene_lotes'] > 0);
+                    }
+                }
+                
+                if ($debe_descontar) {
                     $resultado_lotes = descontarLotesVenta(
                         $venta['id_prod_pos'],
                         $venta['cod_barra'],
@@ -105,7 +137,7 @@ if ($ProContador != 0) {
                         $errores_lotes[] = "Producto {$venta['cod_barra']}: {$resultado_lotes['error']}";
                     }
                 }
-                // Si no hay lotes, simplemente no se descuenta (comportamiento silencioso)
+                // Si el producto no requiere control de lotes, simplemente no se descuenta
             }
             
             $response['status'] = 'success';
