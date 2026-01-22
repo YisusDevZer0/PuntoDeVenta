@@ -4,28 +4,28 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+// Incluir conexión primero
+include_once "../Controladores/db_connect.php";
 
-try {
-    include_once "../Controladores/db_connect.php";
-    
-    if (!isset($conn) || !$conn) {
-        throw new Exception('Error de conexión a la base de datos');
-    }
-    
-    // Intentar incluir ControladorUsuario, pero no fallar si no está disponible
-    $usuario = 'Sistema';
-    if (file_exists("../Controladores/ControladorUsuario.php")) {
+// Verificar conexión
+if (!isset($conn) || !$conn) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos']);
+    exit;
+}
+
+// Intentar obtener usuario, pero no fallar si no está disponible
+$usuario = 'Sistema';
+if (file_exists("../Controladores/ControladorUsuario.php")) {
+    try {
         include_once "../Controladores/ControladorUsuario.php";
         if (isset($row) && isset($row['Nombre_Apellidos'])) {
             $usuario = $row['Nombre_Apellidos'];
         }
+    } catch (Exception $e) {
+        // Si falla, usar usuario por defecto
+        $usuario = 'Sistema';
     }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $e->getMessage()]);
-    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -55,7 +55,12 @@ try {
         exit;
     }
     
-    mysqli_begin_transaction($conn);
+    // Iniciar transacción (compatible con versiones antiguas de PHP)
+    if (function_exists('mysqli_begin_transaction')) {
+        mysqli_begin_transaction($conn);
+    } else {
+        mysqli_query($conn, "START TRANSACTION");
+    }
     
     if ($id_historial > 0) {
         // Actualizar lote existente
@@ -244,9 +249,27 @@ try {
     echo json_encode(['success' => true, 'message' => 'Lote actualizado correctamente']);
     
 } catch (Exception $e) {
-    mysqli_rollback($conn);
+    if (isset($conn) && $conn) {
+        mysqli_rollback($conn);
+    }
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false, 
+        'message' => $e->getMessage(),
+        'error_details' => $e->getFile() . ':' . $e->getLine()
+    ]);
+    exit;
+} catch (Error $e) {
+    if (isset($conn) && $conn) {
+        mysqli_rollback($conn);
+    }
+    http_response_code(500);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Error fatal: ' . $e->getMessage(),
+        'error_details' => $e->getFile() . ':' . $e->getLine()
+    ]);
+    exit;
 }
 
 if (isset($conn) && $conn) {
