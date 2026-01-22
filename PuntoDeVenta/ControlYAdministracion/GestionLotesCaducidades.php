@@ -54,13 +54,25 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h6 class="mb-0" style="color:#0172b6;">
-                            <i class="fa-solid fa-calendar-check me-2"></i>
-                            Gestión de Lotes y Caducidades - <?php echo $row['Licencia']?>
-                        </h6>
-                        <button type="button" class="btn btn-primary btn-sm" id="btn-actualizar-lote">
-                            <i class="fa-solid fa-plus me-2"></i>Actualizar Lote
+                        <div>
+                            <h6 class="mb-0" style="color:#0172b6;">
+                                <i class="fa-solid fa-calendar-check me-2"></i>
+                                Gestión de Lotes y Caducidades - <?php echo $row['Licencia']?>
+                            </h6>
+                            <small class="text-muted">
+                                <i class="fa-solid fa-info-circle me-1"></i>
+                                Sistema integrado con ventas. Los lotes se descontarán automáticamente usando método FEFO (First Expired First Out)
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="btn-actualizar-lote">
+                            <i class="fa-solid fa-plus me-2"></i>Registrar/Actualizar Lote
                         </button>
+                    </div>
+                    
+                    <div class="alert alert-info mb-3" role="alert">
+                        <i class="fa-solid fa-lightbulb me-2"></i>
+                        <strong>¿Sabías que?</strong> El sistema descontará automáticamente los productos de los lotes más próximos a vencer cuando realices una venta. 
+                        Esto ayuda a prevenir pérdidas por caducidad.
                     </div>
                     
                     <div class="row mb-3">
@@ -131,10 +143,10 @@ include_once "Controladores/ControladorUsuario.php";
             
             // Evento para actualizar lote
             $(document).on("click", "#btn-actualizar-lote", function() {
-                $('#Di').removeClass('modal-xl').addClass('modal-dialog modal-notify modal-success');
+                $('#Di').removeClass('modal-xl').addClass('modal-dialog');
                 $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", {}, function(data) {
                     $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("Actualizar Lote y Fecha de Caducidad");
+                    $("#TitulosCajas").html("<i class='fa-solid fa-plus-circle me-2'></i>Registrar Nuevo Lote");
                 });
                 $('#ModalEdDele').modal('show');
             });
@@ -142,10 +154,10 @@ include_once "Controladores/ControladorUsuario.php";
             // Evento para editar lote existente
             $(document).on("click", ".btn-editar-lote", function() {
                 var id = $(this).data("id");
-                $('#Di').removeClass('modal-xl').addClass('modal-dialog modal-notify modal-success');
+                $('#Di').removeClass('modal-xl').addClass('modal-dialog');
                 $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", { id: id }, function(data) {
                     $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("Editar Lote y Fecha de Caducidad");
+                    $("#TitulosCajas").html("<i class='fa-solid fa-edit me-2'></i>Editar Lote y Fecha de Caducidad");
                 });
                 $('#ModalEdDele').modal('show');
             });

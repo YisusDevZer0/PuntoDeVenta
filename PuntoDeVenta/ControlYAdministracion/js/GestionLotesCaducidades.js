@@ -28,16 +28,30 @@ function CargarLotesCaducidades() {
             "dataSrc": "aaData"
         },
         "columns": [
-            { "data": "Cod_Barra", "title": "Código de Barras" },
+            { "data": "Cod_Barra", "title": "Código", "width": "120px" },
             { "data": "Nombre_Prod", "title": "Producto" },
-            { "data": "Lote", "title": "Lote" },
-            { "data": "Fecha_Caducidad", "title": "Fecha Caducidad" },
-            { "data": "Existencias", "title": "Existencias" },
-            { "data": "Dias_restantes", "title": "Días Restantes" },
-            { "data": "Estado", "title": "Estado" },
+            { "data": "Lote", "title": "Lote", "width": "120px" },
+            { "data": "Fecha_Caducidad", "title": "Fecha Caducidad", "width": "130px" },
+            { "data": "Existencias", "title": "Cantidad", "width": "100px", "className": "text-center" },
+            { 
+                "data": "Dias_restantes", 
+                "title": "Días Restantes", 
+                "width": "130px",
+                "className": "text-center",
+                "render": function(data, type, row) {
+                    if (data < 0) {
+                        return '<span class="badge bg-danger">Vencido (' + Math.abs(data) + ' días)</span>';
+                    } else if (data <= 15) {
+                        return '<span class="badge bg-warning text-dark">' + data + ' días</span>';
+                    } else {
+                        return '<span class="badge bg-success">' + data + ' días</span>';
+                    }
+                }
+            },
+            { "data": "Estado", "title": "Estado", "width": "130px", "className": "text-center" },
             { "data": "Sucursal", "title": "Sucursal" },
-            { "data": "Usuario_Modifico", "title": "Último Usuario" },
-            { "data": "Editar", "title": "Acciones", "orderable": false }
+            { "data": "Usuario_Modifico", "title": "Usuario", "width": "150px" },
+            { "data": "Editar", "title": "Acciones", "width": "80px", "orderable": false, "className": "text-center" }
         ],
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros",
