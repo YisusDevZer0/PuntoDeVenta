@@ -108,7 +108,7 @@ try {
         $cantidad_mov = $cantidad > 0 ? $cantidad : $historial_actual['Existencias'];
         mysqli_stmt_bind_param(
             $stmt_mov,
-            "isissssis",
+            "isissssiss",
             $historial_actual['ID_Prod_POS'],
             $cod_barra_historial,
             $historial_actual['Fk_sucursal'],
