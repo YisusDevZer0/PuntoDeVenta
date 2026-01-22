@@ -121,6 +121,9 @@ if ($ProContador != 0) {
                 }
                 
                 if ($debe_descontar) {
+                    // Log para debugging
+                    error_log("DEBUG: Descontando lotes para producto {$venta['cod_barra']}, cantidad: {$venta['cantidad']}, sucursal: {$venta['sucursal']}");
+                    
                     $resultado_lotes = descontarLotesVenta(
                         $venta['id_prod_pos'],
                         $venta['cod_barra'],
@@ -132,10 +135,15 @@ if ($ProContador != 0) {
                     
                     if ($resultado_lotes['success']) {
                         $lotes_descontados++;
+                        error_log("DEBUG: Lotes descontados exitosamente para producto {$venta['cod_barra']}");
                     } else {
                         // No fallamos la venta si hay error en lotes, solo registramos el error
-                        $errores_lotes[] = "Producto {$venta['cod_barra']}: {$resultado_lotes['error']}";
+                        $error_msg = isset($resultado_lotes['error']) ? $resultado_lotes['error'] : 'Error desconocido';
+                        $errores_lotes[] = "Producto {$venta['cod_barra']}: {$error_msg}";
+                        error_log("ERROR: No se pudieron descontar lotes para producto {$venta['cod_barra']}: {$error_msg}");
                     }
+                } else {
+                    error_log("DEBUG: Producto {$venta['cod_barra']} NO requiere descuento de lotes (Control_Lotes_Caducidad = 0 o no tiene lotes)");
                 }
                 // Si el producto no requiere control de lotes, simplemente no se descuenta
             }

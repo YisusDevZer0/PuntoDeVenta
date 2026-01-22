@@ -119,6 +119,21 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
             throw new Exception("No hay suficiente stock en lotes. Faltan $cantidad_restante unidades.");
         }
         
+        // IMPORTANTE: Actualizar Stock_POS pero LIMPIAR el campo Lote para evitar que el trigger
+        // trg_AfterStockUpdate cree una nueva fila en Historial_Lotes
+        // El control de lotes se maneja exclusivamente desde Historial_Lotes cuando Control_Lotes_Caducidad = 1
+        $sql_update_stock = "UPDATE Stock_POS 
+                            SET Existencias_R = Existencias_R - ?,
+                                Lote = NULL,
+                                Fecha_Caducidad = NULL
+                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
+        $stmt_update_stock = mysqli_prepare($conn, $sql_update_stock);
+        if ($stmt_update_stock) {
+            mysqli_stmt_bind_param($stmt_update_stock, "iii", $cantidad_vendida, $id_prod_pos, $sucursal);
+            mysqli_stmt_execute($stmt_update_stock);
+            mysqli_stmt_close($stmt_update_stock);
+        }
+        
         mysqli_commit($conn);
         
         return [
