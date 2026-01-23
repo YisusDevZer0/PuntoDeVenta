@@ -354,16 +354,133 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
                     console.log('Respuesta recibida:', response);
                     
                     if (response.success) {
+                        // Obtener los datos del formulario para enviar al ticket
+                        var NumTicket = $('#NumTicket').val();
+                        var cliente = $('#cliente').val();
+                        var servicioNombre = $('#servicio_id option:selected').text();
+                        var monto = $('#monto').val();
+                        var comision = $('#comision').val() || '0.00';
+                        var observaciones = $('#observaciones').val() || '';
+                        var formaDePago = $('#FormaDePagoServicio').val();
+                        var empleado = $('#empleado').val();
+                        
+                        // Preparar datos para el ticket (similar a como se hace en ventas)
+                        var ticketData = {
+                            TicketVal: NumTicket,
+                            ClienteInputValue: cliente,
+                            ServicioNombre: servicioNombre,
+                            CostoServicio: monto,
+                            ComisionServicio: comision,
+                            Observaciones: observaciones,
+                            BoletaTotal: monto,
+                            FormaPagoSeleccionada: formaDePago,
+                            Vendedor: empleado,
+                            TipoTicket: 'PagoServicio' // Identificador para diferenciar el tipo de ticket
+                        };
+                        
+                        // Codificar los datos
+                        var encodedTicketVal = encodeURIComponent(NumTicket);
+                        var encodedClienteInputValue = encodeURIComponent(cliente);
+                        var encodedServicioNombre = encodeURIComponent(servicioNombre);
+                        var encodedCostoServicio = encodeURIComponent(monto);
+                        var encodedComisionServicio = encodeURIComponent(comision);
+                        var encodedObservaciones = encodeURIComponent(observaciones);
+                        var encodedBoletaTotal = encodeURIComponent(monto);
+                        var encodedFormaPagoSeleccionada = encodeURIComponent(formaDePago);
+                        var encodedVendedor = encodeURIComponent(empleado);
+                        var encodedTipoTicket = encodeURIComponent('PagoServicio');
+                        
+                        var ticketDataString = 'TicketVal=' + encodedTicketVal +
+                                             '&ClienteInputValue=' + encodedClienteInputValue +
+                                             '&ServicioNombre=' + encodedServicioNombre +
+                                             '&CostoServicio=' + encodedCostoServicio +
+                                             '&ComisionServicio=' + encodedComisionServicio +
+                                             '&Observaciones=' + encodedObservaciones +
+                                             '&BoletaTotal=' + encodedBoletaTotal +
+                                             '&FormaPagoSeleccionada=' + encodedFormaPagoSeleccionada +
+                                             '&Vendedor=' + encodedVendedor +
+                                             '&TipoTicket=' + encodedTipoTicket;
+                        
+                        // Mostrar mensaje de éxito y luego enviar ticket
                         Swal.fire({
                             icon: 'success',
                             title: '¡Pago de servicio registrado exitosamente!',
                             text: 'Ticket: ' + response.NumTicket,
-                            confirmButtonText: 'Aceptar',
-                            confirmButtonColor: '#28a745'
-                        }).then((result) => {
-                            $('#ModalEdDele').modal('hide');
-                            // Recargar la página o actualizar la lista
-                            location.reload();
+                            showConfirmButton: false,
+                            timer: 2000,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        }).then(() => {
+                            // Enviar datos al ticket por AJAX
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Generando ticket...',
+                                text: 'Por favor espere',
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+                            
+                            // Enviar ticket por AJAX
+                            $.ajax({
+                                type: 'POST',
+                                url: 'http://localhost/ticket/TicketCobroServicios.php',
+                                data: ticketDataString,
+                                success: function(ticketResponse) {
+                                    // Verificar si la respuesta contiene errores de PHP
+                                    if (typeof ticketResponse === 'string' && (
+                                        ticketResponse.includes('Fatal error') || 
+                                        ticketResponse.includes('Warning') || 
+                                        ticketResponse.includes('failed to open stream') ||
+                                        ticketResponse.includes('No such file or directory') ||
+                                        ticketResponse.includes('Failed to copy file to printer')
+                                    )) {
+                                        // Hay un error en la impresión, mostrar alert
+                                        console.error("Error al imprimir ticket:", ticketResponse);
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Pago registrado, pero hubo un problema al imprimir el ticket',
+                                            text: 'El pago se guardó correctamente (Ticket: ' + response.NumTicket + '), pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
+                                            confirmButtonText: 'Aceptar',
+                                            confirmButtonColor: '#ffc107'
+                                        }).then((result) => {
+                                            $('#ModalEdDele').modal('hide');
+                                            location.reload();
+                                        });
+                                    } else {
+                                        console.log("Ticket enviado correctamente:", ticketResponse);
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Pago registrado y ticket generado!',
+                                            text: 'Ticket: ' + response.NumTicket,
+                                            confirmButtonText: 'Aceptar',
+                                            confirmButtonColor: '#28a745'
+                                        }).then((result) => {
+                                            $('#ModalEdDele').modal('hide');
+                                            // Recargar la página o actualizar la lista
+                                            location.reload();
+                                        });
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Error al generar ticket:", error);
+                                    console.log("Respuesta del servidor:", xhr.responseText);
+                                    // Aún así mostrar éxito si el registro fue exitoso
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Pago registrado, pero hubo un problema al imprimir el ticket',
+                                        text: 'El pago se guardó correctamente (Ticket: ' + response.NumTicket + '), pero no se pudo imprimir el ticket. Verifica la conexión con la impresora.',
+                                        confirmButtonText: 'Aceptar',
+                                        confirmButtonColor: '#ffc107'
+                                    }).then((result) => {
+                                        $('#ModalEdDele').modal('hide');
+                                        location.reload();
+                                    });
+                                }
+                            });
                         });
                     } else {
                         Swal.fire({

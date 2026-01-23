@@ -1,8 +1,8 @@
 <?php
 include_once 'db_connect.php';
 
-// Incluir función de descuento de lotes
-require_once '../api/descontar_lotes_venta.php';
+// NOTA: El descuento automático de lotes está desactivado temporalmente
+// require_once '../api/descontar_lotes_venta.php';
 
 $contador = count($_POST["IdBasedatos"]);
 $ProContador = 0;
@@ -11,7 +11,7 @@ $query = "INSERT INTO Ventas_POS ( `ID_Prod_POS`, `Identificador_tipo`, `Turno`,
 $placeholders = [];
 $values = [];
 $valueTypes = '';
-$ventas_info = []; // Almacenar información para descuento de lotes
+// $ventas_info = []; // Almacenar información para descuento de lotes (desactivado temporalmente)
 
 for ($i = 0; $i < $contador; $i++) {
     if (!empty($_POST["IdBasedatos"][$i]) || !empty($_POST["TiposDeServicio"][$i]) || !empty($_POST["TurnoEnTurno"])) {
@@ -48,15 +48,6 @@ for ($i = 0; $i < $contador; $i++) {
         $values[] = $_POST["Tipo"][$i];
         $valueTypes .= 'sssssssssssssssssssssssssssss';
         
-        // Guardar información para descuento de lotes
-        $ventas_info[] = [
-            'id_prod_pos' => (int)$_POST["IdBasedatos"][$i],
-            'cod_barra' => $_POST["CodBarras"][$i],
-            'sucursal' => (int)$_POST["SucursalEnVenta"][$i],
-            'cantidad' => (int)$_POST["CantidadVendida"][$i],
-            'folio_ticket' => $_POST["NumeroDeTickeT"][$i],
-            'usuario' => $_POST["AgregoElVendedor"][$i]
-        ];
     }
 }
 
@@ -72,96 +63,12 @@ if ($ProContador != 0) {
         $resultadocon = mysqli_stmt_execute($stmt);
 
         if ($resultadocon) {
-            // Descontar lotes automáticamente después de registrar las ventas
-            $errores_lotes = [];
-            $lotes_descontados = 0;
-            
-            foreach ($ventas_info as $venta) {
-                // Verificar si el producto en esta sucursal requiere control de lotes y caducidad
-                // NOTA: El control es por PRODUCTO-SUCURSAL (Stock_POS), no solo por producto
-                // porque diferentes sucursales pueden manejar el mismo producto diferente
-                // (ej: farmacia requiere lotes, tienda general puede no requerirlos)
-                $sql_check = "SELECT COALESCE(Control_Lotes_Caducidad, 0) as requiere_lotes
-                              FROM Stock_POS 
-                              WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
-                $stmt_check = mysqli_prepare($conn, $sql_check);
-                
-                $debe_descontar = false;
-                if ($stmt_check) {
-                    mysqli_stmt_bind_param($stmt_check, "ii", $venta['id_prod_pos'], $venta['sucursal']);
-                    if (mysqli_stmt_execute($stmt_check)) {
-                        $result_check = mysqli_stmt_get_result($stmt_check);
-                        $check_row = mysqli_fetch_assoc($result_check);
-                        mysqli_stmt_close($stmt_check);
-                        
-                        if ($check_row) {
-                            // Campo existe: usar el valor del campo
-                            $debe_descontar = ($check_row['requiere_lotes'] == 1);
-                        }
-                    } else {
-                        // Si falla, el campo probablemente no existe (compatibilidad)
-                        mysqli_stmt_close($stmt_check);
-                    }
-                }
-                
-                // Si el campo no existe o es 0, verificar compatibilidad: ¿tiene lotes en esta sucursal?
-                if (!$debe_descontar) {
-                    $sql_check_lotes = "SELECT COUNT(*) as tiene_lotes 
-                                       FROM Historial_Lotes 
-                                       WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Existencias > 0";
-                    $stmt_check_lotes = mysqli_prepare($conn, $sql_check_lotes);
-                    if ($stmt_check_lotes) {
-                        mysqli_stmt_bind_param($stmt_check_lotes, "ii", $venta['id_prod_pos'], $venta['sucursal']);
-                        mysqli_stmt_execute($stmt_check_lotes);
-                        $result_check_lotes = mysqli_stmt_get_result($stmt_check_lotes);
-                        $check_lotes = mysqli_fetch_assoc($result_check_lotes);
-                        mysqli_stmt_close($stmt_check_lotes);
-                        $debe_descontar = ($check_lotes && $check_lotes['tiene_lotes'] > 0);
-                    }
-                }
-                
-                if ($debe_descontar) {
-                    // Log para debugging
-                    error_log("DEBUG: Descontando lotes para producto {$venta['cod_barra']}, cantidad: {$venta['cantidad']}, sucursal: {$venta['sucursal']}");
-                    
-                    $resultado_lotes = descontarLotesVenta(
-                        $venta['id_prod_pos'],
-                        $venta['cod_barra'],
-                        $venta['sucursal'],
-                        $venta['cantidad'],
-                        $venta['folio_ticket'],
-                        $venta['usuario']
-                    );
-                    
-                    if ($resultado_lotes['success']) {
-                        $lotes_descontados++;
-                        error_log("DEBUG: Lotes descontados exitosamente para producto {$venta['cod_barra']}");
-                    } else {
-                        // No fallamos la venta si hay error en lotes, solo registramos el error
-                        $error_msg = isset($resultado_lotes['error']) ? $resultado_lotes['error'] : 'Error desconocido';
-                        $errores_lotes[] = "Producto {$venta['cod_barra']}: {$error_msg}";
-                        error_log("ERROR: No se pudieron descontar lotes para producto {$venta['cod_barra']}: {$error_msg}");
-                    }
-                } else {
-                    error_log("DEBUG: Producto {$venta['cod_barra']} NO requiere descuento de lotes (Control_Lotes_Caducidad = 0 o no tiene lotes)");
-                }
-                // Si el producto no requiere control de lotes, simplemente no se descuenta
-            }
+            // NOTA: El descuento automático de lotes está desactivado temporalmente
+            // El stock se descuenta normalmente mediante el trigger RestarExistenciasDespuesInsert
+            // que actualiza Stock_POS.Existencias_R al insertar en Ventas_POS
             
             $response['status'] = 'success';
-            $mensaje = 'Registro(s) agregado(s) correctamente.';
-            
-            if ($lotes_descontados > 0) {
-                $mensaje .= " Lotes descontados: $lotes_descontados.";
-            }
-            
-            if (count($errores_lotes) > 0) {
-                $mensaje .= " Advertencias en lotes: " . implode('; ', $errores_lotes);
-                $response['warnings'] = $errores_lotes;
-            }
-            
-            $response['message'] = $mensaje;
-            $response['lotes_descontados'] = $lotes_descontados;
+            $response['message'] = 'Registro(s) agregado(s) correctamente.';
         } else {
             $response['status'] = 'error';
             $response['message'] = 'Error en la consulta de inserción: ' . mysqli_error($conn);

@@ -20,8 +20,21 @@ include_once "../Controladores/db_connect.php";
 function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vendida, $folio_ticket, $usuario) {
     global $conn;
     
+    // Log inicial
+    error_log("DEBUG descontarLotesVenta: ID={$id_prod_pos}, Código={$cod_barra}, Sucursal={$sucursal}, Cantidad={$cantidad_vendida}");
+    
     try {
-        mysqli_begin_transaction($conn);
+        // Verificar conexión
+        if (!isset($conn) || !$conn) {
+            throw new Exception('No hay conexión a la base de datos');
+        }
+        
+        // Iniciar transacción (compatible con versiones antiguas de PHP)
+        if (function_exists('mysqli_begin_transaction')) {
+            mysqli_begin_transaction($conn);
+        } else {
+            mysqli_query($conn, "START TRANSACTION");
+        }
         
         $cantidad_restante = $cantidad_vendida;
         $lotes_utilizados = [];
@@ -54,8 +67,16 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         mysqli_stmt_execute($stmt_lotes);
         $result_lotes = mysqli_stmt_get_result($stmt_lotes);
         
+        $num_lotes = mysqli_num_rows($result_lotes);
+        error_log("DEBUG: Se encontraron {$num_lotes} lotes disponibles para producto {$cod_barra}");
+        
+        if ($num_lotes == 0) {
+            throw new Exception("No hay lotes disponibles para el producto {$cod_barra} en la sucursal {$sucursal}");
+        }
+        
         // Descontar de cada lote hasta cubrir la cantidad vendida
         while (($lote = mysqli_fetch_assoc($result_lotes)) && $cantidad_restante > 0) {
+            error_log("DEBUG: Descontando del lote {$lote['Lote']}, existencias actuales: {$lote['Existencias']}, cantidad a descontar: " . min($cantidad_restante, $lote['Existencias']));
             $cantidad_a_descontar = min($cantidad_restante, $lote['Existencias']);
             $nueva_existencia = $lote['Existencias'] - $cantidad_a_descontar;
             
@@ -136,6 +157,8 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         
         mysqli_commit($conn);
         
+        error_log("DEBUG: Descuento exitoso. Lotes utilizados: " . count($lotes_utilizados) . ", Cantidad descontada: {$cantidad_vendida}");
+        
         return [
             'success' => true,
             'lotes_utilizados' => $lotes_utilizados,
@@ -143,7 +166,10 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         ];
         
     } catch (Exception $e) {
-        mysqli_rollback($conn);
+        if (isset($conn) && $conn) {
+            mysqli_rollback($conn);
+        }
+        error_log("ERROR descontarLotesVenta: " . $e->getMessage());
         return [
             'success' => false,
             'error' => $e->getMessage()
