@@ -53,7 +53,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cantidad" class="form-label">Cantidad *</label>
-                                <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required>
+                                <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required placeholder="Máx. según stock sin cubrir">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -102,7 +102,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="fa fa-times me-1"></i>Cancelar
                 </button>
-                <button type="button" class="btn btn-primary" onclick="guardarLote()">
+                <button type="button" class="btn btn-primary" id="btnGuardarLote" onclick="guardarLote()">
                     <i class="fa fa-save me-1"></i>Registrar Lote
                 </button>
             </div>
@@ -111,21 +111,25 @@
 </div>
 
 <script>
+var permiteRegistrarLoteActual = false;
+
 function abrirModalRegistrarLote() {
-    // Limpiar formulario
     document.getElementById('formRegistrarLote').reset();
     document.getElementById('infoProducto').style.display = 'none';
-    
-    // Cargar sucursales
+    permiteRegistrarLoteActual = false;
+    document.getElementById('btnGuardarLote').disabled = false;
+    document.getElementById('cantidad').removeAttribute('max');
+    document.getElementById('cantidad').disabled = false;
+    document.getElementById('lote').disabled = false;
+    document.getElementById('fechaCaducidad').disabled = false;
+
     cargarSucursalesModal();
-    
-    // Mostrar modal usando Bootstrap 5
     var myModal = new bootstrap.Modal(document.getElementById('modalRegistrarLote'));
     myModal.show();
 }
 
 function buscarProducto() {
-    const codigoBarra = document.getElementById('codigoBarra').value;
+    const codigoBarra = document.getElementById('codigoBarra').value.trim();
     const sucursal = document.getElementById('sucursal').value;
     
     if (!codigoBarra || !sucursal) {
@@ -137,155 +141,147 @@ function buscarProducto() {
         return;
     }
     
-    // Mostrar loading
     Swal.fire({
         title: 'Buscando producto...',
         allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        didOpen: () => { Swal.showLoading(); }
     });
     
-    fetch(`api/buscar_producto.php?codigo=${codigoBarra}`)
+    const url = `api/buscar_producto_registrar_lote.php?codigo=${encodeURIComponent(codigoBarra)}&sucursal=${encodeURIComponent(sucursal)}`;
+    fetch(url)
         .then(response => response.json())
         .then(data => {
             Swal.close();
             
             if (data.success) {
-                // Mostrar información del producto
+                var p = data.producto;
+                permiteRegistrarLoteActual = !!p.permite_registrar_lote;
+                
+                var msg = '';
+                if (permiteRegistrarLoteActual) {
+                    msg = `<span class="text-success"><strong>Puede registrar lote.</strong> Stock sin cubrir: ${p.sin_cubrir} unidad(es).</span>`;
+                    document.getElementById('cantidad').max = p.sin_cubrir;
+                    document.getElementById('cantidad').disabled = false;
+                    document.getElementById('lote').disabled = false;
+                    document.getElementById('fechaCaducidad').disabled = false;
+                    document.getElementById('btnGuardarLote').disabled = false;
+                } else {
+                    msg = '<span class="text-danger"><strong>Todo el stock tiene lote y fecha de caducidad.</strong> No se permiten más altas.</span>';
+                    document.getElementById('cantidad').removeAttribute('max');
+                    document.getElementById('cantidad').disabled = true;
+                    document.getElementById('lote').disabled = true;
+                    document.getElementById('fechaCaducidad').disabled = true;
+                    document.getElementById('btnGuardarLote').disabled = true;
+                }
+                
                 document.getElementById('detallesProducto').innerHTML = `
                     <div class="row">
                         <div class="col-md-6">
-                            <strong>Nombre:</strong> ${data.producto.nombre_producto}<br>
-                            <strong>Código:</strong> ${data.producto.cod_barra}
+                            <strong>Nombre:</strong> ${p.nombre_producto || ''}<br>
+                            <strong>Código:</strong> ${p.cod_barra || ''}<br>
+                            <strong>Existencias:</strong> ${p.existencia_total ?? 0} | En lotes: ${p.en_lotes ?? 0} | Sin cubrir: ${p.sin_cubrir ?? 0}
                         </div>
                         <div class="col-md-6">
-                            <strong>Precio Venta:</strong> $${data.producto.precio_venta}<br>
-                            <strong>Precio Compra:</strong> $${data.producto.precio_compra}
+                            <strong>Precio Venta:</strong> $${p.precio_venta ?? 0}<br>
+                            <strong>Precio Compra:</strong> $${p.precio_compra ?? 0}<br>
+                            ${msg}
                         </div>
                     </div>
                 `;
                 document.getElementById('infoProducto').style.display = 'block';
-                document.getElementById('precioVenta').value = data.producto.precio_venta;
-                document.getElementById('precioCompra').value = data.producto.precio_compra;
+                document.getElementById('precioVenta').value = p.precio_venta ?? '';
+                document.getElementById('precioCompra').value = p.precio_compra ?? '';
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Producto no encontrado',
-                    text: data.error
+                    text: data.error || 'Error al buscar'
                 });
             }
         })
-        .catch(error => {
+        .catch(function(err) {
             Swal.close();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al buscar el producto: ' + error.message
-            });
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Error al buscar: ' + (err && err.message ? err.message : 'desconocido') });
         });
 }
 
 function guardarLote() {
+    if (!permiteRegistrarLoteActual) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No permitido',
+            text: 'Todo el stock de este producto tiene lote y caducidad. No se permiten más altas.'
+        });
+        return;
+    }
+    
     const form = document.getElementById('formRegistrarLote');
     const formData = new FormData(form);
-    
-    // Validar campos requeridos
     const requiredFields = ['codigoBarra', 'sucursal', 'lote', 'fechaCaducidad', 'cantidad'];
-    for (let field of requiredFields) {
-        if (!formData.get(field)) {
+    for (var i = 0; i < requiredFields.length; i++) {
+        if (!formData.get(requiredFields[i])) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campo requerido',
-                text: `Por favor completa el campo: ${field}`
+                text: 'Completa todos los campos obligatorios.'
             });
             return;
         }
     }
     
-    // Mostrar loading
     Swal.fire({
         title: 'Registrando lote...',
         allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        didOpen: function() { Swal.showLoading(); }
     });
     
-    // Preparar datos
-    const datos = {
-        codigoBarra: formData.get('codigoBarra'),
-        sucursal: formData.get('sucursal'),
-        lote: formData.get('lote'),
-        fechaCaducidad: formData.get('fechaCaducidad'),
-        cantidad: formData.get('cantidad'),
-        proveedor: formData.get('proveedor'),
-        precioCompra: formData.get('precioCompra'),
-        observaciones: formData.get('observaciones'),
-        usuarioRegistro: 1
-    };
+    var formDataToSend = new FormData();
+    formDataToSend.append('codigoBarra', formData.get('codigoBarra'));
+    formDataToSend.append('sucursal', formData.get('sucursal'));
+    formDataToSend.append('lote', formData.get('lote'));
+    formDataToSend.append('fechaCaducidad', formData.get('fechaCaducidad'));
+    formDataToSend.append('cantidad', formData.get('cantidad'));
+    formDataToSend.append('observaciones', formData.get('observaciones') || '');
     
-    // Crear FormData para envío
-    const formDataToSend = new FormData();
-    formDataToSend.append('codigoBarra', datos.codigoBarra);
-    formDataToSend.append('sucursal', datos.sucursal);
-    formDataToSend.append('lote', datos.lote);
-    formDataToSend.append('fechaCaducidad', datos.fechaCaducidad);
-    formDataToSend.append('cantidad', datos.cantidad);
-    formDataToSend.append('proveedor', datos.proveedor);
-    formDataToSend.append('precioCompra', datos.precioCompra);
-    formDataToSend.append('observaciones', datos.observaciones);
-    formDataToSend.append('usuarioRegistro', datos.usuarioRegistro);
-    
-    fetch('api/registrar_lote.php', {
-        method: 'POST',
-        body: formDataToSend
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Error de red: ' + response.status);
-        }
-        return response.text().then(text => {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Error parsing JSON:', text);
-                throw new Error('Error al procesar la respuesta del servidor');
-            }
-        });
-    })
-    .then(data => {
-        Swal.close();
-        
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Lote registrado',
-                text: data.message
-            }).then(() => {
-                // Cerrar modal y recargar datos
-                bootstrap.Modal.getInstance(document.getElementById('modalRegistrarLote')).hide();
-                if (typeof tabla !== 'undefined') {
-                    tabla.ajax.reload();
+    fetch('api/registrar_lote.php', { method: 'POST', body: formDataToSend })
+        .then(function(response) {
+            if (!response.ok) throw new Error('Error de red: ' + response.status);
+            return response.text().then(function(text) {
+                try { return JSON.parse(text); } catch (e) {
+                    console.error('Error parsing JSON:', text);
+                    throw new Error('Error al procesar respuesta');
                 }
-                cargarEstadisticas();
             });
-        } else {
+        })
+        .then(function(data) {
+            Swal.close();
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Lote registrado',
+                    text: data.message || 'Registrado correctamente.'
+                }).then(function() {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistrarLote'));
+                    if (modal) modal.hide();
+                    if (typeof tabla !== 'undefined') tabla.ajax.reload();
+                    if (typeof cargarEstadisticas === 'function') cargarEstadisticas();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'No se pudo registrar el lote.'
+                });
+            }
+        })
+        .catch(function(err) {
+            Swal.close();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: data.error
+                text: 'Error al registrar: ' + (err && err.message ? err.message : 'desconocido')
             });
-        }
-    })
-    .catch(error => {
-        Swal.close();
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al registrar el lote: ' + error.message
         });
-    });
 }
 
 function cargarSucursalesModal() {

@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 include_once "../dbconect.php";
 
 try {
-    $sql = "SELECT id, Nombre as nombre FROM Sucursales WHERE estado = 'activo' ORDER BY Nombre";
+    $sql = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales ORDER BY Nombre_Sucursal";
     $result = $con->query($sql);
     
     if (!$result) {
@@ -13,8 +13,8 @@ try {
     $sucursales = [];
     while ($row = $result->fetch_assoc()) {
         $sucursales[] = [
-            'id' => $row['id'],
-            'nombre' => $row['nombre']
+            'id' => $row['ID_Sucursal'],
+            'nombre' => $row['Nombre_Sucursal']
         ];
     }
     
