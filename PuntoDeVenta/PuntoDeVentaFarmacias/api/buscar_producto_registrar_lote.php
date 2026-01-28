@@ -69,18 +69,40 @@ try {
     $sin_cubrir = $existencia_total - $en_lotes;
     $permite_registrar_lote = $sin_cubrir > 0;
 
+    $lotes = [];
+    $stmt = $con->prepare("
+        SELECT Lote, Fecha_Caducidad, Existencias,
+               DATEDIFF(Fecha_Caducidad, CURDATE()) AS Dias_restantes
+        FROM Historial_Lotes
+        WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Existencias > 0
+        ORDER BY Fecha_Caducidad ASC
+    ");
+    $stmt->bind_param("ii", $sp['ID_Prod_POS'], $sp['Fk_sucursal']);
+    $stmt->execute();
+    $res_hl = $stmt->get_result();
+    while ($r = $res_hl->fetch_assoc()) {
+        $lotes[] = $r;
+    }
+    $stmt->close();
+
     echo json_encode([
         'success' => true,
         'producto' => [
             'id_prod_pos'           => $sp['ID_Prod_POS'],
+            'ID_Prod_POS'           => $sp['ID_Prod_POS'],
             'cod_barra'             => $sp['Cod_Barra'],
+            'Nombre_Prod'           => $sp['Nombre_Prod'],
             'nombre_producto'       => $sp['Nombre_Prod'],
+            'Fk_sucursal'           => (int) $sp['Fk_sucursal'],
             'precio_venta'          => $sp['Precio_Venta'] ?? 0,
             'precio_compra'         => $sp['Precio_C'] ?? 0,
+            'Existencias_R'         => $existencia_total,
             'existencia_total'      => $existencia_total,
+            'Total_Lotes'           => $en_lotes,
             'en_lotes'              => $en_lotes,
             'sin_cubrir'            => $sin_cubrir,
             'permite_registrar_lote'=> $permite_registrar_lote,
+            'lotes'                 => $lotes,
         ],
     ]);
 } catch (Exception $e) {

@@ -89,6 +89,7 @@
                             <a href="InventarioTurnos" class="dropdown-item"><i class="fa-solid fa-clipboard-list"></i>Conteo Diario</a>
                             <a href="Devoluciones" class="dropdown-item"><i class="fa-solid fa-undo"></i>Devoluciones</a>
                             <a href="Caducados" class="dropdown-item"><i class="fa-solid fa-calendar-xmark"></i>Caducados</a>
+                            <a href="GestionLotesCaducidadesFarmacias" class="dropdown-item"><i class="fa-solid fa-calendar-check"></i>Gestión de Lotes y Caducidades</a>
                         </div>
                     </div>
 
