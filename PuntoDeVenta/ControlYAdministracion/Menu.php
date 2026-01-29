@@ -189,6 +189,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="RealizarTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck-ramp-box"></i>Realizar traspasos</a>
                     <a href="ListaDeTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-coins"></i>Listado de traspasos</a>
+                    <a href="RecepcionTraspasos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck-ramp-box"></i>Recepción de traspasos (lote y caducidad)</a>
                     <a href="TraspasosAceptados" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Traspasos aceptados </a>
                 </div>
             </div>
