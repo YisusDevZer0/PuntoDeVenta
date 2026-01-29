@@ -76,6 +76,8 @@ function CargarProductosTurno(idTurno) {
             { "data": "Existencias_R", "title": "Existencias Sistema" },
             { "data": "Existencias_Fisicas", "title": "Existencias Físicas" },
             { "data": "Diferencia", "title": "Diferencia" },
+            { "data": "Lote", "title": "Lote", "defaultContent": "-" },
+            { "data": "Fecha_Caducidad", "title": "Fecha Cad.", "defaultContent": "-" },
             { "data": "Estado", "title": "Estado" },
             { "data": "Acciones", "title": "Acciones", "orderable": false }
         ],
@@ -307,38 +309,57 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto
+// Contar producto (incl. lote y fecha caducidad opcionales)
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
     
+    var html = '<div class="text-start">' +
+        '<label class="form-label mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
+        '<input type="number" id="existencias-fisicas" class="swal2-input form-control mb-2" placeholder="Cantidad contada" min="0" required>' +
+        '<label class="form-label mb-1 mt-2">Lote <small class="text-muted">(opcional)</small></label>' +
+        '<input type="text" id="conteo-lote" class="swal2-input form-control mb-2" placeholder="Ej. LOTE-2024-001">' +
+        '<label class="form-label mb-1 mt-2">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
+        '<input type="date" id="conteo-fecha-caducidad" class="swal2-input form-control">' +
+        '</div>';
+    
     Swal.fire({
         title: 'Registrar conteo físico',
-        html: '<input type="number" id="existencias-fisicas" class="swal2-input" placeholder="Existencias físicas" min="0">',
+        html: html,
         showCancelButton: true,
         confirmButtonText: 'Guardar',
         cancelButtonText: 'Cancelar',
+        width: '420px',
         preConfirm: () => {
-            const existencias = document.getElementById('existencias-fisicas').value;
-            if (!existencias || existencias < 0) {
-                Swal.showValidationMessage('Ingrese un valor válido');
+            var ex = document.getElementById('existencias-fisicas').value;
+            if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
+                Swal.showValidationMessage('Ingrese existencias físicas válidas');
+                return false;
             }
-            return existencias;
+            return {
+                existencias: ex,
+                lote: document.getElementById('conteo-lote').value.trim(),
+                fecha: document.getElementById('conteo-fecha-caducidad').value || ''
+            };
         }
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed && result.value) {
+            var d = result.value;
+            var payload = {
+                accion: 'contar_producto',
+                id_registro: idRegistro,
+                existencias_fisicas: d.existencias
+            };
+            if (d.lote) payload.lote = d.lote;
+            if (d.fecha) payload.fecha_caducidad = d.fecha;
             $.ajax({
                 url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
                 type: 'POST',
-                data: {
-                    accion: 'contar_producto',
-                    id_registro: idRegistro,
-                    existencias_fisicas: result.value
-                },
+                data: payload,
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                            if (turnoActivo && turnoActivo.ID_Turno) {
+                            if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
                                 CargarProductosTurno(turnoActivo.ID_Turno);
                             } else {
                                 location.reload();
