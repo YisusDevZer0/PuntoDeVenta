@@ -42,9 +42,10 @@ if ($id > 0 && isset($conn) && $conn) {
             <input type="number" class="form-control" id="cantidad_enviada" value="<?php echo (int) $traspaso['Cantidad']; ?>" readonly>
         </div>
         <div class="col-md-4">
-            <label class="form-label">Cantidad recibida <span class="text-danger">*</span></label>
+            <label class="form-label">Cantidad recibida TOTAL <span class="text-danger">*</span></label>
             <input type="number" class="form-control" name="cantidad_recibida" id="cantidad_recibida" 
                    value="<?php echo (int) $traspaso['Cantidad']; ?>" min="1" required>
+            <small class="text-muted">Ingrese el total recibido (se dividirá entre lotes si aplica)</small>
         </div>
         <div class="col-md-4">
             <label class="form-label"><i class="fa-solid fa-tag me-2"></i>Lote <span class="text-danger">*</span></label>
@@ -82,8 +83,15 @@ if ($id > 0 && isset($conn) && $conn) {
                 </div>
                 <div class="col-md-12 mb-2">
                     <label class="form-label">Cantidad en este lote adicional <span class="text-danger">*</span></label>
-                    <input type="number" class="form-control" name="cantidad_lote_adicional" id="cantidad_lote_adicional" min="1" placeholder="Cantidad que corresponde a este lote">
-                    <small class="text-muted">La suma de las cantidades de ambos lotes debe ser igual a la cantidad recibida total.</small>
+                    <input type="number" class="form-control" name="cantidad_lote_adicional" id="cantidad_lote_adicional" min="1" placeholder="Ej. 1">
+                    <div class="mt-2 p-2 bg-info text-white rounded">
+                        <small>
+                            <strong>Distribución:</strong><br>
+                            • Cantidad total recibida: <span id="info_cantidad_total" class="fw-bold">0</span><br>
+                            • Cantidad lote adicional: <span id="info_cantidad_adicional" class="fw-bold">0</span><br>
+                            • Cantidad lote principal (calculada automáticamente): <span id="info_cantidad_principal" class="fw-bold text-warning">0</span>
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,12 +135,33 @@ $(function() {
     var $camposOtroLote = $('#campos_otro_lote');
     var $mensajeOtraRazon = $('#mensaje_otra_razon');
     
+    // Función para actualizar información de distribución
+    function actualizarDistribucion() {
+        var cantidadTotal = parseInt($cantidadRecibida.val(), 10) || 0;
+        var cantidadAdicional = parseInt($('#cantidad_lote_adicional').val(), 10) || 0;
+        var cantidadPrincipal = cantidadTotal - cantidadAdicional;
+        
+        $('#info_cantidad_total').text(cantidadTotal);
+        $('#info_cantidad_adicional').text(cantidadAdicional);
+        $('#info_cantidad_principal').text(cantidadPrincipal);
+        
+        if (cantidadPrincipal < 0 || cantidadPrincipal === 0) {
+            $('#info_cantidad_principal').addClass('text-danger').removeClass('text-warning');
+        } else {
+            $('#info_cantidad_principal').removeClass('text-danger').addClass('text-warning');
+        }
+    }
+    
     // Detectar cambios en cantidad recibida
     $cantidadRecibida.on('change keyup', function() {
         var cantidadRecibida = parseInt($(this).val(), 10) || 0;
         
         if (cantidadRecibida !== cantidadEnviada && cantidadRecibida > 0) {
             $seccionDiferencia.show();
+            // Si ya está seleccionado "otro_lote", actualizar distribución
+            if ($motivoDiferencia.val() === 'otro_lote') {
+                actualizarDistribucion();
+            }
         } else {
             $seccionDiferencia.hide();
             $motivoDiferencia.val('');
@@ -154,13 +183,14 @@ $(function() {
         // Limpiar campos
         $('#lote_adicional').val('').removeAttr('required');
         $('#fecha_caducidad_adicional').val('').removeAttr('required');
-        $('#cantidad_lote_adicional').val('').removeAttr('required');
+        $('#cantidad_lote_adicional').val('').removeAttr('required').removeClass('is-invalid');
         
         if (motivo === 'otro_lote') {
             $camposOtroLote.show();
             $('#lote_adicional').attr('required', 'required');
             $('#fecha_caducidad_adicional').attr('required', 'required');
             $('#cantidad_lote_adicional').attr('required', 'required');
+            actualizarDistribucion();
         } else if (motivo === 'no_completo') {
             // Agregar automáticamente a observaciones
             var obsActual = $('#observaciones').val();
@@ -175,21 +205,25 @@ $(function() {
         }
     });
     
-    // Validar suma de cantidades cuando es otro lote
+    // Validar y actualizar distribución cuando es otro lote
     $('#cantidad_lote_adicional').on('change keyup', function() {
-        var cantidadLoteAdicional = parseInt($(this).val(), 10) || 0;
-        var cantidadLotePrincipal = parseInt($('#cantidad_recibida').val(), 10) || 0;
-        var cantidadTotal = cantidadLotePrincipal;
+        actualizarDistribucion();
         
-        if (cantidadLoteAdicional > 0) {
-            cantidadTotal = cantidadLoteAdicional;
-            // Ajustar cantidad del lote principal
-            var cantidadPrincipal = cantidadLotePrincipal - cantidadLoteAdicional;
-            if (cantidadPrincipal < 0) {
-                Swal.fire('Atención', 'La cantidad del lote adicional no puede ser mayor a la cantidad recibida total.', 'warning');
-                $(this).val('');
-                return;
-            }
+        var cantidadTotal = parseInt($cantidadRecibida.val(), 10) || 0;
+        var cantidadAdicional = parseInt($(this).val(), 10) || 0;
+        var cantidadPrincipal = cantidadTotal - cantidadAdicional;
+        
+        if (cantidadAdicional > cantidadTotal) {
+            Swal.fire('Atención', 'La cantidad del lote adicional no puede ser mayor a la cantidad recibida total.', 'warning');
+            $(this).val('');
+            actualizarDistribucion();
+            return;
+        }
+        
+        if (cantidadPrincipal <= 0) {
+            $(this).addClass('is-invalid');
+        } else {
+            $(this).removeClass('is-invalid');
         }
     });
 
@@ -222,12 +256,12 @@ $(function() {
                 
                 // Validar que la suma de cantidades sea correcta
                 var cantidadPrincipal = cant - cantidadAdicional;
-                if (cantidadPrincipal < 0) {
-                    Swal.fire('Atención', 'La cantidad del lote adicional no puede ser mayor a la cantidad recibida total', 'warning');
+                if (cantidadAdicional >= cant) {
+                    Swal.fire('Atención', 'La cantidad del lote adicional debe ser menor a la cantidad recibida total. El lote principal también debe tener cantidad.', 'warning');
                     return;
                 }
-                if (cantidadPrincipal === 0) {
-                    Swal.fire('Atención', 'La cantidad del lote principal no puede ser 0. Ajuste las cantidades.', 'warning');
+                if (cantidadPrincipal <= 0) {
+                    Swal.fire('Atención', 'La cantidad del lote principal debe ser mayor a 0. Ajuste las cantidades del lote adicional.', 'warning');
                     return;
                 }
             }
