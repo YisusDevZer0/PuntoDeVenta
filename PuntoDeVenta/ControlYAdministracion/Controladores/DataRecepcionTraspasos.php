@@ -28,16 +28,22 @@ $sql = "SELECT
     tyc.Folio_Ticket,
     tyc.Cod_Barra,
     tyc.Nombre_Prod,
-    tyc.Fk_SucursalDestino,
     tyc.Cantidad,
+    tyc.Fk_sucursal,
+    tyc.Fk_SucursalDestino,
     tyc.Fecha_venta,
     tyc.Estatus,
     tyc.AgregadoPor,
+    tyc.AgregadoEl,
+    tyc.Sistema,
+    tyc.TipoDeMov,
+    tyc.Total_VentaG,
+    tyc.Pc,
     suc_origen.Nombre_Sucursal AS Sucursal_Origen,
     suc_destino.Nombre_Sucursal AS Sucursal_Destino
 FROM TraspasosYNotasC tyc
-INNER JOIN Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
-INNER JOIN Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
+LEFT JOIN Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
+LEFT JOIN Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
 WHERE tyc.Fk_SucursalDestino = ? AND tyc.Estatus = 'Generado'";
 
 $params = [$sucursal];
@@ -68,18 +74,50 @@ $sql .= " ORDER BY tyc.Fecha_venta DESC, tyc.TraspaNotID DESC";
     $result = $stmt->get_result();
     while ($fila = $result->fetch_assoc()) {
         $id = (int) $fila['TraspaNotID'];
-        $fecha_venta = isset($fila['Fecha_venta']) && $fila['Fecha_venta'] ? date('d/m/Y', strtotime($fila['Fecha_venta'])) : '-';
+        
+        // Formatear fechas
+        $fecha_venta = '';
+        if (!empty($fila['Fecha_venta']) && $fila['Fecha_venta'] !== '0000-00-00') {
+            try {
+                $fecha_venta = date('d/m/Y', strtotime($fila['Fecha_venta']));
+            } catch (Exception $e) {
+                $fecha_venta = $fila['Fecha_venta'];
+            }
+        }
+        if (empty($fecha_venta)) $fecha_venta = '-';
+        
+        $fecha_agregado = '';
+        if (!empty($fila['AgregadoEl']) && $fila['AgregadoEl'] !== '0000-00-00 00:00:00') {
+            try {
+                $fecha_agregado = date('d/m/Y H:i', strtotime($fila['AgregadoEl']));
+            } catch (Exception $e) {
+                $fecha_agregado = $fila['AgregadoEl'];
+            }
+        }
+        if (empty($fecha_agregado)) $fecha_agregado = '-';
+        
+        // Función helper para limpiar valores
+        $clean = function($val) {
+            if ($val === null || $val === '') return '-';
+            return htmlspecialchars((string)$val);
+        };
+        
         $data[] = [
             'TraspaNotID' => $id,
-            'Folio_Ticket' => isset($fila['Folio_Ticket']) && $fila['Folio_Ticket'] !== null ? htmlspecialchars($fila['Folio_Ticket']) : '-',
-            'Cod_Barra' => isset($fila['Cod_Barra']) && $fila['Cod_Barra'] !== null ? htmlspecialchars($fila['Cod_Barra']) : '-',
-            'Nombre_Prod' => isset($fila['Nombre_Prod']) && $fila['Nombre_Prod'] !== null ? htmlspecialchars($fila['Nombre_Prod']) : '-',
-            'Cantidad' => isset($fila['Cantidad']) ? (int) $fila['Cantidad'] : 0,
+            'Folio_Ticket' => $clean($fila['Folio_Ticket'] ?? null),
+            'Cod_Barra' => $clean($fila['Cod_Barra'] ?? null),
+            'Nombre_Prod' => $clean($fila['Nombre_Prod'] ?? null),
+            'Cantidad' => isset($fila['Cantidad']) && $fila['Cantidad'] !== null ? (int) $fila['Cantidad'] : 0,
             'Fecha_venta' => $fecha_venta,
-            'AgregadoPor' => isset($fila['AgregadoPor']) && $fila['AgregadoPor'] !== null ? htmlspecialchars($fila['AgregadoPor']) : '-',
-            'Estatus' => isset($fila['Estatus']) && $fila['Estatus'] !== null ? htmlspecialchars($fila['Estatus']) : '-',
-            'Sucursal_Origen' => isset($fila['Sucursal_Origen']) && $fila['Sucursal_Origen'] !== null ? htmlspecialchars($fila['Sucursal_Origen']) : '-',
-            'Sucursal_Destino' => isset($fila['Sucursal_Destino']) && $fila['Sucursal_Destino'] !== null ? htmlspecialchars($fila['Sucursal_Destino']) : '-',
+            'AgregadoPor' => $clean($fila['AgregadoPor'] ?? null),
+            'AgregadoEl' => $fecha_agregado,
+            'Estatus' => $clean($fila['Estatus'] ?? null),
+            'Sucursal_Origen' => $clean($fila['Sucursal_Origen'] ?? null),
+            'Sucursal_Destino' => $clean($fila['Sucursal_Destino'] ?? null),
+            'Fk_sucursal' => isset($fila['Fk_sucursal']) && $fila['Fk_sucursal'] !== null ? (int) $fila['Fk_sucursal'] : 0,
+            'Fk_SucursalDestino' => isset($fila['Fk_SucursalDestino']) && $fila['Fk_SucursalDestino'] !== null ? (int) $fila['Fk_SucursalDestino'] : 0,
+            'Sistema' => $clean($fila['Sistema'] ?? null),
+            'TipoDeMov' => $clean($fila['TipoDeMov'] ?? null),
             'Recibir' => "<button type='button' class='btn btn-sm btn-primary btn-recibir-traspaso' data-id='{$id}' title='Recibir y registrar lote/caducidad'><i class='fa-solid fa-truck-ramp-box'></i> Recibir</button>"
         ];
     }
