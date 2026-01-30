@@ -7,10 +7,10 @@ $traspaso = null;
 
 if ($id > 0 && isset($conn) && $conn) {
     $stmt = $conn->prepare("
-        SELECT tg.ID_Traspaso_Generado, tg.Cod_Barra, tg.Nombre_Prod, tg.Cantidad_Enviada,
-               tg.Fk_SucDestino, tg.Precio_Venta, tg.Precio_Compra, tg.Num_Orden, tg.Num_Factura
-        FROM Traspasos_generados tg
-        WHERE tg.ID_Traspaso_Generado = ? AND tg.Estatus = 'Generado'
+        SELECT tyc.TraspaNotID, tyc.Cod_Barra, tyc.Nombre_Prod, tyc.Cantidad,
+               tyc.Fk_SucursalDestino, tyc.Folio_Ticket, tyc.Fk_sucursal
+        FROM TraspasosYNotasC tyc
+        WHERE tyc.TraspaNotID = ? AND tyc.Estatus = 'Generado'
     ");
     $stmt->bind_param('i', $id);
     $stmt->execute();
@@ -22,8 +22,8 @@ if ($id > 0 && isset($conn) && $conn) {
 
 <?php if ($traspaso): ?>
 <form id="formRecepcionTraspasoLote">
-    <input type="hidden" name="id_traspaso" value="<?php echo (int) $traspaso['ID_Traspaso_Generado']; ?>">
-    <input type="hidden" name="fk_sucursal" value="<?php echo (int) $traspaso['Fk_SucDestino']; ?>">
+    <input type="hidden" name="id_traspaso" value="<?php echo (int) $traspaso['TraspaNotID']; ?>">
+    <input type="hidden" name="fk_sucursal" value="<?php echo (int) $traspaso['Fk_SucursalDestino']; ?>">
 
     <div class="row mb-3">
         <div class="col-md-6">
@@ -39,12 +39,12 @@ if ($id > 0 && isset($conn) && $conn) {
     <div class="row mb-3">
         <div class="col-md-4">
             <label class="form-label">Cantidad enviada</label>
-            <input type="number" class="form-control" id="cantidad_enviada" value="<?php echo (int) $traspaso['Cantidad_Enviada']; ?>" readonly>
+            <input type="number" class="form-control" id="cantidad_enviada" value="<?php echo (int) $traspaso['Cantidad']; ?>" readonly>
         </div>
         <div class="col-md-4">
             <label class="form-label">Cantidad recibida <span class="text-danger">*</span></label>
             <input type="number" class="form-control" name="cantidad_recibida" id="cantidad_recibida" 
-                   value="<?php echo (int) $traspaso['Cantidad_Enviada']; ?>" min="1" required>
+                   value="<?php echo (int) $traspaso['Cantidad']; ?>" min="1" required>
         </div>
         <div class="col-md-4">
             <label class="form-label"><i class="fa-solid fa-tag me-2"></i>Lote <span class="text-danger">*</span></label>

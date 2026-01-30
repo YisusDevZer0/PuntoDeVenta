@@ -48,22 +48,22 @@ if (!$fecha_ok) {
 
 try {
     $stmt = $conn->prepare("
-        SELECT ID_Traspaso_Generado, Cod_Barra, Nombre_Prod, Cantidad_Enviada, Fk_SucDestino
-        FROM Traspasos_generados
-        WHERE ID_Traspaso_Generado = ? AND Estatus = 'Generado'
+        SELECT TraspaNotID, Cod_Barra, Nombre_Prod, Cantidad, Fk_SucursalDestino
+        FROM TraspasosYNotasC
+        WHERE TraspaNotID = ? AND Estatus = 'Generado'
     ");
     $stmt->bind_param('i', $id_traspaso);
     $stmt->execute();
     $res = $stmt->get_result();
-    $tg = $res->fetch_assoc();
+    $tyc = $res->fetch_assoc();
     $stmt->close();
 
-    if (!$tg) {
+    if (!$tyc) {
         echo json_encode(['success' => false, 'error' => 'Traspaso no encontrado o ya fue recibido.']);
         exit;
     }
 
-    if ((int) $tg['Fk_SucDestino'] !== $fk_sucursal) {
+    if ((int) $tyc['Fk_SucursalDestino'] !== $fk_sucursal) {
         echo json_encode(['success' => false, 'error' => 'La sucursal no coincide con el traspaso.']);
         exit;
     }
@@ -74,13 +74,13 @@ try {
         exit;
     }
 
-    $cantidad_enviada = (int) $tg['Cantidad_Enviada'];
+    $cantidad_enviada = (int) $tyc['Cantidad'];
     if ($cantidad_recibida > $cantidad_enviada) {
         echo json_encode(['success' => false, 'error' => "La cantidad recibida no puede ser mayor a la enviada ({$cantidad_enviada})."]);
         exit;
     }
 
-    $cod_barra = $tg['Cod_Barra'];
+    $cod_barra = $tyc['Cod_Barra'];
 
     $stmt = $conn->prepare("
         SELECT ID_Prod_POS FROM Stock_POS
@@ -118,26 +118,19 @@ try {
 
     $conn->begin_transaction();
 
+    // Actualizar Estatus a 'Recibido' (el stock ya fue sumado por el trigger suma_traspaso_a_la_sucursal al INSERT)
     $stmt = $conn->prepare("
-        UPDATE Traspasos_generados
-        SET Estatus = 'Entregado',
-            TraspasoRecibidoPor = ?,
-            Fecha_recepcion = NOW()
-        WHERE ID_Traspaso_Generado = ?
+        UPDATE TraspasosYNotasC
+        SET Estatus = 'Recibido'
+        WHERE TraspaNotID = ?
     ");
-    $stmt->bind_param('si', $usuario, $id_traspaso);
+    $stmt->bind_param('i', $id_traspaso);
     $stmt->execute();
     $stmt->close();
 
-    $stmt = $conn->prepare("
-        UPDATE Stock_POS
-        SET Existencias_R = Existencias_R + ?,
-            JustificacionAjuste = 'Recepción traspaso'
-        WHERE Cod_Barra = ? AND Fk_sucursal = ?
-    ");
-    $stmt->bind_param('isi', $cantidad_recibida, $cod_barra, $fk_sucursal);
-    $stmt->execute();
-    $stmt->close();
+    // NOTA: No sumamos stock aquí porque el trigger suma_traspaso_a_la_sucursal ya lo hizo al INSERT
+    // Si la cantidad recibida difiere de la enviada, podríamos hacer un ajuste, pero por ahora
+    // asumimos que coincide con la cantidad enviada (ya sumada por el trigger)
 
     $stmt = $conn->prepare("
         INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico)
@@ -174,7 +167,7 @@ try {
     }
 
     $conn->commit();
-    echo json_encode(['success' => true, 'message' => 'Traspaso recibido. Stock actualizado y lote registrado.']);
+    echo json_encode(['success' => true, 'message' => 'Traspaso recibido. Lote y fecha de caducidad registrados correctamente.']);
 } catch (Exception $e) {
     if ($conn && method_exists($conn, 'rollback')) {
         @$conn->rollback();

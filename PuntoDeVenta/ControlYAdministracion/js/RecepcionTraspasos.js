@@ -14,13 +14,14 @@ function CargarRecepcionTraspasos() {
         serverSide: false,
         ajax: { url: url, type: 'GET', dataSrc: 'aaData' },
         columns: [
-            { data: 'ID_Traspaso_Generado', title: 'ID', width: '70px', className: 'text-center' },
-            { data: 'Num_Orden', title: 'Orden', width: '90px' },
+            { data: 'TraspaNotID', title: 'ID', width: '70px', className: 'text-center' },
+            { data: 'Folio_Ticket', title: 'Folio', width: '100px' },
             { data: 'Cod_Barra', title: 'Código', width: '120px' },
             { data: 'Nombre_Prod', title: 'Producto' },
-            { data: 'Cantidad_Enviada', title: 'Cant.', width: '80px', className: 'text-center' },
-            { data: 'FechaEntrega', title: 'Fecha entrega', width: '110px' },
-            { data: 'TraspasoGeneradoPor', title: 'Generado por', width: '140px' },
+            { data: 'Cantidad', title: 'Cant.', width: '80px', className: 'text-center' },
+            { data: 'Fecha_venta', title: 'Fecha', width: '110px' },
+            { data: 'Sucursal_Origen', title: 'Origen', width: '120px' },
+            { data: 'AgregadoPor', title: 'Generado por', width: '140px' },
             { data: 'Recibir', title: 'Acciones', width: '120px', orderable: false, className: 'text-center' }
         ],
         language: {

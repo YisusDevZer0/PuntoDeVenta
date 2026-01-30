@@ -17,22 +17,21 @@ if ($sucursal <= 0) {
 $codigo = isset($_GET['codigo']) ? trim($_GET['codigo']) : '';
 
 $sql = "SELECT 
-    tg.ID_Traspaso_Generado,
-    tg.Num_Orden,
-    tg.Num_Factura,
-    tg.Cod_Barra,
-    tg.Nombre_Prod,
-    tg.Fk_SucDestino,
-    tg.Precio_Venta,
-    tg.Precio_Compra,
-    tg.Cantidad_Enviada,
-    tg.FechaEntrega,
-    tg.TraspasoGeneradoPor,
-    tg.Estatus,
-    s.Nombre_Sucursal AS Sucursal_Destino
-FROM Traspasos_generados tg
-INNER JOIN Sucursales s ON tg.Fk_SucDestino = s.ID_Sucursal
-WHERE tg.Fk_SucDestino = ? AND tg.Estatus = 'Generado'";
+    tyc.TraspaNotID,
+    tyc.Folio_Ticket,
+    tyc.Cod_Barra,
+    tyc.Nombre_Prod,
+    tyc.Fk_SucursalDestino,
+    tyc.Cantidad,
+    tyc.Fecha_venta,
+    tyc.Estatus,
+    tyc.AgregadoPor,
+    suc_origen.Nombre_Sucursal AS Sucursal_Origen,
+    suc_destino.Nombre_Sucursal AS Sucursal_Destino
+FROM TraspasosYNotasC tyc
+INNER JOIN Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
+INNER JOIN Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
+WHERE tyc.Fk_SucursalDestino = ? AND tyc.Estatus = 'Generado'";
 
 $params = [$sucursal];
 $types = "i";
@@ -55,17 +54,17 @@ if ($stmt) {
     $stmt->execute();
     $result = $stmt->get_result();
     while ($fila = $result->fetch_assoc()) {
-        $id = (int) $fila['ID_Traspaso_Generado'];
+        $id = (int) $fila['TraspaNotID'];
         $data[] = [
-            'ID_Traspaso_Generado' => $id,
-            'Num_Orden' => $fila['Num_Orden'],
-            'Num_Factura' => $fila['Num_Factura'],
+            'TraspaNotID' => $id,
+            'Folio_Ticket' => $fila['Folio_Ticket'],
             'Cod_Barra' => $fila['Cod_Barra'],
             'Nombre_Prod' => $fila['Nombre_Prod'],
-            'Cantidad_Enviada' => (int) $fila['Cantidad_Enviada'],
-            'FechaEntrega' => date('d/m/Y', strtotime($fila['FechaEntrega'])),
-            'TraspasoGeneradoPor' => $fila['TraspasoGeneradoPor'],
+            'Cantidad' => (int) $fila['Cantidad'],
+            'Fecha_venta' => date('d/m/Y', strtotime($fila['Fecha_venta'])),
+            'AgregadoPor' => $fila['AgregadoPor'],
             'Estatus' => $fila['Estatus'],
+            'Sucursal_Origen' => $fila['Sucursal_Origen'],
             'Sucursal_Destino' => $fila['Sucursal_Destino'],
             'Recibir' => "<button type='button' class='btn btn-sm btn-primary btn-recibir-traspaso' data-id='{$id}' title='Recibir y registrar lote/caducidad'><i class='fa-solid fa-truck-ramp-box'></i> Recibir</button>"
         ];
