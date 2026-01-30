@@ -40,6 +40,7 @@ $motivo_diferencia = isset($_POST['motivo_diferencia']) ? trim($_POST['motivo_di
 $lote_adicional = isset($_POST['lote_adicional']) ? trim($_POST['lote_adicional']) : '';
 $fecha_caducidad_adicional = isset($_POST['fecha_caducidad_adicional']) ? trim($_POST['fecha_caducidad_adicional']) : '';
 $cantidad_lote_adicional = isset($_POST['cantidad_lote_adicional']) ? (int) $_POST['cantidad_lote_adicional'] : 0;
+$cantidad_lote_principal = isset($_POST['cantidad_lote_principal']) ? (int) $_POST['cantidad_lote_principal'] : 0;
 
 if ($id_traspaso <= 0 || $fk_sucursal <= 0 || $cantidad_recibida < 1 || $lote === '' || $fecha_caducidad === '') {
     echo json_encode(['success' => false, 'error' => 'Faltan datos requeridos (traspaso, sucursal, cantidad, lote, fecha caducidad).']);
@@ -85,22 +86,20 @@ try {
     }
 
     $cantidad_enviada = (int) $tyc['Cantidad'];
-    $hay_diferencia = ($cantidad_recibida !== $cantidad_enviada);
     
-    if ($cantidad_recibida > $cantidad_enviada) {
-        echo json_encode(['success' => false, 'error' => "La cantidad recibida no puede ser mayor a la enviada ({$cantidad_enviada})."]);
-        exit;
-    }
-    
-    // Validar motivo de diferencia si hay diferencia
-    if ($hay_diferencia && empty($motivo_diferencia)) {
-        echo json_encode(['success' => false, 'error' => 'Debe indicar el motivo de la diferencia en la cantidad.']);
-        exit;
-    }
-    
-    // Validar datos de lote adicional si el motivo es "otro_lote"
-    if ($hay_diferencia && $motivo_diferencia === 'otro_lote') {
-        if (empty($lote_adicional) || empty($fecha_caducidad_adicional) || $cantidad_lote_adicional < 1) {
+    // Si es otro lote, calcular cantidad recibida sumando ambos lotes
+    if ($motivo_diferencia === 'otro_lote') {
+        if ($cantidad_lote_principal < 1) {
+            echo json_encode(['success' => false, 'error' => 'Debe ingresar la cantidad del lote principal.']);
+            exit;
+        }
+        
+        if ($cantidad_lote_adicional < 1) {
+            echo json_encode(['success' => false, 'error' => 'Debe ingresar la cantidad del lote adicional.']);
+            exit;
+        }
+        
+        if (empty($lote_adicional) || empty($fecha_caducidad_adicional)) {
             echo json_encode(['success' => false, 'error' => 'Debe completar todos los campos del lote adicional.']);
             exit;
         }
@@ -111,12 +110,25 @@ try {
             exit;
         }
         
-        // Validar que la suma de cantidades sea correcta
-        $cantidad_lote_principal = $cantidad_recibida - $cantidad_lote_adicional;
-        if ($cantidad_lote_principal <= 0) {
-            echo json_encode(['success' => false, 'error' => 'La cantidad del lote adicional no puede ser mayor o igual a la cantidad recibida total.']);
-            exit;
-        }
+        // Calcular cantidad recibida total sumando ambos lotes
+        $cantidad_recibida = $cantidad_lote_principal + $cantidad_lote_adicional;
+    } else {
+        // Si no es otro lote, usar toda la cantidad recibida para el lote principal
+        $cantidad_lote_principal = $cantidad_recibida;
+    }
+    
+    // Validar que no exceda la cantidad enviada
+    if ($cantidad_recibida > $cantidad_enviada) {
+        echo json_encode(['success' => false, 'error' => "La cantidad recibida ({$cantidad_recibida}) no puede ser mayor a la enviada ({$cantidad_enviada})."]);
+        exit;
+    }
+    
+    $hay_diferencia = ($cantidad_recibida !== $cantidad_enviada);
+    
+    // Validar motivo de diferencia solo si hay diferencia Y NO es otro lote
+    if ($hay_diferencia && $motivo_diferencia !== 'otro_lote' && empty($motivo_diferencia)) {
+        echo json_encode(['success' => false, 'error' => 'Debe indicar el motivo de la diferencia en la cantidad.']);
+        exit;
     }
 
     $cod_barra = $tyc['Cod_Barra'];
@@ -180,12 +192,6 @@ try {
     }
 
     $conn->begin_transaction();
-
-    // Calcular cantidad del lote principal
-    $cantidad_lote_principal = $cantidad_recibida;
-    if ($hay_diferencia && $motivo_diferencia === 'otro_lote') {
-        $cantidad_lote_principal = $cantidad_recibida - $cantidad_lote_adicional;
-    }
 
     // Actualizar Estatus a 'Recibido' y ajustar cantidad si es necesario
     if ($hay_diferencia) {
