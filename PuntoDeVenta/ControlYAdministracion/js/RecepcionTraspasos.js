@@ -7,22 +7,42 @@ function CargarRecepcionTraspasos() {
 
     if ($.fn.DataTable.isDataTable('#tablaRecepcionTraspasos')) {
         $('#tablaRecepcionTraspasos').DataTable().destroy();
+        $('#tablaRecepcionTraspasos').empty();
     }
 
     $('#tablaRecepcionTraspasos').DataTable({
         processing: true,
         serverSide: false,
-        ajax: { url: url, type: 'GET', dataSrc: 'aaData' },
+        ajax: {
+            url: url,
+            type: 'GET',
+            dataSrc: function(json) {
+                if (json.error) {
+                    console.error('Error del servidor:', json.error);
+                    Swal.fire('Error', json.error, 'error');
+                    return [];
+                }
+                return json.aaData || [];
+            },
+            error: function(xhr, error, thrown) {
+                console.error('Error AJAX:', error, thrown);
+                var errorMsg = 'Error al cargar los datos';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMsg = xhr.responseJSON.error;
+                }
+                Swal.fire('Error', errorMsg, 'error');
+            }
+        },
         columns: [
-            { data: 'TraspaNotID', title: 'ID', width: '70px', className: 'text-center' },
-            { data: 'Folio_Ticket', title: 'Folio', width: '100px' },
-            { data: 'Cod_Barra', title: 'Código', width: '120px' },
-            { data: 'Nombre_Prod', title: 'Producto' },
-            { data: 'Cantidad', title: 'Cant.', width: '80px', className: 'text-center' },
-            { data: 'Fecha_venta', title: 'Fecha', width: '110px' },
-            { data: 'Sucursal_Origen', title: 'Origen', width: '120px' },
-            { data: 'AgregadoPor', title: 'Generado por', width: '140px' },
-            { data: 'Recibir', title: 'Acciones', width: '120px', orderable: false, className: 'text-center' }
+            { data: 'TraspaNotID', title: 'ID', width: '70px', className: 'text-center', defaultContent: '-' },
+            { data: 'Folio_Ticket', title: 'Folio', width: '100px', defaultContent: '-' },
+            { data: 'Cod_Barra', title: 'Código', width: '120px', defaultContent: '-' },
+            { data: 'Nombre_Prod', title: 'Producto', defaultContent: '-' },
+            { data: 'Cantidad', title: 'Cant.', width: '80px', className: 'text-center', defaultContent: '-' },
+            { data: 'Fecha_venta', title: 'Fecha', width: '110px', defaultContent: '-' },
+            { data: 'Sucursal_Origen', title: 'Origen', width: '120px', defaultContent: '-' },
+            { data: 'AgregadoPor', title: 'Generado por', width: '140px', defaultContent: '-' },
+            { data: 'Recibir', title: 'Acciones', width: '120px', orderable: false, className: 'text-center', defaultContent: '-' }
         ],
         language: {
             lengthMenu: 'Mostrar _MENU_ registros',
@@ -45,10 +65,26 @@ function CargarRecepcionTraspasos() {
 }
 
 $(document).ready(function() {
+    // Asegurar que la tabla existe antes de inicializar
     if ($('#tablaRecepcionTraspasos').length === 0) {
         $('#DataRecepcionTraspasos').html(
-            '<table id="tablaRecepcionTraspasos" class="table table-striped table-hover"><thead></thead><tbody></tbody></table>'
+            '<table id="tablaRecepcionTraspasos" class="table table-striped table-hover table-bordered"><thead></thead><tbody></tbody></table>'
         );
     }
-    setTimeout(CargarRecepcionTraspasos, 100);
+    
+    // Limpiar cualquier instancia previa de DataTables
+    if ($.fn.DataTable.isDataTable('#tablaRecepcionTraspasos')) {
+        $('#tablaRecepcionTraspasos').DataTable().destroy();
+        $('#tablaRecepcionTraspasos').empty();
+    }
+    
+    // Inicializar después de un pequeño delay para asegurar que el DOM está listo
+    setTimeout(function() {
+        try {
+            CargarRecepcionTraspasos();
+        } catch (e) {
+            console.error('Error al cargar tabla:', e);
+            Swal.fire('Error', 'Error al inicializar la tabla: ' + e.message, 'error');
+        }
+    }, 200);
 });

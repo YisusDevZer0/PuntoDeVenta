@@ -68,17 +68,18 @@ $sql .= " ORDER BY tyc.Fecha_venta DESC, tyc.TraspaNotID DESC";
     $result = $stmt->get_result();
     while ($fila = $result->fetch_assoc()) {
         $id = (int) $fila['TraspaNotID'];
+        $fecha_venta = isset($fila['Fecha_venta']) && $fila['Fecha_venta'] ? date('d/m/Y', strtotime($fila['Fecha_venta'])) : '-';
         $data[] = [
             'TraspaNotID' => $id,
-            'Folio_Ticket' => $fila['Folio_Ticket'],
-            'Cod_Barra' => $fila['Cod_Barra'],
-            'Nombre_Prod' => $fila['Nombre_Prod'],
-            'Cantidad' => (int) $fila['Cantidad'],
-            'Fecha_venta' => date('d/m/Y', strtotime($fila['Fecha_venta'])),
-            'AgregadoPor' => $fila['AgregadoPor'],
-            'Estatus' => $fila['Estatus'],
-            'Sucursal_Origen' => $fila['Sucursal_Origen'],
-            'Sucursal_Destino' => $fila['Sucursal_Destino'],
+            'Folio_Ticket' => isset($fila['Folio_Ticket']) && $fila['Folio_Ticket'] !== null ? htmlspecialchars($fila['Folio_Ticket']) : '-',
+            'Cod_Barra' => isset($fila['Cod_Barra']) && $fila['Cod_Barra'] !== null ? htmlspecialchars($fila['Cod_Barra']) : '-',
+            'Nombre_Prod' => isset($fila['Nombre_Prod']) && $fila['Nombre_Prod'] !== null ? htmlspecialchars($fila['Nombre_Prod']) : '-',
+            'Cantidad' => isset($fila['Cantidad']) ? (int) $fila['Cantidad'] : 0,
+            'Fecha_venta' => $fecha_venta,
+            'AgregadoPor' => isset($fila['AgregadoPor']) && $fila['AgregadoPor'] !== null ? htmlspecialchars($fila['AgregadoPor']) : '-',
+            'Estatus' => isset($fila['Estatus']) && $fila['Estatus'] !== null ? htmlspecialchars($fila['Estatus']) : '-',
+            'Sucursal_Origen' => isset($fila['Sucursal_Origen']) && $fila['Sucursal_Origen'] !== null ? htmlspecialchars($fila['Sucursal_Origen']) : '-',
+            'Sucursal_Destino' => isset($fila['Sucursal_Destino']) && $fila['Sucursal_Destino'] !== null ? htmlspecialchars($fila['Sucursal_Destino']) : '-',
             'Recibir' => "<button type='button' class='btn btn-sm btn-primary btn-recibir-traspaso' data-id='{$id}' title='Recibir y registrar lote/caducidad'><i class='fa-solid fa-truck-ramp-box'></i> Recibir</button>"
         ];
     }
