@@ -68,7 +68,7 @@ fputcsv($output, [
     'Precio_Venta', 'Precio_C', 'Contabilizado', 'Existencia previa', 'Diferencia', 
     'Sistema', 'AgregadoPor', 'AgregadoEl',  'FechaInventario', 
     'Tipo_Ajuste', 'Anaquel', 'Repisa', 'Total_Precio_Venta', 'Total_Precio_Compra'
-]);
+], ',', '"', '\\');
 
 // Escribir los datos en el archivo CSV
 while ($fila = $result->fetch_assoc()) {
@@ -93,7 +93,7 @@ while ($fila = $result->fetch_assoc()) {
         $fila["Repisa"],
         $fila["Total_Precio_Venta"],
         $fila["Total_Precio_Compra"]
-    ]);
+    ], ',', '"', '\\');
 }
 
 fclose($output);
