@@ -200,7 +200,7 @@
 		 *	TempDir => string Temporary directory path
 		 *	ReturnDateTimeObjects => bool True => dates and times will be returned as PHP DateTime objects, false => as strings
 		 */
-		public function __construct($Filepath, array $Options = null)
+		public function __construct($Filepath, ?array $Options = null)
 		{
 			if (!is_readable($Filepath))
 			{
@@ -404,17 +404,24 @@
 				$RealSheetIndex = $SheetIndexes[$Index];
 			}
 
-			$TempWorksheetPath = $this -> TempDir.'xl/worksheets/sheet'.$RealSheetIndex.'.xml';
+		$TempWorksheetPath = $this -> TempDir.'xl/worksheets/sheet'.$RealSheetIndex.'.xml';
 
-			if ($RealSheetIndex !== false && is_readable($TempWorksheetPath))
-			{
-				$this -> WorksheetPath = $TempWorksheetPath;
+		if ($RealSheetIndex !== false && is_readable($TempWorksheetPath))
+		{
+			$this -> WorksheetPath = $TempWorksheetPath;
 
-				$this -> rewind();
-				return true;
+			// Verificar que WorksheetPath se estableció correctamente antes de llamar a rewind
+			if (empty($this -> WorksheetPath)) {
+				throw new Exception('SpreadsheetReader_XLSX: No se pudo establecer la ruta de la hoja de cálculo');
 			}
 
-			return false;
+			$this -> rewind();
+			return true;
+		}
+
+		// Si no se encontró la hoja, establecer WorksheetPath como false para evitar errores
+		$this -> WorksheetPath = false;
+		return false;
 		}
 
 		/**
@@ -453,7 +460,7 @@
 					case 't':
 						if ($this -> SharedStrings -> nodeType == XMLReader::END_ELEMENT)
 						{
-							continue;
+							continue 2;
 						}
 						$CacheValue .= $this -> SharedStrings -> readString();
 						break;
@@ -578,7 +585,7 @@
 						case 't':
 							if ($this -> SharedStrings -> nodeType == XMLReader::END_ELEMENT)
 							{
-								continue;
+								continue 2;
 							}
 							$Value .= $this -> SharedStrings -> readString();
 							break;
@@ -941,6 +948,7 @@
 		 * Rewind the Iterator to the first element.
 		 * Similar to the reset() function for arrays in PHP
 		 */ 
+		#[\ReturnTypeWillChange]
 		public function rewind()
 		{
 			// Removed the check whether $this -> Index == 0 otherwise ChangeSheet doesn't work properly
@@ -954,6 +962,11 @@
 			else
 			{
 				$this -> Worksheet = new XMLReader;
+			}
+
+			if (empty($this -> WorksheetPath))
+			{
+				throw new Exception('SpreadsheetReader_XLSX: Worksheet path is empty. File may not have been properly initialized.');
 			}
 
 			$this -> Worksheet -> open($this -> WorksheetPath);
@@ -970,6 +983,7 @@
 		 *
 		 * @return mixed current element from the collection
 		 */
+		#[\ReturnTypeWillChange]
 		public function current()
 		{
 			if ($this -> Index == 0 && $this -> CurrentRow === false)
@@ -984,6 +998,7 @@
 		 * Move forward to next element. 
 		 * Similar to the next() function for arrays in PHP 
 		 */ 
+		#[\ReturnTypeWillChange]
 		public function next()
 		{
 			$this -> Index++;
@@ -1046,7 +1061,7 @@
 							// If it is a closing tag, skip it
 							if ($this -> Worksheet -> nodeType == XMLReader::END_ELEMENT)
 							{
-								continue;
+								continue 2;
 							}
 
 							$StyleId = (int)$this -> Worksheet -> getAttribute('s');
@@ -1080,7 +1095,7 @@
 						case 'is':
 							if ($this -> Worksheet -> nodeType == XMLReader::END_ELEMENT)
 							{
-								continue;
+								continue 2;
 							}
 
 							$Value = $this -> Worksheet -> readString();
@@ -1123,6 +1138,7 @@
 		 *
 		 * @return mixed either an integer or a string
 		 */ 
+		#[\ReturnTypeWillChange]
 		public function key()
 		{
 			return $this -> Index;
@@ -1134,6 +1150,7 @@
 		 *
 		 * @return boolean FALSE if there's nothing more to iterate over
 		 */ 
+		#[\ReturnTypeWillChange]
 		public function valid()
 		{
 			return $this -> Valid;
@@ -1144,6 +1161,7 @@
 		 * Ostensibly should return the count of the contained items but this just returns the number
 		 * of rows read so far. It's not really correct but at least coherent.
 		 */
+		#[\ReturnTypeWillChange]
 		public function count()
 		{
 			return $this -> Index + 1;

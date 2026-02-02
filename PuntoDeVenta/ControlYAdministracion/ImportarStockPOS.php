@@ -219,7 +219,17 @@ if (isset($_POST["preview"])) {
 
         try {
             // Leer solo las primeras 100 filas para preview
+            if (!is_readable($targetPath)) {
+                throw new Exception('El archivo no es legible o no existe: ' . $targetPath);
+            }
+            
             $Reader = new SpreadsheetReader($targetPath);
+            
+            // Verificar que el reader se inicializó correctamente
+            if (!$Reader) {
+                throw new Exception('No se pudo inicializar el lector de Excel');
+            }
+            
             $previewRows = [];
             $totalRows = 0;
             $headerRow = null;
@@ -272,7 +282,11 @@ if (isset($_POST["preview"])) {
                 'previewHtml' => $tableHtml
             ]);
         } catch (Exception $e) {
-            echo json_encode(['error' => 'Error leyendo archivo: ' . $e->getMessage()]);
+            error_log('Error en ImportarStockPOS preview: ' . $e->getMessage());
+            echo json_encode(['error' => 'Error leyendo archivo: ' . $e->getMessage() . '. Verifique que el archivo sea un Excel válido y que tenga permisos de lectura.']);
+        } catch (Error $e) {
+            error_log('Error fatal en ImportarStockPOS preview: ' . $e->getMessage());
+            echo json_encode(['error' => 'Error fatal procesando archivo: ' . $e->getMessage() . '. Verifique que el archivo sea un Excel válido (.xlsx o .xls).']);
         }
         exit();
     } else {
@@ -299,7 +313,17 @@ if (isset($_POST["import"])) {
     $errors = [];
 
     try {
+        if (!is_readable($filePath)) {
+            throw new Exception('El archivo no es legible o no existe: ' . $filePath);
+        }
+        
         $Reader = new SpreadsheetReader($filePath);
+        
+        // Verificar que el reader se inicializó correctamente
+        if (!$Reader) {
+            throw new Exception('No se pudo inicializar el lector de Excel');
+        }
+        
         $rowIndex = 0;
 
         foreach ($Reader as $row) {
@@ -399,7 +423,11 @@ if (isset($_POST["import"])) {
         ]);
 
     } catch (Exception $e) {
+        error_log('Error en ImportarStockPOS import: ' . $e->getMessage());
         echo json_encode(['error' => 'Error procesando archivo: ' . $e->getMessage()]);
+    } catch (Error $e) {
+        error_log('Error fatal en ImportarStockPOS import: ' . $e->getMessage());
+        echo json_encode(['error' => 'Error fatal procesando archivo: ' . $e->getMessage() . '. Verifique que el archivo sea un Excel válido (.xlsx o .xls).']);
     }
     exit();
 }
