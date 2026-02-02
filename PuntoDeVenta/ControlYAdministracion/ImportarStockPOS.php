@@ -295,13 +295,17 @@ if (isset($_POST["preview"])) {
     }
 }
 
-// Procesar archivo directamente sin cargar todo en memoria
-if (isset($_POST["import"])) {
+// Procesar archivo en lotes de 100 filas
+if (isset($_POST["import_batch"])) {
     header('Content-Type: application/json');
     $filePath = isset($_SESSION['filePath']) ? $_SESSION['filePath'] : '';
     $defaultSucursal = isset($_SESSION['defaultSucursal']) ? $_SESSION['defaultSucursal'] : '';
     $headerMap = isset($_SESSION['headerMap']) ? $_SESSION['headerMap'] : [];
     $ActualizadoPor = isset($_POST["ActualizadoPor"]) ? mysqli_real_escape_string($con, $_POST["ActualizadoPor"]) : 'Desconocido';
+    
+    // Obtener el índice de inicio del lote
+    $startIndex = isset($_POST['start_index']) ? intval($_POST['start_index']) : 1;
+    $batchSize = 100; // Procesar 100 filas por lote
 
     if (empty($filePath) || !file_exists($filePath)) {
         echo json_encode(['error' => 'Archivo no encontrado. Por favor vuelva a subirlo.']);
@@ -310,7 +314,7 @@ if (isset($_POST["import"])) {
 
     $processedRows = 0;
     $ignoredRows = [];
-    $errors = [];
+    $currentIndex = 0;
 
     try {
         if (!is_readable($filePath)) {
@@ -319,12 +323,13 @@ if (isset($_POST["import"])) {
         
         $Reader = new SpreadsheetReader($filePath);
         
-        // Verificar que el reader se inicializó correctamente
         if (!$Reader) {
             throw new Exception('No se pudo inicializar el lector de Excel');
         }
         
         $rowIndex = 0;
+        $batchProcessed = 0;
+        $skipUntil = $startIndex - 1; // Índice desde donde empezar a procesar
 
         foreach ($Reader as $row) {
             if ($rowIndex === 0) {
@@ -333,6 +338,16 @@ if (isset($_POST["import"])) {
             }
 
             $rowIndex++;
+            
+            // Saltar filas hasta llegar al inicio del lote
+            if ($rowIndex < $skipUntil) {
+                continue;
+            }
+            
+            // Si ya procesamos el lote completo, salir
+            if ($batchProcessed >= $batchSize) {
+                break;
+            }
             
             // Procesar fila
             $tipoServicio = obtenerValorColumna($row, $headerMap, 'tipo_servicio', 0);
@@ -357,6 +372,7 @@ if (isset($_POST["import"])) {
             // Validar campos obligatorios
             if (empty($nombreServicio) || empty($fkSucursal)) {
                 $ignoredRows[] = $rowIndex;
+                $batchProcessed++;
                 continue;
             }
 
@@ -383,52 +399,58 @@ if (isset($_POST["import"])) {
             if ($result['success']) {
                 $processedRows++;
             } else {
-                if (count($ignoredRows) < 100) { // Limitar cantidad de errores guardados
-                    $ignoredRows[] = $rowIndex . ": " . $result['error'];
-                }
+                $ignoredRows[] = $rowIndex . ": " . $result['error'];
             }
-
-            // Liberar memoria periódicamente
-            if ($rowIndex % 1000 == 0) {
-                gc_collect_cycles();
-            }
+            
+            $batchProcessed++;
+            $currentIndex = $rowIndex;
         }
 
-        // Limpiar archivo temporal
-        if (file_exists($filePath)) {
+        // Determinar si hay más filas por procesar
+        $totalRows = isset($_SESSION['totalRows']) ? $_SESSION['totalRows'] : 0;
+        $nextIndex = $currentIndex + 1;
+        $hasMore = ($currentIndex < $totalRows);
+
+        // Si terminamos de procesar todo, limpiar archivo
+        if (!$hasMore && file_exists($filePath)) {
             @unlink($filePath);
-        }
-
-        // Preparar respuesta
-        $message = "Se procesaron " . number_format($processedRows) . " filas correctamente.";
-        $icon = "success";
-
-        if ($processedRows == 0) {
-            $message = "No se procesaron filas. Verifique los datos.";
-            $icon = "warning";
-        }
-
-        if (!empty($ignoredRows) && count($ignoredRows) <= 20) {
-            $message .= " Filas ignoradas: " . implode(', ', array_slice($ignoredRows, 0, 10));
-        } else if (!empty($ignoredRows)) {
-            $message .= " " . count($ignoredRows) . " filas fueron ignoradas.";
+            unset($_SESSION['filePath']);
+            unset($_SESSION['totalRows']);
+            unset($_SESSION['headerMap']);
+            unset($_SESSION['defaultSucursal']);
         }
 
         echo json_encode([
             'success' => true,
-            'message' => $message,
-            'icon' => $icon,
             'processed' => $processedRows,
-            'ignored' => count($ignoredRows)
+            'ignored' => count($ignoredRows),
+            'current_index' => $currentIndex,
+            'next_index' => $nextIndex,
+            'has_more' => $hasMore,
+            'total_rows' => $totalRows
         ]);
 
     } catch (Exception $e) {
-        error_log('Error en ImportarStockPOS import: ' . $e->getMessage());
-        echo json_encode(['error' => 'Error procesando archivo: ' . $e->getMessage()]);
+        error_log('Error en ImportarStockPOS import_batch: ' . $e->getMessage());
+        echo json_encode(['error' => 'Error procesando lote: ' . $e->getMessage()]);
     } catch (Error $e) {
-        error_log('Error fatal en ImportarStockPOS import: ' . $e->getMessage());
-        echo json_encode(['error' => 'Error fatal procesando archivo: ' . $e->getMessage() . '. Verifique que el archivo sea un Excel válido (.xlsx o .xls).']);
+        error_log('Error fatal en ImportarStockPOS import_batch: ' . $e->getMessage());
+        echo json_encode(['error' => 'Error fatal procesando lote: ' . $e->getMessage()]);
     }
+    exit();
+}
+
+// Endpoint para iniciar el procesamiento (solo inicializa)
+if (isset($_POST["import"])) {
+    header('Content-Type: application/json');
+    
+    // Solo inicializar el procesamiento, el frontend se encargará de los lotes
+    echo json_encode([
+        'success' => true,
+        'message' => 'Procesamiento iniciado',
+        'start_index' => 1,
+        'total_rows' => isset($_SESSION['totalRows']) ? $_SESSION['totalRows'] : 0
+    ]);
     exit();
 }
 
@@ -510,12 +532,19 @@ if ($sucursalesResult) {
                         <button class="btn btn-success mt-3" type="button" id="btnImport">Confirmar y Procesar</button>
                     </div>
 
-                    <div id="processingIndicator" class="mt-4">
+                    <div id="processingIndicator" class="mt-4" style="display: none;">
                         <div class="alert alert-info">
                             <h5>Procesando archivo...</h5>
-                            <p>Por favor espere, esto puede tomar varios minutos para archivos grandes.</p>
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">Cargando...</span>
+                            <p id="progressText">Iniciando procesamiento...</p>
+                            <div class="progress mb-3" style="height: 30px;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <span id="progressPercent">0%</span>
+                                </div>
+                            </div>
+                            <div id="progressStats" class="small">
+                                <p>Filas procesadas: <span id="processedCount">0</span> / <span id="totalCount">0</span></p>
+                                <p>Filas exitosas: <span id="successCount">0</span> | Filas ignoradas: <span id="ignoredCount">0</span></p>
                             </div>
                         </div>
                     </div>
@@ -578,52 +607,97 @@ if ($sucursalesResult) {
             });
 
             btnImport.addEventListener('click', function() {
-                if (!confirm('¿Está seguro de procesar el archivo completo? Esto puede tomar varios minutos.')) {
+                if (!confirm('¿Está seguro de procesar el archivo completo? El procesamiento se realizará en lotes de 100 filas.')) {
                     return;
                 }
 
                 previewContainer.style.display = 'none';
                 processingIndicator.style.display = 'block';
+                btnImport.disabled = true;
 
-                const formData = new FormData();
-                formData.append('import', '1');
-                formData.append('ActualizadoPor', document.querySelector('input[name="ActualizadoPor"]').value);
+                // Inicializar contadores
+                let totalProcessed = 0;
+                let totalIgnored = 0;
+                let totalRows = 0;
+                let startIndex = 1;
 
-                fetch('ImportarStockPOS.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    processingIndicator.style.display = 'none';
+                // Función para procesar un lote
+                function processBatch() {
+                    const formData = new FormData();
+                    formData.append('import_batch', '1');
+                    formData.append('start_index', startIndex);
+                    formData.append('ActualizadoPor', document.querySelector('input[name="ActualizadoPor"]').value);
 
-                    if (data.error) {
+                    fetch('ImportarStockPOS.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            throw new Error(data.error);
+                        }
+
+                        // Actualizar contadores
+                        totalProcessed += data.processed || 0;
+                        totalIgnored += data.ignored || 0;
+                        totalRows = data.total_rows || totalRows;
+                        startIndex = data.next_index || (startIndex + 100);
+
+                        // Actualizar UI
+                        document.getElementById('processedCount').textContent = totalProcessed + totalIgnored;
+                        document.getElementById('totalCount').textContent = totalRows;
+                        document.getElementById('successCount').textContent = totalProcessed;
+                        document.getElementById('ignoredCount').textContent = totalIgnored;
+
+                        // Calcular y actualizar progreso
+                        const progress = totalRows > 0 ? Math.min(100, Math.round(((totalProcessed + totalIgnored) / totalRows) * 100)) : 0;
+                        document.getElementById('progressBar').style.width = progress + '%';
+                        document.getElementById('progressBar').setAttribute('aria-valuenow', progress);
+                        document.getElementById('progressPercent').textContent = progress + '%';
+                        document.getElementById('progressText').textContent = 
+                            `Procesando lote... (${totalProcessed + totalIgnored} de ${totalRows} filas)`;
+
+                        // Si hay más filas, procesar siguiente lote
+                        if (data.has_more && startIndex <= totalRows) {
+                            // Pequeña pausa para evitar sobrecargar el servidor
+                            setTimeout(processBatch, 100);
+                        } else {
+                            // Procesamiento completado
+                            processingIndicator.style.display = 'none';
+                            btnImport.disabled = false;
+
+                            const message = `Se procesaron ${totalProcessed.toLocaleString()} filas correctamente.`;
+                            const ignoredMsg = totalIgnored > 0 ? ` ${totalIgnored} filas fueron ignoradas.` : '';
+
+                            Swal.fire({
+                                title: 'Procesamiento completado',
+                                html: `<p>${message}${ignoredMsg}</p>
+                                       <p><strong>Total procesado:</strong> ${(totalProcessed + totalIgnored).toLocaleString()} de ${totalRows.toLocaleString()} filas</p>
+                                       <p><strong>Exitosas:</strong> ${totalProcessed.toLocaleString()}</p>
+                                       <p><strong>Ignoradas:</strong> ${totalIgnored.toLocaleString()}</p>`,
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        processingIndicator.style.display = 'none';
+                        btnImport.disabled = false;
                         Swal.fire({
                             title: 'Error',
-                            text: data.error,
+                            html: `<p>Error procesando archivo: ${error.message}</p>
+                                   <p>Filas procesadas hasta el error: ${totalProcessed.toLocaleString()}</p>`,
                             icon: 'error',
                             confirmButtonText: 'Aceptar'
                         });
-                    } else {
-                        Swal.fire({
-                            title: 'Procesamiento completado',
-                            html: '<p>' + data.message + '</p><p>Filas procesadas: ' + data.processed + '</p>',
-                            icon: data.icon,
-                            confirmButtonText: 'Aceptar'
-                        }).then(() => {
-                            window.location.reload();
-                        });
-                    }
-                })
-                .catch(error => {
-                    processingIndicator.style.display = 'none';
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Error procesando archivo: ' + error.message,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
                     });
-                });
+                }
+
+                // Iniciar procesamiento del primer lote
+                processBatch();
             });
         });
     </script>
