@@ -665,6 +665,34 @@ try {
         
         // Calcular total de tickets incluyendo pagos de servicios
         $TotalTicketsCompleto = intval($Especialistas3->Total_tickets ?? 0) + $total_tickets_pagos_servicios;
+        
+        // ================= CALCULAR DESGLOSE TOTAL ===================
+        // Calcular totales individuales para el desglose
+        $total_servicios_ventas_pos = floatval($Especialistas3->VentaTotal ?? 0);
+        
+        // Total de pagos de servicios (costo + comisión)
+        $total_pagos_servicios_con_comision = 0;
+        foreach ($pagosServicios as $pago) {
+            $total_pagos_servicios_con_comision += floatval($pago['total_con_comision'] ?? $pago['total_costo'] ?? 0);
+        }
+        
+        // Total de abonos
+        $total_abonos_general = 0;
+        foreach ($abonos_dia as $abono) {
+            $total_abonos_general += floatval($abono['monto_abonado'] ?? 0);
+        }
+        
+        // Total de encargos (abonos parciales)
+        $total_encargos_general = 0;
+        foreach ($encargos_dia as $encargo) {
+            $total_encargos_general += floatval($encargo['abono_parcial'] ?? 0);
+        }
+        
+        // Total de gastos (ya calculado anteriormente)
+        // $total_gastos ya está calculado
+        
+        // Total general del desglose
+        $total_desglose_general = $total_servicios_ventas_pos + $total_pagos_servicios_con_comision + $total_abonos_general + $total_encargos_general + $total_gastos;
 
         ?>
 
@@ -976,6 +1004,47 @@ try {
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Desglose Total -->
+            <div class="mt-4 mb-4">
+                <h5 class="text-center mb-3">Desglose Total</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Concepto</th>
+                                <th class="text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Servicios (Ventas POS)</strong></td>
+                                <td class="text-end">$<?= number_format($total_servicios_ventas_pos, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pagos de Servicios (Costo + Comisión)</strong></td>
+                                <td class="text-end">$<?= number_format($total_pagos_servicios_con_comision, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Abonos a Encargos</strong></td>
+                                <td class="text-end">$<?= number_format($total_abonos_general, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encargos del Día</strong></td>
+                                <td class="text-end">$<?= number_format($total_encargos_general, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gastos del Día</strong></td>
+                                <td class="text-end">$<?= number_format($total_gastos, 2) ?></td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>TOTAL GENERAL</strong></td>
+                                <td class="text-end"><strong>$<?= number_format($total_desglose_general, 2) ?></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Campos ocultos y observaciones -->
