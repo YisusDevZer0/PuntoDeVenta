@@ -35,10 +35,10 @@ function ensureConnection($con) {
             die("Error cargando el conjunto de caracteres utf8");
         }
         
-        // Configurar timeouts más largos
+        // Configurar timeouts más largos (solo variables que se pueden cambiar a nivel SESSION)
         mysqli_query($con, "SET SESSION wait_timeout = 3600");
         mysqli_query($con, "SET SESSION interactive_timeout = 3600");
-        mysqli_query($con, "SET SESSION max_allowed_packet = 67108864"); // 64MB
+        // Nota: max_allowed_packet es una variable GLOBAL de solo lectura, no se puede cambiar a nivel SESSION
         
         // Establecer zona horaria
         mysqli_query($con, "SET time_zone = '-6:00'");
@@ -51,7 +51,7 @@ function ensureConnection($con) {
 if (isset($con) && $con) {
     mysqli_query($con, "SET SESSION wait_timeout = 3600");
     mysqli_query($con, "SET SESSION interactive_timeout = 3600");
-    mysqli_query($con, "SET SESSION max_allowed_packet = 67108864"); // 64MB
+    // Nota: max_allowed_packet es una variable GLOBAL de solo lectura, no se puede cambiar a nivel SESSION
 }
 
 // Función para obtener el ID de categoría por nombre
