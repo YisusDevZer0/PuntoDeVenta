@@ -62,21 +62,6 @@
     color:#000000;
   }
 
-  /* Estilos para el botón de Excel */
-  .dt-buttons {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-
-  .dt-buttons button {
-    font-size: 14px;
-    margin: 0 5px;
-    color: white; /* Cambiar el color del texto a blanco */
-    background-color: #fff; /* Cambiar el color de fondo a blanco */
-  }
-
- 
 </style>
 
 <style>
@@ -291,7 +276,7 @@ var tabla = $('#Clientes').DataTable({
 //   }
 // ],
 // Personalizar la posición de los elementos del encabezado
-"dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
+"dom": '<"d-flex justify-content-between"lf>rtip', // Modificar la disposición aquí (sin B para eliminar botones)
 "responsive": true
 });
 // Contador para cajas abiertas
