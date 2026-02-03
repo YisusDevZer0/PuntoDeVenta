@@ -774,7 +774,7 @@ try {
 
             <!-- Desglose Total -->
             <div class="text-center mt-4">
-                <h5 class="text-center mb-3">Desglose Total</h5>
+                <h5 class="text-center mb-3">Desglose Total del corte</h5>
                 <div class="table-responsive">
                     <table id="DesgloseTotalCortes" class="table table-hover">
                         <thead>
@@ -815,6 +815,7 @@ try {
 
               <!-- Mostrar la tabla de servicios si hay datos -->
         <?php if (!empty($Especialistas14)) : ?>
+          <h5 class="text-center mb-3">Desglose Total por servicios</h5>
         <div class="table-responsive">
             <table id="TotalesGeneralesCortes" class="table table-hover">
                 <thead>
