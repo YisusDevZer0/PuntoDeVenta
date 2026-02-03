@@ -45,12 +45,21 @@ if (!empty($missingFields)) {
     $gastos = isset($_POST['gastos']) ? $_POST['gastos'] : '';
     $abonos = isset($_POST['abonos']) ? $_POST['abonos'] : '';
     $encargos = isset($_POST['encargos']) ? $_POST['encargos'] : '';
+    $pagos_servicios = isset($_POST['pagos_servicios']) ? $_POST['pagos_servicios'] : '';
     $desglose_total_json = isset($_POST['desglose_total_json']) ? $_POST['desglose_total_json'] : '';
     
-    // Combinar gastos con desglose total en un solo JSON
+    // Combinar gastos con desglose total y pagos de servicios en un solo JSON
     $gastosArray = json_decode($gastos, true);
     if (!is_array($gastosArray)) {
         $gastosArray = [];
+    }
+    
+    // Agregar pagos de servicios al array de gastos
+    if (!empty($pagos_servicios)) {
+        $pagosServiciosArray = json_decode($pagos_servicios, true);
+        if (is_array($pagosServiciosArray)) {
+            $gastosArray['pagos_servicios'] = $pagosServiciosArray;
+        }
     }
     
     // Agregar desglose total al array de gastos
