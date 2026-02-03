@@ -772,6 +772,47 @@ try {
                     </div>
                 </div>
 
+            <!-- Desglose Total -->
+            <div class="text-center mt-4">
+                <h5 class="text-center mb-3">Desglose Total</h5>
+                <div class="table-responsive">
+                    <table id="DesgloseTotalCortes" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Servicios (Ventas POS)"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_servicios_ventas_pos, 2) ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Pagos de Servicios (Costo + Comisión)"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_pagos_servicios_con_comision, 2) ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Abonos a Encargos"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_abonos_general, 2) ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Encargos del Día"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_encargos_general, 2) ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Gastos del Día"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_gastos, 2) ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="TOTAL GENERAL" style="font-weight: bold;"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_desglose_general, 2) ?>" style="font-weight: bold;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
               <!-- Mostrar la tabla de servicios si hay datos -->
         <?php if (!empty($Especialistas14)) : ?>
         <div class="table-responsive">
@@ -831,47 +872,6 @@ try {
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Transferencia"></td>
                                 <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?= number_format($totalPagosEnTransferenciaFinal, 2) ?>"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Desglose Total -->
-            <div class="mt-4 mb-4">
-                <h5 class="text-center mb-3">Desglose Total</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Concepto</th>
-                                <th class="text-end">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Servicios (Ventas POS)</strong></td>
-                                <td class="text-end">$<?= number_format($total_servicios_ventas_pos, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Pagos de Servicios (Costo + Comisión)</strong></td>
-                                <td class="text-end">$<?= number_format($total_pagos_servicios_con_comision, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Abonos a Encargos</strong></td>
-                                <td class="text-end">$<?= number_format($total_abonos_general, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Encargos del Día</strong></td>
-                                <td class="text-end">$<?= number_format($total_encargos_general, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Gastos del Día</strong></td>
-                                <td class="text-end">$<?= number_format($total_gastos, 2) ?></td>
-                            </tr>
-                            <tr class="table-success">
-                                <td><strong>TOTAL GENERAL</strong></td>
-                                <td class="text-end"><strong>$<?= number_format($total_desglose_general, 2) ?></strong></td>
                             </tr>
                         </tbody>
                     </table>
