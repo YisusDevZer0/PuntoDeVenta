@@ -835,7 +835,7 @@ try {
             </table>
         </div>
         <?php endif; ?>
-
+        <h5 class="text-center mb-3">Desglose Total por formas de pago</h5>
         <!-- Campo oculto con el valor de servicios -->
         <input type="hidden" name="servicios" value='<?= json_encode($servicios) ?>'>
         <!-- Campo oculto con el valor de gastos -->
