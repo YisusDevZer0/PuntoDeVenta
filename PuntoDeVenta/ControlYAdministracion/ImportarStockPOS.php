@@ -12,6 +12,48 @@ require_once('vendor/SpreadsheetReader.php');
 
 session_start();
 
+// Función para verificar y reconectar la base de datos si es necesario
+function ensureConnection($con) {
+    global $con;
+    
+    // Verificar si la conexión está viva
+    $pingResult = @mysqli_ping($con);
+    
+    if (!$pingResult || mysqli_errno($con) == 2006 || mysqli_errno($con) == 2013) {
+        // Cerrar conexión anterior si existe
+        if ($con) {
+            @mysqli_close($con);
+        }
+        
+        // Reconectar
+        $con = connect();
+        if (!$con) {
+            die("Error: No se pudo reconectar a la base de datos");
+        }
+        
+        if (!$con->set_charset("utf8")) {
+            die("Error cargando el conjunto de caracteres utf8");
+        }
+        
+        // Configurar timeouts más largos
+        mysqli_query($con, "SET SESSION wait_timeout = 3600");
+        mysqli_query($con, "SET SESSION interactive_timeout = 3600");
+        mysqli_query($con, "SET SESSION max_allowed_packet = 67108864"); // 64MB
+        
+        // Establecer zona horaria
+        mysqli_query($con, "SET time_zone = '-6:00'");
+    }
+    
+    return $con;
+}
+
+// Configurar timeouts de MySQL al inicio
+if (isset($con) && $con) {
+    mysqli_query($con, "SET SESSION wait_timeout = 3600");
+    mysqli_query($con, "SET SESSION interactive_timeout = 3600");
+    mysqli_query($con, "SET SESSION max_allowed_packet = 67108864"); // 64MB
+}
+
 // Función para obtener el ID de categoría por nombre
 function obtenerIdCategoria($con, $nombreCategoria) {
     if (empty($nombreCategoria)) return null;
@@ -45,7 +87,9 @@ function obtenerValorColumna($row, $headerMap, $key, $defaultIndex) {
 }
 
 // Función para procesar una fila
-function procesarFila($con, $data) {
+function procesarFila(&$con, $data) {
+    // Asegurar que la conexión esté activa
+    $con = ensureConnection($con);
     $tipoServicio = $data['tipo_servicio'];
     $nombreServicio = $data['nombre_servicio'];
     $tipo = mysqli_real_escape_string($con, $data['tipo']);
@@ -119,11 +163,38 @@ function procesarFila($con, $data) {
 
     $stmt = mysqli_prepare($con, $query);
     if (!$stmt) {
-        return ['success' => false, 'error' => 'Error en consulta: ' . mysqli_error($con)];
+        // Si hay error, intentar reconectar y volver a intentar
+        if (mysqli_errno($con) == 2006 || mysqli_errno($con) == 2013) { // MySQL server has gone away
+            $con = ensureConnection($con);
+            $stmt = mysqli_prepare($con, $query);
+            if (!$stmt) {
+                return ['success' => false, 'error' => 'Error en consulta después de reconectar: ' . mysqli_error($con)];
+            }
+        } else {
+            return ['success' => false, 'error' => 'Error en consulta: ' . mysqli_error($con)];
+        }
     }
 
     mysqli_stmt_bind_param($stmt, $whereTypes, ...$whereParams);
-    mysqli_stmt_execute($stmt);
+    $executeResult = mysqli_stmt_execute($stmt);
+    
+    // Si falla la ejecución, verificar si es un error de conexión
+    if (!$executeResult) {
+        if (mysqli_errno($con) == 2006 || mysqli_errno($con) == 2013) {
+            mysqli_stmt_close($stmt);
+            $con = ensureConnection($con);
+            $stmt = mysqli_prepare($con, $query);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, $whereTypes, ...$whereParams);
+                $executeResult = mysqli_stmt_execute($stmt);
+            }
+        }
+        if (!$executeResult) {
+            mysqli_stmt_close($stmt);
+            return ['success' => false, 'error' => 'Error ejecutando consulta: ' . mysqli_error($con)];
+        }
+    }
+    
     $result = mysqli_stmt_get_result($stmt);
 
     $updated = false;
@@ -188,8 +259,68 @@ function procesarFila($con, $data) {
             $updateStmt = mysqli_prepare($con, $updateQuery);
             if ($updateStmt) {
                 mysqli_stmt_bind_param($updateStmt, $updateTypes, ...$updateParams);
-                if (mysqli_stmt_execute($updateStmt)) {
+                $updateResult = mysqli_stmt_execute($updateStmt);
+                
+                // Si falla, verificar si es error de conexión y reconectar
+                if (!$updateResult && (mysqli_errno($con) == 2006 || mysqli_errno($con) == 2013)) {
+                    mysqli_stmt_close($updateStmt);
+                    $con = ensureConnection($con);
+                    $updateStmt = mysqli_prepare($con, $updateQuery);
+                    if ($updateStmt) {
+                        mysqli_stmt_bind_param($updateStmt, $updateTypes, ...$updateParams);
+                        $updateResult = mysqli_stmt_execute($updateStmt);
+                    }
+                }
+                
+                if ($updateResult) {
                     $updated = true;
+                    
+                    // Guardar registro de auditoría en ActualizacionMaxMin si se actualizaron Max o Min
+                    if ($maxExistencia !== null || $minExistencia !== null) {
+                        // Obtener datos del producto para el registro de auditoría
+                        $auditQuery = "SELECT s.Folio_Prod_Stock, s.ID_Prod_POS, s.Cod_Barra, s.Nombre_Prod, 
+                                      su.Nombre_Sucursal 
+                                      FROM Stock_POS s 
+                                      LEFT JOIN Sucursales su ON s.Fk_sucursal = su.ID_Sucursal 
+                                      WHERE s.Folio_Prod_Stock = ? AND s.Fk_sucursal = ? LIMIT 1";
+                        $auditStmt = mysqli_prepare($con, $auditQuery);
+                        if ($auditStmt) {
+                            mysqli_stmt_bind_param($auditStmt, 'ii', $producto['Folio_Prod_Stock'], $fkSucursal);
+                            mysqli_stmt_execute($auditStmt);
+                            $auditResult = mysqli_stmt_get_result($auditStmt);
+                            $auditData = mysqli_fetch_assoc($auditResult);
+                            mysqli_stmt_close($auditStmt);
+                            
+                            if ($auditData) {
+                                // Insertar en tabla de auditoría
+                                $auditInsert = "INSERT INTO ActualizacionMaxMin (
+                                    Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, 
+                                    Fk_sucursal, Nombre_Sucursal, Max_Existencia, Min_Existencia, 
+                                    AgregadoPor, FechaAgregado, ActualizadoPor, FechaActualizado
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NOW())";
+                                
+                                $auditInsertStmt = mysqli_prepare($con, $auditInsert);
+                                if ($auditInsertStmt) {
+                                    $maxVal = $maxExistencia !== null ? $maxExistencia : 0;
+                                    $minVal = $minExistencia !== null ? $minExistencia : 0;
+                                    mysqli_stmt_bind_param($auditInsertStmt, 'iisssiiiss', 
+                                        $producto['Folio_Prod_Stock'],
+                                        $producto['ID_Prod_POS'],
+                                        $auditData['Cod_Barra'],
+                                        $auditData['Nombre_Prod'],
+                                        $fkSucursal,
+                                        $auditData['Nombre_Sucursal'],
+                                        $maxVal,
+                                        $minVal,
+                                        $ActualizadoPor,
+                                        $ActualizadoPor
+                                    );
+                                    mysqli_stmt_execute($auditInsertStmt);
+                                    mysqli_stmt_close($auditInsertStmt);
+                                }
+                            }
+                        }
+                    }
                 }
                 mysqli_stmt_close($updateStmt);
             }
@@ -298,6 +429,10 @@ if (isset($_POST["preview"])) {
 // Procesar archivo en lotes de 100 filas
 if (isset($_POST["import_batch"])) {
     header('Content-Type: application/json');
+    
+    // Asegurar conexión activa antes de procesar
+    $con = ensureConnection($con);
+    
     $filePath = isset($_SESSION['filePath']) ? $_SESSION['filePath'] : '';
     $defaultSucursal = isset($_SESSION['defaultSucursal']) ? $_SESSION['defaultSucursal'] : '';
     $headerMap = isset($_SESSION['headerMap']) ? $_SESSION['headerMap'] : [];
@@ -632,9 +767,23 @@ if ($sucursalesResult) {
                         method: 'POST',
                         body: formData
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error HTTP: ' + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.error) {
+                            // Si es error de conexión MySQL, intentar reconectar
+                            if (data.error.includes('MySQL server has gone away') || 
+                                data.error.includes('gone away')) {
+                                console.log('Error de conexión MySQL detectado, reintentando en 2 segundos...');
+                                document.getElementById('progressText').textContent = 
+                                    'Error de conexión detectado. Reconectando y continuando...';
+                                setTimeout(processBatch, 2000);
+                                return;
+                            }
                             throw new Error(data.error);
                         }
 
@@ -660,8 +809,8 @@ if ($sucursalesResult) {
 
                         // Si hay más filas, procesar siguiente lote
                         if (data.has_more && startIndex <= totalRows) {
-                            // Pequeña pausa para evitar sobrecargar el servidor
-                            setTimeout(processBatch, 100);
+                            // Pausa más larga para dar tiempo al servidor MySQL de procesar
+                            setTimeout(processBatch, 500);
                         } else {
                             // Procesamiento completado
                             processingIndicator.style.display = 'none';
@@ -684,12 +833,24 @@ if ($sucursalesResult) {
                         }
                     })
                     .catch(error => {
+                        // Si es un error de conexión, intentar reconectar y continuar
+                        if (error.message.includes('MySQL server has gone away') || 
+                            error.message.includes('gone away')) {
+                            console.log('Error de conexión detectado, reintentando en 2 segundos...');
+                            document.getElementById('progressText').textContent = 
+                                'Error de conexión detectado. Reconectando y continuando...';
+                            setTimeout(processBatch, 2000);
+                            return;
+                        }
+                        
                         processingIndicator.style.display = 'none';
                         btnImport.disabled = false;
                         Swal.fire({
                             title: 'Error',
                             html: `<p>Error procesando archivo: ${error.message}</p>
-                                   <p>Filas procesadas hasta el error: ${totalProcessed.toLocaleString()}</p>`,
+                                   <p>Filas procesadas hasta el error: ${totalProcessed.toLocaleString()}</p>
+                                   <p>Filas exitosas: ${totalProcessed.toLocaleString()}</p>
+                                   <p>Filas ignoradas: ${totalIgnored.toLocaleString()}</p>`,
                             icon: 'error',
                             confirmButtonText: 'Aceptar'
                         });
