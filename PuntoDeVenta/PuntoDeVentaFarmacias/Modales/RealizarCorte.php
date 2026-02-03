@@ -24,11 +24,32 @@ try {
         $fk_caja = mysqli_real_escape_string($conn, $fk_caja);
         $fk_sucursal = mysqli_real_escape_string($conn, $fk_sucursal);
         $id_h_o_d = mysqli_real_escape_string($conn, $id_h_o_d);
+        
+        // Obtener la fecha de apertura de la caja para filtrar correctamente
+        $sql_fecha_caja = "SELECT Fecha_Apertura FROM Cajas WHERE ID_Caja = '$fk_caja' LIMIT 1";
+        $query_fecha_caja = $conn->query($sql_fecha_caja);
+        $fecha_apertura_caja = date('Y-m-d'); // Por defecto usar fecha actual
+        if ($query_fecha_caja && $query_fecha_caja->num_rows > 0) {
+            $row_fecha = $query_fecha_caja->fetch_assoc();
+            $fecha_apertura_caja = date('Y-m-d', strtotime($row_fecha['Fecha_Apertura']));
+        }
+        
+        // Obtener la fecha de apertura de la caja para filtrar correctamente
+        $sql_fecha_caja = "SELECT Fecha_Apertura FROM Cajas WHERE ID_Caja = '$fk_caja' LIMIT 1";
+        $query_fecha_caja = $conn->query($sql_fecha_caja);
+        $fecha_apertura_caja = date('Y-m-d'); // Por defecto usar fecha actual
+        if ($query_fecha_caja && $query_fecha_caja->num_rows > 0) {
+            $row_fecha = $query_fecha_caja->fetch_assoc();
+            $fecha_apertura_caja = date('Y-m-d', strtotime($row_fecha['Fecha_Apertura']));
+        }
 
-        // CONSULTA 1
+        // CONSULTA 1 - Filtrar por fecha de apertura de la caja
         $sql1 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D 
                  FROM Ventas_POS 
-                 WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
+                 WHERE Fk_Caja = '$fk_caja' 
+                 AND Fk_sucursal = '$fk_sucursal' 
+                 AND ID_H_O_D = '$id_h_o_d'
+                 AND DATE(Fecha_venta) = '$fecha_apertura_caja'
                  ORDER BY Venta_POS_ID ASC LIMIT 1";
         $query1 = $conn->query($sql1);
         $Especialistas = null;
@@ -36,10 +57,13 @@ try {
             $Especialistas = $query1->fetch_object();
         }
 
-        // CONSULTA 2
+        // CONSULTA 2 - Filtrar por fecha de apertura de la caja
         $sql2 = "SELECT Venta_POS_ID, Folio_Ticket, Fk_Caja, Fk_sucursal, ID_H_O_D 
                  FROM Ventas_POS 
-                 WHERE Fk_Caja = '$fk_caja' AND Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' 
+                 WHERE Fk_Caja = '$fk_caja' 
+                 AND Fk_sucursal = '$fk_sucursal' 
+                 AND ID_H_O_D = '$id_h_o_d'
+                 AND DATE(Fecha_venta) = '$fecha_apertura_caja'
                  ORDER BY Venta_POS_ID DESC LIMIT 1";
         $query2 = $conn->query($sql2);
         $Especialistas2 = null;
@@ -47,13 +71,16 @@ try {
             $Especialistas2 = $query2->fetch_object();
         }
 
-        // CONSULTA 3
+        // CONSULTA 3 - Filtrar por fecha de apertura de la caja
         $sql3 = "SELECT Venta_POS_ID, Fk_Caja, Turno, Fecha_venta, Fk_sucursal, AgregadoPor, Turno, ID_H_O_D,
                         COUNT(DISTINCT Folio_Ticket) AS Total_tickets, 
                         COUNT(DISTINCT FolioSignoVital) AS Total_Folios, 
                         SUM(Importe) AS VentaTotal  
                  FROM Ventas_POS 
-                 WHERE Fk_sucursal = '$fk_sucursal' AND ID_H_O_D = '$id_h_o_d' AND Fk_Caja = '$fk_caja'";
+                 WHERE Fk_sucursal = '$fk_sucursal' 
+                 AND ID_H_O_D = '$id_h_o_d' 
+                 AND Fk_Caja = '$fk_caja'
+                 AND DATE(Fecha_venta) = '$fecha_apertura_caja'";
         $query3 = $conn->query($sql3);
         $Especialistas3 = null;
         if ($query3 && $query3->num_rows > 0) {
@@ -68,7 +95,7 @@ try {
             ];
         }
 
-        // CONSULTA 14
+        // CONSULTA 14 - Filtrar por fecha de apertura de la caja
         $sql14 = "SELECT 
                     IFNULL(Servicios_POS.Servicio_ID, '0000') AS Servicio_ID, 
                     IFNULL(Servicios_POS.Nom_Serv, 'No tiene servicio especificado') AS Nom_Serv, 
@@ -87,6 +114,7 @@ try {
                  INNER JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
                  WHERE Ventas_POS.Fk_Caja = '$fk_caja' 
                  AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
+                 AND DATE(Ventas_POS.Fecha_venta) = '$fecha_apertura_caja'
                  GROUP BY Servicio_ID, Nom_Serv";
 
         $query14 = $conn->query($sql14);
@@ -305,7 +333,10 @@ try {
 
             SUM(Ventas_POS.Importe) AS TotalCantidad
         FROM Ventas_POS 
-        WHERE Ventas_POS.Fk_Caja = '$fk_caja' AND Ventas_POS.Fk_sucursal = '$fk_sucursal' AND Ventas_POS.ID_H_O_D = '$id_h_o_d'";
+        WHERE Ventas_POS.Fk_Caja = '$fk_caja' 
+        AND Ventas_POS.Fk_sucursal = '$fk_sucursal' 
+        AND Ventas_POS.ID_H_O_D = '$id_h_o_d'
+        AND DATE(Ventas_POS.Fecha_venta) = '$fecha_apertura_caja'";
 
         $result_totales = $conn->query($sql_totales);
 
@@ -357,7 +388,7 @@ try {
         $totalPagosEnTransferencia_base = $row_totales['totalPagosEnTransferencia'] ?? 0;
         $TotalCantidad_base = $row_totales['TotalCantidad'] ?? 0;
 
-        // Nueva consulta para gastos
+        // Nueva consulta para gastos (solo del día de apertura de la caja)
         $sql_gastos = "SELECT 
             gp.ID_Gastos,
             gp.Concepto_Categoria,
@@ -375,7 +406,8 @@ try {
         INNER JOIN 
             Cajas c ON gp.Fk_Caja = c.ID_Caja
         WHERE 
-            c.ID_Caja = '$fk_caja'";
+            c.ID_Caja = '$fk_caja'
+            AND DATE(gp.FechaConcepto) = '$fecha_apertura_caja'";
 
         $query_gastos = $conn->query($sql_gastos);
         $gastos = [];
@@ -409,9 +441,8 @@ try {
         }
 
         // ================= TABLA DE ABONOS DE ENCARGOS DEL DÍA ===================
-        // Consulta de abonos de encargos del día
+        // Consulta de abonos de encargos del día (usar fecha de apertura de caja)
         $abonos_dia = [];
-        $fecha_hoy = date('Y-m-d');
 
         // Verificar si las tablas existen antes de hacer las consultas
         $sql_check_abonos = "SHOW TABLES LIKE 'historial_abonos_encargos'";
@@ -425,7 +456,7 @@ try {
             ORDER BY h.fecha_abono DESC";
             
             if ($stmt_abonos = $conn->prepare($sql_abonos)) {
-                $stmt_abonos->bind_param("sss", $fecha_hoy, $fk_sucursal, $fk_caja);
+                $stmt_abonos->bind_param("sss", $fecha_apertura_caja, $fk_sucursal, $fk_caja);
                 $stmt_abonos->execute();
                 $result_abonos = $stmt_abonos->get_result();
                 while ($abono = $result_abonos->fetch_assoc()) {
@@ -449,7 +480,7 @@ try {
             ORDER BY fecha_encargo DESC";
             
             if ($stmt_encargos = $conn->prepare($sql_encargos)) {
-                $stmt_encargos->bind_param("sss", $fecha_hoy, $fk_sucursal, $fk_caja);
+                $stmt_encargos->bind_param("sss", $fecha_apertura_caja, $fk_sucursal, $fk_caja);
                 $stmt_encargos->execute();
                 $result_encargos = $stmt_encargos->get_result();
                 while ($encargo = $result_encargos->fetch_assoc()) {
