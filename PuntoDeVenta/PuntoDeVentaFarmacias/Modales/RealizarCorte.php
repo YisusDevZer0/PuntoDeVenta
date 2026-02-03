@@ -469,6 +469,7 @@ try {
         $result_check_pagos = $conn->query($sql_check_pagos);
 
         if ($result_check_pagos && $result_check_pagos->num_rows > 0) {
+            // Consulta de pagos de servicios (sin filtro de fecha ya que la tabla no tiene campo de fecha)
             $sql15 = "SELECT 
                         ps.Servicio,
                         ls.Comision,
@@ -518,6 +519,12 @@ try {
         $totales_pagos_servicios_tarjeta = 0;
         $totales_pagos_servicios_credito = 0;
         $totales_pagos_servicios_transferencia = 0;
+        
+        // Variables para comisiones de pagos de servicios por forma de pago
+        $comisiones_pagos_servicios_efectivo = 0;
+        $comisiones_pagos_servicios_tarjeta = 0;
+        $comisiones_pagos_servicios_credito = 0;
+        $comisiones_pagos_servicios_transferencia = 0;
 
         // Calcular totales de abonos por forma de pago
         if (!empty($abonos_dia)) {
@@ -561,34 +568,42 @@ try {
             }
         }
 
-        // Calcular totales de pagos de servicios por forma de pago
-        // Necesitamos una consulta adicional para obtener FormaDePago de PagosServicios
+        // Calcular totales de pagos de servicios por forma de pago (incluyendo comisiones)
+        // Necesitamos una consulta adicional para obtener FormaDePago de PagosServicios con comisiones
         if ($result_check_pagos && $result_check_pagos->num_rows > 0) {
             $sql_pagos_servicios_totales = "SELECT 
-                FormaDePago,
-                SUM(costo) AS total_costo
-            FROM PagosServicios
-            WHERE Fk_Caja = '$fk_caja' 
-            AND Fk_Sucursal = '$fk_sucursal'
-            GROUP BY FormaDePago";
+                ps.FormaDePago,
+                SUM(ps.costo) AS total_costo,
+                SUM(IFNULL(ls.Comision, 0)) AS total_comision
+            FROM PagosServicios ps
+            LEFT JOIN ListadoServicios ls ON ps.Servicio = ls.Servicio
+            WHERE ps.Fk_Caja = '$fk_caja' 
+            AND ps.Fk_Sucursal = '$fk_sucursal'
+            GROUP BY ps.FormaDePago";
             
             $query_pagos_totales = $conn->query($sql_pagos_servicios_totales);
             if ($query_pagos_totales && $query_pagos_totales->num_rows > 0) {
                 while ($row_ps = $query_pagos_totales->fetch_assoc()) {
-                    $monto = floatval($row_ps['total_costo'] ?? 0);
+                    $monto_costo = floatval($row_ps['total_costo'] ?? 0);
+                    $monto_comision = floatval($row_ps['total_comision'] ?? 0);
                     $forma_pago = strtolower(trim($row_ps['FormaDePago'] ?? ''));
                     
                     if (strpos($forma_pago, 'efectivo') !== false || $forma_pago == 'efectivo') {
-                        $totales_pagos_servicios_efectivo += $monto;
+                        $totales_pagos_servicios_efectivo += $monto_costo;
+                        $comisiones_pagos_servicios_efectivo += $monto_comision;
                     } elseif (strpos($forma_pago, 'tarjeta') !== false || $forma_pago == 'tarjeta' || $forma_pago == 'tarjeta de credito' || $forma_pago == 'tarjeta de debito') {
-                        $totales_pagos_servicios_tarjeta += $monto;
+                        $totales_pagos_servicios_tarjeta += $monto_costo;
+                        $comisiones_pagos_servicios_tarjeta += $monto_comision;
                     } elseif (strpos($forma_pago, 'crédito') !== false || strpos($forma_pago, 'credito') !== false) {
-                        $totales_pagos_servicios_credito += $monto;
+                        $totales_pagos_servicios_credito += $monto_costo;
+                        $comisiones_pagos_servicios_credito += $monto_comision;
                     } elseif (strpos($forma_pago, 'transferencia') !== false || $forma_pago == 'transferencia') {
-                        $totales_pagos_servicios_transferencia += $monto;
+                        $totales_pagos_servicios_transferencia += $monto_costo;
+                        $comisiones_pagos_servicios_transferencia += $monto_comision;
                     } else {
                         // Si no coincide con ninguna, por defecto sumar a efectivo
-                        $totales_pagos_servicios_efectivo += $monto;
+                        $totales_pagos_servicios_efectivo += $monto_costo;
+                        $comisiones_pagos_servicios_efectivo += $monto_comision;
                     }
                 }
             }
@@ -613,10 +628,40 @@ try {
             $TotalCantidad += floatval($encargo['abono_parcial'] ?? 0);
         }
         
-        // Sumar totales de pagos de servicios (solo costo, sin comisión para evitar duplicados si ya se cuenta en ventas)
+        // Sumar totales de pagos de servicios (costo + comisión)
         foreach ($pagosServicios as $pago) {
-            $TotalCantidad += floatval($pago['total_costo'] ?? 0);
+            $TotalCantidad += floatval($pago['total_con_comision'] ?? $pago['total_costo'] ?? 0);
         }
+
+        // Calcular el total de venta completo (incluyendo pagos de servicios con comisión, abonos y encargos)
+        $VentaTotalCompleto = floatval($Especialistas3->VentaTotal ?? 0);
+        
+        // Sumar totales de abonos
+        foreach ($abonos_dia as $abono) {
+            $VentaTotalCompleto += floatval($abono['monto_abonado'] ?? 0);
+        }
+        
+        // Sumar abonos parciales de encargos del día
+        foreach ($encargos_dia as $encargo) {
+            $VentaTotalCompleto += floatval($encargo['abono_parcial'] ?? 0);
+        }
+        
+        // Sumar totales de pagos de servicios (costo + comisión)
+        foreach ($pagosServicios as $pago) {
+            $VentaTotalCompleto += floatval($pago['total_con_comision'] ?? $pago['total_costo'] ?? 0);
+        }
+        
+        // Calcular comisiones totales por forma de pago
+        $comision_total_efectivo = $comisiones_pagos_servicios_efectivo;
+        $comision_total_tarjeta = $comisiones_pagos_servicios_tarjeta;
+        $comision_total_creditos = $comisiones_pagos_servicios_credito;
+        $comision_total_transferencia = $comisiones_pagos_servicios_transferencia;
+        
+        // Calcular totales con comisión por forma de pago
+        $totalPagosEnEfectivoConComision = $totalPagosEnEfectivo + $comision_total_efectivo;
+        $totalPagosEnTarjetaConComision = $totalPagosEnTarjeta + $comision_total_tarjeta;
+        $totalPagosEnCreditosConComision = $totalPagosEnCreditos + $comision_total_creditos;
+        $totalPagosEnTransferenciaConComision = $totalPagosEnTransferencia + $comision_total_transferencia;
 
         ?>
 
@@ -654,7 +699,7 @@ try {
                         <div class="col-md-6">
                             <label for="exampleFormControlInput1">Total de venta</label>
                             <input type="number" class="form-control" id="cantidadtotalventassss" name="VentaTotal" step="any" readonly 
-                                   value="<?= $Especialistas3->VentaTotal ?? 0 ?>" aria-describedby="basic-addon1">
+                                   value="<?= $VentaTotalCompleto ?>" aria-describedby="basic-addon1">
                         </div>
 
                         <div class="col-md-6">
@@ -686,7 +731,14 @@ try {
             </table>
         </div>
         <?php else : ?>
-        <p class="alert alert-danger">No se encontraron servicios para mostrar.</p>
+        <p class="alert alert-info">
+            <?php if (!empty($Especialistas15)): ?>
+                No se encontraron servicios de ventas POS para mostrar, pero hay <?= count($Especialistas15) ?> tipo(s) de pago(s) de servicios registrado(s). 
+                Revisa la sección "Pagos de servicios" en el acordeón para ver el detalle.
+            <?php else: ?>
+                No se encontraron servicios de ventas POS para mostrar.
+            <?php endif; ?>
+        </p>
         <?php endif; ?>
 
         <!-- Campo oculto con el valor de servicios -->
@@ -708,24 +760,34 @@ try {
                             <tr>
                                 <th>Forma de pago</th>
                                 <th>Total</th>
+                                <th>Comisión</th>
+                                <th>Total con Comisión</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Efectivo"></td>
-                                <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?= $totalPagosEnEfectivo ?>"></td>
+                                <td><input type="text" class="form-control" name="EfectivoTotal" readonly value="<?= number_format($totalPagosEnEfectivo, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($comision_total_efectivo, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($totalPagosEnEfectivoConComision, 2) ?>"></td>
                             </tr>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Tarjeta"></td>
-                                <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?= $totalPagosEnTarjeta ?>"></td>
+                                <td><input type="text" class="form-control" name="TarjetaTotal" readonly value="<?= number_format($totalPagosEnTarjeta, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($comision_total_tarjeta, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($totalPagosEnTarjetaConComision, 2) ?>"></td>
                             </tr>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Créditos"></td>
-                                <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?= $totalPagosEnCreditos ?>"></td>
+                                <td><input type="text" class="form-control" name="CreditosTotales" readonly value="<?= number_format($totalPagosEnCreditos, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($comision_total_creditos, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($totalPagosEnCreditosConComision, 2) ?>"></td>
                             </tr>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Transferencia"></td>
-                                <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?= $totalPagosEnTransferencia ?>"></td>
+                                <td><input type="text" class="form-control" name="TotalTransferencias" readonly value="<?= number_format($totalPagosEnTransferencia, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($comision_total_transferencia, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format($totalPagosEnTransferenciaConComision, 2) ?>"></td>
                             </tr>
                         </tbody>
                     </table>
