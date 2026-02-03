@@ -348,11 +348,14 @@ try {
         $totalTransferencia = $row_totales['totalTransferencia'] ?? 0;
         $complementoEfectivoTransferencia = $row_totales['complementoEfectivoTransferencia'] ?? 0;
         $complementoTransferencia = $row_totales['complementoTransferencia'] ?? 0;
-        $totalPagosEnEfectivo = $row_totales['totalPagosEnEfectivo'] ?? 0;
-        $totalPagosEnTarjeta = $row_totales['totalPagosEnTarjeta'] ?? 0;
-        $totalPagosEnCreditos = $row_totales['totalPagosEnCreditos'] ?? 0;
-        $totalPagosEnTransferencia = $row_totales['totalPagosEnTransferencia'] ?? 0;
-        $TotalCantidad = $row_totales['TotalCantidad'] ?? 0;
+        
+        // Los totales de formas de pago se calcularán más abajo incluyendo abonos, encargos y pagos de servicios
+        // Inicializar valores base desde Ventas_POS
+        $totalPagosEnEfectivo_base = $row_totales['totalPagosEnEfectivo'] ?? 0;
+        $totalPagosEnTarjeta_base = $row_totales['totalPagosEnTarjeta'] ?? 0;
+        $totalPagosEnCreditos_base = $row_totales['totalPagosEnCreditos'] ?? 0;
+        $totalPagosEnTransferencia_base = $row_totales['totalPagosEnTransferencia'] ?? 0;
+        $TotalCantidad_base = $row_totales['TotalCantidad'] ?? 0;
 
         // Nueva consulta para gastos
         $sql_gastos = "SELECT 
@@ -440,7 +443,7 @@ try {
         $result_check_encargos = $conn->query($sql_check_encargos);
 
         if ($result_check_encargos && $result_check_encargos->num_rows > 0) {
-            $sql_encargos = "SELECT id, nombre_paciente, medicamento, cantidad, precioventa, abono_parcial, fecha_encargo, estado
+            $sql_encargos = "SELECT id, nombre_paciente, medicamento, cantidad, precioventa, abono_parcial, fecha_encargo, estado, FormaDePago
             FROM encargos
             WHERE DATE(fecha_encargo) = ? AND Fk_Sucursal = ? AND Fk_Caja = ?
             ORDER BY fecha_encargo DESC";
@@ -497,6 +500,122 @@ try {
                     ];
                 }
             }
+        }
+
+        // ================= CALCULAR TOTALES ADICIONALES POR FORMA DE PAGO ===================
+        // Inicializar variables para totales adicionales
+        $totales_abonos_efectivo = 0;
+        $totales_abonos_tarjeta = 0;
+        $totales_abonos_credito = 0;
+        $totales_abonos_transferencia = 0;
+        
+        $totales_encargos_efectivo = 0;
+        $totales_encargos_tarjeta = 0;
+        $totales_encargos_credito = 0;
+        $totales_encargos_transferencia = 0;
+        
+        $totales_pagos_servicios_efectivo = 0;
+        $totales_pagos_servicios_tarjeta = 0;
+        $totales_pagos_servicios_credito = 0;
+        $totales_pagos_servicios_transferencia = 0;
+
+        // Calcular totales de abonos por forma de pago
+        if (!empty($abonos_dia)) {
+            foreach ($abonos_dia as $abono) {
+                $monto = floatval($abono['monto_abonado'] ?? 0);
+                $forma_pago = strtolower(trim($abono['forma_pago'] ?? ''));
+                
+                if (strpos($forma_pago, 'efectivo') !== false || $forma_pago == 'efectivo') {
+                    $totales_abonos_efectivo += $monto;
+                } elseif (strpos($forma_pago, 'tarjeta') !== false || $forma_pago == 'tarjeta' || $forma_pago == 'tarjeta de credito' || $forma_pago == 'tarjeta de debito') {
+                    $totales_abonos_tarjeta += $monto;
+                } elseif (strpos($forma_pago, 'crédito') !== false || strpos($forma_pago, 'credito') !== false) {
+                    $totales_abonos_credito += $monto;
+                } elseif (strpos($forma_pago, 'transferencia') !== false || $forma_pago == 'transferencia') {
+                    $totales_abonos_transferencia += $monto;
+                } else {
+                    // Si no coincide con ninguna, por defecto sumar a efectivo
+                    $totales_abonos_efectivo += $monto;
+                }
+            }
+        }
+
+        // Calcular totales de encargos por forma de pago
+        if (!empty($encargos_dia)) {
+            foreach ($encargos_dia as $encargo) {
+                $monto = floatval($encargo['abono_parcial'] ?? 0);
+                $forma_pago = strtolower(trim($encargo['FormaDePago'] ?? ''));
+                
+                if (strpos($forma_pago, 'efectivo') !== false || $forma_pago == 'efectivo') {
+                    $totales_encargos_efectivo += $monto;
+                } elseif (strpos($forma_pago, 'tarjeta') !== false || $forma_pago == 'tarjeta' || $forma_pago == 'tarjeta de credito' || $forma_pago == 'tarjeta de debito') {
+                    $totales_encargos_tarjeta += $monto;
+                } elseif (strpos($forma_pago, 'crédito') !== false || strpos($forma_pago, 'credito') !== false) {
+                    $totales_encargos_credito += $monto;
+                } elseif (strpos($forma_pago, 'transferencia') !== false || $forma_pago == 'transferencia') {
+                    $totales_encargos_transferencia += $monto;
+                } else {
+                    // Si no coincide con ninguna, por defecto sumar a efectivo
+                    $totales_encargos_efectivo += $monto;
+                }
+            }
+        }
+
+        // Calcular totales de pagos de servicios por forma de pago
+        // Necesitamos una consulta adicional para obtener FormaDePago de PagosServicios
+        if ($result_check_pagos && $result_check_pagos->num_rows > 0) {
+            $sql_pagos_servicios_totales = "SELECT 
+                FormaDePago,
+                SUM(costo) AS total_costo
+            FROM PagosServicios
+            WHERE Fk_Caja = '$fk_caja' 
+            AND Fk_Sucursal = '$fk_sucursal'
+            GROUP BY FormaDePago";
+            
+            $query_pagos_totales = $conn->query($sql_pagos_servicios_totales);
+            if ($query_pagos_totales && $query_pagos_totales->num_rows > 0) {
+                while ($row_ps = $query_pagos_totales->fetch_assoc()) {
+                    $monto = floatval($row_ps['total_costo'] ?? 0);
+                    $forma_pago = strtolower(trim($row_ps['FormaDePago'] ?? ''));
+                    
+                    if (strpos($forma_pago, 'efectivo') !== false || $forma_pago == 'efectivo') {
+                        $totales_pagos_servicios_efectivo += $monto;
+                    } elseif (strpos($forma_pago, 'tarjeta') !== false || $forma_pago == 'tarjeta' || $forma_pago == 'tarjeta de credito' || $forma_pago == 'tarjeta de debito') {
+                        $totales_pagos_servicios_tarjeta += $monto;
+                    } elseif (strpos($forma_pago, 'crédito') !== false || strpos($forma_pago, 'credito') !== false) {
+                        $totales_pagos_servicios_credito += $monto;
+                    } elseif (strpos($forma_pago, 'transferencia') !== false || $forma_pago == 'transferencia') {
+                        $totales_pagos_servicios_transferencia += $monto;
+                    } else {
+                        // Si no coincide con ninguna, por defecto sumar a efectivo
+                        $totales_pagos_servicios_efectivo += $monto;
+                    }
+                }
+            }
+        }
+
+        // Sumar los totales adicionales a los totales principales
+        $totalPagosEnEfectivo = $totalPagosEnEfectivo_base + $totales_abonos_efectivo + $totales_encargos_efectivo + $totales_pagos_servicios_efectivo;
+        $totalPagosEnTarjeta = $totalPagosEnTarjeta_base + $totales_abonos_tarjeta + $totales_encargos_tarjeta + $totales_pagos_servicios_tarjeta;
+        $totalPagosEnCreditos = $totalPagosEnCreditos_base + $totales_abonos_credito + $totales_encargos_credito + $totales_pagos_servicios_credito;
+        $totalPagosEnTransferencia = $totalPagosEnTransferencia_base + $totales_abonos_transferencia + $totales_encargos_transferencia + $totales_pagos_servicios_transferencia;
+
+        // Actualizar TotalCantidad sumando los montos de abonos, encargos y pagos de servicios
+        $TotalCantidad = $TotalCantidad_base;
+        
+        // Sumar totales de abonos
+        foreach ($abonos_dia as $abono) {
+            $TotalCantidad += floatval($abono['monto_abonado'] ?? 0);
+        }
+        
+        // Sumar abonos parciales de encargos del día
+        foreach ($encargos_dia as $encargo) {
+            $TotalCantidad += floatval($encargo['abono_parcial'] ?? 0);
+        }
+        
+        // Sumar totales de pagos de servicios (solo costo, sin comisión para evitar duplicados si ya se cuenta en ventas)
+        foreach ($pagosServicios as $pago) {
+            $TotalCantidad += floatval($pago['total_costo'] ?? 0);
         }
 
         ?>
