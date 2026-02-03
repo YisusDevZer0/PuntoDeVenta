@@ -722,8 +722,8 @@ try {
         // Total de gastos (ya calculado anteriormente)
         // $total_gastos ya está calculado
         
-        // Total general del desglose
-        $total_desglose_general = $total_servicios_ventas_pos + $total_pagos_servicios_con_comision + $total_abonos_general + $total_encargos_general + $total_gastos;
+        // Total general del desglose (los gastos se restan, no se suman)
+        $total_desglose_general = $total_servicios_ventas_pos + $total_pagos_servicios_con_comision + $total_abonos_general + $total_encargos_general - $total_gastos;
 
         ?>
 
@@ -802,7 +802,7 @@ try {
                             </tr>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="Gastos del Día"></td>
-                                <td><input type="text" class="form-control" readonly value="<?= number_format($total_gastos, 2) ?>"></td>
+                                <td><input type="text" class="form-control" readonly value="<?= number_format(-$total_gastos, 2) ?>" style="color: red;"></td>
                             </tr>
                             <tr>
                                 <td><input type="text" class="form-control" readonly value="TOTAL GENERAL" style="font-weight: bold;"></td>
