@@ -806,6 +806,47 @@ try {
                 </div>
             </div>
 
+            <!-- Desglose Total -->
+            <div class="mt-4 mb-4">
+                <h5 class="text-center mb-3">Desglose Total</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Concepto</th>
+                                <th class="text-end">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Servicios (Ventas POS)</strong></td>
+                                <td class="text-end">$<?= number_format($total_servicios_ventas_pos, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pagos de Servicios (Costo + Comisión)</strong></td>
+                                <td class="text-end">$<?= number_format($total_pagos_servicios_con_comision, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Abonos a Encargos</strong></td>
+                                <td class="text-end">$<?= number_format($total_abonos_general, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Encargos del Día</strong></td>
+                                <td class="text-end">$<?= number_format($total_encargos_general, 2) ?></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gastos del Día</strong></td>
+                                <td class="text-end">$<?= number_format($total_gastos, 2) ?></td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>TOTAL GENERAL</strong></td>
+                                <td class="text-end"><strong>$<?= number_format($total_desglose_general, 2) ?></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Mensaje para el usuario sobre el acordeón -->
             <div class="alert alert-info text-center" role="alert">
               Puedes hacer <strong>clic en cada sección</strong> para mostrar u ocultar el desglose de información.
@@ -1006,52 +1047,27 @@ try {
               </div>
             </div>
 
-            <!-- Desglose Total -->
-            <div class="mt-4 mb-4">
-                <h5 class="text-center mb-3">Desglose Total</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Concepto</th>
-                                <th class="text-end">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Servicios (Ventas POS)</strong></td>
-                                <td class="text-end">$<?= number_format($total_servicios_ventas_pos, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Pagos de Servicios (Costo + Comisión)</strong></td>
-                                <td class="text-end">$<?= number_format($total_pagos_servicios_con_comision, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Abonos a Encargos</strong></td>
-                                <td class="text-end">$<?= number_format($total_abonos_general, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Encargos del Día</strong></td>
-                                <td class="text-end">$<?= number_format($total_encargos_general, 2) ?></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Gastos del Día</strong></td>
-                                <td class="text-end">$<?= number_format($total_gastos, 2) ?></td>
-                            </tr>
-                            <tr class="table-success">
-                                <td><strong>TOTAL GENERAL</strong></td>
-                                <td class="text-end"><strong>$<?= number_format($total_desglose_general, 2) ?></strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <!-- Campos ocultos y observaciones -->
             <input type="hidden" name="Sistema" value="Ventas">
             <input type="hidden" name="ID_H_O_D" value="DoctorPez">
             <input type="hidden" name="total_gastos" value="<?= $total_gastos ?>">
             <input type="hidden" name="FechaDelCorte" value="<?= date('Y-m-d') ?>">
+            
+            <!-- Campos ocultos para el desglose total (para guardar e imprimir) -->
+            <input type="hidden" name="desglose_total_servicios_pos" value="<?= $total_servicios_ventas_pos ?>">
+            <input type="hidden" name="desglose_total_pagos_servicios" value="<?= $total_pagos_servicios_con_comision ?>">
+            <input type="hidden" name="desglose_total_abonos" value="<?= $total_abonos_general ?>">
+            <input type="hidden" name="desglose_total_encargos" value="<?= $total_encargos_general ?>">
+            <input type="hidden" name="desglose_total_gastos" value="<?= $total_gastos ?>">
+            <input type="hidden" name="desglose_total_general" value="<?= $total_desglose_general ?>">
+            <input type="hidden" name="desglose_total_json" value='<?= json_encode([
+                'servicios_pos' => $total_servicios_ventas_pos,
+                'pagos_servicios' => $total_pagos_servicios_con_comision,
+                'abonos' => $total_abonos_general,
+                'encargos' => $total_encargos_general,
+                'gastos' => $total_gastos,
+                'total_general' => $total_desglose_general
+            ]) ?>'>
             
             <label for="comentarios">Observaciones:</label>
             <textarea class="form-control" id="comentarios" name="comentarios" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
