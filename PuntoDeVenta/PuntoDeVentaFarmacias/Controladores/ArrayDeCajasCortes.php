@@ -7,9 +7,10 @@ include_once "ControladorUsuario.php";
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 $nombre_apellidos = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';
 
-// Obtener parámetros de filtro
-$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
-$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-d');
+// Obtener parámetros de filtro - Por defecto mostrar todos los cortes del año en curso
+$anio_actual = date('Y');
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : $anio_actual . '-01-01';
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : $anio_actual . '-12-31';
 $sucursal = isset($_GET['sucursal']) ? $_GET['sucursal'] : '';
 $cajero = isset($_GET['cajero']) ? $_GET['cajero'] : '';
 
@@ -24,18 +25,14 @@ $sql = "SELECT Cajas.ID_Caja, Cajas.Cantidad_Fondo, Cajas.Empleado, Cajas.Sucurs
 $params = [];
 $types = "ss";
 
-// Filtrar por fecha de apertura
-if (!empty($fecha_inicio)) {
-    $sql .= " AND DATE(Cajas.Fecha_Apertura) >= ?";
-    $params[] = $fecha_inicio;
-    $types .= "s";
-}
+// Filtrar por fecha de apertura (siempre incluir filtro de año en curso)
+$sql .= " AND DATE(Cajas.Fecha_Apertura) >= ?";
+$params[] = $fecha_inicio;
+$types .= "s";
 
-if (!empty($fecha_fin)) {
-    $sql .= " AND DATE(Cajas.Fecha_Apertura) <= ?";
-    $params[] = $fecha_fin;
-    $types .= "s";
-}
+$sql .= " AND DATE(Cajas.Fecha_Apertura) <= ?";
+$params[] = $fecha_fin;
+$types .= "s";
 
 // Filtrar por sucursal (si se especifica y es diferente a la del usuario)
 if (!empty($sucursal) && $sucursal != $fk_sucursal) {

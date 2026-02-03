@@ -211,30 +211,19 @@ var tabla = $('#Clientes').DataTable({
  "order": [[ 0, "desc" ]],
  "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeCajasCortes.php",
  "fnServerData": function ( sSource, aoData, fnCallback ) {
-     // Agregar parámetros de filtro a la petición
-     var fecha_inicio = $('#fecha_inicio').val();
-     var fecha_fin = $('#fecha_fin').val();
-     var sucursal = $('#filtro_sucursal').val();
-     var cajero = $('#filtro_cajero').val();
+     // Cargar todos los cortes del año en curso
+     var anio_actual = new Date().getFullYear();
+     var fecha_inicio = anio_actual + '-01-01';
+     var fecha_fin = anio_actual + '-12-31';
      
      // Limpiar parámetros anteriores
      aoData = aoData.filter(function(item) {
          return !['fecha_inicio', 'fecha_fin', 'sucursal', 'cajero'].includes(item.name);
      });
      
-     // Agregar los parámetros de filtro
-     if (fecha_inicio && fecha_inicio.trim() !== '') {
-         aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
-     }
-     if (fecha_fin && fecha_fin.trim() !== '') {
-         aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
-     }
-     if (sucursal && sucursal.trim() !== '') {
-         aoData.push( { "name": "sucursal", "value": sucursal } );
-     }
-     if (cajero && cajero.trim() !== '') {
-         aoData.push( { "name": "cajero", "value": cajero } );
-     }
+     // Agregar los parámetros del año en curso
+     aoData.push( { "name": "fecha_inicio", "value": fecha_inicio } );
+     aoData.push( { "name": "fecha_fin", "value": fecha_fin } );
      
      $.ajax( {
          "dataType": 'json',

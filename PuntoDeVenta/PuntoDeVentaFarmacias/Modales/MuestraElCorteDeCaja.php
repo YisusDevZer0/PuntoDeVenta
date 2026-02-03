@@ -19,7 +19,7 @@ error_log("ID de caja recibido: " . $fk_caja);
 $sql = "SELECT ID_Caja, Fk_Caja, Empleado, Sucursal, Turno, TotalTickets, 
                Valor_Total_Caja, TotalEfectivo, TotalTarjeta, TotalCreditos, 
                TotalTransferencias, Hora_Cierre, Sistema, ID_H_O_D, Comentarios,
-               Servicios, Gastos 
+               Servicios, Gastos, Abonos, Encargos
         FROM Cortes_Cajas_POS 
         WHERE Fk_Caja = ?";
 
@@ -45,88 +45,84 @@ if ($result && $result->num_rows > 0) {
     exit;
 }
 
-// CONSULTA 2: Obtener servicios y gastos
-$sqlDetalles = "SELECT Servicios, Gastos FROM Cortes_Cajas_POS WHERE Fk_Caja = ?";
-$stmtDetalles = $conn->prepare($sqlDetalles);
-if (!$stmtDetalles) {
-    error_log("Error en la preparación de la consulta de detalles: " . $conn->error);
-    echo '<p class="alert alert-danger">Error en la preparación de la consulta de detalles.</p>';
-    exit;
-}
-
-$stmtDetalles->bind_param("s", $fk_caja);
-$stmtDetalles->execute();
-$resultDetalles = $stmtDetalles->get_result();
-
+// Procesar datos del corte
 $servicios = [];
 $gastos = [];
+$abonos = [];
+$encargos = [];
 $totalGastos = 0;
+$desglose_total = null;
 
-if ($resultDetalles && $resultDetalles->num_rows > 0) {
-    $rowDetalles = $resultDetalles->fetch_object();
-    error_log("ID de caja consultado: " . $fk_caja);
-    error_log("Gastos encontrados en BD: " . $rowDetalles->Gastos);
-    
-    // Procesar servicios
-    if (!empty($rowDetalles->Servicios)) {
-        $serviciosArray = explode(", ", $rowDetalles->Servicios);
-        foreach ($serviciosArray as $servicio) {
-            $servicioPartes = explode(": ", $servicio);
-            if (count($servicioPartes) === 2) {
-                $servicios[] = [
-                    'nombre' => trim($servicioPartes[0]),
-                    'total' => trim($servicioPartes[1])
-                ];
-            }
+// Procesar servicios
+if (!empty($datosCorte->Servicios)) {
+    $serviciosArray = explode(", ", $datosCorte->Servicios);
+    foreach ($serviciosArray as $servicio) {
+        $servicioPartes = explode(": ", $servicio);
+        if (count($servicioPartes) === 2) {
+            $servicios[] = [
+                'nombre' => trim($servicioPartes[0]),
+                'total' => trim($servicioPartes[1])
+            ];
         }
     }
+}
 
-    // Procesar gastos
-    if (!empty($rowDetalles->Gastos)) {
-        error_log("Iniciando procesamiento de gastos...");
-        // Primero separar por la última coma que precede a TOTAL GASTOS
-        $partes = explode(", TOTAL GASTOS:", $rowDetalles->Gastos);
+// Procesar gastos (ahora viene como JSON con desglose_total)
+if (!empty($datosCorte->Gastos)) {
+    $gastosData = json_decode($datosCorte->Gastos, true);
+    if (is_array($gastosData)) {
+        // Obtener el desglose total si existe
+        if (isset($gastosData['desglose_total'])) {
+            $desglose_total = $gastosData['desglose_total'];
+        }
+        
+        // Obtener los gastos del detalle
+        if (isset($gastosData['detalle']) && is_array($gastosData['detalle'])) {
+            $gastos = $gastosData['detalle'];
+        }
+        
+        // Obtener el total de gastos
+        if (isset($gastosData['total'])) {
+            $totalGastos = floatval($gastosData['total']);
+        }
+    } else {
+        // Formato antiguo - intentar procesar como string
+        $partes = explode(", TOTAL GASTOS:", $datosCorte->Gastos);
         if (count($partes) === 2) {
-            // Procesar el total
             $totalGastos = floatval(trim(str_replace('$', '', $partes[1])));
-            error_log("Total de gastos extraído: " . $totalGastos);
-
-            // Procesar los gastos individuales
             $gastosArray = explode(", ", $partes[0]);
-            error_log("Gastos separados: " . print_r($gastosArray, true));
-            
             foreach ($gastosArray as $gasto) {
-                error_log("Procesando gasto: " . $gasto);
-                
-                // Ajustar la expresión regular para que coincida exactamente con el formato
                 if (preg_match('/^([^:]+): \$([\d.]+) \(Recibe: ([^,]+), Fecha: ([^)]+)\)$/', trim($gasto), $matches)) {
-                    error_log("Gasto procesado exitosamente: " . print_r($matches, true));
                     $gastos[] = [
                         'concepto' => trim($matches[1]),
                         'importe' => floatval($matches[2]),
                         'recibe' => trim($matches[3]),
                         'fecha' => trim($matches[4])
                     ];
-                } else {
-                    error_log("No se pudo procesar el gasto: " . $gasto);
                 }
             }
-        } else {
-            error_log("Formato de gastos no reconocido: " . $rowDetalles->Gastos);
         }
-        
-        error_log("Gastos finales procesados: " . print_r($gastos, true));
-        error_log("Total de gastos final: " . $totalGastos);
-    } else {
-        error_log("No hay gastos para procesar en la BD");
     }
-} else {
-    error_log("No se encontraron detalles para la caja: " . $fk_caja);
 }
 
-// Cerrar los statements
+// Procesar abonos
+if (!empty($datosCorte->Abonos)) {
+    $abonos = json_decode($datosCorte->Abonos, true);
+    if (!is_array($abonos)) {
+        $abonos = [];
+    }
+}
+
+// Procesar encargos
+if (!empty($datosCorte->Encargos)) {
+    $encargos = json_decode($datosCorte->Encargos, true);
+    if (!is_array($encargos)) {
+        $encargos = [];
+    }
+}
+
+// Cerrar el statement
 $stmt->close();
-$stmtDetalles->close();
 
 // Verificación final antes de mostrar
 error_log("Verificación final - Número de gastos: " . count($gastos));
@@ -170,6 +166,49 @@ error_log("Verificación final - Total de gastos: " . $totalGastos);
                 </tbody>
             </table>
         </div>
+
+        <!-- Desglose Total -->
+        <?php if ($desglose_total && is_array($desglose_total)): ?>
+            <div class="text-center mt-4">
+                <h5 class="text-center mb-3">Desglose Total del corte</h5>
+                <div class="table-responsive">
+                    <table id="DesgloseTotalCortes" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Servicios (Ventas POS)"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['servicios_pos']) ? floatval($desglose_total['servicios_pos']) : 0, 2); ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Pagos de Servicios (Costo + Comisión)"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['pagos_servicios']) ? floatval($desglose_total['pagos_servicios']) : 0, 2); ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Abonos a Encargos"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['abonos']) ? floatval($desglose_total['abonos']) : 0, 2); ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Encargos del Día"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['encargos']) ? floatval($desglose_total['encargos']) : 0, 2); ?>"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="Gastos del Día"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['gastos']) ? -floatval($desglose_total['gastos']) : 0, 2); ?>" style="color: red;"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="form-control" readonly value="TOTAL GENERAL" style="font-weight: bold;"></td>
+                                <td><input type="text" class="form-control" readonly value="<?php echo number_format(isset($desglose_total['total_general']) ? floatval($desglose_total['total_general']) : 0, 2); ?>" style="font-weight: bold;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <!-- Desglose de servicios -->
         <div class="table-responsive">
