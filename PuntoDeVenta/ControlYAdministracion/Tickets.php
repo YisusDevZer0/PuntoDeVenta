@@ -221,10 +221,10 @@ include_once "Controladores/ControladorUsuario.php";
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#FiltroPorSucursal">
                                         <i class="fas fa-clinic-medical me-1"></i> Filtrar por Sucursal
                                     </button>
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#FiltroEspecificoMes">
+                                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#FiltroEspecificoMes">
                                         <i class="fas fa-calendar-week me-1"></i> Buscar por Mes
                                     </button>
-                                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#FiltroRangoFechas">
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#FiltroRangoFechas">
                                         <i class="fas fa-calendar me-1"></i> Rango de Fechas
                                     </button>
                                     <button type="button" class="btn btn-success" onclick="cargarTickets()">
@@ -247,8 +247,15 @@ include_once "Controladores/ControladorUsuario.php";
 
     <script>
     $(document).ready(function() {
-        // Cargar tickets al iniciar la página
-        cargarTickets();
+        // Esperar un momento para que todos los scripts se carguen
+        setTimeout(function() {
+            // Cargar tickets al iniciar la página
+            if (typeof CargaServicios === 'function') {
+                CargaServicios();
+            } else {
+                cargarTickets();
+            }
+        }, 500);
         
         // Delegación de eventos para el botón "btn-Reimpresion"
         $(document).on("click", ".btn-Reimpresion", function() {
@@ -295,11 +302,17 @@ include_once "Controladores/ControladorUsuario.php";
         });
     });
 
-    // Función para cargar tickets (debe ser implementada en el archivo JS correspondiente)
+    // Función para cargar tickets (implementada en DesgloseTicketss.js)
     function cargarTickets() {
-        // Esta función debe ser implementada en el archivo DesgloseTicketss.js
-        // o en el archivo JS correspondiente para cargar los datos de tickets
-        console.log("Cargando tickets...");
+        if (typeof aplicarFiltros === 'function') {
+            aplicarFiltros();
+        } else if (typeof CargaServicios === 'function') {
+            CargaServicios();
+        } else {
+            console.log("Cargando tickets...");
+            // Recargar la página si las funciones no están disponibles
+            location.reload();
+        }
     }
     </script>
 

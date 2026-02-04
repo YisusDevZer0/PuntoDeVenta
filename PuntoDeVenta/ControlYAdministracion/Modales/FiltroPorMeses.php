@@ -1,15 +1,15 @@
-<div class="modal fade bd-example-modal-xl" id="FiltroEspecificoMesxd" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-notify modal-success">
+<div class="modal fade" id="FiltroEspecificoMes" tabindex="-1" role="dialog" aria-labelledby="FiltroEspecificoMesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-notify modal-success">
         <div class="modal-content">
             <div class="text-center">
-                <div class="modal-header">
-                    <h5 class="modal-title">Filtrado de ventas por sucursal <i class="fas fa-credit-card"></i></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" class="white-text">&times;</span>
-                    </button>
+                <div class="modal-header" style="background-color: #ef7980 !important;">
+                    <h5 class="modal-title" style="color:white;" id="FiltroEspecificoMesLabel">
+                        <i class="fas fa-calendar-week me-2"></i>Buscar por Mes
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white; opacity: 1;"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="FiltroPorMesVentas" method="POST">
+                    <form id="formFiltroMes">
                         <div class="form-row">
                             <div class="col">
                                 <label for="mesesSelect">Seleccione un mes</label>
@@ -17,7 +17,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="calendario"><i class="far fa-calendar"></i></span>
                                     </div>
-                                    <select id="mesesSelect" class="form-control" name="Mes" required>
+                                    <select id="mesesSelect" class="form-control" required>
                                         <option value="">Seleccione un mes:</option>
                                         <option value="01">Enero</option>
                                         <option value="02">Febrero</option>
@@ -40,11 +40,11 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="calendario"><i class="far fa-calendar"></i></span>
                                     </div>
-                                    <select id="añosSelect" class="form-control" name="anual" required>
+                                    <select id="añosSelect" class="form-control" required>
                                         <option value="">Seleccione un año:</option>
                                         <?php
                                         $añoActual = date('Y');
-                                        $añosAtras = 5; // Puedes ajustar este valor para mostrar más años pasados
+                                        $añosAtras = 5;
                                         for ($i = $añoActual; $i >= ($añoActual - $añosAtras); $i--) {
                                             echo "<option value='$i'>$i</option>";
                                         }
@@ -53,7 +53,14 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success">Realizar Busqueda <i class="fas fa-exchange-alt"></i></button>
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-success" onclick="aplicarFiltroMes()">
+                                <i class="fas fa-filter me-1"></i>Aplicar Filtro
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -61,4 +68,20 @@
     </div>
 </div>
 
-
+<script>
+function aplicarFiltroMes() {
+    var mes = $('#mesesSelect').val();
+    var anio = $('#añosSelect').val();
+    
+    if (!mes || !anio) {
+        alert('Por favor seleccione un mes y un año');
+        return;
+    }
+    
+    if (typeof filtrarPorMes === 'function') {
+        filtrarPorMes(mes, anio);
+    } else {
+        console.error('La función filtrarPorMes no está definida');
+    }
+}
+</script>

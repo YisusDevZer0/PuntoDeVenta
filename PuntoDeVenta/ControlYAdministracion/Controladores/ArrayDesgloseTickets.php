@@ -18,8 +18,21 @@ function fechaCastellano($fecha) {
     $nombreMes = str_replace($meses_EN, $meses_ES, $mes);
     return $nombredia . " " . $numeroDia . " de " . $nombreMes . " de " . $anio;
 }
-// Obtener el valor de Fk_Sucursal desde la solicitud
+
+// Obtener parámetros de filtro desde GET o POST
+$filtro_sucursal = isset($_REQUEST['filtro_sucursal']) ? $_REQUEST['filtro_sucursal'] : '';
+$filtro_mes = isset($_REQUEST['filtro_mes']) ? $_REQUEST['filtro_mes'] : '';
+$filtro_anio = isset($_REQUEST['filtro_anio']) ? $_REQUEST['filtro_anio'] : '';
+$filtro_fecha_inicio = isset($_REQUEST['filtro_fecha_inicio']) ? $_REQUEST['filtro_fecha_inicio'] : '';
+$filtro_fecha_fin = isset($_REQUEST['filtro_fecha_fin']) ? $_REQUEST['filtro_fecha_fin'] : '';
+
+// Obtener el valor de Fk_Sucursal desde la sesión (valor por defecto)
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
+
+// Si hay un filtro de sucursal, usarlo; de lo contrario, usar la sucursal del usuario
+if (!empty($filtro_sucursal)) {
+    $fk_sucursal = $filtro_sucursal;
+}
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
@@ -27,16 +40,47 @@ if (empty($fk_sucursal)) {
     exit;
 }
 
-// Consulta segura utilizando una sentencia preparada con el filtro de sucursal
+// Construir la consulta con filtros dinámicos
+$where_conditions = ["Ventas_POS.Fk_sucursal = ?"];
+$params = [$fk_sucursal];
+$types = "s";
+
+// Filtro por mes y año
+if (!empty($filtro_mes) && !empty($filtro_anio)) {
+    $where_conditions[] = "MONTH(Ventas_POS.AgregadoEl) = ?";
+    $where_conditions[] = "YEAR(Ventas_POS.AgregadoEl) = ?";
+    $params[] = intval($filtro_mes);
+    $params[] = intval($filtro_anio);
+    $types .= "ii";
+} elseif (empty($filtro_fecha_inicio) && empty($filtro_fecha_fin)) {
+    // Si no hay filtros específicos, usar el mes y año actual por defecto
+    $where_conditions[] = "MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE)";
+    $where_conditions[] = "YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)";
+}
+
+// Filtro por rango de fechas
+if (!empty($filtro_fecha_inicio)) {
+    $where_conditions[] = "DATE(Ventas_POS.AgregadoEl) >= ?";
+    $params[] = $filtro_fecha_inicio;
+    $types .= "s";
+}
+
+if (!empty($filtro_fecha_fin)) {
+    $where_conditions[] = "DATE(Ventas_POS.AgregadoEl) <= ?";
+    $params[] = $filtro_fecha_fin;
+    $types .= "s";
+}
+
+$where_clause = implode(" AND ", $where_conditions);
+
+// Consulta segura utilizando una sentencia preparada con los filtros
 $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
         Ventas_POS.Identificador_tipo, Ventas_POS.Cod_Barra, Ventas_POS.Clave_adicional, Ventas_POS.Nombre_Prod, 
         Ventas_POS.Cantidad_Venta, Ventas_POS.Fk_sucursal, Ventas_POS.AgregadoPor, Ventas_POS.AgregadoEl, 
         Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Ventas_POS 
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE MONTH(Ventas_POS.AgregadoEl) = MONTH(CURRENT_DATE) 
-        AND YEAR(Ventas_POS.AgregadoEl) = YEAR(CURRENT_DATE)
-        AND Ventas_POS.Fk_sucursal = ? -- Filtrar por sucursal
+        WHERE $where_clause
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
         ORDER BY Ventas_POS.AgregadoEl DESC;";
 
@@ -49,8 +93,10 @@ if (!$stmt) {
     exit;
 }
 
-// Enlazar el parámetro Fk_Sucursal
-$stmt->bind_param("s", $fk_sucursal);
+// Enlazar los parámetros si hay alguno
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
 
 // Ejecutar y verificar la consulta
 if ($stmt->execute()) {
@@ -61,10 +107,42 @@ if ($stmt->execute()) {
     exit;
 }
 
-// Verificar si hay resultados
-if ($result->num_rows === 0) {
-    echo json_encode(["error" => "No se encontraron resultados para la sucursal: " . $fk_sucursal]);
-    exit;
+// Obtener totales de cada ticket para estadísticas usando una consulta preparada
+$sql_totales = "SELECT Folio_Ticket, FolioSucursal, SUM(Total_Venta) as total_ticket, DATE(AgregadoEl) as fecha_ticket
+                FROM Ventas_POS 
+                WHERE $where_clause
+                GROUP BY Folio_Ticket, FolioSucursal, DATE(AgregadoEl)";
+
+$stmt_totales = $conn->prepare($sql_totales);
+if (!$stmt_totales) {
+    // Si falla la preparación, calcular estadísticas desde los datos principales
+    $total_ventas = 0;
+    $tickets_hoy = 0;
+} else {
+    if (!empty($params)) {
+        $stmt_totales->bind_param($types, ...$params);
+    }
+    $stmt_totales->execute();
+    $result_totales = $stmt_totales->get_result();
+    
+    // Calcular estadísticas
+    $total_ventas = 0;
+    $tickets_hoy = 0;
+    $fecha_hoy = date('Y-m-d');
+    $tickets_unicos = [];
+    
+    while ($row_total = $result_totales->fetch_assoc()) {
+        $folio_key = $row_total['Folio_Ticket'] . '_' . $row_total['FolioSucursal'];
+        if (!isset($tickets_unicos[$folio_key])) {
+            $tickets_unicos[$folio_key] = $row_total['total_ticket'];
+            $total_ventas += floatval($row_total['total_ticket']);
+            
+            if ($row_total['fecha_ticket'] == $fecha_hoy) {
+                $tickets_hoy++;
+            }
+        }
+    }
+    $stmt_totales->close();
 }
 
 // Inicializar array para almacenar los resultados
@@ -73,7 +151,6 @@ $data = [];
 while ($fila = $result->fetch_assoc()) {
     $data[] = [
         "NumberTicket" => $fila["Folio_Ticket"],
-        
         "Fecha" => fechaCastellano($fila["AgregadoEl"]),
         "Hora" => date("g:i:s a", strtotime($fila["AgregadoEl"])),
         "Vendedor" => $fila["AgregadoPor"],
@@ -86,12 +163,22 @@ while ($fila = $result->fetch_assoc()) {
 // Cerrar la declaración
 $stmt->close();
 
+// Calcular promedio por ticket
+$total_tickets = count($data);
+$promedio_ticket = $total_tickets > 0 ? $total_ventas / $total_tickets : 0;
+
 // Construir el array de resultados para la respuesta JSON
 $results = [
     "sEcho" => 1,
-    "iTotalRecords" => count($data),
-    "iTotalDisplayRecords" => count($data),
-    "aaData" => $data
+    "iTotalRecords" => $total_tickets,
+    "iTotalDisplayRecords" => $total_tickets,
+    "aaData" => $data,
+    "estadisticas" => [
+        "total_tickets" => $total_tickets,
+        "total_ventas" => round($total_ventas, 2),
+        "tickets_hoy" => $tickets_hoy,
+        "promedio_ticket" => round($promedio_ticket, 2)
+    ]
 ];
 
 // Imprimir la respuesta JSON
