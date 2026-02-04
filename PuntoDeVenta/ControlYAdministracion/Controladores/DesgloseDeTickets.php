@@ -201,6 +201,16 @@
   }
 
 
+// Variables globales para filtros (hacerlas globales)
+window.filtrosActuales = {
+    filtro_sucursal: '',
+    filtro_mes: '',
+    filtro_anio: '',
+    filtro_fecha_inicio: '',
+    filtro_fecha_fin: ''
+};
+var filtrosActuales = window.filtrosActuales;
+
 tabla = $('#Clientes').DataTable({
 
  "bProcessing": true,
@@ -208,19 +218,45 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDesgloseTickets.php",
+ "ajax": {
+    "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDesgloseTickets.php",
+    "type": "POST",
+    "data": function(d) {
+        // Agregar los filtros actuales a la petición
+        var filtros = window.filtrosActuales || filtrosActuales;
+        d.filtro_sucursal = filtros.filtro_sucursal || '';
+        d.filtro_mes = filtros.filtro_mes || '';
+        d.filtro_anio = filtros.filtro_anio || '';
+        d.filtro_fecha_inicio = filtros.filtro_fecha_inicio || '';
+        d.filtro_fecha_fin = filtros.filtro_fecha_fin || '';
+    },
+    "dataSrc": function(json) {
+        // Actualizar estadísticas si están disponibles
+        if (json.estadisticas) {
+            if (typeof window.actualizarEstadisticas === 'function') {
+                window.actualizarEstadisticas(json.estadisticas);
+            } else if (typeof actualizarEstadisticas === 'function') {
+                actualizarEstadisticas(json.estadisticas);
+            }
+        }
+        
+        // Manejar errores
+        if (json.error) {
+            console.error('Error en la respuesta:', json.error);
+            return [];
+        }
+        
+        return json.aaData || [];
+    }
+ },
  "aoColumns": [
     { mData: 'NumberTicket' },  
-  
   { mData: 'Fecha' },
   { mData: 'Hora' },
        { mData: 'Vendedor' },
        { mData: 'Desglose' },
        { mData: 'Reimpresion' },
-       { mData: 'Eliminar' },
-       
-      
-  
+       { mData: 'Eliminar' }
       ],
      
       "lengthMenu": [[20,150,250,500, -1], [20,50,250,500, "Todos"]],  
@@ -264,6 +300,86 @@ tabla = $('#Clientes').DataTable({
 "dom": '<"d-flex justify-content-between"lBf>rtip', // Modificar la disposición aquí
 "responsive": true
 });
+
+// Función para actualizar estadísticas (hacerla global)
+window.actualizarEstadisticas = function(stats) {
+    if (stats) {
+        $('#total-tickets').text(stats.total_tickets || 0);
+        $('#total-ventas').text('$' + parseFloat(stats.total_ventas || 0).toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+        $('#tickets-hoy').text(stats.tickets_hoy || 0);
+        $('#promedio-ticket').text('$' + parseFloat(stats.promedio_ticket || 0).toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    }
+};
+
+// Función para aplicar filtros (hacerla global)
+window.aplicarFiltros = function() {
+    if (typeof tabla !== 'undefined' && tabla) {
+        mostrarCargando();
+        tabla.ajax.reload(function() {
+            ocultarCargando();
+        });
+    }
+};
+
+// Función para filtrar por sucursal (hacerla global)
+window.filtrarPorSucursal = function(sucursalId) {
+    window.filtrosActuales.filtro_sucursal = sucursalId;
+    window.filtrosActuales.filtro_mes = '';
+    window.filtrosActuales.filtro_anio = '';
+    window.filtrosActuales.filtro_fecha_inicio = '';
+    window.filtrosActuales.filtro_fecha_fin = '';
+    window.aplicarFiltros();
+    var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroPorSucursal')) || $('#FiltroPorSucursal').data('bs.modal');
+    if (modal) {
+        modal.hide();
+    } else {
+        $('#FiltroPorSucursal').modal('hide');
+    }
+};
+
+// Función para filtrar por mes (hacerla global)
+window.filtrarPorMes = function(mes, anio) {
+    window.filtrosActuales.filtro_mes = mes;
+    window.filtrosActuales.filtro_anio = anio;
+    window.filtrosActuales.filtro_sucursal = '';
+    window.filtrosActuales.filtro_fecha_inicio = '';
+    window.filtrosActuales.filtro_fecha_fin = '';
+    window.aplicarFiltros();
+    var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroEspecificoMes')) || $('#FiltroEspecificoMes').data('bs.modal');
+    if (modal) {
+        modal.hide();
+    } else {
+        $('#FiltroEspecificoMes').modal('hide');
+    }
+};
+
+// Función para filtrar por rango de fechas (hacerla global)
+window.filtrarPorRangoFechas = function(fechaInicio, fechaFin, sucursalId) {
+    window.filtrosActuales.filtro_fecha_inicio = fechaInicio;
+    window.filtrosActuales.filtro_fecha_fin = fechaFin;
+    window.filtrosActuales.filtro_sucursal = sucursalId || '';
+    window.filtrosActuales.filtro_mes = '';
+    window.filtrosActuales.filtro_anio = '';
+    window.aplicarFiltros();
+    var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroRangoFechas')) || $('#FiltroRangoFechas').data('bs.modal');
+    if (modal) {
+        modal.hide();
+    } else {
+        $('#FiltroRangoFechas').modal('hide');
+    }
+};
+
+// Función para recargar y limpiar filtros (hacerla global)
+window.cargarTicketsDesdeTabla = function() {
+    window.filtrosActuales = {
+        filtro_sucursal: '',
+        filtro_mes: '',
+        filtro_anio: '',
+        filtro_fecha_inicio: '',
+        filtro_fecha_fin: ''
+    };
+    window.aplicarFiltros();
+};
 </script>
 <div class="text-center">
   <div class="table-responsive">

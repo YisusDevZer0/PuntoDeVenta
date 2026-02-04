@@ -36,7 +36,18 @@ if (!empty($filtro_sucursal)) {
 
 // Verificar si la sucursal tiene un valor válido
 if (empty($fk_sucursal)) {
-    echo json_encode(["error" => "El valor de Fk_Sucursal está vacío"]);
+    echo json_encode([
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "estadisticas" => [
+            "total_tickets" => 0,
+            "total_ventas" => 0,
+            "tickets_hoy" => 0,
+            "promedio_ticket" => 0
+        ]
+    ]);
     exit;
 }
 
@@ -73,7 +84,7 @@ if (!empty($filtro_fecha_fin)) {
 
 $where_clause = implode(" AND ", $where_conditions);
 
-// Consulta segura utilizando una sentencia preparada con los filtros
+// Consulta para obtener los tickets únicos
 $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
         Ventas_POS.Identificador_tipo, Ventas_POS.Cod_Barra, Ventas_POS.Clave_adicional, Ventas_POS.Nombre_Prod, 
         Ventas_POS.Cantidad_Venta, Ventas_POS.Fk_sucursal, Ventas_POS.AgregadoPor, Ventas_POS.AgregadoEl, 
@@ -89,7 +100,19 @@ $stmt = $conn->prepare($sql);
 
 // Verificar si la consulta fue preparada correctamente
 if (!$stmt) {
-    echo json_encode(["error" => "Error al preparar la consulta: " . $conn->error]);
+    echo json_encode([
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error al preparar la consulta: " . $conn->error,
+        "estadisticas" => [
+            "total_tickets" => 0,
+            "total_ventas" => 0,
+            "tickets_hoy" => 0,
+            "promedio_ticket" => 0
+        ]
+    ]);
     exit;
 }
 
@@ -102,43 +125,49 @@ if (!empty($params)) {
 if ($stmt->execute()) {
     $result = $stmt->get_result();
 } else {
-    // Si la ejecución falla, imprime el error
-    echo json_encode(["error" => "Error en la ejecución de la consulta: " . $stmt->error]);
+    echo json_encode([
+        "sEcho" => 1,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => [],
+        "error" => "Error en la ejecución de la consulta: " . $stmt->error,
+        "estadisticas" => [
+            "total_tickets" => 0,
+            "total_ventas" => 0,
+            "tickets_hoy" => 0,
+            "promedio_ticket" => 0
+        ]
+    ]);
     exit;
 }
 
-// Obtener totales de cada ticket para estadísticas usando una consulta preparada
+// Consulta para calcular totales de cada ticket (estadísticas)
 $sql_totales = "SELECT Folio_Ticket, FolioSucursal, SUM(Total_Venta) as total_ticket, DATE(AgregadoEl) as fecha_ticket
                 FROM Ventas_POS 
                 WHERE $where_clause
                 GROUP BY Folio_Ticket, FolioSucursal, DATE(AgregadoEl)";
 
 $stmt_totales = $conn->prepare($sql_totales);
-if (!$stmt_totales) {
-    // Si falla la preparación, calcular estadísticas desde los datos principales
-    $total_ventas = 0;
-    $tickets_hoy = 0;
-} else {
+$total_ventas = 0;
+$tickets_hoy = 0;
+$fecha_hoy = date('Y-m-d');
+$tickets_unicos = [];
+
+if ($stmt_totales) {
     if (!empty($params)) {
         $stmt_totales->bind_param($types, ...$params);
     }
-    $stmt_totales->execute();
-    $result_totales = $stmt_totales->get_result();
-    
-    // Calcular estadísticas
-    $total_ventas = 0;
-    $tickets_hoy = 0;
-    $fecha_hoy = date('Y-m-d');
-    $tickets_unicos = [];
-    
-    while ($row_total = $result_totales->fetch_assoc()) {
-        $folio_key = $row_total['Folio_Ticket'] . '_' . $row_total['FolioSucursal'];
-        if (!isset($tickets_unicos[$folio_key])) {
-            $tickets_unicos[$folio_key] = $row_total['total_ticket'];
-            $total_ventas += floatval($row_total['total_ticket']);
-            
-            if ($row_total['fecha_ticket'] == $fecha_hoy) {
-                $tickets_hoy++;
+    if ($stmt_totales->execute()) {
+        $result_totales = $stmt_totales->get_result();
+        while ($row_total = $result_totales->fetch_assoc()) {
+            $folio_key = $row_total['Folio_Ticket'] . '_' . $row_total['FolioSucursal'];
+            if (!isset($tickets_unicos[$folio_key])) {
+                $tickets_unicos[$folio_key] = $row_total['total_ticket'];
+                $total_ventas += floatval($row_total['total_ticket']);
+                
+                if ($row_total['fecha_ticket'] == $fecha_hoy) {
+                    $tickets_hoy++;
+                }
             }
         }
     }

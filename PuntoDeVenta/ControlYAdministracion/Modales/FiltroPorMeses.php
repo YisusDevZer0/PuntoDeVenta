@@ -78,10 +78,12 @@ function aplicarFiltroMes() {
         return;
     }
     
+    // Las funciones están definidas en DesgloseDeTickets.php
     if (typeof filtrarPorMes === 'function') {
         filtrarPorMes(mes, anio);
     } else {
-        console.error('La función filtrarPorMes no está definida');
+        console.log('Aplicando filtro de mes:', mes, anio);
+        location.reload();
     }
 }
 </script>

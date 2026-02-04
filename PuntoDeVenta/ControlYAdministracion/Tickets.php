@@ -302,17 +302,29 @@ include_once "Controladores/ControladorUsuario.php";
         });
     });
 
-    // Función para cargar tickets (implementada en DesgloseTicketss.js)
+    // Función para cargar tickets (implementada en DesgloseDeTickets.php)
     function cargarTickets() {
-        if (typeof aplicarFiltros === 'function') {
-            aplicarFiltros();
-        } else if (typeof CargaServicios === 'function') {
-            CargaServicios();
-        } else {
-            console.log("Cargando tickets...");
-            // Recargar la página si las funciones no están disponibles
-            location.reload();
-        }
+        // Esperar a que la tabla esté cargada
+        setTimeout(function() {
+            if (typeof window.cargarTicketsDesdeTabla === 'function') {
+                window.cargarTicketsDesdeTabla();
+            } else if (typeof window.aplicarFiltros === 'function') {
+                // Limpiar filtros y recargar
+                window.filtrosActuales = {
+                    filtro_sucursal: '',
+                    filtro_mes: '',
+                    filtro_anio: '',
+                    filtro_fecha_inicio: '',
+                    filtro_fecha_fin: ''
+                };
+                window.aplicarFiltros();
+            } else if (typeof tabla !== 'undefined' && tabla) {
+                tabla.ajax.reload();
+            } else {
+                // Si nada funciona, recargar la página
+                location.reload();
+            }
+        }, 500);
     }
     </script>
 

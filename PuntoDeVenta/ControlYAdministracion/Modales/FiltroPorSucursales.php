@@ -40,10 +40,13 @@
 <script>
 function aplicarFiltroSucursal() {
     var sucursalId = $('#sucursalFiltro').val();
+    // Las funciones están definidas en DesgloseDeTickets.php
     if (typeof filtrarPorSucursal === 'function') {
         filtrarPorSucursal(sucursalId);
     } else {
-        console.error('La función filtrarPorSucursal no está definida');
+        // Si no está disponible, intentar recargar la página con el filtro
+        console.log('Aplicando filtro de sucursal:', sucursalId);
+        location.reload();
     }
 }
 </script>

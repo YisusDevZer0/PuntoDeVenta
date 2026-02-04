@@ -83,10 +83,12 @@ function aplicarFiltroRangoFechas() {
         return;
     }
     
+    // Las funciones están definidas en DesgloseDeTickets.php
     if (typeof filtrarPorRangoFechas === 'function') {
         filtrarPorRangoFechas(fechaInicio, fechaFin, sucursalId);
     } else {
-        console.error('La función filtrarPorRangoFechas no está definida');
+        console.log('Aplicando filtro de rango de fechas:', fechaInicio, fechaFin);
+        location.reload();
     }
 }
 </script>
