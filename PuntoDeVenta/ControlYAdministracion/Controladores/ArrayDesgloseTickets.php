@@ -20,7 +20,9 @@ function fechaCastellano($fecha) {
 }
 
 // Obtener parámetros de filtro desde GET o POST
-$filtro_sucursal = isset($_REQUEST['filtro_sucursal']) ? $_REQUEST['filtro_sucursal'] : '';
+// Usar array_key_exists para distinguir entre "no enviado" y "enviado como vacío"
+$filtro_sucursal_enviado = array_key_exists('filtro_sucursal', $_REQUEST);
+$filtro_sucursal = $filtro_sucursal_enviado ? $_REQUEST['filtro_sucursal'] : null;
 $filtro_mes = isset($_REQUEST['filtro_mes']) ? $_REQUEST['filtro_mes'] : '';
 $filtro_anio = isset($_REQUEST['filtro_anio']) ? $_REQUEST['filtro_anio'] : '';
 $filtro_fecha_inicio = isset($_REQUEST['filtro_fecha_inicio']) ? $_REQUEST['filtro_fecha_inicio'] : '';
@@ -29,32 +31,40 @@ $filtro_fecha_fin = isset($_REQUEST['filtro_fecha_fin']) ? $_REQUEST['filtro_fec
 // Obtener el valor de Fk_Sucursal desde la sesión (valor por defecto)
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
-// Si hay un filtro de sucursal, usarlo; de lo contrario, usar la sucursal del usuario
-if (!empty($filtro_sucursal)) {
-    $fk_sucursal = $filtro_sucursal;
-}
+// Determinar si debemos filtrar por sucursal
+// - Si filtro_sucursal fue enviado explícitamente como "" (cadena vacía) -> mostrar TODAS las sucursales
+// - Si filtro_sucursal tiene un valor específico -> filtrar por esa sucursal
+// - Si filtro_sucursal NO fue enviado -> usar la sucursal del usuario por defecto
+$usar_filtro_sucursal = false;
+$sucursal_filtro = '';
 
-// Verificar si la sucursal tiene un valor válido
-if (empty($fk_sucursal)) {
-    echo json_encode([
-        "sEcho" => 1,
-        "iTotalRecords" => 0,
-        "iTotalDisplayRecords" => 0,
-        "aaData" => [],
-        "estadisticas" => [
-            "total_tickets" => 0,
-            "total_ventas" => 0,
-            "tickets_hoy" => 0,
-            "promedio_ticket" => 0
-        ]
-    ]);
-    exit;
+if ($filtro_sucursal_enviado) {
+    // El parámetro fue enviado explícitamente
+    if (!empty($filtro_sucursal)) {
+        // Tiene un valor específico, filtrar por esa sucursal
+        $usar_filtro_sucursal = true;
+        $sucursal_filtro = $filtro_sucursal;
+    }
+    // Si está vacío (""), no filtrar por sucursal (mostrar todas)
+} else {
+    // El parámetro NO fue enviado, usar la sucursal del usuario por defecto
+    if (!empty($fk_sucursal)) {
+        $usar_filtro_sucursal = true;
+        $sucursal_filtro = $fk_sucursal;
+    }
 }
 
 // Construir la consulta con filtros dinámicos
-$where_conditions = ["Ventas_POS.Fk_sucursal = ?"];
-$params = [$fk_sucursal];
-$types = "s";
+$where_conditions = [];
+$params = [];
+$types = "";
+
+// Solo agregar filtro de sucursal si se debe usar
+if ($usar_filtro_sucursal && !empty($sucursal_filtro)) {
+    $where_conditions[] = "Ventas_POS.Fk_sucursal = ?";
+    $params[] = $sucursal_filtro;
+    $types .= "s";
+}
 
 // Filtro por mes y año
 if (!empty($filtro_mes) && !empty($filtro_anio)) {
@@ -82,7 +92,8 @@ if (!empty($filtro_fecha_fin)) {
     $types .= "s";
 }
 
-$where_clause = implode(" AND ", $where_conditions);
+// Construir la cláusula WHERE
+$where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
 // Consulta para obtener los tickets únicos
 $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_Caja, Ventas_POS.Venta_POS_ID, 
@@ -91,7 +102,7 @@ $sql = "SELECT Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal, Ventas_POS.Fk_
         Ventas_POS.Total_Venta, Ventas_POS.Lote, Ventas_POS.ID_H_O_D, Sucursales.ID_Sucursal, Sucursales.Nombre_Sucursal 
         FROM Ventas_POS 
         JOIN Sucursales ON Ventas_POS.Fk_sucursal = Sucursales.ID_Sucursal 
-        WHERE $where_clause
+        $where_clause
         GROUP BY Ventas_POS.Folio_Ticket, Ventas_POS.FolioSucursal
         ORDER BY Ventas_POS.AgregadoEl DESC;";
 
@@ -117,7 +128,7 @@ if (!$stmt) {
 }
 
 // Enlazar los parámetros si hay alguno
-if (!empty($params)) {
+if (!empty($params) && !empty($types)) {
     $stmt->bind_param($types, ...$params);
 }
 
@@ -144,7 +155,7 @@ if ($stmt->execute()) {
 // Consulta para calcular totales de cada ticket (estadísticas)
 $sql_totales = "SELECT Folio_Ticket, FolioSucursal, SUM(Total_Venta) as total_ticket, DATE(AgregadoEl) as fecha_ticket
                 FROM Ventas_POS 
-                WHERE $where_clause
+                $where_clause
                 GROUP BY Folio_Ticket, FolioSucursal, DATE(AgregadoEl)";
 
 $stmt_totales = $conn->prepare($sql_totales);
@@ -154,7 +165,7 @@ $fecha_hoy = date('Y-m-d');
 $tickets_unicos = [];
 
 if ($stmt_totales) {
-    if (!empty($params)) {
+    if (!empty($params) && !empty($types)) {
         $stmt_totales->bind_param($types, ...$params);
     }
     if ($stmt_totales->execute()) {
