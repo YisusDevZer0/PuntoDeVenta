@@ -153,6 +153,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="VentasDelDia" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-coins"></i>Ventas del dia</a>
                     <a href="VentasACredito" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Ventas del dia de Credito </a>
                     <a href="TotalesDeVentaPorVendedor" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-users"></i>Ventas por personal </a>
+                    <a href="ComparacionInventarioVentas" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-excel"></i>Comparación Inventario/Ventas</a>
                 </div>
             </div>
 
