@@ -76,6 +76,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="VentasDelDia" class="dropdown-item"><i class="fa-solid fa-coins"></i>Ventas del día</a>
                             <a href="VentasAcredito" class="dropdown-item"><i class="fa-solid fa-credit-card"></i>Ventas a crédito</a>
+                            <a href="ComparacionInventarioVentas" class="dropdown-item"><i class="fa-solid fa-file-excel"></i>Comparación Inventario/Ventas</a>
                         </div>
                     </div>
 
