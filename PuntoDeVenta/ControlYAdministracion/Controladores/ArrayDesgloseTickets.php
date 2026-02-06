@@ -32,27 +32,18 @@ $filtro_fecha_fin = isset($_REQUEST['filtro_fecha_fin']) ? $_REQUEST['filtro_fec
 $fk_sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';
 
 // Determinar si debemos filtrar por sucursal
-// - Si filtro_sucursal fue enviado explícitamente como "" (cadena vacía) -> mostrar TODAS las sucursales
+// - Por defecto (al entrar, sin parámetros): mostrar TODAS las sucursales (libre)
+// - Si filtro_sucursal fue enviado como "" (cadena vacía) -> mostrar TODAS las sucursales
 // - Si filtro_sucursal tiene un valor específico -> filtrar por esa sucursal
-// - Si filtro_sucursal NO fue enviado -> usar la sucursal del usuario por defecto
 $usar_filtro_sucursal = false;
 $sucursal_filtro = '';
 
-if ($filtro_sucursal_enviado) {
-    // El parámetro fue enviado explícitamente
-    if (!empty($filtro_sucursal)) {
-        // Tiene un valor específico, filtrar por esa sucursal
-        $usar_filtro_sucursal = true;
-        $sucursal_filtro = $filtro_sucursal;
-    }
-    // Si está vacío (""), no filtrar por sucursal (mostrar todas)
-} else {
-    // El parámetro NO fue enviado, usar la sucursal del usuario por defecto
-    if (!empty($fk_sucursal)) {
-        $usar_filtro_sucursal = true;
-        $sucursal_filtro = $fk_sucursal;
-    }
+if ($filtro_sucursal_enviado && !empty($filtro_sucursal)) {
+    // Solo filtrar por sucursal si se envió explícitamente un valor
+    $usar_filtro_sucursal = true;
+    $sucursal_filtro = $filtro_sucursal;
 }
+// Si no se envió el parámetro o está vacío -> no filtrar (mostrar todo, libre)
 
 // Construir la consulta con filtros dinámicos
 $where_conditions = [];
