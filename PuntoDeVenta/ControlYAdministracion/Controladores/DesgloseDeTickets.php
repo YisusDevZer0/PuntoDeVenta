@@ -202,12 +202,13 @@
 
 
 // Variables globales para filtros (hacerlas globales)
+// Inicializar como null para que no se envíen parámetros al inicio (usar valores por defecto)
 window.filtrosActuales = {
-    filtro_sucursal: '',
-    filtro_mes: '',
-    filtro_anio: '',
-    filtro_fecha_inicio: '',
-    filtro_fecha_fin: ''
+    filtro_sucursal: null,
+    filtro_mes: null,
+    filtro_anio: null,
+    filtro_fecha_inicio: null,
+    filtro_fecha_fin: null
 };
 var filtrosActuales = window.filtrosActuales;
 
@@ -223,12 +224,32 @@ tabla = $('#Clientes').DataTable({
     "type": "POST",
     "data": function(d) {
         // Agregar los filtros actuales a la petición
+        // Solo enviar los parámetros si tienen un valor (no null/undefined)
         var filtros = window.filtrosActuales || filtrosActuales;
-        d.filtro_sucursal = filtros.filtro_sucursal || '';
-        d.filtro_mes = filtros.filtro_mes || '';
-        d.filtro_anio = filtros.filtro_anio || '';
-        d.filtro_fecha_inicio = filtros.filtro_fecha_inicio || '';
-        d.filtro_fecha_fin = filtros.filtro_fecha_fin || '';
+        
+        // Solo agregar filtro_sucursal si tiene un valor (no null/undefined)
+        // Si es null, no se envía el parámetro y el backend usará el valor por defecto
+        // Si es cadena vacía "", se envía para indicar "todas las sucursales"
+        if (filtros.filtro_sucursal !== null && filtros.filtro_sucursal !== undefined) {
+            d.filtro_sucursal = filtros.filtro_sucursal;
+        }
+        // Si es null, no agregar el parámetro (el backend usará la sucursal del usuario por defecto)
+        
+        if (filtros.filtro_mes !== null && filtros.filtro_mes !== undefined && filtros.filtro_mes !== '') {
+            d.filtro_mes = filtros.filtro_mes;
+        }
+        
+        if (filtros.filtro_anio !== null && filtros.filtro_anio !== undefined && filtros.filtro_anio !== '') {
+            d.filtro_anio = filtros.filtro_anio;
+        }
+        
+        if (filtros.filtro_fecha_inicio !== null && filtros.filtro_fecha_inicio !== undefined && filtros.filtro_fecha_inicio !== '') {
+            d.filtro_fecha_inicio = filtros.filtro_fecha_inicio;
+        }
+        
+        if (filtros.filtro_fecha_fin !== null && filtros.filtro_fecha_fin !== undefined && filtros.filtro_fecha_fin !== '') {
+            d.filtro_fecha_fin = filtros.filtro_fecha_fin;
+        }
     },
     "dataSrc": function(json) {
         // Actualizar estadísticas si están disponibles
@@ -323,11 +344,13 @@ window.aplicarFiltros = function() {
 
 // Función para filtrar por sucursal (hacerla global)
 window.filtrarPorSucursal = function(sucursalId) {
-    window.filtrosActuales.filtro_sucursal = sucursalId;
-    window.filtrosActuales.filtro_mes = '';
-    window.filtrosActuales.filtro_anio = '';
-    window.filtrosActuales.filtro_fecha_inicio = '';
-    window.filtrosActuales.filtro_fecha_fin = '';
+    // Si sucursalId es cadena vacía, establecer como null para mostrar todas
+    // Si tiene valor, usarlo normalmente
+    window.filtrosActuales.filtro_sucursal = (sucursalId === '' || sucursalId === null) ? null : sucursalId;
+    window.filtrosActuales.filtro_mes = null;
+    window.filtrosActuales.filtro_anio = null;
+    window.filtrosActuales.filtro_fecha_inicio = null;
+    window.filtrosActuales.filtro_fecha_fin = null;
     window.aplicarFiltros();
     var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroPorSucursal')) || $('#FiltroPorSucursal').data('bs.modal');
     if (modal) {
@@ -341,9 +364,9 @@ window.filtrarPorSucursal = function(sucursalId) {
 window.filtrarPorMes = function(mes, anio) {
     window.filtrosActuales.filtro_mes = mes;
     window.filtrosActuales.filtro_anio = anio;
-    window.filtrosActuales.filtro_sucursal = '';
-    window.filtrosActuales.filtro_fecha_inicio = '';
-    window.filtrosActuales.filtro_fecha_fin = '';
+    window.filtrosActuales.filtro_sucursal = null;
+    window.filtrosActuales.filtro_fecha_inicio = null;
+    window.filtrosActuales.filtro_fecha_fin = null;
     window.aplicarFiltros();
     var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroEspecificoMes')) || $('#FiltroEspecificoMes').data('bs.modal');
     if (modal) {
@@ -357,9 +380,10 @@ window.filtrarPorMes = function(mes, anio) {
 window.filtrarPorRangoFechas = function(fechaInicio, fechaFin, sucursalId) {
     window.filtrosActuales.filtro_fecha_inicio = fechaInicio;
     window.filtrosActuales.filtro_fecha_fin = fechaFin;
-    window.filtrosActuales.filtro_sucursal = sucursalId || '';
-    window.filtrosActuales.filtro_mes = '';
-    window.filtrosActuales.filtro_anio = '';
+    // Si sucursalId está vacío o es null, establecer como null (no filtrar por sucursal)
+    window.filtrosActuales.filtro_sucursal = (sucursalId === '' || sucursalId === null || sucursalId === undefined) ? null : sucursalId;
+    window.filtrosActuales.filtro_mes = null;
+    window.filtrosActuales.filtro_anio = null;
     window.aplicarFiltros();
     var modal = bootstrap.Modal.getInstance(document.getElementById('FiltroRangoFechas')) || $('#FiltroRangoFechas').data('bs.modal');
     if (modal) {
@@ -372,13 +396,55 @@ window.filtrarPorRangoFechas = function(fechaInicio, fechaFin, sucursalId) {
 // Función para recargar y limpiar filtros (hacerla global)
 window.cargarTicketsDesdeTabla = function() {
     window.filtrosActuales = {
-        filtro_sucursal: '',
-        filtro_mes: '',
-        filtro_anio: '',
-        filtro_fecha_inicio: '',
-        filtro_fecha_fin: ''
+        filtro_sucursal: null,
+        filtro_mes: null,
+        filtro_anio: null,
+        filtro_fecha_inicio: null,
+        filtro_fecha_fin: null
     };
     window.aplicarFiltros();
+};
+
+// Función para limpiar todos los filtros y volver al estado inicial (hacerla global)
+window.limpiarFiltros = function() {
+    // Resetear todos los filtros a null/undefined para que no se envíen al backend
+    // Esto hará que el backend use los valores por defecto (sucursal del usuario, mes actual)
+    window.filtrosActuales = {
+        filtro_sucursal: null,  // null en lugar de '' para que no se envíe el parámetro
+        filtro_mes: null,
+        filtro_anio: null,
+        filtro_fecha_inicio: null,
+        filtro_fecha_fin: null
+    };
+    
+    // Limpiar los valores en los modales también
+    if ($('#sucursalFiltro').length) $('#sucursalFiltro').val('');
+    if ($('#mesesSelect').length) $('#mesesSelect').val('');
+    if ($('#añosSelect').length) $('#añosSelect').val('');
+    if ($('#fechaInicio').length) $('#fechaInicio').val('');
+    if ($('#fechaFin').length) $('#fechaFin').val('');
+    if ($('#sucursalRango').length) $('#sucursalRango').val('');
+    
+    // Cerrar todos los modales abiertos
+    $('.modal').modal('hide');
+    
+    // Recargar la tabla sin filtros
+    if (typeof window.aplicarFiltros === 'function') {
+        window.aplicarFiltros();
+    } else if (typeof tabla !== 'undefined' && tabla) {
+        mostrarCargando();
+        tabla.ajax.reload(function() {
+            ocultarCargando();
+        });
+    }
+    
+    // Mostrar mensaje de confirmación
+    if (typeof toastr !== 'undefined') {
+        toastr.success('Filtros limpiados correctamente. Mostrando datos por defecto.');
+    } else {
+        console.log('Filtros limpiados correctamente');
+        alert('Filtros limpiados correctamente');
+    }
 };
 </script>
 <div class="text-center">

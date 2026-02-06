@@ -230,6 +230,9 @@ include_once "Controladores/ControladorUsuario.php";
                                     <button type="button" class="btn btn-success" onclick="cargarTickets()">
                                         <i class="fas fa-sync-alt me-1"></i> Actualizar Lista
                                     </button>
+                                    <button type="button" class="btn btn-danger" onclick="limpiarFiltros()">
+                                        <i class="fas fa-times-circle me-1"></i> Limpiar Filtros
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -306,16 +309,19 @@ include_once "Controladores/ControladorUsuario.php";
     function cargarTickets() {
         // Esperar a que la tabla esté cargada
         setTimeout(function() {
-            if (typeof window.cargarTicketsDesdeTabla === 'function') {
+            if (typeof window.limpiarFiltros === 'function') {
+                // Usar la función de limpiar filtros para volver al estado inicial
+                window.limpiarFiltros();
+            } else if (typeof window.cargarTicketsDesdeTabla === 'function') {
                 window.cargarTicketsDesdeTabla();
             } else if (typeof window.aplicarFiltros === 'function') {
                 // Limpiar filtros y recargar
                 window.filtrosActuales = {
-                    filtro_sucursal: '',
-                    filtro_mes: '',
-                    filtro_anio: '',
-                    filtro_fecha_inicio: '',
-                    filtro_fecha_fin: ''
+                    filtro_sucursal: null,
+                    filtro_mes: null,
+                    filtro_anio: null,
+                    filtro_fecha_inicio: null,
+                    filtro_fecha_fin: null
                 };
                 window.aplicarFiltros();
             } else if (typeof tabla !== 'undefined' && tabla) {
@@ -325,6 +331,16 @@ include_once "Controladores/ControladorUsuario.php";
                 location.reload();
             }
         }, 500);
+    }
+    
+    // Función global para limpiar filtros (disponible desde Tickets.php también)
+    function limpiarFiltros() {
+        if (typeof window.limpiarFiltros === 'function') {
+            window.limpiarFiltros();
+        } else {
+            // Si la función aún no está disponible, recargar la página
+            location.reload();
+        }
     }
     </script>
 
