@@ -14,6 +14,7 @@ $lote_nuevo = isset($_POST['lote_nuevo']) ? trim($_POST['lote_nuevo']) : '';
 $fecha_cad = isset($_POST['fecha_caducidad_nueva']) ? trim($_POST['fecha_caducidad_nueva']) : '';
 $cantidad = isset($_POST['cantidad']) ? (int)$_POST['cantidad'] : 0;
 $observaciones = isset($_POST['observaciones']) ? trim($_POST['observaciones']) : '';
+$tipo_accion = isset($_POST['tipo_accion']) ? trim($_POST['tipo_accion']) : 'editar';
 $usuario = 'Farmacia';
 
 if (empty($cod_barra) || empty($lote_nuevo) || empty($fecha_cad)) {
@@ -42,6 +43,39 @@ try {
         if (!$hist) {
             throw new Exception('Lote no encontrado.');
         }
+
+        if ($tipo_accion === 'ingreso') {
+            // Registrar ingreso nuevo: agregar unidades al lote existente (sin cambiar lote ni fecha)
+            if ($cantidad <= 0) {
+                throw new Exception('Indique la cantidad de unidades a agregar.');
+            }
+            $cantidad_nueva = (int)$hist['Existencias'] + $cantidad;
+
+            $ins = $con->prepare("INSERT INTO Gestion_Lotes_Movimientos (ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo, Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones) VALUES (?,?,?,?,?,?,'ingreso',?,?)");
+            $ins->bind_param("isississ", $hist['ID_Prod_POS'], $cod_barra ?: $hist['Lote'], $hist['Fk_sucursal'], $hist['Lote'], $hist['Fecha_Caducidad'], $cantidad, $usuario, $observaciones);
+            $ins->execute();
+            $ins->close();
+
+            $up = $con->prepare("UPDATE Historial_Lotes SET Existencias=?, Usuario_Modifico=?, Fecha_Registro=NOW() WHERE ID_Historial=?");
+            $up->bind_param("isi", $cantidad_nueva, $usuario, $id_historial);
+            $up->execute();
+            $up->close();
+
+            $up2 = $con->prepare("UPDATE Stock_POS SET Existencias_R = Existencias_R + ? WHERE ID_Prod_POS=? AND Fk_sucursal=?");
+            $up2->bind_param("iii", $cantidad, $hist['ID_Prod_POS'], $hist['Fk_sucursal']);
+            $up2->execute();
+            $up2->close();
+
+            if (function_exists('mysqli_commit')) {
+                mysqli_commit($con);
+            } else {
+                $con->query("COMMIT");
+            }
+            echo json_encode(['success' => true, 'message' => 'Ingreso de ' . $cantidad . ' unidades registrado correctamente al lote.']);
+            exit;
+        }
+
+        // Editar datos del lote (comportamiento original)
         $cod_barra_hl = $cod_barra;
         $cant_mov = $cantidad > 0 ? $cantidad : $hist['Existencias'];
 

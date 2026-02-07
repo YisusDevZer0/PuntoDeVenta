@@ -39,8 +39,9 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         $cantidad_restante = $cantidad_vendida;
         $lotes_utilizados = [];
         
-        // Obtener lotes disponibles ordenados por fecha de caducidad (FEFO)
-        // Primero los que están próximos a vencer, luego los vencidos, luego los que están bien
+        // Obtener solo lotes con registro válido (lote y fecha de caducidad reales).
+        // No usar filas con Lote NaN/vacío ni Fecha_Caducidad 0000-00-00.
+        // Si no hay ningún registro válido, no descontar y no crear contenido vacío.
         $sql_lotes = "SELECT 
                         ID_Historial,
                         Lote,
@@ -51,6 +52,11 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
                       WHERE ID_Prod_POS = ? 
                         AND Fk_sucursal = ?
                         AND Existencias > 0
+                        AND Lote IS NOT NULL AND TRIM(Lote) != '' 
+                        AND LOWER(TRIM(Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote')
+                        AND Fecha_Caducidad IS NOT NULL 
+                        AND Fecha_Caducidad > '1900-01-01' 
+                        AND Fecha_Caducidad != '0000-00-00'
                       ORDER BY 
                         CASE 
                           WHEN DATEDIFF(Fecha_Caducidad, CURDATE()) < 0 THEN 0  -- Vencidos primero
@@ -71,7 +77,7 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         error_log("DEBUG: Se encontraron {$num_lotes} lotes disponibles para producto {$cod_barra}");
         
         if ($num_lotes == 0) {
-            throw new Exception("No hay lotes disponibles para el producto {$cod_barra} en la sucursal {$sucursal}");
+            throw new Exception("No hay registro previo válido en Historial_Lotes para el producto {$cod_barra} en la sucursal {$sucursal}. No se descuenta ni se crea contenido vacío.");
         }
         
         // Descontar de cada lote hasta cubrir la cantidad vendida

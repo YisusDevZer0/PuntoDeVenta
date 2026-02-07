@@ -23,6 +23,26 @@ if ($id_historial > 0) {
     <input type="hidden" name="id_historial" id="id_historial" value="<?php echo $id_historial; ?>">
     <input type="hidden" name="id_prod_pos" id="id_prod_pos" value="<?php echo $lote_actual ? $lote_actual['ID_Prod_POS'] : ''; ?>">
     <input type="hidden" name="fk_sucursal" id="fk_sucursal" value="<?php echo $lote_actual ? $lote_actual['Fk_sucursal'] : $sucursal_modal; ?>">
+    <input type="hidden" name="tipo_accion" id="tipo_accion" value="editar">
+    <input type="hidden" id="cantidad_actual_lote" value="<?php echo $lote_actual ? (int)$lote_actual['Existencias'] : 0; ?>">
+    
+    <?php if ($id_historial > 0): ?>
+    <div class="mb-4 p-3 rounded" style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
+        <label class="form-label fw-bold mb-2"><i class="fa-solid fa-list-check me-2"></i>¿Qué desea hacer?</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="accion_lote" id="accion-editar" value="editar" checked>
+            <label class="form-check-label" for="accion-editar">
+                <strong>Editar datos del lote</strong> — Modificar número de lote, fecha de caducidad o cantidad actual
+            </label>
+        </div>
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="accion_lote" id="accion-ingreso" value="ingreso">
+            <label class="form-check-label" for="accion-ingreso">
+                <strong>Registrar ingreso nuevo a este lote</strong> — Agregar más unidades al mismo lote (ej. nueva recepción de mercancía)
+            </label>
+        </div>
+    </div>
+    <?php endif; ?>
     
     <div class="mb-3">
         <label class="form-label"><i class="fa-solid fa-barcode me-2"></i>Código de Barras:</label>
@@ -60,12 +80,13 @@ if ($id_historial > 0) {
         </div>
     </div>
     
-    <div class="mb-3">
-        <label class="form-label"><i class="fa-solid fa-boxes-stacked me-2"></i>Cantidad:</label>
+    <div class="mb-3" id="div-cantidad">
+        <label class="form-label"><i class="fa-solid fa-boxes-stacked me-2"></i><span id="lbl-cantidad">Cantidad:</span></label>
         <input type="number" class="form-control" id="cantidad" name="cantidad" 
                value="<?php echo $lote_actual ? $lote_actual['Existencias'] : ''; ?>" 
                min="0" step="1" required>
         <small class="form-text text-muted" id="cantidad-ayuda">Cantidad de unidades en este lote</small>
+        <small class="form-text text-muted d-none" id="cantidad-actual-ayuda">Cantidad actual en lote: <strong id="cantidad-actual-valor">0</strong> unidades</small>
     </div>
     
     <div id="div-lotes-existentes" style="display:none;" class="mb-3">
@@ -97,6 +118,31 @@ if ($id_historial > 0) {
 $(function() {
     var sucursalUsuario = <?php echo json_encode($sucursal_modal); ?>;
     var permiteRegistrar = false;
+    var cantidadActualLote = parseInt($('#cantidad_actual_lote').val()) || 0;
+    var esModoEdicion = $('#id_historial').val() && $('#id_historial').val() > 0;
+
+    function cambiarModoAccion() {
+        var modo = $('input[name="accion_lote"]:checked').val();
+        $('#tipo_accion').val(modo);
+        if (modo === 'ingreso') {
+            $('#lote_nuevo, #fecha_caducidad_nueva').prop('readonly', true).addClass('bg-light');
+            $('#lbl-cantidad').text('Unidades a agregar:');
+            $('#cantidad').val('').attr('min', 1).attr('placeholder', 'Ej: 10');
+            $('#cantidad-ayuda').addClass('d-none');
+            $('#cantidad-actual-valor').text(cantidadActualLote);
+            $('#cantidad-actual-ayuda').removeClass('d-none');
+        } else {
+            $('#lote_nuevo, #fecha_caducidad_nueva').prop('readonly', false).removeClass('bg-light');
+            $('#lbl-cantidad').text('Cantidad:');
+            $('#cantidad').val(cantidadActualLote).attr('min', 0).removeAttr('placeholder');
+            $('#cantidad-ayuda').removeClass('d-none').text('Cantidad total de unidades en este lote');
+            $('#cantidad-actual-ayuda').addClass('d-none');
+        }
+    }
+
+    if (esModoEdicion) {
+        $('input[name="accion_lote"]').on('change', cambiarModoAccion);
+    }
 
     $('#btn-buscar-producto').on('click', buscarProducto);
     $('#cod_barra').on('keypress', function(e) {
@@ -171,6 +217,15 @@ $(function() {
         if (!$('#id_historial').val() && !permiteRegistrar) {
             Swal.fire('Atención', 'Todo el stock tiene lote y caducidad. No se permiten más altas.', 'warning');
             return;
+        }
+        var tipoAccion = $('#tipo_accion').val();
+        if (tipoAccion === 'ingreso') {
+            var cantIngreso = parseInt($('#cantidad').val()) || 0;
+            if (cantIngreso <= 0) {
+                Swal.fire('Atención', 'Indique la cantidad de unidades a agregar', 'warning');
+                $('#cantidad').focus();
+                return;
+            }
         }
         var formData = $(this).serialize();
         Swal.fire({ title: 'Guardando...', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
