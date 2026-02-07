@@ -153,6 +153,45 @@ if ($sucursal_id > 0) {
         .inventario-actions .btn { margin: 0 2px; }
         .search-box-wrap .input-group-text { border-radius: 8px 0 0 8px; }
         .search-box-wrap .form-control { border-radius: 0 8px 8px 0; }
+        /* Ordenamiento de tabla: iconos discretos (ocultar los por defecto de DataTables) */
+        #DataInventarioTurnos .table thead th.sorting,
+        #DataInventarioTurnos .table thead th.sorting_asc,
+        #DataInventarioTurnos .table thead th.sorting_desc {
+            position: relative;
+            padding-right: 1.5rem !important;
+            cursor: pointer;
+            background-image: none !important;
+        }
+        #DataInventarioTurnos .table thead th.sorting::after,
+        #DataInventarioTurnos .table thead th.sorting_asc::after,
+        #DataInventarioTurnos .table thead th.sorting_desc::after {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            opacity: 0.5;
+            font-family: inherit;
+        }
+        #DataInventarioTurnos .table thead th.sorting::after {
+            content: "\21C5";
+            opacity: 0.35;
+        }
+        #DataInventarioTurnos .table thead th.sorting_asc::after {
+            content: "\2191";
+            opacity: 0.8;
+            color: #0d6efd;
+        }
+        #DataInventarioTurnos .table thead th.sorting_desc::after {
+            content: "\2193";
+            opacity: 0.8;
+            color: #0d6efd;
+        }
+        #DataInventarioTurnos .table thead th.sorting:hover::after,
+        #DataInventarioTurnos .table thead th.sorting_asc:hover::after,
+        #DataInventarioTurnos .table thead th.sorting_desc:hover::after {
+            opacity: 1;
+        }
     </style>
 </head>
 

@@ -55,7 +55,6 @@ function CargarProductosTurno(idTurno) {
         "processing": true,
         "serverSide": false,
         "destroy": true,
-        "ordering": false,
         "ajax": {
             "url": url,
             "type": "GET",
@@ -80,7 +79,7 @@ function CargarProductosTurno(idTurno) {
             { "data": "Lote", "title": "Lote", "defaultContent": "-" },
             { "data": "Fecha_Caducidad", "title": "Fecha Cad.", "defaultContent": "-" },
             { "data": "Estado", "title": "Estado" },
-            { "data": "Acciones", "title": "Acciones" }
+            { "data": "Acciones", "title": "Acciones", "orderable": false }
         ],
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros",
