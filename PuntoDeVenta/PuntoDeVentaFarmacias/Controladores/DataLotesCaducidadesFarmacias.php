@@ -94,7 +94,9 @@ if ($stmt) {
             'Sucursal' => $fila['Nombre_Sucursal'],
             'Usuario_Modifico' => $fila['Usuario_Modifico'],
             'Fecha_Registro' => date('d/m/Y H:i', strtotime($fila['Fecha_Registro'])),
-            'Editar' => "<button class='btn btn-sm btn-primary btn-editar-lote' data-id='{$fila['ID_Historial']}' title='Editar lote'><i class='fa-solid fa-edit'></i></button>"
+            'Editar' => "<button class='btn btn-sm btn-primary btn-editar-lote' data-id='{$fila['ID_Historial']}' title='Editar lote, fecha o cantidad'>
+                <i class='fa-solid fa-edit'></i> Editar
+            </button>"
         ];
     }
     $stmt->close();

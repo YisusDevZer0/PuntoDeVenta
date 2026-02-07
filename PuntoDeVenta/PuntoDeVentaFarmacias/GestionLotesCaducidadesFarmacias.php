@@ -43,7 +43,7 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                             </small>
                         </div>
                         <button type="button" class="btn btn-primary" id="btn-actualizar-lote">
-                            <i class="fa-solid fa-plus me-2"></i>Registrar/Actualizar Lote
+                            <i class="fa-solid fa-plus me-2"></i>Registrar lote
                         </button>
                     </div>
 
@@ -55,11 +55,11 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">Buscar por código de barras:</label>
                             <input type="text" class="form-control" id="buscar-codigo" placeholder="Código de barras">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label">Filtrar por estado:</label>
                             <select class="form-select" id="filtro-estado">
                                 <option value="">Todos</option>
@@ -68,7 +68,7 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                                 <option value="ok">Vigentes</option>
                             </select>
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
+                        <div class="col-md-3 d-flex align-items-end">
                             <button type="button" class="btn btn-secondary w-100" id="btn-limpiar-filtros">
                                 <i class="fa-solid fa-eraser me-2"></i>Limpiar Filtros
                             </button>
@@ -103,6 +103,9 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
     <script src="js/GestionLotesCaducidadesFarmacias.js"></script>
     <script>
         $(document).ready(function() {
+            // Cargar datos iniciales
+            CargarLotesCaducidadesFarmacias();
+
             // Botón menú (hamburguesa): ocultar/desplegar sidebar
             $(document).on("click", ".sidebar-toggler", function(e) {
                 e.preventDefault();
@@ -115,17 +118,18 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                 $('#Di').removeClass('modal-xl').addClass('modal-dialog');
                 $.post("Modales/ActualizarLoteCaducidadFarmacias.php", { id: 0, sucursal: suc }, function(data) {
                     $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("<i class='fa-solid fa-plus-circle me-2'></i>Registrar Nuevo Lote");
+                    $("#TitulosCajas").html("<i class='fa-solid fa-plus-circle me-2'></i>Registrar Lote");
                 });
                 $('#ModalEdDele').modal('show');
             });
 
             $(document).on("click", ".btn-editar-lote", function() {
                 var id = $(this).data("id");
+                var suc = $("#sucursal-usuario").val();
                 $('#Di').removeClass('modal-xl').addClass('modal-dialog');
-                $.post("Modales/ActualizarLoteCaducidadFarmacias.php", { id: id }, function(data) {
+                $.post("Modales/ActualizarLoteCaducidadFarmacias.php", { id: id, sucursal: suc }, function(data) {
                     $("#FormCajas").html(data);
-                    $("#TitulosCajas").html("<i class='fa-solid fa-edit me-2'></i>Editar Lote y Fecha de Caducidad");
+                    $("#TitulosCajas").html("<i class='fa-solid fa-edit me-2'></i>Editar Lote, Fecha o Cantidad");
                 });
                 $('#ModalEdDele').modal('show');
             });

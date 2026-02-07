@@ -35,7 +35,7 @@ function CargarLotesCaducidadesFarmacias() {
             { data: 'Estado', title: 'Estado', width: '130px', className: 'text-center' },
             { data: 'Sucursal', title: 'Sucursal' },
             { data: 'Usuario_Modifico', title: 'Usuario', width: '150px' },
-            { data: 'Editar', title: 'Acciones', width: '80px', orderable: false, className: 'text-center' }
+            { data: 'Editar', title: 'Acciones', width: '100px', orderable: false, className: 'text-center' }
         ],
         language: {
             lengthMenu: 'Mostrar _MENU_ registros',
@@ -63,7 +63,4 @@ $(document).ready(function() {
             '<table id="tablaLotes" class="table table-striped table-hover"><thead></thead><tbody></tbody></table>'
         );
     }
-    setTimeout(function() {
-        CargarLotesCaducidadesFarmacias();
-    }, 100);
 });
