@@ -173,8 +173,12 @@ function pausarTurno(idTurno) {
                             location.reload();
                         });
                     } else {
-                        Swal.fire('Error', response.message, 'error');
+                        Swal.fire('Error', response.message || 'No se pudo pausar el turno', 'error');
                     }
+                },
+                error: function(xhr) {
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Error al comunicarse con el servidor';
+                    Swal.fire('Error', msg, 'error');
                 }
             });
         }
@@ -317,6 +321,7 @@ $(document).on('click', '.btn-contar-producto', function() {
         '<div class="mb-3">' +
         '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
         '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
+        '<small class="text-muted">Cantidad que contaste en el inventario</small>' +
         '</div>' +
         '<div class="mb-3">' +
         '<label class="form-label mb-1">Lote <small class="text-muted">(opcional)</small></label>' +
@@ -324,7 +329,7 @@ $(document).on('click', '.btn-contar-producto', function() {
         '</div>' +
         '<div class="mb-0">' +
         '<label class="form-label mb-1">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
-        '<input type="date" id="conteo-fecha-caducidad" class="form-control">' +
+        '<input type="date" id="conteo-fecha-caducidad" class="form-control" title="Seleccione la fecha de caducidad del lote">' +
         '</div>' +
         '</div>';
     
@@ -334,7 +339,7 @@ $(document).on('click', '.btn-contar-producto', function() {
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
-        width: '440px',
+        width: '480px',
         customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
         preConfirm: () => {
             var ex = document.getElementById('existencias-fisicas').value;

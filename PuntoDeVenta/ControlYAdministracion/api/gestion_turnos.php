@@ -295,16 +295,16 @@ try {
                 throw new Exception('ID de turno inválido');
             }
             
-            // Verificar que el turno pertenece al usuario
-            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Usuario_Actual = ?";
+            // Obtener turno por ID y estado (parte administrativa: no exigir coincidencia exacta de usuario)
+            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Estado = 'activo'";
             $stmt_ver = $conn->prepare($sql_ver);
-            $stmt_ver->bind_param("is", $id_turno, $usuario);
+            $stmt_ver->bind_param("i", $id_turno);
             $stmt_ver->execute();
             $turno = $stmt_ver->get_result()->fetch_assoc();
             $stmt_ver->close();
             
-            if (!$turno || $turno['Estado'] != 'activo') {
-                throw new Exception('Turno no válido para pausar');
+            if (!$turno) {
+                throw new Exception('Turno no válido para pausar. Verifica que el turno esté activo.');
             }
             
             // Contar productos actuales antes de pausar
@@ -353,16 +353,15 @@ try {
                 throw new Exception('ID de turno inválido');
             }
             
-            // Verificar que el turno pertenece al usuario
-            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Usuario_Actual = ?";
+            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Estado = 'pausado'";
             $stmt_ver = $conn->prepare($sql_ver);
-            $stmt_ver->bind_param("is", $id_turno, $usuario);
+            $stmt_ver->bind_param("i", $id_turno);
             $stmt_ver->execute();
             $turno = $stmt_ver->get_result()->fetch_assoc();
             $stmt_ver->close();
             
-            if (!$turno || $turno['Estado'] != 'pausado') {
-                throw new Exception('Turno no válido para reanudar');
+            if (!$turno) {
+                throw new Exception('Turno no válido para reanudar. Verifica que el turno esté pausado.');
             }
             
             // Recalcular contadores antes de reanudar
@@ -410,16 +409,15 @@ try {
                 throw new Exception('ID de turno inválido');
             }
             
-            // Verificar que el turno pertenece al usuario
-            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Usuario_Actual = ?";
+            $sql_ver = "SELECT * FROM Inventario_Turnos WHERE ID_Turno = ? AND Estado IN ('activo', 'pausado')";
             $stmt_ver = $conn->prepare($sql_ver);
-            $stmt_ver->bind_param("is", $id_turno, $usuario);
+            $stmt_ver->bind_param("i", $id_turno);
             $stmt_ver->execute();
             $turno = $stmt_ver->get_result()->fetch_assoc();
             $stmt_ver->close();
             
             if (!$turno) {
-                throw new Exception('Turno no encontrado');
+                throw new Exception('Turno no encontrado o ya finalizado');
             }
             
             // Obtener el límite de productos del turno
