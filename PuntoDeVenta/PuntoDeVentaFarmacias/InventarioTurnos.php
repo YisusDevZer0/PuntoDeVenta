@@ -104,24 +104,78 @@ if ($sucursal_id > 0) {
     
     <style>
         .turno-activo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 50%, #084298 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.25);
         }
+        .turno-activo .row { align-items: center; }
+        .turno-activo strong { opacity: 0.9; font-weight: 600; }
+        .turno-activo .progress { height: 1.25rem; border-radius: 8px; background: rgba(255,255,255,0.25); }
+        .turno-activo .progress-bar { font-size: 0.8rem; font-weight: 600; }
         .producto-bloqueado {
-            background-color: #fff3cd;
+            background-color: #fff8e6;
             border-left: 4px solid #ffc107;
         }
         .producto-disponible {
-            background-color: #d1ecf1;
-            border-left: 4px solid #17a2b8;
+            background-color: #e8f4fc;
+            border-left: 4px solid #0d6efd;
         }
-        .badge-estado {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
+        .table-success { border-left: 4px solid #198754 !important; }
+        .table-warning { border-left: 4px solid #ffc107 !important; }
+        .badge-estado { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+        #DataInventarioTurnos .table { border-radius: 8px; overflow: hidden; }
+        #DataInventarioTurnos .table thead th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #212529;
+            border-bottom: 2px solid #dee2e6;
+            padding: 0.85rem 0.75rem;
+        }
+        #DataInventarioTurnos .table tbody td { padding: 0.75rem; vertical-align: middle; }
+        .inventario-actions .btn { margin: 0 2px; }
+        .search-box-wrap .input-group-text { border-radius: 8px 0 0 8px; }
+        .search-box-wrap .form-control { border-radius: 0 8px 8px 0; }
+        /* Ordenamiento de tabla: iconos discretos */
+        #DataInventarioTurnos .table thead th.sorting,
+        #DataInventarioTurnos .table thead th.sorting_asc,
+        #DataInventarioTurnos .table thead th.sorting_desc {
+            position: relative;
+            padding-right: 1.5rem !important;
+            cursor: pointer;
+            background-image: none !important;
+        }
+        #DataInventarioTurnos .table thead th.sorting::after,
+        #DataInventarioTurnos .table thead th.sorting_asc::after,
+        #DataInventarioTurnos .table thead th.sorting_desc::after {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            opacity: 0.5;
+            font-family: inherit;
+        }
+        #DataInventarioTurnos .table thead th.sorting::after {
+            content: "\21C5";
+            opacity: 0.35;
+        }
+        #DataInventarioTurnos .table thead th.sorting_asc::after {
+            content: "\2191";
+            opacity: 0.8;
+            color: #0d6efd;
+        }
+        #DataInventarioTurnos .table thead th.sorting_desc::after {
+            content: "\2193";
+            opacity: 0.8;
+            color: #0d6efd;
+        }
+        #DataInventarioTurnos .table thead th.sorting:hover::after,
+        #DataInventarioTurnos .table thead th.sorting_asc:hover::after,
+        #DataInventarioTurnos .table thead th.sorting_desc:hover::after {
+            opacity: 1;
         }
     </style>
 </head>
@@ -139,12 +193,13 @@ if ($sucursal_id > 0) {
         <div class="container-fluid pt-4 px-4">
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h6 class="mb-0" style="color:#0172b6;">
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <h5 class="mb-0 fw-bold" style="color:#0d6efd;">
                             <i class="fa-solid fa-clipboard-list me-2"></i>
-                            Conteo Diario por Turnos Diarios - <?php echo $row['Licencia']?>
-                        </h6>
-                        <div class="btn-group">
+                            Conteo Diario por Turnos
+                        </h5>
+                        <span class="text-muted small"><?php echo htmlspecialchars($row['Licencia']); ?></span>
+                        <div class="btn-group btn-group-sm">
                             <?php if (!$turno_activo): ?>
                                 <button type="button" class="btn btn-success btn-sm" id="btn-iniciar-turno">
                                     <i class="fa-solid fa-play me-2"></i>Iniciar Turno
@@ -188,11 +243,11 @@ if ($sucursal_id > 0) {
                             <div class="col-md-3">
                                 <strong>Progreso:</strong> 
                                 <?php 
-                                $limite_productos = isset($turno_activo['Limite_Productos']) ? $turno_activo['Limite_Productos'] : 50;
-                                $total_seleccionados = $turno_activo['Total_Productos'];
-                                $completados = $turno_activo['Productos_Completados'];
-                                $porcentaje = $total_seleccionados > 0 
-                                    ? round(($completados / $total_seleccionados) * 100, 2) 
+                                $limite_productos = isset($turno_activo['Limite_Productos']) ? (int)$turno_activo['Limite_Productos'] : 50;
+                                $total_seleccionados = (int)$turno_activo['Total_Productos'];
+                                $completados = (int)$turno_activo['Productos_Completados'];
+                                $porcentaje = $limite_productos > 0 
+                                    ? min(100, round(($completados / $limite_productos) * 100, 2)) 
                                     : 0;
                                 ?>
                                 <div class="progress mt-1">
@@ -201,10 +256,8 @@ if ($sucursal_id > 0) {
                                     </div>
                                 </div>
                                 <small class="texto-progreso">
-                                    <?php echo $completados; ?> / <?php echo $total_seleccionados; ?> completados
-                                    <?php if ($limite_productos > 0): ?>
-                                        (Máx: <?php echo $limite_productos; ?> productos)
-                                    <?php endif; ?>
+                                    <?php echo $completados; ?> de <?php echo $limite_productos; ?> requeridos
+                                    <?php if ($total_seleccionados > 0): ?>(<?php echo $total_seleccionados; ?> seleccionados)<?php endif; ?>
                                 </small>
                             </div>
                             <div class="col-md-3">
@@ -235,23 +288,23 @@ if ($sucursal_id > 0) {
                     </div>
                     <?php endif; ?>
                     
-                    <div class="row mb-3">
+                    <div class="row mb-4 g-3">
                         <div class="col-md-5">
-                            <label class="form-label">
-                                <i class="fa-solid fa-barcode me-2"></i>Buscar producto (código o nombre):
+                            <label class="form-label fw-semibold">
+                                <i class="fa-solid fa-barcode me-2 text-primary"></i>Buscar producto
                             </label>
-                            <div class="input-group">
-                                <span class="input-group-text" style="background-color: #ef7980; color: white;">
+                            <div class="input-group search-box-wrap">
+                                <span class="input-group-text bg-primary text-white">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </span>
                                 <input type="text" class="form-control" id="buscar-producto" 
-                                       placeholder="Escribe código de barras o nombre del producto..." 
+                                       placeholder="Código de barras o nombre del producto..." 
                                        autocomplete="off">
                             </div>
-                            <small class="form-text text-muted">Comienza a escribir para buscar productos automáticamente</small>
+                            <small class="form-text text-muted">Escribe o escanea para buscar</small>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Filtrar por estado:</label>
+                            <label class="form-label fw-semibold">Estado</label>
                             <select class="form-select" id="filtro-estado-producto">
                                 <option value="">Todos</option>
                                 <option value="disponible">Disponibles</option>
@@ -261,11 +314,11 @@ if ($sucursal_id > 0) {
                                 <option value="ya_contado_otro_turno">Ya contado (otro turno)</option>
                             </select>
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button type="button" class="btn btn-secondary me-2" id="btn-limpiar-filtros">
-                                <i class="fa-solid fa-eraser me-2"></i>Limpiar Filtros
+                        <div class="col-md-4 d-flex align-items-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary" id="btn-limpiar-filtros">
+                                <i class="fa-solid fa-eraser me-1"></i>Limpiar
                             </button>
-                            <button type="button" class="btn btn-info" id="btn-refrescar-productos" title="Refrescar lista">
+                            <button type="button" class="btn btn-outline-primary" id="btn-refrescar-productos" title="Refrescar lista">
                                 <i class="fa-solid fa-rotate"></i>
                             </button>
                         </div>
@@ -294,8 +347,8 @@ if ($sucursal_id > 0) {
         <div id="Di" class="modal-dialog modal-notify modal-success">
             <div class="text-center">
                 <div class="modal-content">
-                    <div class="modal-header" style="background-color: #ef7980 !important;">
-                        <p class="heading lead" id="TitulosCajas" style="color:white;"></p>
+                    <div class="modal-header bg-primary text-white">
+                        <p class="heading lead mb-0" id="TitulosCajas"></p>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

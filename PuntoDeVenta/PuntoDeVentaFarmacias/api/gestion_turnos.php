@@ -687,6 +687,8 @@ try {
         case 'contar_producto':
             $id_registro = isset($_POST['id_registro']) ? (int)$_POST['id_registro'] : 0;
             $existencias_fisicas = isset($_POST['existencias_fisicas']) ? (int)$_POST['existencias_fisicas'] : 0;
+            $lote = isset($_POST['lote']) ? trim($_POST['lote']) : '';
+            $fecha_caducidad = isset($_POST['fecha_caducidad']) ? trim($_POST['fecha_caducidad']) : '';
             
             if ($id_registro <= 0) {
                 throw new Exception('Registro inválido');
@@ -710,18 +712,72 @@ try {
             // Calcular diferencia
             $diferencia = $existencias_fisicas - $registro['Existencias_Sistema'];
             
-            // Actualizar registro
-            $sql_update = "UPDATE Inventario_Turnos_Productos SET
-                Existencias_Fisicas = ?,
-                Diferencia = ?,
-                Estado = 'completado',
-                Fecha_Conteo = NOW()
-            WHERE ID_Registro = ?";
+            // Verificar si existen columnas Lote y Fecha_Caducidad
+            $tiene_lote = false;
+            $tiene_fecha = false;
+            $chk_col = $conn->query("SHOW COLUMNS FROM Inventario_Turnos_Productos LIKE 'Lote'");
+            if ($chk_col && $chk_col->num_rows > 0) $tiene_lote = true;
+            $chk_col = $conn->query("SHOW COLUMNS FROM Inventario_Turnos_Productos LIKE 'Fecha_Caducidad'");
+            if ($chk_col && $chk_col->num_rows > 0) $tiene_fecha = true;
             
-            $stmt_update = $conn->prepare($sql_update);
-            $stmt_update->bind_param("iii", $existencias_fisicas, $diferencia, $id_registro);
+            if ($tiene_lote && $tiene_fecha) {
+                $sql_update = "UPDATE Inventario_Turnos_Productos SET
+                    Existencias_Fisicas = ?,
+                    Diferencia = ?,
+                    Estado = 'completado',
+                    Fecha_Conteo = NOW(),
+                    Lote = ?,
+                    Fecha_Caducidad = ?
+                WHERE ID_Registro = ?";
+                $lote_val = ($lote !== '') ? $lote : null;
+                $fecha_val = ($fecha_caducidad !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_caducidad)) ? $fecha_caducidad : null;
+                $stmt_update = $conn->prepare($sql_update);
+                $stmt_update->bind_param("iissi", $existencias_fisicas, $diferencia, $lote_val, $fecha_val, $id_registro);
+            } else {
+                $sql_update = "UPDATE Inventario_Turnos_Productos SET
+                    Existencias_Fisicas = ?,
+                    Diferencia = ?,
+                    Estado = 'completado',
+                    Fecha_Conteo = NOW()
+                WHERE ID_Registro = ?";
+                $stmt_update = $conn->prepare($sql_update);
+                $stmt_update->bind_param("iii", $existencias_fisicas, $diferencia, $id_registro);
+            }
             $stmt_update->execute();
             $stmt_update->close();
+            
+            // Si se proporcionaron lote y fecha: registrar en Historial_Lotes si el lote no existe
+            $id_prod = (int) $registro['ID_Prod_POS'];
+            $fk_suc = (int) $registro['Fk_sucursal'];
+            $cod_barra = $registro['Cod_Barra'];
+            if ($lote !== '' && $fecha_caducidad !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_caducidad)) {
+                $existe_hl = $conn->prepare("SELECT ID_Historial FROM Historial_Lotes WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ? LIMIT 1");
+                $existe_hl->bind_param("iis", $id_prod, $fk_suc, $lote);
+                $existe_hl->execute();
+                $hl_row = $existe_hl->get_result()->fetch_assoc();
+                $existe_hl->close();
+                if (!$hl_row) {
+                    $ins_hl = $conn->prepare("INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico) VALUES (?, ?, ?, ?, CURDATE(), ?, ?)");
+                    $ins_hl->bind_param("iissis", $id_prod, $fk_suc, $lote, $fecha_caducidad, $existencias_fisicas, $usuario);
+                    $ins_hl->execute();
+                    $ins_hl->close();
+                    $chk_control = $conn->query("SHOW COLUMNS FROM Stock_POS LIKE 'Control_Lotes_Caducidad'");
+                    if ($chk_control && $chk_control->num_rows > 0) {
+                        $up_ctrl = $conn->prepare("UPDATE Stock_POS SET Control_Lotes_Caducidad = 1 WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND (Control_Lotes_Caducidad IS NULL OR Control_Lotes_Caducidad = 0)");
+                        $up_ctrl->bind_param("ii", $id_prod, $fk_suc);
+                        $up_ctrl->execute();
+                        $up_ctrl->close();
+                    }
+                    $chk_glm = $conn->query("SHOW COLUMNS FROM Gestion_Lotes_Movimientos LIKE 'Tipo_Movimiento'");
+                    if ($chk_glm && $chk_glm->num_rows > 0) {
+                        $obs_mov = 'Conteo turno ID_Registro ' . $id_registro;
+                        $ins_mov = $conn->prepare("INSERT INTO Gestion_Lotes_Movimientos (ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo, Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones) VALUES (?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)");
+                        $ins_mov->bind_param("isississ", $id_prod, $cod_barra, $fk_suc, $lote, $fecha_caducidad, $existencias_fisicas, $usuario, $obs_mov);
+                        $ins_mov->execute();
+                        $ins_mov->close();
+                    }
+                }
+            }
             
             // Actualizar contador de completados solo si no estaba completado antes
             if (!$ya_completado) {

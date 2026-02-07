@@ -76,6 +76,8 @@ function CargarProductosTurno(idTurno) {
             { "data": "Existencias_R", "title": "Existencias Sistema" },
             { "data": "Existencias_Fisicas", "title": "Existencias Físicas" },
             { "data": "Diferencia", "title": "Diferencia" },
+            { "data": "Lote", "title": "Lote", "defaultContent": "-" },
+            { "data": "Fecha_Caducidad", "title": "Fecha Cad.", "defaultContent": "-" },
             { "data": "Estado", "title": "Estado" },
             { "data": "Acciones", "title": "Acciones", "orderable": false }
         ],
@@ -375,33 +377,59 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto
+// Contar producto (incl. lote y fecha caducidad opcionales)
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
     
+    var html = '<div class="text-start conteo-modal-fields">' +
+        '<div class="mb-3">' +
+        '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
+        '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
+        '</div>' +
+        '<div class="mb-3">' +
+        '<label class="form-label mb-1">Lote <small class="text-muted">(opcional)</small></label>' +
+        '<input type="text" id="conteo-lote" class="form-control" placeholder="Ej. LOTE-2024-001">' +
+        '</div>' +
+        '<div class="mb-0">' +
+        '<label class="form-label mb-1">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
+        '<input type="date" id="conteo-fecha-caducidad" class="form-control">' +
+        '</div>' +
+        '</div>';
+    
     Swal.fire({
-        title: 'Registrar conteo físico',
-        html: '<input type="number" id="existencias-fisicas" class="swal2-input" placeholder="Existencias físicas" min="0">',
+        title: '<i class="fa-solid fa-calculator text-primary me-2"></i>Registrar conteo físico',
+        html: html,
         showCancelButton: true,
-        confirmButtonText: 'Guardar',
+        confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
+        width: '440px',
+        customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
         preConfirm: () => {
-            const existencias = document.getElementById('existencias-fisicas').value;
-            if (!existencias || existencias < 0) {
-                Swal.showValidationMessage('Ingrese un valor válido');
+            var ex = document.getElementById('existencias-fisicas').value;
+            if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
+                Swal.showValidationMessage('Ingrese existencias físicas válidas');
+                return false;
             }
-            return existencias;
+            return {
+                existencias: ex,
+                lote: document.getElementById('conteo-lote').value.trim(),
+                fecha: document.getElementById('conteo-fecha-caducidad').value || ''
+            };
         }
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed && result.value) {
+            var d = result.value;
+            var payload = {
+                accion: 'contar_producto',
+                id_registro: idRegistro,
+                existencias_fisicas: d.existencias
+            };
+            if (d.lote) payload.lote = d.lote;
+            if (d.fecha) payload.fecha_caducidad = d.fecha;
             $.ajax({
                 url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
-                data: {
-                    accion: 'contar_producto',
-                    id_registro: idRegistro,
-                    existencias_fisicas: result.value
-                },
+                data: payload,
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {

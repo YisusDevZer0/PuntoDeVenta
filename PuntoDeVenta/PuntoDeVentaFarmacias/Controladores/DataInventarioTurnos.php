@@ -104,6 +104,15 @@ if (!$turno) {
     exit;
 }
 
+// Verificar si existen columnas Lote y Fecha_Caducidad en Inventario_Turnos_Productos
+$tiene_lote_caducidad = false;
+$chk_l = $conn->query("SHOW COLUMNS FROM Inventario_Turnos_Productos LIKE 'Lote'");
+$chk_f = $conn->query("SHOW COLUMNS FROM Inventario_Turnos_Productos LIKE 'Fecha_Caducidad'");
+if ($chk_l && $chk_l->num_rows > 0 && $chk_f && $chk_f->num_rows > 0) {
+    $tiene_lote_caducidad = true;
+}
+$extra_select = $tiene_lote_caducidad ? ", itp.Lote, itp.Fecha_Caducidad" : "";
+
 // Subconsulta: productos ya contados en OTRO turno (misma sucursal, mismo día)
 $sql_ya_contado = "SELECT itp2.ID_Prod_POS, itp2.Fk_sucursal, it2.Folio_Turno
     FROM Inventario_Turnos_Productos itp2
@@ -134,6 +143,7 @@ $sql = "SELECT
     itp.Usuario_Selecciono,
     ipb.Usuario_Bloqueo,
     ya_contado.Folio_Turno as Folio_Turno_Anterior
+    " . $extra_select . "
 FROM Stock_POS sp
 INNER JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
 LEFT JOIN Inventario_Turnos_Productos itp ON sp.ID_Prod_POS = itp.ID_Prod_POS 
@@ -230,7 +240,7 @@ if ($stmt) {
                     </button>';
         }
         
-        $data[] = [
+        $row_data = [
             "Cod_Barra" => $fila["Cod_Barra"],
             "Nombre_Prod" => $fila["Nombre_Prod"],
             "Existencias_R" => number_format($fila["Existencias_R"]),
@@ -241,6 +251,11 @@ if ($stmt) {
             "Acciones" => $botones,
             "clase_fila" => $clase_fila
         ];
+        if ($tiene_lote_caducidad) {
+            $row_data["Lote"] = isset($fila["Lote"]) && $fila["Lote"] !== null && $fila["Lote"] !== '' ? htmlspecialchars($fila["Lote"]) : '-';
+            $row_data["Fecha_Caducidad"] = isset($fila["Fecha_Caducidad"]) && $fila["Fecha_Caducidad"] ? date('d/m/Y', strtotime($fila["Fecha_Caducidad"])) : '-';
+        }
+        $data[] = $row_data;
     }
     
     $stmt->close();

@@ -98,6 +98,7 @@
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-exchange-alt"></i>Realizar Traspasos</a>
                             <a href="ListadoDeTraspasos" class="dropdown-item"><i class="fa-solid fa-list-check"></i>Listado de traspasos</a>
+                            <a href="RecepcionTraspasos" class="dropdown-item"><i class="fa-solid fa-truck-ramp-box"></i>Recepción de traspasos (lote y caducidad)</a>
                             <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-inbox"></i>Solicitar ingresos</a>
                             <a href="SolicitudPendientes" class="dropdown-item"><i class="fa-solid fa-clock-rotate-left"></i>Solicitudes pendientes</a>
                         </div>
