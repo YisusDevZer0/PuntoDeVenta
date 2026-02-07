@@ -219,11 +219,12 @@ if ($sucursal_id > 0) {
                             <div class="col-md-3">
                                 <strong>Progreso:</strong> 
                                 <?php 
-                                $limite_productos = isset($turno_activo['Limite_Productos']) ? $turno_activo['Limite_Productos'] : 50;
-                                $total_seleccionados = $turno_activo['Total_Productos'];
-                                $completados = $turno_activo['Productos_Completados'];
-                                $porcentaje = $total_seleccionados > 0 
-                                    ? round(($completados / $total_seleccionados) * 100, 2) 
+                                $limite_productos = isset($turno_activo['Limite_Productos']) ? (int)$turno_activo['Limite_Productos'] : 50;
+                                $total_seleccionados = (int)$turno_activo['Total_Productos'];
+                                $completados = (int)$turno_activo['Productos_Completados'];
+                                // Porcentaje respecto al objetivo del turno (ej: 1 de 50 = 2%)
+                                $porcentaje = $limite_productos > 0 
+                                    ? min(100, round(($completados / $limite_productos) * 100, 2)) 
                                     : 0;
                                 ?>
                                 <div class="progress mt-1">
@@ -232,8 +233,8 @@ if ($sucursal_id > 0) {
                                     </div>
                                 </div>
                                 <small>
-                                    <?php echo $completados; ?> / <?php echo $total_seleccionados; ?> completados
-                                    (Máx: <?php echo $limite_productos; ?> productos)
+                                    <?php echo $completados; ?> de <?php echo $limite_productos; ?> requeridos
+                                    <?php if ($total_seleccionados > 0): ?>(<?php echo $total_seleccionados; ?> seleccionados)<?php endif; ?>
                                 </small>
                             </div>
                             <div class="col-md-3">
