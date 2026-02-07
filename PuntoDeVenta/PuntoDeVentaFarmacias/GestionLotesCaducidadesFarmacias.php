@@ -103,6 +103,13 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
     <script src="js/GestionLotesCaducidadesFarmacias.js"></script>
     <script>
         $(document).ready(function() {
+            // Botón menú (hamburguesa): ocultar/desplegar sidebar
+            $(document).on("click", ".sidebar-toggler", function(e) {
+                e.preventDefault();
+                $(".sidebar").toggleClass("active");
+                $(".content").toggleClass("active");
+            });
+
             $(document).on("click", "#btn-actualizar-lote", function() {
                 var suc = $("#sucursal-usuario").val();
                 $('#Di').removeClass('modal-xl').addClass('modal-dialog');

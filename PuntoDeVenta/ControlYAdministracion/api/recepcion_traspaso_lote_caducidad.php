@@ -99,11 +99,8 @@ try {
         exit;
     }
 
-    $sucursal_usuario = isset($row['Fk_Sucursal']) ? (int) $row['Fk_Sucursal'] : 0;
-    if ($sucursal_usuario > 0 && $fk_sucursal !== $sucursal_usuario) {
-        echo json_encode(['success' => false, 'error' => 'Solo puede recibir traspasos destinados a su sucursal.']);
-        exit;
-    }
+    // Parte administrativa: no se restringe por sucursal del usuario; la sucursal de recepción es la del traspaso.
+    // En el módulo de Farmacias se puede validar que solo vean/reciban lo de su sucursal.
 
     $cantidad_enviada = (int) $tyc['Cantidad'];
     

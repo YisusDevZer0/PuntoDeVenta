@@ -25,6 +25,14 @@ Ejecutar los siguientes scripts SQL en la base de datos en este orden:
    -- Crea tablas y procedimientos para inventario por turnos
    ```
 
+3. **inventario_turnos_lote_caducidad.sql** (recomendado para farmacias)
+   ```sql
+   -- Ubicación: database/inventario_turnos_lote_caducidad.sql
+   -- Agrega columnas Lote y Fecha_Caducidad a Inventario_Turnos_Productos
+   -- para que el modal "Registrar conteo físico" guarde lote y fecha de caducidad.
+   -- Si no ejecutas este script, el conteo seguirá funcionando pero sin lote/caducidad.
+   ```
+
 ### Paso 2: Verificar Archivos Creados
 
 Los siguientes archivos han sido creados:
@@ -134,6 +142,11 @@ Los enlaces han sido agregados al menú en `Menu.php` dentro de la sección "Alm
 ### Lotes no se descuentan:
 - Verificar que el trigger `trg_descontar_lote_venta` esté activo
 - Revisar la tabla `Lotes_Descuentos_Ventas` para ver si se registran los descuentos
+
+### Lote y Fecha de caducidad no se guardan en "Registrar conteo físico":
+- Ejecutar el script **database/inventario_turnos_lote_caducidad.sql** en tu base de datos.
+- Ese script agrega las columnas `Lote` y `Fecha_Caducidad` a la tabla `Inventario_Turnos_Productos`.
+- Sin ejecutarlo, el modal funciona pero solo guarda existencias físicas y diferencia.
 
 ## Soporte
 

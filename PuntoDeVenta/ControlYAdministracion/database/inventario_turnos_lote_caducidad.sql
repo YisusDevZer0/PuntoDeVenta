@@ -1,8 +1,12 @@
 -- =====================================================
 -- Inventario por turnos: Lote y Fecha de caducidad
 -- =====================================================
--- Agrega columnas opcionales a Inventario_Turnos_Productos
--- para registrar lote y fecha de caducidad al hacer el conteo.
+-- Ejecuta este script en tu base de datos (phpMyAdmin o MySQL)
+-- para que el modal "Registrar conteo físico" guarde Lote y
+-- Fecha de caducidad. Sin este script, el conteo funciona pero
+-- esos campos no se guardan.
+--
+-- Agrega columnas opcionales a Inventario_Turnos_Productos.
 
 SET @dbname = DATABASE();
 SET @tbl = 'Inventario_Turnos_Productos';

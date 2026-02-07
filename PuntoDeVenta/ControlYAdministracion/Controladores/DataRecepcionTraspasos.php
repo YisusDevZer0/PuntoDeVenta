@@ -12,15 +12,12 @@ try {
         throw new Exception('Error de conexión a la base de datos');
     }
 
-    if (!isset($row) || !isset($row['Fk_Sucursal'])) {
-        throw new Exception('Usuario no autenticado o sin sucursal asignada');
+    if (!isset($row)) {
+        throw new Exception('Usuario no autenticado');
     }
 
-    $sucursal = (int) $row['Fk_Sucursal'];
-    if ($sucursal <= 0) {
-        throw new Exception('Sucursal inválida');
-    }
-
+    // Parte administrativa: se muestran todos los traspasos pendientes (sin filtrar por sucursal del usuario).
+    // La sucursal que recibe se toma del propio traspaso al aceptarlo.
 $codigo = isset($_GET['codigo']) ? trim($_GET['codigo']) : '';
 
 $sql = "SELECT 
@@ -45,10 +42,10 @@ $sql = "SELECT
 FROM TraspasosYNotasC tyc
 LEFT JOIN Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
 LEFT JOIN Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
-WHERE tyc.Fk_SucursalDestino = ? AND tyc.Estatus = 'Generado'";
+WHERE tyc.Estatus = 'Generado'";
 
-$params = [$sucursal];
-$types = "i";
+$params = [];
+$types = "";
 
 if ($codigo !== '') {
     $sql .= " AND (tyc.Cod_Barra LIKE ? OR tyc.Nombre_Prod LIKE ?)";
@@ -58,7 +55,8 @@ if ($codigo !== '') {
     $types .= "ss";
 }
 
-$sql .= " ORDER BY tyc.Fecha_venta DESC, tyc.TraspaNotID DESC";
+// Ordenar de más reciente a más antiguo: primero por TraspaNotID (ID mayor = más reciente), luego por fecha
+$sql .= " ORDER BY tyc.TraspaNotID DESC";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
@@ -66,8 +64,9 @@ $sql .= " ORDER BY tyc.Fecha_venta DESC, tyc.TraspaNotID DESC";
     }
 
     $data = [];
-    $stmt->bind_param($types, ...$params);
-    
+    if ($params !== []) {
+        $stmt->bind_param($types, ...$params);
+    }
     if (!$stmt->execute()) {
         throw new Exception('Error al ejecutar consulta: ' . $stmt->error);
     }

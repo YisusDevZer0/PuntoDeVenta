@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 22-01-2026 a las 01:21:07
+-- Tiempo de generación: 07-02-2026 a las 15:59:24
 -- Versión del servidor: 11.8.3-MariaDB-log
 -- Versión de PHP: 7.2.34
 
@@ -1036,24 +1036,6 @@ CREATE TRIGGER `ActualizaPausaAlInsertar` AFTER INSERT ON `ConteosDiarios` FOR E
 END
 $$
 DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `ConteosDiariosrRESPALDO`
---
-
-CREATE TABLE `ConteosDiariosrRESPALDO` (
-  `Folio_Ingreso` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `Cod_Barra` varchar(250) NOT NULL,
-  `Nombre_Producto` varchar(250) NOT NULL,
-  `Fk_sucursal` int(12) NOT NULL,
-  `Existencias_R` int(11) NOT NULL,
-  `ExistenciaFisica` int(11) DEFAULT NULL,
-  `AgregadoPor` varchar(250) NOT NULL,
-  `AgregadoEl` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `EnPausa` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -3544,7 +3526,8 @@ CREATE TABLE `Stock_POS` (
   `Repisa` varchar(200) NOT NULL,
   `UltimoInventarioPor` varchar(200) NOT NULL,
   `FechaUltimoInventario` date NOT NULL,
-  `JustificacionAjuste` varchar(300) NOT NULL
+  `JustificacionAjuste` varchar(300) NOT NULL,
+  `Control_Lotes_Caducidad` tinyint(1) DEFAULT 0 COMMENT '1 = Requiere control de lotes y caducidad, 0 = No requiere'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
@@ -3587,30 +3570,32 @@ CREATE TRIGGER `trg_AfterStockUpdate` AFTER UPDATE ON `Stock_POS` FOR EACH ROW B
     DECLARE existe_lote INT;
 
     -- Verificar si el producto, lote y sucursal ya existen en Historial_Lotes
-    SELECT COUNT(*) INTO existe_lote 
-    FROM Historial_Lotes 
-    WHERE ID_Prod_POS = NEW.ID_Prod_POS 
-      AND Lote = NEW.Lote
-      AND Fk_sucursal = NEW.Fk_sucursal;
-
-    IF existe_lote = 0 THEN
-        -- Insertar nuevo lote en el historial
-        INSERT INTO Historial_Lotes (
-            ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
-        ) VALUES (
-            NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, NEW.ActualizadoPor
-        );
-    ELSE
-        -- Si el lote ya existe en la misma sucursal, actualizar existencias
-        UPDATE Historial_Lotes
-        SET Existencias = NEW.Existencias_R,
-            Fecha_Ingreso = NEW.Fecha_Ingreso,
-            Usuario_Modifico = NEW.AgregadoPor
+    -- Solo si hay un lote válido (no NULL y no vacío)
+    IF NEW.Lote IS NOT NULL AND NEW.Lote != '' THEN
+        SELECT COUNT(*) INTO existe_lote 
+        FROM Historial_Lotes 
         WHERE ID_Prod_POS = NEW.ID_Prod_POS 
           AND Lote = NEW.Lote
           AND Fk_sucursal = NEW.Fk_sucursal;
-    END IF;
 
+        IF existe_lote = 0 THEN
+            -- Insertar nuevo lote en el historial
+            INSERT INTO Historial_Lotes (
+                ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
+            ) VALUES (
+                NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
+            );
+        ELSE
+            -- Si el lote ya existe en la misma sucursal, actualizar existencias
+            UPDATE Historial_Lotes
+            SET Existencias = NEW.Existencias_R,
+                Fecha_Ingreso = NEW.Fecha_Ingreso,
+                Usuario_Modifico = COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
+            WHERE ID_Prod_POS = NEW.ID_Prod_POS 
+              AND Lote = NEW.Lote
+              AND Fk_sucursal = NEW.Fk_sucursal;
+        END IF;
+    END IF;
 END
 $$
 DELIMITER ;
@@ -3634,98 +3619,10 @@ CREATE TABLE `Stock_POS_Log` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `Stock_POS_respaldo`
+-- Estructura de tabla para la tabla `Stock_POS_Respaldofebrero26`
 --
 
-CREATE TABLE `Stock_POS_respaldo` (
-  `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `ID_Prod_POS` int(12) UNSIGNED ZEROFILL NOT NULL,
-  `Clave_adicional` varchar(15) DEFAULT NULL,
-  `Clave_Levic` varchar(100) NOT NULL,
-  `Cod_Barra` varchar(100) NOT NULL,
-  `Nombre_Prod` varchar(250) NOT NULL,
-  `Fk_sucursal` int(12) NOT NULL,
-  `Precio_Venta` decimal(50,2) NOT NULL,
-  `Precio_C` decimal(50,2) NOT NULL,
-  `Max_Existencia` int(11) NOT NULL,
-  `Min_Existencia` int(12) NOT NULL,
-  `Existencias_R` int(11) NOT NULL,
-  `Lote` varchar(100) NOT NULL,
-  `Fecha_Caducidad` date NOT NULL,
-  `Fecha_Ingreso` date NOT NULL,
-  `Tipo_Servicio` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `Tipo` varchar(500) NOT NULL,
-  `FkCategoria` varchar(500) NOT NULL,
-  `FkMarca` varchar(500) NOT NULL,
-  `FkPresentacion` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `Proveedor1` varchar(250) DEFAULT NULL,
-  `Proveedor2` varchar(250) DEFAULT NULL,
-  `Estatus` varchar(150) NOT NULL,
-  `Sistema` varchar(200) NOT NULL,
-  `AgregadoPor` varchar(250) NOT NULL,
-  `AgregadoEl` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `ID_H_O_D` varchar(100) NOT NULL,
-  `ActualizoFecha` varchar(200) NOT NULL,
-  `Cod_Paquete` int(11) NOT NULL,
-  `ActualizadoPor` varchar(200) NOT NULL,
-  `Contable` varchar(200) NOT NULL,
-  `Anaquel` varchar(100) NOT NULL,
-  `Repisa` varchar(200) NOT NULL,
-  `UltimoInventarioPor` varchar(200) NOT NULL,
-  `FechaUltimoInventario` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `Stock_POS_Respaldo2611`
---
-
-CREATE TABLE `Stock_POS_Respaldo2611` (
-  `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `ID_Prod_POS` int(12) UNSIGNED ZEROFILL NOT NULL,
-  `Clave_adicional` varchar(15) DEFAULT NULL,
-  `Clave_Levic` varchar(100) NOT NULL,
-  `Cod_Barra` varchar(100) NOT NULL,
-  `Nombre_Prod` varchar(250) NOT NULL,
-  `Fk_sucursal` int(12) NOT NULL,
-  `Precio_Venta` decimal(50,2) NOT NULL,
-  `Precio_C` decimal(50,2) NOT NULL,
-  `Max_Existencia` int(11) NOT NULL,
-  `Min_Existencia` int(12) NOT NULL,
-  `Existencias_R` int(11) NOT NULL,
-  `Lote` varchar(100) NOT NULL,
-  `Fecha_Caducidad` date NOT NULL,
-  `Fecha_Ingreso` date NOT NULL,
-  `Tipo_Servicio` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `Tipo` varchar(500) NOT NULL,
-  `FkCategoria` varchar(500) NOT NULL,
-  `FkMarca` varchar(500) NOT NULL,
-  `FkPresentacion` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NOT NULL,
-  `Proveedor1` varchar(250) DEFAULT NULL,
-  `Proveedor2` varchar(250) DEFAULT NULL,
-  `Estatus` varchar(150) NOT NULL,
-  `Sistema` varchar(200) NOT NULL,
-  `AgregadoPor` varchar(250) NOT NULL,
-  `AgregadoEl` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `ID_H_O_D` varchar(100) NOT NULL,
-  `ActualizoFecha` varchar(200) NOT NULL,
-  `Cod_Paquete` int(11) NOT NULL,
-  `ActualizadoPor` varchar(200) NOT NULL,
-  `Contable` varchar(200) NOT NULL,
-  `Anaquel` varchar(100) NOT NULL,
-  `Repisa` varchar(200) NOT NULL,
-  `UltimoInventarioPor` varchar(200) NOT NULL,
-  `FechaUltimoInventario` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `Stock_POS_RespaldoSeptiembre`
---
-
-CREATE TABLE `Stock_POS_RespaldoSeptiembre` (
+CREATE TABLE `Stock_POS_Respaldofebrero26` (
   `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL,
   `ID_Prod_POS` int(12) UNSIGNED ZEROFILL NOT NULL,
   `Clave_adicional` varchar(15) DEFAULT NULL,
@@ -3761,7 +3658,8 @@ CREATE TABLE `Stock_POS_RespaldoSeptiembre` (
   `Repisa` varchar(200) NOT NULL,
   `UltimoInventarioPor` varchar(200) NOT NULL,
   `FechaUltimoInventario` date NOT NULL,
-  `JustificacionAjuste` varchar(300) NOT NULL
+  `JustificacionAjuste` varchar(300) NOT NULL,
+  `Control_Lotes_Caducidad` tinyint(1) DEFAULT 0 COMMENT '1 = Requiere control de lotes y caducidad, 0 = No requiere'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -4587,47 +4485,6 @@ CREATE TABLE `Ventas_POS_Pruebas` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `Ventas_POS_respaldo`
---
-
-CREATE TABLE `Ventas_POS_respaldo` (
-  `Venta_POS_ID` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `ID_Prod_POS` int(12) UNSIGNED ZEROFILL NOT NULL,
-  `Identificador_tipo` varchar(300) NOT NULL,
-  `Turno` varchar(250) NOT NULL,
-  `FolioSucursal` varchar(100) NOT NULL,
-  `Folio_Ticket` varchar(100) NOT NULL,
-  `Folio_Ticket_Aleatorio` varchar(200) NOT NULL,
-  `Clave_adicional` varchar(15) DEFAULT NULL,
-  `Cod_Barra` varchar(100) NOT NULL,
-  `Nombre_Prod` varchar(250) NOT NULL,
-  `Cantidad_Venta` int(11) NOT NULL,
-  `Fk_sucursal` int(12) NOT NULL,
-  `Total_Venta` decimal(50,2) NOT NULL,
-  `Importe` decimal(50,2) NOT NULL,
-  `Total_VentaG` decimal(50,2) NOT NULL,
-  `DescuentoAplicado` int(11) DEFAULT NULL,
-  `FormaDePago` varchar(200) NOT NULL,
-  `CantidadPago` decimal(50,2) NOT NULL,
-  `Cambio` decimal(50,2) NOT NULL,
-  `Cliente` varchar(200) NOT NULL,
-  `Fecha_venta` date NOT NULL,
-  `Fk_Caja` int(10) UNSIGNED ZEROFILL NOT NULL,
-  `Lote` varchar(100) NOT NULL,
-  `Motivo_Cancelacion` varchar(250) NOT NULL,
-  `Estatus` varchar(200) NOT NULL,
-  `Sistema` varchar(200) NOT NULL,
-  `AgregadoPor` varchar(250) NOT NULL,
-  `AgregadoEl` timestamp NOT NULL DEFAULT current_timestamp(),
-  `ID_H_O_D` varchar(100) NOT NULL,
-  `FolioSignoVital` varchar(200) NOT NULL,
-  `TicketAnterior` varchar(100) NOT NULL,
-  `Pagos_tarjeta` decimal(50,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura Stand-in para la vista `v_chat_conversaciones_info`
 -- (Véase abajo para la vista actual)
 --
@@ -4895,31 +4752,45 @@ CREATE TABLE `v_resumen_mensual` (
 -- Indices de la tabla `AbonosCreditosLiquidaciones`
 --
 ALTER TABLE `AbonosCreditosLiquidaciones`
-  ADD PRIMARY KEY (`IdAbono`);
+  ADD PRIMARY KEY (`IdAbono`),
+  ADD KEY `idx_abonos_liq_num_ticket` (`NumTicket`),
+  ADD KEY `idx_abonos_liq_sucursal_fecha` (`Sucursal`,`FechaHora`),
+  ADD KEY `idx_abonos_liq_fecha` (`FechaHora`),
+  ADD KEY `idx_abonos_liq_caja` (`FkCaja`);
 
 --
 -- Indices de la tabla `AbonosCreditosVentas`
 --
 ALTER TABLE `AbonosCreditosVentas`
-  ADD PRIMARY KEY (`IdAbono`);
+  ADD PRIMARY KEY (`IdAbono`),
+  ADD KEY `idx_abonos_num_ticket` (`NumTicket`),
+  ADD KEY `idx_abonos_sucursal_fecha` (`Sucursal`,`FechaHora`),
+  ADD KEY `idx_abonos_caja` (`FkCaja`),
+  ADD KEY `idx_abonos_fecha` (`FechaHora`),
+  ADD KEY `idx_abonos_cobrado_por` (`CobradoPor`);
 
 --
 -- Indices de la tabla `ActualizacionesMasivasProductosPOS`
 --
 ALTER TABLE `ActualizacionesMasivasProductosPOS`
-  ADD PRIMARY KEY (`ID_Prod_POS`);
+  ADD PRIMARY KEY (`ID_Prod_POS`),
+  ADD KEY `idx_actualizaciones_masivas_producto` (`Id_Actualizado`),
+  ADD KEY `idx_actualizaciones_masivas_fecha` (`ActualizadoEl`);
 
 --
 -- Indices de la tabla `ActualizacionMasivaProductosGlobales`
 --
 ALTER TABLE `ActualizacionMasivaProductosGlobales`
-  ADD PRIMARY KEY (`IdActualizador`);
+  ADD PRIMARY KEY (`IdActualizador`),
+  ADD KEY `idx_actualizacion_global_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_actualizacion_global_fecha` (`ActualizadoEl`);
 
 --
 -- Indices de la tabla `ActualizacionMaxMin`
 --
 ALTER TABLE `ActualizacionMaxMin`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_actualizacion_maxmin_producto` (`ID_Prod_POS`);
 
 --
 -- Indices de la tabla `Agenda_Laboratorios`
@@ -4938,7 +4809,9 @@ ALTER TABLE `Agenda_revaloraciones`
 --
 ALTER TABLE `AjustesDeInventarios`
   ADD PRIMARY KEY (`Folio_Ingreso`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_ajustes_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ajustes_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Areas_Credit_POS`
@@ -4950,7 +4823,9 @@ ALTER TABLE `Areas_Credit_POS`
 -- Indices de la tabla `Areas_Credit_POS_Audita`
 --
 ALTER TABLE `Areas_Credit_POS_Audita`
-  ADD PRIMARY KEY (`ID_Audita_Ar_Cred`);
+  ADD PRIMARY KEY (`ID_Audita_Ar_Cred`),
+  ADD KEY `idx_areas_cred_audita_area` (`ID_Area_Cred`),
+  ADD KEY `idx_areas_cred_audita_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `Area_De_Notificaciones`
@@ -4980,7 +4855,8 @@ ALTER TABLE `Bitacora_Limpieza`
 --
 ALTER TABLE `caducados_configuracion`
   ADD PRIMARY KEY (`id_config`),
-  ADD UNIQUE KEY `unique_sucursal` (`sucursal_id`);
+  ADD UNIQUE KEY `unique_sucursal` (`sucursal_id`),
+  ADD KEY `idx_caducados_config_sucursal` (`sucursal_id`);
 
 --
 -- Indices de la tabla `caducados_historial`
@@ -4989,7 +4865,10 @@ ALTER TABLE `caducados_historial`
   ADD PRIMARY KEY (`id_historial`),
   ADD KEY `idx_id_lote` (`id_lote`),
   ADD KEY `idx_tipo_movimiento` (`tipo_movimiento`),
-  ADD KEY `idx_fecha_movimiento` (`fecha_movimiento`);
+  ADD KEY `idx_fecha_movimiento` (`fecha_movimiento`),
+  ADD KEY `idx_caducados_hist_lote` (`id_lote`),
+  ADD KEY `idx_caducados_hist_tipo` (`tipo_movimiento`),
+  ADD KEY `idx_caducados_hist_fecha` (`fecha_movimiento`);
 
 --
 -- Indices de la tabla `caducados_notificaciones`
@@ -4999,20 +4878,28 @@ ALTER TABLE `caducados_notificaciones`
   ADD KEY `idx_fecha_programada` (`fecha_programada`),
   ADD KEY `idx_estado` (`estado`),
   ADD KEY `idx_tipo_alerta` (`tipo_alerta`),
-  ADD KEY `fk_notificaciones_lote` (`id_lote`),
-  ADD KEY `idx_notificaciones_fecha_estado` (`fecha_programada`,`estado`);
+  ADD KEY `idx_notificaciones_fecha_estado` (`fecha_programada`,`estado`),
+  ADD KEY `idx_caducados_notif_fecha` (`fecha_programada`),
+  ADD KEY `idx_caducados_notif_estado` (`estado`),
+  ADD KEY `idx_caducados_notif_tipo` (`tipo_alerta`),
+  ADD KEY `idx_caducados_notif_lote` (`id_lote`);
 
 --
 -- Indices de la tabla `Cajas`
 --
 ALTER TABLE `Cajas`
-  ADD PRIMARY KEY (`ID_Caja`);
+  ADD PRIMARY KEY (`ID_Caja`),
+  ADD KEY `idx_cajas_sucursal_estatus` (`Sucursal`,`Estatus`),
+  ADD KEY `idx_cajas_estatus` (`Estatus`),
+  ADD KEY `idx_cajas_sucursal` (`Sucursal`),
+  ADD KEY `idx_cajas_fecha_apertura` (`Fecha_Apertura`);
 
 --
 -- Indices de la tabla `Cajas_POS_Audita`
 --
 ALTER TABLE `Cajas_POS_Audita`
-  ADD PRIMARY KEY (`ID_Caja_Audita`);
+  ADD PRIMARY KEY (`ID_Caja_Audita`),
+  ADD KEY `idx_cajas_audita_caja` (`ID_Caja`);
 
 --
 -- Indices de la tabla `Categorias_POS`
@@ -5024,25 +4911,40 @@ ALTER TABLE `Categorias_POS`
 -- Indices de la tabla `Categorias_POS_Updates`
 --
 ALTER TABLE `Categorias_POS_Updates`
-  ADD PRIMARY KEY (`ID_Update`);
+  ADD PRIMARY KEY (`ID_Update`),
+  ADD KEY `idx_categorias_updates_categoria` (`Cat_ID`),
+  ADD KEY `idx_categorias_updates_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `CEDIS`
 --
 ALTER TABLE `CEDIS`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_cedis_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_cedis_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_cedis_tipo_servicio` (`Tipo_Servicio`),
+  ADD KEY `idx_cedis_estatus` (`Estatus`),
+  ADD KEY `idx_cedis_fecha_caducidad` (`Fecha_Caducidad`),
+  ADD KEY `idx_cedis_agregado_el` (`AgregadoEl`),
+  ADD KEY `idx_cedis_actualizado_el` (`ActualizadoEl`);
 
 --
 -- Indices de la tabla `CEDIS_Eliminados`
 --
 ALTER TABLE `CEDIS_Eliminados`
-  ADD PRIMARY KEY (`Id_CedisEliminado`);
+  ADD PRIMARY KEY (`Id_CedisEliminado`),
+  ADD KEY `idx_cedis_eliminados_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_cedis_eliminados_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Cedis_Inventarios`
 --
 ALTER TABLE `Cedis_Inventarios`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_cedis_inv_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_cedis_inv_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_cedis_inv_fecha` (`FechaInventario`),
+  ADD KEY `idx_cedis_inv_agregado_el` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `chat_configuraciones`
@@ -5062,7 +4964,9 @@ ALTER TABLE `chat_conversaciones`
   ADD KEY `idx_ultimo_mensaje_fecha` (`ultimo_mensaje_fecha`),
   ADD KEY `idx_privado` (`privado`),
   ADD KEY `fk_chat_conversaciones_sucursal` (`sucursal_id`),
-  ADD KEY `idx_conversacion_activa_ultimo` (`activo`,`archivado`,`ultimo_mensaje_fecha` DESC);
+  ADD KEY `idx_conversacion_activa_ultimo` (`activo`,`archivado`,`ultimo_mensaje_fecha` DESC),
+  ADD KEY `idx_chat_conv_fecha_creacion` (`fecha_creacion`),
+  ADD KEY `idx_chat_conv_activo_fecha` (`activo`,`ultimo_mensaje_fecha`);
 ALTER TABLE `chat_conversaciones` ADD FULLTEXT KEY `idx_conversacion_nombre` (`nombre_conversacion`,`descripcion`);
 
 --
@@ -5100,7 +5004,9 @@ ALTER TABLE `chat_mensajes`
   ADD KEY `idx_archivo_hash` (`archivo_hash`),
   ADD KEY `idx_conversacion_fecha_eliminado` (`conversacion_id`,`fecha_envio` DESC,`eliminado`),
   ADD KEY `fk_chat_mensajes_eliminado_por` (`eliminado_por`),
-  ADD KEY `idx_mensaje_conversacion_fecha` (`conversacion_id`,`fecha_envio` DESC,`eliminado`);
+  ADD KEY `idx_mensaje_conversacion_fecha` (`conversacion_id`,`fecha_envio` DESC,`eliminado`),
+  ADD KEY `idx_chat_msg_conversacion_eliminado` (`conversacion_id`,`eliminado`),
+  ADD KEY `idx_chat_msg_usuario_fecha` (`usuario_id`,`fecha_envio`);
 ALTER TABLE `chat_mensajes` ADD FULLTEXT KEY `idx_mensaje_texto` (`mensaje`);
 
 --
@@ -5123,7 +5029,8 @@ ALTER TABLE `chat_participantes`
   ADD KEY `idx_activo` (`activo`),
   ADD KEY `idx_rol` (`rol`),
   ADD KEY `idx_ultima_lectura` (`ultima_lectura`),
-  ADD KEY `idx_participante_activo_conversacion` (`activo`,`conversacion_id`,`usuario_id`);
+  ADD KEY `idx_participante_activo_conversacion` (`activo`,`conversacion_id`,`usuario_id`),
+  ADD KEY `idx_chat_part_usuario_activo` (`usuario_id`,`activo`);
 
 --
 -- Indices de la tabla `chat_reacciones`
@@ -5147,77 +5054,105 @@ ALTER TABLE `Componentes`
 --
 ALTER TABLE `configuracion_checador`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `uk_usuario_clave` (`usuario_id`,`clave`);
+  ADD UNIQUE KEY `uk_usuario_clave` (`usuario_id`,`clave`),
+  ADD KEY `idx_config_checador_usuario_clave` (`usuario_id`,`clave`);
 
 --
 -- Indices de la tabla `ConteosDiarios`
 --
 ALTER TABLE `ConteosDiarios`
   ADD PRIMARY KEY (`Folio_Ingreso`),
-  ADD KEY `ID_Prod_POS` (`Cod_Barra`);
-
---
--- Indices de la tabla `ConteosDiariosrRESPALDO`
---
-ALTER TABLE `ConteosDiariosrRESPALDO`
-  ADD PRIMARY KEY (`Folio_Ingreso`),
-  ADD KEY `ID_Prod_POS` (`Cod_Barra`);
+  ADD KEY `ID_Prod_POS` (`Cod_Barra`),
+  ADD KEY `idx_conteos_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_conteos_usuario_fecha` (`AgregadoPor`,`AgregadoEl`),
+  ADD KEY `idx_conteos_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_conteos_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `ConteosDiarios_Pausados`
 --
 ALTER TABLE `ConteosDiarios_Pausados`
   ADD PRIMARY KEY (`Folio_Ingreso`),
-  ADD KEY `ID_Prod_POS` (`Cod_Barra`);
+  ADD KEY `ID_Prod_POS` (`Cod_Barra`),
+  ADD KEY `idx_conteos_pausados_usuario_sucursal` (`AgregadoPor`,`Fk_sucursal`,`EnPausa`),
+  ADD KEY `idx_conteos_pausados_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_conteos_pausados_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Cortes_Cajas_POS`
 --
 ALTER TABLE `Cortes_Cajas_POS`
-  ADD PRIMARY KEY (`ID_Caja`);
+  ADD PRIMARY KEY (`ID_Caja`),
+  ADD KEY `idx_cortes_caja` (`ID_Caja`),
+  ADD KEY `idx_cortes_fecha` (`Hora_Cierre`),
+  ADD KEY `idx_cortes_sucursal` (`Sucursal`),
+  ADD KEY `idx_cortes_fk_caja` (`Fk_Caja`);
 
 --
 -- Indices de la tabla `Cotizaciones`
 --
 ALTER TABLE `Cotizaciones`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_cotizaciones_num` (`NumCotizacion`),
+  ADD KEY `idx_cotizaciones_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_cotizaciones_proveedor` (`Proveedor`(100)),
+  ADD KEY `idx_cotizaciones_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Creditos_POS`
 --
 ALTER TABLE `Creditos_POS`
-  ADD PRIMARY KEY (`Folio_Credito`);
+  ADD PRIMARY KEY (`Folio_Credito`),
+  ADD KEY `idx_creditos_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_creditos_fecha_apertura` (`Fecha_Apertura`),
+  ADD KEY `idx_creditos_fecha_termino` (`Fecha_Termino`),
+  ADD KEY `idx_creditos_nombre` (`Nombre_Cred`(100));
 
 --
 -- Indices de la tabla `Creditos_POS_Audita`
 --
 ALTER TABLE `Creditos_POS_Audita`
-  ADD PRIMARY KEY (`Audita_Credi_POS`);
+  ADD PRIMARY KEY (`Audita_Credi_POS`),
+  ADD KEY `idx_creditos_audita_folio` (`Folio_Credito`),
+  ADD KEY `idx_creditos_audita_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_creditos_audita_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Data_Facturacion_POS`
 --
 ALTER TABLE `Data_Facturacion_POS`
-  ADD PRIMARY KEY (`ID_Factura`);
+  ADD PRIMARY KEY (`ID_Factura`),
+  ADD KEY `idx_facturacion_ticket` (`Fk_Ticket`),
+  ADD KEY `idx_facturacion_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_facturacion_estatus` (`Estatus`),
+  ADD KEY `idx_facturacion_rfc` (`RFC`),
+  ADD KEY `idx_facturacion_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `Data_Pacientes`
 --
 ALTER TABLE `Data_Pacientes`
-  ADD PRIMARY KEY (`ID_Data_Paciente`);
+  ADD PRIMARY KEY (`ID_Data_Paciente`),
+  ADD KEY `idx_pacientes_nombre` (`Nombre_Paciente`(100)),
+  ADD KEY `idx_pacientes_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_pacientes_telefono` (`Telefono`),
+  ADD KEY `idx_pacientes_fecha_nacimiento` (`Fecha_Nacimiento`),
+  ADD KEY `idx_pacientes_ingreso` (`Ingresadoen`);
 
 --
 -- Indices de la tabla `Data_Pacientes_Updates`
 --
 ALTER TABLE `Data_Pacientes_Updates`
-  ADD PRIMARY KEY (`ID_Update`);
+  ADD PRIMARY KEY (`ID_Update`),
+  ADD KEY `idx_pacientes_updates_paciente` (`ID_Data_Paciente`),
+  ADD KEY `idx_pacientes_updates_fecha` (`Ingresadoen`);
 
 --
 -- Indices de la tabla `Detalle_Limpieza`
 --
 ALTER TABLE `Detalle_Limpieza`
   ADD PRIMARY KEY (`id_detalle`),
-  ADD KEY `id_bitacora` (`id_bitacora`);
+  ADD KEY `idx_detalle_limpieza_bitacora` (`id_bitacora`);
 
 --
 -- Indices de la tabla `Devoluciones`
@@ -5230,7 +5165,10 @@ ALTER TABLE `Devoluciones`
   ADD KEY `idx_fecha` (`fecha`),
   ADD KEY `idx_estatus` (`estatus`),
   ADD KEY `idx_devoluciones_fecha_estatus` (`fecha`,`estatus`),
-  ADD KEY `idx_devoluciones_sucursal_fecha` (`sucursal_id`,`fecha`);
+  ADD KEY `idx_devoluciones_sucursal_fecha` (`sucursal_id`,`fecha`),
+  ADD KEY `idx_devoluciones_usuario` (`usuario_id`),
+  ADD KEY `idx_devoluciones_estatus` (`estatus`),
+  ADD KEY `idx_devoluciones_folio` (`folio`);
 
 --
 -- Indices de la tabla `Devoluciones_Acciones`
@@ -5239,7 +5177,10 @@ ALTER TABLE `Devoluciones_Acciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_devolucion` (`devolucion_id`),
   ADD KEY `idx_detalle` (`detalle_id`),
-  ADD KEY `idx_usuario` (`usuario_ejecuta`);
+  ADD KEY `idx_usuario` (`usuario_ejecuta`),
+  ADD KEY `idx_devoluciones_acciones_devolucion` (`devolucion_id`),
+  ADD KEY `idx_devoluciones_acciones_usuario` (`usuario_ejecuta`),
+  ADD KEY `idx_devoluciones_acciones_fecha` (`created_at`);
 
 --
 -- Indices de la tabla `Devoluciones_Autorizaciones`
@@ -5247,7 +5188,10 @@ ALTER TABLE `Devoluciones_Acciones`
 ALTER TABLE `Devoluciones_Autorizaciones`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_devolucion` (`devolucion_id`),
-  ADD KEY `idx_usuario` (`usuario_autoriza`);
+  ADD KEY `idx_usuario` (`usuario_autoriza`),
+  ADD KEY `idx_devoluciones_auth_devolucion` (`devolucion_id`),
+  ADD KEY `idx_devoluciones_auth_usuario` (`usuario_autoriza`),
+  ADD KEY `idx_devoluciones_auth_fecha` (`created_at`);
 
 --
 -- Indices de la tabla `Devoluciones_Detalle`
@@ -5259,7 +5203,11 @@ ALTER TABLE `Devoluciones_Detalle`
   ADD KEY `idx_codigo_barras` (`codigo_barras`),
   ADD KEY `idx_tipo` (`tipo_devolucion`),
   ADD KEY `idx_detalle_tipo_fecha` (`tipo_devolucion`,`created_at`),
-  ADD KEY `idx_detalle_producto_cantidad` (`producto_id`,`cantidad`);
+  ADD KEY `idx_detalle_producto_cantidad` (`producto_id`,`cantidad`),
+  ADD KEY `idx_devoluciones_detalle_devolucion` (`devolucion_id`),
+  ADD KEY `idx_devoluciones_detalle_producto` (`producto_id`),
+  ADD KEY `idx_devoluciones_detalle_tipo` (`tipo_devolucion`),
+  ADD KEY `idx_devoluciones_detalle_devolucion_tipo` (`devolucion_id`,`tipo_devolucion`);
 
 --
 -- Indices de la tabla `Devoluciones_Reportes`
@@ -5268,69 +5216,103 @@ ALTER TABLE `Devoluciones_Reportes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_tipo` (`tipo_reporte`),
   ADD KEY `idx_fecha` (`fecha_generacion`),
-  ADD KEY `idx_usuario` (`usuario_genera`);
+  ADD KEY `idx_usuario` (`usuario_genera`),
+  ADD KEY `idx_devoluciones_reportes_tipo` (`tipo_reporte`),
+  ADD KEY `idx_devoluciones_reportes_fecha` (`fecha_generacion`),
+  ADD KEY `idx_devoluciones_reportes_usuario` (`usuario_genera`);
 
 --
 -- Indices de la tabla `Devolucion_POS`
 --
 ALTER TABLE `Devolucion_POS`
-  ADD PRIMARY KEY (`ID_Registro`);
+  ADD PRIMARY KEY (`ID_Registro`),
+  ADD KEY `idx_devolucion_pos_fecha` (`Fecha`),
+  ADD KEY `idx_devolucion_pos_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_devolucion_pos_sucursal` (`Fk_Suc_Salida`),
+  ADD KEY `idx_devolucion_pos_hora` (`HoraAgregado`);
 
 --
 -- Indices de la tabla `encargos`
 --
 ALTER TABLE `encargos`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_encargos_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_encargos_estado` (`estado`),
+  ADD KEY `idx_encargos_fecha` (`fecha_encargo`),
+  ADD KEY `idx_encargos_ticket` (`NumTicket`),
+  ADD KEY `idx_encargos_caja` (`Fk_Caja`),
+  ADD KEY `idx_encargos_paciente` (`nombre_paciente`(100));
 
 --
 -- Indices de la tabla `Errores_POS`
 --
 ALTER TABLE `Errores_POS`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_errores_pos_fecha` (`fecha`),
+  ADD KEY `idx_errores_pos_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_errores_pos_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `Errores_POS_Ventas`
 --
 ALTER TABLE `Errores_POS_Ventas`
-  ADD PRIMARY KEY (`ID_Error`);
+  ADD PRIMARY KEY (`ID_Error`),
+  ADD KEY `idx_errores_ventas_fecha` (`Fecha`),
+  ADD KEY `idx_errores_ventas_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_errores_ventas_sucursal` (`Fk_sucursal`);
 
 --
 -- Indices de la tabla `ErrorLog`
 --
 ALTER TABLE `ErrorLog`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_error_log_fecha` (`error_time`),
+  ADD KEY `idx_error_log_caja` (`Fk_Caja`),
+  ADD KEY `idx_error_log_codigo` (`error_code`);
 
 --
 -- Indices de la tabla `error_log_act_prod`
 --
 ALTER TABLE `error_log_act_prod`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_error_log_act_prod_fecha` (`error_time`);
 
 --
 -- Indices de la tabla `Estados`
 --
 ALTER TABLE `Estados`
-  ADD PRIMARY KEY (`ID_Estado`);
+  ADD PRIMARY KEY (`ID_Estado`),
+  ADD KEY `idx_estados_nombre` (`Nombre_Estado`);
 
 --
 -- Indices de la tabla `Fondos_Cajas`
 --
 ALTER TABLE `Fondos_Cajas`
   ADD PRIMARY KEY (`ID_Fon_Caja`),
-  ADD KEY `Fk_Sucursal` (`Fk_Sucursal`);
+  ADD KEY `Fk_Sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_fondos_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_fondos_estatus` (`Estatus`),
+  ADD KEY `idx_fondos_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Fondos_Cajas_Audita`
 --
 ALTER TABLE `Fondos_Cajas_Audita`
   ADD PRIMARY KEY (`ID_Audita_FonCaja`),
-  ADD KEY `Fk_Sucursal` (`Fk_Sucursal`);
+  ADD KEY `Fk_Sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_fondos_audita_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_fondos_audita_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `GastosPOS`
 --
 ALTER TABLE `GastosPOS`
-  ADD PRIMARY KEY (`ID_Gastos`);
+  ADD PRIMARY KEY (`ID_Gastos`),
+  ADD KEY `idx_gastos_sucursal_fecha` (`Fk_sucursal`,`FechaConcepto`),
+  ADD KEY `idx_gastos_tipo` (`Concepto_Categoria`),
+  ADD KEY `idx_gastos_caja` (`Fk_Caja`),
+  ADD KEY `idx_gastos_fecha` (`FechaConcepto`),
+  ADD KEY `idx_gastos_empleado` (`Empleado`(100));
 
 --
 -- Indices de la tabla `Gestion_Lotes_Movimientos`
@@ -5339,7 +5321,10 @@ ALTER TABLE `Gestion_Lotes_Movimientos`
   ADD PRIMARY KEY (`ID_Movimiento`),
   ADD KEY `idx_producto_sucursal` (`ID_Prod_POS`,`Fk_sucursal`),
   ADD KEY `idx_cod_barra` (`Cod_Barra`),
-  ADD KEY `idx_fecha` (`Fecha_Modificacion`);
+  ADD KEY `idx_fecha` (`Fecha_Modificacion`),
+  ADD KEY `idx_gestion_lotes_producto_sucursal` (`ID_Prod_POS`,`Fk_sucursal`),
+  ADD KEY `idx_gestion_lotes_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_gestion_lotes_fecha` (`Fecha_Modificacion`);
 
 --
 -- Indices de la tabla `historial_abonos_encargos`
@@ -5348,51 +5333,78 @@ ALTER TABLE `historial_abonos_encargos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_encargo_id` (`encargo_id`),
   ADD KEY `idx_fecha_abono` (`fecha_abono`),
-  ADD KEY `idx_sucursal` (`sucursal`);
+  ADD KEY `idx_sucursal` (`sucursal`),
+  ADD KEY `idx_abonos_encargos_encargo` (`encargo_id`),
+  ADD KEY `idx_abonos_encargos_fecha` (`fecha_abono`),
+  ADD KEY `idx_abonos_encargos_sucursal` (`sucursal`);
 
 --
 -- Indices de la tabla `Historial_Lotes`
 --
 ALTER TABLE `Historial_Lotes`
   ADD PRIMARY KEY (`ID_Historial`),
-  ADD KEY `idx_caducidad_existencias` (`Fecha_Caducidad`,`Existencias`);
+  ADD KEY `idx_caducidad_existencias` (`Fecha_Caducidad`,`Existencias`),
+  ADD KEY `idx_hist_lotes_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_hist_lotes_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_hist_lotes_lote` (`Lote`),
+  ADD KEY `idx_hist_lotes_caducidad` (`Fecha_Caducidad`),
+  ADD KEY `idx_hist_lotes_producto_lote` (`ID_Prod_POS`,`Lote`,`Fk_sucursal`);
 
 --
 -- Indices de la tabla `IngresosAutorizados`
 --
 ALTER TABLE `IngresosAutorizados`
-  ADD PRIMARY KEY (`IDIngreso`);
+  ADD PRIMARY KEY (`IDIngreso`),
+  ADD KEY `idx_ingresos_auth_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ingresos_auth_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_ingresos_auth_sucursal` (`Fk_Sucursal`);
 
 --
 -- Indices de la tabla `IngresosCedis`
 --
 ALTER TABLE `IngresosCedis`
-  ADD PRIMARY KEY (`IDIngreso`);
+  ADD PRIMARY KEY (`IDIngreso`),
+  ADD KEY `idx_ingresos_cedis_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ingresos_cedis_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `IngresosFarmacias`
 --
 ALTER TABLE `IngresosFarmacias`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_ingresos_farmacias_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ingresos_farmacias_cod_barra` (`Cod_Barra`);
+
+--
+-- Indices de la tabla `Ingresos_Medicamentos`
+--
+ALTER TABLE `Ingresos_Medicamentos`
+  ADD KEY `idx_ingresos_med_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_ingresos_med_fecha` (`Fecha_Ingreso`);
 
 --
 -- Indices de la tabla `Inserciones_Excel_inventarios`
 --
 ALTER TABLE `Inserciones_Excel_inventarios`
-  ADD PRIMARY KEY (`Id_Insert`);
+  ADD PRIMARY KEY (`Id_Insert`),
+  ADD KEY `idx_excel_inv_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `InventariosStocks_Conteos`
 --
 ALTER TABLE `InventariosStocks_Conteos`
   ADD PRIMARY KEY (`Folio_Prod_Stock`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_inv_stocks_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_inv_stocks_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `InventariosSucursales`
 --
 ALTER TABLE `InventariosSucursales`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_inv_sucursales_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_inv_sucursales_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `Inventarios_Clinicas`
@@ -5404,20 +5416,24 @@ ALTER TABLE `Inventarios_Clinicas`
 -- Indices de la tabla `Inventarios_Clinicas_audita`
 --
 ALTER TABLE `Inventarios_Clinicas_audita`
-  ADD PRIMARY KEY (`ID_Inv_Clic_Audita`);
+  ADD PRIMARY KEY (`ID_Inv_Clic_Audita`),
+  ADD KEY `idx_inv_clinicas_audit_inventario` (`ID_Inv_Clic`),
+  ADD KEY `idx_inv_clinicas_audit_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `inventario_inicial_estado`
 --
 ALTER TABLE `inventario_inicial_estado`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `fkSucursal` (`fkSucursal`,`fecha_establecido`);
+  ADD UNIQUE KEY `fkSucursal` (`fkSucursal`,`fecha_establecido`),
+  ADD KEY `idx_inv_inicial_sucursal_fecha` (`fkSucursal`,`fecha_establecido`);
 
 --
 -- Indices de la tabla `Inventario_lotes_fechas`
 --
 ALTER TABLE `Inventario_lotes_fechas`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `idx_lotes_fechas_fecha` (`fecha_caducidad`);
 
 --
 -- Indices de la tabla `Inventario_Mobiliario`
@@ -5432,7 +5448,11 @@ ALTER TABLE `Inventario_Productos_Bloqueados`
   ADD PRIMARY KEY (`ID_Bloqueo`),
   ADD UNIQUE KEY `idx_producto_turno` (`ID_Turno`,`ID_Prod_POS`,`Cod_Barra`),
   ADD KEY `idx_usuario` (`Usuario_Bloqueo`),
-  ADD KEY `idx_sucursal` (`Fk_sucursal`);
+  ADD KEY `idx_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_bloqueados_turno` (`ID_Turno`),
+  ADD KEY `idx_bloqueados_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_bloqueados_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_bloqueados_usuario` (`Usuario_Bloqueo`);
 
 --
 -- Indices de la tabla `Inventario_Turnos`
@@ -5442,7 +5462,11 @@ ALTER TABLE `Inventario_Turnos`
   ADD UNIQUE KEY `idx_folio` (`Folio_Turno`),
   ADD KEY `idx_sucursal_fecha` (`Fk_sucursal`,`Fecha_Turno`),
   ADD KEY `idx_usuario` (`Usuario_Actual`),
-  ADD KEY `idx_estado` (`Estado`);
+  ADD KEY `idx_estado` (`Estado`),
+  ADD KEY `idx_turnos_sucursal_estado` (`Fk_sucursal`,`Estado`),
+  ADD KEY `idx_turnos_usuario_actual` (`Usuario_Actual`),
+  ADD KEY `idx_turnos_fecha` (`Fecha_Turno`),
+  ADD KEY `idx_turnos_folio` (`Folio_Turno`);
 
 --
 -- Indices de la tabla `Inventario_Turnos_Historial`
@@ -5450,7 +5474,10 @@ ALTER TABLE `Inventario_Turnos`
 ALTER TABLE `Inventario_Turnos_Historial`
   ADD PRIMARY KEY (`ID_Historial`),
   ADD KEY `idx_turno` (`ID_Turno`,`Folio_Turno`),
-  ADD KEY `idx_fecha` (`Fecha_Accion`);
+  ADD KEY `idx_fecha` (`Fecha_Accion`),
+  ADD KEY `idx_turnos_hist_turno` (`ID_Turno`),
+  ADD KEY `idx_turnos_hist_fecha` (`Fecha_Accion`),
+  ADD KEY `idx_turnos_hist_folio` (`Folio_Turno`);
 
 --
 -- Indices de la tabla `Inventario_Turnos_Productos`
@@ -5460,7 +5487,11 @@ ALTER TABLE `Inventario_Turnos_Productos`
   ADD KEY `idx_turno` (`ID_Turno`,`Folio_Turno`),
   ADD KEY `idx_producto` (`ID_Prod_POS`,`Cod_Barra`),
   ADD KEY `idx_usuario_estado` (`Usuario_Selecciono`,`Estado`),
-  ADD KEY `idx_sucursal` (`Fk_sucursal`);
+  ADD KEY `idx_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_turnos_productos_turno_estado` (`ID_Turno`,`Estado`),
+  ADD KEY `idx_turnos_productos_sucursal_estado` (`Fk_sucursal`,`Estado`),
+  ADD KEY `idx_turnos_productos_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_turnos_productos_fecha` (`Fecha_Conteo`);
 
 --
 -- Indices de la tabla `Licencias`
@@ -5480,7 +5511,9 @@ ALTER TABLE `ListadoServicios`
 --
 ALTER TABLE `Localidades`
   ADD PRIMARY KEY (`ID_Localidad`),
-  ADD KEY `Fk_Municipio` (`Fk_Municipio`);
+  ADD KEY `Fk_Municipio` (`Fk_Municipio`),
+  ADD KEY `idx_localidades_municipio` (`Fk_Municipio`),
+  ADD KEY `idx_localidades_nombre` (`Nombre_Localidad`);
 
 --
 -- Indices de la tabla `logsingresosmedicamentos`
@@ -5495,7 +5528,9 @@ ALTER TABLE `logs_checador`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_usuario_id` (`usuario_id`),
   ADD KEY `idx_accion` (`accion`),
-  ADD KEY `idx_created_at` (`created_at`);
+  ADD KEY `idx_created_at` (`created_at`),
+  ADD KEY `idx_logs_checador_usuario_fecha` (`usuario_id`,`created_at`),
+  ADD KEY `idx_logs_checador_accion_fecha` (`accion`,`created_at`);
 
 --
 -- Indices de la tabla `Lotes_Descuentos_Ventas`
@@ -5504,26 +5539,34 @@ ALTER TABLE `Lotes_Descuentos_Ventas`
   ADD PRIMARY KEY (`ID_Descuento`),
   ADD KEY `idx_venta` (`Folio_Ticket`),
   ADD KEY `idx_producto_lote` (`ID_Prod_POS`,`Lote`,`Fk_sucursal`),
-  ADD KEY `idx_fecha_caducidad` (`Fecha_Caducidad`);
+  ADD KEY `idx_fecha_caducidad` (`Fecha_Caducidad`),
+  ADD KEY `idx_lotes_desc_venta` (`Folio_Ticket`),
+  ADD KEY `idx_lotes_desc_producto_lote` (`ID_Prod_POS`,`Lote`,`Fk_sucursal`),
+  ADD KEY `idx_lotes_desc_fecha_caducidad` (`Fecha_Caducidad`);
 
 --
 -- Indices de la tabla `Marcas_POS`
 --
 ALTER TABLE `Marcas_POS`
-  ADD PRIMARY KEY (`Marca_ID`);
+  ADD PRIMARY KEY (`Marca_ID`),
+  ADD KEY `idx_marcas_nombre` (`Nom_Marca`);
 
 --
 -- Indices de la tabla `Marcas_POS_Updates`
 --
 ALTER TABLE `Marcas_POS_Updates`
-  ADD PRIMARY KEY (`ID_Update_Mar`);
+  ADD PRIMARY KEY (`ID_Update_Mar`),
+  ADD KEY `idx_marcas_updates_marca` (`Marca_ID`),
+  ADD KEY `idx_marcas_updates_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `Municipios`
 --
 ALTER TABLE `Municipios`
   ADD PRIMARY KEY (`ID_Municipio`),
-  ADD KEY `Fk_Estado` (`Fk_Estado`);
+  ADD KEY `Fk_Estado` (`Fk_Estado`),
+  ADD KEY `idx_municipios_estado` (`Fk_Estado`),
+  ADD KEY `idx_municipios_nombre` (`Nombre_Municipio`);
 
 --
 -- Indices de la tabla `Notificaciones`
@@ -5532,14 +5575,20 @@ ALTER TABLE `Notificaciones`
   ADD PRIMARY KEY (`ID_Notificacion`),
   ADD KEY `SucursalID` (`SucursalID`),
   ADD KEY `Tipo` (`Tipo`),
-  ADD KEY `Fecha` (`Fecha`);
+  ADD KEY `Fecha` (`Fecha`),
+  ADD KEY `idx_notificaciones_sucursal` (`SucursalID`),
+  ADD KEY `idx_notificaciones_tipo` (`Tipo`),
+  ADD KEY `idx_notificaciones_fecha` (`Fecha`),
+  ADD KEY `idx_notificaciones_sucursal_tipo` (`SucursalID`,`Tipo`),
+  ADD KEY `idx_notificaciones_tipo_fecha` (`Tipo`,`Fecha`);
 
 --
 -- Indices de la tabla `Ordenes_Compra_Sugeridas`
 --
 ALTER TABLE `Ordenes_Compra_Sugeridas`
   ADD PRIMARY KEY (`ID_Orden`),
-  ADD KEY `idx_folio_prod_stock` (`Folio_Prod_Stock`);
+  ADD KEY `idx_folio_prod_stock` (`Folio_Prod_Stock`),
+  ADD KEY `idx_ordenes_folio_stock` (`Folio_Prod_Stock`);
 
 --
 -- Indices de la tabla `PagosServicios`
@@ -5555,7 +5604,13 @@ ALTER TABLE `pedidos`
   ADD UNIQUE KEY `folio` (`folio`),
   ADD KEY `idx_sucursal` (`sucursal_id`),
   ADD KEY `idx_estado` (`estado`),
-  ADD KEY `idx_fecha_creacion` (`fecha_creacion`);
+  ADD KEY `idx_fecha_creacion` (`fecha_creacion`),
+  ADD KEY `idx_pedidos_sucursal` (`sucursal_id`),
+  ADD KEY `idx_pedidos_estado` (`estado`),
+  ADD KEY `idx_pedidos_fecha_creacion` (`fecha_creacion`),
+  ADD KEY `idx_pedidos_usuario` (`usuario_id`),
+  ADD KEY `idx_pedidos_folio` (`folio`),
+  ADD KEY `idx_pedidos_sucursal_estado` (`sucursal_id`,`estado`);
 
 --
 -- Indices de la tabla `pedido_detalles`
@@ -5563,32 +5618,45 @@ ALTER TABLE `pedidos`
 ALTER TABLE `pedido_detalles`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_pedido` (`pedido_id`),
-  ADD KEY `idx_producto` (`producto_id`);
+  ADD KEY `idx_producto` (`producto_id`),
+  ADD KEY `idx_pedido_detalles_pedido` (`pedido_id`),
+  ADD KEY `idx_pedido_detalles_producto` (`producto_id`),
+  ADD KEY `idx_pedido_detalles_estado` (`estado`);
 
 --
 -- Indices de la tabla `pedido_historial`
 --
 ALTER TABLE `pedido_historial`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_pedido_fecha` (`pedido_id`,`fecha_cambio`);
+  ADD KEY `idx_pedido_fecha` (`pedido_id`,`fecha_cambio`),
+  ADD KEY `idx_pedido_hist_pedido` (`pedido_id`),
+  ADD KEY `idx_pedido_hist_fecha` (`fecha_cambio`),
+  ADD KEY `idx_pedido_hist_usuario` (`usuario_id`);
 
 --
 -- Indices de la tabla `Presentaciones`
 --
 ALTER TABLE `Presentaciones`
-  ADD PRIMARY KEY (`Presentacion_ID`);
+  ADD PRIMARY KEY (`Presentacion_ID`),
+  ADD KEY `idx_presentaciones_nombre` (`Nom_Presentacion`),
+  ADD KEY `idx_presentaciones_estado` (`Estado`);
 
 --
 -- Indices de la tabla `Presentacion_Prod_POS_Updates`
 --
 ALTER TABLE `Presentacion_Prod_POS_Updates`
-  ADD PRIMARY KEY (`ID_Update_Pre`);
+  ADD PRIMARY KEY (`ID_Update_Pre`),
+  ADD KEY `idx_presentaciones_updates_presentacion` (`Pprod_ID`),
+  ADD KEY `idx_presentaciones_updates_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `Productos`
 --
 ALTER TABLE `Productos`
-  ADD PRIMARY KEY (`ID_Producto`);
+  ADD PRIMARY KEY (`ID_Producto`),
+  ADD KEY `idx_productos_generales_codigo` (`Codigo_Barra`),
+  ADD KEY `idx_productos_generales_folio` (`Folio_Producto`),
+  ADD KEY `idx_productos_generales_activo` (`Activo`);
 
 --
 -- Indices de la tabla `productos_lotes_caducidad`
@@ -5602,25 +5670,42 @@ ALTER TABLE `productos_lotes_caducidad`
   ADD KEY `idx_estado` (`estado`),
   ADD KEY `idx_folio_stock` (`folio_stock`),
   ADD KEY `idx_productos_caducidad_fecha` (`fecha_caducidad`,`estado`),
-  ADD KEY `idx_productos_caducidad_sucursal_fecha` (`sucursal_id`,`fecha_caducidad`);
+  ADD KEY `idx_productos_caducidad_sucursal_fecha` (`sucursal_id`,`fecha_caducidad`),
+  ADD KEY `idx_lotes_caducidad_cod_barra` (`cod_barra`),
+  ADD KEY `idx_lotes_caducidad_sucursal` (`sucursal_id`),
+  ADD KEY `idx_lotes_caducidad_fecha` (`fecha_caducidad`),
+  ADD KEY `idx_lotes_caducidad_estado` (`estado`),
+  ADD KEY `idx_lotes_caducidad_sucursal_fecha` (`sucursal_id`,`fecha_caducidad`);
 
 --
 -- Indices de la tabla `Productos_POS`
 --
 ALTER TABLE `Productos_POS`
-  ADD PRIMARY KEY (`ID_Prod_POS`);
+  ADD PRIMARY KEY (`ID_Prod_POS`),
+  ADD KEY `idx_productos_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_productos_tipo_servicio` (`Tipo_Servicio`),
+  ADD KEY `idx_productos_categoria` (`FkCategoria`(100)),
+  ADD KEY `idx_productos_marca` (`FkMarca`(100)),
+  ADD KEY `idx_productos_categoria_marca` (`FkCategoria`(100),`FkMarca`(100)),
+  ADD KEY `idx_productos_clave_levic` (`Clave_Levic`),
+  ADD KEY `idx_productos_agregado_el` (`AgregadoEl`),
+  ADD KEY `idx_productos_actualizado_el` (`ActualizadoEl`);
+ALTER TABLE `Productos_POS` ADD FULLTEXT KEY `idx_productos_nombre_fulltext` (`Nombre_Prod`);
 
 --
 -- Indices de la tabla `Productos_POS_Auditoria`
 --
 ALTER TABLE `Productos_POS_Auditoria`
-  ADD PRIMARY KEY (`Id_Auditoria`);
+  ADD PRIMARY KEY (`Id_Auditoria`),
+  ADD KEY `idx_productos_audit_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_productos_audit_fecha` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Productos_POS_Eliminados`
 --
 ALTER TABLE `Productos_POS_Eliminados`
-  ADD PRIMARY KEY (`EliminadoIDPOS`);
+  ADD PRIMARY KEY (`EliminadoIDPOS`),
+  ADD KEY `idx_productos_eliminados_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `producto_proveedor`
@@ -5629,20 +5714,25 @@ ALTER TABLE `producto_proveedor`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_producto_proveedor` (`producto_id`,`proveedor_id`),
   ADD KEY `idx_producto` (`producto_id`),
-  ADD KEY `idx_proveedor` (`proveedor_id`);
+  ADD KEY `idx_proveedor` (`proveedor_id`),
+  ADD KEY `idx_prod_prov_producto` (`producto_id`),
+  ADD KEY `idx_prod_prov_proveedor` (`proveedor_id`);
 
 --
 -- Indices de la tabla `Proveedores`
 --
 ALTER TABLE `Proveedores`
-  ADD PRIMARY KEY (`ID_Proveedor`);
+  ADD PRIMARY KEY (`ID_Proveedor`),
+  ADD KEY `idx_proveedores_nombre` (`Nombre_Proveedor`);
+ALTER TABLE `Proveedores` ADD FULLTEXT KEY `idx_proveedores_nombre_fulltext` (`Nombre_Proveedor`);
 
 --
 -- Indices de la tabla `proveedores_pedidos`
 --
 ALTER TABLE `proveedores_pedidos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_activo` (`activo`);
+  ADD KEY `idx_activo` (`activo`),
+  ADD KEY `idx_prov_pedidos_activo` (`activo`);
 
 --
 -- Indices de la tabla `recordatorios_config_whatsapp`
@@ -5659,7 +5749,10 @@ ALTER TABLE `recordatorios_destinatarios`
   ADD KEY `idx_recordatorio` (`recordatorio_id`),
   ADD KEY `idx_usuario` (`usuario_id`),
   ADD KEY `idx_estado_envio` (`estado_envio`),
-  ADD KEY `idx_destinatarios_estado_envio` (`estado_envio`,`fecha_envio`);
+  ADD KEY `idx_destinatarios_estado_envio` (`estado_envio`,`fecha_envio`),
+  ADD KEY `idx_recordatorios_dest_recordatorio` (`recordatorio_id`),
+  ADD KEY `idx_recordatorios_dest_usuario` (`usuario_id`),
+  ADD KEY `idx_recordatorios_dest_estado` (`estado_envio`);
 
 --
 -- Indices de la tabla `recordatorios_grupos`
@@ -5668,7 +5761,9 @@ ALTER TABLE `recordatorios_grupos`
   ADD PRIMARY KEY (`id_grupo`),
   ADD KEY `idx_sucursal` (`sucursal_id`),
   ADD KEY `idx_activo` (`activo`),
-  ADD KEY `fk_recordatorios_grupos_usuario_creador` (`usuario_creador`);
+  ADD KEY `fk_recordatorios_grupos_usuario_creador` (`usuario_creador`),
+  ADD KEY `idx_recordatorios_grupos_sucursal` (`sucursal_id`),
+  ADD KEY `idx_recordatorios_grupos_activo` (`activo`);
 
 --
 -- Indices de la tabla `recordatorios_grupos_miembros`
@@ -5686,13 +5781,19 @@ ALTER TABLE `recordatorios_logs`
   ADD PRIMARY KEY (`id_log`),
   ADD KEY `idx_recordatorio` (`recordatorio_id`),
   ADD KEY `idx_destinatario` (`destinatario_id`),
-  ADD KEY `idx_fecha` (`fecha_log`);
+  ADD KEY `idx_fecha` (`fecha_log`),
+  ADD KEY `idx_recordatorios_logs_recordatorio` (`recordatorio_id`),
+  ADD KEY `idx_recordatorios_logs_fecha` (`fecha_log`);
 
 --
 -- Indices de la tabla `Recordatorios_Pendientes`
 --
 ALTER TABLE `Recordatorios_Pendientes`
-  ADD PRIMARY KEY (`ID_Notificacion`);
+  ADD PRIMARY KEY (`ID_Notificacion`),
+  ADD KEY `idx_recordatorios_sucursal` (`Sucursal`),
+  ADD KEY `idx_recordatorios_estado` (`Estado`),
+  ADD KEY `idx_recordatorios_tipo` (`TipoMensaje`),
+  ADD KEY `idx_recordatorios_fecha` (`Registrado`);
 
 --
 -- Indices de la tabla `recordatorios_plantillas`
@@ -5701,7 +5802,9 @@ ALTER TABLE `recordatorios_plantillas`
   ADD PRIMARY KEY (`id_plantilla`),
   ADD KEY `idx_tipo` (`tipo`),
   ADD KEY `idx_activo` (`activo`),
-  ADD KEY `fk_recordatorios_plantillas_usuario_creador` (`usuario_creador`);
+  ADD KEY `fk_recordatorios_plantillas_usuario_creador` (`usuario_creador`),
+  ADD KEY `idx_recordatorios_plant_tipo` (`tipo`),
+  ADD KEY `idx_recordatorios_plant_activo` (`activo`);
 
 --
 -- Indices de la tabla `recordatorios_sistema`
@@ -5716,13 +5819,19 @@ ALTER TABLE `recordatorios_sistema`
   ADD KEY `idx_usuario_creador` (`usuario_creador`),
   ADD KEY `fk_recordatorios_usuario_modificador` (`usuario_modificador`),
   ADD KEY `idx_recordatorios_fecha_estado` (`fecha_programada`,`estado`),
-  ADD KEY `idx_recordatorios_prioridad_estado` (`prioridad`,`estado`);
+  ADD KEY `idx_recordatorios_prioridad_estado` (`prioridad`,`estado`),
+  ADD KEY `idx_recordatorios_sis_fecha` (`fecha_programada`),
+  ADD KEY `idx_recordatorios_sis_estado` (`estado`),
+  ADD KEY `idx_recordatorios_sis_prioridad` (`prioridad`),
+  ADD KEY `idx_recordatorios_sis_sucursal` (`sucursal_id`),
+  ADD KEY `idx_recordatorios_sis_usuario` (`usuario_creador`);
 
 --
 -- Indices de la tabla `Registros_Energia`
 --
 ALTER TABLE `Registros_Energia`
-  ADD PRIMARY KEY (`Id_Registro`);
+  ADD PRIMARY KEY (`Id_Registro`),
+  ADD KEY `idx_registros_energia_fecha` (`Fecha_registro`);
 
 --
 -- Indices de la tabla `registro_errores_Actualizacionanaqueles`
@@ -5734,73 +5843,96 @@ ALTER TABLE `registro_errores_Actualizacionanaqueles`
 -- Indices de la tabla `Servicios_POS`
 --
 ALTER TABLE `Servicios_POS`
-  ADD PRIMARY KEY (`Servicio_ID`);
+  ADD PRIMARY KEY (`Servicio_ID`),
+  ADD KEY `idx_servicios_nombre` (`Nom_Serv`),
+  ADD KEY `idx_servicios_estado` (`Estado`);
 
 --
 -- Indices de la tabla `Servicios_POS_Audita`
 --
 ALTER TABLE `Servicios_POS_Audita`
-  ADD PRIMARY KEY (`Audita_Serv_ID`);
+  ADD PRIMARY KEY (`Audita_Serv_ID`),
+  ADD KEY `idx_servicios_audit_servicio` (`Servicio_ID`),
+  ADD KEY `idx_servicios_audit_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `Solicitudes_Ingresos`
 --
 ALTER TABLE `Solicitudes_Ingresos`
-  ADD PRIMARY KEY (`IdProdCedis`);
+  ADD PRIMARY KEY (`IdProdCedis`),
+  ADD KEY `idx_solicitudes_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_solicitudes_sucursal` (`Fk_Sucursal`),
+  ADD KEY `idx_solicitudes_estatus` (`Estatus`),
+  ADD KEY `idx_solicitudes_num_orden` (`NumOrden`),
+  ADD KEY `idx_solicitudes_fecha` (`AgregadoEl`),
+  ADD KEY `idx_solicitudes_proveedor` (`Proveedor`(100));
 
 --
 -- Indices de la tabla `Solicitudes_Ingresos_Eliminados`
 --
 ALTER TABLE `Solicitudes_Ingresos_Eliminados`
-  ADD PRIMARY KEY (`Id_Eliminado`);
+  ADD PRIMARY KEY (`Id_Eliminado`),
+  ADD KEY `idx_solicitudes_elim_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_solicitudes_elim_fecha` (`AgregadoEl`),
+  ADD KEY `idx_solicitudes_elim_num_orden` (`NumOrden`);
 
 --
 -- Indices de la tabla `Stock_POS`
 --
 ALTER TABLE `Stock_POS`
   ADD PRIMARY KEY (`Folio_Prod_Stock`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_control_lotes` (`Control_Lotes_Caducidad`),
+  ADD KEY `idx_stock_cod_barra_sucursal` (`Cod_Barra`,`Fk_sucursal`),
+  ADD KEY `idx_stock_producto_sucursal` (`ID_Prod_POS`,`Fk_sucursal`),
+  ADD KEY `idx_stock_existencias` (`Min_Existencia`,`Existencias_R`),
+  ADD KEY `idx_stock_tipo_servicio` (`Tipo_Servicio`),
+  ADD KEY `idx_stock_sucursal_tipo` (`Fk_sucursal`,`Tipo_Servicio`),
+  ADD KEY `idx_stock_estatus` (`Estatus`),
+  ADD KEY `idx_stock_sucursal_existencias` (`Fk_sucursal`,`Existencias_R`),
+  ADD KEY `idx_stock_lote` (`Lote`),
+  ADD KEY `idx_stock_fecha_caducidad` (`Fecha_Caducidad`),
+  ADD KEY `idx_stock_caducidad_sucursal` (`Fecha_Caducidad`,`Fk_sucursal`),
+  ADD KEY `idx_stock_fecha_ingreso` (`Fecha_Ingreso`),
+  ADD KEY `idx_stock_producto_lote_sucursal` (`ID_Prod_POS`,`Lote`,`Fk_sucursal`),
+  ADD KEY `idx_stock_control_lotes` (`Control_Lotes_Caducidad`),
+  ADD KEY `idx_stock_agregado_el` (`AgregadoEl`);
 
 --
 -- Indices de la tabla `Stock_POS_Log`
 --
 ALTER TABLE `Stock_POS_Log`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_stock_log_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_stock_log_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_stock_log_fecha` (`Fecha`);
 
 --
--- Indices de la tabla `Stock_POS_respaldo`
+-- Indices de la tabla `Stock_POS_Respaldofebrero26`
 --
-ALTER TABLE `Stock_POS_respaldo`
+ALTER TABLE `Stock_POS_Respaldofebrero26`
   ADD PRIMARY KEY (`Folio_Prod_Stock`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
-
---
--- Indices de la tabla `Stock_POS_Respaldo2611`
---
-ALTER TABLE `Stock_POS_Respaldo2611`
-  ADD PRIMARY KEY (`Folio_Prod_Stock`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
-
---
--- Indices de la tabla `Stock_POS_RespaldoSeptiembre`
---
-ALTER TABLE `Stock_POS_RespaldoSeptiembre`
-  ADD PRIMARY KEY (`Folio_Prod_Stock`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_control_lotes` (`Control_Lotes_Caducidad`);
 
 --
 -- Indices de la tabla `Stock_registrosNuevos`
 --
 ALTER TABLE `Stock_registrosNuevos`
   ADD PRIMARY KEY (`Folio_Ingreso`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_stock_nuevos_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_stock_nuevos_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_stock_nuevos_fecha` (`AgregadoEl`),
+  ADD KEY `idx_stock_nuevos_fecha_caducidad` (`Fecha_Caducidad`);
 
 --
 -- Indices de la tabla `Sucursales`
 --
 ALTER TABLE `Sucursales`
   ADD PRIMARY KEY (`ID_Sucursal`),
-  ADD UNIQUE KEY `Nombre_Sucursal` (`Nombre_Sucursal`,`Licencia`);
+  ADD UNIQUE KEY `Nombre_Sucursal` (`Nombre_Sucursal`,`Licencia`),
+  ADD KEY `idx_sucursales_licencia` (`Licencia`);
 
 --
 -- Indices de la tabla `Suscripciones_Push`
@@ -5815,7 +5947,9 @@ ALTER TABLE `tareas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_asignado_a` (`asignado_a`),
   ADD KEY `idx_estado` (`estado`),
-  ADD KEY `idx_prioridad` (`prioridad`);
+  ADD KEY `idx_prioridad` (`prioridad`),
+  ADD KEY `idx_tareas_simple_asignado_estado` (`asignado_a`,`estado`),
+  ADD KEY `idx_tareas_simple_prioridad` (`prioridad`);
 
 --
 -- Indices de la tabla `Tareas`
@@ -5826,20 +5960,26 @@ ALTER TABLE `Tareas`
   ADD KEY `idx_creado_por` (`creado_por`),
   ADD KEY `idx_estado` (`estado`),
   ADD KEY `idx_prioridad` (`prioridad`),
-  ADD KEY `idx_fecha_limite` (`fecha_limite`);
+  ADD KEY `idx_fecha_limite` (`fecha_limite`),
+  ADD KEY `idx_tareas_asignado_estado` (`asignado_a`,`estado`),
+  ADD KEY `idx_tareas_creado_por` (`creado_por`),
+  ADD KEY `idx_tareas_fecha_limite` (`fecha_limite`),
+  ADD KEY `idx_tareas_prioridad_estado` (`prioridad`,`estado`);
 
 --
 -- Indices de la tabla `TareasPorHacer`
 --
 ALTER TABLE `TareasPorHacer`
-  ADD PRIMARY KEY (`ID_Tarea`);
+  ADD PRIMARY KEY (`ID_Tarea`),
+  ADD KEY `idx_tareas_por_hacer_estado` (`Estado`);
 
 --
 -- Indices de la tabla `templates_downloads`
 --
 ALTER TABLE `templates_downloads`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `user_id` (`user_id`),
+  ADD KEY `idx_templates_user` (`user_id`);
 
 --
 -- Indices de la tabla `TiposDeGastos`
@@ -5860,7 +6000,9 @@ ALTER TABLE `Tipos_Devolucion`
 ALTER TABLE `Tipos_estudios`
   ADD PRIMARY KEY (`ID_tipo_analisis`),
   ADD KEY `Fk_Tipo_analisis` (`Fk_Tipo_analisis`,`ID_H_O_D`),
-  ADD KEY `ID_H_O_D` (`ID_H_O_D`);
+  ADD KEY `ID_H_O_D` (`ID_H_O_D`),
+  ADD KEY `idx_tipos_estudios_tipo` (`Fk_Tipo_analisis`),
+  ADD KEY `idx_tipos_estudios_hod` (`ID_H_O_D`);
 
 --
 -- Indices de la tabla `Tipos_Usuarios`
@@ -5878,44 +6020,74 @@ ALTER TABLE `TipProd_POS`
 -- Indices de la tabla `TipProd_POS_Audita`
 --
 ALTER TABLE `TipProd_POS_Audita`
-  ADD PRIMARY KEY (`ID_Audita_TipoProd`);
+  ADD PRIMARY KEY (`ID_Audita_TipoProd`),
+  ADD KEY `idx_tip_prod_audit_tipo` (`Tip_Prod_ID`),
+  ADD KEY `idx_tip_prod_audit_fecha` (`Agregadoel`);
 
 --
 -- Indices de la tabla `TraspasosYNotasC`
 --
 ALTER TABLE `TraspasosYNotasC`
-  ADD PRIMARY KEY (`TraspaNotID`);
+  ADD PRIMARY KEY (`TraspaNotID`),
+  ADD KEY `idx_traspasos_notas_estatus` (`Estatus`),
+  ADD KEY `idx_traspasos_notas_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_traspasos_notas_destino` (`Fk_SucursalDestino`),
+  ADD KEY `idx_traspasos_notas_fecha` (`Fecha_venta`);
 
 --
 -- Indices de la tabla `Traspasos_generados`
 --
 ALTER TABLE `Traspasos_generados`
-  ADD PRIMARY KEY (`ID_Traspaso_Generado`);
+  ADD PRIMARY KEY (`ID_Traspaso_Generado`),
+  ADD KEY `idx_traspasos_estatus` (`Estatus`),
+  ADD KEY `idx_traspasos_sucursal_destino` (`Fk_SucDestino`),
+  ADD KEY `idx_traspasos_destino_estatus` (`Fk_SucDestino`,`Estatus`),
+  ADD KEY `idx_traspasos_fecha` (`FechaEntrega`),
+  ADD KEY `idx_traspasos_fecha_agregado` (`AgregadoEl`),
+  ADD KEY `idx_traspasos_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_traspasos_producto` (`Nombre_Prod`(100));
 
 --
 -- Indices de la tabla `Traspasos_generados_audita`
 --
 ALTER TABLE `Traspasos_generados_audita`
-  ADD PRIMARY KEY (`id_audita_traspaso`);
+  ADD PRIMARY KEY (`id_audita_traspaso`),
+  ADD KEY `idx_traspasos_audita_traspaso` (`ID_Traspaso_Generado`),
+  ADD KEY `idx_traspasos_audita_fecha` (`AgregadoEl`),
+  ADD KEY `idx_traspasos_audita_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_traspasos_audita_sucursal` (`Fk_sucursal`);
 
 --
 -- Indices de la tabla `Traspasos_generados_Eliminados`
 --
 ALTER TABLE `Traspasos_generados_Eliminados`
   ADD PRIMARY KEY (`ID_eliminado`),
-  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`);
+  ADD KEY `ID_Prod_POS` (`ID_Prod_POS`),
+  ADD KEY `idx_traspasos_eliminados_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_traspasos_eliminados_fecha` (`AgregadoEl`),
+  ADD KEY `idx_traspasos_eliminados_traspaso` (`ID_Traspaso_Generado`),
+  ADD KEY `idx_traspasos_eliminados_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `Traspasos_generados_Entre_sucursales`
 --
 ALTER TABLE `Traspasos_generados_Entre_sucursales`
-  ADD PRIMARY KEY (`ID_Traspaso_Generado`);
+  ADD PRIMARY KEY (`ID_Traspaso_Generado`),
+  ADD KEY `idx_traspasos_entre_sucursal_destino` (`Fk_SucDestino`),
+  ADD KEY `idx_traspasos_entre_estatus` (`Estatus`),
+  ADD KEY `idx_traspasos_entre_fecha` (`FechaEntrega`),
+  ADD KEY `idx_traspasos_entre_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `Traspasos_Recepcionados`
 --
 ALTER TABLE `Traspasos_Recepcionados`
-  ADD PRIMARY KEY (`Id_recepcion`);
+  ADD PRIMARY KEY (`Id_recepcion`),
+  ADD KEY `idx_recepcionados_traspaso` (`ID_Traspaso_Generado`),
+  ADD KEY `idx_recepcionados_fecha` (`AgregadoEl`),
+  ADD KEY `idx_recepcionados_sucursal` (`Fk_SucDestino`),
+  ADD KEY `idx_recepcionados_estatus` (`Estatus`),
+  ADD KEY `idx_recepcionados_cod_barra` (`Cod_Barra`);
 
 --
 -- Indices de la tabla `ubicaciones_trabajo`
@@ -5932,42 +6104,62 @@ ALTER TABLE `ubicaciones_trabajo`
 ALTER TABLE `Usuarios_PV`
   ADD PRIMARY KEY (`Id_PvUser`),
   ADD KEY `Nombre_Apellidos` (`Nombre_Apellidos`),
-  ADD KEY `Fk_Usuario` (`Fk_Usuario`);
+  ADD KEY `Fk_Usuario` (`Fk_Usuario`),
+  ADD KEY `idx_usuarios_pv_nombre` (`Nombre_Apellidos`),
+  ADD KEY `idx_usuarios_pv_usuario` (`Fk_Usuario`);
 
 --
 -- Indices de la tabla `Ventas_POS`
 --
 ALTER TABLE `Ventas_POS`
-  ADD PRIMARY KEY (`Venta_POS_ID`);
+  ADD PRIMARY KEY (`Venta_POS_ID`),
+  ADD KEY `idx_ventas_fecha_sucursal` (`Fecha_venta`,`Fk_sucursal`),
+  ADD KEY `idx_ventas_fecha_estatus` (`Fecha_venta`,`Estatus`),
+  ADD KEY `idx_ventas_sucursal_estatus` (`Fk_sucursal`,`Estatus`),
+  ADD KEY `idx_ventas_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ventas_cod_barra` (`Cod_Barra`),
+  ADD KEY `idx_ventas_folio_ticket` (`Folio_Ticket`),
+  ADD KEY `idx_ventas_agregado_el` (`AgregadoEl`),
+  ADD KEY `idx_ventas_fecha_estatus_importe` (`Fecha_venta`,`Estatus`,`Importe`),
+  ADD KEY `idx_ventas_caja` (`Fk_Caja`),
+  ADD KEY `idx_ventas_producto_fecha` (`ID_Prod_POS`,`Fecha_venta`),
+  ADD KEY `idx_ventas_turno` (`Turno`),
+  ADD KEY `idx_ventas_forma_pago` (`FormaDePago`),
+  ADD KEY `idx_ventas_cliente` (`Cliente`(100)),
+  ADD KEY `idx_ventas_sucursal_fecha_estatus` (`Fk_sucursal`,`Fecha_venta`,`Estatus`);
 
 --
 -- Indices de la tabla `Ventas_POSV2`
 --
 ALTER TABLE `Ventas_POSV2`
-  ADD PRIMARY KEY (`Venta_POS_ID`);
+  ADD PRIMARY KEY (`Venta_POS_ID`),
+  ADD KEY `idx_ventasv2_fecha_sucursal` (`Fecha_venta`,`Fk_sucursal`),
+  ADD KEY `idx_ventasv2_estatus` (`Estatus`),
+  ADD KEY `idx_ventasv2_producto` (`ID_Prod_POS`),
+  ADD KEY `idx_ventasv2_folio_ticket` (`Folio_Ticket`);
 
 --
 -- Indices de la tabla `Ventas_POS_Audita`
 --
 ALTER TABLE `Ventas_POS_Audita`
-  ADD PRIMARY KEY (`ID_Audita`);
+  ADD PRIMARY KEY (`ID_Audita`),
+  ADD KEY `idx_ventas_audita_fecha` (`AgregadoEl`),
+  ADD KEY `idx_ventas_audita_ticket` (`Folio_Ticket`);
 
 --
 -- Indices de la tabla `Ventas_POS_Cancelaciones`
 --
 ALTER TABLE `Ventas_POS_Cancelaciones`
-  ADD PRIMARY KEY (`Cancelacion_IDVenPOS`);
+  ADD PRIMARY KEY (`Cancelacion_IDVenPOS`),
+  ADD KEY `idx_cancelaciones_fecha` (`AgregadoEl`),
+  ADD KEY `idx_cancelaciones_ticket` (`Folio_Ticket`),
+  ADD KEY `idx_cancelaciones_sucursal` (`Fk_sucursal`),
+  ADD KEY `idx_cancelaciones_producto` (`ID_Prod_POS`);
 
 --
 -- Indices de la tabla `Ventas_POS_Pruebas`
 --
 ALTER TABLE `Ventas_POS_Pruebas`
-  ADD PRIMARY KEY (`Venta_POS_ID`);
-
---
--- Indices de la tabla `Ventas_POS_respaldo`
---
-ALTER TABLE `Ventas_POS_respaldo`
   ADD PRIMARY KEY (`Venta_POS_ID`);
 
 --
@@ -6176,12 +6368,6 @@ ALTER TABLE `configuracion_checador`
 -- AUTO_INCREMENT de la tabla `ConteosDiarios`
 --
 ALTER TABLE `ConteosDiarios`
-  MODIFY `Folio_Ingreso` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `ConteosDiariosrRESPALDO`
---
-ALTER TABLE `ConteosDiariosrRESPALDO`
   MODIFY `Folio_Ingreso` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
 
 --
@@ -6677,21 +6863,9 @@ ALTER TABLE `Stock_POS_Log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `Stock_POS_respaldo`
+-- AUTO_INCREMENT de la tabla `Stock_POS_Respaldofebrero26`
 --
-ALTER TABLE `Stock_POS_respaldo`
-  MODIFY `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `Stock_POS_Respaldo2611`
---
-ALTER TABLE `Stock_POS_Respaldo2611`
-  MODIFY `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `Stock_POS_RespaldoSeptiembre`
---
-ALTER TABLE `Stock_POS_RespaldoSeptiembre`
+ALTER TABLE `Stock_POS_Respaldofebrero26`
   MODIFY `Folio_Prod_Stock` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
 
 --
@@ -6848,12 +7022,6 @@ ALTER TABLE `Ventas_POS_Cancelaciones`
 -- AUTO_INCREMENT de la tabla `Ventas_POS_Pruebas`
 --
 ALTER TABLE `Ventas_POS_Pruebas`
-  MODIFY `Venta_POS_ID` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `Ventas_POS_respaldo`
---
-ALTER TABLE `Ventas_POS_respaldo`
   MODIFY `Venta_POS_ID` int(10) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------

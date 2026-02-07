@@ -30,8 +30,7 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                                 Recepción de Traspasos
                             </h6>
                             <small class="text-muted">
-                                Sucursal: <strong><?php echo htmlspecialchars($nombre_sucursal); ?></strong>.
-                                Traspasos pendientes de recibir. Al recibir, registre lote y fecha de caducidad.
+                                Vista administrativa: todos los traspasos pendientes. Al recibir uno, el stock se registrará en la <strong>sucursal destino</strong> del traspaso. Registre lote y fecha de caducidad.
                             </small>
                         </div>
                     </div>
@@ -39,7 +38,7 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                     <div class="alert alert-info mb-3" role="alert">
                         <i class="fa-solid fa-lightbulb me-2"></i>
                         <strong>Lote y caducidad:</strong> Al recibir un traspaso deberá ingresar el <strong>lote</strong> y la <strong>fecha de caducidad</strong>
-                        del producto. El stock se actualizará en esta sucursal y se registrará en el historial de lotes.
+                        del producto. El stock se actualizará en la sucursal destino del traspaso y se registrará en el historial de lotes.
                     </div>
 
                     <div class="row mb-3">

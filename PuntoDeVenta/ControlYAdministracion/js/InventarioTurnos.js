@@ -313,22 +313,29 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
     
-    var html = '<div class="text-start">' +
-        '<label class="form-label mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
-        '<input type="number" id="existencias-fisicas" class="swal2-input form-control mb-2" placeholder="Cantidad contada" min="0" required>' +
-        '<label class="form-label mb-1 mt-2">Lote <small class="text-muted">(opcional)</small></label>' +
-        '<input type="text" id="conteo-lote" class="swal2-input form-control mb-2" placeholder="Ej. LOTE-2024-001">' +
-        '<label class="form-label mb-1 mt-2">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
-        '<input type="date" id="conteo-fecha-caducidad" class="swal2-input form-control">' +
+    var html = '<div class="text-start conteo-modal-fields">' +
+        '<div class="mb-3">' +
+        '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
+        '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
+        '</div>' +
+        '<div class="mb-3">' +
+        '<label class="form-label mb-1">Lote <small class="text-muted">(opcional)</small></label>' +
+        '<input type="text" id="conteo-lote" class="form-control" placeholder="Ej. LOTE-2024-001">' +
+        '</div>' +
+        '<div class="mb-0">' +
+        '<label class="form-label mb-1">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
+        '<input type="date" id="conteo-fecha-caducidad" class="form-control">' +
+        '</div>' +
         '</div>';
     
     Swal.fire({
-        title: 'Registrar conteo físico',
+        title: '<i class="fa-solid fa-calculator text-primary me-2"></i>Registrar conteo físico',
         html: html,
         showCancelButton: true,
-        confirmButtonText: 'Guardar',
+        confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
-        width: '420px',
+        width: '440px',
+        customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
         preConfirm: () => {
             var ex = document.getElementById('existencias-fisicas').value;
             if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
