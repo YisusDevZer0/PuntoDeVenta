@@ -9,11 +9,6 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
     <meta charset="utf-8">
     <title>Gestión de Lotes y Caducidades - Farmacias - <?php echo $row['Licencia'] ?? ''; ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <?php include "header.php"; ?>
-    <div id="loading-overlay">
-        <div class="loader"></div>
-        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-    </div>
     <style>
         .swal2-popup { font-size: 1.2rem; color: #333; }
         .badge-caducidad { padding: 5px 10px; border-radius: 4px; font-size: 12px; }
@@ -21,8 +16,13 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
         .badge-vencido { background-color: #dc3545; color: #fff; }
         .badge-ok { background-color: #28a745; color: #fff; }
     </style>
+    <?php include "header.php"; ?>
 </head>
 <body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
     <?php include_once "Menu.php"; ?>
     <div class="content">
         <?php include "navbar.php"; ?>

@@ -91,7 +91,8 @@
         margin-left: 0;
     }
 
-    .sidebar.open {
+    .sidebar.open,
+    .sidebar.active {
         margin-left: -250px;
     }
 
@@ -99,7 +100,8 @@
         width: calc(100% - 250px);
     }
 
-    .content.open {
+    .content.open,
+    .content.active {
         width: 100%;
         margin-left: 0;
     }
@@ -110,7 +112,8 @@
         margin-left: -250px;
     }
 
-    .sidebar.open {
+    .sidebar.open,
+    .sidebar.active {
         margin-left: 0;
     }
 
