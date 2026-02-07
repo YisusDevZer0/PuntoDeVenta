@@ -32,8 +32,22 @@ $id_traspaso = isset($_POST['id_traspaso']) ? (int) $_POST['id_traspaso'] : 0;
 $fk_sucursal = isset($_POST['fk_sucursal']) ? (int) $_POST['fk_sucursal'] : 0;
 $cantidad_recibida = isset($_POST['cantidad_recibida']) ? (int) $_POST['cantidad_recibida'] : 0;
 $lote = isset($_POST['lote']) ? trim($_POST['lote']) : '';
-$fecha_caducidad = isset($_POST['fecha_caducidad']) ? trim($_POST['fecha_caducidad']) : '';
+$fecha_caducidad_raw = isset($_POST['fecha_caducidad']) ? trim($_POST['fecha_caducidad']) : '';
 $observaciones = isset($_POST['observaciones']) ? trim($_POST['observaciones']) : '';
+
+// Normalizar fecha: aceptar Y-m-d (input date) o d/m/Y
+$fecha_caducidad = '';
+if ($fecha_caducidad_raw !== '') {
+    $d = DateTime::createFromFormat('Y-m-d', $fecha_caducidad_raw);
+    if (!$d) {
+        $d = DateTime::createFromFormat('d/m/Y', $fecha_caducidad_raw);
+    }
+    if ($d) {
+        $fecha_caducidad = $d->format('Y-m-d');
+    } else {
+        $fecha_caducidad = $fecha_caducidad_raw;
+    }
+}
 
 // Campos para diferencia de cantidad
 $motivo_diferencia = isset($_POST['motivo_diferencia']) ? trim($_POST['motivo_diferencia']) : '';
@@ -43,7 +57,13 @@ $cantidad_lote_adicional = isset($_POST['cantidad_lote_adicional']) ? (int) $_PO
 $cantidad_lote_principal = isset($_POST['cantidad_lote_principal']) ? (int) $_POST['cantidad_lote_principal'] : 0;
 
 if ($id_traspaso <= 0 || $fk_sucursal <= 0 || $cantidad_recibida < 1 || $lote === '' || $fecha_caducidad === '') {
-    echo json_encode(['success' => false, 'error' => 'Faltan datos requeridos (traspaso, sucursal, cantidad, lote, fecha caducidad).']);
+    $detalle = [];
+    if ($id_traspaso <= 0) $detalle[] = 'traspaso';
+    if ($fk_sucursal <= 0) $detalle[] = 'sucursal';
+    if ($cantidad_recibida < 1) $detalle[] = 'cantidad';
+    if ($lote === '') $detalle[] = 'lote';
+    if ($fecha_caducidad === '') $detalle[] = 'fecha caducidad';
+    echo json_encode(['success' => false, 'error' => 'Faltan datos requeridos: ' . implode(', ', $detalle) . '.']);
     exit;
 }
 

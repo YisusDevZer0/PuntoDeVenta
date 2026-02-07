@@ -44,14 +44,14 @@ if ($id > 0 && isset($conn) && $conn) {
         <div class="col-md-4" id="campo_cantidad_total_normal">
             <label class="form-label">Cantidad recibida TOTAL <span class="text-danger">*</span></label>
             <input type="number" class="form-control" name="cantidad_recibida" id="cantidad_recibida" 
-                   value="<?php echo (int) $traspaso['Cantidad']; ?>" min="1" required>
+                   value="<?php echo (int) $traspaso['Cantidad']; ?>" min="1" required >
             <small class="text-muted">Ingrese el total recibido</small>
         </div>
         <div class="col-md-4" id="campo_cantidad_total_calculada" style="display: none;">
             <label class="form-label">Cantidad recibida TOTAL <span class="text-danger">*</span></label>
             <input type="number" class="form-control bg-light" id="cantidad_recibida_calculada" readonly>
             <small class="text-muted">Se calcula automáticamente sumando ambos lotes</small>
-            <input type="hidden" name="cantidad_recibida" id="cantidad_recibida_hidden">
+            <input type="hidden" id="cantidad_recibida_hidden">
         </div>
         <div class="col-md-4">
             <label class="form-label"><i class="fa-solid fa-tag me-2"></i>Lote principal <span class="text-danger">*</span></label>
@@ -240,19 +240,21 @@ $(function() {
             // Ocultar campo de cantidad total normal y mostrar el calculado
             $('#campo_cantidad_total_normal').hide();
             $('#campo_cantidad_total_calculada').show();
+            // Quitar name del input visible para que solo se envíe el hidden (evitar duplicado)
+            $('#cantidad_recibida').removeAttr('name');
+            $('#cantidad_recibida_hidden').attr('name', 'cantidad_recibida');
             // Hacer requeridos los campos de cantidades individuales
             $('#cantidad_lote_principal').attr('required', 'required');
             $('#lote_adicional').attr('required', 'required');
             $('#fecha_caducidad_adicional').attr('required', 'required');
             $('#cantidad_lote_adicional').attr('required', 'required');
-            // El campo de cantidad recibida ya no es requerido directamente
             $('#cantidad_recibida').removeAttr('required');
             actualizarDistribucion();
         } else if (motivo === 'no_completo' || motivo === 'otra_razon') {
-            // Si no es otro lote, mostrar campo normal y ocultar calculado
             $('#campo_cantidad_total_normal').show();
             $('#campo_cantidad_total_calculada').hide();
-            $('#cantidad_recibida').attr('required', 'required');
+            $('#cantidad_recibida').attr('name', 'cantidad_recibida').attr('required', 'required');
+            $('#cantidad_recibida_hidden').removeAttr('name');
             $('#cantidad_lote_principal').removeAttr('required');
             $('#cantidad_lote_adicional').removeAttr('required');
         }
@@ -295,53 +297,47 @@ $(function() {
 
     $('#formRecepcionTraspasoLote').on('submit', function(e) {
         e.preventDefault();
-        var cant = parseInt($('#cantidad_recibida').val(), 10);
+        var motivo = $motivoDiferencia.val();
+        var cant;
+        if (motivo === 'otro_lote') {
+            actualizarDistribucion();
+            cant = parseInt($('#cantidad_recibida_hidden').val(), 10) || 0;
+        } else {
+            cant = parseInt($('#cantidad_recibida').val(), 10) || 0;
+        }
         
         if (cant < 1) {
             Swal.fire('Atención', 'La cantidad recibida debe ser mayor a 0', 'warning');
             return;
         }
         
-        // Validar diferencia de cantidad (solo si NO es otro lote)
-        var motivo = $motivoDiferencia.val();
         if (motivo === 'otro_lote') {
-            // Para otro lote, la cantidad ya se calculó arriba
-            // No validamos diferencia aquí porque puede ser igual o diferente
+            var cantidadPrincipal = parseInt($('#cantidad_lote_principal').val(), 10) || 0;
+            var cantidadAdicional = parseInt($('#cantidad_lote_adicional').val(), 10) || 0;
+            var loteAdicional = $('#lote_adicional').val().trim();
+            var fechaAdicional = $('#fecha_caducidad_adicional').val();
+            
+            if (cantidadPrincipal < 1) {
+                Swal.fire('Atención', 'Debe ingresar la cantidad del lote principal', 'warning');
+                return;
+            }
+            if (cantidadAdicional < 1) {
+                Swal.fire('Atención', 'Debe ingresar la cantidad del lote adicional', 'warning');
+                return;
+            }
+            if (!loteAdicional || !fechaAdicional) {
+                Swal.fire('Atención', 'Debe completar todos los campos del lote adicional', 'warning');
+                return;
+            }
+            if ($('#lote').val().trim() === loteAdicional) {
+                Swal.fire('Atención', 'El lote adicional debe ser diferente al lote principal', 'warning');
+                return;
+            }
+            cant = cantidadPrincipal + cantidadAdicional;
         } else if (cant !== cantidadEnviada) {
             if (!motivo) {
                 Swal.fire('Atención', 'Debe seleccionar el motivo de la diferencia en la cantidad', 'warning');
                 return;
-            }
-            
-            if (motivo === 'otro_lote') {
-                var cantidadPrincipal = parseInt($('#cantidad_lote_principal').val(), 10) || 0;
-                var cantidadAdicional = parseInt($('#cantidad_lote_adicional').val(), 10) || 0;
-                var loteAdicional = $('#lote_adicional').val().trim();
-                var fechaAdicional = $('#fecha_caducidad_adicional').val();
-                
-                if (cantidadPrincipal < 1) {
-                    Swal.fire('Atención', 'Debe ingresar la cantidad del lote principal', 'warning');
-                    return;
-                }
-                
-                if (cantidadAdicional < 1) {
-                    Swal.fire('Atención', 'Debe ingresar la cantidad del lote adicional', 'warning');
-                    return;
-                }
-                
-                if (!loteAdicional || !fechaAdicional) {
-                    Swal.fire('Atención', 'Debe completar todos los campos del lote adicional', 'warning');
-                    return;
-                }
-                
-                // Validar que los lotes sean diferentes
-                if ($('#lote').val().trim() === loteAdicional) {
-                    Swal.fire('Atención', 'El lote adicional debe ser diferente al lote principal', 'warning');
-                    return;
-                }
-                
-                // Actualizar cantidad recibida total (suma de ambos)
-                cant = cantidadPrincipal + cantidadAdicional;
             }
         }
         
@@ -354,11 +350,19 @@ $(function() {
             return;
         }
 
+        // Construir datos explícitamente para asegurar que lleguen id_traspaso, fk_sucursal, cantidad_recibida, lote, fecha_caducidad
+        var formData = $(this).serializeArray();
+        var data = {};
+        $.each(formData, function(i, field) {
+            data[field.name] = field.value;
+        });
+        data.cantidad_recibida = cant;
+
         Swal.fire({ title: 'Procesando...', allowOutsideClick: false, didOpen: function() { Swal.showLoading(); } });
         $.ajax({
             url: 'api/recepcion_traspaso_lote_caducidad.php',
             type: 'POST',
-            data: $(this).serialize(),
+            data: data,
             dataType: 'json',
             success: function(r) {
                 Swal.close();
