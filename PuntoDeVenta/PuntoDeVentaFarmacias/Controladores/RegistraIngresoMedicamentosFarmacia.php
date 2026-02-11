@@ -15,11 +15,17 @@ for ($i = 0; $i < $contador; $i++) {
         continue;
     }
 
+    // Lote: siempre como texto desde el input de lote (no confundir con cantidad u otro número)
     $lote = isset($_POST["Lote"][$i]) ? trim((string) $_POST["Lote"][$i]) : '';
+    $contabilizado = (int) ($_POST["Contabilizado"][$i] ?? 0);
     $fecha_cad = isset($_POST["FechaCaducidad"][$i]) ? trim((string) $_POST["FechaCaducidad"][$i]) : '';
 
     // Evitar guardar "NaN" o vacío en Lote (para que Stock_POS e Historial_Lotes queden bien)
     if (strtolower($lote) === 'nan' || $lote === '') {
+        $lote = 'S/L';
+    }
+    // Si Lote llegó como número (ej. valor de cantidad por desorden de arrays), no usarlo como lote
+    if (strlen($lote) <= 3 && ctype_digit($lote) && (int) $lote === $contabilizado) {
         $lote = 'S/L';
     }
     if (strtolower($fecha_cad) === 'nan' || $fecha_cad === '' || $fecha_cad === '0000-00-00') {
@@ -38,7 +44,7 @@ for ($i = 0; $i < $contador; $i++) {
         'Cod_Barra'        => $_POST["CodBarras"][$i] ?? '',
         'Nombre_Prod'      => $_POST["NombreDelProducto"][$i] ?? '',
         'Fk_Sucursal'      => $_POST["FkSucursal"][$i] ?? '',
-        'Contabilizado'    => (int) ($_POST["Contabilizado"][$i] ?? 0),
+        'Contabilizado'    => $contabilizado,
         'Fecha_Caducidad'  => $fecha_cad,
         'Lote'             => $lote,
         'PrecioMaximo'     => $_POST["PrecioMaximo"][$i] ?? 0,
