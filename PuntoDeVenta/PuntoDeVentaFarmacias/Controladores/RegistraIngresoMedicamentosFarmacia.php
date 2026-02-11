@@ -24,6 +24,11 @@ for ($i = 0; $i < $contador; $i++) {
     }
     if (strtolower($fecha_cad) === 'nan' || $fecha_cad === '' || $fecha_cad === '0000-00-00') {
         $fecha_cad = date('Y-m-d');
+    } else {
+        // Normalizar a Y-m-d para que el trigger reciba fecha válida (acepta Y-m-d o d/m/Y)
+        $d = DateTime::createFromFormat('Y-m-d', $fecha_cad);
+        if (!$d) $d = DateTime::createFromFormat('d/m/Y', $fecha_cad);
+        if ($d) $fecha_cad = $d->format('Y-m-d');
     }
 
     $rows_to_insert[] = [

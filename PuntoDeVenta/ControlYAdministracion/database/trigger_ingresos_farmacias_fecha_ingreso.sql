@@ -28,12 +28,11 @@ BEGIN
     WHERE Cod_Barra = NEW.Cod_Barra
       AND Fk_sucursal = NEW.Fk_Sucursal;
 
-    -- 2) Historial_Lotes solo si lote y fecha son válidos (no S/L, no vacíos)
-    IF NEW.Lote IS NOT NULL AND TRIM(NEW.Lote) != ''
-       AND LOWER(TRIM(NEW.Lote)) NOT IN ('s/l', 'nan', 'null', 'n/a', 'na', 'sin lote')
-       AND NEW.Fecha_Caducidad IS NOT NULL
-       AND NEW.Fecha_Caducidad > '1900-01-01'
-       AND NEW.Fecha_Caducidad != '0000-00-00'
+    -- 2) Historial_Lotes cuando lote no es S/L/vacío y fecha es válida
+    -- Condición permisiva: solo excluir lotes placeholder y fechas inválidas
+    IF CHAR_LENGTH(IFNULL(TRIM(NEW.Lote), '')) > 0
+       AND LOWER(IFNULL(TRIM(NEW.Lote), '')) NOT IN ('s/l', 'nan', 'null', 'n/a', 'na', 'sin lote')
+       AND IFNULL(NEW.Fecha_Caducidad, '0000-00-00') > '1900-01-01'
     THEN
         SELECT COUNT(*) INTO v_count
         FROM Historial_Lotes
