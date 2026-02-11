@@ -15,17 +15,17 @@ for ($i = 0; $i < $contador; $i++) {
         continue;
     }
 
-    // Lote: siempre como texto desde el input de lote (no confundir con cantidad u otro número)
+    // Lote: siempre como texto; leer explícitamente del índice $i (no confundir con cantidad)
     $lote = isset($_POST["Lote"][$i]) ? trim((string) $_POST["Lote"][$i]) : '';
     $contabilizado = (int) ($_POST["Contabilizado"][$i] ?? 0);
     $fecha_cad = isset($_POST["FechaCaducidad"][$i]) ? trim((string) $_POST["FechaCaducidad"][$i]) : '';
 
-    // Evitar guardar "NaN" o vacío en Lote (para que Stock_POS e Historial_Lotes queden bien)
-    if (strtolower($lote) === 'nan' || $lote === '') {
+    // No guardar "0", "NaN" o vacío como lote real (usar S/L para que no se confunda con cantidad)
+    if ($lote === '' || strtolower($lote) === 'nan' || $lote === '0') {
         $lote = 'S/L';
     }
-    // Si Lote llegó como número (ej. valor de cantidad por desorden de arrays), no usarlo como lote
-    if (strlen($lote) <= 3 && ctype_digit($lote) && (int) $lote === $contabilizado) {
+    // Si Lote es solo dígitos y coincide con la cantidad, es probable desorden de arrays
+    if (strlen($lote) <= 4 && ctype_digit($lote) && (int) $lote === $contabilizado) {
         $lote = 'S/L';
     }
     if (strtolower($fecha_cad) === 'nan' || $fecha_cad === '' || $fecha_cad === '0000-00-00') {

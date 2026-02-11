@@ -52,8 +52,8 @@ $(document).ready(function () {
                 data.CodBarras.push($f.find('input[name="CodBarras[]"]').val() || '');
                 data.NombreDelProducto.push($f.find('textarea[name="NombreDelProducto[]"]').val() || '');
                 data.Contabilizado.push($f.find('input[name="Contabilizado[]"]').val() || '0');
-                data.FechaCaducidad.push($f.find('input[name="FechaCaducidad[]"]').val() || '');
-                data.Lote.push(($f.find('input[name="Lote[]"]').val() || '').trim());
+                data.FechaCaducidad.push($f.find('input.input-fecha-caducidad, input[name="FechaCaducidad[]"]').val() || '');
+                data.Lote.push(($f.find('input.input-lote, input[name="Lote[]"]').val() || '').trim());
                 data.PrecioMaximo.push($f.find('input[name="PrecioMaximo[]"]').val() || '0');
                 data.Proveedor.push($f.find('input[name="Proveedor[]"]').val() || '');
                 data.FacturaNumber.push($f.find('input[name="FacturaNumber[]"]').val() || '');
