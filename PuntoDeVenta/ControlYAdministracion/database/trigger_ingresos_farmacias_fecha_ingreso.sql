@@ -8,10 +8,12 @@
 --
 -- ¿AFECTA A OTROS LUGARES?
 -- NO. Este trigger SOLO se ejecuta cuando hay INSERT en IngresosFarmacias.
--- En el proyecto, eso solo ocurre desde: RegistraIngresoMedicamentosFarmacia.php
--- (páginas Ingresos / IngresosConLotes). No se dispara en traspasos, ventas,
--- devoluciones ni en ningún otro módulo. Solo añade Fecha_Ingreso al UPDATE
--- sobre Stock_POS para que trg_AfterStockUpdate pueda escribir en Historial_Lotes.
+--
+-- IMPORTANTE: RegistraIngresoMedicamentosFarmacia.php ahora actualiza Stock_POS
+-- e Historial_Lotes desde PHP. Si tienes este trigger instalado, las existencias
+-- se sumarían DOS VECES. Debes elegir UNA de las dos:
+--   A) Usar solo PHP: NO ejecutes este trigger (o haz DROP TRIGGER actualizar_existencias).
+--   B) Usar solo trigger: comenta o quita en PHP el bloque que actualiza Stock_POS/Historial_Lotes.
 -- =====================================================
 
 DROP TRIGGER IF EXISTS `actualizar_existencias`;

@@ -77,7 +77,16 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
         error_log("DEBUG: Se encontraron {$num_lotes} lotes disponibles para producto {$cod_barra}");
         
         if ($num_lotes == 0) {
-            throw new Exception("No hay registro previo válido en Historial_Lotes para el producto {$cod_barra} en la sucursal {$sucursal}. No se descuenta ni se crea contenido vacío.");
+            // No hay registros en Historial_Lotes: no descontar ahí, el stock ya se descontó en el trigger
+            mysqli_commit($conn);
+            error_log("DEBUG: Sin lotes en Historial_Lotes para {$cod_barra}; proceso normal de stock aplicado por trigger.");
+            return [
+                'success' => true,
+                'solo_stock' => true,
+                'mensaje' => 'Sin registros en historial de lotes; descuento aplicado solo al stock.',
+                'lotes_utilizados' => [],
+                'cantidad_descontada' => 0
+            ];
         }
         
         // Descontar de cada lote hasta cubrir la cantidad vendida
@@ -146,20 +155,8 @@ function descontarLotesVenta($id_prod_pos, $cod_barra, $sucursal, $cantidad_vend
             throw new Exception("No hay suficiente stock en lotes. Faltan $cantidad_restante unidades.");
         }
         
-        // IMPORTANTE: Actualizar Stock_POS pero LIMPIAR el campo Lote para evitar que el trigger
-        // trg_AfterStockUpdate cree una nueva fila en Historial_Lotes
-        // El control de lotes se maneja exclusivamente desde Historial_Lotes cuando Control_Lotes_Caducidad = 1
-        $sql_update_stock = "UPDATE Stock_POS 
-                            SET Existencias_R = Existencias_R - ?,
-                                Lote = NULL,
-                                Fecha_Caducidad = NULL
-                            WHERE ID_Prod_POS = ? AND Fk_sucursal = ?";
-        $stmt_update_stock = mysqli_prepare($conn, $sql_update_stock);
-        if ($stmt_update_stock) {
-            mysqli_stmt_bind_param($stmt_update_stock, "iii", $cantidad_vendida, $id_prod_pos, $sucursal);
-            mysqli_stmt_execute($stmt_update_stock);
-            mysqli_stmt_close($stmt_update_stock);
-        }
+        // NO actualizar Stock_POS aquí: el trigger RestarExistenciasDespuesInsert ya restó del stock.
+        // Solo actualizamos Historial_Lotes cuando hay registros válidos.
         
         mysqli_commit($conn);
         
