@@ -21,7 +21,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
 
 <head>
     <meta charset="utf-8">
-    <title>Ingreso de medicamentos <?php echo $row['Licencia']?></title>
+    <title>Ingresos con lotes y caducidad <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -193,73 +193,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             return mensajesCarga[Math.floor(Math.random() * mensajesCarga.length)];
         }
         
-// Function to show the instructions message
-function showInstructions() {
-            Swal.fire({
-                title: 'Instrucciones',
-                html: `
-                    <ol style="text-align: left;">
-                    <p>El campo escanear productos esta bloqueado, para desbloquearlo sigue las instrucciones<p/>
-                        <li>Selecciona el <b>proveedor</b> del cual solicitas su ingreso</li>
-                        <li>Coloca el <b>número de factura</b>.</li>
-                        <li>Revisa que todos los datos sean correctos.</li>
-                        <li>El campo escanear productos se desbloqueara automaticamente</li>
-                        <li>Escanea tu producto, si es un encargo recuerda generar la solicitud de encargo</li>
-                        <li>Recuerda llenar los campos fecha de caducidad,lote y precio maximo de venta</li>
-                    </ol>
-                    <div style="margin-top: 20px;">
-                        <label>
-                            <input type="checkbox" id="noMostrar"> No volver a mostrar esta información durante una semana
-                        </label>
-                    </div>
-                `,
-                icon: 'info',
-                confirmButtonText: 'Entendido',
-                customClass: {
-                    container: 'animated fadeInDown'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (document.getElementById('noMostrar').checked) {
-                        localStorage.setItem('noMostrarInstrucciones', Date.now());
-                    }
-                }
-            });
-        }
-        // Mostrar SweetAlert2 de carga al iniciar la página
-        Swal.fire({
-            title: 'Cargando',
-            html: '<div class="loader-container">' +
-                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish">' +
-                    '<div class="loaderPill-text">' + getRandomMessage() + '</div>' +
-                  '</div>',
-            showCancelButton: false,
-            showConfirmButton: false,
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            onBeforeOpen: () => {
-                Swal.showLoading();
-            },
-            customClass: {
-                container: 'animated fadeInDown'
-            }
-        });
-
-        setInterval(() => {
-            const messageElement = document.querySelector('.loaderPill-text');
-            if (messageElement) {
-                messageElement.textContent = getRandomMessage();
-            }
-        }, 2000);
-
-        window.addEventListener('load', function() {
-            Swal.close();
-            const noMostrarInstrucciones = localStorage.getItem('noMostrarInstrucciones');
-            const unaSemana = 7 * 24 * 60 * 60 * 1000;
-            if (!noMostrarInstrucciones || (Date.now() - noMostrarInstrucciones) > unaSemana) {
-                showInstructions();
-            }
-        });
+        window.addEventListener('load', function() { Swal.close(); });
      
         
 </script>
@@ -502,6 +436,20 @@ function showInstructions() {
 
                       </div>
 
+                      <div class="col-12 mb-2">
+                        <div class="collapse" id="instruccionesIngresosLotes">
+                          <div class="card card-body border-0 bg-light small">
+                            <strong><i class="fas fa-info-circle text-primary"></i> Instrucciones (módulo con lotes y caducidad):</strong>
+                            <ol class="mb-0 pl-3">
+                              <li>Selecciona el <b>proveedor</b> e ingresa el <b>número de factura</b> para desbloquear el escáner.</li>
+                              <li>Escanea o busca cada producto y completa en cada fila: <b>cantidad</b>, <b>fecha de caducidad</b>, <b>lote</b> y <b>precio máximo</b>.</li>
+                              <li><b>Lote</b> y <b>fecha de caducidad</b> son obligatorios para actualizar Stock y Historial de lotes.</li>
+                            </ol>
+                          </div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-toggle="collapse" data-target="#instruccionesIngresosLotes" aria-expanded="false"><i class="fas fa-question-circle"></i> Ver instrucciones</button>
+                      </div>
+
                       <label class="col-form-label" for="iptCodigoVenta">
                         <i class="fas fa-barcode fs-6"></i>
                         <span class="small">Escanear productos</span>
@@ -559,15 +507,16 @@ function showInstructions() {
                       <div class="text-center">
         <button type="submit" class="btn btn-primary">Enviar Información</button>
     </div>
+                        <p class="small text-muted mb-1"><i class="fas fa-exclamation-triangle text-warning"></i> Completa <b>Lote</b> y <b>Fecha de caducidad</b> en cada fila (obligatorio en este módulo).</p>
                         <table class="table table-striped" id="tablaAgregarArticulos" class="display">
                           <thead>
                             <tr>
-                              <th>Codigo</th>
+                              <th>Código</th>
                               <th style="width:20%">Producto</th>
-                              <th style="width:6%">Contabilizado</th>
-                              <th >Fecha caducidad</th>
-                              <th >Lote</th>
-                              <th>Precio Maximo</th>
+                              <th style="width:6%">Cantidad</th>
+                              <th>Fecha caducidad <span class="text-danger">*</span></th>
+                              <th>Lote <span class="text-danger">*</span></th>
+                              <th>Precio máx.</th>
                               <th>Eliminar</th>
                             </tr>
                           </thead>
@@ -912,8 +861,8 @@ $(document).on('change', '.cantidad-vendida-input', function() {
         tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
-tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" style="font-size: 0.75rem !important;" type="date" name="FechaCaducidad[]" value="' + articulo.fechacaducidad + '" /></td>';
-tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="text" name="Lote[]" /></td>';
+tr += '<td class="ExistenciasEnBd"><input class="form-control cantidad-existencias-input" style="font-size: 0.75rem !important;" type="date" name="FechaCaducidad[]" value="' + (articulo.fechacaducidad || articulo.existencia || '') + '" placeholder="Requerido" title="Fecha de caducidad" /></td>';
+tr += '<td class="Diferenciaresultante"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="text" name="Lote[]" placeholder="Requerido" title="Número de lote" /></td>';
 tr += '<td class="Preciototal"><input class="form-control cantidad-diferencia-input" style="font-size: 0.75rem !important;" type="text" name="PrecioMaximo[]" /></td>';
 tr += '<td style="visibility:collapse; display:none;" class="Proveedor"><input class="form-control proveedor-input" style="font-size: 0.75rem !important;" id="proveedor" type="text" name="Proveedor[]" /></td>';
 tr += '<td   style="visibility:collapse; display:none;"class="factura"><input class="form-control factura-input" style="font-size: 0.75rem !important;" id="facturanumber" type="text" name="FacturaNumber[]" /></td>';
@@ -970,7 +919,7 @@ function eliminarFila(element) {
 
 </script>
 
-<script src="js/RealizaIngreso.js"></script>
+<script src="js/RealizaIngresoConLotes.js"></script>
 
 <script src="js/ConectaProveedores.js"></script>
 <!-- Control Sidebar -->

@@ -200,6 +200,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="IngresosDeFarmacias" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice-dollar"></i>Ingresos Farmacias </a>
                     <a href="Ingresos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-file-invoice-dollar"></i>Realizar ingresos </a>
+                    <a href="HistorialIngresosFarmacias" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-history"></i>Consultar ingresos (lotes y caducidades)</a>
                 </div>
             </div>
             
