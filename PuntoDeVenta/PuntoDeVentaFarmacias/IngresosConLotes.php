@@ -29,133 +29,88 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
    include "header.php";?>
    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
-   <div id="loading-overlay">
-  <div class="loader"></div>
-  <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
-</div>
-<body>
+   <div id="loading-overlay"><div class="loader"></div><div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div></div>
+<body class="ingresos-lotes-module">
 <style>
-        .fish {
-            animation: swim 10s linear infinite;
-            width: 30%; /* Reducir el tamaño de la imagen al 50% */
-            display: block; /* Asegurar que se comporte como un bloque */
-            margin: 0 auto; /* Centrar la imagen */
-        }
-        .loader-container {
-            text-align: center; /* Centrar el contenido */
-        }
-        .loaderPill-text {
-            margin-top: 10px; /* Añadir espacio entre la imagen y el texto */
-            color: #C80096;
-        }
-    </style>
-    </style>
-        <!-- Spinner End -->
-        <style>
-    .error {
-      color: red;
-      margin-left: 5px;
-
-    }
-
-    #Tarjeta2 {
-      background-color: #e83e8c !important;
-      color: white;
-    }
-    .btn-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.input-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-    
-  </style>
-  <style>
-  /* Personalizar el diseño de la paginación con CSS */
-  .dataTables_wrapper .dataTables_paginate {
-    text-align: center !important; /* Centrar los botones de paginación */
-    margin-top: 10px !important;
+  /* ========== Módulo Ingresos con Lotes - Interfaz mejorada ========== */
+  .ingresos-lotes-module .page-hero {
+    background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #1976d2 100%);
+    color: #fff;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(13, 71, 161, 0.35);
   }
-
-  .dataTables_paginate .paginate_button {
-    padding: 5px 10px !important;
-    border: 1px solid #ef7980 !important;
-    margin: 2px !important;
-    cursor: pointer !important;
-    font-size: 16px !important;
-    color: #ef7980 !important;
-    background-color: #fff !important;
+  .ingresos-lotes-module .page-hero h1 { font-size: 1.5rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+  .ingresos-lotes-module .page-hero p { margin: 0.35rem 0 0 0; opacity: 0.95; font-size: 0.9rem; }
+  .ingresos-lotes-module .card-modulo {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
   }
-
-  /* Cambiar el color del paginado seleccionado */
-  .dataTables_paginate .paginate_button.current {
-    background-color: #ef7980 !important;
-    color: #fff !important;
-    border-color: #ef7980 !important;
+  .ingresos-lotes-module .card-modulo .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
   }
-
-  /* Cambiar el color del hover */
-  .dataTables_paginate .paginate_button:hover {
-    background-color: #C80096 !important;
-    color: #fff !important;
-    border-color: #C80096 !important;
-  }
-</style>
-
-<style>
-  /* Estilos personalizados para la tabla */
-  #tablaAgregarArticulos th {
-    font-size: 12px; /* Tamaño de letra para los encabezados */
-    padding: 4px; /* Ajustar el espaciado entre los encabezados */
-    white-space: nowrap; /* Evitar que los encabezados se dividan en varias líneas */
-  }
-</style>
-
-<style>
-  /* Estilos para la tabla */
-  #tablaAgregarArticulos {
-    font-size: 12px; /* Tamaño de letra para el contenido de la tabla */
-    border-collapse: collapse; /* Colapsar los bordes de las celdas */
-    width: 100%;
-    text-align: center; /* Centrar el contenido de las celdas */
-  }
-
-  #tablaAgregarArticulos th {
-    font-size: 16px; /* Tamaño de letra para los encabezados de la tabla */
-    background-color: #ef7980 !important; /* Nuevo color de fondo para los encabezados */
-    color: white; /* Cambiar el color del texto a blanco para contrastar */
-    padding: 10px; /* Ajustar el espaciado de los encabezados */
-  }
-
-  #tablaAgregarArticulos td {
-    font-size: 14px; /* Tamaño de letra para el contenido de la tabla */
-    padding: 8px; /* Ajustar el espaciado de las celdas */
-    border-bottom: 1px solid #ccc; /* Agregar una línea de separación entre las filas */
-    color:#000000;
-  }
-
-  /* Estilos para el botón de Excel */
-  .dt-buttons {
-    display: flex;
+  .ingresos-lotes-module .card-modulo .card-body { padding: 1.25rem; }
+  .ingresos-lotes-module .input-group-text.ico {
+    background: #e3f2fd;
+    color: #1565c0;
+    border-color: #90caf9;
+    border-radius: 8px 0 0 8px;
+    min-width: 42px;
     justify-content: center;
-    margin-bottom: 10px;
   }
-
-  .dt-buttons button {
-    font-size: 14px;
-    margin: 0 5px;
-    color: white; /* Cambiar el color del texto a blanco */
-    background-color: #fff; /* Cambiar el color de fondo a blanco */
+  .ingresos-lotes-module .form-control:focus { border-color: #1976d2; box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.2); }
+  .ingresos-lotes-module .scanner-zone {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 2px dashed #43a047;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    transition: all 0.2s ease;
   }
-
- 
+  .ingresos-lotes-module .scanner-zone:focus-within { border-color: #2e7d32; background: #fff; box-shadow: 0 0 0 3px rgba(67, 160, 71, 0.2); }
+  .ingresos-lotes-module .scanner-zone .form-control { border-radius: 8px; font-size: 1rem; padding: 0.6rem 1rem; }
+  .ingresos-lotes-module #tablaAgregarArticulos {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    font-size: 13px;
+  }
+  .ingresos-lotes-module #tablaAgregarArticulos thead th {
+    background: linear-gradient(135deg, #1565c0 0%, #1976d2 100%) !important;
+    color: #fff !important;
+    padding: 12px 10px;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    white-space: nowrap;
+  }
+  .ingresos-lotes-module #tablaAgregarArticulos tbody tr:hover { background-color: #f5f9ff !important; }
+  .ingresos-lotes-module #tablaAgregarArticulos tbody td { padding: 10px; vertical-align: middle; border-color: #eee; }
+  .ingresos-lotes-module .btn-enviar-modulo {
+    background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+    color: #fff;
+    border: none;
+    padding: 0.65rem 1.75rem;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(46, 125, 50, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .ingresos-lotes-module .btn-enviar-modulo:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46, 125, 50, 0.45); }
+  .ingresos-lotes-module .badge-obligatorio { font-size: 0.7rem; vertical-align: middle; }
+  .ingresos-lotes-module .alert-lotes { border-radius: 10px; border-left: 4px solid #ff9800; }
+  .ingresos-lotes-module .btn-instructions { border-radius: 8px; }
+  .ingresos-lotes-module .btn-container { display: flex; justify-content: center; align-items: center; }
+  .ingresos-lotes-module .input-container { display: flex; flex-direction: column; align-items: center; }
+  .ingresos-lotes-module .loader-container { justify-content: center; align-items: center; height: 180px; }
 </style>
 
         <?php include_once "Menu.php" ?>
@@ -362,191 +317,107 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
   }
 </style>
 
-<!-- Main content -->
+<!-- Main content - Interfaz mejorada -->
+<div class="container-fluid py-3">
+  <input type="hidden" id="nombreUsuario" value="<?php echo htmlspecialchars($row['Nombre_Apellidos'] ?? ''); ?>">
 
-
-<div class="container-fluid">
-
-<div class="row mb-3">
-
-
-
-<div class="card-body p-3">
-            
-            <div class="tab-content" id="pills-tabContent">
-              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                <div class="row">
-                  <!-- INPUT PARA INGRESO DEL CODIGO DE BARRAS O DESCRIPCION DEL PRODUCTO -->
-                  <div class="col-md-12 mb-3">
-
-                    <div class="form-group mb-2">
-                    <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FiltroEspecifico" class="btn btn-default">
- Cambiar de sucursal <i class="fas fa-clinic-medical"></i>
-</button> -->
-                      <div class="row">
-                        <input hidden type="text" class="form-control " readonly value="<?php echo $row['Nombre_Apellidos'] ?>">
-
-                        <div class="col">
-
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Proveedor</label>
-                          <div class="input-group mb-3">
-                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-                            </div>
-                            <select id="proveedoresSelect" class="form-control" style="font-size: 0.75rem !important;">
-            <option value="">Proveedor</option>
-        </select>
-                
-                           
-                          </div>
-                        </div>
-
-                        <div class="col">
-
-                          <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Fecha</label>
-                          <div class="input-group mb-3">
-                            <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-                            </div>
-                            <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo $fechaActual ?>">
-                           
-                          </div>
-                        </div>
-                        <div class="col">
-
-<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Factura</label>
-<div class="input-group mb-3">
-  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
+  <!-- Hero / Título del módulo -->
+  <div class="page-hero">
+    <h1><i class="fas fa-boxes-stacked"></i> Ingresos con Lotes y Caducidad</h1>
+    <p>Registra productos con lote y fecha de caducidad para actualizar stock e historial automáticamente.</p>
   </div>
-  <input type="text" class="form-control " id="numerofactura" style="font-size: 0.75rem !important;" >
- 
-</div>
-</div>
-                      
-<div class="col">
 
-<label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de solicitud
-</label>
-<div class="input-group mb-3">
-  <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-barcode"></i></span>
-  </div>
-  <input type="text" class="form-control " style="font-size: 0.75rem !important;" readonly value="<?php echo  $totalmonto?>">
- 
-</div>
-</div>            
-
-
-                      </div>
-
-                      <div class="col-12 mb-2">
-                        <div class="collapse" id="instruccionesIngresosLotes">
-                          <div class="card card-body border-0 bg-light small">
-                            <strong><i class="fas fa-info-circle text-primary"></i> Instrucciones (módulo con lotes y caducidad):</strong>
-                            <ol class="mb-0 pl-3">
-                              <li>Selecciona el <b>proveedor</b> e ingresa el <b>número de factura</b> para desbloquear el escáner.</li>
-                              <li>Escanea o busca cada producto y completa en cada fila: <b>cantidad</b>, <b>fecha de caducidad</b>, <b>lote</b> y <b>precio máximo</b>.</li>
-                              <li><b>Lote</b> y <b>fecha de caducidad</b> son obligatorios para actualizar Stock y Historial de lotes.</li>
-                            </ol>
-                          </div>
-                        </div>
-                        <button class="btn btn-sm btn-outline-secondary" type="button" data-toggle="collapse" data-target="#instruccionesIngresosLotes" aria-expanded="false"><i class="fas fa-question-circle"></i> Ver instrucciones</button>
-                      </div>
-
-                      <label class="col-form-label" for="iptCodigoVenta">
-                        <i class="fas fa-barcode fs-6"></i>
-                        <span class="small">Escanear productos</span>
-                      </label>
-
-                      <div class="input-group">
-
-                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo();">
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <!-- ETIQUETA QUE MUESTRA LA SUMA TOTAL DE LOS PRODUCTOS AGREGADOS AL LISTADO -->
-               
-
-                  <!-- BOTONES PARA VACIAR LISTADO Y COMPLETAR LA VENTA -->
-                  <!-- <div class="col-md-5 text-right">
-
-                    <button class="btn btn-danger btn-sm" id="btnVaciarListado">
-                      <i class="far fa-trash-alt"></i> Vaciar Listado
-                    </button>
-                  </div> -->
-
-                  <!-- LISTADO QUE CONTIENE LOS PRODUCTOS QUE SE VAN AGREGANDO PARA LA COMPRA -->
-                  <div class="table-responsive">
-                    <div class="col-md-12">
-                      <style>
-                        #tablaAgregarArticulos {
-                          width: 100%;
-                          table-layout: fixed;
-                        }
-
-                        #tablaAgregarArticulos td,
-                        #tablaAgregarArticulos th {
-                          white-space: nowrap;
-                          overflow: hidden;
-                          text-overflow: visible;
-
-
-                        }
-
-                        .smaller-button {
-                          padding: 0.25rem 0.5rem;
-                          font-size: 0.8rem;
-                        }
-
-
-                        div.card-body p-2 {
-                          margin-top: -10px !important;
-                          margin-bottom: 5px !important;
-                        }
-                      </style>
-                      <form action="javascript:void(0)" target="print_popup" method="post" id="VentasAlmomento">
-                      <div class="text-center">
-        <button type="submit" class="btn btn-primary">Enviar Información</button>
-    </div>
-                        <p class="small text-muted mb-1"><i class="fas fa-exclamation-triangle text-warning"></i> Completa <b>Lote</b> y <b>Fecha de caducidad</b> en cada fila (obligatorio en este módulo).</p>
-                        <table class="table table-striped" id="tablaAgregarArticulos" class="display">
-                          <thead>
-                            <tr>
-                              <th>Código</th>
-                              <th style="width:20%">Producto</th>
-                              <th style="width:6%">Cantidad</th>
-                              <th>Fecha caducidad <span class="text-danger">*</span></th>
-                              <th>Lote <span class="text-danger">*</span></th>
-                              <th>Precio máx.</th>
-                              <th>Eliminar</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-
-                          </tbody>
-                        </table>
-                        <!-- / table -->
-                        
-                    </div>
-                  </div>
-                  <!-- /.col -->
-                </div>
-                
-              </div>
-            
-              </form>
-
-              
-
+  <form action="javascript:void(0)" method="post" id="VentasAlmomento">
+    <!-- Card: Datos del ingreso -->
+    <div class="card card-modulo">
+      <div class="card-header"><i class="fas fa-file-invoice mr-2"></i>Datos del ingreso</div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 col-6 mb-3">
+            <label class="small font-weight-bold text-secondary">Proveedor</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fas fa-truck"></i></span></div>
+              <select id="proveedoresSelect" class="form-control">
+                <option value="">Seleccionar proveedor</option>
+              </select>
             </div>
-
-          </div> <!-- ./ end card-body -->
+          </div>
+          <div class="col-md-2 col-6 mb-3">
+            <label class="small font-weight-bold text-secondary">Fecha</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fas fa-calendar-alt"></i></span></div>
+              <input type="text" class="form-control" readonly value="<?php echo $fechaActual ?>">
+            </div>
+          </div>
+          <div class="col-md-2 col-6 mb-3">
+            <label class="small font-weight-bold text-secondary">Nº Factura</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fas fa-receipt"></i></span></div>
+              <input type="text" class="form-control" id="numerofactura" placeholder="Ej. 001">
+            </div>
+          </div>
+          <div class="col-md-2 col-6 mb-3">
+            <label class="small font-weight-bold text-secondary"># Solicitud</label>
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fas fa-hashtag"></i></span></div>
+              <input type="text" class="form-control" readonly value="<?php echo $totalmonto ?>">
+            </div>
+          </div>
         </div>
-
       </div>
-     
-</div>
-</div>
-</div>
+    </div>
+
+    <!-- Card: Escanear producto -->
+    <div class="card card-modulo">
+      <div class="card-header"><i class="fas fa-barcode mr-2"></i>Escanear o buscar producto</div>
+      <div class="card-body">
+        <div class="collapse mb-2" id="instruccionesIngresosLotes">
+          <div class="alert alert-lotes alert-info small py-2">
+            <strong><i class="fas fa-info-circle"></i> Instrucciones:</strong>
+            <ol class="mb-0 pl-3 mt-1">
+              <li>Selecciona <b>proveedor</b> e ingresa <b>número de factura</b> para habilitar el escáner.</li>
+              <li>Escanea o escribe y elige el producto; completa en cada fila: <b>cantidad</b>, <b>fecha de caducidad</b>, <b>lote</b> y <b>precio máximo</b>.</li>
+              <li><b>Lote</b> y <b>fecha de caducidad</b> son obligatorios para actualizar Stock e Historial de lotes.</li>
+            </ol>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-primary btn-instructions mb-2" type="button" data-toggle="collapse" data-target="#instruccionesIngresosLotes"><i class="fas fa-question-circle"></i> Ver instrucciones</button>
+        <div class="scanner-zone">
+          <label class="small font-weight-bold text-secondary d-block mb-1">Código de barras o nombre del producto</label>
+          <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" placeholder="Escanea o escribe para buscar..." autocomplete="off" onchange="buscarArticulo();">
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Lista de productos -->
+    <div class="card card-modulo">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+        <span><i class="fas fa-list-ul mr-2"></i>Lista de productos</span>
+        <button type="submit" class="btn btn-enviar-modulo btn-sm"><i class="fas fa-paper-plane mr-1"></i> Guardar ingresos</button>
+      </div>
+      <div class="card-body">
+        <div class="alert alert-warning alert-lotes small py-2 mb-3">
+          <i class="fas fa-exclamation-triangle"></i> Completa <b>Lote</b> y <b>Fecha de caducidad</b> en cada fila antes de guardar.
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped mb-0" id="tablaAgregarArticulos" style="width:100%; table-layout: fixed;">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th style="width:22%">Producto</th>
+                <th style="width:8%">Cantidad</th>
+                <th>Fecha caducidad <span class="badge badge-danger badge-obligatorio">*</span></th>
+                <th>Lote <span class="badge badge-danger badge-obligatorio">*</span></th>
+                <th>Precio máx.</th>
+                <th style="width:80px">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <!-- function actualizarSumaTotal  -->
 <script>
