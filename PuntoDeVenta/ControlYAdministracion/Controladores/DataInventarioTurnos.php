@@ -101,6 +101,15 @@ if ($chk_l && $chk_l->num_rows > 0 && $chk_f && $chk_f->num_rows > 0) {
 
 $extra_select = $tiene_lote_caducidad ? ", itp.Lote, itp.Fecha_Caducidad" : "";
 
+// Subconsulta: productos ya contados en OTRO turno (misma sucursal, mismo día)
+$sql_ya_contado = "SELECT itp2.ID_Prod_POS, itp2.Fk_sucursal, it2.Folio_Turno
+    FROM Inventario_Turnos_Productos itp2
+    INNER JOIN Inventario_Turnos it2 ON itp2.ID_Turno = it2.ID_Turno
+    WHERE itp2.Estado = 'completado'
+      AND it2.ID_Turno != ?
+      AND it2.Fk_sucursal = ?
+      AND DATE(it2.Fecha_Turno) = CURDATE()";
+
 // Construir consulta base para productos disponibles (no bloqueados por otros usuarios)
 $sql = "SELECT 
     sp.Folio_Prod_Stock,
@@ -113,13 +122,15 @@ $sql = "SELECT
     CASE 
         WHEN ipb.ID_Bloqueo IS NOT NULL AND ipb.Usuario_Bloqueo != ? AND ipb.Estado = 'bloqueado' THEN 'bloqueado_otro'
         WHEN itp.ID_Registro IS NOT NULL THEN itp.Estado
+        WHEN ya_contado.ID_Prod_POS IS NOT NULL THEN 'ya_contado_otro_turno'
         ELSE 'disponible'
     END as Estado_Producto,
     itp.ID_Registro,
     itp.Existencias_Fisicas,
     itp.Diferencia,
     itp.Usuario_Selecciono,
-    ipb.Usuario_Bloqueo
+    ipb.Usuario_Bloqueo,
+    ya_contado.Folio_Turno as Folio_Turno_Anterior
     " . $extra_select . "
 FROM Stock_POS sp
 INNER JOIN Sucursales s ON sp.Fk_sucursal = s.ID_Sucursal
@@ -130,10 +141,11 @@ LEFT JOIN Inventario_Productos_Bloqueados ipb ON sp.ID_Prod_POS = ipb.ID_Prod_PO
     AND sp.Fk_sucursal = ipb.Fk_sucursal 
     AND ipb.ID_Turno = ?
     AND ipb.Estado = 'bloqueado'
+LEFT JOIN ($sql_ya_contado) ya_contado ON sp.ID_Prod_POS = ya_contado.ID_Prod_POS AND sp.Fk_sucursal = ya_contado.Fk_sucursal
 WHERE sp.Fk_sucursal = ?";
 
-$params = [$turno['Usuario_Actual'], $id_turno, $id_turno, $turno['Fk_sucursal']];
-$types = "siii";
+$params = [$id_turno, $turno['Fk_sucursal'], $turno['Usuario_Actual'], $id_turno, $id_turno, $turno['Fk_sucursal']];
+$types = "iisiii";
 
 // Aplicar filtros
 if (!empty($buscar)) {
@@ -147,15 +159,21 @@ if (!empty($buscar)) {
 if (!empty($filtro_estado)) {
     if ($filtro_estado == 'disponible') {
         $sql .= " AND (itp.ID_Registro IS NULL OR itp.Estado = 'liberado') 
-                  AND (ipb.ID_Bloqueo IS NULL OR ipb.Usuario_Bloqueo = ?)";
+                  AND (ipb.ID_Bloqueo IS NULL OR ipb.Usuario_Bloqueo = ?)
+                  AND ya_contado.ID_Prod_POS IS NULL";
         $params[] = $turno['Usuario_Actual'];
         $types .= "s";
+    } elseif ($filtro_estado == 'en_proceso') {
+        $sql .= " AND itp.ID_Registro IS NOT NULL 
+                  AND (itp.Estado = 'seleccionado' OR itp.Estado = 'en_conteo')";
     } elseif ($filtro_estado == 'bloqueado') {
         $sql .= " AND ipb.ID_Bloqueo IS NOT NULL AND ipb.Usuario_Bloqueo != ? AND ipb.Estado = 'bloqueado'";
         $params[] = $turno['Usuario_Actual'];
         $types .= "s";
     } elseif ($filtro_estado == 'completado') {
         $sql .= " AND itp.Estado = 'completado'";
+    } elseif ($filtro_estado == 'ya_contado_otro_turno') {
+        $sql .= " AND ya_contado.ID_Prod_POS IS NOT NULL";
     }
 }
 
@@ -186,6 +204,11 @@ if ($stmt) {
             $clase_fila = 'producto-bloqueado';
             $badge_estado = '<span class="badge bg-warning">Bloqueado por: ' . htmlspecialchars($fila['Usuario_Bloqueo']) . '</span>';
             $botones = '<button class="btn btn-sm btn-secondary" disabled><i class="fa-solid fa-lock"></i> No disponible</button>';
+        } elseif ($estado == 'ya_contado_otro_turno') {
+            $folio_ant = htmlspecialchars($fila['Folio_Turno_Anterior'] ?? '');
+            $clase_fila = 'producto-ya-contado-otro';
+            $badge_estado = '<span class="badge bg-secondary">Ya contado en turno ' . $folio_ant . ' hoy</span>';
+            $botones = '<button class="btn btn-sm btn-secondary" disabled><i class="fa-solid fa-ban"></i> No disponible (otro turno)</button>';
         } elseif ($estado == 'disponible') {
             $clase_fila = 'producto-disponible';
             $badge_estado = '<span class="badge bg-success">Disponible</span>';

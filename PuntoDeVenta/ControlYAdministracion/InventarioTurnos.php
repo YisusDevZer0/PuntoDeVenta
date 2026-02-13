@@ -138,6 +138,10 @@ if ($sucursal_id > 0) {
             background-color: #e8f4fc;
             border-left: 4px solid #0d6efd;
         }
+        .producto-ya-contado-otro {
+            background-color: #f0f0f0;
+            border-left: 4px solid #6c757d;
+        }
         .table-success { border-left: 4px solid #198754 !important; }
         .table-warning { border-left: 4px solid #ffc107 !important; }
         .badge-estado { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; }
@@ -271,7 +275,7 @@ if ($sucursal_id > 0) {
                                         <?php echo $porcentaje; ?>%
                                     </div>
                                 </div>
-                                <small>
+                                <small class="texto-progreso">
                                     <?php echo $completados; ?> de <?php echo $limite_productos; ?> requeridos
                                     <?php if ($total_seleccionados > 0): ?>(<?php echo $total_seleccionados; ?> seleccionados)<?php endif; ?>
                                 </small>
@@ -304,8 +308,10 @@ if ($sucursal_id > 0) {
                             <select class="form-select" id="filtro-estado-producto">
                                 <option value="">Todos</option>
                                 <option value="disponible">Disponibles</option>
+                                <option value="en_proceso">En proceso</option>
                                 <option value="bloqueado">Bloqueados</option>
                                 <option value="completado">Completados</option>
+                                <option value="ya_contado_otro_turno">Ya contado (otro turno)</option>
                             </select>
                         </div>
                         <div class="col-md-4 d-flex align-items-end gap-2">

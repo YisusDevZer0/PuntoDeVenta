@@ -403,6 +403,34 @@ try {
             ]);
             break;
             
+        case 'obtener_estado':
+            $id_turno = isset($_POST['id_turno']) ? (int)$_POST['id_turno'] : 0;
+            if ($id_turno <= 0) {
+                throw new Exception('ID de turno inválido');
+            }
+            $sql_total = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                          WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_total = $conn->prepare($sql_total);
+            $stmt_total->bind_param("i", $id_turno);
+            $stmt_total->execute();
+            $total_data = $stmt_total->get_result()->fetch_assoc();
+            $stmt_total->close();
+            $total_productos = $total_data ? (int)$total_data['total'] : 0;
+            $sql_completados = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos 
+                               WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_completados);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $stmt_comp->close();
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            echo json_encode([
+                'success' => true,
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
+            break;
+
         case 'finalizar':
             $id_turno = isset($_POST['id_turno']) ? (int)$_POST['id_turno'] : 0;
             if ($id_turno <= 0) {
@@ -557,7 +585,27 @@ try {
             $stmt_total->execute();
             $stmt_total->close();
             
-            echo json_encode(['success' => true, 'message' => 'Producto seleccionado correctamente']);
+            // Devolver totales actualizados para actualizar barra de progreso
+            $sql_contar = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_contar = $conn->prepare($sql_contar);
+            $stmt_contar->bind_param("i", $id_turno);
+            $stmt_contar->execute();
+            $contar_data = $stmt_contar->get_result()->fetch_assoc();
+            $stmt_contar->close();
+            $total_productos = $contar_data ? (int)$contar_data['total'] : 0;
+            $sql_comp = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp = $conn->prepare($sql_comp);
+            $stmt_comp->bind_param("i", $id_turno);
+            $stmt_comp->execute();
+            $comp_data = $stmt_comp->get_result()->fetch_assoc();
+            $stmt_comp->close();
+            $productos_completados = $comp_data ? (int)$comp_data['total'] : 0;
+            echo json_encode([
+                'success' => true,
+                'message' => 'Producto seleccionado correctamente',
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
             break;
             
         case 'contar_producto':
@@ -661,7 +709,28 @@ try {
             $stmt_comp->execute();
             $stmt_comp->close();
             
-            echo json_encode(['success' => true, 'message' => 'Conteo registrado correctamente', 'diferencia' => $diferencia]);
+            // Devolver totales actualizados para actualizar barra de progreso
+            $sql_tot = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos WHERE ID_Turno = ? AND Estado != 'liberado'";
+            $stmt_tot = $conn->prepare($sql_tot);
+            $stmt_tot->bind_param("i", $registro['ID_Turno']);
+            $stmt_tot->execute();
+            $tot_data = $stmt_tot->get_result()->fetch_assoc();
+            $stmt_tot->close();
+            $total_productos = $tot_data ? (int)$tot_data['total'] : 0;
+            $sql_comp2 = "SELECT COUNT(*) as total FROM Inventario_Turnos_Productos WHERE ID_Turno = ? AND Estado = 'completado'";
+            $stmt_comp2 = $conn->prepare($sql_comp2);
+            $stmt_comp2->bind_param("i", $registro['ID_Turno']);
+            $stmt_comp2->execute();
+            $comp2_data = $stmt_comp2->get_result()->fetch_assoc();
+            $stmt_comp2->close();
+            $productos_completados = $comp2_data ? (int)$comp2_data['total'] : 0;
+            echo json_encode([
+                'success' => true,
+                'message' => 'Conteo registrado correctamente',
+                'diferencia' => $diferencia,
+                'total_productos' => $total_productos,
+                'productos_completados' => $productos_completados
+            ]);
             break;
             
         case 'liberar_productos_sucursal':

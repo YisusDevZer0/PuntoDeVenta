@@ -208,35 +208,74 @@ function reanudarTurno(idTurno) {
     });
 }
 
-// Finalizar turno
+// Finalizar turno: verificar estado actual en servidor antes de permitir finalizar
 function finalizarTurno(idTurno) {
-    // Primero verificar cuántos productos están completados
     if (!turnoActivo || !turnoActivo.ID_Turno) {
         Swal.fire('Error', 'No hay un turno activo', 'error');
         return;
     }
-    
-    var limite_productos = turnoActivo.Limite_Productos || 50;
-    var productos_completados = turnoActivo.Productos_Completados || 0;
-    
-    // Verificar si se han completado todos los productos requeridos
-    if (productos_completados < limite_productos) {
-        Swal.fire({
-            title: 'No se puede finalizar el turno',
-            html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + limite_productos + '</strong> productos requeridos.</p>' +
-                  '<p>Debes completar todos los productos antes de poder finalizar el turno.</p>',
-            icon: 'warning',
-            confirmButtonText: 'Entendido',
-            confirmButtonColor: '#3085d6'
-        });
-        return;
-    }
-    
-    // Si se han completado todos, mostrar confirmación
+    var limite_requerido = parseInt(turnoActivo.Limite_Productos) || 50;
+    $.ajax({
+        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        type: 'POST',
+        data: { accion: 'obtener_estado', id_turno: idTurno },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                var total_productos = response.total_productos || 0;
+                var productos_completados = response.productos_completados || 0;
+                if (productos_completados < limite_requerido) {
+                    Swal.fire({
+                        title: 'No se puede finalizar el turno',
+                        html: '<p>Debes tener <strong>' + limite_requerido + '</strong> productos contados.</p>' +
+                              '<p>Tienes <strong>' + productos_completados + '</strong> de ' + limite_requerido + '.</p>' +
+                              '<p>Cuenta los productos pendientes antes de finalizar.</p>',
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+                confirmarFinalizarTurno(idTurno, total_productos, productos_completados);
+            } else {
+                var productos_completados = turnoActivo.Productos_Completados || 0;
+                if (productos_completados < limite_requerido) {
+                    Swal.fire({
+                        title: 'No se puede finalizar el turno',
+                        html: '<p>Debes tener ' + limite_requerido + ' productos contados. Tienes ' + productos_completados + '.</p>',
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+                confirmarFinalizarTurno(idTurno, turnoActivo.Total_Productos || 0, productos_completados);
+            }
+        },
+        error: function() {
+            var productos_completados = turnoActivo.Productos_Completados || 0;
+            if (productos_completados < limite_requerido) {
+                Swal.fire({
+                    title: 'No se puede finalizar el turno',
+                    html: '<p>Debes tener ' + limite_requerido + ' productos contados. Tienes ' + productos_completados + '.</p>',
+                    icon: 'warning',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+            confirmarFinalizarTurno(idTurno, turnoActivo.Total_Productos || 0, productos_completados);
+        }
+    });
+}
+
+// Confirmar finalización del turno (solo se llama cuando ya hay suficientes contados)
+function confirmarFinalizarTurno(idTurno, total_productos, productos_completados) {
+    var html = '<p>Has completado <strong>' + productos_completados + '</strong> productos contados.</p>' +
+               '<p>Una vez finalizado, no podrás agregar más productos.</p>';
     Swal.fire({
         title: '¿Finalizar el turno?',
-        html: '<p>Has completado <strong>' + productos_completados + '</strong> de <strong>' + limite_productos + '</strong> productos.</p>' +
-              '<p>Una vez finalizado, no podrás agregar más productos.</p>',
+        html: html,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
@@ -248,10 +287,7 @@ function finalizarTurno(idTurno) {
             $.ajax({
                 url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
                 type: 'POST',
-                data: {
-                    accion: 'finalizar',
-                    id_turno: idTurno
-                },
+                data: { accion: 'finalizar', id_turno: idTurno },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
@@ -296,13 +332,24 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                    if (turnoActivo && turnoActivo.ID_Turno) {
-                        CargarProductosTurno(turnoActivo.ID_Turno);
-                    } else {
-                        location.reload();
-                    }
+                if (turnoActivo && response.total_productos !== undefined) {
+                    turnoActivo.Total_Productos = response.total_productos;
+                    turnoActivo.Productos_Completados = response.productos_completados || 0;
+                    actualizarBarraProgreso();
+                }
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto agregado',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
                 });
+                if (turnoActivo && turnoActivo.ID_Turno) {
+                    CargarProductosTurno(turnoActivo.ID_Turno);
+                } else {
+                    location.reload();
+                }
             } else {
                 Swal.fire('Error', response.message, 'error');
             }
@@ -419,6 +466,11 @@ $(document).on('click', '.btn-contar-producto', function() {
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
+                        if (turnoActivo && response.total_productos !== undefined) {
+                            turnoActivo.Total_Productos = response.total_productos;
+                            turnoActivo.Productos_Completados = response.productos_completados;
+                            actualizarBarraProgreso();
+                        }
                         Swal.fire('¡Éxito!', response.message, 'success').then(() => {
                             if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
                                 CargarProductosTurno(turnoActivo.ID_Turno);
@@ -438,6 +490,30 @@ $(document).on('click', '.btn-contar-producto', function() {
         }
     });
 });
+
+// Actualizar barra de progreso en tiempo real (sin recargar página)
+function actualizarBarraProgreso() {
+    if (!turnoActivo || !turnoActivo.ID_Turno) {
+        return;
+    }
+    var total_productos = parseInt(turnoActivo.Total_Productos) || 0;
+    var productos_completados = parseInt(turnoActivo.Productos_Completados) || 0;
+    var limite = parseInt(turnoActivo.Limite_Productos) || 50;
+    var porcentaje = limite > 0 ? Math.round((productos_completados / limite) * 100) : 0;
+    porcentaje = Math.min(100, porcentaje);
+    var progressBar = $('.turno-activo .progress-bar');
+    if (progressBar.length > 0) {
+        progressBar.css('width', porcentaje + '%')
+                   .attr('aria-valuenow', porcentaje)
+                   .attr('aria-valuemax', 100)
+                   .text(porcentaje + '%');
+        var progresoText = productos_completados + ' / ' + limite + ' completados';
+        if (total_productos > 0) {
+            progresoText += ' (' + total_productos + ' seleccionados)';
+        }
+        $('.turno-activo .texto-progreso').text(progresoText);
+    }
+}
 
 // Ver historial
 function verHistorialTurnos() {
@@ -494,6 +570,19 @@ function buscarYSeleccionarProducto(codigo) {
                     return;
                 }
                 
+                // Verificar si ya fue contado en otro turno hoy
+                if (response.ya_contado_otro_turno) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Producto ya contado',
+                        text: 'Este producto ya fue contado en el turno ' + (response.folio_turno_anterior || '') + ' hoy. No se puede contar el mismo producto en otro turno el mismo día.',
+                        timer: 3500,
+                        showConfirmButton: false
+                    });
+                    limpiarCampoBusqueda();
+                    return;
+                }
+                
                 // Seleccionar el producto en el turno
                 seleccionarProductoEnTurno(response.producto.id, response.producto.codigo, response.producto.nombre);
             } else {
@@ -528,7 +617,11 @@ function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                // Mostrar notificación rápida y actualizar tabla
+                if (turnoActivo && response.total_productos !== undefined) {
+                    turnoActivo.Total_Productos = response.total_productos;
+                    turnoActivo.Productos_Completados = response.productos_completados || 0;
+                    actualizarBarraProgreso();
+                }
                 Swal.fire({
                     icon: 'success',
                     title: 'Producto agregado',
@@ -538,8 +631,6 @@ function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
                     toast: true,
                     position: 'top-end'
                 });
-                
-                // Actualizar tabla y limpiar campo
                 CargarProductosTurno(turnoActivo.ID_Turno);
                 limpiarCampoBusqueda();
             } else {
