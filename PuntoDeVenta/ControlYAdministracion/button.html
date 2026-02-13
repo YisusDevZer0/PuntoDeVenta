@@ -29,6 +29,8 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/dark-mode.css" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('control-admin-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 </head>
 
 <body>
@@ -101,6 +103,9 @@
                     <input class="form-control border-0" type="search" placeholder="Search">
                 </form>
                 <div class="navbar-nav align-items-center ms-auto">
+                    <button type="button" id="btn-dark-mode-toggle" class="btn btn-link nav-link py-2 me-2" data-dark-mode-toggle title="Modo oscuro" aria-label="Alternar modo oscuro">
+                        <i class="fa fa-moon"></i><i class="fa fa-sun" style="display:none"></i>
+                    </button>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <i class="fa fa-envelope me-lg-2"></i>
@@ -458,6 +463,7 @@
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
+    <script src="js/dark-mode.js"></script>
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>

@@ -1,0 +1,324 @@
+/**
+ * Modo oscuro - ControlYAdministracion
+ * Se activa con data-theme="dark" en <html> (persistido en localStorage).
+ */
+
+/* Variables del tema oscuro */
+html[data-theme="dark"] {
+    --primary: #009CFF;
+    --light: #1e2228;
+    --dark: #e4e6eb;
+    --bg-base: #12151a;
+    --bg-surface: #1a1e24;
+    --bg-elevated: #23272e;
+    --text-primary: #e4e6eb;
+    --text-secondary: #b0b3b8;
+    --border-color: #2d3239;
+}
+
+/* Contenedor principal y body */
+html[data-theme="dark"] body,
+html[data-theme="dark"] .container-xxl.position-relative,
+html[data-theme="dark"] .container-xxl.bg-white {
+    background-color: var(--bg-base) !important;
+    color: var(--text-primary);
+}
+
+/* Spinner de carga */
+html[data-theme="dark"] #spinner,
+html[data-theme="dark"] #spinner.show {
+    background: var(--bg-base) !important;
+}
+
+/* Sidebar */
+html[data-theme="dark"] .sidebar {
+    background: var(--bg-surface) !important;
+    border-right: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .sidebar .navbar,
+html[data-theme="dark"] .sidebar .navbar.bg-light,
+html[data-theme="dark"] .sidebar .navbar.navbar-light {
+    background: transparent !important;
+}
+
+html[data-theme="dark"] .sidebar .navbar .navbar-brand h3,
+html[data-theme="dark"] .sidebar .navbar .nav-link {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .sidebar .navbar .nav-link {
+    border-left-color: var(--bg-surface) !important;
+}
+
+html[data-theme="dark"] .sidebar .navbar .nav-link:hover,
+html[data-theme="dark"] .sidebar .navbar .nav-link.active {
+    color: var(--primary) !important;
+    background: var(--bg-elevated) !important;
+    border-color: var(--primary) !important;
+}
+
+html[data-theme="dark"] .sidebar .navbar .nav-link i {
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .sidebar .navbar .nav-link:hover i,
+html[data-theme="dark"] .sidebar .navbar .nav-link.active i {
+    background: var(--bg-base) !important;
+    color: var(--primary);
+}
+
+html[data-theme="dark"] .sidebar .dropdown-menu,
+html[data-theme="dark"] .sidebar .dropdown-menu.bg-transparent {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .sidebar .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .sidebar .dropdown-item:hover {
+    background: var(--bg-surface) !important;
+    color: var(--primary) !important;
+}
+
+html[data-theme="dark"] .sidebar .d-flex.align-items-center .h6,
+html[data-theme="dark"] .sidebar .d-flex.align-items-center span {
+    color: var(--text-primary) !important;
+}
+
+/* Área de contenido principal */
+html[data-theme="dark"] .content {
+    background: var(--bg-base) !important;
+    color: var(--text-primary);
+}
+
+/* Navbar superior (sticky) */
+html[data-theme="dark"] .content .navbar,
+html[data-theme="dark"] .content .navbar.bg-light,
+html[data-theme="dark"] .content .navbar.navbar-light {
+    background: var(--bg-surface) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .content .navbar .navbar-brand h2 {
+    color: var(--primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .nav-link {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .nav-link:hover,
+html[data-theme="dark"] .content .navbar .nav-link.active {
+    color: var(--primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .sidebar-toggler,
+html[data-theme="dark"] .content .navbar .nav-link i {
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary);
+}
+
+/* Formulario de búsqueda en navbar */
+html[data-theme="dark"] .content .navbar .form-control,
+html[data-theme="dark"] .content .navbar input[type="search"] {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Dropdowns del navbar */
+html[data-theme="dark"] .content .navbar .dropdown-menu,
+html[data-theme="dark"] .content .navbar .dropdown-menu.bg-light {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .content .navbar .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .dropdown-item:hover {
+    background: var(--bg-surface) !important;
+    color: var(--primary) !important;
+}
+
+html[data-theme="dark"] .content .navbar .dropdown-divider {
+    border-color: var(--border-color);
+}
+
+html[data-theme="dark"] .content .navbar .dropdown-item .h6,
+html[data-theme="dark"] .content .navbar .dropdown-item small {
+    color: var(--text-primary) !important;
+}
+
+/* Botón modo oscuro en navbar (iconos los actualiza también JS) */
+html[data-theme="dark"] .content .navbar [data-dark-mode-toggle] {
+    color: var(--primary);
+}
+
+/* Cards y bloques bg-light */
+html[data-theme="dark"] .bg-light,
+html[data-theme="dark"] .bg-white {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .rounded-top,
+html[data-theme="dark"] .rounded,
+html[data-theme="dark"] .rounded-bottom {
+    border-color: var(--border-color);
+}
+
+/* Formularios */
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input[type="email"],
+html[data-theme="dark"] input[type="password"],
+html[data-theme="dark"] input[type="search"],
+html[data-theme="dark"] textarea.form-control {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .form-select:focus {
+    background: var(--bg-elevated) !important;
+    border-color: var(--primary) !important;
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .form-control::placeholder {
+    color: var(--text-secondary);
+}
+
+html[data-theme="dark"] .form-label,
+html[data-theme="dark"] .form-check-label,
+html[data-theme="dark"] label {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .form-text {
+    color: var(--text-secondary) !important;
+}
+
+/* Input group */
+html[data-theme="dark"] .input-group-text {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary);
+}
+
+/* Tablas (si se usan) */
+html[data-theme="dark"] .table {
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .table thead th {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .table td,
+html[data-theme="dark"] .table th {
+    border-color: var(--border-color);
+}
+
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background: var(--bg-surface);
+}
+
+/* Footer */
+html[data-theme="dark"] .bg-light.rounded-top.p-4 {
+    background: var(--bg-surface) !important;
+    border-top: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .bg-light.rounded-top.p-4 a {
+    color: var(--primary);
+}
+
+/* Textos y títulos */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+html[data-theme="dark"] .text-dark {
+    color: var(--text-primary) !important;
+}
+
+/* Date picker (tempusdominus) */
+html[data-theme="dark"] .bootstrap-datetimepicker-widget.dropdown-menu {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color);
+}
+
+html[data-theme="dark"] .bootstrap-datetimepicker-widget .table th,
+html[data-theme="dark"] .bootstrap-datetimepicker-widget .table td {
+    color: var(--text-primary);
+}
+
+/* Notificaciones (toasts) */
+html[data-theme="dark"] .toast {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .toast-header {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .toast-body {
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .btn-close {
+    color: var(--text-primary);
+    opacity: 0.8;
+}
+
+/* Chat / notificaciones (clases propias) */
+html[data-theme="dark"] .notificacion-toast {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color);
+}
+
+/* Recordatorios */
+html[data-theme="dark"] .page-content {
+    background: var(--bg-base);
+}
+
+html[data-theme="dark"] .recordatorios-table th {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+html[data-theme="dark"] .recordatorios-table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Toggle flotante (páginas sin navbar, ej. signin/signup) */
+html[data-theme="dark"] #dark-mode-toggle-float {
+    background: var(--bg-elevated) !important;
+    border-color: var(--border-color);
+    color: var(--primary);
+}
