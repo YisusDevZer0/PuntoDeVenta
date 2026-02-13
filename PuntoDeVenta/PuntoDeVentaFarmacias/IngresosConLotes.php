@@ -393,7 +393,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
     <div class="card card-modulo">
       <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
         <span><i class="fas fa-list-ul mr-2"></i>Lista de productos</span>
-        <button type="button" id="btnGuardarIngresos" class="btn btn-enviar-modulo btn-sm"><i class="fas fa-paper-plane mr-1"></i> Guardar ingresos</button>
+        <button type="submit" class="btn btn-enviar-modulo btn-sm"><i class="fas fa-paper-plane mr-1"></i> Guardar ingresos</button>
       </div>
       <div class="card-body">
         <div class="alert alert-warning alert-lotes small py-2 mb-3">
