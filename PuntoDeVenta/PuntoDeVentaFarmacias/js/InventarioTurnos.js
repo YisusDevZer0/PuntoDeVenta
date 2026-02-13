@@ -76,6 +76,7 @@ function CargarProductosTurno(idTurno) {
             { "data": "Existencias_R", "title": "Existencias Sistema" },
             { "data": "Existencias_Fisicas", "title": "Existencias Físicas" },
             { "data": "Diferencia", "title": "Diferencia" },
+            { "data": "Lotes_Caducidad_Texto", "title": "Lotes y caducidad", "defaultContent": "-" },
             { "data": "Lote", "title": "Lote", "defaultContent": "-" },
             { "data": "Fecha_Caducidad", "title": "Fecha Cad.", "defaultContent": "-" },
             { "data": "Estado", "title": "Estado" },
@@ -377,22 +378,45 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto (incl. lote y fecha caducidad opcionales)
+// Contar producto: muestra lotes y fechas del producto, opción de seleccionar o agregar nuevo
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
+    var idProducto = $(this).data('producto');
+    var fkSucursal = $(this).data('fk-sucursal');
+    var lotesData = $(this).data('lotes');
+    var lotes = [];
+    try {
+        if (typeof lotesData === 'string') lotes = JSON.parse(lotesData || '[]');
+        else if (Array.isArray(lotesData)) lotes = lotesData;
+    } catch (e) { lotes = []; }
+    
+    var listaLotesHtml = '';
+    if (lotes.length > 0) {
+        listaLotesHtml = '<div class="mb-3">' +
+            '<label class="form-label fw-semibold mb-2"><i class="fa-solid fa-list me-1"></i>Lotes y fechas de caducidad del producto</label>' +
+            '<div class="list-group list-group-flush border rounded" style="max-height: 180px; overflow-y: auto;">';
+        lotes.forEach(function(l, i) {
+            var fechaStr = l.Fecha_Caducidad ? (l.Fecha_Caducidad.split(' ')[0] || l.Fecha_Caducidad) : '';
+            var fechaDisplay = fechaStr ? new Date(fechaStr + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+            listaLotesHtml += '<a href="#" class="list-group-item list-group-item-action btn-seleccionar-lote-conteo" data-lote="' + (l.Lote || '').replace(/"/g, '&quot;') + '" data-fecha="' + fechaStr + '" data-index="' + i + '">' +
+                '<span class="fw-semibold">' + (l.Lote || '-') + '</span> · Cad: ' + fechaDisplay + ' · ' + (l.Existencias || 0) + ' und</a>';
+        });
+        listaLotesHtml += '</div><small class="text-muted">Haz clic en un lote para usarlo en este conteo</small></div>';
+    }
     
     var html = '<div class="text-start conteo-modal-fields">' +
         '<div class="mb-3">' +
         '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
         '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
         '</div>' +
+        listaLotesHtml +
         '<div class="mb-3">' +
-        '<label class="form-label mb-1">Lote <small class="text-muted">(opcional)</small></label>' +
-        '<input type="text" id="conteo-lote" class="form-control" placeholder="Ej. LOTE-2024-001">' +
+        '<label class="form-label fw-semibold mb-1"><i class="fa-solid fa-plus me-1"></i>Cambiar o agregar lote nuevo</label>' +
+        '<div class="row g-2">' +
+        '<div class="col-6"><input type="text" id="conteo-lote" class="form-control" placeholder="Lote (ej. LOTE-2024-001)"></div>' +
+        '<div class="col-6"><input type="date" id="conteo-fecha-caducidad" class="form-control" placeholder="Fecha cad."></div>' +
         '</div>' +
-        '<div class="mb-0">' +
-        '<label class="form-label mb-1">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
-        '<input type="date" id="conteo-fecha-caducidad" class="form-control">' +
+        '<small class="text-muted">Opcional. Si ingresas lote y fecha nuevos se registrarán en historial de lotes.</small>' +
         '</div>' +
         '</div>';
     
@@ -402,8 +426,19 @@ $(document).on('click', '.btn-contar-producto', function() {
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
-        width: '440px',
+        width: '520px',
         customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
+        didOpen: function() {
+            $(document).off('click.conteoLote').on('click.conteoLote', '.btn-seleccionar-lote-conteo', function(e) {
+                e.preventDefault();
+                var lote = $(this).data('lote');
+                var fecha = $(this).data('fecha') || '';
+                $('#conteo-lote').val(lote);
+                $('#conteo-fecha-caducidad').val(fecha);
+                $('.btn-seleccionar-lote-conteo').removeClass('active');
+                $(this).addClass('active');
+            });
+        },
         preConfirm: () => {
             var ex = document.getElementById('existencias-fisicas').value;
             if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
@@ -417,6 +452,7 @@ $(document).on('click', '.btn-contar-producto', function() {
             };
         }
     }).then((result) => {
+        $(document).off('click.conteoLote');
         if (result.isConfirmed && result.value) {
             var d = result.value;
             var payload = {
@@ -433,13 +469,11 @@ $(document).on('click', '.btn-contar-producto', function() {
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        // Actualizar el estado del turno activo con los nuevos datos
                         if (turnoActivo && response.total_productos !== undefined) {
                             turnoActivo.Total_Productos = response.total_productos;
                             turnoActivo.Productos_Completados = response.productos_completados;
                             actualizarBarraProgreso();
                         }
-                        
                         Swal.fire('¡Éxito!', response.message, 'success').then(() => {
                             if (turnoActivo && turnoActivo.ID_Turno) {
                                 CargarProductosTurno(turnoActivo.ID_Turno);

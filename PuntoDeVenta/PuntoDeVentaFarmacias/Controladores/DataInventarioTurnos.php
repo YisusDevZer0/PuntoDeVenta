@@ -67,6 +67,9 @@ if ($id_turno <= 0) {
                 "Existencias_R" => number_format($fila["Existencias_R"]),
                 "Existencias_Fisicas" => '-',
                 "Diferencia" => '-',
+                "Lotes_Caducidad_Texto" => '-',
+                "Lote" => '-',
+                "Fecha_Caducidad" => '-',
                 "Estado" => '<span class="badge bg-info">Disponible (Sin turno activo)</span>',
                 "Sucursal" => $fila["Nombre_Sucursal"],
                 "Acciones" => '<button class="btn btn-sm btn-secondary" disabled><i class="fa-solid fa-info-circle"></i> Inicia un turno para seleccionar</button>',
@@ -194,6 +197,7 @@ $sql .= " ORDER BY sp.Nombre_Prod ASC LIMIT 500";
 // Preparar y ejecutar consulta
 $stmt = $conn->prepare($sql);
 $data = [];
+$pares_producto_sucursal = [];
 
 if ($stmt) {
     $stmt->bind_param($types, ...$params);
@@ -205,6 +209,9 @@ if ($stmt) {
         $clase_fila = '';
         $badge_estado = '';
         $botones = '';
+        $id_prod = (int)$fila['ID_Prod_POS'];
+        $fk_suc = (int)$fila['Fk_sucursal'];
+        $pares_producto_sucursal[$id_prod . '_' . $fk_suc] = [$id_prod, $fk_suc];
         
         if ($estado == 'bloqueado_otro') {
             $clase_fila = 'producto-bloqueado';
@@ -228,7 +235,8 @@ if ($stmt) {
             $badge_estado = '<span class="badge bg-warning">En proceso</span>';
             $botones = '<button class="btn btn-sm btn-info btn-contar-producto" 
                         data-id="' . $fila['ID_Registro'] . '"
-                        data-producto="' . $fila['ID_Prod_POS'] . '">
+                        data-producto="' . $fila['ID_Prod_POS'] . '"
+                        data-fk-sucursal="' . $fk_suc . '">
                         <i class="fa-solid fa-calculator"></i> Contar
                     </button>';
         } elseif ($estado == 'completado') {
@@ -249,17 +257,88 @@ if ($stmt) {
             "Estado" => $badge_estado,
             "Sucursal" => $fila["Nombre_Sucursal"],
             "Acciones" => $botones,
-            "clase_fila" => $clase_fila
+            "clase_fila" => $clase_fila,
+            "ID_Prod_POS" => $id_prod,
+            "Fk_sucursal" => $fk_suc,
+            "ID_Registro" => isset($fila["ID_Registro"]) ? (int)$fila["ID_Registro"] : null
         ];
         if ($tiene_lote_caducidad) {
             $row_data["Lote"] = isset($fila["Lote"]) && $fila["Lote"] !== null && $fila["Lote"] !== '' ? htmlspecialchars($fila["Lote"]) : '-';
             $row_data["Fecha_Caducidad"] = isset($fila["Fecha_Caducidad"]) && $fila["Fecha_Caducidad"] ? date('d/m/Y', strtotime($fila["Fecha_Caducidad"])) : '-';
+        } else {
+            $row_data["Lote"] = '-';
+            $row_data["Fecha_Caducidad"] = '-';
         }
+        $row_data["Lotes_Caducidad_Texto"] = '-';
         $data[] = $row_data;
     }
     
     $stmt->close();
 }
+
+// Lotes de Historial_Lotes por producto (para columna y modal Contar)
+$lotes_por_producto = [];
+if (!empty($pares_producto_sucursal)) {
+    $chk_hl = $conn->query("SHOW TABLES LIKE 'Historial_Lotes'");
+    if ($chk_hl && $chk_hl->num_rows > 0) {
+        $placeholders = [];
+        $tipos = '';
+        $vals = [];
+        foreach ($pares_producto_sucursal as $par) {
+            $placeholders[] = '(ID_Prod_POS = ? AND Fk_sucursal = ?)';
+            $tipos .= 'ii';
+            $vals[] = $par[0];
+            $vals[] = $par[1];
+        }
+        $sql_hl = "SELECT ID_Historial, ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Existencias 
+                   FROM Historial_Lotes 
+                   WHERE Existencias > 0 AND Lote IS NOT NULL AND TRIM(Lote) != '' 
+                     AND Fecha_Caducidad IS NOT NULL AND Fecha_Caducidad > '1900-01-01' 
+                     AND (" . implode(' OR ', $placeholders) . ") 
+                   ORDER BY Fecha_Caducidad ASC";
+        $stmt_hl = $conn->prepare($sql_hl);
+        if ($stmt_hl) {
+            $stmt_hl->bind_param($tipos, ...$vals);
+            $stmt_hl->execute();
+            $res_hl = $stmt_hl->get_result();
+            while ($hl = $res_hl->fetch_assoc()) {
+                $k = $hl['ID_Prod_POS'] . '_' . $hl['Fk_sucursal'];
+                if (!isset($lotes_por_producto[$k])) $lotes_por_producto[$k] = [];
+                $lotes_por_producto[$k][] = [
+                    'ID_Historial' => (int)$hl['ID_Historial'],
+                    'Lote' => $hl['Lote'],
+                    'Fecha_Caducidad' => $hl['Fecha_Caducidad'],
+                    'Existencias' => (int)$hl['Existencias']
+                ];
+            }
+            $stmt_hl->close();
+        }
+    }
+}
+
+foreach ($data as &$row) {
+    $key = $row['ID_Prod_POS'] . '_' . $row['Fk_sucursal'];
+    $lotes = isset($lotes_por_producto[$key]) ? $lotes_por_producto[$key] : [];
+    if (!empty($lotes)) {
+        $partes = [];
+        foreach ($lotes as $l) {
+            $fecha_f = $l['Fecha_Caducidad'] ? date('d/m/Y', strtotime($l['Fecha_Caducidad'])) : '-';
+            $partes[] = $l['Lote'] . ' (' . $fecha_f . ') · ' . $l['Existencias'] . ' und';
+        }
+        $row['Lotes_Caducidad_Texto'] = implode(' | ', $partes);
+    }
+    if (strpos($row['Acciones'], 'btn-contar-producto') !== false && isset($row['ID_Registro'])) {
+        $lotes_json = htmlspecialchars(json_encode($lotes), ENT_QUOTES, 'UTF-8');
+        $row['Acciones'] = '<button class="btn btn-sm btn-info btn-contar-producto" 
+                        data-id="' . $row['ID_Registro'] . '"
+                        data-producto="' . $row['ID_Prod_POS'] . '"
+                        data-fk-sucursal="' . $row['Fk_sucursal'] . '"
+                        data-lotes="' . $lotes_json . '">
+                        <i class="fa-solid fa-calculator"></i> Contar
+                    </button>';
+    }
+}
+unset($row);
 
 // Construir respuesta JSON
 $results = [
