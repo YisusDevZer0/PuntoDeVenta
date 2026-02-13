@@ -13,7 +13,14 @@ if (!$conn) {
     exit();
 }
 
-// Asegurar que los arrays POST existan (con 1 solo elemento algunos entornos envían escalar)
+// Normalizar POST: cuando hay 1 solo elemento, algunos entornos envían escalar en vez de array.
+// Si indexamos un string $str[0] da el primer carácter (ej. "DevZero"[0]="D") → corrupción.
+$normalizar = function ($key, $i) {
+    $v = $_POST[$key] ?? null;
+    if ($v === null) return '';
+    if (is_array($v)) return $v[$i] ?? '';
+    return (string) $v; // mismo valor para todas las filas
+};
 $idBasedatos = $_POST["IdBasedatos"] ?? [];
 if (!is_array($idBasedatos)) {
     $_POST["IdBasedatos"] = [$idBasedatos];
@@ -23,14 +30,14 @@ $rows_to_insert = [];
 $response = ['status' => 'error', 'message' => ''];
 
 for ($i = 0; $i < $contador; $i++) {
-    if (empty($_POST["IdBasedatos"][$i]) && empty($_POST["CodBarras"][$i]) && empty($_POST["NombreDelProducto"][$i])) {
+    if (empty($normalizar("IdBasedatos", $i)) && empty($normalizar("CodBarras", $i)) && empty($normalizar("NombreDelProducto", $i))) {
         continue;
     }
 
-    // Lote: siempre como texto; leer explícitamente del índice $i (no confundir con cantidad)
-    $lote = isset($_POST["Lote"][$i]) ? trim((string) $_POST["Lote"][$i]) : '';
-    $contabilizado = (int) ($_POST["Contabilizado"][$i] ?? 0);
-    $fecha_cad = isset($_POST["FechaCaducidad"][$i]) ? trim((string) $_POST["FechaCaducidad"][$i]) : '';
+    // Usar normalizar() para evitar $str[$i] cuando el campo llega como string (da 1er carácter)
+    $lote = trim((string) $normalizar("Lote", $i));
+    $contabilizado = (int) ($normalizar("Contabilizado", $i) ?: 0);
+    $fecha_cad = trim((string) $normalizar("FechaCaducidad", $i));
 
     // No guardar "0", "NaN" o vacío como lote real (usar S/L para que no se confunda con cantidad)
     if ($lote === '' || strtolower($lote) === 'nan' || $lote === '0') {
@@ -50,22 +57,22 @@ for ($i = 0; $i < $contador; $i++) {
     }
 
     $rows_to_insert[] = [
-        'ID_Prod_POS'      => $_POST["IdBasedatos"][$i],
-        'NumFactura'       => $_POST["FacturaNumber"][$i] ?? '',
-        'Proveedor'        => $_POST["Proveedor"][$i] ?? '',
-        'Cod_Barra'        => $_POST["CodBarras"][$i] ?? '',
-        'Nombre_Prod'      => $_POST["NombreDelProducto"][$i] ?? '',
-        'Fk_Sucursal'      => $_POST["FkSucursal"][$i] ?? '',
+        'ID_Prod_POS'      => $normalizar("IdBasedatos", $i),
+        'NumFactura'       => $normalizar("FacturaNumber", $i),
+        'Proveedor'        => $normalizar("Proveedor", $i),
+        'Cod_Barra'        => $normalizar("CodBarras", $i),
+        'Nombre_Prod'      => $normalizar("NombreDelProducto", $i),
+        'Fk_Sucursal'      => $normalizar("FkSucursal", $i),
         'Contabilizado'    => $contabilizado,
         'Fecha_Caducidad'  => $fecha_cad,
         'Lote'             => $lote,
-        'PrecioMaximo'     => $_POST["PrecioMaximo"][$i] ?? 0,
-        'Precio_Venta'     => $_POST["PrecioVenta"][$i] ?? 0,
-        'Precio_C'        => $_POST["PrecioCompra"][$i] ?? 0,
-        'AgregadoPor'      => $_POST["AgregoElVendedor"][$i] ?? '',
-        'FechaInventario'  => $_POST["FechaDeInventario"][$i] ?? date('Y-m-d'),
-        'Estatus'          => $_POST["Estatusdesolicitud"][$i] ?? 'Pendiente',
-        'NumOrden'         => $_POST["NumberOrden"][$i] ?? 0,
+        'PrecioMaximo'     => $normalizar("PrecioMaximo", $i) ?: 0,
+        'Precio_Venta'     => $normalizar("PrecioVenta", $i) ?: 0,
+        'Precio_C'         => $normalizar("PrecioCompra", $i) ?: 0,
+        'AgregadoPor'      => $normalizar("AgregoElVendedor", $i) ?: '',
+        'FechaInventario'  => $normalizar("FechaDeInventario", $i) ?: date('Y-m-d'),
+        'Estatus'          => $normalizar("Estatusdesolicitud", $i) ?: 'Pendiente',
+        'NumOrden'         => $normalizar("NumberOrden", $i) ?: 0,
     ];
 }
 
