@@ -97,6 +97,7 @@ foreach ($rows_to_insert as $r) {
     $values[] = $r['FechaInventario'];
     $values[] = $r['Estatus'];
     $values[] = $r['NumOrden'];
+    // 16 tipos (uno por cada ?): s,s,s,s,s,s,i,s,s,d,d,d,s,s,s,i
     $types .= 'sssssisddsssssi';
 }
 

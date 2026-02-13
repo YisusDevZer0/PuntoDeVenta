@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 07-02-2026 a las 15:59:24
+-- Tiempo de generación: 13-02-2026 a las 04:56:28
 -- Versión del servidor: 11.8.3-MariaDB-log
 -- Versión de PHP: 7.2.34
 
@@ -1926,13 +1926,56 @@ CREATE TABLE `IngresosFarmacias` (
 --
 DELIMITER $$
 CREATE TRIGGER `actualizar_existencias` AFTER INSERT ON `IngresosFarmacias` FOR EACH ROW BEGIN
+    DECLARE v_count INT DEFAULT 0;
+    DECLARE v_lote_ok TINYINT DEFAULT 0;
+    DECLARE v_fecha_ok TINYINT DEFAULT 0;
+    -- Fecha de ingreso al inventario: la que viene en el registro o hoy (correcto usar CURDATE aquí)
+    DECLARE v_fecha_ingreso DATE DEFAULT COALESCE(NEW.FechaInventario, CURDATE());
+
+    -- 1) Actualizar Stock_POS (si falla, todo el INSERT se revierte)
     UPDATE Stock_POS
     SET Existencias_R = Existencias_R + NEW.Contabilizado,
         Lote = NEW.Lote,
-        ActualizadoPor = NEW.AgregadoPor,
-        Fecha_Caducidad = NEW.Fecha_Caducidad
+        Fecha_Caducidad = NEW.Fecha_Caducidad,
+        Fecha_Ingreso = v_fecha_ingreso,
+        ActualizadoPor = NEW.AgregadoPor
     WHERE Cod_Barra = NEW.Cod_Barra
-      AND Fk_Sucursal = NEW.Fk_Sucursal;
+      AND Fk_sucursal = NEW.Fk_Sucursal;
+
+    -- 2) Historial_Lotes: escribir cuando haya lote no vacío (cualquier texto; S/L también se registra)
+    SET v_lote_ok = (CHAR_LENGTH(TRIM(IFNULL(NEW.Lote, ''))) > 0);
+    -- Fecha caducidad: válida si no nula y >= 1900 (si no, usamos fecha ingreso para no fallar el INSERT)
+    SET v_fecha_ok = (NEW.Fecha_Caducidad IS NOT NULL AND NEW.Fecha_Caducidad >= '1900-01-01');
+
+    IF v_lote_ok THEN
+        SELECT COUNT(*) INTO v_count
+        FROM Historial_Lotes
+        WHERE ID_Prod_POS = NEW.ID_Prod_POS
+          AND Lote = NEW.Lote
+          AND Fk_sucursal = NEW.Fk_Sucursal;
+
+        IF v_count > 0 THEN
+            UPDATE Historial_Lotes
+            SET Existencias = Existencias + NEW.Contabilizado,
+                Fecha_Caducidad = IF(v_fecha_ok, NEW.Fecha_Caducidad, Fecha_Caducidad),
+                Fecha_Ingreso = v_fecha_ingreso,
+                Usuario_Modifico = NEW.AgregadoPor
+            WHERE ID_Prod_POS = NEW.ID_Prod_POS
+              AND Lote = NEW.Lote
+              AND Fk_sucursal = NEW.Fk_Sucursal;
+        ELSE
+            INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico)
+            VALUES (
+                NEW.ID_Prod_POS,
+                NEW.Fk_Sucursal,
+                NEW.Lote,
+                IF(v_fecha_ok, NEW.Fecha_Caducidad, v_fecha_ingreso),
+                v_fecha_ingreso,
+                NEW.Contabilizado,
+                NEW.AgregadoPor
+            );
+        END IF;
+    END IF;
 END
 $$
 DELIMITER ;
@@ -2361,7 +2404,9 @@ CREATE TABLE `Inventario_Turnos_Productos` (
   `Fecha_Seleccion` timestamp NOT NULL DEFAULT current_timestamp(),
   `Fecha_Conteo` timestamp NULL DEFAULT NULL,
   `Estado` enum('seleccionado','en_conteo','completado','liberado') NOT NULL DEFAULT 'seleccionado',
-  `Observaciones` text DEFAULT NULL
+  `Observaciones` text DEFAULT NULL,
+  `Lote` varchar(100) DEFAULT NULL,
+  `Fecha_Caducidad` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -3536,64 +3581,92 @@ CREATE TABLE `Stock_POS` (
 DELIMITER $$
 CREATE TRIGGER `trg_AfterStockInsert` AFTER INSERT ON `Stock_POS` FOR EACH ROW BEGIN
     DECLARE existe_lote INT;
+    DECLARE lote_valido TINYINT DEFAULT 0;
+    DECLARE fecha_valida TINYINT DEFAULT 0;
 
-    -- Verificar si el producto, lote y sucursal ya existen en Historial_Lotes
-    SELECT COUNT(*) INTO existe_lote 
-    FROM Historial_Lotes 
-    WHERE ID_Prod_POS = NEW.ID_Prod_POS 
-      AND Lote = NEW.Lote
-      AND Fk_sucursal = NEW.Fk_sucursal;
+    -- Solo procesar si Lote es válido (no NULL, no vacío, no 'NaN' ni similares)
+    SET lote_valido = (NEW.Lote IS NOT NULL
+        AND TRIM(NEW.Lote) != ''
+        AND LOWER(TRIM(NEW.Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote'));
 
-    IF existe_lote = 0 THEN
-        -- Insertar nuevo lote en el historial
-        INSERT INTO Historial_Lotes (
-            ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
-        ) VALUES (
-            NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, NEW.AgregadoPor
-        );
-    ELSE
-        -- Si el lote ya existe en la misma sucursal, actualizar existencias
-        UPDATE Historial_Lotes
-        SET Existencias = NEW.Existencias_R,
-            Fecha_Ingreso = NEW.Fecha_Ingreso,
-            Usuario_Modifico = NEW.AgregadoPor
-        WHERE ID_Prod_POS = NEW.ID_Prod_POS 
+    -- Solo procesar si Fecha_Caducidad es válida (no NULL ni fecha placeholder)
+    SET fecha_valida = (NEW.Fecha_Caducidad IS NOT NULL
+        AND NEW.Fecha_Caducidad > '1900-01-01'
+        AND NEW.Fecha_Caducidad != '0000-00-00');
+
+    IF lote_valido = 1 AND fecha_valida = 1 THEN
+        SELECT COUNT(*) INTO existe_lote
+        FROM Historial_Lotes
+        WHERE ID_Prod_POS = NEW.ID_Prod_POS
           AND Lote = NEW.Lote
           AND Fk_sucursal = NEW.Fk_sucursal;
-    END IF;
 
+        IF existe_lote = 0 THEN
+            INSERT INTO Historial_Lotes (
+                ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
+            ) VALUES (
+                NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, NEW.AgregadoPor
+            );
+        ELSE
+            UPDATE Historial_Lotes
+            SET Existencias = NEW.Existencias_R,
+                Fecha_Ingreso = NEW.Fecha_Ingreso,
+                Usuario_Modifico = NEW.AgregadoPor
+            WHERE ID_Prod_POS = NEW.ID_Prod_POS
+              AND Lote = NEW.Lote
+              AND Fk_sucursal = NEW.Fk_sucursal;
+        END IF;
+    END IF;
 END
 $$
 DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `trg_AfterStockUpdate` AFTER UPDATE ON `Stock_POS` FOR EACH ROW BEGIN
     DECLARE existe_lote INT;
+    DECLARE tiene_control_lotes TINYINT DEFAULT 0;
+    DECLARE lote_valido TINYINT DEFAULT 0;
+    DECLARE fecha_valida TINYINT DEFAULT 0;
 
-    -- Verificar si el producto, lote y sucursal ya existen en Historial_Lotes
-    -- Solo si hay un lote válido (no NULL y no vacío)
-    IF NEW.Lote IS NOT NULL AND NEW.Lote != '' THEN
-        SELECT COUNT(*) INTO existe_lote 
-        FROM Historial_Lotes 
-        WHERE ID_Prod_POS = NEW.ID_Prod_POS 
-          AND Lote = NEW.Lote
-          AND Fk_sucursal = NEW.Fk_sucursal;
+    -- Si el producto tiene control de lotes activado, el manejo se hace desde Historial_Lotes (descontar_lotes_venta)
+    SELECT COALESCE(Control_Lotes_Caducidad, 0) INTO tiene_control_lotes
+    FROM Stock_POS
+    WHERE ID_Prod_POS = NEW.ID_Prod_POS
+      AND Fk_sucursal = NEW.Fk_sucursal
+    LIMIT 1;
 
-        IF existe_lote = 0 THEN
-            -- Insertar nuevo lote en el historial
-            INSERT INTO Historial_Lotes (
-                ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
-            ) VALUES (
-                NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
-            );
-        ELSE
-            -- Si el lote ya existe en la misma sucursal, actualizar existencias
-            UPDATE Historial_Lotes
-            SET Existencias = NEW.Existencias_R,
-                Fecha_Ingreso = NEW.Fecha_Ingreso,
-                Usuario_Modifico = COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
-            WHERE ID_Prod_POS = NEW.ID_Prod_POS 
+    -- Solo procesar si NO tiene control de lotes (cuando tiene control, se maneja desde PHP)
+    IF tiene_control_lotes = 0 THEN
+        -- Solo escribir en Historial_Lotes si Lote y Fecha_Caducidad son válidos
+        SET lote_valido = (NEW.Lote IS NOT NULL
+            AND TRIM(NEW.Lote) != ''
+            AND LOWER(TRIM(NEW.Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote'));
+
+        SET fecha_valida = (NEW.Fecha_Caducidad IS NOT NULL
+            AND NEW.Fecha_Caducidad > '1900-01-01'
+            AND NEW.Fecha_Caducidad != '0000-00-00');
+
+        IF lote_valido = 1 AND fecha_valida = 1 THEN
+            SELECT COUNT(*) INTO existe_lote
+            FROM Historial_Lotes
+            WHERE ID_Prod_POS = NEW.ID_Prod_POS
               AND Lote = NEW.Lote
               AND Fk_sucursal = NEW.Fk_sucursal;
+
+            IF existe_lote = 0 THEN
+                INSERT INTO Historial_Lotes (
+                    ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico
+                ) VALUES (
+                    NEW.ID_Prod_POS, NEW.Fk_sucursal, NEW.Lote, NEW.Fecha_Caducidad, NEW.Fecha_Ingreso, NEW.Existencias_R, COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
+                );
+            ELSE
+                UPDATE Historial_Lotes
+                SET Existencias = NEW.Existencias_R,
+                    Fecha_Ingreso = NEW.Fecha_Ingreso,
+                    Usuario_Modifico = COALESCE(NEW.ActualizadoPor, NEW.AgregadoPor)
+                WHERE ID_Prod_POS = NEW.ID_Prod_POS
+                  AND Lote = NEW.Lote
+                  AND Fk_sucursal = NEW.Fk_sucursal;
+            END IF;
         END IF;
     END IF;
 END
@@ -4275,34 +4348,100 @@ CREATE TABLE `Ventas_POS` (
 --
 DELIMITER $$
 CREATE TRIGGER `RestarExistenciasDespuesInsert` AFTER INSERT ON `Ventas_POS` FOR EACH ROW BEGIN
-    DECLARE v_existencias INT;
+    DECLARE v_stock INT DEFAULT NULL;
     DECLARE v_error VARCHAR(255);
+    DECLARE v_a_restar_stock INT DEFAULT 0;
+    DECLARE v_cantidad_restante INT DEFAULT 0;
+    DECLARE v_id_historial INT;
+    DECLARE v_lote VARCHAR(100);
+    DECLARE v_fecha_caducidad DATE;
+    DECLARE v_exist_lote INT;
+    DECLARE v_a_descontar INT;
+    DECLARE v_done INT DEFAULT 0;
 
-    -- Buscar las existencias del producto en Stock_POS
-    SELECT Existencias_R INTO v_existencias
+    DECLARE cur_lotes CURSOR FOR
+        SELECT hl.ID_Historial, hl.Lote, hl.Fecha_Caducidad, hl.Existencias
+        FROM Historial_Lotes hl
+        WHERE hl.ID_Prod_POS = NEW.ID_Prod_POS
+          AND hl.Fk_sucursal = NEW.Fk_sucursal
+          AND hl.Existencias > 0
+          AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+          AND LOWER(TRIM(hl.Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote')
+          AND hl.Fecha_Caducidad IS NOT NULL
+          AND hl.Fecha_Caducidad > '1900-01-01'
+          AND hl.Fecha_Caducidad != '0000-00-00'
+        ORDER BY
+          CASE
+            WHEN DATEDIFF(hl.Fecha_Caducidad, CURDATE()) < 0 THEN 0
+            WHEN DATEDIFF(hl.Fecha_Caducidad, CURDATE()) <= 15 THEN 1
+            ELSE 2
+          END,
+          hl.Fecha_Caducidad ASC;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_done = 1;
+
+    -- Stock actual
+    SELECT Existencias_R INTO v_stock
     FROM Stock_POS
     WHERE ID_Prod_POS = NEW.ID_Prod_POS
       AND (Cod_Barra = NEW.Cod_Barra OR NEW.Cod_Barra IS NULL)
       AND Fk_sucursal = NEW.Fk_sucursal
     LIMIT 1;
 
-    -- Verificar si el producto existe en el inventario
-    IF v_existencias IS NULL THEN
+    IF v_stock IS NULL THEN
         SET v_error = 'Producto no encontrado en inventario.';
         INSERT INTO Errores_POS_Ventas (ID_Prod_POS, Cod_Barra, Fk_sucursal, Cantidad_Venta, Mensaje_Error)
         VALUES (NEW.ID_Prod_POS, NEW.Cod_Barra, NEW.Fk_sucursal, NEW.Cantidad_Venta, v_error);
-    ELSEIF v_existencias < NEW.Cantidad_Venta THEN
-        -- Verificar si hay suficiente stock
-        SET v_error = 'No hay suficientes existencias.';
-        INSERT INTO Errores_POS_Ventas (ID_Prod_POS, Cod_Barra, Fk_sucursal, Cantidad_Venta, Mensaje_Error)
-        VALUES (NEW.ID_Prod_POS, NEW.Cod_Barra, NEW.Fk_sucursal, NEW.Cantidad_Venta, v_error);
     ELSE
-        -- Restar la cantidad vendida del inventario
+        -- Registrar fallo si no hay suficiente stock (la venta ya está en Ventas_POS)
+        IF v_stock < NEW.Cantidad_Venta THEN
+            SET v_error = 'No hay suficientes existencias.';
+            INSERT INTO Errores_POS_Ventas (ID_Prod_POS, Cod_Barra, Fk_sucursal, Cantidad_Venta, Mensaje_Error)
+            VALUES (NEW.ID_Prod_POS, NEW.Cod_Barra, NEW.Fk_sucursal, NEW.Cantidad_Venta, v_error);
+        END IF;
+
+        -- ---------- Siempre descontar lo que se pueda: STOCK ----------
+        SET v_a_restar_stock = LEAST(NEW.Cantidad_Venta, v_stock);
         UPDATE Stock_POS
-        SET Existencias_R = Existencias_R - NEW.Cantidad_Venta
+        SET Existencias_R = Existencias_R - v_a_restar_stock
         WHERE ID_Prod_POS = NEW.ID_Prod_POS
           AND (Cod_Barra = NEW.Cod_Barra OR NEW.Cod_Barra IS NULL)
           AND Fk_sucursal = NEW.Fk_sucursal;
+
+        -- ---------- Siempre descontar lo que se pueda: LOTES (FEFO). No afecta al stock. ----------
+        SET v_cantidad_restante = LEAST(NEW.Cantidad_Venta, (
+            SELECT COALESCE(SUM(hl.Existencias), 0)
+            FROM Historial_Lotes hl
+            WHERE hl.ID_Prod_POS = NEW.ID_Prod_POS
+              AND hl.Fk_sucursal = NEW.Fk_sucursal
+              AND hl.Existencias > 0
+              AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+              AND LOWER(TRIM(hl.Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote')
+              AND hl.Fecha_Caducidad IS NOT NULL
+              AND hl.Fecha_Caducidad > '1900-01-01'
+              AND hl.Fecha_Caducidad != '0000-00-00'
+        ));
+        SET v_done = 0;
+        OPEN cur_lotes;
+
+        read_lotes: LOOP
+            FETCH cur_lotes INTO v_id_historial, v_lote, v_fecha_caducidad, v_exist_lote;
+            IF v_done = 1 OR v_cantidad_restante <= 0 THEN
+                LEAVE read_lotes;
+            END IF;
+
+            SET v_a_descontar = LEAST(v_cantidad_restante, v_exist_lote);
+
+            UPDATE Historial_Lotes
+            SET Existencias = Existencias - v_a_descontar,
+                Usuario_Modifico = NEW.AgregadoPor,
+                Fecha_Registro = NOW()
+            WHERE ID_Historial = v_id_historial;
+
+            SET v_cantidad_restante = v_cantidad_restante - v_a_descontar;
+        END LOOP;
+
+        CLOSE cur_lotes;
     END IF;
 END
 $$
