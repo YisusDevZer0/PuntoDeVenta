@@ -732,9 +732,9 @@ tr += '<td   style="visibility:collapse; display:none;"class="numerorden"><input
         tr += '<td style="visibility:collapse; display:none;"><input id="ieps_' + articulo.id + '" class="form-control ieps" type="number" readonly /></td>';
         tr += '<td style="visibility:collapse; display:none;"class="idbd"><input class="form-control" style="font-size: 0.75rem !important;" type="text" value="' + articulo.id + '" name="IdBasedatos[]" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="NumberSucursal"><input type="hidden" id="estatussolicitud" class="form-control" name="Estatusdesolicitud[]" readonly value="Pendiente" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="NumberSucursal"><input type="hidden" id="sucursal" class="form-control" name="FkSucursal[]" readonly value="<?php echo $row['Fk_Sucursal']; ?>" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="ResponsableInventario"><input type="hidden" id="VendedorFarma" class="form-control" name="AgregoElVendedor[]" readonly value="<?php echo htmlspecialchars($row['Nombre_Apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" /></td>';
-        tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input type="hidden" class="form-control" name="FechaDeInventario[]" readonly value="<?php echo $fechaActual; ?>" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="NumberSucursal"><input type="hidden" id="sucursal" class="form-control" name="FkSucursal[]" readonly value="<?php echo isset($row['Fk_Sucursal']) ? htmlspecialchars((string)$row['Fk_Sucursal'], ENT_QUOTES, 'UTF-8') : ''; ?>" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="ResponsableInventario"><input type="hidden" id="VendedorFarma" class="form-control" name="AgregoElVendedor[]" readonly value="<?php echo htmlspecialchars((string)($row['Nombre_Apellidos'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" /></td>';
+        tr += '<td style="visibility:collapse; display:none;" class="Fecha"><input type="hidden" class="form-control" name="FechaDeInventario[]" readonly value="<?php echo isset($fechaActual) ? htmlspecialchars((string)$fechaActual, ENT_QUOTES, 'UTF-8') : date('Y-m-d'); ?>" /></td>';
         tr += '<td><div class="btn-container">' + btnEliminar + '</div><div class="input-container"></td>';
       
 

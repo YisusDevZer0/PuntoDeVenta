@@ -1,12 +1,24 @@
 <?php
-include_once 'db_connect.php';
+// Capturar errores fatales para devolver JSON en lugar de 500
+header('Content-Type: application/json; charset=utf-8');
+try {
+    include_once 'db_connect.php';
+} catch (Throwable $e) {
+    echo json_encode(['status' => 'error', 'message' => 'Error al cargar: ' . $e->getMessage()]);
+    exit;
+}
 
 if (!$conn) {
     echo json_encode(['status' => 'error', 'message' => 'Error de conexión: ' . mysqli_connect_error()]);
     exit();
 }
 
-$contador = isset($_POST["IdBasedatos"]) ? count($_POST["IdBasedatos"]) : 0;
+// Asegurar que los arrays POST existan (con 1 solo elemento algunos entornos envían escalar)
+$idBasedatos = $_POST["IdBasedatos"] ?? [];
+if (!is_array($idBasedatos)) {
+    $_POST["IdBasedatos"] = [$idBasedatos];
+}
+$contador = count($_POST["IdBasedatos"]);
 $rows_to_insert = [];
 $response = ['status' => 'error', 'message' => ''];
 
@@ -100,8 +112,21 @@ if (!$stmt) {
 // Transacción: si el trigger falla (Stock_POS o Historial_Lotes), todo hace rollback
 mysqli_begin_transaction($conn);
 
-mysqli_stmt_bind_param($stmt, $types, ...$values);
-$ok = mysqli_stmt_execute($stmt);
+try {
+    // En PHP 8+ bind_param exige que el número de tipos coincida con el de valores
+    if (strlen($types) !== count($values)) {
+        throw new Exception('Tipos y valores no coinciden: ' . strlen($types) . ' tipos, ' . count($values) . ' valores.');
+    }
+    mysqli_stmt_bind_param($stmt, $types, ...$values);
+    $ok = mysqli_stmt_execute($stmt);
+} catch (Throwable $e) {
+    mysqli_rollback($conn);
+    mysqli_stmt_close($stmt);
+    echo json_encode(['status' => 'error', 'message' => 'Error al guardar: ' . $e->getMessage()]);
+    mysqli_close($conn);
+    exit();
+}
+
 mysqli_stmt_close($stmt);
 
 if (!$ok) {
