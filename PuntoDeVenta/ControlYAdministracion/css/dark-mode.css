@@ -234,11 +234,27 @@ html[data-theme="dark"] .table thead th {
 html[data-theme="dark"] .table td,
 html[data-theme="dark"] .table th { border-color: var(--dm-border); }
 
-html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) { background: var(--dm-surface); }
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd),
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) { background: var(--dm-surface); }
 
 html[data-theme="dark"] .table-hover tbody tr:hover { background: var(--dm-elevated) !important; }
 
-/* DataTables */
+/* Filas con estado Bootstrap (evitar fondos claros) */
+html[data-theme="dark"] .table .table-success,
+html[data-theme="dark"] .table .table-warning,
+html[data-theme="dark"] .table .table-info,
+html[data-theme="dark"] .table .table-danger {
+    background: var(--dm-surface) !important;
+    color: var(--dm-text) !important;
+    border-left: 4px solid var(--dm-border);
+}
+
+html[data-theme="dark"] .table .table-success { border-left-color: #198754; }
+html[data-theme="dark"] .table .table-warning { border-left-color: #ffc107; }
+html[data-theme="dark"] .table .table-info { border-left-color: var(--primary); }
+html[data-theme="dark"] .table .table-danger { border-left-color: #dc3545; }
+
+/* DataTables: todas las filas siempre oscuras */
 html[data-theme="dark"] .dataTables_wrapper {
     color: var(--dm-text);
 }
@@ -268,8 +284,15 @@ html[data-theme="dark"] table.dataTable thead th {
 
 html[data-theme="dark"] table.dataTable tbody td { border-color: var(--dm-border); }
 
+/* Forzar fondo oscuro en TODAS las filas (odd, even y sin clase) */
+html[data-theme="dark"] table.dataTable tbody tr,
 html[data-theme="dark"] table.dataTable.stripe tbody tr.odd,
-html[data-theme="dark"] table.dataTable.display tbody tr.odd { background: var(--dm-surface) !important; }
+html[data-theme="dark"] table.dataTable.stripe tbody tr.even,
+html[data-theme="dark"] table.dataTable.display tbody tr.odd,
+html[data-theme="dark"] table.dataTable.display tbody tr.even {
+    background: var(--dm-surface) !important;
+    color: var(--dm-text) !important;
+}
 
 html[data-theme="dark"] table.dataTable.hover tbody tr:hover,
 html[data-theme="dark"] table.dataTable.display tbody tr:hover { background: var(--dm-elevated) !important; }
@@ -294,6 +317,74 @@ html[data-theme="dark"] .dataTables_paginate .paginate_button.current {
 
 html[data-theme="dark"] .dataTables_paginate .paginate_button.disabled {
     color: var(--dm-muted) !important;
+}
+
+/* Inventario por Turnos: clases de fila (evitar fondos claros) */
+html[data-theme="dark"] .producto-disponible,
+html[data-theme="dark"] .producto-bloqueado,
+html[data-theme="dark"] .producto-ya-contado-otro {
+    background: var(--dm-surface) !important;
+    color: var(--dm-text) !important;
+}
+
+html[data-theme="dark"] .producto-disponible { border-left: 4px solid var(--primary); }
+html[data-theme="dark"] .producto-bloqueado { border-left: 4px solid #ffc107; }
+html[data-theme="dark"] .producto-ya-contado-otro { border-left: 4px solid var(--dm-muted); }
+
+/* Tabla InventarioTurnos: cabecera (sobrescribe estilos inline de la página) */
+html[data-theme="dark"] #DataInventarioTurnos .table thead th {
+    background: var(--dm-elevated) !important;
+    color: var(--dm-text) !important;
+    border-bottom-color: var(--dm-border) !important;
+}
+
+html[data-theme="dark"] #DataInventarioTurnos .table tbody tr,
+html[data-theme="dark"] #DataInventarioTurnos .table tbody td {
+    background: var(--dm-surface) !important;
+    color: var(--dm-text) !important;
+}
+
+html[data-theme="dark"] #DataInventarioTurnos .table tbody tr:hover {
+    background: var(--dm-elevated) !important;
+}
+
+/* Caja de turno activo: mantener legible en oscuro */
+html[data-theme="dark"] .turno-activo {
+    background: linear-gradient(135deg, #0a5a9e 0%, #084078 50%, #062d58 100%);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+html[data-theme="dark"] .turno-activo .progress { background: rgba(255,255,255,0.2); }
+html[data-theme="dark"] .turno-activo .progress-bar { background: var(--primary); }
+
+/* Badges en modo oscuro (Activo, Disponible, etc.): mantener contraste */
+html[data-theme="dark"] .badge.bg-success,
+html[data-theme="dark"] .badge.bg-warning,
+html[data-theme="dark"] .badge.bg-info,
+html[data-theme="dark"] .badge.bg-secondary { color: #fff !important; }
+
+/* Botones outline en modo oscuro */
+html[data-theme="dark"] .btn-outline-secondary {
+    background: transparent;
+    border-color: var(--dm-border);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .btn-outline-secondary:hover {
+    background: var(--dm-elevated);
+    border-color: var(--dm-muted);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .btn-outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+html[data-theme="dark"] .btn-outline-primary:hover {
+    background: rgba(0, 156, 255, 0.2);
+    color: var(--primary);
 }
 
 /* ========== Modales ========== */
@@ -401,6 +492,10 @@ html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] 
 html[data-theme="dark"] h4, html[data-theme="dark"] h5, html[data-theme="dark"] h6 { color: var(--dm-text) !important; }
 
 html[data-theme="dark"] .text-dark { color: var(--dm-text) !important; }
+
+/* Títulos con color inline (p. ej. Inventario por Turnos) */
+html[data-theme="dark"] .fw-bold[style*="color"],
+html[data-theme="dark"] h5[style*="color"] { color: var(--primary) !important; }
 
 html[data-theme="dark"] .text-muted,
 html[data-theme="dark"] .text-gray-500,
