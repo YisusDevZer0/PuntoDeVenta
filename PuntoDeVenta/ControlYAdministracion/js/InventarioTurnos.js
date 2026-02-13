@@ -76,8 +76,9 @@ function CargarProductosTurno(idTurno) {
             { "data": "Existencias_R", "title": "Existencias Sistema" },
             { "data": "Existencias_Fisicas", "title": "Existencias Físicas" },
             { "data": "Diferencia", "title": "Diferencia" },
-            { "data": "Lote", "title": "Lote", "defaultContent": "-" },
-            { "data": "Fecha_Caducidad", "title": "Fecha Cad.", "defaultContent": "-" },
+            { "data": "Lotes_Caducidad_Texto", "title": "Lotes / Caducidad", "defaultContent": "-", "orderable": false },
+            { "data": "Lote", "title": "Lote conteo", "defaultContent": "-" },
+            { "data": "Fecha_Caducidad", "title": "Fecha Cad. conteo", "defaultContent": "-" },
             { "data": "Estado", "title": "Estado" },
             { "data": "Acciones", "title": "Acciones", "orderable": false }
         ],
@@ -313,23 +314,50 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto (incl. lote y fecha caducidad opcionales)
+// Contar producto: mostrar lotes y fechas del producto, opción elegir existente o agregar nuevo
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
+    var lotesData = $(this).data('lotes');
+    var lotes = (typeof lotesData === 'string') ? (lotesData ? JSON.parse(lotesData) : []) : (lotesData || []);
     
+    var hayLotes = lotes && lotes.length > 0;
+    var htmlLotes = '';
+    if (hayLotes) {
+        htmlLotes = '<div class="mb-3">' +
+            '<label class="form-label fw-semibold mb-2"><i class="fa-solid fa-boxes-stacked me-1"></i> Lotes y caducidades del producto</label>' +
+            '<div class="border rounded p-2 bg-light" style="max-height: 140px; overflow-y: auto;">';
+        lotes.forEach(function(l, i) {
+            var fechaF = l.Fecha_Caducidad ? (function(d) {
+                var parts = d.split('-');
+                return parts[2] + '/' + parts[1] + '/' + parts[0];
+            })(l.Fecha_Caducidad) : '-';
+            htmlLotes += '<div class="form-check mb-1">' +
+                '<input class="form-check-input opcion-lote" type="radio" name="opcion_lote" id="lote-existente-' + i + '" value="' + i + '">' +
+                '<label class="form-check-label small" for="lote-existente-' + i + '">' +
+                '<strong>' + (l.Lote || '-') + '</strong> · Cad: ' + fechaF + ' · ' + (l.Existencias || 0) + ' und' +
+                '</label></div>';
+        });
+        htmlLotes += '</div></div>';
+    }
+    
+    var mostrarNuevoLotePorDefecto = !hayLotes;
     var html = '<div class="text-start conteo-modal-fields">' +
         '<div class="mb-3">' +
         '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
         '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
         '<small class="text-muted">Cantidad que contaste en el inventario</small>' +
         '</div>' +
-        '<div class="mb-3">' +
-        '<label class="form-label mb-1">Lote <small class="text-muted">(opcional)</small></label>' +
-        '<input type="text" id="conteo-lote" class="form-control" placeholder="Ej. LOTE-2024-001">' +
-        '</div>' +
-        '<div class="mb-0">' +
-        '<label class="form-label mb-1">Fecha de caducidad <small class="text-muted">(opcional)</small></label>' +
-        '<input type="date" id="conteo-fecha-caducidad" class="form-control" title="Seleccione la fecha de caducidad del lote">' +
+        htmlLotes +
+        '<div class="mb-2">' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" type="radio" name="opcion_lote" id="opcion-nuevo-lote" value="nuevo"' + (mostrarNuevoLotePorDefecto ? ' checked' : '') + '>' +
+        '<label class="form-check-label fw-semibold" for="opcion-nuevo-lote">Agregar lote nuevo</label>' +
+        '</div></div>' +
+        '<div id="conteo-nuevo-lote-fields" class="mb-3 ms-3 border-start border-2 border-secondary ps-3" style="' + (mostrarNuevoLotePorDefecto ? '' : 'display:none;') + '">' +
+        '<label class="form-label mb-1">Lote nuevo</label>' +
+        '<input type="text" id="conteo-lote" class="form-control mb-2" placeholder="Ej. LOTE-2024-001"' + (mostrarNuevoLotePorDefecto ? '' : ' disabled') + '>' +
+        '<label class="form-label mb-1">Fecha de caducidad</label>' +
+        '<input type="date" id="conteo-fecha-caducidad" class="form-control" title="Fecha de caducidad del lote"' + (mostrarNuevoLotePorDefecto ? '' : ' disabled') + '>' +
         '</div>' +
         '</div>';
     
@@ -339,19 +367,40 @@ $(document).on('click', '.btn-contar-producto', function() {
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
-        width: '480px',
+        width: '520px',
         customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
+        didOpen: function() {
+            $('#opcion-nuevo-lote').on('change', function() {
+                var checked = this.checked;
+                $('#conteo-nuevo-lote-fields').toggle(checked);
+                $('#conteo-lote, #conteo-fecha-caducidad').prop('disabled', !checked);
+            });
+            $('.opcion-lote').on('change', function() {
+                $('#conteo-nuevo-lote-fields').hide();
+                $('#conteo-lote, #conteo-fecha-caducidad').val('').prop('disabled', true);
+            });
+        },
         preConfirm: () => {
             var ex = document.getElementById('existencias-fisicas').value;
             if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
                 Swal.showValidationMessage('Ingrese existencias físicas válidas');
                 return false;
             }
-            return {
-                existencias: ex,
-                lote: document.getElementById('conteo-lote').value.trim(),
-                fecha: document.getElementById('conteo-fecha-caducidad').value || ''
-            };
+            var opcionNuevo = document.getElementById('opcion-nuevo-lote').checked;
+            var lote = '';
+            var fecha = '';
+            if (opcionNuevo) {
+                lote = document.getElementById('conteo-lote').value.trim();
+                fecha = document.getElementById('conteo-fecha-caducidad').value || '';
+            } else {
+                var sel = document.querySelector('input[name="opcion_lote"]:checked');
+                if (sel && sel.value !== 'nuevo' && lotes[parseInt(sel.value, 10)]) {
+                    var elegido = lotes[parseInt(sel.value, 10)];
+                    lote = elegido.Lote || '';
+                    fecha = elegido.Fecha_Caducidad || '';
+                }
+            }
+            return { existencias: ex, lote: lote, fecha: fecha };
         }
     }).then((result) => {
         if (result.isConfirmed && result.value) {

@@ -1,324 +1,448 @@
 /**
- * Modo oscuro - ControlYAdministracion
- * Se activa con data-theme="dark" en <html> (persistido en localStorage).
+ * Modo oscuro - ControlYAdministracion (óptimo)
+ * Se activa con data-theme="dark" en <html>. Preferencia en localStorage.
  */
 
-/* Variables del tema oscuro */
+/* ========== Variables del tema ========== */
 html[data-theme="dark"] {
     --primary: #009CFF;
     --light: #1e2228;
     --dark: #e4e6eb;
-    --bg-base: #12151a;
-    --bg-surface: #1a1e24;
-    --bg-elevated: #23272e;
-    --text-primary: #e4e6eb;
-    --text-secondary: #b0b3b8;
-    --border-color: #2d3239;
+    --dm-bg: #12151a;
+    --dm-surface: #1a1e24;
+    --dm-elevated: #23272e;
+    --dm-text: #e4e6eb;
+    --dm-muted: #b0b3b8;
+    --dm-border: #2d3239;
 }
 
-/* Contenedor principal y body */
+/* ========== Base: body y contenedores ========== */
 html[data-theme="dark"] body,
 html[data-theme="dark"] .container-xxl.position-relative,
-html[data-theme="dark"] .container-xxl.bg-white {
-    background-color: var(--bg-base) !important;
-    color: var(--text-primary);
+html[data-theme="dark"] .container-xxl.bg-white,
+html[data-theme="dark"] .container-fluid {
+    background-color: var(--dm-bg) !important;
+    color: var(--dm-text);
 }
 
-/* Spinner de carga */
 html[data-theme="dark"] #spinner,
 html[data-theme="dark"] #spinner.show {
-    background: var(--bg-base) !important;
+    background: var(--dm-bg) !important;
 }
 
-/* Sidebar */
+/* ========== Sidebar ========== */
 html[data-theme="dark"] .sidebar {
-    background: var(--bg-surface) !important;
-    border-right: 1px solid var(--border-color);
+    background: var(--dm-surface) !important;
+    border-right: 1px solid var(--dm-border);
 }
 
 html[data-theme="dark"] .sidebar .navbar,
 html[data-theme="dark"] .sidebar .navbar.bg-light,
-html[data-theme="dark"] .sidebar .navbar.navbar-light {
-    background: transparent !important;
-}
+html[data-theme="dark"] .sidebar .navbar.navbar-light { background: transparent !important; }
 
 html[data-theme="dark"] .sidebar .navbar .navbar-brand h3,
-html[data-theme="dark"] .sidebar .navbar .nav-link {
-    color: var(--text-primary) !important;
-}
+html[data-theme="dark"] .sidebar .navbar .nav-link,
+html[data-theme="dark"] .sidebar .navbar .d-flex .h6,
+html[data-theme="dark"] .sidebar .navbar .d-flex span { color: var(--dm-text) !important; }
 
-html[data-theme="dark"] .sidebar .navbar .nav-link {
-    border-left-color: var(--bg-surface) !important;
-}
+html[data-theme="dark"] .sidebar .navbar .nav-link { border-left-color: var(--dm-surface) !important; }
 
 html[data-theme="dark"] .sidebar .navbar .nav-link:hover,
 html[data-theme="dark"] .sidebar .navbar .nav-link.active {
     color: var(--primary) !important;
-    background: var(--bg-elevated) !important;
+    background: var(--dm-elevated) !important;
     border-color: var(--primary) !important;
 }
 
 html[data-theme="dark"] .sidebar .navbar .nav-link i {
-    background: var(--bg-elevated) !important;
-    color: var(--text-primary);
+    background: var(--dm-elevated) !important;
+    color: var(--dm-text);
 }
 
 html[data-theme="dark"] .sidebar .navbar .nav-link:hover i,
 html[data-theme="dark"] .sidebar .navbar .nav-link.active i {
-    background: var(--bg-base) !important;
+    background: var(--dm-bg) !important;
     color: var(--primary);
 }
 
 html[data-theme="dark"] .sidebar .dropdown-menu,
 html[data-theme="dark"] .sidebar .dropdown-menu.bg-transparent {
-    background: var(--bg-elevated) !important;
-    border: 1px solid var(--border-color);
+    background: var(--dm-elevated) !important;
+    border: 1px solid var(--dm-border);
 }
 
-html[data-theme="dark"] .sidebar .dropdown-item {
-    color: var(--text-primary) !important;
-}
+html[data-theme="dark"] .sidebar .dropdown-item { color: var(--dm-text) !important; }
+html[data-theme="dark"] .sidebar .dropdown-item:hover { background: var(--dm-surface) !important; color: var(--primary) !important; }
 
-html[data-theme="dark"] .sidebar .dropdown-item:hover {
-    background: var(--bg-surface) !important;
-    color: var(--primary) !important;
-}
-
-html[data-theme="dark"] .sidebar .d-flex.align-items-center .h6,
-html[data-theme="dark"] .sidebar .d-flex.align-items-center span {
-    color: var(--text-primary) !important;
-}
-
-/* Área de contenido principal */
+/* ========== Content y navbar superior ========== */
 html[data-theme="dark"] .content {
-    background: var(--bg-base) !important;
-    color: var(--text-primary);
+    background: var(--dm-bg) !important;
+    color: var(--dm-text);
 }
 
-/* Navbar superior (sticky) */
 html[data-theme="dark"] .content .navbar,
 html[data-theme="dark"] .content .navbar.bg-light,
 html[data-theme="dark"] .content .navbar.navbar-light {
-    background: var(--bg-surface) !important;
-    border-bottom: 1px solid var(--border-color);
+    background: var(--dm-surface) !important;
+    border-bottom: 1px solid var(--dm-border);
 }
 
-html[data-theme="dark"] .content .navbar .navbar-brand h2 {
-    color: var(--primary) !important;
-}
-
-html[data-theme="dark"] .content .navbar .nav-link {
-    color: var(--text-primary) !important;
-}
-
+html[data-theme="dark"] .content .navbar .navbar-brand h2 { color: var(--primary) !important; }
+html[data-theme="dark"] .content .navbar .nav-link { color: var(--dm-text) !important; }
 html[data-theme="dark"] .content .navbar .nav-link:hover,
-html[data-theme="dark"] .content .navbar .nav-link.active {
-    color: var(--primary) !important;
-}
+html[data-theme="dark"] .content .navbar .nav-link.active { color: var(--primary) !important; }
 
 html[data-theme="dark"] .content .navbar .sidebar-toggler,
 html[data-theme="dark"] .content .navbar .nav-link i {
-    background: var(--bg-elevated) !important;
-    color: var(--text-primary);
+    background: var(--dm-elevated) !important;
+    color: var(--dm-text);
 }
 
-/* Formulario de búsqueda en navbar */
 html[data-theme="dark"] .content .navbar .form-control,
 html[data-theme="dark"] .content .navbar input[type="search"] {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
 }
 
-html[data-theme="dark"] .content .navbar .form-control::placeholder {
-    color: var(--text-secondary);
-}
+html[data-theme="dark"] .content .navbar .form-control::placeholder { color: var(--dm-muted); }
 
-/* Dropdowns del navbar */
+/* Dropdowns del navbar (incl. usuario, notificaciones, asistencias) */
 html[data-theme="dark"] .content .navbar .dropdown-menu,
-html[data-theme="dark"] .content .navbar .dropdown-menu.bg-light {
-    background: var(--bg-elevated) !important;
-    border: 1px solid var(--border-color);
+html[data-theme="dark"] .content .navbar .dropdown-menu.bg-light,
+html[data-theme="dark"] #notification-dropdown,
+html[data-theme="dark"] #clock-dropdown {
+    background: var(--dm-elevated) !important;
+    border: 1px solid var(--dm-border);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.4);
 }
 
-html[data-theme="dark"] .content .navbar .dropdown-item {
-    color: var(--text-primary) !important;
-}
-
-html[data-theme="dark"] .content .navbar .dropdown-item:hover {
-    background: var(--bg-surface) !important;
-    color: var(--primary) !important;
-}
-
-html[data-theme="dark"] .content .navbar .dropdown-divider {
-    border-color: var(--border-color);
-}
-
+html[data-theme="dark"] .content .navbar .dropdown-item,
 html[data-theme="dark"] .content .navbar .dropdown-item .h6,
-html[data-theme="dark"] .content .navbar .dropdown-item small {
-    color: var(--text-primary) !important;
+html[data-theme="dark"] .content .navbar .dropdown-item small { color: var(--dm-text) !important; }
+
+html[data-theme="dark"] .content .navbar .dropdown-item:hover { background: var(--dm-surface) !important; color: var(--primary) !important; }
+
+html[data-theme="dark"] .content .navbar .dropdown-divider { border-color: var(--dm-border); }
+
+html[data-theme="dark"] .content .navbar .dropdown-item.text-gray-500,
+html[data-theme="dark"] .content .navbar .dropdown-item.small { color: var(--dm-muted) !important; }
+
+/* Dropdown header (notificaciones / asistencias) - mantener acento primario */
+html[data-theme="dark"] .dropdown-header.bg-primary { background: var(--primary) !important; color: #fff !important; }
+
+/* Notification / clock items */
+html[data-theme="dark"] .notification-item,
+html[data-theme="dark"] .clock-item {
+    border-color: var(--dm-border);
+    color: var(--dm-text);
 }
 
-/* Botón modo oscuro en navbar (iconos los actualiza también JS) */
-html[data-theme="dark"] .content .navbar [data-dark-mode-toggle] {
-    color: var(--primary);
+html[data-theme="dark"] .notification-item:hover,
+html[data-theme="dark"] .clock-item:hover { background: var(--dm-surface) !important; }
+
+html[data-theme="dark"] .notification-message,
+html[data-theme="dark"] .clock-message { color: var(--dm-text) !important; }
+
+html[data-theme="dark"] .notification-time,
+html[data-theme="dark"] .clock-time { color: var(--dm-muted) !important; }
+
+/* Switch modo oscuro en dropdown */
+html[data-theme="dark"] .content .navbar [data-dark-mode-toggle] { color: var(--primary); }
+
+html[data-theme="dark"] .form-check-input[data-dark-mode-toggle] {
+    background-color: var(--dm-elevated);
+    border-color: var(--dm-border);
 }
 
-/* Cards y bloques bg-light */
+html[data-theme="dark"] .form-check-input[data-dark-mode-toggle]:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ========== Cards, bloques y superficie ========== */
 html[data-theme="dark"] .bg-light,
 html[data-theme="dark"] .bg-white {
-    background-color: var(--bg-surface) !important;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
+    background-color: var(--dm-surface) !important;
+    color: var(--dm-text);
+    border: 1px solid var(--dm-border);
 }
 
-html[data-theme="dark"] .rounded-top,
-html[data-theme="dark"] .rounded,
-html[data-theme="dark"] .rounded-bottom {
-    border-color: var(--border-color);
+html[data-theme="dark"] .bg-light.rounded-top.p-4 {
+    background: var(--dm-surface) !important;
+    border-top: 1px solid var(--dm-border);
 }
 
-/* Formularios */
+html[data-theme="dark"] .bg-light.rounded-top.p-4 a { color: var(--primary); }
+
+/* ========== Formularios ========== */
 html[data-theme="dark"] .form-control,
 html[data-theme="dark"] .form-select,
 html[data-theme="dark"] input[type="text"],
 html[data-theme="dark"] input[type="email"],
 html[data-theme="dark"] input[type="password"],
 html[data-theme="dark"] input[type="search"],
+html[data-theme="dark"] input[type="number"],
+html[data-theme="dark"] input[type="date"],
 html[data-theme="dark"] textarea.form-control {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
 }
 
 html[data-theme="dark"] .form-control:focus,
 html[data-theme="dark"] .form-select:focus {
-    background: var(--bg-elevated) !important;
+    background: var(--dm-elevated) !important;
     border-color: var(--primary) !important;
-    color: var(--text-primary);
+    color: var(--dm-text);
 }
 
-html[data-theme="dark"] .form-control::placeholder {
-    color: var(--text-secondary);
-}
+html[data-theme="dark"] .form-control::placeholder { color: var(--dm-muted); }
 
 html[data-theme="dark"] .form-label,
 html[data-theme="dark"] .form-check-label,
-html[data-theme="dark"] label {
-    color: var(--text-primary) !important;
-}
+html[data-theme="dark"] label { color: var(--dm-text) !important; }
 
-html[data-theme="dark"] .form-text {
-    color: var(--text-secondary) !important;
-}
+html[data-theme="dark"] .form-text { color: var(--dm-muted) !important; }
 
-/* Input group */
 html[data-theme="dark"] .input-group-text {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-primary);
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text);
 }
 
-/* Tablas (si se usan) */
-html[data-theme="dark"] .table {
-    color: var(--text-primary);
+/* Checkbox / radio en modo oscuro */
+html[data-theme="dark"] .form-check-input {
+    background-color: var(--dm-elevated);
+    border-color: var(--dm-border);
 }
+
+html[data-theme="dark"] .form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ========== Tablas (Bootstrap y DataTables) ========== */
+html[data-theme="dark"] .table { color: var(--dm-text); }
 
 html[data-theme="dark"] .table thead th {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color);
-    color: var(--text-primary);
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
+    color: var(--dm-text);
 }
 
 html[data-theme="dark"] .table td,
-html[data-theme="dark"] .table th {
-    border-color: var(--border-color);
+html[data-theme="dark"] .table th { border-color: var(--dm-border); }
+
+html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) { background: var(--dm-surface); }
+
+html[data-theme="dark"] .table-hover tbody tr:hover { background: var(--dm-elevated) !important; }
+
+/* DataTables */
+html[data-theme="dark"] .dataTables_wrapper {
+    color: var(--dm-text);
 }
 
-html[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
-    background: var(--bg-surface);
+html[data-theme="dark"] .dataTables_filter input,
+html[data-theme="dark"] .dataTables_length select {
+    background: var(--dm-elevated) !important;
+    border: 1px solid var(--dm-border) !important;
+    color: var(--dm-text) !important;
 }
 
-/* Footer */
-html[data-theme="dark"] .bg-light.rounded-top.p-4 {
-    background: var(--bg-surface) !important;
-    border-top: 1px solid var(--border-color);
+html[data-theme="dark"] .dataTables_filter label,
+html[data-theme="dark"] .dataTables_length label,
+html[data-theme="dark"] .dataTables_info { color: var(--dm-muted) !important; }
+
+html[data-theme="dark"] table.dataTable {
+    background: var(--dm-surface);
+    border-color: var(--dm-border);
+    color: var(--dm-text);
 }
 
-html[data-theme="dark"] .bg-light.rounded-top.p-4 a {
-    color: var(--primary);
+html[data-theme="dark"] table.dataTable thead th {
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
+    color: var(--dm-text);
 }
 
-/* Textos y títulos */
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h2,
-html[data-theme="dark"] h3,
-html[data-theme="dark"] h4,
-html[data-theme="dark"] h5,
-html[data-theme="dark"] h6 {
-    color: var(--text-primary) !important;
+html[data-theme="dark"] table.dataTable tbody td { border-color: var(--dm-border); }
+
+html[data-theme="dark"] table.dataTable.stripe tbody tr.odd,
+html[data-theme="dark"] table.dataTable.display tbody tr.odd { background: var(--dm-surface) !important; }
+
+html[data-theme="dark"] table.dataTable.hover tbody tr:hover,
+html[data-theme="dark"] table.dataTable.display tbody tr:hover { background: var(--dm-elevated) !important; }
+
+html[data-theme="dark"] .dataTables_paginate .paginate_button {
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text) !important;
 }
 
-html[data-theme="dark"] .text-dark {
-    color: var(--text-primary) !important;
+html[data-theme="dark"] .dataTables_paginate .paginate_button:hover {
+    background: var(--dm-surface) !important;
+    border-color: var(--dm-border);
+    color: var(--primary) !important;
 }
 
-/* Date picker (tempusdominus) */
+html[data-theme="dark"] .dataTables_paginate .paginate_button.current {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #fff !important;
+}
+
+html[data-theme="dark"] .dataTables_paginate .paginate_button.disabled {
+    color: var(--dm-muted) !important;
+}
+
+/* ========== Modales ========== */
+html[data-theme="dark"] .modal-content {
+    background: var(--dm-surface);
+    border: 1px solid var(--dm-border);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .modal-header {
+    background: var(--dm-elevated) !important;
+    border-bottom-color: var(--dm-border);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .modal-header.bg-primary { background: var(--primary) !important; color: #fff !important; }
+
+html[data-theme="dark"] .modal-body {
+    background: var(--dm-surface);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .modal-footer {
+    background: var(--dm-elevated);
+    border-top-color: var(--dm-border);
+}
+
+html[data-theme="dark"] .modal .btn-close { filter: invert(1); opacity: 0.8; }
+
+/* ========== Alertas ========== */
+html[data-theme="dark"] .alert {
+    border: 1px solid var(--dm-border);
+}
+
+html[data-theme="dark"] .alert-info {
+    background: rgba(0, 156, 255, 0.15);
+    color: var(--dm-text);
+    border-color: var(--primary);
+}
+
+html[data-theme="dark"] .alert-success {
+    background: rgba(40, 167, 69, 0.2);
+    color: var(--dm-text);
+    border-color: #28a745;
+}
+
+html[data-theme="dark"] .alert-warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: var(--dm-text);
+    border-color: #ffc107;
+}
+
+html[data-theme="dark"] .alert-danger {
+    background: rgba(220, 53, 69, 0.2);
+    color: var(--dm-text);
+    border-color: #dc3545;
+}
+
+html[data-theme="dark"] .alert-secondary { background: var(--dm-elevated); color: var(--dm-text); border-color: var(--dm-border); }
+
+/* ========== Badges (contadores en navbar) ========== */
+html[data-theme="dark"] .badge-counter { color: #fff !important; }
+
+/* ========== Select2 ========== */
+html[data-theme="dark"] .select2-container--default .select2-selection--single,
+html[data-theme="dark"] .select2-container--default .select2-selection--multiple {
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border) !important;
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .select2-container--default .select2-selection__rendered { color: var(--dm-text) !important; }
+
+html[data-theme="dark"] .select2-dropdown {
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
+}
+
+html[data-theme="dark"] .select2-container--default .select2-results__option {
+    background: var(--dm-elevated);
+    color: var(--dm-text);
+}
+
+html[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: var(--primary) !important;
+    color: #fff;
+}
+
+html[data-theme="dark"] .select2-container--default .select2-search--dropdown .select2-search__field {
+    background: var(--dm-surface);
+    border-color: var(--dm-border);
+    color: var(--dm-text);
+}
+
+/* ========== Loading overlay ========== */
+html[data-theme="dark"] #loading-overlay {
+    background: rgba(18, 21, 26, 0.9) !important;
+}
+
+html[data-theme="dark"] #loading-overlay #loading-text,
+html[data-theme="dark"] #loading-overlay .loader { color: var(--dm-text); }
+
+/* ========== Textos y títulos ========== */
+html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3,
+html[data-theme="dark"] h4, html[data-theme="dark"] h5, html[data-theme="dark"] h6 { color: var(--dm-text) !important; }
+
+html[data-theme="dark"] .text-dark { color: var(--dm-text) !important; }
+
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .text-gray-500,
+html[data-theme="dark"] .small.text-muted { color: var(--dm-muted) !important; }
+
+/* ========== Date picker (tempusdominus) ========== */
 html[data-theme="dark"] .bootstrap-datetimepicker-widget.dropdown-menu {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color);
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
 }
 
 html[data-theme="dark"] .bootstrap-datetimepicker-widget .table th,
-html[data-theme="dark"] .bootstrap-datetimepicker-widget .table td {
-    color: var(--text-primary);
-}
+html[data-theme="dark"] .bootstrap-datetimepicker-widget .table td { color: var(--dm-text); }
 
-/* Notificaciones (toasts) */
-html[data-theme="dark"] .toast {
-    background: var(--bg-elevated) !important;
-    border: 1px solid var(--border-color);
-}
-
-html[data-theme="dark"] .toast-header {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-html[data-theme="dark"] .toast-body {
-    color: var(--text-primary);
-}
-
-html[data-theme="dark"] .btn-close {
-    color: var(--text-primary);
-    opacity: 0.8;
-}
-
-/* Chat / notificaciones (clases propias) */
+/* ========== Toasts / notificaciones ========== */
+html[data-theme="dark"] .toast,
 html[data-theme="dark"] .notificacion-toast {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color);
+    background: var(--dm-elevated) !important;
+    border: 1px solid var(--dm-border);
 }
 
-/* Recordatorios */
-html[data-theme="dark"] .page-content {
-    background: var(--bg-base);
-}
+html[data-theme="dark"] .toast-header { border-color: var(--dm-border); color: var(--dm-text); }
+html[data-theme="dark"] .toast-body { color: var(--dm-text); }
+html[data-theme="dark"] .btn-close { color: var(--dm-text); opacity: 0.8; }
+
+/* ========== Recordatorios ========== */
+html[data-theme="dark"] .page-content { background: var(--dm-bg); }
 
 html[data-theme="dark"] .recordatorios-table th {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color);
-    color: var(--text-primary);
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
+    color: var(--dm-text);
 }
 
-html[data-theme="dark"] .recordatorios-table td {
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
+html[data-theme="dark"] .recordatorios-table td { border-color: var(--dm-border); color: var(--dm-text); }
 
-/* Toggle flotante (páginas sin navbar, ej. signin/signup) */
+/* ========== Botón flotante (páginas sin navbar) ========== */
 html[data-theme="dark"] #dark-mode-toggle-float {
-    background: var(--bg-elevated) !important;
-    border-color: var(--border-color);
+    background: var(--dm-elevated) !important;
+    border-color: var(--dm-border);
     color: var(--primary);
 }
+
+/* ========== Back to top ========== */
+html[data-theme="dark"] .back-to-top { color: #fff; }
