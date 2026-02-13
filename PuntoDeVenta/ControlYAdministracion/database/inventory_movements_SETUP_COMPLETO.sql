@@ -1,0 +1,18 @@
+-- =====================================================
+-- INVENTORY MOVEMENTS - SETUP COMPLETO
+-- =====================================================
+-- Ejecutar los archivos en este orden (desde la carpeta database/):
+--
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_create_table.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_ventas.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_ingresos.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_conteos.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_traspasos.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_traspasos_recepcionados.sql
+--   mysql -u usuario -p u858848268_doctorpez < inventory_movements_trigger_inventarios_sucursales.sql
+--
+-- O desde phpMyAdmin/MySQL Workbench: ejecutar cada .sql en orden.
+--
+-- IMPORTANTE: Hacer backup de la BD antes de ejecutar.
+-- Para revertir: modificar_trigger_ventas_pos.sql, trigger_ingresos_farmacias_fecha_ingreso.sql, etc.
+-- =====================================================

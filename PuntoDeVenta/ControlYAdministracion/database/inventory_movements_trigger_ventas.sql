@@ -64,8 +64,8 @@ BEGIN
             VALUES (NEW.ID_Prod_POS, NEW.Cod_Barra, NEW.Fk_sucursal, NEW.Cantidad_Venta, v_error);
         END IF;
 
-        -- ---------- Siempre descontar lo que se pueda: STOCK ----------
-        SET v_a_restar_stock = LEAST(NEW.Cantidad_Venta, v_stock);
+        -- ---------- Descontar la cantidad vendida (permite stock negativo) ----------
+        SET v_a_restar_stock = NEW.Cantidad_Venta;
         UPDATE Stock_POS
         SET Existencias_R = Existencias_R - v_a_restar_stock
         WHERE ID_Prod_POS = NEW.ID_Prod_POS

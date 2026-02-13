@@ -41,21 +41,35 @@ $(document).ready(function () {
 
     function enviarIngresos() {
         if (!validarLotesYCaducidades()) return;
+
+        var $btn = $('#btnGuardarIngresos');
+        if ($btn.prop('disabled')) return; // Ya está enviando
+
+        $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Guardando...');
+        Swal.fire({
+            title: 'Guardando ingresos...',
+            text: 'Por favor espera, no cierres esta ventana.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: function () { Swal.showLoading(); }
+        });
+
         $.ajax({
-                type: 'POST',
-                url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
-                data: $('#VentasAlmomento').serialize(),
-                cache: false,
-                dataType: 'json',
-                success: function (response) {
+            type: 'POST',
+            url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
+            data: $('#VentasAlmomento').serialize(),
+            cache: false,
+            dataType: 'json',
+            success: function (response) {
+                Swal.close();
+                try {
                     if (response && response.status === 'success') {
                         Swal.fire({
                             icon: 'success',
                             title: '¡Guardado exitoso!',
                             text: response.message || 'Los productos se registraron correctamente. Stock y lotes actualizados.',
                             confirmButtonText: 'Aceptar',
-                            timer: 3500,
-                            timerProgressBar: true,
+                            allowOutsideClick: false
                         }).then(function () {
                             location.reload();
                         });
@@ -64,26 +78,38 @@ $(document).ready(function () {
                             icon: 'error',
                             title: 'Error al guardar',
                             text: (response && response.message) ? response.message : 'No se pudieron guardar los datos.',
-                            confirmButtonText: 'Aceptar',
+                            confirmButtonText: 'Aceptar'
                         });
                     }
-                },
-                error: function (xhr, status, err) {
-                    var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
-                    if (xhr && xhr.responseText) {
-                        try {
-                            var r = JSON.parse(xhr.responseText);
-                            if (r && r.message) msg = r.message;
-                        } catch (e) {}
-                    }
+                } catch (e) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error al guardar',
-                        text: msg,
-                        confirmButtonText: 'Aceptar',
+                        title: 'Error',
+                        text: 'No se pudo procesar la respuesta del servidor.',
+                        confirmButtonText: 'Aceptar'
                     });
                 }
-            });
+            },
+            error: function (xhr, status, err) {
+                Swal.close();
+                var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
+                if (xhr && xhr.responseText) {
+                    try {
+                        var r = JSON.parse(xhr.responseText);
+                        if (r && r.message) msg = r.message;
+                    } catch (e) {}
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al guardar',
+                    text: msg,
+                    confirmButtonText: 'Aceptar'
+                });
+            },
+            complete: function () {
+                $btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> Guardar ingresos');
+            }
+        });
     }
 
     // Click directo en el botón (no depende de jQuery Validate)
