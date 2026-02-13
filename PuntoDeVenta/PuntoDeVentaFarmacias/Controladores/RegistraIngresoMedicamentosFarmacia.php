@@ -77,7 +77,7 @@ if (count($rows_to_insert) === 0) {
 
 $placeholders = [];
 $values = [];
-$types = '';
+$types_arr = []; // tipos por columna: s=string, i=int, d=double
 
 foreach ($rows_to_insert as $r) {
     $placeholders[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?)";
@@ -97,9 +97,25 @@ foreach ($rows_to_insert as $r) {
     $values[] = $r['FechaInventario'];
     $values[] = $r['Estatus'];
     $values[] = $r['NumOrden'];
-    // 16 tipos (uno por cada ?): s,s,s,s,s,s,i,s,s,d,d,d,s,s,s,i
-    $types .= 'sssssisddsssssi';
+    // 16 tipos: s,s,s,s,s,s,i,s,s,d,d,d,s,s,s,i (uno por cada valor)
+    $types_arr[] = 's'; // ID_Prod_POS
+    $types_arr[] = 's'; // NumFactura
+    $types_arr[] = 's'; // Proveedor
+    $types_arr[] = 's'; // Cod_Barra
+    $types_arr[] = 's'; // Nombre_Prod
+    $types_arr[] = 's'; // Fk_Sucursal
+    $types_arr[] = 'i'; // Contabilizado
+    $types_arr[] = 's'; // Fecha_Caducidad
+    $types_arr[] = 's'; // Lote
+    $types_arr[] = 'd'; // PrecioMaximo
+    $types_arr[] = 'd'; // Precio_Venta
+    $types_arr[] = 'd'; // Precio_C
+    $types_arr[] = 's'; // AgregadoPor
+    $types_arr[] = 's'; // FechaInventario
+    $types_arr[] = 's'; // Estatus
+    $types_arr[] = 'i'; // NumOrden
 }
+$types = implode('', $types_arr);
 
 $query = "INSERT INTO IngresosFarmacias (ID_Prod_POS, NumFactura, Proveedor, Cod_Barra, Nombre_Prod, Fk_Sucursal, Contabilizado, Fecha_Caducidad, Lote, PrecioMaximo, Precio_Venta, Precio_C, AgregadoPor, AgregadoEl, FechaInventario, Estatus, NumOrden) VALUES " . implode(', ', $placeholders);
 
