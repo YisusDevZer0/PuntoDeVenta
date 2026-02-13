@@ -111,6 +111,8 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
   .ingresos-lotes-module .btn-container { display: flex; justify-content: center; align-items: center; }
   .ingresos-lotes-module .input-container { display: flex; flex-direction: column; align-items: center; }
   .ingresos-lotes-module .loader-container { justify-content: center; align-items: center; height: 180px; }
+  /* Asegurar que SweetAlert2 aparezca sobre todo */
+  .swal2-container { z-index: 99999 !important; }
 </style>
 
         <?php include_once "Menu.php" ?>
@@ -148,7 +150,7 @@ $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Añ
             return mensajesCarga[Math.floor(Math.random() * mensajesCarga.length)];
         }
         
-        window.addEventListener('load', function() { Swal.close(); });
+        window.addEventListener('load', function() { try { Swal.close(); } catch(e){} $('#loading-overlay').hide(); });
      
         
 </script>

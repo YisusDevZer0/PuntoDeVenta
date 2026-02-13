@@ -50,26 +50,35 @@ $(document).ready(function () {
                 cache: false,
                 dataType: 'json',
                 success: function (response) {
-                    if (response && response.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Guardado exitoso!',
-                            text: response.message || 'Los productos se registraron correctamente.',
-                            confirmButtonText: 'Aceptar'
-                        }).then(function () {
-                            location.reload();
-                        });
+                    $('#loading-overlay').hide();
+                    var ok = response && (response.status === 'success' || response.success === true);
+                    var msg = (response && response.message) ? response.message : '';
+                    if (ok) {
+                        msg = msg || 'Los productos se registraron correctamente.';
+                        setTimeout(function () {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire('¡Guardado exitoso!', msg, 'success').then(function () {
+                                    location.reload();
+                                });
+                            } else {
+                                alert('¡Guardado exitoso!\n\n' + msg);
+                                location.reload();
+                            }
+                        }, 50);
                     } else {
                         $btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> Guardar ingresos');
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error al guardar',
-                            text: (response && response.message) ? response.message : 'No se pudieron guardar los datos.',
-                            confirmButtonText: 'Aceptar'
-                        });
+                        msg = msg || 'No se pudieron guardar los datos.';
+                        setTimeout(function () {
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire('Error al guardar', msg, 'error');
+                            } else {
+                                alert('Error al guardar\n\n' + msg);
+                            }
+                        }, 50);
                     }
                 },
                 error: function (xhr) {
+                    $('#loading-overlay').hide();
                     $btn.prop('disabled', false).html('<i class="fas fa-paper-plane mr-1"></i> Guardar ingresos');
                     var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
                     if (xhr && xhr.responseText) {
@@ -78,12 +87,13 @@ $(document).ready(function () {
                             if (r && r.message) msg = r.message;
                         } catch (e) {}
                     }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error al guardar',
-                        text: msg,
-                        confirmButtonText: 'Aceptar'
-                    });
+                    setTimeout(function () {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire('Error al guardar', msg, 'error');
+                        } else {
+                            alert('Error al guardar\n\n' + msg);
+                        }
+                    }, 50);
                 }
             });
             return false; // Evitar submit normal del formulario
