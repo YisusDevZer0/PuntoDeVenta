@@ -2,7 +2,6 @@
 include_once "db_connect.php";
 include_once "ControladorUsuario.php";
 
-// Obtener parámetros
 $codigo = isset($_POST['codigo']) ? trim($_POST['codigo']) : '';
 $id_turno = isset($_POST['id_turno']) ? (int)$_POST['id_turno'] : 0;
 $sucursal = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
@@ -12,7 +11,6 @@ if (empty($codigo)) {
     exit;
 }
 
-// Buscar producto por código de barras o nombre
 $sql = "SELECT ID_Prod_POS, Cod_Barra, Nombre_Prod, Existencias_R, Fk_sucursal
         FROM Stock_POS
         WHERE Fk_sucursal = ?
@@ -31,13 +29,11 @@ if ($stmt && $sucursal > 0) {
     $stmt->close();
     
     if ($producto) {
-        // Verificar si está bloqueado por otro usuario en el turno
         $bloqueado_por_otro = false;
         $usuario_actual = isset($row['Nombre_Apellidos']) ? trim($row['Nombre_Apellidos']) : '';
         $ya_contado_otro_turno = false;
         $folio_turno_anterior = null;
         
-        // Verificar si este producto ya fue contado en OTRO turno (misma sucursal, mismo día)
         if ($id_turno > 0 && $sucursal > 0) {
             $sql_ya_contado = "SELECT it.Folio_Turno 
                               FROM Inventario_Turnos_Productos itp
@@ -62,7 +58,6 @@ if ($stmt && $sucursal > 0) {
             }
         }
         
-        // Verificar si está bloqueado por otro usuario en el MISMO turno
         if ($id_turno > 0 && !empty($usuario_actual) && !$ya_contado_otro_turno) {
             $sql_bloqueo = "SELECT Usuario_Bloqueo 
                            FROM Inventario_Productos_Bloqueados 
@@ -77,7 +72,6 @@ if ($stmt && $sucursal > 0) {
                 $stmt_bloq->execute();
                 $bloq_data = $stmt_bloq->get_result()->fetch_assoc();
                 $stmt_bloq->close();
-                
                 if ($bloq_data) {
                     $bloqueado_por_otro = true;
                     $usuario_bloqueador = $bloq_data['Usuario_Bloqueo'];

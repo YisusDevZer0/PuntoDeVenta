@@ -85,7 +85,7 @@ foreach ($rows_to_insert as $r) {
     $values[] = $r['FechaInventario'];
     $values[] = $r['Estatus'];
     $values[] = $r['NumOrden'];
-    $types .= 'sssssisddsssssii';
+    $types .= 'sssssisddsssssi';
 }
 
 $query = "INSERT INTO IngresosFarmacias (ID_Prod_POS, NumFactura, Proveedor, Cod_Barra, Nombre_Prod, Fk_Sucursal, Contabilizado, Fecha_Caducidad, Lote, PrecioMaximo, Precio_Venta, Precio_C, AgregadoPor, AgregadoEl, FechaInventario, Estatus, NumOrden) VALUES " . implode(', ', $placeholders);

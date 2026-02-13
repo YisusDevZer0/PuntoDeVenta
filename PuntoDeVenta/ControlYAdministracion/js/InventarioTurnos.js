@@ -3,45 +3,38 @@ var buscarTimeout = null;
 
 // Variables para procesamiento de escáner
 var scanBuffer = "";
-var scanInterval = 5; // Milisegundos
+var scanInterval = 5;
 var isScannerInput = false;
 var ultimoEscaneo = null;
 var tiempoUltimoEscaneo = 0;
 
+var BASE_URL = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion';
+
 // Función para cargar productos del turno (0 = sin turno, mostrar disponibles)
 function CargarProductosTurno(idTurno) {
-    // Permitir idTurno = 0 para mostrar productos sin turno activo
-    // Convertir a número y validar
     idTurno = parseInt(idTurno) || 0;
-    
-    // Solo validar si es undefined o null, NO si es 0
     if (idTurno === undefined || idTurno === null || isNaN(idTurno)) {
-        console.warn('ID de turno inválido, usando 0:', idTurno);
         idTurno = 0;
     }
     
     var buscar = $('#buscar-producto').val();
     var estado = $('#filtro-estado-producto').val();
     
-    var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataInventarioTurnos.php';
+    var url = BASE_URL + '/Controladores/DataInventarioTurnos.php';
     var params = ['id_turno=' + (idTurno || 0)];
-    
     if (buscar && buscar.trim() !== '') {
         params.push('buscar=' + encodeURIComponent(buscar.trim()));
     }
     if (estado && estado !== '') {
         params.push('estado=' + encodeURIComponent(estado));
     }
-    
     url += '?' + params.join('&');
     
-    // Destruir tabla existente si hay
     if ($.fn.DataTable.isDataTable('#tablaInventarioTurnos')) {
         $('#tablaInventarioTurnos').DataTable().destroy();
         $('#tablaInventarioTurnos').empty();
     }
     
-    // Crear tabla si no existe
     if ($('#tablaInventarioTurnos').length === 0) {
         $('#DataInventarioTurnos').html(`
             <table id="tablaInventarioTurnos" class="table table-striped table-hover">
@@ -59,7 +52,6 @@ function CargarProductosTurno(idTurno) {
             "url": url,
             "type": "GET",
             "dataSrc": function(json) {
-                console.log('Datos recibidos:', json);
                 if (json.aaData && json.aaData.length > 0) {
                     return json.aaData;
                 }
@@ -103,17 +95,13 @@ function CargarProductosTurno(idTurno) {
             if (data.clase_fila) {
                 $(row).addClass(data.clase_fila);
             }
-        },
-        "initComplete": function() {
-            console.log('Tabla de productos cargada correctamente');
         }
     });
 }
 
-// Iniciar turno
 function iniciarTurno() {
     Swal.fire({
-        title: '¿Iniciar nuevo turno de inventario?',
+        title: '¿Iniciar nuevo turno de conteo diario?',
         text: 'Se creará un nuevo turno para el día de hoy',
         icon: 'question',
         showCancelButton: true,
@@ -124,17 +112,13 @@ function iniciarTurno() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                url: BASE_URL + '/api/gestion_turnos.php',
                 type: 'POST',
-                data: {
-                    accion: 'iniciar'
-                },
+                data: { accion: 'iniciar' },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                            location.reload();
-                        });
+                        Swal.fire('¡Éxito!', response.message, 'success').then(() => { location.reload(); });
                     } else {
                         Swal.fire('Error', response.message, 'error');
                     }
@@ -147,7 +131,6 @@ function iniciarTurno() {
     });
 }
 
-// Pausar turno
 function pausarTurno(idTurno) {
     Swal.fire({
         title: '¿Pausar el turno?',
@@ -161,46 +144,31 @@ function pausarTurno(idTurno) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                url: BASE_URL + '/api/gestion_turnos.php',
                 type: 'POST',
-                data: {
-                    accion: 'pausar',
-                    id_turno: idTurno
-                },
+                data: { accion: 'pausar', id_turno: idTurno },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                            location.reload();
-                        });
+                        Swal.fire('¡Éxito!', response.message, 'success').then(() => { location.reload(); });
                     } else {
-                        Swal.fire('Error', response.message || 'No se pudo pausar el turno', 'error');
+                        Swal.fire('Error', response.message, 'error');
                     }
-                },
-                error: function(xhr) {
-                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Error al comunicarse con el servidor';
-                    Swal.fire('Error', msg, 'error');
                 }
             });
         }
     });
 }
 
-// Reanudar turno
 function reanudarTurno(idTurno) {
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        url: BASE_URL + '/api/gestion_turnos.php',
         type: 'POST',
-        data: {
-            accion: 'reanudar',
-            id_turno: idTurno
-        },
+        data: { accion: 'reanudar', id_turno: idTurno },
         dataType: 'json',
         success: function(response) {
             if (response.success) {
-                Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                    location.reload();
-                });
+                Swal.fire('¡Éxito!', response.message, 'success').then(() => { location.reload(); });
             } else {
                 Swal.fire('Error', response.message, 'error');
             }
@@ -208,15 +176,13 @@ function reanudarTurno(idTurno) {
     });
 }
 
-// Finalizar turno: verificar estado actual en servidor antes de permitir finalizar
 function finalizarTurno(idTurno) {
     if (!turnoActivo || !turnoActivo.ID_Turno) {
         Swal.fire('Error', 'No hay un turno activo', 'error');
         return;
     }
-    var limite_requerido = parseInt(turnoActivo.Limite_Productos) || 50;
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        url: BASE_URL + '/api/gestion_turnos.php',
         type: 'POST',
         data: { accion: 'obtener_estado', id_turno: idTurno },
         dataType: 'json',
@@ -224,12 +190,11 @@ function finalizarTurno(idTurno) {
             if (response.success) {
                 var total_productos = response.total_productos || 0;
                 var productos_completados = response.productos_completados || 0;
+                var limite_requerido = turnoActivo.Limite_Productos || 50;
                 if (productos_completados < limite_requerido) {
                     Swal.fire({
                         title: 'No se puede finalizar el turno',
-                        html: '<p>Debes tener <strong>' + limite_requerido + '</strong> productos contados.</p>' +
-                              '<p>Tienes <strong>' + productos_completados + '</strong> de ' + limite_requerido + '.</p>' +
-                              '<p>Cuenta los productos pendientes antes de finalizar.</p>',
+                        html: '<p>Debes tener <strong>' + limite_requerido + '</strong> productos contados.</p><p>Tienes <strong>' + productos_completados + '</strong> de ' + limite_requerido + '.</p>',
                         icon: 'warning',
                         confirmButtonText: 'Entendido',
                         confirmButtonColor: '#3085d6'
@@ -239,6 +204,7 @@ function finalizarTurno(idTurno) {
                 confirmarFinalizarTurno(idTurno, total_productos, productos_completados);
             } else {
                 var productos_completados = turnoActivo.Productos_Completados || 0;
+                var limite_requerido = turnoActivo.Limite_Productos || 50;
                 if (productos_completados < limite_requerido) {
                     Swal.fire({
                         title: 'No se puede finalizar el turno',
@@ -254,6 +220,7 @@ function finalizarTurno(idTurno) {
         },
         error: function() {
             var productos_completados = turnoActivo.Productos_Completados || 0;
+            var limite_requerido = turnoActivo.Limite_Productos || 50;
             if (productos_completados < limite_requerido) {
                 Swal.fire({
                     title: 'No se puede finalizar el turno',
@@ -269,13 +236,10 @@ function finalizarTurno(idTurno) {
     });
 }
 
-// Confirmar finalización del turno (solo se llama cuando ya hay suficientes contados)
 function confirmarFinalizarTurno(idTurno, total_productos, productos_completados) {
-    var html = '<p>Has completado <strong>' + productos_completados + '</strong> productos contados.</p>' +
-               '<p>Una vez finalizado, no podrás agregar más productos.</p>';
     Swal.fire({
         title: '¿Finalizar el turno?',
-        html: html,
+        html: '<p>Has completado <strong>' + productos_completados + '</strong> productos contados.</p><p>Una vez finalizado, no podrás agregar más productos.</p>',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
@@ -285,24 +249,19 @@ function confirmarFinalizarTurno(idTurno, total_productos, productos_completados
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                url: BASE_URL + '/api/gestion_turnos.php',
                 type: 'POST',
                 data: { accion: 'finalizar', id_turno: idTurno },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                            location.reload();
-                        });
+                        Swal.fire('¡Éxito!', response.message, 'success').then(() => { location.reload(); });
                     } else {
                         Swal.fire('Error', response.message, 'error');
                     }
                 },
                 error: function(xhr) {
-                    var errorMsg = 'Error al comunicarse con el servidor';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                    }
+                    var errorMsg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Error al comunicarse con el servidor';
                     Swal.fire('Error', errorMsg, 'error');
                 }
             });
@@ -310,18 +269,15 @@ function confirmarFinalizarTurno(idTurno, total_productos, productos_completados
     });
 }
 
-// Seleccionar producto
 $(document).on('click', '.btn-seleccionar-producto', function() {
     var idProducto = $(this).data('id');
     var codigo = $(this).data('codigo');
-    
     if (!turnoActivo) {
         Swal.fire('Error', 'No hay un turno activo', 'error');
         return;
     }
-    
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        url: BASE_URL + '/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'seleccionar_producto',
@@ -345,11 +301,7 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
                     toast: true,
                     position: 'top-end'
                 });
-                if (turnoActivo && turnoActivo.ID_Turno) {
-                    CargarProductosTurno(turnoActivo.ID_Turno);
-                } else {
-                    location.reload();
-                }
+                CargarProductosTurno(turnoActivo.ID_Turno);
             } else {
                 Swal.fire('Error', response.message, 'error');
             }
@@ -361,52 +313,39 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto: mostrar lotes y fechas del producto, opción elegir existente o agregar nuevo
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
     var lotesData = $(this).data('lotes');
     var lotes = (typeof lotesData === 'string') ? (lotesData ? JSON.parse(lotesData) : []) : (lotesData || []);
-    
     var hayLotes = lotes && lotes.length > 0;
+    
     var htmlLotes = '';
     if (hayLotes) {
-        htmlLotes = '<div class="mb-3">' +
-            '<label class="form-label fw-semibold mb-2"><i class="fa-solid fa-boxes-stacked me-1"></i> Lotes y caducidades del producto</label>' +
+        htmlLotes = '<div class="mb-3"><label class="form-label fw-semibold mb-2"><i class="fa-solid fa-boxes-stacked me-1"></i> Lotes y caducidades del producto</label>' +
             '<div class="border rounded p-2 bg-light" style="max-height: 140px; overflow-y: auto;">';
         lotes.forEach(function(l, i) {
-            var fechaF = l.Fecha_Caducidad ? (function(d) {
-                var parts = d.split('-');
-                return parts[2] + '/' + parts[1] + '/' + parts[0];
-            })(l.Fecha_Caducidad) : '-';
+            var fechaF = l.Fecha_Caducidad ? (function(d) { var p = d.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; })(l.Fecha_Caducidad) : '-';
             htmlLotes += '<div class="form-check mb-1">' +
-                '<input class="form-check-input opcion-lote" type="radio" name="opcion_lote" id="lote-existente-' + i + '" value="' + i + '">' +
-                '<label class="form-check-label small" for="lote-existente-' + i + '">' +
-                '<strong>' + (l.Lote || '-') + '</strong> · Cad: ' + fechaF + ' · ' + (l.Existencias || 0) + ' und' +
-                '</label></div>';
+                '<input class="form-check-input opcion-lote" type="radio" name="opcion_lote" id="lote-ex-' + i + '" value="' + i + '">' +
+                '<label class="form-check-label small" for="lote-ex-' + i + '"><strong>' + (l.Lote || '-') + '</strong> · Cad: ' + fechaF + ' · ' + (l.Existencias || 0) + ' und</label></div>';
         });
         htmlLotes += '</div></div>';
     }
     
-    var mostrarNuevoLotePorDefecto = !hayLotes;
+    var mostrarNuevo = !hayLotes;
     var html = '<div class="text-start conteo-modal-fields">' +
         '<div class="mb-3">' +
         '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
         '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
-        '<small class="text-muted">Cantidad que contaste en el inventario</small>' +
-        '</div>' +
-        htmlLotes +
-        '<div class="mb-2">' +
-        '<div class="form-check">' +
-        '<input class="form-check-input" type="radio" name="opcion_lote" id="opcion-nuevo-lote" value="nuevo"' + (mostrarNuevoLotePorDefecto ? ' checked' : '') + '>' +
-        '<label class="form-check-label fw-semibold" for="opcion-nuevo-lote">Agregar lote nuevo</label>' +
-        '</div></div>' +
-        '<div id="conteo-nuevo-lote-fields" class="mb-3 ms-3 border-start border-2 border-secondary ps-3" style="' + (mostrarNuevoLotePorDefecto ? '' : 'display:none;') + '">' +
+        '</div>' + htmlLotes +
+        '<div class="mb-2"><div class="form-check">' +
+        '<input class="form-check-input" type="radio" name="opcion_lote" id="opcion-nuevo-lote" value="nuevo"' + (mostrarNuevo ? ' checked' : '') + '>' +
+        '<label class="form-check-label fw-semibold" for="opcion-nuevo-lote">Agregar lote nuevo</label></div></div>' +
+        '<div id="conteo-nuevo-lote-fields" class="mb-3 ms-3 border-start border-2 border-secondary ps-3" style="' + (mostrarNuevo ? '' : 'display:none;') + '">' +
         '<label class="form-label mb-1">Lote nuevo</label>' +
-        '<input type="text" id="conteo-lote" class="form-control mb-2" placeholder="Ej. LOTE-2024-001"' + (mostrarNuevoLotePorDefecto ? '' : ' disabled') + '>' +
+        '<input type="text" id="conteo-lote" class="form-control mb-2" placeholder="Ej. LOTE-2024-001"' + (mostrarNuevo ? '' : ' disabled') + '>' +
         '<label class="form-label mb-1">Fecha de caducidad</label>' +
-        '<input type="date" id="conteo-fecha-caducidad" class="form-control" title="Fecha de caducidad del lote"' + (mostrarNuevoLotePorDefecto ? '' : ' disabled') + '>' +
-        '</div>' +
-        '</div>';
+        '<input type="date" id="conteo-fecha-caducidad" class="form-control"' + (mostrarNuevo ? '' : ' disabled') + '></div></div>';
     
     Swal.fire({
         title: '<i class="fa-solid fa-calculator text-primary me-2"></i>Registrar conteo físico',
@@ -418,9 +357,9 @@ $(document).on('click', '.btn-contar-producto', function() {
         customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
         didOpen: function() {
             $('#opcion-nuevo-lote').on('change', function() {
-                var checked = this.checked;
-                $('#conteo-nuevo-lote-fields').toggle(checked);
-                $('#conteo-lote, #conteo-fecha-caducidad').prop('disabled', !checked);
+                var c = this.checked;
+                $('#conteo-nuevo-lote-fields').toggle(c);
+                $('#conteo-lote, #conteo-fecha-caducidad').prop('disabled', !c);
             });
             $('.opcion-lote').on('change', function() {
                 $('#conteo-nuevo-lote-fields').hide();
@@ -434,17 +373,16 @@ $(document).on('click', '.btn-contar-producto', function() {
                 return false;
             }
             var opcionNuevo = document.getElementById('opcion-nuevo-lote').checked;
-            var lote = '';
-            var fecha = '';
+            var lote = '', fecha = '';
             if (opcionNuevo) {
                 lote = document.getElementById('conteo-lote').value.trim();
                 fecha = document.getElementById('conteo-fecha-caducidad').value || '';
             } else {
                 var sel = document.querySelector('input[name="opcion_lote"]:checked');
                 if (sel && sel.value !== 'nuevo' && lotes[parseInt(sel.value, 10)]) {
-                    var elegido = lotes[parseInt(sel.value, 10)];
-                    lote = elegido.Lote || '';
-                    fecha = elegido.Fecha_Caducidad || '';
+                    var e = lotes[parseInt(sel.value, 10)];
+                    lote = e.Lote || '';
+                    fecha = e.Fecha_Caducidad || '';
                 }
             }
             return { existencias: ex, lote: lote, fecha: fecha };
@@ -452,15 +390,11 @@ $(document).on('click', '.btn-contar-producto', function() {
     }).then((result) => {
         if (result.isConfirmed && result.value) {
             var d = result.value;
-            var payload = {
-                accion: 'contar_producto',
-                id_registro: idRegistro,
-                existencias_fisicas: d.existencias
-            };
+            var payload = { accion: 'contar_producto', id_registro: idRegistro, existencias_fisicas: d.existencias };
             if (d.lote) payload.lote = d.lote;
             if (d.fecha) payload.fecha_caducidad = d.fecha;
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                url: BASE_URL + '/api/gestion_turnos.php',
                 type: 'POST',
                 data: payload,
                 dataType: 'json',
@@ -472,11 +406,7 @@ $(document).on('click', '.btn-contar-producto', function() {
                             actualizarBarraProgreso();
                         }
                         Swal.fire('¡Éxito!', response.message, 'success').then(() => {
-                            if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
-                                CargarProductosTurno(turnoActivo.ID_Turno);
-                            } else {
-                                location.reload();
-                            }
+                            CargarProductosTurno(turnoActivo.ID_Turno);
                         });
                     } else {
                         Swal.fire('Error', response.message, 'error');
@@ -491,65 +421,23 @@ $(document).on('click', '.btn-contar-producto', function() {
     });
 });
 
-// Actualizar barra de progreso en tiempo real (sin recargar página)
-function actualizarBarraProgreso() {
-    if (!turnoActivo || !turnoActivo.ID_Turno) {
-        return;
-    }
-    var total_productos = parseInt(turnoActivo.Total_Productos) || 0;
-    var productos_completados = parseInt(turnoActivo.Productos_Completados) || 0;
-    var limite = parseInt(turnoActivo.Limite_Productos) || 50;
-    var porcentaje = limite > 0 ? Math.round((productos_completados / limite) * 100) : 0;
-    porcentaje = Math.min(100, porcentaje);
-    var progressBar = $('.turno-activo .progress-bar');
-    if (progressBar.length > 0) {
-        progressBar.css('width', porcentaje + '%')
-                   .attr('aria-valuenow', porcentaje)
-                   .attr('aria-valuemax', 100)
-                   .text(porcentaje + '%');
-        var progresoText = productos_completados + ' / ' + limite + ' completados';
-        if (total_productos > 0) {
-            progresoText += ' (' + total_productos + ' seleccionados)';
-        }
-        $('.turno-activo .texto-progreso').text(progresoText);
-    }
-}
-
-// Ver historial
 function verHistorialTurnos() {
-    // Implementar vista de historial
     Swal.fire('Información', 'Funcionalidad de historial en desarrollo', 'info');
 }
 
-// Función global para recargar datos después de acciones
-function recargarDatosTurno() {
-    if (typeof turnoActivo !== 'undefined' && turnoActivo && turnoActivo.ID_Turno) {
-        // Recargar página para obtener el turno actualizado
-        location.reload();
-    }
-}
-
-// ===== SISTEMA DE BÚSQUEDA ACTIVA CON ESCÁNER =====
-
-// Función para buscar y seleccionar producto (desde escáner o autocomplete)
 function buscarYSeleccionarProducto(codigo) {
-    if (!codigo || codigo.trim() === '') {
-        return;
-    }
-    
+    if (!codigo || codigo.trim() === '') return;
     if (!turnoActivo || !turnoActivo.ID_Turno) {
         Swal.fire('Error', 'No hay un turno activo', 'error');
         limpiarCampoBusqueda();
         return;
     }
-    
-    // Buscar producto primero
     var formData = new FormData();
     formData.append('codigo', codigo.trim());
     formData.append('id_turno', turnoActivo.ID_Turno);
     
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaEscanerInventarioTurnos.php',
+        url: BASE_URL + '/Controladores/BusquedaEscanerInventarioTurnos.php',
         type: 'POST',
         data: formData,
         processData: false,
@@ -557,7 +445,6 @@ function buscarYSeleccionarProducto(codigo) {
         dataType: 'json',
         success: function(response) {
             if (response.success && response.producto) {
-                // Verificar si está bloqueado por otro usuario
                 if (response.bloqueado_por_otro) {
                     Swal.fire({
                         icon: 'warning',
@@ -569,21 +456,17 @@ function buscarYSeleccionarProducto(codigo) {
                     limpiarCampoBusqueda();
                     return;
                 }
-                
-                // Verificar si ya fue contado en otro turno hoy
                 if (response.ya_contado_otro_turno) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Producto ya contado',
-                        text: 'Este producto ya fue contado en el turno ' + (response.folio_turno_anterior || '') + ' hoy. No se puede contar el mismo producto en otro turno el mismo día.',
+                        text: 'Este producto ya fue contado en el turno ' + (response.folio_turno_anterior || '') + ' hoy.',
                         timer: 3500,
                         showConfirmButton: false
                     });
                     limpiarCampoBusqueda();
                     return;
                 }
-                
-                // Seleccionar el producto en el turno
                 seleccionarProductoEnTurno(response.producto.id, response.producto.codigo, response.producto.nombre);
             } else {
                 Swal.fire({
@@ -603,10 +486,9 @@ function buscarYSeleccionarProducto(codigo) {
     });
 }
 
-// Función para seleccionar producto en el turno
 function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        url: BASE_URL + '/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'seleccionar_producto',
@@ -645,40 +527,29 @@ function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
     });
 }
 
-// Función para procesar buffer de escaneo
-function procesarBufferEscaneo() {
-    var delimiter = "\n";
-    var delimiterIndex = scanBuffer.indexOf(delimiter);
-    
-    while (delimiterIndex !== -1) {
-        var codigoEscaneado = scanBuffer.slice(0, delimiterIndex).trim();
-        scanBuffer = scanBuffer.slice(delimiterIndex + 1);
-        
-        if (esCodigoBarrasValido(codigoEscaneado)) {
-            tiempoUltimoEscaneo = Date.now();
-            buscarYSeleccionarProducto(codigoEscaneado);
-        }
-        
-        delimiterIndex = scanBuffer.indexOf(delimiter);
-    }
-}
-
-// Función para agregar escaneo al buffer
-function agregarEscaneo(escaneo) {
-    scanBuffer += escaneo;
-}
-
-// Función para validar código de barras
-function esCodigoBarrasValido(codigo) {
-    var longitud = codigo.length;
-    return longitud >= 2 && longitud <= 50; // Rango ampliado para nombres también
-}
-
-// Función para limpiar campo de búsqueda
 function limpiarCampoBusqueda() {
     $('#buscar-producto').val('');
     $('#buscar-producto').focus();
 }
 
-// El autocomplete se inicializa en InventarioTurnos.php directamente
-// Aquí solo mantenemos las funciones auxiliares
+function actualizarBarraProgreso() {
+    if (!turnoActivo || !turnoActivo.ID_Turno) return;
+    var total_productos = parseInt(turnoActivo.Total_Productos) || 0;
+    var productos_completados = parseInt(turnoActivo.Productos_Completados) || 0;
+    var limite = parseInt(turnoActivo.Limite_Productos) || 0;
+    var porcentaje = limite > 0 ? Math.round((productos_completados / limite) * 100) : 0;
+    porcentaje = Math.min(100, porcentaje);
+    
+    var progressBar = $('.turno-activo .progress-bar');
+    if (progressBar.length > 0) {
+        progressBar.css('width', porcentaje + '%').attr('aria-valuenow', porcentaje).attr('aria-valuemax', 100).text(porcentaje + '%');
+        var progresoText = productos_completados + ' / ' + limite + ' completados';
+        if (total_productos > 0) progresoText += ' (Máx: ' + limite + ' productos)';
+        var textoProgreso = $('.turno-activo .texto-progreso');
+        if (textoProgreso.length > 0) {
+            textoProgreso.text(progresoText);
+        } else {
+            $('.turno-activo .progress').next('small').text(progresoText);
+        }
+    }
+}

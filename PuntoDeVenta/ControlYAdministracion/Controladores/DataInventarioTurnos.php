@@ -11,7 +11,6 @@ $sucursal_usuario = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
 
 // Si no hay turno, mostrar productos disponibles de la sucursal
 if ($id_turno <= 0) {
-    // Consulta simple para productos disponibles sin turno
     $sql = "SELECT 
         sp.ID_Prod_POS,
         sp.Cod_Barra,
@@ -98,7 +97,6 @@ $chk_f = $conn->query("SHOW COLUMNS FROM Inventario_Turnos_Productos LIKE 'Fecha
 if ($chk_l && $chk_l->num_rows > 0 && $chk_f && $chk_f->num_rows > 0) {
     $tiene_lote_caducidad = true;
 }
-
 $extra_select = $tiene_lote_caducidad ? ", itp.Lote, itp.Fecha_Caducidad" : "";
 
 // Subconsulta: productos ya contados en OTRO turno (misma sucursal, mismo día)
@@ -110,7 +108,7 @@ $sql_ya_contado = "SELECT itp2.ID_Prod_POS, itp2.Fk_sucursal, it2.Folio_Turno
       AND it2.Fk_sucursal = ?
       AND DATE(it2.Fecha_Turno) = CURDATE()";
 
-// Construir consulta base para productos disponibles (no bloqueados por otros usuarios)
+// Construir consulta base
 $sql = "SELECT 
     sp.Folio_Prod_Stock,
     sp.ID_Prod_POS,
@@ -144,10 +142,10 @@ LEFT JOIN Inventario_Productos_Bloqueados ipb ON sp.ID_Prod_POS = ipb.ID_Prod_PO
 LEFT JOIN ($sql_ya_contado) ya_contado ON sp.ID_Prod_POS = ya_contado.ID_Prod_POS AND sp.Fk_sucursal = ya_contado.Fk_sucursal
 WHERE sp.Fk_sucursal = ?";
 
+// Orden de placeholders: subquery (id_turno, Fk_sucursal), luego Usuario_Actual, id_turno, id_turno, Fk_sucursal
 $params = [$id_turno, $turno['Fk_sucursal'], $turno['Usuario_Actual'], $id_turno, $id_turno, $turno['Fk_sucursal']];
 $types = "iisiii";
 
-// Aplicar filtros
 if (!empty($buscar)) {
     $sql .= " AND (sp.Cod_Barra LIKE ? OR sp.Nombre_Prod LIKE ?)";
     $buscar_param = "%$buscar%";
@@ -179,10 +177,9 @@ if (!empty($filtro_estado)) {
 
 $sql .= " ORDER BY sp.Nombre_Prod ASC LIMIT 500";
 
-// Preparar y ejecutar consulta
 $stmt = $conn->prepare($sql);
 $data = [];
-$pares_producto_sucursal = []; // (ID_Prod_POS, Fk_sucursal) para consultar Historial_Lotes
+$pares_producto_sucursal = [];
 
 if ($stmt) {
     $stmt->bind_param($types, ...$params);
@@ -194,11 +191,9 @@ if ($stmt) {
         $clase_fila = '';
         $badge_estado = '';
         $botones = '';
-        
         $id_prod = (int) $fila['ID_Prod_POS'];
         $fk_suc = (int) $fila['Fk_sucursal'];
-        $key_lotes = $id_prod . '_' . $fk_suc;
-        $pares_producto_sucursal[$key_lotes] = [$id_prod, $fk_suc];
+        $pares_producto_sucursal[$id_prod . '_' . $fk_suc] = [$id_prod, $fk_suc];
         
         if ($estado == 'bloqueado_otro') {
             $clase_fila = 'producto-bloqueado';
@@ -252,6 +247,9 @@ if ($stmt) {
         if ($tiene_lote_caducidad) {
             $row_data["Lote"] = isset($fila["Lote"]) && $fila["Lote"] !== null && $fila["Lote"] !== '' ? htmlspecialchars($fila["Lote"]) : '-';
             $row_data["Fecha_Caducidad"] = isset($fila["Fecha_Caducidad"]) && $fila["Fecha_Caducidad"] ? date('d/m/Y', strtotime($fila["Fecha_Caducidad"])) : '-';
+        } else {
+            $row_data["Lote"] = '-';
+            $row_data["Fecha_Caducidad"] = '-';
         }
         $data[] = $row_data;
     }
@@ -259,7 +257,7 @@ if ($stmt) {
     $stmt->close();
 }
 
-// Obtener lotes y fechas de caducidad de Historial_Lotes por producto/sucursal
+// Lotes de Historial_Lotes por producto (para columna y modal)
 $lotes_por_producto = [];
 if (!empty($pares_producto_sucursal)) {
     $chk_hl = $conn->query("SHOW TABLES LIKE 'Historial_Lotes'");
@@ -275,8 +273,7 @@ if (!empty($pares_producto_sucursal)) {
         }
         $sql_hl = "SELECT ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Existencias 
                    FROM Historial_Lotes 
-                   WHERE Existencias > 0 
-                     AND Lote IS NOT NULL AND TRIM(Lote) != '' 
+                   WHERE Existencias > 0 AND Lote IS NOT NULL AND TRIM(Lote) != '' 
                      AND Fecha_Caducidad IS NOT NULL AND Fecha_Caducidad > '1900-01-01' 
                      AND (" . implode(' OR ', $placeholders) . ") 
                    ORDER BY Fecha_Caducidad ASC";
@@ -287,9 +284,7 @@ if (!empty($pares_producto_sucursal)) {
             $res_hl = $stmt_hl->get_result();
             while ($hl = $res_hl->fetch_assoc()) {
                 $k = $hl['ID_Prod_POS'] . '_' . $hl['Fk_sucursal'];
-                if (!isset($lotes_por_producto[$k])) {
-                    $lotes_por_producto[$k] = [];
-                }
+                if (!isset($lotes_por_producto[$k])) $lotes_por_producto[$k] = [];
                 $lotes_por_producto[$k][] = [
                     'Lote' => $hl['Lote'],
                     'Fecha_Caducidad' => $hl['Fecha_Caducidad'],
@@ -301,11 +296,9 @@ if (!empty($pares_producto_sucursal)) {
     }
 }
 
-// Añadir columna de lotes/caducidad y datos para el modal de conteo
 foreach ($data as &$row) {
     $key = $row['ID_Prod_POS'] . '_' . $row['Fk_sucursal'];
     $lotes = isset($lotes_por_producto[$key]) ? $lotes_por_producto[$key] : [];
-    $row['Lotes_Producto'] = $lotes;
     $row['Lotes_Caducidad_Texto'] = '-';
     if (!empty($lotes)) {
         $partes = [];
@@ -315,7 +308,6 @@ foreach ($data as &$row) {
         }
         $row['Lotes_Caducidad_Texto'] = implode(' | ', $partes);
     }
-    // Pasar lotes en el botón Contar para el modal (solo si es btn-contar-producto)
     if (strpos($row['Acciones'], 'btn-contar-producto') !== false && isset($row['ID_Registro'])) {
         $lotes_json = htmlspecialchars(json_encode($lotes), ENT_QUOTES, 'UTF-8');
         $row['Acciones'] = '<button class="btn btn-sm btn-info btn-contar-producto" 
@@ -329,14 +321,11 @@ foreach ($data as &$row) {
 }
 unset($row);
 
-// Construir respuesta JSON
-$results = [
+echo json_encode([
     "sEcho" => 1,
     "iTotalRecords" => count($data),
     "iTotalDisplayRecords" => count($data),
     "aaData" => $data
-];
-
-echo json_encode($results);
+]);
 $conn->close();
 ?>
