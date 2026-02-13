@@ -43,32 +43,41 @@ $(document).ready(function () {
                 url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
                 data: $('#VentasAlmomento').serialize(),
                 cache: false,
-                success: function (data) {
-                    var response = JSON.parse(data);
-                    if (response.status === 'success') {
+                dataType: 'json',
+                success: function (response) {
+                    if (response && response.status === 'success') {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Ingresos guardados',
-                            text: 'Los productos se registraron correctamente. Stock y Historial de lotes actualizados.',
-                            showConfirmButton: false,
-                            timer: 2200,
-                            didOpen: function () {
-                                setTimeout(function () { location.reload(); }, 1800);
-                            },
+                            title: '¡Guardado exitoso!',
+                            text: response.message || 'Los productos se registraron correctamente. Stock y lotes actualizados.',
+                            confirmButtonText: 'Aceptar',
+                            timer: 3500,
+                            timerProgressBar: true,
+                        }).then(function () {
+                            location.reload();
                         });
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error al guardar',
-                            text: response.message || 'No se pudieron guardar los datos.',
+                            text: (response && response.message) ? response.message : 'No se pudieron guardar los datos.',
+                            confirmButtonText: 'Aceptar',
                         });
                     }
                 },
-                error: function () {
+                error: function (xhr, status, err) {
+                    var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
+                    if (xhr && xhr.responseText) {
+                        try {
+                            var r = JSON.parse(xhr.responseText);
+                            if (r && r.message) msg = r.message;
+                        } catch (e) {}
+                    }
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error en la petición',
-                        text: 'No se pudieron guardar los datos. Inténtalo de nuevo.',
+                        title: 'Error al guardar',
+                        text: msg,
+                        confirmButtonText: 'Aceptar',
                     });
                 }
             });
