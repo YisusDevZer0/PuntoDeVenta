@@ -4,7 +4,11 @@
  */
 $(document).ready(function () {
     function validarLotesYCaducidades() {
-        var filas = $('#tablaAgregarArticulos tbody tr[data-id]');
+        // Buscar filas con data-id o que tengan los inputs del ingreso (DataTables puede cambiar el DOM)
+        var filas = $('#tablaAgregarArticulos').find('tbody tr[data-id]');
+        if (filas.length === 0) {
+            filas = $('#tablaAgregarArticulos').find('tbody tr').has('input[name="Lote[]"]');
+        }
         if (filas.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -35,10 +39,9 @@ $(document).ready(function () {
         return true;
     }
 
-    $("#VentasAlmomento").validate({
-        submitHandler: function () {
-            if (!validarLotesYCaducidades()) return;
-            $.ajax({
+    function enviarIngresos() {
+        if (!validarLotesYCaducidades()) return;
+        $.ajax({
                 type: 'POST',
                 url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
                 data: $('#VentasAlmomento').serialize(),
@@ -81,6 +84,11 @@ $(document).ready(function () {
                     });
                 }
             });
-        },
+    }
+
+    // Click directo en el botón (no depende de jQuery Validate)
+    $(document).on('click', '#btnGuardarIngresos', function (e) {
+        e.preventDefault();
+        enviarIngresos();
     });
 });
