@@ -47,15 +47,19 @@
 
     function updateToggleButtons() {
         var dark = isDark();
-        document.querySelectorAll("[data-dark-mode-toggle]").forEach(function (btn) {
-            var iconMoon = btn.querySelector(".fa-moon");
-            var iconSun = btn.querySelector(".fa-sun");
-            var title = btn.getAttribute("title") || btn.getAttribute("aria-label");
+        document.querySelectorAll("[data-dark-mode-toggle]").forEach(function (el) {
+            if (el.tagName === "INPUT" && (el.type === "checkbox" || el.getAttribute("role") === "switch")) {
+                el.checked = dark;
+                return;
+            }
+            var iconMoon = el.querySelector(".fa-moon");
+            var iconSun = el.querySelector(".fa-sun");
+            var title = el.getAttribute("title") || el.getAttribute("aria-label");
             if (iconMoon) iconMoon.style.display = dark ? "none" : "inline-block";
             if (iconSun) iconSun.style.display = dark ? "inline-block" : "none";
             if (title !== undefined) {
-                btn.setAttribute("title", dark ? "Usar modo claro" : "Usar modo oscuro");
-                if (btn.getAttribute("aria-label")) btn.setAttribute("aria-label", dark ? "Usar modo claro" : "Usar modo oscuro");
+                el.setAttribute("title", dark ? "Usar modo claro" : "Usar modo oscuro");
+                if (el.getAttribute("aria-label")) el.setAttribute("aria-label", dark ? "Usar modo claro" : "Usar modo oscuro");
             }
         });
     }
@@ -83,8 +87,16 @@
         var stored = getStoredTheme();
         applyTheme(stored === THEME_DARK);
 
-        document.querySelectorAll("[data-dark-mode-toggle]").forEach(function (btn) {
-            btn.addEventListener("click", function (e) {
+        document.querySelectorAll("[data-dark-mode-toggle]").forEach(function (el) {
+            if (el.tagName === "INPUT" && (el.type === "checkbox" || el.getAttribute("role") === "switch")) {
+                el.addEventListener("change", function () {
+                    var dark = this.checked;
+                    applyTheme(dark);
+                    setStoredTheme(dark ? THEME_DARK : null);
+                });
+                return;
+            }
+            el.addEventListener("click", function (e) {
                 e.preventDefault();
                 toggleTheme();
             });

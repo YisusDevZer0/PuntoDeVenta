@@ -60,7 +60,12 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
                             <a href="MiPerfilDeUsuarioYMas" class="dropdown-item">Mi perfil</a>
-                            <!-- <a href="Ajustes" class="dropdown-item">Ajustes</a> -->
+                            <div class="dropdown-item d-flex align-items-center justify-content-between py-2" onclick="event.stopPropagation()">
+                                <span>Modo oscuro</span>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="dark-mode-switch" data-dark-mode-toggle aria-label="Alternar modo oscuro">
+                                </div>
+                            </div>
                             <a href="Cierre" class="dropdown-item">Cerrar sesion</a>
                         </div>
                     </div>

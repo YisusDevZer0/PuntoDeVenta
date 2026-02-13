@@ -20,6 +20,8 @@
 
 <!-- Template Stylesheet -->
 <link href="css/style.css" rel="stylesheet">
+<link href="css/dark-mode.css" rel="stylesheet">
+<script>try{var t=localStorage.getItem('control-admin-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 
 <!-- Notifications Stylesheet -->
 <link href="css/notifications.css" rel="stylesheet">
