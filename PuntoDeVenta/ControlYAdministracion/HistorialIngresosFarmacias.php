@@ -1,8 +1,8 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 
-$fecha_desde = isset($_GET['fecha_desde']) ? $_GET['fecha_desde'] : date('Y-m-d', strtotime('-30 days'));
-$fecha_hasta = isset($_GET['fecha_hasta']) ? $_GET['fecha_hasta'] : date('Y-m-d');
+$fecha_desde = isset($_GET['fecha_desde']) ? $_GET['fecha_desde'] : date('Y-m-01'); // Primer día del mes en curso
+$fecha_hasta = isset($_GET['fecha_hasta']) ? $_GET['fecha_hasta'] : date('Y-m-d');   // Hoy
 $sucursal_id = isset($_GET['sucursal_id']) ? (int)$_GET['sucursal_id'] : 0;
 
 $sucursales = [];
@@ -49,7 +49,7 @@ if ($res_suc) {
                             </h6>
                             <small class="text-muted">
                                 <i class="fa-solid fa-info-circle me-1"></i>
-                                Consulta los ingresos realizados con lote y fecha de caducidad. Filtra por rango de fechas y sucursal.
+                                Por defecto se muestran los ingresos del mes en curso. Puedes filtrar por rango de fechas y sucursal.
                             </small>
                         </div>
                     </div>
