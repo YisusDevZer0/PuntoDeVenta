@@ -6,7 +6,7 @@ $fecha_hasta = isset($_GET['fecha_hasta']) ? $_GET['fecha_hasta'] : date('Y-m-d'
 $sucursal_id = isset($_GET['sucursal_id']) ? (int)$_GET['sucursal_id'] : 0;
 
 $sucursales = [];
-$sql_suc = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales WHERE Estatus = 'Activo' ORDER BY Nombre_Sucursal";
+$sql_suc = "SELECT ID_Sucursal, Nombre_Sucursal FROM Sucursales ORDER BY Nombre_Sucursal";
 $res_suc = mysqli_query($conn, $sql_suc);
 if ($res_suc) {
     while ($r = mysqli_fetch_assoc($res_suc)) {
@@ -18,13 +18,19 @@ if ($res_suc) {
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Historial de ingresos - <?php echo $row['Licencia']; ?></title>
+    <title>Historial de ingresos - <?php echo htmlspecialchars($row['Licencia'] ?? 'Doctor Pez'); ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
+    </div>
     <style>
         #tablaHistorialIngresos th { font-size: 12px; white-space: nowrap; }
         #tablaHistorialIngresos td { font-size: 13px; }
-        #tablaHistorialIngresos th { background-color: #0172b6 !important; color: #fff; padding: 8px; }
+        #tablaHistorialIngresos thead th { background-color: #0172b6 !important; color: #fff; padding: 10px 8px; }
+        #tablaHistorialIngresos tbody tr:hover { background-color: #f8f9fa; }
+        .swal2-container { z-index: 99999 !important; }
     </style>
 </head>
 <body>
@@ -35,33 +41,46 @@ if ($res_suc) {
         <div class="container-fluid pt-4 px-4">
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
-                    <h6 class="mb-4" style="color:#0172b6;"><i class="fas fa-history"></i> Consultar ingresos realizados (lotes y caducidades)</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h6 class="mb-0" style="color:#0172b6;">
+                                <i class="fa-solid fa-history me-2"></i>
+                                Historial de ingresos (lotes y caducidades)
+                            </h6>
+                            <small class="text-muted">
+                                <i class="fa-solid fa-info-circle me-1"></i>
+                                Consulta los ingresos realizados con lote y fecha de caducidad. Filtra por rango de fechas y sucursal.
+                            </small>
+                        </div>
+                    </div>
 
                     <form method="get" class="row g-3 mb-4" id="filtroHistorial">
                         <div class="col-md-2">
-                            <label class="form-label small">Desde</label>
+                            <label class="form-label small fw-semibold">Desde</label>
                             <input type="date" name="fecha_desde" class="form-control form-control-sm" value="<?php echo htmlspecialchars($fecha_desde); ?>">
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label small">Hasta</label>
+                            <label class="form-label small fw-semibold">Hasta</label>
                             <input type="date" name="fecha_hasta" class="form-control form-control-sm" value="<?php echo htmlspecialchars($fecha_hasta); ?>">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label small">Sucursal</label>
+                            <label class="form-label small fw-semibold">Sucursal</label>
                             <select name="sucursal_id" class="form-select form-select-sm">
                                 <option value="0">Todas</option>
                                 <?php foreach ($sucursales as $s): ?>
-                                    <option value="<?php echo (int)$s['ID_Sucursal']; ?>" <?php echo ($sucursal_id === (int)$s['ID_Sucursal']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['Nombre_Sucursal']); ?></option>
+                                    <option value="<?php echo (int)$s['ID_Sucursal']; ?>" <?php echo ($sucursal_id === (int)$s['ID_Sucursal']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($s['Nombre_Sucursal'] ?? ''); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Buscar</button>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Buscar
+                            </button>
                         </div>
                     </form>
 
                     <div class="table-responsive">
-                        <table id="tablaHistorialIngresos" class="table table-hover table-sm">
+                        <table id="tablaHistorialIngresos" class="table table-hover table-sm table-striped">
                             <thead>
                                 <tr>
                                     <th># Factura</th>
@@ -126,8 +145,14 @@ if ($res_suc) {
             },
             pageLength: 25,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
-            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rtip"
+            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rtip",
+            initComplete: function() {
+                $('#loading-overlay').hide();
+            }
         });
+    });
+    window.addEventListener('load', function() {
+        $('#loading-overlay').hide();
     });
     </script>
 </body>
