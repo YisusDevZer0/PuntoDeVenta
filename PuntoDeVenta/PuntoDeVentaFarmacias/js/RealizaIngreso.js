@@ -1,87 +1,83 @@
+/**
+ * Módulo Ingreso de medicamentos (Ingresos.php).
+ * Envía al controlador RegistraIngresoMedicamentosFarmacia.php.
+ * Usa dataType: 'json' para recibir el objeto directamente, sin JSON.parse.
+ */
 $(document).ready(function () {
-    // Agregar los métodos de validación personalizados
-    function validarFormulario() {
-        var clienteInput = $("#clienteInput");
-
-        if (clienteInput.val() === "") {
+    function validarProductos() {
+        var filas = $('#tablaAgregarArticulos tbody tr').has('input[name="IdBasedatos[]"]');
+        if (filas.length === 0) {
             Swal.fire({
-                icon: 'error',
-                title: 'Campo requerido',
-                text: 'El nombre del cliente es necesario',
+                icon: 'warning',
+                title: 'Lista vacía',
+                text: 'Agrega al menos un producto (escanear o buscar) antes de enviar.',
             });
             return false;
         }
         return true;
     }
 
-    // Validar el formulario
     $("#VentasAlmomento").validate({
-        rules: {
-            clienteInput: {
-                required: true,
-            },
-        },
-        messages: {
-            clienteInput: {
-                required: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Campo requerido',
-                        text: 'El nombre del cliente es necesario',
-                    });
-                },
-            },
-        },
-        submitHandler: function () {
-            if (validarFormulario()) {
-                $.ajax({
-                    type: 'POST',
-                    url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
-                    data: $('#VentasAlmomento').serialize(),
-                    dataType: 'text',
-                    cache: false,
-                    success: function (data) {
-                        var response;
-                        try {
-                            response = typeof data === 'string' ? JSON.parse(data) : data;
-                        } catch (e) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error al procesar respuesta',
-                                text: 'La sesión pudo haber expirado. Recarga la página e inicia sesión de nuevo.',
-                            });
-                            return;
-                        }
+        rules: {},
+        submitHandler: function (form) {
+            if (!validarProductos()) return false;
+            var $btn = $(form).find('button[type="submit"]');
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Enviando...');
 
-                        if (response.status === 'success') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Venta realizada con éxito',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                didOpen: () => {
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 1500);
-                                },
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Algo salió mal',
-                                text: response.message,
-                            });
-                        }
-                    },
-                    error: function () {
+            $.ajax({
+                type: 'POST',
+                url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
+                data: $(form).serialize(),
+                cache: false,
+                dataType: 'json',
+                success: function (response) {
+                    var ok = response && (response.status === 'success' || response.success === true);
+                    var msg = (response && response.message) ? response.message : '';
+                    if (ok) {
+                        msg = msg || 'Los productos se registraron correctamente.';
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Ingreso registrado',
+                            text: msg,
+                            showConfirmButton: false,
+                            timer: 2000,
+                        }).then(function () {
+                            location.reload();
+                        });
+                    } else {
+                        $btn.prop('disabled', false).html('Enviar Información');
+                        msg = msg || 'No se pudieron guardar los datos.';
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error en la petición',
-                            text: 'No se pudieron guardar los datos. Por favor, inténtalo de nuevo.',
+                            title: 'Algo salió mal',
+                            text: msg,
                         });
                     }
-                });
-            }
-        },
+                },
+                error: function (xhr) {
+                    $btn.prop('disabled', false).html('Enviar Información');
+                    var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
+                    var sesionExpirada = false;
+                    if (xhr && xhr.responseText) {
+                        var txt = (xhr.responseText || '').toLowerCase();
+                        if (txt.indexOf('sesión') >= 0 || txt.indexOf('session') >= 0 || txt.indexOf('login') >= 0 || txt.indexOf('vencida') >= 0) {
+                            sesionExpirada = true;
+                            msg = 'La sesión ha expirado. Recarga la página e inicia sesión nuevamente.';
+                        } else {
+                            try {
+                                var r = JSON.parse(xhr.responseText);
+                                if (r && r.message) msg = r.message;
+                            } catch (e) {}
+                        }
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: sesionExpirada ? 'Sesión vencida' : 'Error en la petición',
+                        text: msg,
+                    });
+                }
+            });
+            return false;
+        }
     });
 });
