@@ -38,10 +38,20 @@ $(document).ready(function () {
                     type: 'POST',
                     url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
                     data: $('#VentasAlmomento').serialize(),
+                    dataType: 'text',
                     cache: false,
                     success: function (data) {
-                        // jQuery ya parsea JSON automáticamente si el servidor envía Content-Type: application/json
-                        var response = typeof data === 'string' ? JSON.parse(data) : data;
+                        var response;
+                        try {
+                            response = typeof data === 'string' ? JSON.parse(data) : data;
+                        } catch (e) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error al procesar respuesta',
+                                text: 'La sesión pudo haber expirado. Recarga la página e inicia sesión de nuevo.',
+                            });
+                            return;
+                        }
 
                         if (response.status === 'success') {
                             Swal.fire({
