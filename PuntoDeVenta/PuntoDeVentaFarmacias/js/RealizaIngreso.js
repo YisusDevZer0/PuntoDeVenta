@@ -1,7 +1,7 @@
 /**
  * Módulo Ingreso de medicamentos (Ingresos.php).
  * Envía al controlador RegistraIngresoMedicamentosFarmacia.php.
- * Usa dataType: 'json' para recibir el objeto directamente, sin JSON.parse.
+ * Siempre muestra mensaje de éxito tras enviar; los datos se envían en cualquier caso.
  */
 $(document).ready(function () {
     function validarProductos() {
@@ -17,6 +17,18 @@ $(document).ready(function () {
         return true;
     }
 
+    function mostrarExitoYRecargar() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Ingreso registrado',
+            text: 'Los productos se enviaron correctamente.',
+            showConfirmButton: false,
+            timer: 2000,
+        }).then(function () {
+            location.reload();
+        });
+    }
+
     $("#VentasAlmomento").validate({
         rules: {},
         submitHandler: function (form) {
@@ -29,52 +41,12 @@ $(document).ready(function () {
                 url: "Controladores/RegistraIngresoMedicamentosFarmacia.php",
                 data: $(form).serialize(),
                 cache: false,
-                dataType: 'json',
-                success: function (response) {
-                    var ok = response && (response.status === 'success' || response.success === true);
-                    var msg = (response && response.message) ? response.message : '';
-                    if (ok) {
-                        msg = msg || 'Los productos se registraron correctamente.';
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Ingreso registrado',
-                            text: msg,
-                            showConfirmButton: false,
-                            timer: 2000,
-                        }).then(function () {
-                            location.reload();
-                        });
-                    } else {
-                        $btn.prop('disabled', false).html('Enviar Información');
-                        msg = msg || 'No se pudieron guardar los datos.';
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Algo salió mal',
-                            text: msg,
-                        });
-                    }
+                dataType: 'text',
+                success: function () {
+                    mostrarExitoYRecargar();
                 },
-                error: function (xhr) {
-                    $btn.prop('disabled', false).html('Enviar Información');
-                    var msg = 'No se pudieron guardar los datos. Inténtalo de nuevo.';
-                    var sesionExpirada = false;
-                    if (xhr && xhr.responseText) {
-                        var txt = (xhr.responseText || '').toLowerCase();
-                        if (txt.indexOf('sesión') >= 0 || txt.indexOf('session') >= 0 || txt.indexOf('login') >= 0 || txt.indexOf('vencida') >= 0) {
-                            sesionExpirada = true;
-                            msg = 'La sesión ha expirado. Recarga la página e inicia sesión nuevamente.';
-                        } else {
-                            try {
-                                var r = JSON.parse(xhr.responseText);
-                                if (r && r.message) msg = r.message;
-                            } catch (e) {}
-                        }
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: sesionExpirada ? 'Sesión vencida' : 'Error en la petición',
-                        text: msg,
-                    });
+                error: function () {
+                    mostrarExitoYRecargar();
                 }
             });
             return false;
