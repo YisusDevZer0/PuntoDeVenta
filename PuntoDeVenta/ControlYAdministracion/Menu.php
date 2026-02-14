@@ -207,6 +207,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-truck-ramp-box"></i>Inventarios</a>
                 <div class="dropdown-menu bg-transparent border-0">
+                    <a href="MovimientosInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-arrows-rotate"></i>Movimientos de inventario</a>
                     <a href="InventarioSucursales" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-boxes-stacked"></i>inventario de sucursales </a>
                     <a href="AjusteInsumos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Insumos </a>
                     <a href="ReportesCedisInventario" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-money-bills"></i>Reportes Cedis </a>
