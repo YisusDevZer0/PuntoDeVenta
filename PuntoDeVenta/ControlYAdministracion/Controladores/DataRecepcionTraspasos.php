@@ -20,6 +20,7 @@ try {
     // La sucursal que recibe se toma del propio traspaso al aceptarlo.
 $codigo = isset($_GET['codigo']) ? trim($_GET['codigo']) : '';
 
+// Lote y Fecha_Caducidad: subconsulta sobre Historial_Lotes (sucursal origen), lote con caducidad más cercana (FEFO)
 $sql = "SELECT 
     tyc.TraspaNotID,
     tyc.Folio_Ticket,
@@ -37,6 +38,21 @@ $sql = "SELECT
     tyc.AgregadoPor,
     tyc.AgregadoEl,
     tyc.ID_H_O_D,
+    (SELECT hl.Lote FROM Historial_Lotes hl
+     INNER JOIN Stock_POS sp2 ON sp2.ID_Prod_POS = hl.ID_Prod_POS AND sp2.Fk_sucursal = hl.Fk_sucursal
+     WHERE sp2.Cod_Barra = tyc.Cod_Barra AND sp2.Fk_sucursal = tyc.Fk_sucursal
+       AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+       AND LOWER(TRIM(hl.Lote)) NOT IN ('nan', 'null', 'n/a', 'na', 'sin lote')
+       AND hl.Fecha_Caducidad IS NOT NULL AND hl.Fecha_Caducidad > '1900-01-01'
+       AND hl.Fecha_Caducidad != '0000-00-00' AND hl.Existencias > 0
+     ORDER BY hl.Fecha_Caducidad ASC LIMIT 1) AS Lote,
+    (SELECT hl.Fecha_Caducidad FROM Historial_Lotes hl
+     INNER JOIN Stock_POS sp2 ON sp2.ID_Prod_POS = hl.ID_Prod_POS AND sp2.Fk_sucursal = hl.Fk_sucursal
+     WHERE sp2.Cod_Barra = tyc.Cod_Barra AND sp2.Fk_sucursal = tyc.Fk_sucursal
+       AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+       AND hl.Fecha_Caducidad IS NOT NULL AND hl.Fecha_Caducidad > '1900-01-01'
+       AND hl.Fecha_Caducidad != '0000-00-00' AND hl.Existencias > 0
+     ORDER BY hl.Fecha_Caducidad ASC LIMIT 1) AS Fecha_Caducidad,
     suc_origen.Nombre_Sucursal AS Sucursal_Origen,
     suc_destino.Nombre_Sucursal AS Sucursal_Destino
 FROM TraspasosYNotasC tyc
@@ -102,6 +118,16 @@ $sql .= " ORDER BY tyc.TraspaNotID DESC";
             return htmlspecialchars((string)$val);
         };
         
+        $lote = $clean($fila['Lote'] ?? null);
+        $fechaCaducidad = '-';
+        if (!empty($fila['Fecha_Caducidad']) && $fila['Fecha_Caducidad'] !== '0000-00-00') {
+            try {
+                $fechaCaducidad = date('d/m/Y', strtotime($fila['Fecha_Caducidad']));
+            } catch (Exception $e) {
+                $fechaCaducidad = $fila['Fecha_Caducidad'];
+            }
+        }
+        
         $data[] = [
             'TraspaNotID' => $id,
             'Folio_Ticket' => $clean($fila['Folio_Ticket'] ?? null),
@@ -119,6 +145,8 @@ $sql .= " ORDER BY tyc.TraspaNotID DESC";
             'AgregadoPor' => $clean($fila['AgregadoPor'] ?? null),
             'AgregadoEl' => $fecha_agregado,
             'ID_H_O_D' => isset($fila['ID_H_O_D']) && $fila['ID_H_O_D'] !== null ? (int) $fila['ID_H_O_D'] : 0,
+            'Lote' => $lote,
+            'Fecha_Caducidad' => $fechaCaducidad,
             'Sucursal_Origen' => $clean($fila['Sucursal_Origen'] ?? null),
             'Sucursal_Destino' => $clean($fila['Sucursal_Destino'] ?? null),
             'Recibir' => "<button type='button' class='btn btn-sm btn-primary btn-recibir-traspaso' data-id='{$id}' title='Recibir y registrar lote/caducidad'><i class='fa-solid fa-truck-ramp-box'></i> Recibir</button>"

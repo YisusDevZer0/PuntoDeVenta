@@ -6,9 +6,22 @@ $id = isset($_POST['id']) ? (int) $_POST['id'] : 0;
 $traspaso = null;
 
 if ($id > 0 && isset($conn) && $conn) {
+    // Lote y Fecha_Caducidad vienen de Historial_Lotes (sucursal origen), lote con caducidad más cercana
     $stmt = $conn->prepare("
         SELECT tyc.TraspaNotID, tyc.Cod_Barra, tyc.Nombre_Prod, tyc.Cantidad,
-               tyc.Fk_SucursalDestino, tyc.Folio_Ticket, tyc.Fk_sucursal
+               tyc.Fk_SucursalDestino, tyc.Folio_Ticket, tyc.Fk_sucursal,
+               (SELECT hl.Lote FROM Historial_Lotes hl
+                INNER JOIN Stock_POS sp2 ON sp2.ID_Prod_POS = hl.ID_Prod_POS AND sp2.Fk_sucursal = hl.Fk_sucursal
+                WHERE sp2.Cod_Barra = tyc.Cod_Barra AND sp2.Fk_sucursal = tyc.Fk_sucursal
+                  AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+                  AND hl.Fecha_Caducidad > '1900-01-01' AND hl.Existencias > 0
+                ORDER BY hl.Fecha_Caducidad ASC LIMIT 1) AS Lote,
+               (SELECT hl.Fecha_Caducidad FROM Historial_Lotes hl
+                INNER JOIN Stock_POS sp2 ON sp2.ID_Prod_POS = hl.ID_Prod_POS AND sp2.Fk_sucursal = hl.Fk_sucursal
+                WHERE sp2.Cod_Barra = tyc.Cod_Barra AND sp2.Fk_sucursal = tyc.Fk_sucursal
+                  AND hl.Lote IS NOT NULL AND TRIM(hl.Lote) != ''
+                  AND hl.Fecha_Caducidad > '1900-01-01' AND hl.Existencias > 0
+                ORDER BY hl.Fecha_Caducidad ASC LIMIT 1) AS Fecha_Caducidad
         FROM TraspasosYNotasC tyc
         WHERE tyc.TraspaNotID = ? AND tyc.Estatus = 'Generado'
     ");
@@ -55,7 +68,7 @@ if ($id > 0 && isset($conn) && $conn) {
         </div>
         <div class="col-md-4">
             <label class="form-label"><i class="fa-solid fa-tag me-2"></i>Lote principal <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="lote" id="lote" placeholder="Ej. LOTE-2024-001" required>
+            <input type="text" class="form-control" name="lote" id="lote" placeholder="Ej. LOTE-2024-001" value="<?php echo htmlspecialchars($traspaso['Lote'] ?? ''); ?>" required>
         </div>
     </div>
 
@@ -124,7 +137,7 @@ if ($id > 0 && isset($conn) && $conn) {
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label"><i class="fa-solid fa-calendar-days me-2"></i>Fecha de caducidad <span class="text-danger">*</span></label>
-            <input type="date" class="form-control" name="fecha_caducidad" id="fecha_caducidad" required>
+            <input type="date" class="form-control" name="fecha_caducidad" id="fecha_caducidad" value="<?php echo !empty($traspaso['Fecha_Caducidad']) && $traspaso['Fecha_Caducidad'] !== '0000-00-00' ? htmlspecialchars($traspaso['Fecha_Caducidad']) : ''; ?>" required>
         </div>
         <div class="col-md-6">
             <label class="form-label"><i class="fa-solid fa-comment me-2"></i>Observaciones</label>

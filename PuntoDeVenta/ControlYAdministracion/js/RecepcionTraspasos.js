@@ -39,6 +39,8 @@ function CargarRecepcionTraspasos() {
             { data: 'Cod_Barra', title: 'Código', width: '120px', defaultContent: '-' },
             { data: 'Nombre_Prod', title: 'Producto', defaultContent: '-' },
             { data: 'Cantidad', title: 'Cant.', width: '80px', className: 'text-center', defaultContent: '-' },
+            { data: 'Lote', title: 'Lote', width: '100px', defaultContent: '-', visible: true },
+            { data: 'Fecha_Caducidad', title: 'Caducidad', width: '100px', defaultContent: '-', visible: true },
             { data: 'Fecha_venta', title: 'Fecha', width: '110px', defaultContent: '-' },
             { data: 'Sucursal_Origen', title: 'Origen', width: '120px', defaultContent: '-' },
             { data: 'AgregadoPor', title: 'Generado por', width: '140px', defaultContent: '-' },
