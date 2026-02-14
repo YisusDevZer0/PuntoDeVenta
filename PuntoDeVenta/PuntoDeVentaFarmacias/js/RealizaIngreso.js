@@ -40,7 +40,8 @@ $(document).ready(function () {
                     data: $('#VentasAlmomento').serialize(),
                     cache: false,
                     success: function (data) {
-                        var response = JSON.parse(data);
+                        // jQuery ya parsea JSON automáticamente si el servidor envía Content-Type: application/json
+                        var response = typeof data === 'string' ? JSON.parse(data) : data;
 
                         if (response.status === 'success') {
                             Swal.fire({
