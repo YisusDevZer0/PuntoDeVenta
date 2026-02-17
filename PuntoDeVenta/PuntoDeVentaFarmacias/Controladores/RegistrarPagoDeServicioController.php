@@ -108,17 +108,9 @@ try {
             $pago_id = $stmt->insert_id;
             $stmt->close();
             
-            // Actualizar el valor total de la caja (sumar el monto del pago)
-            if ($Fk_Caja > 0 && $monto > 0) {
-                $sql_caja = "UPDATE Cajas SET Valor_Total_Caja = Valor_Total_Caja + ? WHERE ID_Caja = ?";
-                $stmt_caja = $conn->prepare($sql_caja);
-                if ($stmt_caja) {
-                    $stmt_caja->bind_param("di", $monto, $Fk_Caja);
-                    $stmt_caja->execute();
-                    $stmt_caja->close();
-                }
-            }
-            
+            // El valor de la caja se actualiza automáticamente por el trigger tr_pago_servicio_insert
+            // que suma costo + comisión. No actualizar aquí para evitar doble suma.
+
             echo json_encode([
                 'success' => true, 
                 'message' => 'Pago de servicio registrado exitosamente',
@@ -180,11 +172,9 @@ try {
         if (mysqli_query($conn, $sql_fallback)) {
             $pago_id = mysqli_insert_id($conn);
             
-            // Actualizar el valor total de la caja
-            if ($Fk_Caja > 0 && $monto > 0) {
-                mysqli_query($conn, "UPDATE Cajas SET Valor_Total_Caja = Valor_Total_Caja + $monto WHERE ID_Caja = $Fk_Caja");
-            }
-            
+            // El valor de la caja se actualiza automáticamente por el trigger tr_pago_servicio_insert
+            // que suma costo + comisión. No actualizar aquí para evitar doble suma.
+
             echo json_encode([
                 'success' => true, 
                 'message' => 'Pago de servicio registrado exitosamente',
