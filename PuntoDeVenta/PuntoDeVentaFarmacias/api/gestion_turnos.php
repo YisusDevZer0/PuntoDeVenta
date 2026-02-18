@@ -721,26 +721,20 @@ try {
                 }
             }
             // Compatibilidad: si no hay lotes_json pero sí lote/fecha_caducidad, usar un solo lote
-            if (empty($lotes_array) && $lote !== '' && $fecha_caducidad !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_caducidad)) {
+            if (empty($lotes_array) && ($lote !== '' || ($fecha_caducidad !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_caducidad)))) {
                 $lotes_array = [['lote' => $lote, 'fecha_caducidad' => $fecha_caducidad, 'cantidad' => $existencias_fisicas]];
             }
             
-            // Verificar si ya estaba completado
             $ya_completado = ($registro['Estado'] == 'completado');
-            
-            // Calcular diferencia (total físico vs sistema) para Stock_POS
             $diferencia = $existencias_fisicas - (int)$registro['Existencias_Sistema'];
             
-            // Historial_Lotes: por cada lote, si ya existe sumar cantidad; si no existe, insertar
+            // Historial_Lotes: SOLO sumar si el lote YA EXISTE; si NO existe, insertar nuevo. Nada más.
             $chk_hl_table = $conn->query("SHOW TABLES LIKE 'Historial_Lotes'");
             if ($chk_hl_table && $chk_hl_table->num_rows > 0) {
                 foreach ($lotes_array as $item) {
                     $lote_val = isset($item['lote']) ? trim($item['lote']) : '';
                     $fecha_val = isset($item['fecha_caducidad']) ? trim($item['fecha_caducidad']) : '';
                     $cant = isset($item['cantidad']) ? (int)$item['cantidad'] : 0;
-                    if ($cant <= 0 && $lote_val === '' && $fecha_val === '') {
-                        continue;
-                    }
                     if ($fecha_val !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha_val)) {
                         $fecha_val = '';
                     }
@@ -756,12 +750,14 @@ try {
                     $hl_row = $existe_hl->get_result()->fetch_assoc();
                     $existe_hl->close();
                     if ($hl_row) {
+                        // Lote YA EXISTE: solo sumar cantidad a ese lote
                         $nueva_exist = (int)$hl_row['Existencias'] + $cant;
                         $up_hl = $conn->prepare("UPDATE Historial_Lotes SET Existencias = ?, Usuario_Modifico = ?, Fecha_Registro = NOW() WHERE ID_Historial = ?");
                         $up_hl->bind_param("isi", $nueva_exist, $usuario, $hl_row['ID_Historial']);
                         $up_hl->execute();
                         $up_hl->close();
                     } else {
+                        // Lote NO existe: insertar nuevo registro
                         $ins_hl = $conn->prepare("INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico) VALUES (?, ?, ?, ?, CURDATE(), ?, ?)");
                         $fecha_cad_hl = $fecha_val !== '' ? $fecha_val : null;
                         $ins_hl->bind_param("iissis", $id_prod, $fk_suc, $lote_val, $fecha_cad_hl, $cant, $usuario);
@@ -774,14 +770,6 @@ try {
                             $up_ctrl->execute();
                             $up_ctrl->close();
                         }
-                    }
-                    $chk_glm = $conn->query("SHOW COLUMNS FROM Gestion_Lotes_Movimientos LIKE 'Tipo_Movimiento'");
-                    if ($chk_glm && $chk_glm->num_rows > 0) {
-                        $obs_mov = 'Conteo turno ID_Registro ' . $id_registro;
-                        $ins_mov = $conn->prepare("INSERT INTO Gestion_Lotes_Movimientos (ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo, Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones) VALUES (?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)");
-                        $ins_mov->bind_param("isississ", $id_prod, $cod_barra, $fk_suc, $lote_val, $fecha_val, $cant, $usuario, $obs_mov);
-                        $ins_mov->execute();
-                        $ins_mov->close();
                     }
                 }
             }
@@ -829,51 +817,63 @@ try {
             $stmt_update->execute();
             $stmt_update->close();
             
-            // Insertar en InventariosStocks_Conteos para que el trigger actualice Stock_POS (stock_pos)
-            // Folio_Prod_Stock: si es AUTO_INCREMENT no lo insertamos (evita Duplicate entry).
-            // Si no es AUTO_INCREMENT, generamos un valor único con MAX+1 para no duplicar PK.
+            // Afectar Stock_POS con la diferencia del conteo (físico - sistema). Si existe tabla
+            // InventariosStocks_Conteos y el trigger, usarla; si falla o no existe, actualizar Stock_POS directo
+            // para que el guardado NUNCA falle por esto.
+            $stock_actualizado = false;
             $chk_inv = $conn->query("SHOW TABLES LIKE 'InventariosStocks_Conteos'");
             if ($chk_inv && $chk_inv->num_rows > 0) {
-                $sql_stock = "SELECT Nombre_Prod, Cod_Barra FROM Stock_POS WHERE ID_Prod_POS = ? AND Fk_sucursal = ? LIMIT 1";
-                $stmt_stock = $conn->prepare($sql_stock);
-                if ($stmt_stock) {
-                    $stmt_stock->bind_param("ii", $id_prod, $fk_suc);
-                    $stmt_stock->execute();
-                    $sp = $stmt_stock->get_result()->fetch_assoc();
-                    $stmt_stock->close();
-                    if ($sp) {
-                        $nombre_prod = $nombre_prod !== '' ? $nombre_prod : ($sp['Nombre_Prod'] ?? '');
-                        $cod_barra = $cod_barra !== '' ? $cod_barra : ($sp['Cod_Barra'] ?? '');
-                        $precio_v = 0.0;
-                        $precio_c = 0.0;
-                        $contabilizado = (int)$registro['Existencias_Sistema'];
-                        $sistema = 'Conteo turno farmacias';
-                        $id_hod = isset($_SESSION['ID_H_O_D']) ? (string)$_SESSION['ID_H_O_D'] : '0';
-                        $fecha_inv = date('Y-m-d');
-                        $tipo_ajuste = 'Conteo diario';
-                        $anaquel = '';
-                        $repisa = '';
-                        $col_folio = $conn->query("SHOW COLUMNS FROM InventariosStocks_Conteos WHERE Field = 'Folio_Prod_Stock'");
-                        $folio_auto = false;
-                        if ($col_folio && $row_f = $col_folio->fetch_assoc()) {
-                            $folio_auto = (stripos($row_f['Extra'] ?? '', 'auto_increment') !== false);
-                        }
-                        if ($folio_auto) {
-                            $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                            $ins_inv->bind_param("issddiiisssssss", $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
-                        } else {
-                            $res_max = $conn->query("SELECT COALESCE(MAX(Folio_Prod_Stock), 0) + 1 AS next_folio FROM InventariosStocks_Conteos");
-                            $next_folio = 1;
-                            if ($res_max && $row_max = $res_max->fetch_assoc()) {
-                                $next_folio = (int)$row_max['next_folio'];
+                try {
+                    $sql_stock = "SELECT Nombre_Prod, Cod_Barra FROM Stock_POS WHERE ID_Prod_POS = ? AND Fk_sucursal = ? LIMIT 1";
+                    $stmt_stock = $conn->prepare($sql_stock);
+                    if ($stmt_stock) {
+                        $stmt_stock->bind_param("ii", $id_prod, $fk_suc);
+                        $stmt_stock->execute();
+                        $sp = $stmt_stock->get_result()->fetch_assoc();
+                        $stmt_stock->close();
+                        if ($sp) {
+                            $nombre_prod = $nombre_prod !== '' ? $nombre_prod : ($sp['Nombre_Prod'] ?? '');
+                            $cod_barra = $cod_barra !== '' ? $cod_barra : ($sp['Cod_Barra'] ?? '');
+                            $precio_v = 0.0;
+                            $precio_c = 0.0;
+                            $contabilizado = (int)$registro['Existencias_Sistema'];
+                            $sistema = 'Conteo turno farmacias';
+                            $id_hod = isset($_SESSION['ID_H_O_D']) ? (string)$_SESSION['ID_H_O_D'] : '0';
+                            $fecha_inv = date('Y-m-d');
+                            $tipo_ajuste = 'Conteo diario';
+                            $anaquel = '';
+                            $repisa = '';
+                            $col_folio = $conn->query("SHOW COLUMNS FROM InventariosStocks_Conteos WHERE Field = 'Folio_Prod_Stock'");
+                            $folio_auto = false;
+                            if ($col_folio && $row_f = $col_folio->fetch_assoc()) {
+                                $folio_auto = (stripos($row_f['Extra'] ?? '', 'auto_increment') !== false);
                             }
-                            $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                            $ins_inv->bind_param("iissiddiiisssssss", $next_folio, $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
+                            if ($folio_auto) {
+                                $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                $ins_inv->bind_param("issiddiiisssssss", $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
+                            } else {
+                                $res_max = $conn->query("SELECT COALESCE(MAX(Folio_Prod_Stock), 0) + 1 AS next_folio FROM InventariosStocks_Conteos");
+                                $next_folio = 1;
+                                if ($res_max && $row_max = $res_max->fetch_assoc()) {
+                                    $next_folio = (int)$row_max['next_folio'];
+                                }
+                                $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                $ins_inv->bind_param("iissiddiiisssssss", $next_folio, $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
+                            }
+                            $ins_inv->execute();
+                            $ins_inv->close();
+                            $stock_actualizado = true;
                         }
-                        $ins_inv->execute();
-                        $ins_inv->close();
                     }
+                } catch (Exception $e) {
+                    // Si falla el insert en InventariosStocks_Conteos, no romper el guardado
                 }
+            }
+            if (!$stock_actualizado && $diferencia != 0) {
+                $up_stock = $conn->prepare("UPDATE Stock_POS SET Existencias_R = IFNULL(Existencias_R, 0) + ? WHERE ID_Prod_POS = ? AND Fk_sucursal = ?");
+                $up_stock->bind_param("iii", $diferencia, $id_prod, $fk_suc);
+                $up_stock->execute();
+                $up_stock->close();
             }
             
             // Actualizar contador de completados solo si no estaba completado antes
