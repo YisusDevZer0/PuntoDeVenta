@@ -30,15 +30,18 @@ if ($result->num_rows > 0) {
     $tipos = explode(',', $row['tipos']);
     
     // Tomar el primer valor de cada columna para evitar la repetición
+    $fechaCad = isset($fechacaducidad[0]) ? trim($fechacaducidad[0]) : '';
+    $loteVal = isset($lotes[0]) ? trim($lotes[0]) : '';
     $data = array(
         "id" => $ids[0],
         "codigo" => $row["Cod_Barra"],
         "descripcion" => $descripciones[0],
         "cantidad" => [1],
-        "existencia" => $fechacaducidad[0],
+        "existencia" => $fechaCad,
+        "fechacaducidad" => $fechaCad,
         "precio" => $precios[0],
         "preciocompra" => $precioscompra[0],
-        "lote" => $lotes[0],
+        "lote" => $loteVal,
         "clave" => $claves[0],
         "tipo" => $tipos[0],
         "eliminar" => ""

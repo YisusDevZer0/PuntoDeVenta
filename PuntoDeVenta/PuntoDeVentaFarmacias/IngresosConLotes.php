@@ -1,19 +1,17 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'$fecha
-  $sql = "SELECT * FROM Solicitudes_Ingresos ORDER BY IdProdCedis  DESC LIMIT 1";
-  $resultset = mysqli_query($conn, $sql) or die("database error:" . mysqli_error($conn));
-  $Ticketss = mysqli_fetch_assoc($resultset);
-  
-  $monto1 = $Ticketss['NumOrden'];
-  $monto2 = 1;
-  $totalmonto = $monto1 + $monto2;
-  
 
-  
-  
-
-
+// # Solicitud: siguiente número según BD; después de guardar y recargar será 176, 177, etc.
+$sql = "SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM Solicitudes_Ingresos";
+$resultset = mysqli_query($conn, $sql);
+$rowNum = mysqli_fetch_assoc($resultset);
+$maxSolicitudes = (int)($rowNum['maxNum'] ?? 0);
+$sql2 = "SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM IngresosFarmacias";
+$resultset2 = @mysqli_query($conn, $sql2);
+$rowNum2 = $resultset2 ? mysqli_fetch_assoc($resultset2) : null;
+$maxIngresos = $rowNum2 ? (int)($rowNum2['maxNum'] ?? 0) : 0;
+$totalmonto = max($maxSolicitudes, $maxIngresos) + 1;
 
 
 ?><!DOCTYPE html>
@@ -691,22 +689,37 @@ $('#codigoEscaneado').autocomplete({
     } else if ($('#detIdModal' + articulo.id).length) {
       mostrarMensaje('El artículo ya se encuentra incluido');
     } else {
-      var row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-      if (row.length) {
-        var cantidadActual = parseInt(row.find('.cantidad input').val());
-        var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
+      var loteArt = (articulo.lote || '').toString().trim();
+      var fechaArt = (articulo.fechacaducidad || articulo.existencia || '').toString().trim();
+      var cantidadSumar = parseInt(articulo.cantidad) || 1;
+
+      // Buscar fila existente con mismo producto + mismo lote + misma fecha (para sumar cantidad)
+      var filasMismoProducto = $('#tablaAgregarArticulos tbody tr[data-id="' + articulo.id + '"]');
+      var filaExistente = null;
+      filasMismoProducto.each(function() {
+        var loteFila = ($(this).find('input[name="Lote[]"]').val() || '').toString().trim();
+        var fechaFila = ($(this).find('input[name="FechaCaducidad[]"]').val() || '').toString().trim();
+        if (loteFila === loteArt && fechaFila === fechaArt) {
+          filaExistente = $(this);
+          return false; // break
+        }
+      });
+
+      if (filaExistente && filaExistente.length) {
+        var cantidadActual = parseInt(filaExistente.find('.cantidad input').val()) || 0;
+        var nuevaCantidad = cantidadActual + cantidadSumar;
         if (nuevaCantidad < 0) {
           mostrarMensaje('La cantidad no puede ser negativa');
           return;
         }
-        row.find('.cantidad input').val(nuevaCantidad);
-        
-    
-     
-        
-      } else {
-       
-        var tr = '';
+        filaExistente.find('.cantidad input').val(nuevaCantidad);
+        limpiarCampo();
+        $('#codigoEscaneado').focus();
+        return;
+      }
+
+      // No hay fila con mismo producto+lote+fecha; agregar nueva fila
+      var tr = '';
         var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
       
 
@@ -719,7 +732,7 @@ $('#codigoEscaneado').autocomplete({
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
         tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
 tr += '<td class="ExistenciasEnBd"><input class="form-control input-fecha-caducidad" style="font-size: 0.75rem !important;" type="date" name="FechaCaducidad[]" value="' + (articulo.fechacaducidad || articulo.existencia || '') + '" placeholder="Requerido" title="Fecha de caducidad" /></td>';
-tr += '<td class="Diferenciaresultante"><input class="form-control input-lote" style="font-size: 0.75rem !important;" type="text" name="Lote[]" placeholder="Requerido" title="Número de lote" /></td>';
+tr += '<td class="Diferenciaresultante"><input class="form-control input-lote" style="font-size: 0.75rem !important;" type="text" name="Lote[]" value="' + (articulo.lote || '') + '" placeholder="Requerido" title="Número de lote" /></td>';
 tr += '<td class="Preciototal"><input class="form-control input-precio-max" style="font-size: 0.75rem !important;" type="text" name="PrecioMaximo[]" placeholder="Precio máx." title="Precio máximo" /></td>';
 tr += '<td style="visibility:collapse; display:none;" class="Proveedor"><input class="form-control proveedor-input" style="font-size: 0.75rem !important;" id="proveedor" type="text" name="Proveedor[]" /></td>';
 tr += '<td   style="visibility:collapse; display:none;"class="factura"><input class="form-control factura-input" style="font-size: 0.75rem !important;" id="facturanumber" type="text" name="FacturaNumber[]" /></td>';
@@ -745,14 +758,10 @@ tr += '<td   style="visibility:collapse; display:none;"class="numerorden"><input
         $('#tablaAgregarArticulos tbody').append(tr);
         $('#tablaAgregarArticulos tbody tr:last-child').find('.proveedor-input').val(selectedAdjustment);
         $('#tablaAgregarArticulos tbody tr:last-child').find('.factura-input').val(selectedfactura);
-        
-     
-       
-      }
-    }
 
     $('#codigoEscaneado').val('');
     $('#codigoEscaneado').focus();
+    }
   }
 
   

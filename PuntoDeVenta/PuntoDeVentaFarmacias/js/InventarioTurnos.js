@@ -378,7 +378,7 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     });
 });
 
-// Contar producto: muestra lotes y fechas del producto, opción de seleccionar o agregar nuevo
+// Contar producto: muestra lotes existentes, permite agregar varios lotes con cantidad cada uno
 $(document).on('click', '.btn-contar-producto', function() {
     var idRegistro = $(this).data('id');
     var idProducto = $(this).data('producto');
@@ -393,30 +393,38 @@ $(document).on('click', '.btn-contar-producto', function() {
     var listaLotesHtml = '';
     if (lotes.length > 0) {
         listaLotesHtml = '<div class="mb-3">' +
-            '<label class="form-label fw-semibold mb-2"><i class="fa-solid fa-list me-1"></i>Lotes y fechas de caducidad del producto</label>' +
-            '<div class="list-group list-group-flush border rounded" style="max-height: 180px; overflow-y: auto;">';
+            '<label class="form-label fw-semibold mb-2"><i class="fa-solid fa-list me-1"></i>Lotes y fechas de caducidad del producto (existentes)</label>' +
+            '<div class="list-group list-group-flush border rounded" style="max-height: 160px; overflow-y: auto;">';
         lotes.forEach(function(l, i) {
             var fechaStr = l.Fecha_Caducidad ? (l.Fecha_Caducidad.split(' ')[0] || l.Fecha_Caducidad) : '';
             var fechaDisplay = fechaStr ? new Date(fechaStr + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
-            listaLotesHtml += '<a href="#" class="list-group-item list-group-item-action btn-seleccionar-lote-conteo" data-lote="' + (l.Lote || '').replace(/"/g, '&quot;') + '" data-fecha="' + fechaStr + '" data-index="' + i + '">' +
-                '<span class="fw-semibold">' + (l.Lote || '-') + '</span> · Cad: ' + fechaDisplay + ' · ' + (l.Existencias || 0) + ' und</a>';
+            listaLotesHtml += '<div class="list-group-item d-flex justify-content-between align-items-center">' +
+                '<span><strong>' + (l.Lote || '-') + '</strong> · Cad: ' + fechaDisplay + ' · <span class="text-muted">' + (l.Existencias || 0) + ' und</span></span>' +
+                '</div>';
         });
-        listaLotesHtml += '</div><small class="text-muted">Haz clic en un lote para usarlo en este conteo</small></div>';
+        listaLotesHtml += '</div><small class="text-muted">Si agregas el mismo lote abajo, el sistema sumará la cantidad a este.</small></div>';
     }
     
+    var filaLoteHtml = function(idx) {
+        return '<div class="row g-2 align-items-end fila-lote-conteo mb-2" data-idx="' + idx + '">' +
+            '<div class="col-4"><input type="text" class="form-control form-control-sm inp-lote" placeholder="Lote"></div>' +
+            '<div class="col-3"><input type="date" class="form-control form-control-sm inp-fecha" placeholder="Cad."></div>' +
+            '<div class="col-3"><input type="number" class="form-control form-control-sm inp-cantidad" placeholder="Cant." min="0" value="0"></div>' +
+            '<div class="col-2"><button type="button" class="btn btn-outline-danger btn-sm btn-quitar-lote" title="Quitar"><i class="fa-solid fa-times"></i></button></div>' +
+            '</div>';
+    };
+    
     var html = '<div class="text-start conteo-modal-fields">' +
-        '<div class="mb-3">' +
-        '<label class="form-label fw-semibold mb-1">Existencias físicas <span class="text-danger">*</span></label>' +
-        '<input type="number" id="existencias-fisicas" class="form-control form-control-lg" placeholder="Cantidad contada" min="0" required autofocus>' +
-        '</div>' +
         listaLotesHtml +
-        '<div class="mb-3">' +
-        '<label class="form-label fw-semibold mb-1"><i class="fa-solid fa-plus me-1"></i>Cambiar o agregar lote nuevo</label>' +
-        '<div class="row g-2">' +
-        '<div class="col-6"><input type="text" id="conteo-lote" class="form-control" placeholder="Lote (ej. LOTE-2024-001)"></div>' +
-        '<div class="col-6"><input type="date" id="conteo-fecha-caducidad" class="form-control" placeholder="Fecha cad."></div>' +
+        '<div class="mb-2">' +
+        '<label class="form-label fw-semibold mb-1"><i class="fa-solid fa-plus me-1"></i>Lotes a registrar (lote, fecha cad., cantidad)</label>' +
+        '<div id="contenedor-filas-lote">' + filaLoteHtml(0) + '</div>' +
+        '<button type="button" class="btn btn-sm btn-outline-primary mt-2" id="btn-agregar-lote-conteo"><i class="fa-solid fa-plus me-1"></i>Agregar otro lote</button>' +
         '</div>' +
-        '<small class="text-muted">Opcional. Si ingresas lote y fecha nuevos se registrarán en historial de lotes.</small>' +
+        '<div class="mb-3">' +
+        '<label class="form-label fw-semibold mb-1">Total existencias físicas <span class="text-danger">*</span></label>' +
+        '<input type="number" id="existencias-fisicas-total" class="form-control form-control-lg" placeholder="Total contado" min="0">' +
+        '<small class="text-muted">Se rellena con la suma de cantidades por lote. Puedes editarlo si el total es distinto.</small>' +
         '</div>' +
         '</div>';
     
@@ -426,42 +434,61 @@ $(document).on('click', '.btn-contar-producto', function() {
         showCancelButton: true,
         confirmButtonText: '<i class="fa-solid fa-check me-1"></i> Guardar',
         cancelButtonText: 'Cancelar',
-        width: '520px',
+        width: '560px',
         customClass: { confirmButton: 'btn btn-primary', cancelButton: 'btn btn-outline-secondary' },
         didOpen: function() {
-            $(document).off('click.conteoLote').on('click.conteoLote', '.btn-seleccionar-lote-conteo', function(e) {
-                e.preventDefault();
-                var lote = $(this).data('lote');
-                var fecha = $(this).data('fecha') || '';
-                $('#conteo-lote').val(lote);
-                $('#conteo-fecha-caducidad').val(fecha);
-                $('.btn-seleccionar-lote-conteo').removeClass('active');
-                $(this).addClass('active');
+            var $cont = $('#contenedor-filas-lote');
+            var $total = $('#existencias-fisicas-total');
+            function actualizarTotal() {
+                var sum = 0;
+                $cont.find('.inp-cantidad').each(function() {
+                    sum += parseInt($(this).val(), 10) || 0;
+                });
+                $total.val(sum);
+            }
+            $cont.on('input', '.inp-cantidad', actualizarTotal);
+            $('#btn-agregar-lote-conteo').on('click', function() {
+                var idx = $cont.find('.fila-lote-conteo').length;
+                $cont.append(filaLoteHtml(idx));
             });
+            $cont.on('click', '.btn-quitar-lote', function() {
+                var $fila = $(this).closest('.fila-lote-conteo');
+                if ($cont.find('.fila-lote-conteo').length > 1) {
+                    $fila.remove();
+                    actualizarTotal();
+                }
+            });
+            actualizarTotal();
         },
         preConfirm: () => {
-            var ex = document.getElementById('existencias-fisicas').value;
-            if (!ex || ex.trim() === '' || parseInt(ex, 10) < 0) {
-                Swal.showValidationMessage('Ingrese existencias físicas válidas');
+            var totalEx = parseInt($('#existencias-fisicas-total').val(), 10) || 0;
+            if (totalEx < 0) {
+                Swal.showValidationMessage('El total de existencias debe ser mayor o igual a 0');
                 return false;
             }
+            var lotesEnviar = [];
+            $('#contenedor-filas-lote .fila-lote-conteo').each(function() {
+                var lote = $(this).find('.inp-lote').val().trim();
+                var fecha = $(this).find('.inp-fecha').val() || '';
+                var cant = parseInt($(this).find('.inp-cantidad').val(), 10) || 0;
+                if (lote || fecha || cant > 0) {
+                    lotesEnviar.push({ lote: lote, fecha_caducidad: fecha, cantidad: cant });
+                }
+            });
             return {
-                existencias: ex,
-                lote: document.getElementById('conteo-lote').value.trim(),
-                fecha: document.getElementById('conteo-fecha-caducidad').value || ''
+                existencias_fisicas_total: totalEx,
+                lotes: lotesEnviar
             };
         }
     }).then((result) => {
-        $(document).off('click.conteoLote');
         if (result.isConfirmed && result.value) {
             var d = result.value;
             var payload = {
                 accion: 'contar_producto',
                 id_registro: idRegistro,
-                existencias_fisicas: d.existencias
+                existencias_fisicas: d.existencias_fisicas_total,
+                lotes_json: JSON.stringify(d.lotes || [])
             };
-            if (d.lote) payload.lote = d.lote;
-            if (d.fecha) payload.fecha_caducidad = d.fecha;
             $.ajax({
                 url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
@@ -487,7 +514,7 @@ $(document).on('click', '.btn-contar-producto', function() {
                 },
                 error: function(xhr, status, error) {
                     console.error('Error al contar producto:', error);
-                    Swal.fire('Error', 'Error al comunicarse con el servidor', 'error');
+                    Swal.fire('Error', (xhr.responseJSON && xhr.responseJSON.message) || 'Error al comunicarse con el servidor', 'error');
                 }
             });
         }

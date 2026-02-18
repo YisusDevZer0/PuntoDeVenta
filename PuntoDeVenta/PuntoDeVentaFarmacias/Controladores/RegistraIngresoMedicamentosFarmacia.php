@@ -82,6 +82,18 @@ if (count($rows_to_insert) === 0) {
     exit();
 }
 
+// Agrupar por producto + lote + fecha de caducidad: sumar cantidades y conservar una fila por grupo
+$agrupados = [];
+foreach ($rows_to_insert as $r) {
+    $clave = $r['ID_Prod_POS'] . '|' . $r['Lote'] . '|' . $r['Fecha_Caducidad'];
+    if (!isset($agrupados[$clave])) {
+        $agrupados[$clave] = $r;
+    } else {
+        $agrupados[$clave]['Contabilizado'] += $r['Contabilizado'];
+    }
+}
+$rows_to_insert = array_values($agrupados);
+
 $placeholders = [];
 $values = [];
 $types_arr = []; // tipos por columna: s=string, i=int, d=double
