@@ -830,9 +830,11 @@ try {
             $stmt_update->close();
             
             // Insertar en InventariosStocks_Conteos para que el trigger actualice Stock_POS (stock_pos)
+            // No insertar Folio_Prod_Stock: en muchas BD es PK y/o AUTO_INCREMENT; usarlo provocaría
+            // "Duplicate entry" al contar de nuevo el mismo producto. El trigger identifica por Cod_Barra/ID_Prod_POS + Fk_sucursal.
             $chk_inv = $conn->query("SHOW TABLES LIKE 'InventariosStocks_Conteos'");
             if ($chk_inv && $chk_inv->num_rows > 0) {
-                $sql_stock = "SELECT Folio_Prod_Stock, Nombre_Prod, Cod_Barra FROM Stock_POS WHERE ID_Prod_POS = ? AND Fk_sucursal = ? LIMIT 1";
+                $sql_stock = "SELECT Nombre_Prod, Cod_Barra FROM Stock_POS WHERE ID_Prod_POS = ? AND Fk_sucursal = ? LIMIT 1";
                 $stmt_stock = $conn->prepare($sql_stock);
                 if ($stmt_stock) {
                     $stmt_stock->bind_param("ii", $id_prod, $fk_suc);
@@ -840,7 +842,6 @@ try {
                     $sp = $stmt_stock->get_result()->fetch_assoc();
                     $stmt_stock->close();
                     if ($sp) {
-                        $folio_stock = (int)$sp['Folio_Prod_Stock'];
                         $nombre_prod = $nombre_prod !== '' ? $nombre_prod : ($sp['Nombre_Prod'] ?? '');
                         $cod_barra = $cod_barra !== '' ? $cod_barra : ($sp['Cod_Barra'] ?? '');
                         $precio_v = 0.0;
@@ -852,14 +853,8 @@ try {
                         $tipo_ajuste = 'Conteo diario';
                         $anaquel = '';
                         $repisa = '';
-                        $chk_col_folio = $conn->query("SHOW COLUMNS FROM InventariosStocks_Conteos LIKE 'Folio_Prod_Stock'");
-                        if ($chk_col_folio && $chk_col_folio->num_rows > 0) {
-                            $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (Folio_Prod_Stock, ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                            $ins_inv->bind_param("iissiddiiisssssss", $folio_stock, $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
-                        } else {
-                            $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                            $ins_inv->bind_param("issiddiiisssssss", $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
-                        }
+                        $ins_inv = $conn->prepare("INSERT INTO InventariosStocks_Conteos (ID_Prod_POS, Cod_Barra, Nombre_Prod, Fk_sucursal, Precio_Venta, Precio_C, Contabilizado, StockEnMomento, Diferencia, Sistema, AgregadoPor, ID_H_O_D, FechaInventario, Tipo_Ajuste, Anaquel, Repisa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        $ins_inv->bind_param("issddiiisssssss", $id_prod, $cod_barra, $nombre_prod, $fk_suc, $precio_v, $precio_c, $contabilizado, $existencias_fisicas, $diferencia, $sistema, $usuario, $id_hod, $fecha_inv, $tipo_ajuste, $anaquel, $repisa);
                         $ins_inv->execute();
                         $ins_inv->close();
                     }
