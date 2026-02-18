@@ -2,15 +2,28 @@
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'$fecha
 
-// # Solicitud: siguiente número según BD; después de guardar y recargar será 176, 177, etc.
-$sql = "SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM Solicitudes_Ingresos";
-$resultset = mysqli_query($conn, $sql);
-$rowNum = mysqli_fetch_assoc($resultset);
-$maxSolicitudes = (int)($rowNum['maxNum'] ?? 0);
-$sql2 = "SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM IngresosFarmacias";
-$resultset2 = @mysqli_query($conn, $sql2);
-$rowNum2 = $resultset2 ? mysqli_fetch_assoc($resultset2) : null;
-$maxIngresos = $rowNum2 ? (int)($rowNum2['maxNum'] ?? 0) : 0;
+// # Solicitud: siguiente número por sucursal (176, 177... por cada sucursal)
+$fkSucursal = isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : 0;
+$maxSolicitudes = 0;
+$maxIngresos = 0;
+if ($fkSucursal > 0) {
+    $stmtSol = $conn->prepare("SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM Solicitudes_Ingresos WHERE Fk_Sucursal = ?");
+    if ($stmtSol) {
+        $stmtSol->bind_param("i", $fkSucursal);
+        $stmtSol->execute();
+        $resSol = $stmtSol->get_result();
+        if ($r = $resSol->fetch_assoc()) $maxSolicitudes = (int)($r['maxNum'] ?? 0);
+        $stmtSol->close();
+    }
+    $stmtIng = $conn->prepare("SELECT COALESCE(MAX(NumOrden), 0) AS maxNum FROM IngresosFarmacias WHERE Fk_Sucursal = ?");
+    if ($stmtIng) {
+        $stmtIng->bind_param("i", $fkSucursal);
+        $stmtIng->execute();
+        $resIng = $stmtIng->get_result();
+        if ($r = $resIng->fetch_assoc()) $maxIngresos = (int)($r['maxNum'] ?? 0);
+        $stmtIng->close();
+    }
+}
 $totalmonto = max($maxSolicitudes, $maxIngresos) + 1;
 
 
