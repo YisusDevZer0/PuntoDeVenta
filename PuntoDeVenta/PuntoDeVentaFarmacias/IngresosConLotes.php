@@ -333,6 +333,7 @@ $totalmonto = max($maxSolicitudes, $maxIngresos) + 1;
 <!-- Main content - Interfaz mejorada -->
 <div class="container-fluid py-3">
   <input type="hidden" id="nombreUsuario" value="<?php echo htmlspecialchars($row['Nombre_Apellidos'] ?? ''); ?>">
+  <input type="hidden" id="fkSucursalIngresos" value="<?php echo isset($row['Fk_Sucursal']) ? (int)$row['Fk_Sucursal'] : ''; ?>">
 
   <!-- Hero / Título del módulo -->
   <div class="page-hero">
@@ -614,6 +615,8 @@ document.getElementById('numerofactura').addEventListener('change', function() {
   function buscarArticulo(codigoEscaneado) {
   var formData = new FormData();
   formData.append('codigoEscaneado', codigoEscaneado);
+  var fkSuc = $('#fkSucursalIngresos').val();
+  if (fkSuc) formData.append('fkSucursal', fkSuc);
 
   $.ajax({
     url: "Controladores/BusquedaPorEscaner.php",
@@ -659,14 +662,14 @@ $('#codigoEscaneado').keyup(function (event) {
 // Agrega el autocompletado al campo de búsqueda
 $('#codigoEscaneado').autocomplete({
   source: function (request, response) {
-    // Realiza una solicitud AJAX para obtener los resultados de autocompletado
+    var params = { term: request.term };
+    var fkSuc = $('#fkSucursalIngresos').val();
+    if (fkSuc) params.fkSucursal = fkSuc;
     $.ajax({
       url: 'Controladores/DespliegaAutoComplete.php',
       type: 'GET',
       dataType: 'json',
-      data: {
-        term: request.term
-      },
+      data: params,
       success: function (data) {
         response(data);
       }
