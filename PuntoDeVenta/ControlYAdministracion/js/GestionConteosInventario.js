@@ -1,13 +1,22 @@
-// Cargar sucursales en el filtro
+var BASE_URL_CONFIG = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion';
+
+// Cargar sucursales en el filtro y en selects de configuración
 function CargarSucursales() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataSucursales.php", 
+    $.get(BASE_URL_CONFIG + "/Controladores/DataSucursales.php", 
         function(data) {
             if (data && data.length > 0) {
                 var options = '<option value="">Todas las sucursales</option>';
+                var optionsConfig = '<option value="0">Global (por defecto)</option>';
+                var optionsModal = '<option value="0">Global</option>';
                 $.each(data, function(i, sucursal) {
                     options += '<option value="' + sucursal.ID_Sucursal + '">' + sucursal.Nombre_Sucursal + '</option>';
+                    optionsConfig += '<option value="' + sucursal.ID_Sucursal + '">' + sucursal.Nombre_Sucursal + '</option>';
+                    optionsModal += '<option value="' + sucursal.ID_Sucursal + '">' + sucursal.Nombre_Sucursal + '</option>';
                 });
                 $('#filtroSucursal').html(options);
+                if ($('#configSucursalSelect').length) $('#configSucursalSelect').html(optionsConfig);
+                if ($('#configEmpleadoSucursal').length) $('#configEmpleadoSucursal').html('<option value="0">Todas</option>' + optionsModal.replace('<option value="0">Global</option>', ''));
+                if ($('#modalPeriodoSucursal').length) $('#modalPeriodoSucursal').html(optionsModal);
             }
         }, 'json')
         .fail(function() {
@@ -288,10 +297,156 @@ window.ExportarConteosInventario = function() {
     }
 }
 
+// --- Configuración inventario por turnos (periodos, sucursal, empleado) ---
+var configSucursalList = [];
+
+function CargarConfigInventario() {
+    $.get(BASE_URL_CONFIG + '/api/config_inventario_turnos.php', function(data) {
+        if (data.periodos) renderTablaPeriodos(data.periodos);
+        if (data.config_sucursal) {
+            configSucursalList = data.config_sucursal;
+            actualizarFormConfigSucursal(data.config_sucursal);
+        }
+        if (data.config_empleados) renderListaConfigEmpleados(data.config_empleados);
+    }, 'json').fail(function() { console.error('Error al cargar configuración'); });
+}
+
+function renderTablaPeriodos(periodos) {
+    var mapSuc = {};
+    $('#configSucursalSelect option').each(function() { var v = $(this).val(); if (v !== '0') mapSuc[v] = $(this).text(); });
+    mapSuc['0'] = 'Global';
+    var tbody = '';
+    (periodos || []).forEach(function(p) {
+        var suc = mapSuc[p.Fk_sucursal] || ('Suc. ' + p.Fk_sucursal);
+        tbody += '<tr><td>' + suc + '</td><td>' + (p.Fecha_Inicio || '') + '</td><td>' + (p.Fecha_Fin || '') + '</td><td>' + (p.Nombre_Periodo || '-') + '</td><td>' + (p.Codigo_Externo || '-') + '</td><td>' + (p.Activo ? 'Sí' : 'No') + '</td><td><button type="button" class="btn btn-sm btn-outline-secondary" onclick="editarPeriodo(' + p.ID_Periodo + ',\'' + (p.Fecha_Inicio||'') + '\',\'' + (p.Fecha_Fin||'') + '\',' + p.Fk_sucursal + ',\'' + (p.Nombre_Periodo||'').replace(/'/g, "\\'") + '\',\'' + (p.Codigo_Externo||'').replace(/'/g, "\\'") + '\',' + (p.Activo?1:0) + ')">Editar</button></td></tr>';
+    });
+    $('#tablaPeriodos tbody').html(tbody || '<tr><td colspan="7" class="text-muted">No hay periodos. Agrega uno para restringir por fechas.</td></tr>');
+}
+
+function abrirModalPeriodo() {
+    $('#modalPeriodoId').val('');
+    $('#modalPeriodoInicio').val('');
+    $('#modalPeriodoFin').val('');
+    $('#modalPeriodoNombre').val('');
+    $('#modalPeriodoCodigo').val('');
+    $('#modalPeriodoActivo').prop('checked', true);
+    $('#modalPeriodo').modal('show');
+}
+
+function editarPeriodo(id, inicio, fin, fkSuc, nombre, codigo, activo) {
+    $('#modalPeriodoId').val(id);
+    $('#modalPeriodoInicio').val(inicio);
+    $('#modalPeriodoFin').val(fin);
+    $('#modalPeriodoNombre').val(nombre || '');
+    $('#modalPeriodoCodigo').val(codigo || '');
+    $('#modalPeriodoActivo').prop('checked', !!activo);
+    $('#modalPeriodoSucursal').val(fkSuc || '0');
+    $('#modalPeriodo').modal('show');
+}
+
+function guardarPeriodo() {
+    var id = $('#modalPeriodoId').val();
+    var fk_sucursal = $('#modalPeriodoSucursal').val() || 0;
+    var Fecha_Inicio = $('#modalPeriodoInicio').val();
+    var Fecha_Fin = $('#modalPeriodoFin').val();
+    var Nombre_Periodo = $('#modalPeriodoNombre').val();
+    var Codigo_Externo = $('#modalPeriodoCodigo').val();
+    var Activo = $('#modalPeriodoActivo').is(':checked') ? 1 : 0;
+    if (!Fecha_Inicio || !Fecha_Fin) { alert('Fecha inicio y fecha fin son obligatorias.'); return; }
+    $.post(BASE_URL_CONFIG + '/api/config_inventario_turnos.php', {
+        accion: 'guardar_periodo',
+        ID_Periodo: id,
+        Fk_sucursal: fk_sucursal,
+        Fecha_Inicio: Fecha_Inicio,
+        Fecha_Fin: Fecha_Fin,
+        Nombre_Periodo: Nombre_Periodo,
+        Codigo_Externo: Codigo_Externo,
+        Activo: Activo
+    }, function(res) {
+        if (res.success) { $('#modalPeriodo').modal('hide'); CargarConfigInventario(); if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Guardado', text: res.message }); else alert(res.message); }
+        else { if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message }); else alert(res.message); }
+    }, 'json').fail(function() { alert('Error de conexión'); });
+}
+
+function actualizarFormConfigSucursal(configs) {
+    if (!configs || !configs.length) return;
+    var sel = $('#configSucursalSelect');
+    if (!sel.length) return;
+    var suc = sel.val() || '0';
+    var c = configs.find(function(x) { return String(x.Fk_sucursal) === String(suc); }) || configs.find(function(x) { return x.Fk_sucursal === 0; });
+    if (c) {
+        $('#configSucursalMaxTurnos').val(c.Max_Turnos_Por_Dia);
+        $('#configSucursalMaxProductos').val(c.Max_Productos_Por_Turno);
+    }
+}
+
+function guardarConfigSucursal() {
+    var Fk_sucursal = $('#configSucursalSelect').val() || 0;
+    var Max_Turnos_Por_Dia = $('#configSucursalMaxTurnos').val() || 0;
+    var Max_Productos_Por_Turno = $('#configSucursalMaxProductos').val() || 50;
+    $.post(BASE_URL_CONFIG + '/api/config_inventario_turnos.php', {
+        accion: 'guardar_config_sucursal',
+        Fk_sucursal: Fk_sucursal,
+        Max_Turnos_Por_Dia: Max_Turnos_Por_Dia,
+        Max_Productos_Por_Turno: Max_Productos_Por_Turno
+    }, function(res) {
+        if (res.success) { CargarConfigInventario(); if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Guardado', text: res.message }); else alert(res.message); }
+        else { if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message }); else alert(res.message); }
+    }, 'json').fail(function() { alert('Error de conexión'); });
+}
+
+function guardarConfigEmpleado() {
+    var Fk_usuario = $('#configEmpleadoUsuario').val();
+    var Fk_sucursal = $('#configEmpleadoSucursal').val() || 0;
+    var Max_Turnos_Por_Dia = $('#configEmpleadoMaxTurnos').val() || 0;
+    var Max_Productos_Por_Turno = $('#configEmpleadoMaxProductos').val() || 0;
+    if (!Fk_usuario) { alert('Selecciona un empleado.'); return; }
+    $.post(BASE_URL_CONFIG + '/api/config_inventario_turnos.php', {
+        accion: 'guardar_config_empleado',
+        Fk_usuario: Fk_usuario,
+        Fk_sucursal: Fk_sucursal,
+        Max_Turnos_Por_Dia: Max_Turnos_Por_Dia,
+        Max_Productos_Por_Turno: Max_Productos_Por_Turno
+    }, function(res) {
+        if (res.success) { CargarConfigInventario(); if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Guardado', text: res.message }); else alert(res.message); }
+        else { if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message }); else alert(res.message); }
+    }, 'json').fail(function() { alert('Error de conexión'); });
+}
+
+function renderListaConfigEmpleados(lista) {
+    var html = '';
+    (lista || []).forEach(function(e) {
+        html += '<div class="border-bottom py-1 small">' + (e.Nombre_Apellidos || 'Id ' + e.Fk_usuario) + ' — Suc. ' + e.Fk_sucursal + ': máx ' + e.Max_Turnos_Por_Dia + ' turnos/día, ' + e.Max_Productos_Por_Turno + ' prod/turno</div>';
+    });
+    $('#listaConfigEmpleados').html(html || '<span class="text-muted">Sin config por empleado. Usa el formulario para agregar.</span>');
+}
+
+function CargarUsuariosParaConfig() {
+    $.get(BASE_URL_CONFIG + '/api/config_inventario_turnos.php', { action: 'usuarios' }, function(data) {
+        var opts = '<option value="">-- Seleccionar --</option>';
+        (data.usuarios || []).forEach(function(u) {
+            opts += '<option value="' + u.Id_PvUser + '">' + (u.Nombre_Apellidos || '') + '</option>';
+        });
+        $('#configEmpleadoUsuario').html(opts);
+    }, 'json');
+}
+
+$(document).on('change', '#configSucursalSelect', function() {
+    var suc = $(this).val();
+    var c = configSucursalList.find(function(x) { return String(x.Fk_sucursal) === String(suc); }) || configSucursalList.find(function(x) { return x.Fk_sucursal === 0; });
+    if (c) {
+        $('#configSucursalMaxTurnos').val(c.Max_Turnos_Por_Dia);
+        $('#configSucursalMaxProductos').val(c.Max_Productos_Por_Turno);
+    } else {
+        $('#configSucursalMaxTurnos').val(0);
+        $('#configSucursalMaxProductos').val(50);
+    }
+});
+
 // Liberar productos contados por sucursal y rango de fechas
 function liberarProductosSucursal(sucursal, fechaDesde, fechaHasta) {
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+        url: BASE_URL_CONFIG + '/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'liberar_productos_sucursal',

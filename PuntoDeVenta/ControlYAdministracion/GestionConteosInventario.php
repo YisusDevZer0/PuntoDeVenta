@@ -61,7 +61,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                             <i class="fa-solid fa-clipboard-check me-2"></i>
                             Gestión de Conteos de Inventario - <?php echo $row['Licencia']?>
                         </h6>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2" id="panelBotonesProductos">
                             <button class="btn btn-primary btn-sm" onclick="CargarProductosContados()">
                                 <i class="fa-solid fa-refresh me-1"></i>Actualizar
                             </button>
@@ -76,6 +76,78 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                         </div>
                     </div>
                     
+                    <!-- Pestañas: Configuración | Productos contados -->
+                    <ul class="nav nav-tabs mb-3" id="tabGestionConteos" role="tablist">
+                        <?php if ($isAdmin): ?>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-config" data-bs-toggle="tab" data-bs-target="#panel-config" type="button" role="tab">Configuración</button>
+                        </li>
+                        <?php endif; ?>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link <?php echo !$isAdmin ? 'active' : ''; ?>" id="tab-productos" data-bs-toggle="tab" data-bs-target="#panel-productos" type="button" role="tab">Productos contados</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Panel Configuración (solo admin) -->
+                    <?php if ($isAdmin): ?>
+                    <div class="tab-pane fade show active" id="panel-config" role="tabpanel">
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-secondary mb-2"><i class="fa-solid fa-calendar-days me-1"></i> Periodos (fechas en que se permite inventario por turnos)</h6>
+                                <p class="small text-muted">Si no hay periodos activos, el inventario se permite cualquier día. Si hay al menos uno, la fecha actual debe estar dentro de un periodo para la sucursal.</p>
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="abrirModalPeriodo()"><i class="fa-solid fa-plus me-1"></i>Nuevo periodo</button>
+                                </div>
+                                <div id="tablaPeriodosContainer"><table class="table table-sm table-bordered" id="tablaPeriodos"><thead><tr><th>Sucursal</th><th>Inicio</th><th>Fin</th><th>Nombre</th><th>Código externo</th><th>Activo</th><th></th></tr></thead><tbody></tbody></table></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-secondary mb-2"><i class="fa-solid fa-store me-1"></i> Configuración por sucursal</h6>
+                                <p class="small text-muted">Máx. turnos por día (0 = sin límite). Máx. productos por turno.</p>
+                                <div class="mb-2">
+                                    <label class="form-label small">Sucursal</label>
+                                    <select class="form-select form-select-sm" id="configSucursalSelect"><option value="0">Global (por defecto)</option></select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Máx. turnos por día</label>
+                                    <input type="number" class="form-control form-control-sm" id="configSucursalMaxTurnos" min="0" value="0" placeholder="0 = sin límite">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Máx. productos por turno</label>
+                                    <input type="number" class="form-control form-control-sm" id="configSucursalMaxProductos" min="1" value="50">
+                                </div>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="guardarConfigSucursal()"><i class="fa-solid fa-save me-1"></i>Guardar</button>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary mb-2"><i class="fa-solid fa-user me-1"></i> Configuración por empleado</h6>
+                                <p class="small text-muted">0 = usar límite de la sucursal.</p>
+                                <div class="mb-2">
+                                    <label class="form-label small">Empleado</label>
+                                    <select class="form-select form-select-sm" id="configEmpleadoUsuario"><option value="">-- Seleccionar --</option></select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Sucursal (0 = todas)</label>
+                                    <select class="form-select form-select-sm" id="configEmpleadoSucursal"><option value="0">Todas</option></select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Máx. turnos por día</label>
+                                    <input type="number" class="form-control form-control-sm" id="configEmpleadoMaxTurnos" min="0" value="0">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Máx. productos por turno</label>
+                                    <input type="number" class="form-control form-control-sm" id="configEmpleadoMaxProductos" min="0" value="0">
+                                </div>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="guardarConfigEmpleado()"><i class="fa-solid fa-save me-1"></i>Guardar</button>
+                                <div id="listaConfigEmpleados" class="mt-3 small"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Panel Productos contados -->
+                    <div class="tab-pane fade <?php echo !$isAdmin ? 'show active' : ''; ?>" id="panel-productos" role="tabpanel">
                     <!-- Filtros -->
                     <div class="row mb-4">
                         <div class="col-md-3">
@@ -165,17 +237,65 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     </div>
                     
                     <div id="tablaProductosContados"></div>
+                    </div>
+                    <!-- fin panel Productos contados -->
                 </div>
             </div>
         </div>
             
         <!-- Footer Start -->
+        <!-- Modal Periodo -->
+        <div class="modal fade" id="modalPeriodo" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Periodo de inventario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="modalPeriodoId" value="">
+                        <div class="mb-2">
+                            <label class="form-label">Sucursal (0 = global)</label>
+                            <select class="form-select form-select-sm" id="modalPeriodoSucursal"><option value="0">Global</option></select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Fecha inicio</label>
+                            <input type="date" class="form-control form-control-sm" id="modalPeriodoInicio">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Fecha fin</label>
+                            <input type="date" class="form-control form-control-sm" id="modalPeriodoFin">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Nombre (opcional)</label>
+                            <input type="text" class="form-control form-control-sm" id="modalPeriodoNombre" placeholder="Ej. Semana 1 Feb 2025">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Código externo (opcional)</label>
+                            <input type="text" class="form-control form-control-sm" id="modalPeriodoCodigo" placeholder="Para integración">
+                        </div>
+                        <div class="mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="modalPeriodoActivo" checked>
+                                <label class="form-check-label" for="modalPeriodoActivo">Activo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="guardarPeriodo()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <?php 
         include "Modales/Modales_Errores.php";
         include "Modales/Modales_Referencias.php";
         include "Footer.php";?>
 
 <script>
+var esAdminGestionConteos = <?php echo $isAdmin ? 'true' : 'false'; ?>;
 $(document).ready(function() {
     // Verificar que las funciones estén disponibles
     if (typeof CargarSucursales === 'undefined') {
@@ -187,8 +307,12 @@ $(document).ready(function() {
     CargarSucursales();
     CargarUsuarios();
     
-    // NO establecer fechas por defecto - dejar vacías para mostrar todos los registros
-    // Si el usuario quiere filtrar por fecha, puede seleccionarlas manualmente
+    if (esAdminGestionConteos && typeof CargarConfigInventario === 'function') {
+        setTimeout(function() {
+            CargarConfigInventario();
+            if (typeof CargarUsuariosParaConfig === 'function') CargarUsuariosParaConfig();
+        }, 500);
+    }
     
     // Cargar productos después de un pequeño delay para asegurar que los selects están cargados
     setTimeout(function() {
