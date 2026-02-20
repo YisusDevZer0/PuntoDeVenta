@@ -23,6 +23,7 @@
                             <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i>Realizar Ventas</a>
                             <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
                             <a href="GeneracionDePagosDeServicios" class="dropdown-item"><i class="fa-solid fa-money-check-dollar"></i>Pago de servicios</a>
+                            <a href="ConsultarProductoOtraSucursal" class="dropdown-item"><i class="fa-solid fa-warehouse"></i>Consultar producto en otra sucursal</a>
                         </div>
                     </div>
 
@@ -97,6 +98,7 @@
                         <a href="#" class="nav-link dropdown-toggle"><i class="fa-solid fa-arrow-right-arrow-left"></i>Traspasos</a>
                         <div class="dropdown-menu bg-transparent border-0">
                             <a href="RealizarTraspasos" class="dropdown-item"><i class="fa-solid fa-exchange-alt"></i>Realizar Traspasos</a>
+                            <a href="SolicitudesTraspasoSucursales" class="dropdown-item"><i class="fa-solid fa-inbox"></i>Solicitudes entre sucursales</a>
                             <a href="ListadoDeTraspasos" class="dropdown-item"><i class="fa-solid fa-list-check"></i>Listado de traspasos</a>
                             <a href="RecepcionTraspasos" class="dropdown-item"><i class="fa-solid fa-truck-ramp-box"></i>Recepción de traspasos (lote y caducidad)</a>
                             <a href="Ingresos" class="dropdown-item"><i class="fa-solid fa-inbox"></i>Solicitar ingresos</a>
