@@ -119,6 +119,87 @@ try {
                 echo json_encode(['success' => false, 'turno' => null]);
             }
             break;
+        
+        case 'verificar_puede_iniciar':
+            // Comprueba si el usuario puede iniciar un turno (periodo vigente, límites). No crea turno.
+            $puede_iniciar = true;
+            $mensaje_bloqueo = '';
+            if ($sucursal <= 0 || empty($usuario)) {
+                $puede_iniciar = false;
+                $mensaje_bloqueo = 'No se pudo obtener sucursal o usuario.';
+            } else {
+                $hoy = date('Y-m-d');
+                $chk_periodos = $conn->query("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Inventario_Turnos_Periodos' LIMIT 1");
+                if ($chk_periodos && $chk_periodos->num_rows > 0) {
+                    $hay_alguno = $conn->query("SELECT 1 FROM Inventario_Turnos_Periodos WHERE Activo = 1 LIMIT 1");
+                    if ($hay_alguno && $hay_alguno->num_rows > 0) {
+                        $sql_periodo = "SELECT 1 FROM Inventario_Turnos_Periodos WHERE Activo = 1 AND ? BETWEEN Fecha_Inicio AND Fecha_Fin AND (Fk_sucursal = ? OR Fk_sucursal = 0) LIMIT 1";
+                        $stmt_p = $conn->prepare($sql_periodo);
+                        if ($stmt_p) {
+                            $stmt_p->bind_param("si", $hoy, $sucursal);
+                            $stmt_p->execute();
+                            $hay_periodo = $stmt_p->get_result()->fetch_assoc();
+                            $stmt_p->close();
+                            if (!$hay_periodo) {
+                                $puede_iniciar = false;
+                                $mensaje_bloqueo = 'El inventario por turnos no está habilitado para esta sucursal en la fecha actual. Verifica los periodos configurados.';
+                            }
+                        }
+                    }
+                }
+                if ($puede_iniciar) {
+                    $chk_config_suc = $conn->query("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Inventario_Turnos_Config_Sucursal' LIMIT 1");
+                    if ($chk_config_suc && $chk_config_suc->num_rows > 0) {
+                        $stmt_cs = $conn->prepare("SELECT Max_Turnos_Por_Dia FROM Inventario_Turnos_Config_Sucursal WHERE Activo = 1 AND (Fk_sucursal = ? OR Fk_sucursal = 0) ORDER BY Fk_sucursal DESC LIMIT 1");
+                        if ($stmt_cs) {
+                            $stmt_cs->bind_param("i", $sucursal);
+                            $stmt_cs->execute();
+                            $cfg_suc = $stmt_cs->get_result()->fetch_assoc();
+                            $stmt_cs->close();
+                            if ($cfg_suc && (int)$cfg_suc['Max_Turnos_Por_Dia'] > 0) {
+                                $stmt_cnt = $conn->prepare("SELECT COUNT(*) as total FROM Inventario_Turnos WHERE Fk_sucursal = ? AND DATE(Fecha_Turno) = CURDATE()");
+                                if ($stmt_cnt) {
+                                    $stmt_cnt->bind_param("i", $sucursal);
+                                    $stmt_cnt->execute();
+                                    $cnt = $stmt_cnt->get_result()->fetch_assoc();
+                                    $stmt_cnt->close();
+                                    if ($cnt && (int)$cnt['total'] >= (int)$cfg_suc['Max_Turnos_Por_Dia']) {
+                                        $puede_iniciar = false;
+                                        $mensaje_bloqueo = 'Se alcanzó el máximo de turnos de inventario permitidos hoy para esta sucursal.';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if ($puede_iniciar && $id_usuario > 0) {
+                    $chk_emp = $conn->query("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'Inventario_Turnos_Config_Empleado' LIMIT 1");
+                    if ($chk_emp && $chk_emp->num_rows > 0) {
+                        $stmt_ce = $conn->prepare("SELECT Max_Turnos_Por_Dia FROM Inventario_Turnos_Config_Empleado WHERE Activo = 1 AND Fk_usuario = ? AND (Fk_sucursal = ? OR Fk_sucursal = 0) ORDER BY Fk_sucursal DESC LIMIT 1");
+                        if ($stmt_ce) {
+                            $stmt_ce->bind_param("ii", $id_usuario, $sucursal);
+                            $stmt_ce->execute();
+                            $cfg_emp = $stmt_ce->get_result()->fetch_assoc();
+                            $stmt_ce->close();
+                            if ($cfg_emp && (int)$cfg_emp['Max_Turnos_Por_Dia'] > 0) {
+                                $stmt_cu = $conn->prepare("SELECT COUNT(*) as total FROM Inventario_Turnos WHERE Fk_sucursal = ? AND DATE(Fecha_Turno) = CURDATE() AND (Usuario_Actual = ? OR Usuario_Inicio = ?)");
+                                if ($stmt_cu) {
+                                    $stmt_cu->bind_param("iss", $sucursal, $usuario, $usuario);
+                                    $stmt_cu->execute();
+                                    $cnt_u = $stmt_cu->get_result()->fetch_assoc();
+                                    $stmt_cu->close();
+                                    if ($cnt_u && (int)$cnt_u['total'] >= (int)$cfg_emp['Max_Turnos_Por_Dia']) {
+                                        $puede_iniciar = false;
+                                        $mensaje_bloqueo = 'Has alcanzado el máximo de turnos de inventario permitidos para hoy.';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            echo json_encode(['success' => true, 'puede_iniciar' => $puede_iniciar, 'mensaje_bloqueo' => $mensaje_bloqueo]);
+            break;
             
         case 'iniciar':
             // Validar que la sucursal sea válida

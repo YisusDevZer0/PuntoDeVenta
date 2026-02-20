@@ -193,6 +193,14 @@ if ($sucursal_id > 0) {
         <div class="container-fluid pt-4 px-4">
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
+                    <!-- Alerta cuando el inventario está bloqueado (periodo o límites) -->
+                    <div id="alerta-inventario-bloqueado" class="alert alert-warning d-none mb-3 align-items-center" role="alert">
+                        <i class="fa-solid fa-lock fa-2x me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Inventario no disponible</strong>
+                            <p class="mb-0 mt-1" id="texto-inventario-bloqueado">El conteo por turnos no está habilitado en este momento.</p>
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                         <h5 class="mb-0 fw-bold" style="color:#0d6efd;">
                             <i class="fa-solid fa-clipboard-list me-2"></i>
