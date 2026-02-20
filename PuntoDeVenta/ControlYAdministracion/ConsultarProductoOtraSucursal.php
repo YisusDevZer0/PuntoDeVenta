@@ -6,7 +6,7 @@ include_once "Controladores/ControladorUsuario.php";
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Consultar producto en otra sucursal - <?php echo $row['Licencia']; ?></title>
+    <title>Producto en otra sucursal - <?php echo $row['Licencia']; ?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <?php include "header.php"; ?>
     <style>
@@ -24,7 +24,7 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="col-12">
                 <div class="bg-light rounded h-100 p-4">
                     <h6 class="mb-4" style="color:#0172b6;">
-                        <i class="fa-solid fa-warehouse me-2"></i>Consultar producto en otra sucursal
+                        <i class="fa-solid fa-warehouse me-2"></i>Producto en otra sucursal
                     </h6>
                     <p class="text-muted small mb-3">Busque por código de barra, nombre o clave. Se mostrará el stock del producto en todas las sucursales. Resaltadas las sucursales con menos existencia que la suya.</p>
                     <div class="row mb-4">

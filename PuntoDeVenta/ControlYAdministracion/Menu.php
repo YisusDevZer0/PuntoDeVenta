@@ -57,7 +57,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
                     <a href="RealizarVentas" class="dropdown-item"><i class="fa-solid fa-hand-holding-dollar"></i> Realizar Ventas</a>
                     <a href="GeneracionDeEncargos" class="dropdown-item"><i class="fa-solid fa-file-invoice"></i>Encargos</a>
                     <a href="GeneracionDePagosDeServicios" class="dropdown-item"><i class="fa-solid fa-money-check-dollar"></i>Pago de servicios</a>
-                    <a href="ConsultarProductoOtraSucursal" class="dropdown-item"><i class="fa-solid fa-warehouse"></i> Consultar producto en otra sucursal</a>
+                    <a href="ConsultarProductoOtraSucursal" class="dropdown-item"><i class="fa-solid fa-warehouse"></i> Producto en otra sucursal</a>
                 </div>
             </div>
             
