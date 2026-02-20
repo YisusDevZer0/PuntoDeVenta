@@ -112,6 +112,9 @@ function CargarProductosTurno(idTurno) {
 
 // Iniciar turno
 function iniciarTurno() {
+    if ($('#btn-iniciar-turno').length && $('#btn-iniciar-turno').prop('disabled')) {
+        return; // Inventario bloqueado (periodo o límites)
+    }
     Swal.fire({
         title: '¿Iniciar nuevo turno de conteo diario?',
         text: 'Se creará un nuevo turno para el día de hoy',

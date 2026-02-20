@@ -175,7 +175,28 @@ function reactivar(){
     });
   });
 </script>
-
+<!-- Abrir modal con origen/destino desde URL (reutilizable desde Consultar producto en otra sucursal) -->
+<script>
+$(function() {
+  var p = new URLSearchParams(location.search);
+  var origen = p.get('origen'), destino = p.get('destino');
+  if (origen && destino) {
+    var $modal = $('#GeneradorDeOrdenesDeTraspasoSucursales');
+    var $selOrigen = $('#sucursalconordenorigen'), $selDestino = $('#sucursalconorden');
+    if ($selOrigen.length && $selDestino.length) {
+      $selOrigen.val(origen);
+      $selDestino.val(destino);
+      $('#sucursalLetrasOrigen').val($selOrigen.find('option:selected').text());
+      $('#sucursalLetras').val($selDestino.find('option:selected').text());
+      if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+        new bootstrap.Modal($modal[0]).show();
+      } else {
+        $modal.modal('show');
+      }
+    }
+  }
+});
+</script>
 
     </div>
   </div>

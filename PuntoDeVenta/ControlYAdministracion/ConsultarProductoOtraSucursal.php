@@ -76,8 +76,10 @@ include_once "Controladores/ControladorUsuario.php";
                     $out.html('<div class="alert alert-info">No hay resultados para "<strong>' + (data.query || '') + '</strong>".</div>');
                     return;
                 }
+                var sucursalActual = data.sucursal_actual || '';
+                var urlTraspaso = 'TraspasosEntreSucursales';
                 var html = '<div class="table-responsive"><table class="table table-bordered table-hover"><thead><tr>' +
-                    '<th>Código</th><th>Producto</th><th>Sucursal</th><th>Existencias</th><th>Min</th><th>Max</th><th></th></tr></thead><tbody>';
+                    '<th>Código</th><th>Producto</th><th>Sucursal</th><th>Existencias</th><th>Acción</th></tr></thead><tbody>';
                 productos.forEach(function (p) {
                     var trClass = '';
                     if (p.es_mi_sucursal) trClass = 'sucursal-mia';
@@ -85,14 +87,17 @@ include_once "Controladores/ControladorUsuario.php";
                     var badges = '';
                     if (p.es_mi_sucursal) badges += ' <span class="badge bg-primary badge-sucursal">Mi sucursal</span>';
                     if (p.menos_que_mi_sucursal) badges += ' <span class="badge bg-warning text-dark badge-sucursal">Menor que mi sucursal</span>';
+                    var btnTraspaso = '';
+                    if (!p.es_mi_sucursal) {
+                        var href = urlTraspaso + '?origen=' + encodeURIComponent(p.Fk_sucursal) + '&destino=' + encodeURIComponent(sucursalActual);
+                        btnTraspaso = '<a href="' + href + '" class="btn btn-sm btn-outline-primary" title="Solicitar traspaso desde esta sucursal"><i class="fa-solid fa-truck"></i> Solicitar traspaso</a>';
+                    }
                     html += '<tr class="' + trClass + '">' +
                         '<td>' + (p.Cod_Barra || '-') + '</td>' +
                         '<td>' + (p.Nombre_Prod || '-') + '</td>' +
                         '<td>' + (p.Nombre_Sucursal || '-') + badges + '</td>' +
                         '<td>' + p.Existencias_R + '</td>' +
-                        '<td>' + p.Min_Existencia + '</td>' +
-                        '<td>' + p.Max_Existencia + '</td>' +
-                        '<td></td></tr>';
+                        '<td>' + btnTraspaso + '</td></tr>';
                 });
                 html += '</tbody></table></div>';
                 $out.html(html);

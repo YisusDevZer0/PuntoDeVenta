@@ -415,17 +415,47 @@ if ($sucursal_id > 0) {
                     success: function(response) {
                         if (response.success && response.turno) {
                             console.log('Turno encontrado después de verificar:', response.turno);
-                            // Recargar la página para mostrar el turno
                             location.reload();
                         } else {
-                            // Cargar productos disponibles sin turno
+                            // Verificar si puede iniciar (periodo, límites); si no, mostrar aviso y deshabilitar botón
+                            $.ajax({
+                                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                                type: 'POST',
+                                data: { accion: 'verificar_puede_iniciar' },
+                                dataType: 'json',
+                                success: function(res) {
+                                    if (res.success && res.puede_iniciar === false) {
+                                        var msg = res.mensaje_bloqueo || 'El inventario no está disponible en este momento.';
+                                        $('#texto-inventario-bloqueado').text(msg);
+                                        $('#alerta-inventario-bloqueado').removeClass('d-none');
+                                        $('#btn-iniciar-turno').prop('disabled', true).prop('title', msg).addClass('disabled');
+                                    } else {
+                                        $('#alerta-inventario-bloqueado').addClass('d-none');
+                                        $('#btn-iniciar-turno').prop('disabled', false).prop('title', '').removeClass('disabled');
+                                    }
+                                }
+                            });
                             setTimeout(function() {
-                                CargarProductosTurno(0); // 0 indica sin turno
+                                CargarProductosTurno(0);
                             }, 300);
                         }
                     },
                     error: function() {
-                        // Cargar productos disponibles sin turno
+                        // Sin respuesta de verificar_turno, comprobar si puede iniciar
+                        $.ajax({
+                            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                            type: 'POST',
+                            data: { accion: 'verificar_puede_iniciar' },
+                            dataType: 'json',
+                            success: function(res) {
+                                if (res.success && res.puede_iniciar === false) {
+                                    var msg = res.mensaje_bloqueo || 'El inventario no está disponible en este momento.';
+                                    $('#texto-inventario-bloqueado').text(msg);
+                                    $('#alerta-inventario-bloqueado').removeClass('d-none');
+                                    $('#btn-iniciar-turno').prop('disabled', true).prop('title', msg).addClass('disabled');
+                                }
+                            }
+                        });
                         setTimeout(function() {
                             CargarProductosTurno(0);
                         }, 300);
