@@ -3,6 +3,13 @@ header('Content-Type: application/json');
 include("db_connect.php");
 include_once "ControladorUsuario.php";
 
+// Parámetros de filtro
+$fechaDesde = isset($_GET['fechaDesde']) ? trim($_GET['fechaDesde']) : '';
+$fechaHasta = isset($_GET['fechaHasta']) ? trim($_GET['fechaHasta']) : '';
+$sucursalOrigen = isset($_GET['sucursalOrigen']) ? trim($_GET['sucursalOrigen']) : '';
+$sucursalDestino = isset($_GET['sucursalDestino']) ? trim($_GET['sucursalDestino']) : '';
+$estatus = isset($_GET['estatus']) ? trim($_GET['estatus']) : '';
+
 // Consulta segura con JOIN a la tabla Sucursales para obtener nombres de origen y destino
 $sql = "SELECT 
     tyc.TraspaNotID, 
@@ -29,12 +36,44 @@ INNER JOIN
     Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
 INNER JOIN 
     Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
-WHERE 
-    MONTH(tyc.AgregadoEl) = MONTH(CURRENT_DATE) 
-    AND YEAR(tyc.AgregadoEl) = YEAR(CURRENT_DATE)";
+WHERE 1=1";
+
+$params = [];
+$types = "";
+
+// Si no hay filtros de fecha, usar mes/año actual por defecto (comportamiento anterior)
+if ($fechaDesde !== '' && $fechaHasta !== '') {
+    $sql .= " AND DATE(tyc.AgregadoEl) >= ? AND DATE(tyc.AgregadoEl) <= ?";
+    $params[] = $fechaDesde;
+    $params[] = $fechaHasta;
+    $types .= "ss";
+} elseif ($fechaDesde === '' && $fechaHasta === '') {
+    $sql .= " AND MONTH(tyc.AgregadoEl) = MONTH(CURRENT_DATE) AND YEAR(tyc.AgregadoEl) = YEAR(CURRENT_DATE)";
+}
+
+if ($sucursalOrigen !== '') {
+    $sql .= " AND tyc.Fk_sucursal = ?";
+    $params[] = $sucursalOrigen;
+    $types .= "i";
+}
+if ($sucursalDestino !== '') {
+    $sql .= " AND tyc.Fk_SucursalDestino = ?";
+    $params[] = $sucursalDestino;
+    $types .= "i";
+}
+if ($estatus !== '') {
+    $sql .= " AND tyc.Estatus = ?";
+    $params[] = $estatus;
+    $types .= "s";
+}
+
+$sql .= " ORDER BY tyc.AgregadoEl DESC";
 
 // Preparar la consulta
 $stmt = $conn->prepare($sql);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
+}
 
 // Ejecutar la consulta
 $stmt->execute();

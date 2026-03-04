@@ -7,7 +7,7 @@ include_once "Controladores/ControladorUsuario.php";
 
 <head>
     <meta charset="utf-8">
-    <title>Listado de productos en cedis <?php echo $row['Licencia']?></title>
+    <title>Lista de traspasos - <?php echo $row['Licencia']?></title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
    
 
@@ -36,13 +36,56 @@ include_once "Controladores/ControladorUsuario.php";
             <div class="container-fluid pt-4 px-4">
     <div class="col-12">
         <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#0172b6;">lista de productos de cedis de <?php echo $row['Licencia']?></h6>
-           
-   
-    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#FiltroTraspasos"
-      class="btn btn-default">
-      Filtrar por fechas <i class="fas fa-search"></i>
-    </button> <br><br>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="mb-0" style="color:#0172b6;">
+                    <i class="fa-solid fa-truck-fast me-2"></i>
+                    Lista de traspasos - <?php echo $row['Licencia']?>
+                </h6>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="CargaServicios()">
+                        <i class="fa-solid fa-refresh me-1"></i>Actualizar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros (mismo estilo que otros módulos) -->
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <label class="form-label">Sucursal origen:</label>
+                    <select class="form-select form-select-sm" id="filtroSucursalOrigen" onchange="CargaServicios()">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Sucursal destino:</label>
+                    <select class="form-select form-select-sm" id="filtroSucursalDestino" onchange="CargaServicios()">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Fecha desde:</label>
+                    <input type="date" class="form-control form-control-sm" id="filtroFechaDesde" onchange="CargaServicios()">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Fecha hasta:</label>
+                    <input type="date" class="form-control form-control-sm" id="filtroFechaHasta" onchange="CargaServicios()">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Estatus:</label>
+                    <select class="form-select form-select-sm" id="filtroEstatus" onchange="CargaServicios()">
+                        <option value="">Todos</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Enviado">Enviado</option>
+                        <option value="Recibido">Recibido</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="btnLimpiarFiltrosTraspasos">
+                        <i class="fa-solid fa-eraser me-1"></i>Limpiar filtros
+                    </button>
+                </div>
+            </div>
 
             <div id="DataDeServicios"></div>
             </div></div></div></div>

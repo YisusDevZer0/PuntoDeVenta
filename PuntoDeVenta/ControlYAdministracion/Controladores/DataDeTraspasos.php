@@ -1,3 +1,10 @@
+<?php
+$filtroFechaDesde = isset($_GET['fechaDesde']) ? trim($_GET['fechaDesde']) : '';
+$filtroFechaHasta = isset($_GET['fechaHasta']) ? trim($_GET['fechaHasta']) : '';
+$filtroSucursalOrigen = isset($_GET['sucursalOrigen']) ? trim($_GET['sucursalOrigen']) : '';
+$filtroSucursalDestino = isset($_GET['sucursalDestino']) ? trim($_GET['sucursalDestino']) : '';
+$filtroEstatus = isset($_GET['estatus']) ? trim($_GET['estatus']) : '';
+?>
 <style>
   /* Personalizar el diseño de la paginación con CSS */
   .dataTables_wrapper .dataTables_paginate {
@@ -136,6 +143,15 @@
 </style>
 
 <script>
+  // Filtros enviados desde la página ListaDeTraspasos (se rellenan al cargar este fragmento vía AJAX con query params)
+  var filtrosTraspasos = {
+    fechaDesde: '<?php echo addslashes($filtroFechaDesde); ?>',
+    fechaHasta: '<?php echo addslashes($filtroFechaHasta); ?>',
+    sucursalOrigen: '<?php echo addslashes($filtroSucursalOrigen); ?>',
+    sucursalDestino: '<?php echo addslashes($filtroSucursalDestino); ?>',
+    estatus: '<?php echo addslashes($filtroEstatus); ?>'
+  };
+
   // Definir una lista de mensajes para el mensaje de carga
   var mensajesCarga = [
     "Consultando ventas...",
@@ -234,7 +250,13 @@
     "order": [
       [0, "desc"]
     ],
-    "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
+    "ajax": {
+      "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
+      "dataSrc": "aaData",
+      "data": function(d) {
+        return $.extend(d || {}, filtrosTraspasos);
+      }
+    },
     "aoColumns": [{
       mData: 'TraspaNotID',
 },
