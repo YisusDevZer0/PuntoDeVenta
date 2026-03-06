@@ -30,8 +30,9 @@ foreach ($sessionKeys as $key) {
 }
 
 $baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
+$errorUrl = $baseUrl . 'bridge_error.php?code=';
 if ($legacy_user_id === null || $legacy_user_id === '') {
-    header('Location: ' . $baseUrl . '?bridge_error=no_session');
+    header('Location: ' . $errorUrl . 'no_session');
     exit;
 }
 
@@ -55,14 +56,14 @@ $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode !== 200 || !$response) {
-    header('Location: ' . $baseUrl . '?bridge_error=token_failed');
+    header('Location: ' . $errorUrl . 'token_failed');
     exit;
 }
 
 $data = json_decode($response, true);
 $token = is_array($data) && !empty($data['token']) ? $data['token'] : '';
 if ($token === '') {
-    header('Location: ' . $baseUrl . '?bridge_error=token_failed');
+    header('Location: ' . $errorUrl . 'token_failed');
     exit;
 }
 

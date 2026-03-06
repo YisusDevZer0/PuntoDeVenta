@@ -10,9 +10,10 @@ session_start();
 require_once __DIR__ . '/config_puente.php';
 
 $baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
+$errorUrl = $baseUrl . 'bridge_error.php?code=';
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 if ($token === '') {
-    header('Location: ' . $baseUrl . '?bridge_error=no_token');
+    header('Location: ' . $errorUrl . 'no_token');
     exit;
 }
 
@@ -28,13 +29,13 @@ $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode !== 200 || !$response) {
-    header('Location: ' . $baseUrl . '?bridge_error=validate_failed');
+    header('Location: ' . $errorUrl . 'validate_failed');
     exit;
 }
 
 $data = json_decode($response, true);
 if (!is_array($data) || empty($data['legacy_user_id']) || empty($data['pos_session_key']) || empty($data['pos_redirect_path'])) {
-    header('Location: ' . $baseUrl . '?bridge_error=invalid_response');
+    header('Location: ' . $errorUrl . 'invalid_response');
     exit;
 }
 
