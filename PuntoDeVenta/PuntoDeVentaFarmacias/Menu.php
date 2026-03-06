@@ -107,8 +107,8 @@
                         </div>
                     </div>
 
-                    <a href="videos" class="nav-item nav-link"><i class="fa-solid fa-circle-play me-2"></i>Video tutoriales</a>
-                    <a href="Checador" class="nav-item nav-link"><i class="fa-solid fa-clock me-2"></i>Checador</a>
+                    <!-- <a href="videos" class="nav-item nav-link"><i class="fa-solid fa-circle-play me-2"></i>Video tutoriales</a>
+                    <a href="Checador" class="nav-item nav-link"><i class="fa-solid fa-clock me-2"></i>Checador</a> -->
                     <a href="../IrAlSistemaNuevo.php" class="nav-item nav-link"><i class="fa-solid fa-external-link-alt me-2"></i>Ir a farmacitas</a>
                    
             </nav>
