@@ -9,13 +9,14 @@
 session_start();
 require_once __DIR__ . '/config_puente.php';
 
+$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 if ($token === '') {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=no_token');
     exit;
 }
 
-$apiBase = isset($FDP_AUTH_API_URL) ? $FDP_AUTH_API_URL : 'https://api.farmaciasdeldoctorpez.com/api/v1/auth';
+$apiBase = isset($FDP_AUTH_API_URL) ? $FDP_AUTH_API_URL : 'http://localhost:8000/api/v1/auth';
 $validateUrl = rtrim($apiBase, '/') . '/pos-bridge/validate?token=' . urlencode($token);
 
 $ch = curl_init($validateUrl);
@@ -27,13 +28,13 @@ $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode !== 200 || !$response) {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=validate_failed');
     exit;
 }
 
 $data = json_decode($response, true);
 if (!is_array($data) || empty($data['legacy_user_id']) || empty($data['pos_session_key']) || empty($data['pos_redirect_path'])) {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=invalid_response');
     exit;
 }
 
@@ -46,6 +47,5 @@ if ($pos_redirect_path === '') {
 
 $_SESSION[$pos_session_key] = $legacy_user_id;
 
-$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
 header('Location: ' . $baseUrl . $pos_redirect_path . '/');
 exit;

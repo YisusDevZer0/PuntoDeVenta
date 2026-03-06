@@ -29,14 +29,15 @@ foreach ($sessionKeys as $key) {
     }
 }
 
+$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
 if ($legacy_user_id === null || $legacy_user_id === '') {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=no_session');
     exit;
 }
 
-$apiUrl = isset($FDP_AUTH_API_URL) ? $FDP_AUTH_API_URL : 'https://api.farmaciasdeldoctorpez.com/api/v1/auth';
+$apiUrl = isset($FDP_AUTH_API_URL) ? $FDP_AUTH_API_URL : 'http://localhost:8000/api/v1/auth';
 $apiKey = isset($FDP_POS_BRIDGE_API_KEY) ? $FDP_POS_BRIDGE_API_KEY : '';
-$appUrl = isset($FDP_APP_URL) ? $FDP_APP_URL : 'https://app.farmaciasdeldoctorpez.com';
+$appUrl = isset($FDP_APP_URL) ? $FDP_APP_URL : 'http://localhost:3000';
 
 $tokenUrl = rtrim($apiUrl, '/') . '/pos-login-token';
 
@@ -54,14 +55,14 @@ $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 if ($httpCode !== 200 || !$response) {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=token_failed');
     exit;
 }
 
 $data = json_decode($response, true);
 $token = is_array($data) && !empty($data['token']) ? $data['token'] : '';
 if ($token === '') {
-    header('Location: https://doctorpez.mx/PuntoDeVenta/');
+    header('Location: ' . $baseUrl . '?bridge_error=token_failed');
     exit;
 }
 

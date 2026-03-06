@@ -26,7 +26,7 @@ if($_SESSION["AdministradorGeneral"])	//Condicion admin
 
 }
 
-if($_SESSION["Supervision"])	//Condicion admin
+if($_SESSION["Supervision"] || $_SESSION["ResponsableDeSupervision"])	// Supervisor (ValidadorUsuario usa ResponsableDeSupervision)
 {
 	
 
