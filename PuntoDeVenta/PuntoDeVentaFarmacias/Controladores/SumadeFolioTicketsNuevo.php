@@ -6,14 +6,12 @@
 $primeras_tres_letras = substr($row['Nombre_Sucursal'], 0, 3);
 $primeras_tres_letras = strtoupper($primeras_tres_letras);
 
-// Buscar solo tickets que sigan el formato correcto (sin fechas)
+// Buscar solo tickets que sigan el formato correcto (prefijo 2-4 letras + números, sin fechas).
+// No usar NOT LIKE '%2024%' etc.: excluiría folios válidos como TEA12024 (el "2024" está dentro de 12024).
 $sql = "SELECT Folio_Ticket FROM Ventas_POS 
         WHERE Fk_sucursal='" . $row['Fk_Sucursal'] . "' 
         AND Folio_Ticket NOT LIKE 'VEN-%'
         AND Folio_Ticket NOT LIKE '%-%-%'
-        AND Folio_Ticket NOT LIKE '%2024%'
-        AND Folio_Ticket NOT LIKE '%2023%'
-        AND Folio_Ticket NOT LIKE '%2025%'
         AND Folio_Ticket REGEXP '^[A-Z]{2,4}[0-9]+$'
         ORDER BY Venta_POS_ID DESC 
         LIMIT 1";
