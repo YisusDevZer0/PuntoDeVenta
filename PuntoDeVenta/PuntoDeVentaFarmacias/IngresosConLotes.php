@@ -398,7 +398,7 @@ $totalmonto = max($maxSolicitudes, $maxIngresos) + 1;
         <button class="btn btn-sm btn-outline-primary btn-instructions mb-2" type="button" data-toggle="collapse" data-target="#instruccionesIngresosLotes"><i class="fas fa-question-circle"></i> Ver instrucciones</button>
         <div class="scanner-zone">
           <label class="small font-weight-bold text-secondary d-block mb-1">Código de barras o nombre del producto</label>
-          <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" placeholder="Escanea o escribe para buscar..." autocomplete="off" onchange="buscarArticulo();">
+          <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" placeholder="Escanea o escribe para buscar..." autocomplete="off">
         </div>
       </div>
     </div>
@@ -613,6 +613,14 @@ document.getElementById('numerofactura').addEventListener('change', function() {
   
 
   function buscarArticulo(codigoEscaneado) {
+  if (codigoEscaneado === undefined || codigoEscaneado === null || codigoEscaneado === '') {
+    codigoEscaneado = $('#codigoEscaneado').val();
+  }
+  codigoEscaneado = (codigoEscaneado || '').toString().trim();
+  if (!codigoEscaneado) {
+    return;
+  }
+
   var formData = new FormData();
   formData.append('codigoEscaneado', codigoEscaneado);
   var fkSuc = $('#fkSucursalIngresos').val();
@@ -645,17 +653,25 @@ function limpiarCampo() {
   $('#codigoEscaneado').focus();
 }
 
-var isScannerInput = false;
+// Escucha el input del campo de búsqueda y detecta fin de escaneo sin requerir Enter
+var scannerInputTimer = null;
+$('#codigoEscaneado').on('input', function () {
+  var valor = $('#codigoEscaneado').val();
+  valor = (valor || '').toString().trim();
+  if (!valor) {
+    return;
+  }
+  clearTimeout(scannerInputTimer);
+  scannerInputTimer = setTimeout(function () {
+    buscarArticulo(valor);
+  }, 200); // pequeño debounce para distinguir fin de escaneo/escritura
+});
 
-// Escucha el evento keyup en el campo de búsqueda
-$('#codigoEscaneado').keyup(function (event) {
-  if (event.which === 13) { // Verifica si la tecla presionada es "Enter"
-    if (!isScannerInput) { // Verifica si el evento no viene del escáner
-      var codigoEscaneado = $('#codigoEscaneado').val();
-      buscarArticulo(codigoEscaneado);
-      event.preventDefault(); // Evita que el formulario se envíe al presionar "Enter"
-    }
-    isScannerInput = false; // Restablece la bandera del escáner
+// Permitir también Enter manual si el usuario lo presiona
+$('#codigoEscaneado').on('keydown', function (event) {
+  if (event.which === 13 || event.key === 'Enter') {
+    event.preventDefault();
+    buscarArticulo();
   }
 });
 
@@ -679,7 +695,6 @@ $('#codigoEscaneado').autocomplete({
   select: function (event, ui) {
     // Cuando se selecciona un resultado del autocompletado, llamar a la función buscarArticulo() con el código seleccionado
     var codigoEscaneado = ui.item.value;
-    isScannerInput = true; // Establece la bandera del escáner
     $('#codigoEscaneado').val(codigoEscaneado);
     buscarArticulo(codigoEscaneado);
   }
