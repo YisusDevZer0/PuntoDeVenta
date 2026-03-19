@@ -1,6 +1,39 @@
 <?php
 include_once 'db_connect.php';
 
+/**
+ * Normaliza montos recibidos desde formularios:
+ * - Elimina símbolos de moneda/espacios
+ * - Soporta formatos con coma o punto como separador decimal
+ * - Devuelve float seguro para guardar en BD
+ */
+function normalizarMonto($valor)
+{
+    if ($valor === null || $valor === '') {
+        return 0.0;
+    }
+
+    $valor = trim((string)$valor);
+    $valor = str_replace(['$', ' '], '', $valor);
+
+    // Si tiene coma y punto, asumimos que la coma es separador de miles.
+    if (strpos($valor, ',') !== false && strpos($valor, '.') !== false) {
+        $valor = str_replace(',', '', $valor);
+    } elseif (strpos($valor, ',') !== false) {
+        // Si solo tiene coma, la tratamos como separador decimal.
+        $valor = str_replace(',', '.', $valor);
+    }
+
+    // Limpieza final: permitir solo dígitos, punto y signo negativo.
+    $valor = preg_replace('/[^0-9.\-]/', '', $valor);
+
+    if ($valor === '' || $valor === '-' || !is_numeric($valor)) {
+        return 0.0;
+    }
+
+    return (float)$valor;
+}
+
 // Verificar si se recibieron todos los datos necesarios
 $requiredFields = array('Sucursal', 'Turno', 'Cajero', 'VentaTotal', 'TicketVentasTotal', 'EfectivoTotal', 'TarjetaTotal', 'CreditosTotales', 'Sistema', 'ID_H_O_D', 'servicios', 'gastos');
 $missingFields = array();
@@ -18,12 +51,12 @@ if (!empty($missingFields)) {
     $Sucursal = mysqli_real_escape_string($conn, $_POST['Sucursal']);
     $Turno = mysqli_real_escape_string($conn, $_POST['Turno']);
     $Empleado = mysqli_real_escape_string($conn, $_POST['Cajero']);
-    $ValorTotalCaja = mysqli_real_escape_string($conn, $_POST['VentaTotal']);
-    $TotalTickets = mysqli_real_escape_string($conn, $_POST['TicketVentasTotal']);
-    $TotalEfectivo = mysqli_real_escape_string($conn, $_POST['EfectivoTotal']);
-    $TotalTarjeta = mysqli_real_escape_string($conn, $_POST['TarjetaTotal']);
-    $TotalCreditos = mysqli_real_escape_string($conn, $_POST['CreditosTotales']);
-    $TotalTransferencias= mysqli_real_escape_string($conn, $_POST['TotalTransferencias']);
+    $ValorTotalCaja = normalizarMonto($_POST['VentaTotal'] ?? 0);
+    $TotalTickets = (int)($_POST['TicketVentasTotal'] ?? 0);
+    $TotalEfectivo = normalizarMonto($_POST['EfectivoTotal'] ?? 0);
+    $TotalTarjeta = normalizarMonto($_POST['TarjetaTotal'] ?? 0);
+    $TotalCreditos = normalizarMonto($_POST['CreditosTotales'] ?? 0);
+    $TotalTransferencias = normalizarMonto($_POST['TotalTransferencias'] ?? 0);
     $Sistema = mysqli_real_escape_string($conn, $_POST['Sistema']);
     $ID_H_O_D = mysqli_real_escape_string($conn, $_POST['ID_H_O_D']);
     $FkCaja = mysqli_real_escape_string($conn, $_POST['Fk_Caja']);
@@ -83,14 +116,48 @@ if (!empty($missingFields)) {
         echo json_encode(array("statusCode" => 250)); // El registro ya existe
     } else {
         // Consulta de inserción para agregar un nuevo registro
-        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`(`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`, `Gastos`, `Abonos`, `Encargos`) 
-                       VALUES ('$FkCaja', '$Empleado', '$Sucursal', '$Turno', '$TotalTickets', '$ValorTotalCaja', '$TotalEfectivo', '$TotalTarjeta', '$TotalCreditos', '$TotalTransferencias', NOW(), '$Sistema', '$ID_H_O_D', '$Comentarios', '$serviciosString', '$gastosString', '$abonosString', '$encargosString')";
+        $sql_insert = "INSERT INTO `Cortes_Cajas_POS`
+            (`Fk_Caja`, `Empleado`, `Sucursal`, `Turno`, `TotalTickets`, `Valor_Total_Caja`, `TotalEfectivo`, `TotalTarjeta`, `TotalCreditos`, `TotalTransferencias`, `Hora_Cierre`, `Sistema`, `ID_H_O_D`, `Comentarios`, `Servicios`, `Gastos`, `Abonos`, `Encargos`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)";
+        $stmt_insert = $conn->prepare($sql_insert);
 
-        if (mysqli_query($conn, $sql_insert)) {
+        if (!$stmt_insert) {
+            echo json_encode(array("statusCode" => 201, "error" => $conn->error));
+            mysqli_close($conn);
+            exit;
+        }
+
+        // Tipos: Fk_Caja(s), Empleado(s), Sucursal(s), Turno(s), TotalTickets(i),
+        //        ValorTotal(d), Efectivo(d), Tarjeta(d), Creditos(d), Transferencias(d),
+        //        Sistema(s), ID_H_O_D(s), Comentarios(s), Servicios(s), Gastos(s), Abonos(s), Encargos(s)
+        $stmt_insert->bind_param(
+            "ssssidddddsssssss",
+            $FkCaja,
+            $Empleado,
+            $Sucursal,
+            $Turno,
+            $TotalTickets,
+            $ValorTotalCaja,
+            $TotalEfectivo,
+            $TotalTarjeta,
+            $TotalCreditos,
+            $TotalTransferencias,
+            $Sistema,
+            $ID_H_O_D,
+            $Comentarios,
+            $serviciosString,
+            $gastosString,
+            $abonosString,
+            $encargosString
+        );
+
+        if ($stmt_insert->execute()) {
             echo json_encode(array("statusCode" => 200)); // Inserción exitosa
         } else {
-            echo json_encode(array("statusCode" => 201, "error" => mysqli_error($conn))); // Error en la inserción
+            echo json_encode(array("statusCode" => 201, "error" => $stmt_insert->error)); // Error en la inserción
         }
+
+        $stmt_insert->close();
     }
 }
 
