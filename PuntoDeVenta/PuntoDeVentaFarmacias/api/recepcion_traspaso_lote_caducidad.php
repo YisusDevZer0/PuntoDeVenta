@@ -70,11 +70,55 @@ if (!$fecha_ok) {
     exit;
 }
 
+/**
+ * Inserta o suma en Historial_Lotes (mismo producto/sucursal/lote).
+ * @return bool true si fue UPDATE (suma a existente), false si fue INSERT
+ */
+function recepcionHistorialLoteUpsert($conn, $id_prod, $fk_sucursal, $lote, $fecha_caducidad, $cantidad, $usuario)
+{
+    if ($cantidad < 1) {
+        return false;
+    }
+    $stmt = $conn->prepare("
+        SELECT ID_Historial FROM Historial_Lotes
+        WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param('iis', $id_prod, $fk_sucursal, $lote);
+    $stmt->execute();
+    $existe = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if ($existe) {
+        $stmt = $conn->prepare("
+            UPDATE Historial_Lotes
+            SET Existencias = Existencias + ?,
+                Fecha_Ingreso = CURDATE(),
+                Usuario_Modifico = ?
+            WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?
+        ");
+        $stmt->bind_param('isiis', $cantidad, $usuario, $id_prod, $fk_sucursal, $lote);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+
+    $stmt = $conn->prepare("
+        INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico)
+        VALUES (?, ?, ?, ?, CURDATE(), ?, ?)
+    ");
+    $stmt->bind_param('iissis', $id_prod, $fk_sucursal, $lote, $fecha_caducidad, $cantidad, $usuario);
+    $stmt->execute();
+    $stmt->close();
+    return false;
+}
+
 try {
     $stmt = $conn->prepare("
         SELECT TraspaNotID, Cod_Barra, Nombre_Prod, Cantidad, Fk_SucursalDestino
         FROM TraspasosYNotasC
-        WHERE TraspaNotID = ? AND Estatus = 'Generado'
+        WHERE TraspaNotID = ?
+          AND Estatus IN ('Generado', 'Pendiente', '1', '0')
     ");
     $stmt->bind_param('i', $id_traspaso);
     $stmt->execute();
@@ -157,34 +201,7 @@ try {
 
     $id_prod = (int) $sp['ID_Prod_POS'];
 
-    $stmt = $conn->prepare("
-        SELECT ID_Historial FROM Historial_Lotes
-        WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?
-        LIMIT 1
-    ");
-    $stmt->bind_param('iis', $id_prod, $fk_sucursal, $lote);
-    $stmt->execute();
-    if ($stmt->get_result()->fetch_assoc()) {
-        $stmt->close();
-        echo json_encode(['success' => false, 'error' => 'Ya existe un lote con ese número en esta sucursal.']);
-        exit;
-    }
-    $stmt->close();
-
     if ($hay_diferencia && $motivo_diferencia === 'otro_lote' && !empty($lote_adicional)) {
-        $stmt = $conn->prepare("
-            SELECT ID_Historial FROM Historial_Lotes
-            WHERE ID_Prod_POS = ? AND Fk_sucursal = ? AND Lote = ?
-            LIMIT 1
-        ");
-        $stmt->bind_param('iis', $id_prod, $fk_sucursal, $lote_adicional);
-        $stmt->execute();
-        if ($stmt->get_result()->fetch_assoc()) {
-            $stmt->close();
-            echo json_encode(['success' => false, 'error' => 'Ya existe un lote adicional con ese número en esta sucursal.']);
-            exit;
-        }
-        $stmt->close();
         if ($lote === $lote_adicional) {
             echo json_encode(['success' => false, 'error' => 'El lote adicional debe ser diferente al lote principal.']);
             exit;
@@ -221,22 +238,27 @@ try {
         $stmt->close();
     }
 
-    $stmt = $conn->prepare("
-        INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico)
-        VALUES (?, ?, ?, ?, CURDATE(), ?, ?)
-    ");
-    $stmt->bind_param('iissis', $id_prod, $fk_sucursal, $lote, $fecha_caducidad, $cantidad_lote_principal, $usuario);
-    $stmt->execute();
-    $stmt->close();
+    $principalFueSuma = recepcionHistorialLoteUpsert(
+        $conn,
+        $id_prod,
+        $fk_sucursal,
+        $lote,
+        $fecha_caducidad,
+        $cantidad_lote_principal,
+        $usuario
+    );
 
+    $adicionalFueSuma = false;
     if ($hay_diferencia && $motivo_diferencia === 'otro_lote' && !empty($lote_adicional)) {
-        $stmt = $conn->prepare("
-            INSERT INTO Historial_Lotes (ID_Prod_POS, Fk_sucursal, Lote, Fecha_Caducidad, Fecha_Ingreso, Existencias, Usuario_Modifico)
-            VALUES (?, ?, ?, ?, CURDATE(), ?, ?)
-        ");
-        $stmt->bind_param('iissis', $id_prod, $fk_sucursal, $lote_adicional, $fecha_caducidad_adicional, $cantidad_lote_adicional, $usuario);
-        $stmt->execute();
-        $stmt->close();
+        $adicionalFueSuma = recepcionHistorialLoteUpsert(
+            $conn,
+            $id_prod,
+            $fk_sucursal,
+            $lote_adicional,
+            $fecha_caducidad_adicional,
+            $cantidad_lote_adicional,
+            $usuario
+        );
     }
 
     $chk = $conn->query("SHOW COLUMNS FROM Stock_POS LIKE 'Control_Lotes_Caducidad'");
@@ -253,14 +275,22 @@ try {
     $chk = $conn->query("SHOW COLUMNS FROM Gestion_Lotes_Movimientos LIKE 'Tipo_Movimiento'");
     if ($chk && $chk->num_rows > 0) {
         $obs = 'Recepción traspaso ID ' . $id_traspaso;
+        if ($principalFueSuma) {
+            $obs .= '. Suma a lote existente (principal). Cantidad sumada: ' . $cantidad_lote_principal;
+        }
         if ($hay_diferencia) {
             $obs .= '. Cantidad enviada: ' . $cantidad_enviada . ', cantidad recibida: ' . $cantidad_recibida;
             if ($motivo_diferencia === 'otro_lote') {
                 $obs .= '. Recibido en dos lotes: ' . $lote . ' (' . $cantidad_lote_principal . ') y ' . $lote_adicional . ' (' . $cantidad_lote_adicional . ')';
-            } elseif ($motivo_diferencia === 'no_completo') $obs .= '. Motivo: No llegó completo';
-            elseif ($motivo_diferencia === 'otra_razon') $obs .= '. Motivo: Otra razón';
+            } elseif ($motivo_diferencia === 'no_completo') {
+                $obs .= '. Motivo: No llegó completo';
+            } elseif ($motivo_diferencia === 'otra_razon') {
+                $obs .= '. Motivo: Otra razón';
+            }
         }
-        if ($observaciones !== '') $obs .= '. ' . $observaciones;
+        if ($observaciones !== '') {
+            $obs .= '. ' . $observaciones;
+        }
         $stmt = $conn->prepare("
             INSERT INTO Gestion_Lotes_Movimientos (ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo, Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones)
             VALUES (?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)
@@ -270,6 +300,9 @@ try {
         $stmt->close();
         if ($hay_diferencia && $motivo_diferencia === 'otro_lote' && !empty($lote_adicional)) {
             $obs_adicional = 'Recepción traspaso ID ' . $id_traspaso . ' - Lote adicional. Cantidad: ' . $cantidad_lote_adicional;
+            if ($adicionalFueSuma) {
+                $obs_adicional .= '. Suma a lote existente. Cantidad sumada: ' . $cantidad_lote_adicional;
+            }
             $stmt = $conn->prepare("
                 INSERT INTO Gestion_Lotes_Movimientos (ID_Prod_POS, Cod_Barra, Fk_sucursal, Lote_Nuevo, Fecha_Caducidad_Nueva, Cantidad, Tipo_Movimiento, Usuario_Modifico, Observaciones)
                 VALUES (?, ?, ?, ?, ?, ?, 'actualizacion', ?, ?)

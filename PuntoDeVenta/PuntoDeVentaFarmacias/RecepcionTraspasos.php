@@ -1,6 +1,7 @@
 <?php
 include_once "Controladores/ControladorUsuario.php";
 $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
+$fk_sucursal_sesion = (int) ($row['Fk_Sucursal'] ?? $row['Fk_sucursal'] ?? 0);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -40,6 +41,8 @@ $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
                         <strong>Lote y caducidad:</strong> Al recibir un traspaso deberá ingresar el <strong>lote</strong> y la <strong>fecha de caducidad</strong>
                         del producto. El stock se actualizará en esta sucursal y se registrará en el historial de lotes.
                     </div>
+
+                    <input type="hidden" id="fkSucursalRecepcion" value="<?php echo $fk_sucursal_sesion; ?>">
 
                     <div class="row mb-3">
                         <div class="col-md-6">

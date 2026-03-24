@@ -11,7 +11,8 @@ if ($id > 0 && isset($conn) && $conn) {
         SELECT tyc.TraspaNotID, tyc.Cod_Barra, tyc.Nombre_Prod, tyc.Cantidad,
                tyc.Fk_SucursalDestino, tyc.Folio_Ticket, tyc.Fk_sucursal
         FROM TraspasosYNotasC tyc
-        WHERE tyc.TraspaNotID = ? AND tyc.Estatus = 'Generado'
+        WHERE tyc.TraspaNotID = ?
+          AND tyc.Estatus IN ('Generado', 'Pendiente', '1', '0')
     ");
     $stmt->bind_param('i', $id);
     $stmt->execute();

@@ -1,8 +1,16 @@
 function CargarRecepcionTraspasos() {
     var codigo = $('#buscar-codigo').val();
+    var fk = $('#fkSucursalRecepcion').val();
     var url = 'Controladores/DataRecepcionTraspasos.php';
+    var qs = [];
     if (codigo) {
-        url += '?codigo=' + encodeURIComponent(codigo);
+        qs.push('codigo=' + encodeURIComponent(codigo));
+    }
+    if (fk) {
+        qs.push('fk_sucursal=' + encodeURIComponent(fk));
+    }
+    if (qs.length) {
+        url += '?' + qs.join('&');
     }
 
     if ($.fn.DataTable.isDataTable('#tablaRecepcionTraspasos')) {

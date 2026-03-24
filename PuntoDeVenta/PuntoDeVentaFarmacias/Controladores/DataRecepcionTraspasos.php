@@ -21,9 +21,18 @@ try {
         throw new Exception('Sucursal inválida');
     }
 
+    // Refuerzo: el cliente puede enviar fk_sucursal; debe coincidir con la sesión
+    if (isset($_GET['fk_sucursal']) && $_GET['fk_sucursal'] !== '') {
+        $fkParam = (int) $_GET['fk_sucursal'];
+        if ($fkParam > 0 && $fkParam !== $sucursal) {
+            throw new Exception('La sucursal indicada no coincide con su sesión.');
+        }
+    }
+
     // Farmacias: solo traspasos destinados a esta sucursal
     $codigo = isset($_GET['codigo']) ? trim($_GET['codigo']) : '';
 
+    // Pendientes de recepción: legacy "Generado", integraciones "1"/"0", u otros pendientes explícitos
     $sql = "SELECT 
         tyc.TraspaNotID,
         tyc.Folio_Ticket,
@@ -46,7 +55,8 @@ try {
     FROM TraspasosYNotasC tyc
     LEFT JOIN Sucursales suc_origen ON tyc.Fk_sucursal = suc_origen.ID_Sucursal
     LEFT JOIN Sucursales suc_destino ON tyc.Fk_SucursalDestino = suc_destino.ID_Sucursal
-    WHERE tyc.Fk_SucursalDestino = ? AND tyc.Estatus = 'Generado'";
+    WHERE tyc.Fk_SucursalDestino = ?
+      AND tyc.Estatus IN ('Generado', 'Pendiente', '1', '0')";
 
     $params = [$sucursal];
     $types = "i";
