@@ -2,6 +2,23 @@
 include_once "Controladores/ControladorUsuario.php";
 $nombre_sucursal = $row['Nombre_Sucursal'] ?? '';
 $fk_sucursal_sesion = (int) ($row['Fk_Sucursal'] ?? $row['Fk_sucursal'] ?? 0);
+// Nombre canónico de la sucursal destino (= recepción), desde catálogo (no solo el join del usuario)
+$nombre_sucursal_destino = $nombre_sucursal;
+if (!empty($conn) && $fk_sucursal_sesion > 0) {
+    $stmtNom = $conn->prepare('SELECT Nombre_Sucursal FROM Sucursales WHERE ID_Sucursal = ? LIMIT 1');
+    if ($stmtNom) {
+        $stmtNom->bind_param('i', $fk_sucursal_sesion);
+        $stmtNom->execute();
+        $resNom = $stmtNom->get_result();
+        if ($resNom && ($rNom = $resNom->fetch_assoc())) {
+            $tmp = trim((string) ($rNom['Nombre_Sucursal'] ?? ''));
+            if ($tmp !== '') {
+                $nombre_sucursal_destino = $tmp;
+            }
+        }
+        $stmtNom->close();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,8 +47,13 @@ $fk_sucursal_sesion = (int) ($row['Fk_Sucursal'] ?? $row['Fk_sucursal'] ?? 0);
                                 Recepción de Traspasos
                             </h6>
                             <small class="text-muted">
-                                Sucursal: <strong><?php echo htmlspecialchars($nombre_sucursal); ?></strong>.
-                                Solo se muestran traspasos destinados a esta sucursal. Al recibir, registre lote y fecha de caducidad.
+                                <strong>Sucursal destino (recepción):</strong>
+                                <?php echo htmlspecialchars($nombre_sucursal_destino); ?>
+                                <?php if ($fk_sucursal_sesion > 0) { ?>
+                                    <span class="text-secondary">(ID <?php echo (int) $fk_sucursal_sesion; ?>)</span>
+                                <?php } ?>.
+                                Solo se listan traspasos cuyo <strong>destino</strong> coincide con esta sucursal.
+                                Al recibir, registre lote y fecha de caducidad.
                             </small>
                         </div>
                     </div>

@@ -49,6 +49,7 @@ function CargarRecepcionTraspasos() {
             { data: 'Cantidad', title: 'Cant.', width: '80px', className: 'text-center', defaultContent: '-' },
             { data: 'Fecha_venta', title: 'Fecha', width: '110px', defaultContent: '-' },
             { data: 'Sucursal_Origen', title: 'Origen', width: '120px', defaultContent: '-' },
+            { data: 'Sucursal_Destino', title: 'Sucursal destino', width: '130px', defaultContent: '-' },
             { data: 'AgregadoPor', title: 'Generado por', width: '140px', defaultContent: '-' },
             { data: 'Recibir', title: 'Acciones', width: '120px', orderable: false, className: 'text-center', defaultContent: '-' }
         ],
