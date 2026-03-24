@@ -69,7 +69,7 @@ if ($result->num_rows > 0) {
         "id" => $ids[0],
         "codigo" => $row["Cod_Barra"],
         "descripcion" => $descripciones[0],
-        "cantidad" => [1],
+        "cantidad" => 1,
         "existencia" => $fechaCad,
         "fechacaducidad" => $fechaCad,
         "precio" => $precios[0],

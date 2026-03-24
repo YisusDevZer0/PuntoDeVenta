@@ -612,6 +612,9 @@ document.getElementById('numerofactura').addEventListener('change', function() {
 
   
 
+  var busquedaEnCursoPorCodigo = {};
+  var ultimaBusqueda = { codigo: '', ts: 0 };
+
   function buscarArticulo(codigoEscaneado) {
   if (codigoEscaneado === undefined || codigoEscaneado === null || codigoEscaneado === '') {
     codigoEscaneado = $('#codigoEscaneado').val();
@@ -620,6 +623,16 @@ document.getElementById('numerofactura').addEventListener('change', function() {
   if (!codigoEscaneado) {
     return;
   }
+  var codigoNormalizado = codigoEscaneado.toUpperCase();
+  var ahora = Date.now();
+  if (ultimaBusqueda.codigo === codigoNormalizado && (ahora - ultimaBusqueda.ts) < 450) {
+    return;
+  }
+  if (busquedaEnCursoPorCodigo[codigoNormalizado]) {
+    return;
+  }
+  busquedaEnCursoPorCodigo[codigoNormalizado] = true;
+  ultimaBusqueda = { codigo: codigoNormalizado, ts: ahora };
 
   var formData = new FormData();
   formData.append('codigoEscaneado', codigoEscaneado);
@@ -641,9 +654,10 @@ document.getElementById('numerofactura').addEventListener('change', function() {
       }
 
       limpiarCampo();
+      delete busquedaEnCursoPorCodigo[codigoNormalizado];
     },
     error: function (data) {
-      
+      delete busquedaEnCursoPorCodigo[codigoNormalizado];
     }
   });
 }
@@ -653,21 +667,7 @@ function limpiarCampo() {
   $('#codigoEscaneado').focus();
 }
 
-// Escucha el input del campo de búsqueda y detecta fin de escaneo sin requerir Enter
-var scannerInputTimer = null;
-$('#codigoEscaneado').on('input', function () {
-  var valor = $('#codigoEscaneado').val();
-  valor = (valor || '').toString().trim();
-  if (!valor) {
-    return;
-  }
-  clearTimeout(scannerInputTimer);
-  scannerInputTimer = setTimeout(function () {
-    buscarArticulo(valor);
-  }, 200); // pequeño debounce para distinguir fin de escaneo/escritura
-});
-
-// Permitir también Enter manual si el usuario lo presiona
+// Buscar solo con Enter (escáner o captura manual de código exacto)
 $('#codigoEscaneado').on('keydown', function (event) {
   if (event.which === 13 || event.key === 'Enter') {
     event.preventDefault();
@@ -697,6 +697,7 @@ $('#codigoEscaneado').autocomplete({
     var codigoEscaneado = ui.item.value;
     $('#codigoEscaneado').val(codigoEscaneado);
     buscarArticulo(codigoEscaneado);
+    return false;
   }
 });
   
@@ -720,21 +721,17 @@ $('#codigoEscaneado').autocomplete({
     } else if ($('#detIdModal' + articulo.id).length) {
       mostrarMensaje('El artículo ya se encuentra incluido');
     } else {
-      var loteArt = (articulo.lote || '').toString().trim();
-      var fechaArt = (articulo.fechacaducidad || articulo.existencia || '').toString().trim();
-      var cantidadSumar = parseInt(articulo.cantidad) || 1;
+      var cantidadRecibida = articulo.cantidad;
+      if (Array.isArray(cantidadRecibida)) {
+        cantidadRecibida = cantidadRecibida[0];
+      }
+      var cantidadSumar = parseInt(cantidadRecibida, 10);
+      if (!Number.isFinite(cantidadSumar) || cantidadSumar <= 0) {
+        cantidadSumar = 1;
+      }
 
-      // Buscar fila existente con mismo producto + mismo lote + misma fecha (para sumar cantidad)
-      var filasMismoProducto = $('#tablaAgregarArticulos tbody tr[data-id="' + articulo.id + '"]');
-      var filaExistente = null;
-      filasMismoProducto.each(function() {
-        var loteFila = ($(this).find('input[name="Lote[]"]').val() || '').toString().trim();
-        var fechaFila = ($(this).find('input[name="FechaCaducidad[]"]').val() || '').toString().trim();
-        if (loteFila === loteArt && fechaFila === fechaArt) {
-          filaExistente = $(this);
-          return false; // break
-        }
-      });
+      // Una sola fila por producto: si ya existe, solo sumar cantidad
+      var filaExistente = $('#tablaAgregarArticulos tbody tr[data-id="' + articulo.id + '"]').first();
 
       if (filaExistente && filaExistente.length) {
         var cantidadActual = parseInt(filaExistente.find('.cantidad input').val()) || 0;
@@ -749,19 +746,19 @@ $('#codigoEscaneado').autocomplete({
         return;
       }
 
-      // No hay fila con mismo producto+lote+fecha; agregar nueva fila
+      // No hay fila del producto; agregar una sola fila con cantidad inicial 1
       var tr = '';
         var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
       
 
         var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
-        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
+        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + cantidadSumar + '" />';
 
         tr += '<tr data-id="' + articulo.id + '">';
 
         tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + articulo.codigo + '" name="CodBarras[]" /></td>';
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto"name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
-        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="Contabilizado[]" value="' + articulo.cantidad + '" /></td>';
+        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" min="1" step="1" name="Contabilizado[]" value="1" /></td>';
 tr += '<td class="ExistenciasEnBd"><input class="form-control input-fecha-caducidad" style="font-size: 0.75rem !important;" type="date" name="FechaCaducidad[]" value="' + (articulo.fechacaducidad || articulo.existencia || '') + '" placeholder="Requerido" title="Fecha de caducidad" /></td>';
 tr += '<td class="Diferenciaresultante"><input class="form-control input-lote" style="font-size: 0.75rem !important;" type="text" name="Lote[]" value="' + (articulo.lote || '') + '" placeholder="Requerido" title="Número de lote" /></td>';
 tr += '<td class="Preciototal"><input class="form-control input-precio-max" style="font-size: 0.75rem !important;" type="text" name="PrecioMaximo[]" placeholder="Precio máx." title="Precio máximo" /></td>';
