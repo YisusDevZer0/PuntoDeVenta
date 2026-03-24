@@ -149,6 +149,35 @@ if (!$stmt) {
 mysqli_begin_transaction($conn);
 
 try {
+    // Este módulo trabaja con lotes/caducidad; activar control de lotes en Stock_POS
+    // evita doble ajuste en Historial_Lotes cuando existen triggers legacy sobre Stock_POS.
+    $paresStock = [];
+    foreach ($rows_to_insert as $r) {
+        $cod = trim((string)($r['Cod_Barra'] ?? ''));
+        $suc = (int)($r['Fk_Sucursal'] ?? 0);
+        if ($cod === '' || $suc <= 0) {
+            continue;
+        }
+        $key = $cod . '|' . $suc;
+        $paresStock[$key] = [$cod, $suc];
+    }
+    if (count($paresStock) > 0) {
+        $stmtCtl = mysqli_prepare($conn, "UPDATE Stock_POS SET Control_Lotes_Caducidad = 1 WHERE Cod_Barra = ? AND Fk_sucursal = ?");
+        if (!$stmtCtl) {
+            throw new Exception('Error al preparar actualización de control de lotes: ' . mysqli_error($conn));
+        }
+        foreach ($paresStock as $par) {
+            $codBarra = $par[0];
+            $fkSucursal = $par[1];
+            mysqli_stmt_bind_param($stmtCtl, "si", $codBarra, $fkSucursal);
+            if (!mysqli_stmt_execute($stmtCtl)) {
+                mysqli_stmt_close($stmtCtl);
+                throw new Exception('Error al activar control de lotes en Stock_POS: ' . mysqli_error($conn));
+            }
+        }
+        mysqli_stmt_close($stmtCtl);
+    }
+
     // En PHP 8+ bind_param exige que el número de tipos coincida con el de valores
     if (strlen($types) !== count($values)) {
         throw new Exception('Tipos y valores no coinciden: ' . strlen($types) . ' tipos, ' . count($values) . ' valores.');
