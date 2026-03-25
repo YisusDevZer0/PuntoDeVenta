@@ -982,7 +982,7 @@ $('#codigoEscaneado').autocomplete({
         var cantidadActual = parseInt(row.find('.cantidad input').val(), 10) || 0;
         var nuevaCantidad = cantidadActual + addQty;
         if (nuevaCantidad < 0) {
-            mostrarMensaje('La cantidad no puede ser negativa');
+            mostrarAlertaCantidadNegativa();
             return;
         }
         row.find('.cantidad input').val(nuevaCantidad);
@@ -1074,7 +1074,7 @@ $('#codigoEscaneado').autocomplete({
   
 
   if (cantidad < 0) {
-    mostrarMensaje('La cantidad no puede ser negativa');
+    mostrarAlertaCantidadNegativa();
     return;
   }
 
@@ -1132,6 +1132,20 @@ $('#codigoEscaneado').autocomplete({
   }
 
   // Función para mostrar un mensaje
+  function mostrarAlertaCantidadNegativa() {
+    if (typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Cantidad inválida',
+        text: 'La cantidad no puede ser negativa',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6'
+      });
+    } else {
+      alert('La cantidad no puede ser negativa');
+    }
+  }
+
   function mostrarMensaje(mensaje) {
     // Mostrar el mensaje en una ventana emergente de alerta
     alert(mensaje);
