@@ -4,8 +4,15 @@ include_once "ControladorUsuario.php";
 
 $codigo = $_POST['codigoEscaneado'];
 
-// Actualizar la consulta para incluir el campo Tipo
-$sql = "SELECT Cod_Barra, GROUP_CONCAT(ID_Prod_POS) AS IDs, GROUP_CONCAT(Nombre_Prod) AS descripciones, GROUP_CONCAT(Precio_Venta) AS precios, GROUP_CONCAT(Tipo_Servicio) AS tiposervicios,GROUP_CONCAT(Lote) AS lotes, GROUP_CONCAT(Clave_adicional) AS claves, GROUP_CONCAT(Tipo) AS tipos
+// ORDER BY dentro de GROUP_CONCAT: mismo orden en todos los campos → ID estable (siempre el menor ID_Prod_POS por Cod_Barra)
+$sql = "SELECT Cod_Barra,
+        GROUP_CONCAT(ID_Prod_POS ORDER BY ID_Prod_POS) AS IDs,
+        GROUP_CONCAT(Nombre_Prod ORDER BY ID_Prod_POS) AS descripciones,
+        GROUP_CONCAT(Precio_Venta ORDER BY ID_Prod_POS) AS precios,
+        GROUP_CONCAT(Tipo_Servicio ORDER BY ID_Prod_POS) AS tiposervicios,
+        GROUP_CONCAT(Lote ORDER BY ID_Prod_POS) AS lotes,
+        GROUP_CONCAT(Clave_adicional ORDER BY ID_Prod_POS) AS claves,
+        GROUP_CONCAT(Tipo ORDER BY ID_Prod_POS) AS tipos
         FROM Stock_POS
         WHERE Cod_Barra = ? OR Nombre_Prod LIKE ? OR Clave_adicional = ?
         GROUP BY Cod_Barra";
@@ -24,7 +31,7 @@ if ($result->num_rows > 0) {
     $isAntibiotico = in_array('ANTIBIOTICO', $tipos);
     
     $data = array(
-        "id" => explode(',', $row['IDs'])[0],
+        "id" => explode(',', $row['IDs'])[0], // primer ID = MIN(ID_Prod_POS) por el ORDER BY en GROUP_CONCAT
         "codigo" => $row["Cod_Barra"],
         "descripcion" => $descripciones[0],
         "cantidad" => [1],

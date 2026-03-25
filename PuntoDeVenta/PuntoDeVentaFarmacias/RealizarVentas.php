@@ -216,7 +216,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
                       <div class="input-group">
 
-                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;" onchange="buscarArticulo();">
+                        <input type="text" class="form-control producto" name="codigoEscaneado" id="codigoEscaneado" style="position: relative;">
                       </div>
                     </div>
 
@@ -804,52 +804,114 @@ document.getElementById("selTipoPago").addEventListener("change", function() {
     $('#ivatotal').text(subtotal.toFixed(2));
   }
 
-  function buscarArticulo(codigoEscaneado) {
-  var formData = new FormData();
-  formData.append('codigoEscaneado', codigoEscaneado);
+  var busquedaArticuloEnCurso = false;
+  var colaBusquedaArticulo = [];
 
-  $.ajax({
-    url: "Controladores/escaner_articulo.php",
-    type: 'POST',
-    data: formData,
-    processData: false,
-    contentType: false,
-    dataType: 'json',
-    success: function (data) {
-      if ($.isEmptyObject(data)) {
-        // Manejar caso de no resultados
-      } else if (data.codigo || data.descripcion) {
-        agregarArticulo(data);
-        if (data.esAntibiotico) {
-          Swal.fire({
-    title: '¡Atención!',
-    text: 'El artículo escaneado es de tipo "ANTIBIOTICO". Por favor, recuerde solicitar la receta médica al paciente antes de proceder con la venta.',
-    icon: 'warning',
-    confirmButtonText: 'Entendido',
-    confirmButtonColor: '#3085d6',
-    background: '#fff3cd', // Color de fondo amarillo claro para llamar la atención
-    customClass: {
-        title: 'swal-title',
-        content: 'swal-content'
-    },
-    backdrop: `
-        rgba(0,0,123,0.4)
-        url("https://via.placeholder.com/150") // Puedes añadir una imagen o dejarlo en blanco
-        center center
-        no-repeat
-    `
-});
+  function normalizarCodigoBarras(c) {
+    if (c == null || c === undefined) return '';
+    return String(c).trim();
+  }
 
+  function cantidadDesdeArticulo(articulo) {
+    var c = articulo.cantidad;
+    if (Array.isArray(c)) {
+      c = c.length ? c[0] : 1;
+    }
+    var n = parseInt(c, 10);
+    return (isNaN(n) || n < 1) ? 1 : n;
+  }
+
+  function buscarFilaPorProducto(articulo) {
+    var row = $();
+    if (articulo.id != null && articulo.id !== '') {
+      row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
+      if (row.length) return row;
+    }
+    var codNorm = normalizarCodigoBarras(articulo.codigo);
+    if (codNorm !== '') {
+      $('#tablaAgregarArticulos tbody tr').each(function() {
+        var v = normalizarCodigoBarras($(this).find('.codigo-barras-input').val());
+        if (v !== '' && v === codNorm) {
+          row = $(this);
+          return false;
+        }
+      });
+      if (row.length) return row;
+    }
+    if (articulo.descripcion) {
+      $('#tablaAgregarArticulos tbody tr').each(function() {
+        if ($(this).find('.descripcion-producto-input').val() === articulo.descripcion) {
+          row = $(this);
+          return false;
+        }
+      });
+    }
+    return row;
+  }
+
+  function ejecutarBusquedaArticulo(codigoEscaneado) {
+    busquedaArticuloEnCurso = true;
+    var formData = new FormData();
+    formData.append('codigoEscaneado', codigoEscaneado);
+
+    $.ajax({
+      url: "Controladores/escaner_articulo.php",
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function (data) {
+        if ($.isEmptyObject(data)) {
+          // sin resultados
+        } else if (data.codigo || data.descripcion) {
+          agregarArticulo(data);
+          if (data.esAntibiotico) {
+            Swal.fire({
+              title: '¡Atención!',
+              text: 'El artículo escaneado es de tipo "ANTIBIOTICO". Por favor, recuerde solicitar la receta médica al paciente antes de proceder con la venta.',
+              icon: 'warning',
+              confirmButtonText: 'Entendido',
+              confirmButtonColor: '#3085d6',
+              background: '#fff3cd',
+              customClass: {
+                title: 'swal-title',
+                content: 'swal-content'
+              },
+              backdrop: 'rgba(0,0,123,0.4) center center no-repeat'
+            });
+          }
+        }
+        limpiarCampo();
+      },
+      error: function (data) {
+        msjError('Error en la búsqueda');
+      },
+      complete: function () {
+        busquedaArticuloEnCurso = false;
+        if (colaBusquedaArticulo.length > 0) {
+          var siguiente = colaBusquedaArticulo.shift();
+          ejecutarBusquedaArticulo(siguiente);
         }
       }
+    });
+  }
 
-      limpiarCampo();
-    },
-    error: function (data) {
-      msjError('Error en la búsqueda');
+  function buscarArticulo(codigoEscaneado) {
+    var cod = normalizarCodigoBarras(
+      codigoEscaneado !== undefined && codigoEscaneado !== null && String(codigoEscaneado) !== ''
+        ? codigoEscaneado
+        : $('#codigoEscaneado').val()
+    );
+    if (!cod) {
+      return;
     }
-  });
-}
+    if (busquedaArticuloEnCurso) {
+      colaBusquedaArticulo.push(cod);
+      return;
+    }
+    ejecutarBusquedaArticulo(cod);
+  }
 
 
 function limpiarCampo() {
@@ -908,27 +970,17 @@ $('#codigoEscaneado').autocomplete({
     if (!articulo || (!articulo.id && !articulo.descripcion)) {
         mostrarMensaje('El artículo no es válido');
         return;
-    } else if ($('#detIdModal' + articulo.id).length) {
-        mostrarMensaje('El artículo ya se encuentra incluido');
-        return;
+    }
+    var addQty = cantidadDesdeArticulo(articulo);
+    if (articulo.codigo != null && articulo.codigo !== undefined) {
+        articulo.codigo = normalizarCodigoBarras(articulo.codigo);
     }
 
-    var row = null;
-    if (articulo.id) {
-        row = $('#tablaAgregarArticulos tbody').find('tr[data-id="' + articulo.id + '"]');
-    } else {
-        // Buscar el primer artículo que coincida con la descripción si no hay un ID
-        $('#tablaAgregarArticulos tbody tr').each(function() {
-            if ($(this).find('.descripcion-producto-input').val() === articulo.descripcion) {
-                row = $(this);
-                return false; // Salir del bucle each cuando se encuentre el artículo
-            }
-        });
-    }
+    var row = buscarFilaPorProducto(articulo);
 
     if (row && row.length) {
-        var cantidadActual = parseInt(row.find('.cantidad input').val());
-        var nuevaCantidad = cantidadActual + parseInt(articulo.cantidad);
+        var cantidadActual = parseInt(row.find('.cantidad input').val(), 10) || 0;
+        var nuevaCantidad = cantidadActual + addQty;
         if (nuevaCantidad < 0) {
             mostrarMensaje('La cantidad no puede ser negativa');
             return;
@@ -940,17 +992,30 @@ $('#codigoEscaneado').autocomplete({
         mostrarTotalVenta();
         mostrarSubTotal();
         mostrarIvaTotal();
+        var descToast = (articulo.descripcion || '').toString();
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'info',
+            title: 'Producto ya en el ticket',
+            text: 'Se sumaron ' + addQty + ' u. a: ' + (descToast.length > 80 ? descToast.substring(0, 80) + '…' : descToast),
+            showConfirmButton: false,
+            timer: 2200,
+            timerProgressBar: true
+          });
+        }
     } else {
         var tr = '';
         var btnEliminar = '<button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this);"><i class="fas fa-minus-circle fa-xs"></i></button>';
 
         var inputId = '<input type="hidden" name="detIdModal[' + articulo.id + ']" value="' + articulo.id + '" />';
-        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + articulo.cantidad + '" />';
+        var inputCantidad = '<input class="form-control" type="hidden" name="detCantidadModal[' + articulo.id + ']" value="' + addQty + '" />';
 
         tr += '<tr data-id="' + articulo.id + '">';
         tr += '<td class="codigo"><input class="form-control codigo-barras-input" id="codBarrasInput" style="font-size: 0.75rem !important;" type="text" value="' + (articulo.codigo || '') + '" name="CodBarras[]" /></td>';
         tr += '<td class="descripcion"><textarea class="form-control descripcion-producto-input" id="descripcionproducto" name="NombreDelProducto[]" style="font-size: 0.75rem !important;">' + articulo.descripcion + '</textarea></td>';
-        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + articulo.cantidad + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
+        tr += '<td class="cantidad"><input class="form-control cantidad-vendida-input" style="font-size: 0.75rem !important;" type="number" name="CantidadVendida[]" value="' + addQty + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
         tr += '<td class="preciofijo"><input class="form-control preciou-input" style="font-size: 0.75rem !important;" type="number" value="' + articulo.precio + '" /></td>';
         tr += '<td style="visibility:collapse; display:none;" class="precio"><input hidden id="precio_' + articulo.id + '" class="form-control precio" style="font-size: 0.75rem !important;" type="number" name="PrecioVentaProd[]" value="' + articulo.precio + '" onchange="actualizarImporte($(this).parent().parent());" /></td>';
         tr += '<td><input id="importe_' + articulo.id + '" class="form-control importe" name="ImporteGenerado[]" style="font-size: 0.75rem !important;" type="number" readonly /></td>';
