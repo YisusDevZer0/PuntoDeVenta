@@ -998,8 +998,8 @@ $('#codigoEscaneado').autocomplete({
             toast: true,
             position: 'top-end',
             icon: 'info',
-            title: 'Producto ya en el ticket',
-            text: 'Se sumaron ' + addQty + ' u. a: ' + (descToast.length > 80 ? descToast.substring(0, 80) + '…' : descToast),
+            title: 'Producto ya agregado',
+            text: 'Se incremento la cantidad en ' + addQty + ' u. para: ' + (descToast.length > 80 ? descToast.substring(0, 80) + '…' : descToast),
             showConfirmButton: false,
             timer: 2200,
             timerProgressBar: true
