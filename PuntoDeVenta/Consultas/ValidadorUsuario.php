@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once("db_connect.php");
+require_once __DIR__ . '/pos_password_verify.php';
 
 if(isset($_POST['login_button'])) {
     $Correo_electronico = trim($_POST['user_email']);
@@ -19,42 +20,49 @@ if(isset($_POST['login_button'])) {
     $resultset = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($resultset);
 
+    if (!$row) {
+        echo "Error: Usuario no autorizado";
+        exit;
+    }
+
+    $passwordOk = pos_password_matches($Password, (string) ($row['Password'] ?? ''));
+
     switch(true) {
-        case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
+        case $passwordOk && $row['TipoUsuario'] == "Administrador" && $row['Estatus'] == "Activo":
             echo "ok";
             $_SESSION['ControlMaestro'] = $row['Id_PvUser'];
             break;
-        case $row['Password'] == $Password && $row['TipoUsuario'] == "Farmaceutico" && $row['Estatus'] == "Activo":
+        case $passwordOk && $row['TipoUsuario'] == "Farmaceutico" && $row['Estatus'] == "Activo":
             echo "ok";
             $_SESSION['VentasPos'] = $row['Id_PvUser'];
             break;
 
-            case $row['Password'] == $Password && $row['TipoUsuario'] == "Administrador General" && $row['Estatus'] == "Activo":
+            case $passwordOk && $row['TipoUsuario'] == "Administrador General" && $row['Estatus'] == "Activo":
                 echo "ok";
                 $_SESSION['AdministradorGeneral'] = $row['Id_PvUser'];
                 break;
-                case $row['Password'] == $Password && $row['TipoUsuario'] == "Supervisor" && $row['Estatus'] == "Activo":
+                case $passwordOk && $row['TipoUsuario'] == "Supervisor" && $row['Estatus'] == "Activo":
                     echo "ok";
                     $_SESSION['ResponsableDeSupervision'] = $row['Id_PvUser'];
                     break;
-                    case $row['Password'] == $Password && $row['TipoUsuario'] == "Desarrollo Humano" && $row['Estatus'] == "Activo":
+                    case $passwordOk && $row['TipoUsuario'] == "Desarrollo Humano" && $row['Estatus'] == "Activo":
                         echo "ok";
                         $_SESSION['AdministradorRH'] = $row['Id_PvUser'];
                         break;
 
-                        case $row['Password'] == $Password && $row['TipoUsuario'] == "Responsable Cedis" && $row['Estatus'] == "Activo":
+                        case $passwordOk && $row['TipoUsuario'] == "Responsable Cedis" && $row['Estatus'] == "Activo":
                             echo "ok";
                             $_SESSION['ResponsableDelCedis'] = $row['Id_PvUser'];
                             break;
-                            case $row['Password'] == $Password && $row['TipoUsuario'] == "Inventarios" && $row['Estatus'] == "Activo":
+                            case $passwordOk && $row['TipoUsuario'] == "Inventarios" && $row['Estatus'] == "Activo":
                                 echo "ok";
                                 $_SESSION['Inventarios'] = $row['Id_PvUser'];
                                 break;
-                                case $row['Password'] == $Password && $row['TipoUsuario'] == "Enfermero" && $row['Estatus'] == "Activo":
+                                case $passwordOk && $row['TipoUsuario'] == "Enfermero" && $row['Estatus'] == "Activo":
                                     echo "ok";
                                     $_SESSION['Enfermeria'] = $row['Id_PvUser'];
                                     break;
-                                case $row['Password'] == $Password && $row['TipoUsuario'] == "MKT" && $row['Estatus'] == "Activo":
+                                case $passwordOk && $row['TipoUsuario'] == "MKT" && $row['Estatus'] == "Activo":
                                     echo "ok";
                                     $_SESSION['Marketing'] = $row['Id_PvUser'];
                                     break;
