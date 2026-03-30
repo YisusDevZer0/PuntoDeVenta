@@ -1,7 +1,7 @@
 <?php
 /**
  * Muestra un mensaje cuando el puente POS ↔ Sistema nuevo falla.
- * Recibe ?code= validate_failed | token_failed | invalid_response | no_token | no_session
+ * Recibe ?code= validate_failed | token_failed | bridge_key | bridge_user | bridge_net | …
  * Sin datos sensibles; diseño cuidado.
  */
 $baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
@@ -15,6 +15,26 @@ $messages = [
     'token_failed' => [
         'title' => 'No se pudo obtener el enlace',
         'detail' => 'La conexión con el sistema nuevo no se completó. El administrador debe verificar la configuración del puente en el servidor.',
+    ],
+    'bridge_key' => [
+        'title' => 'Clave del puente incorrecta',
+        'detail' => 'El servidor del sistema nuevo rechazó la clave (API key). En Hostinger, FDP_POS_BRIDGE_API_KEY en config_puente.php debe ser exactamente igual a POS_BRIDGE_API_KEY en el .env del API (sin espacios ni caracteres de más).',
+    ],
+    'bridge_user' => [
+        'title' => 'Usuario no enlazado en Farmacitas',
+        'detail' => 'Tu sesión del Punto de Venta es válida, pero no hay un usuario en el sistema nuevo con ese mismo ID legacy. Un administrador debe sincronizar o crear el usuario en Farmacitas con el Id_PvUser correcto.',
+    ],
+    'bridge_forbidden' => [
+        'title' => 'Acceso denegado al sistema nuevo',
+        'detail' => 'El sistema nuevo no autorizó el acceso para este usuario (p. ej. usuario inactivo en el POS según la validación del API). Contacta al administrador.',
+    ],
+    'bridge_busy' => [
+        'title' => 'Sistema nuevo no disponible',
+        'detail' => 'El API respondió que no puede completar el puente ahora (servicio temporalmente no disponible). Intenta de nuevo en unos minutos o revisa logs del servidor del API.',
+    ],
+    'bridge_net' => [
+        'title' => 'No hubo respuesta del API',
+        'detail' => 'Desde este servidor (Hostinger) no se pudo conectar a la URL del API del puente. Revisa firewall, DNS, SSL o que $FDP_AUTH_API_URL en config_puente.php sea correcta y alcanzable.',
     ],
     'invalid_response' => [
         'title' => 'Respuesta inesperada',

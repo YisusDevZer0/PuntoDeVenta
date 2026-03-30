@@ -50,11 +50,34 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json',
     'X-API-Key: ' . $apiKey,
 ]);
-curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 $response = curl_exec($ch);
 $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlErr = curl_error($ch);
 curl_close($ch);
 
+// Diagnóstico por código HTTP (mismo endpoint que antes; solo cambia el mensaje en bridge_error.php)
+if ($response === false || ($httpCode === 0 && $curlErr !== '')) {
+    header('Location: ' . $errorUrl . 'bridge_net');
+    exit;
+}
+if ($httpCode === 401) {
+    header('Location: ' . $errorUrl . 'bridge_key');
+    exit;
+}
+if ($httpCode === 404) {
+    header('Location: ' . $errorUrl . 'bridge_user');
+    exit;
+}
+if ($httpCode === 403) {
+    header('Location: ' . $errorUrl . 'bridge_forbidden');
+    exit;
+}
+if ($httpCode === 503) {
+    header('Location: ' . $errorUrl . 'bridge_busy');
+    exit;
+}
 if ($httpCode !== 200 || !$response) {
     header('Location: ' . $errorUrl . 'token_failed');
     exit;
