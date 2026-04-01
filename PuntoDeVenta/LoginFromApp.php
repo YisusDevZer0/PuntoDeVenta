@@ -24,6 +24,10 @@ $ch = curl_init($validateUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+// Misma clave que pos-login-token; obligatoria si el API tiene POS_BRIDGE_API_KEY configurada
+if (isset($FDP_POS_BRIDGE_API_KEY) && $FDP_POS_BRIDGE_API_KEY !== '') {
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['X-API-Key: ' . $FDP_POS_BRIDGE_API_KEY]);
+}
 $response = curl_exec($ch);
 $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
