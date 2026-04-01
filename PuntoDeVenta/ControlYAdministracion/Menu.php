@@ -43,6 +43,7 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             </div>
         </div>
         <div class="navbar-nav w-100">
+            <a href="../IrAlSistemaNuevo.php" class="nav-item nav-link"><i class="fa-solid fa-external-link-alt me-2"></i>Ir a farmacitas</a>
             <a href="index" class="nav-item nav-link <?php echo (!isset($currentPage) || $currentPage == 'index') ? 'active' : ''; ?>"><i class="fa fa-tachometer-alt me-2"></i>Inicio</a>
             
             <?php if ($showDashboard): ?>
