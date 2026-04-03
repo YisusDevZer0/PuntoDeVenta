@@ -2,7 +2,7 @@
 // Establecer zona horaria
 date_default_timezone_set('America/Mexico_City');
 
-// Raíz del módulo ControlYAdministracion (válido en /, /develop, cualquier subcarpeta)
+// Raíz del módulo ControlYAdministracion (ruta real; vhost puede ser subdominio con docroot propio)
 $__cronRoot = realpath(__DIR__ . '/..');
 if ($__cronRoot === false) {
     exit('Cron: no se pudo resolver la ruta del módulo.');
