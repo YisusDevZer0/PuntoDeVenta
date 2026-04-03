@@ -4,3 +4,4 @@
 # Git configuration for deployment
 .git/config text eol=lf
 .git/config merge=union
+vendor/ export-ignore
