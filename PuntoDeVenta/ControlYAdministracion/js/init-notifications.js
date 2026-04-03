@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const title = this.getNotificationTitle(notif.Tipo);
                         const options = { 
                             body: notif.Mensaje,
-                            icon: '/PuntoDeVenta/ControlYAdministracion/img/logo.png'
+                            icon: (window.__FDP_BASE_URL__ || '') + 'ControlYAdministracion/img/logo.png'
                         };
                         new Notification(title, options);
                     }

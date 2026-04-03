@@ -45,7 +45,6 @@ try {
         __DIR__ . '/../../../../vendor/autoload.php',
         __DIR__ . '/../../../vendor/autoload.php',
         __DIR__ . '/../../vendor/autoload.php',
-        __DIR__ . '/../../../PuntoDeVenta/vendor/autoload.php'
     ];
     
     $autoloadFound = false;

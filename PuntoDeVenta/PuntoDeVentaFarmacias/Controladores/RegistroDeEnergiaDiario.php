@@ -20,8 +20,9 @@ if (!empty($_POST['name']) || !empty($_FILES['file']['name'])) {
                     ($_FILES["file"]["type"] == "image/jpeg")
                 ) && in_array($file_extension, $valid_extensions)
             ) {
-                // Ruta de destino en el servidor
-                $targetDir = $_SERVER['DOCUMENT_ROOT'] . "/PuntoDeVenta/FotosMedidores/";
+                // Carpeta de la app (misma raíz que ControlPOS.php) + FotosMedidores
+                $appRoot = realpath(__DIR__ . '/../..');
+                $targetDir = ($appRoot !== false ? $appRoot : dirname(__DIR__, 2)) . DIRECTORY_SEPARATOR . 'FotosMedidores' . DIRECTORY_SEPARATOR;
                 $targetPath = $targetDir . $fileName;
                 
                 // Verifica que la carpeta de destino tenga permisos de escritura

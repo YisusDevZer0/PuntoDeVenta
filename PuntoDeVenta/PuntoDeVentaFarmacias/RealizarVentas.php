@@ -45,7 +45,7 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
         // Si es un dispositivo móvil, cargar el Service Worker
         if (isMobileDevice()) {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/PuntoDeVenta/PuntoDeVentaFarmacias/sw.js')
+                navigator.serviceWorker.register(<?= json_encode(BASE_PATH . 'PuntoDeVentaFarmacias/sw.js', JSON_UNESCAPED_SLASHES) ?>)
                     .then((registration) => {
                         console.log('Service Worker registrado con éxito:', registration.scope);
                     })

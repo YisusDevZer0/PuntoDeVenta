@@ -52,7 +52,7 @@ if (!defined('BASE_URL')) {
   if (isMobileDevice()) {
     const link = document.createElement('link');
     link.rel = 'manifest';
-    link.href = '/PuntoDeVenta/PuntoDeVentaFarmacias/manifest.json';
+    link.href = <?= json_encode(BASE_PATH . 'PuntoDeVentaFarmacias/manifest.json', JSON_UNESCAPED_SLASHES) ?>;
     document.head.appendChild(link);
   }
 </script>

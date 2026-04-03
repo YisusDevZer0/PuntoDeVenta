@@ -2,8 +2,12 @@
 // Establecer zona horaria
 date_default_timezone_set('America/Mexico_City');
 
-// Definir rutas absolutas
-define('ROOT_PATH', '/home/u858848268/domains/doctorpez.mx/public_html/PuntoDeVenta/ControlYAdministracion');
+// Raíz del módulo ControlYAdministracion (válido en /, /develop, cualquier subcarpeta)
+$__cronRoot = realpath(__DIR__ . '/..');
+if ($__cronRoot === false) {
+    exit('Cron: no se pudo resolver la ruta del módulo.');
+}
+define('ROOT_PATH', $__cronRoot);
 define('LOG_PATH', ROOT_PATH . '/cron/logs');
 
 // Incluir archivo de conexión a la base de datos
