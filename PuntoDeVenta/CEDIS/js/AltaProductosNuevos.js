@@ -104,7 +104,7 @@ $('document').ready(function ($) {
 
     $.ajax({
       type: 'POST',
-      url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AltaProductos.php",
+      url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/AltaProductos.php",
       data: $('#AgregaProductos').serialize(),
       cache: false,
       beforeSend: function () {

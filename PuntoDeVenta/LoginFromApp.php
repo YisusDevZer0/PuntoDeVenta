@@ -9,8 +9,7 @@
 session_start();
 require_once __DIR__ . '/config_puente.php';
 
-$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
-$errorUrl = $baseUrl . 'bridge_error.php?code=';
+$errorUrl = fdp_url('bridge_error.php?code=');
 $token = isset($_GET['token']) ? trim($_GET['token']) : '';
 if ($token === '') {
     header('Location: ' . $errorUrl . 'no_token');
@@ -52,5 +51,5 @@ if ($pos_redirect_path === '') {
 
 $_SESSION[$pos_session_key] = $legacy_user_id;
 
-header('Location: ' . $baseUrl . $pos_redirect_path . '/');
+header('Location: ' . fdp_url($pos_redirect_path . '/'));
 exit;

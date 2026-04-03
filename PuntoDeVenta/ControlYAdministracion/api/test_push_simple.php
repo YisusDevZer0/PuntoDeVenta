@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../config/app.php';
 // Habilitar visualización de errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -58,7 +59,7 @@ try {
         'title' => 'Prueba Simple',
         'body' => 'Esta es una notificación de prueba',
         'icon' => '/assets/img/logo.png',
-        'url' => 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/'
+        'url' => BASE_URL . 'ControlYAdministracion/'
     ]);
 
     // 6. Obtener el endpoint y las claves de la suscripción

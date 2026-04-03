@@ -245,7 +245,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
             
             // Hacer petición AJAX para obtener los datos del servicio
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ObtenerDatosServicio.php',
+                url: '<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ObtenerDatosServicio.php',
                 type: 'POST',
                 data: { servicio_id: servicioId },
                 dataType: 'json',
@@ -345,7 +345,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
             console.log('Datos a enviar:', formData);
             
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistrarPagoDeServicioController.php',
+                url: '<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/RegistrarPagoDeServicioController.php',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',

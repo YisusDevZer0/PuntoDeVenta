@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/TiposDeUsuarios","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/TiposDeUsuarios","",function(data){
       $("#DataDeServicios").html(data);
     })
   

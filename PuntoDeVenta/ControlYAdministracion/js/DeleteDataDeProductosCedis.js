@@ -20,7 +20,7 @@ $(document).ready(function() {
         submitHandler: function(form) {
             $.ajax({
                 type: 'POST',
-                url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EliminarProductoCedis.php",
+                url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EliminarProductoCedis.php",
                 data: $(form).serialize(),
                 cache: false,
                 beforeSend: function() {

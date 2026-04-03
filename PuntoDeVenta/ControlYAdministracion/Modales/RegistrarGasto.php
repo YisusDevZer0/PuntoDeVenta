@@ -45,7 +45,7 @@ $Especialistas = $query->fetch_object();
     <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
 
-<script src="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/js/RegistraElNuevoGasto.js"></script>
+<script src="<?= BASE_URL ?>ControlYAdministracion/js/RegistraElNuevoGasto.js"></script>
 
 <?php else : ?>
     <p class="alert alert-danger">404 No se encuentra</p>

@@ -1,3 +1,9 @@
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../config/app.php';
+}
+?>
+<script>window.__FDP_BASE_URL__=<?= json_encode(BASE_URL, JSON_UNESCAPED_SLASHES) ?>;</script>
 <!-- Favicon -->
 <link href="img/favicon.ico" rel="icon">
 

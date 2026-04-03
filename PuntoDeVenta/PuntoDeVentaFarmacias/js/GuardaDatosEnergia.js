@@ -51,7 +51,7 @@ $('document').ready(function($) {
 
             $.ajax({
                 type: 'POST',
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/RegistroDeEnergiaDiario.php',
+                url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/Controladores/RegistroDeEnergiaDiario.php',
                 data: new FormData(this),
                 contentType: false,
                 cache: false,

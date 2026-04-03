@@ -1,3 +1,9 @@
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../config/app.php';
+}
+?>
+<script>window.__FDP_BASE_URL__=<?= json_encode(BASE_URL, JSON_UNESCAPED_SLASHES) ?>;</script>
 <!-- Favicon -->
 <link href="img/favicon.ico" rel="icon">
 
@@ -31,10 +37,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 <script type="text/javascript" src="js/validation.min.js"></script>
 <link rel="stylesheet" href="styles.css"> <!-- Si tienes un archivo CSS -->
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars(BASE_PATH, ENT_QUOTES, 'UTF-8') ?>favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="<?= htmlspecialchars(BASE_PATH, ENT_QUOTES, 'UTF-8') ?>favicon.svg" />
+    <link rel="shortcut icon" href="<?= htmlspecialchars(BASE_PATH, ENT_QUOTES, 'UTF-8') ?>favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= htmlspecialchars(BASE_PATH, ENT_QUOTES, 'UTF-8') ?>apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Punto de venta" />
     <script>
   // Función para detectar si es un dispositivo móvil

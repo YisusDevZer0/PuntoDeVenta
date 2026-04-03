@@ -234,7 +234,7 @@ function ReanudarTodosConteos() {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ReanudarTodosConteos.php", 
+            $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ReanudarTodosConteos.php", 
                 {}, 
                 function(data) {
                     if (data.success) {
@@ -249,7 +249,7 @@ function ReanudarTodosConteos() {
 }
 
 function ReanudarConteo(folio, codigo) {
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ReanudarConteo.php", 
+    $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ReanudarConteo.php", 
         { folio: folio, codigo: codigo }, 
         function(data) {
             if (data.success) {
@@ -262,7 +262,7 @@ function ReanudarConteo(folio, codigo) {
 }
 
 function FinalizarConteo(folio, codigo) {
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/FinalizarConteo.php", 
+    $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/FinalizarConteo.php", 
         { folio: folio, codigo: codigo }, 
         function(data) {
             if (data.success) {
@@ -275,7 +275,7 @@ function FinalizarConteo(folio, codigo) {
 }
 
 function EliminarConteo(folio, codigo) {
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EliminarConteo.php", 
+    $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/EliminarConteo.php", 
         { folio: folio, codigo: codigo }, 
         function(data) {
             if (data.success) {

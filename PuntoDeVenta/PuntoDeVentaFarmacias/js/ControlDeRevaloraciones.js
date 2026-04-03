@@ -1,7 +1,7 @@
 function CargaClientes(){
 
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/AgendaDeRevaloraciones.php","",function(data){
+    $.post((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/AgendaDeRevaloraciones.php","",function(data){
       $("#RevaloracionesMedicas").html(data);
     })
   

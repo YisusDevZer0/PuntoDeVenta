@@ -260,7 +260,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDataEncargos.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayDataEncargos.php",
  "aoColumns": [
   { mData: 'NumTicket' },
   { mData: 'NombrePaciente' },

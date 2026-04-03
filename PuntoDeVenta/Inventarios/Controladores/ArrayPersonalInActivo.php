@@ -34,12 +34,12 @@ while ($fila = $result->fetch_assoc()) {
                 <i class="fas fa-th-list fa-1x"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd='.base64_encode($fila["Id_PvUser"]).'">Asignar en sucursales <i class="fas fa-clinic-medical"></i></a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid='.base64_encode($fila["Id_PvUser"]).'">Consultar distribución <i class="fas fa-table"></i></a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/EdicionDatosProducto?editprod='.base64_encode($fila["Id_PvUser"]).'">Editar datos <i class="fas fa-pencil-alt"></i></a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd='.base64_encode($fila["Id_PvUser"]).'">Ver movimientos <i class="fas fa-history"></i></a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/MaximoYMinimo?Disid='.base64_encode($fila["Id_PvUser"]).'">Actualizar mínimo y máximo <i class="fas fa-list-ol"></i></a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/CambiaProveedor?idProd='.base64_encode($fila["Id_PvUser"]).'">Cambio de proveedores <i class="fas fa-truck-loading"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/AsignacionSucursalesStock?idProd='.base64_encode($fila["Id_PvUser"]).'">Asignar en sucursales <i class="fas fa-clinic-medical"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/DistribucionSucursales?Disid='.base64_encode($fila["Id_PvUser"]).'">Consultar distribución <i class="fas fa-table"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/EdicionDatosProducto?editprod='.base64_encode($fila["Id_PvUser"]).'">Editar datos <i class="fas fa-pencil-alt"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/HistorialProducto?idProd='.base64_encode($fila["Id_PvUser"]).'">Ver movimientos <i class="fas fa-history"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/MaximoYMinimo?Disid='.base64_encode($fila["Id_PvUser"]).'">Actualizar mínimo y máximo <i class="fas fa-list-ol"></i></a></li>
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/CambiaProveedor?idProd='.base64_encode($fila["Id_PvUser"]).'">Cambio de proveedores <i class="fas fa-truck-loading"></i></a></li>
             </ul>
         </div>
     ';

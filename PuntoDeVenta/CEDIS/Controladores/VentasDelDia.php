@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/CEDIS/Controladores/ArrayVentasDelDia.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>CEDIS/Controladores/ArrayVentasDelDia.php",
  "aoColumns": [
        { mData: 'Cod_Barra' },
        { mData: 'Nombre_Prod' },

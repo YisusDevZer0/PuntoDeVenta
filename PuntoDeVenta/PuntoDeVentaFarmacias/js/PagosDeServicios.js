@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/DataPagosServicios.php","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/DataPagosServicios.php","",function(data){
       $("#DataDeServicios").html(data);
     })
   

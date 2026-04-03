@@ -51,7 +51,7 @@ include_once "Controladores/ControladorUsuario.php";
 <script>
   $(document).ready(function() {
     $.ajax({
-      url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CargaFechaDeCargaMasiva.php',
+      url: '<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/CargaFechaDeCargaMasiva.php',
       type: 'GET',
       dataType: 'json',
       success: function(data) {

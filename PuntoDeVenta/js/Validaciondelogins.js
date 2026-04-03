@@ -50,7 +50,7 @@ $('document').ready(function() {
                         if (result.isConfirmed) {
                             // Redirecciona al usuario después de 2 segundos
                             setTimeout(function() {
-                                window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlPOS";
+                                window.location.href = (window.__FDP_BASE_URL__||"")+"ControlPOS";
                             }, 2000);
                         }
                     });

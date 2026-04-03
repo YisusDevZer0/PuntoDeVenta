@@ -19,7 +19,8 @@ echo "<pre>";
 print_r($datosPrueba);
 echo "</pre>";
 
-$url = 'http://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ChecadorController.php';
+require_once __DIR__ . '/../../config/app.php';
+$url = str_replace('https://', 'http://', BASE_URL) . 'ControlYAdministracion/Controladores/ChecadorController.php';
 
 echo "<h2>URL del controlador:</h2>";
 echo "<p>$url</p>";

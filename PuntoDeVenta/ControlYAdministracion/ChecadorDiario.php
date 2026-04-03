@@ -57,7 +57,7 @@ include_once "Controladores/ControladorUsuario.php";
     $(document).on("click", ".btn-actualizadata", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaDatosPacientes.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EditaDatosPacientes.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Actualizando datos del paciente");
             

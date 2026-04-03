@@ -171,7 +171,7 @@ $(document).ready(function() {
         
         $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
         
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DetallesConteoDiario.php", 
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/DetallesConteoDiario.php", 
             { folio: folio, codigo: codigo }, 
             function(data) {
                 $("#FormCajas").html(data);
@@ -186,7 +186,7 @@ $(document).ready(function() {
         var codigo = $(this).data("codigo");
         
         // Exportar conteo específico
-        const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
+        const url = `' . BASE_URL . 'ControlYAdministracion/Controladores/ExportarConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
         window.open(url, '_blank');
     });
 
@@ -195,7 +195,7 @@ $(document).ready(function() {
         var codigo = $(this).data("codigo");
         
         // Imprimir conteo específico
-        const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ImprimirConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
+        const url = `' . BASE_URL . 'ControlYAdministracion/Controladores/ImprimirConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
         window.open(url, '_blank');
     });
 });
@@ -209,7 +209,7 @@ function CargarEstadisticasResumen() {
         fechaHasta: $('#fechaHasta').val()
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EstadisticasConteosDiarios.php", 
+    $.get("<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/EstadisticasConteosDiarios.php", 
         filtros, 
         function(data) {
             if (data.success) {

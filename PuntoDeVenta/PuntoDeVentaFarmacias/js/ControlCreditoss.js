@@ -1,7 +1,7 @@
 function CargaFCajas(){
 
 
-    $.Post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/CreditosActivos.php","",function(data){
+    $.Post((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/CreditosActivos.php","",function(data){
       $("#FCajas").html(data);
     })
   

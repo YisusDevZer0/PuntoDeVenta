@@ -54,7 +54,7 @@ include_once "Controladores/ControladorUsuario.php";
            <script>
     $(".btn-cambiaestadomensaje").click(function(){
         id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/ActualizaEstadoMensaje.php", "id=" + id, function(data){
+        $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/ActualizaEstadoMensaje.php", "id=" + id, function(data){
             $("#form-edit").html(data);
             $("#Titulo").html("¿Marcar como leido?");
             $("#Di").addClass("modal-dialog  modal-notify modal-success");

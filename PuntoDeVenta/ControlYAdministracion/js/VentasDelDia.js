@@ -26,7 +26,7 @@ function CargaListadoDeProductos(){
     
     console.log("Enviando petición a VentasDelDiaConFiltros.php...");
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data){
         console.log("Respuesta recibida:", data);
         $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
@@ -143,7 +143,7 @@ function calcularEstadisticasAlternativo() {
         sucursal: sucursal
     };
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasDelDia.php", parametros, function(data) {
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/ArrayVentasDelDia.php", parametros, function(data) {
         console.log("Respuesta de ArrayVentasDelDia.php:", data);
         
         if (data && data.data) {
@@ -228,7 +228,7 @@ function filtrarDatos() {
         sucursal: sucursal
     };
     
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/VentasDelDiaConFiltros.php", parametros, function(data) {
       $("#DataDeServicios").html(data);
         // Esperar a que se inicialice la tabla antes de calcular estadísticas
         setTimeout(function() {

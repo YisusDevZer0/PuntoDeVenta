@@ -8,7 +8,7 @@ function CargaFCajas(){
         fecha_fin: fecha_fin
     };
     
-    var url = "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/CortesDeCajasRealizados.php";
+    var url = (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/CortesDeCajasRealizados.php";
     url += "?" + $.param(params);
     
     $.get(url, function(data){

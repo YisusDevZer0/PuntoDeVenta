@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayIngresosCedis.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayIngresosCedis.php",
  "aoColumns": [
 // Correspondencia de mData con campos de la consulta
 { mData: 'IdProdCedis' },       // ID de ingreso => $fila["IDIngreso"]

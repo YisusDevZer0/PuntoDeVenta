@@ -195,7 +195,7 @@ if ($Especialistas && !empty($Especialistas->Nombre_Sucursal)) {
             console.log('Datos a enviar:', formData);
             
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/RegistrarEncargoController.php',
+                url: '<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/RegistrarEncargoController.php',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',

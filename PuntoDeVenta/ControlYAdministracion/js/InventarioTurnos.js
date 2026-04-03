@@ -8,7 +8,7 @@ var isScannerInput = false;
 var ultimoEscaneo = null;
 var tiempoUltimoEscaneo = 0;
 
-var BASE_URL = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion';
+var BASE_URL = (window.__FDP_BASE_URL__||'')+'ControlYAdministracion';
 
 // Función para cargar productos del turno (0 = sin turno, mostrar disponibles)
 function CargarProductosTurno(idTurno) {

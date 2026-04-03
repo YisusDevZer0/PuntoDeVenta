@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EliminaMarcas.php",
+            url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EliminaMarcas.php",
             data: $('#EliminaServiciosForm').serialize(),
             cache: false,
             beforeSend: function(){	

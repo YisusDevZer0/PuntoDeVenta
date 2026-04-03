@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeCajasVentas.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayDeCajasVentas.php",
  "aoColumns": [
   { mData: 'IdCaja' },  
   { mData: 'Empleado' },

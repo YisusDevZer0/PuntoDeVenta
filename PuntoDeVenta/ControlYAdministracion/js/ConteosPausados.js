@@ -14,7 +14,7 @@ function CargarConteosPausados(pagina = 1) {
         registros: registrosPorPaginaPausados
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataConteosPausados.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataConteosPausados.php", 
         filtros, 
         function(data) {
             $("#DataConteosPausados").html(data);
@@ -27,7 +27,7 @@ function CargarConteosPausados(pagina = 1) {
 }
 
 function CargarSucursales() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataSucursales.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataSucursales.php", 
         {}, 
         function(data) {
             $("#filtroSucursal").html(data);
@@ -38,7 +38,7 @@ function CargarSucursales() {
 }
 
 function CargarUsuarios() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataUsuarios.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataUsuarios.php", 
         {}, 
         function(data) {
             $("#filtroUsuario").html(data);
@@ -56,7 +56,7 @@ function CargarEstadisticas() {
         fechaHasta: $('#fechaHasta').val()
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EstadisticasConteosPausados.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EstadisticasConteosPausados.php", 
         filtros, 
         function(data) {
             if (data.success) {
@@ -91,7 +91,7 @@ function ExportarConteosPausados() {
 
     // Crear URL con parámetros
     const params = new URLSearchParams(filtros);
-    const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarConteosPausados.php?${params.toString()}`;
+    const url = `${window.__FDP_BASE_URL__ || ''}ControlYAdministracion/Controladores/ExportarConteosPausados.php?${params.toString()}`;
     
     // Abrir en nueva ventana para descargar
     window.open(url, '_blank');
@@ -109,7 +109,7 @@ function ImprimirConteosPausados() {
 
     // Crear URL con parámetros
     const params = new URLSearchParams(filtros);
-    const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ImprimirConteosPausados.php?${params.toString()}`;
+    const url = `${window.__FDP_BASE_URL__ || ''}ControlYAdministracion/Controladores/ImprimirConteosPausados.php?${params.toString()}`;
     
     // Abrir en nueva ventana para imprimir
     window.open(url, '_blank');
@@ -141,7 +141,7 @@ function CambiarRegistrosPorPaginaPausados(registros) {
 function VerDetallesConteo(folio, codigo) {
     $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
     
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DetallesConteoPausado.php", 
+    $.post((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Modales/DetallesConteoPausado.php", 
         { folio: folio, codigo: codigo }, 
         function(data) {
             $("#FormCajas").html(data);
@@ -164,7 +164,7 @@ function EnviarRecordatorio(folio, codigo) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EnviarRecordatorioConteo.php", 
+            $.post((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EnviarRecordatorioConteo.php", 
                 { folio: folio, codigo: codigo }, 
                 function(data) {
                     if (data.success) {
@@ -179,7 +179,7 @@ function EnviarRecordatorio(folio, codigo) {
 
 // Función para marcar como urgente
 function MarcarUrgente(folio, codigo) {
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/MarcarConteoUrgente.php", 
+    $.post((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/MarcarConteoUrgente.php", 
         { folio: folio, codigo: codigo }, 
         function(data) {
             if (data.success) {
@@ -200,7 +200,7 @@ function GenerarReporteTiempo() {
         fechaHasta: $('#fechaHasta').val()
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ReporteTiempoConteosPausados.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/ReporteTiempoConteosPausados.php", 
         filtros, 
         function(data) {
             if (data.success) {

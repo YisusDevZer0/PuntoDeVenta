@@ -311,17 +311,17 @@ if ($stmt) {
         
         <script>
         function ExportarConteoIndividual(folio, codigo) {
-            const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
+            const url = `' . BASE_URL . 'ControlYAdministracion/Controladores/ExportarConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
             window.open(url, '_blank');
         }
         
         function ImprimirConteoIndividual(folio, codigo) {
-            const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ImprimirConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
+            const url = `' . BASE_URL . 'ControlYAdministracion/Controladores/ImprimirConteoIndividual.php?folio=${folio}&codigo=${codigo}`;
             window.open(url, '_blank');
         }
         
         function GenerarReporteComparativo(folio, codigo) {
-            const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ReporteComparativoConteo.php?folio=${folio}&codigo=${codigo}`;
+            const url = `' . BASE_URL . 'ControlYAdministracion/Controladores/ReporteComparativoConteo.php?folio=${folio}&codigo=${codigo}`;
             window.open(url, '_blank');
         }
         </script>

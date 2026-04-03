@@ -1,5 +1,5 @@
 function CargaCaducados(){
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataCaducados","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataCaducados","",function(data){
       $("#DataDeCaducados").html(data);
     })
 }

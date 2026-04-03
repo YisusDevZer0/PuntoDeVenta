@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArraySolicitudesPendientes.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArraySolicitudesPendientes.php",
  "aoColumns": [
     { mData: 'IdProdCedis' },  
 { mData: 'NumFactura' },

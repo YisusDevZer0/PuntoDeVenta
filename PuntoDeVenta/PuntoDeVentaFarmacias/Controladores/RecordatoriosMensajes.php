@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDesgloseRecordatoriosMensajes.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayDesgloseRecordatoriosMensajes.php",
  "aoColumns": [
     { mData: 'Id' },  
   { mData: 'TipMensaje' },  

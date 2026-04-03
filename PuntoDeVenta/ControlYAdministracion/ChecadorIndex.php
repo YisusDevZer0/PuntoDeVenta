@@ -284,7 +284,7 @@ $isAdmin = ($row['TipoUsuario'] == 'Administrador' || $row['TipoUsuario'] == 'MK
                 <p>Control de asistencia y ubicaciones de trabajo</p>
                 
                 <div class="user-info">
-                    <img src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo isset($row['file_name']) ? $row['file_name'] : 'user.jpg'; ?>" 
+                    <img src="<?= BASE_URL ?>PerfilesImg/<?php echo isset($row['file_name']) ? $row['file_name'] : 'user.jpg'; ?>" 
                          alt="Usuario" class="user-avatar" 
                          onerror="this.src='img/user.jpg'; this.onerror=null;">
                     <div class="user-name"><?php echo isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : 'Usuario'; ?></div>

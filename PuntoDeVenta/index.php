@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/config/app.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -16,6 +17,7 @@
 
 
     <!-- jQuery y jQuery Validation -->
+    <script>window.__FDP_BASE_URL__=<?= json_encode(BASE_URL, JSON_UNESCAPED_SLASHES) ?>;</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 

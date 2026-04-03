@@ -40,7 +40,7 @@ $row = mysqli_fetch_assoc($resultset);
 
 
 // if ($row['Nombre_Apellidos'] != 'DevZero') {
-//     header("Location: https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Mantenimiento.php");
+//     header("Location: ' . BASE_URL . 'PuntoDeVentaFarmacias/Mantenimiento.php");
 //     exit();
 // }
 

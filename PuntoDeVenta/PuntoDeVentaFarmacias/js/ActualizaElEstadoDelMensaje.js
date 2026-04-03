@@ -63,7 +63,7 @@ $('document').ready(function ($) {
 
         $.ajax({
             type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ActualizaLosMensajes.php",
+            url: (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/ActualizaLosMensajes.php",
             data: $('#MarcarLeidoForm').serialize(),
             cache: false,
             beforeSend: function () {

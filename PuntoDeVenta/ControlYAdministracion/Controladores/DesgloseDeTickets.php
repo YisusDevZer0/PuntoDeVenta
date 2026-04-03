@@ -220,7 +220,7 @@ tabla = $('#Clientes').DataTable({
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
  "ajax": {
-    "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDesgloseTickets.php",
+    "url": "' . BASE_URL . 'ControlYAdministracion/Controladores/ArrayDesgloseTickets.php",
     "type": "POST",
     "data": function(d) {
         // Agregar los filtros actuales a la petición

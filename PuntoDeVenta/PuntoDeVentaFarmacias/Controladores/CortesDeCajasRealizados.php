@@ -194,7 +194,7 @@ var tabla = $('#Clientes').DataTable({
  "stateSave": false, // Desactivar para que siempre recargue con filtros
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayDeCajasCortes.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayDeCajasCortes.php",
  "fnServerData": function ( sSource, aoData, fnCallback ) {
      // Cargar todos los cortes del año en curso
      var anio_actual = new Date().getFullYear();

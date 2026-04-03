@@ -1,7 +1,7 @@
 function CargaCajas(){
 
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/RegistrosDiariosGastos.php","",function(data){
+    $.post((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/RegistrosDiariosGastos.php","",function(data){
       $("#Cajas").html(data);
     })
   

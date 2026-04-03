@@ -64,7 +64,7 @@ if (isset($_POST["import"])) {
                 }
             }
         }
-        header("Location: https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ResultadoActualizacionMasiva");
+        header('Location: ' . fdp_url('ControlYAdministracion/ResultadoActualizacionMasiva'));
         exit();
     } else {
         $type = "error";

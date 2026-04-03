@@ -240,7 +240,7 @@ include_once "Controladores/ControladorUsuario.php";
             "order": [[ 0, "desc" ]],
             "ajax": {
               "type": "POST", // Especifica el método de envío de la solicitud AJAX
-              "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayVentasPorTotalesPorFechas.php",
+              "url": "' . BASE_URL . 'ControlYAdministracion/Controladores/ArrayVentasPorTotalesPorFechas.php",
 
               "data": function (d) {
         // Aquí puedes definir el código PHP directamente

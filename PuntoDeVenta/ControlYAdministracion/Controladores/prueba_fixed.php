@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../../config/app.php';
 // Prueba del controlador corregido
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -22,7 +23,7 @@ print_r($datosPrueba);
 echo "</pre>";
 
 // URL del endpoint público
-$url = 'https://doctorpez.mx/PuntoDeVenta/api/checador.php';
+$url = BASE_URL . 'api/checador.php';
 
 echo "<h2>URL del controlador corregido:</h2>";
 echo "<p>$url</p>";

@@ -8,7 +8,7 @@ tabla = $('#Productos').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayIngresosProductos.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayIngresosProductos.php",
  "aoColumns": [
     { mData: 'Folio_Ingreso' },
                 { mData: 'Factura' },

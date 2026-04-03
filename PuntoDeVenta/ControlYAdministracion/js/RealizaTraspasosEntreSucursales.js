@@ -55,7 +55,7 @@ $('document').ready(function($) {
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ListaDeTraspasos";
+                        window.location.href = (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/ListaDeTraspasos";
                     });
                 } else {
                     Swal.fire({

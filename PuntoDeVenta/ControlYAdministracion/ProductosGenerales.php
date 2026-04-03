@@ -59,10 +59,10 @@ document.getElementById('openAlert').addEventListener('click', function() {
   }).then((result) => {
     if (result.isConfirmed) {
       // Redirige a la URL para proceder si el usuario ya tiene la plantilla
-      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasiva';
+      window.location.href = '<?php echo BASE_URL; ?>ControlYAdministracion/ActualizacionMasiva';
     } else if (result.isDismissed) {
       // Redirige a la URL para descargar la plantilla si el usuario no la tiene
-      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Plantillaexcel';
+      window.location.href = '<?php echo BASE_URL; ?>ControlYAdministracion/Plantillaexcel';
     }
   });
 });
@@ -78,11 +78,11 @@ document.getElementById('openAlertmaxmin').addEventListener('click', function() 
   }).then((result) => {
     if (result.isConfirmed) {
       // Redirige a la URL para proceder si el usuario ya tiene la plantilla
-      window.location.href = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin';
+      window.location.href = '<?php echo BASE_URL; ?>ControlYAdministracion/ActualizacionMasivaMaxMin';
     } else if (result.isDismissed) {
       // Descarga la plantilla y redirige automáticamente después
-      const downloadUrl = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GenerarPlantillaMaxMin';
-      const redirectUrl = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/ActualizacionMasivaMaxMin';
+      const downloadUrl = <?= json_encode(BASE_URL . 'ControlYAdministracion/GenerarPlantillaMaxMin', JSON_UNESCAPED_SLASHES) ?>;
+      const redirectUrl = <?= json_encode(BASE_URL . 'ControlYAdministracion/ActualizacionMasivaMaxMin', JSON_UNESCAPED_SLASHES) ?>;
 
       // Crea un formulario invisible para descargar la plantilla
       const form = document.createElement('form');
@@ -117,7 +117,7 @@ document.getElementById('openAlertmaxmin').addEventListener('click', function() 
     $(document).on("click", ".btn-EditarProd", function() {
     
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EditaProductosGenerales.php", { id: id }, function(data) {
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar datos de productos");
             $("#Di").addClass("modal-dialog modal-xl modal-notify modal-warning");
@@ -129,7 +129,7 @@ document.getElementById('openAlertmaxmin').addEventListener('click', function() 
   $(document).on("click", ".btn-EliminarData", function() {
     
     var id = $(this).data("id");
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaProductosGeneral.php", { id: id }, function(data) {
+    $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EliminaProductosGeneral.php", { id: id }, function(data) {
       $("#FormCajas").html(data);
         $("#TitulosCajas").html("Eliminar datos");
         $("#Di").addClass("modal-dialog  modal-notify modal-warning");
@@ -139,7 +139,7 @@ document.getElementById('openAlertmaxmin').addEventListener('click', function() 
         $(document).on("click", ".btn-CrearCodBar", function() {
     
     var id = $(this).data("id");
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
+    $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/GeneraCodigoDeBarrasProductos.php", { id: id }, function(data) {
       $("#FormCajas").html(data);
         $("#TitulosCajas").html("Generar codigos de barras");
         $("#Di").addClass("modal-dialog modal-lg modal-notify modal-warning");

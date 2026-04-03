@@ -212,7 +212,7 @@ tabla = $('#StocksDESucursales').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayConsultaStockRapida.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayConsultaStockRapida.php",
  "aoColumns": [
   { mData: 'Cod_Barra' },
   { mData: 'Nombre_Prod' },

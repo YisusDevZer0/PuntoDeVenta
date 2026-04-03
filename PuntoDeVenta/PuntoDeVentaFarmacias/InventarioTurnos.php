@@ -408,7 +408,7 @@ if ($sucursal_id > 0) {
                 console.log('No hay turno activo detectado. Usuario:', '<?php echo addslashes($nombre_usuario); ?>', 'Sucursal:', <?php echo $sucursal_id; ?>);
                 // Intentar verificar si hay un turno que no se detectó
                 $.ajax({
-                    url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                    url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/api/gestion_turnos.php',
                     type: 'POST',
                     data: { accion: 'verificar_turno' },
                     dataType: 'json',
@@ -419,7 +419,7 @@ if ($sucursal_id > 0) {
                         } else {
                             // Verificar si puede iniciar (periodo, límites); si no, mostrar aviso y deshabilitar botón
                             $.ajax({
-                                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                                url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/api/gestion_turnos.php',
                                 type: 'POST',
                                 data: { accion: 'verificar_puede_iniciar' },
                                 dataType: 'json',
@@ -443,7 +443,7 @@ if ($sucursal_id > 0) {
                     error: function() {
                         // Sin respuesta de verificar_turno, comprobar si puede iniciar
                         $.ajax({
-                            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                            url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/api/gestion_turnos.php',
                             type: 'POST',
                             data: { accion: 'verificar_puede_iniciar' },
                             dataType: 'json',
@@ -523,7 +523,7 @@ if ($sucursal_id > 0) {
                     if (turnoActivo && turnoActivo.ID_Turno && idProducto) {
                         // Hacer la selección directamente sin esperar
                         $.ajax({
-                            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                            url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/api/gestion_turnos.php',
                             type: 'POST',
                             data: {
                                 accion: 'seleccionar_producto',
@@ -619,7 +619,7 @@ if ($sucursal_id > 0) {
                 formData.append('id_turno', turnoActivo.ID_Turno);
                 
                 $.ajax({
-                    url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/BusquedaEscanerInventarioTurnos.php',
+                    url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/BusquedaEscanerInventarioTurnos.php',
                     type: 'POST',
                     data: formData,
                     processData: false,
@@ -655,7 +655,7 @@ if ($sucursal_id > 0) {
                             
                             // Seleccionar el producto
                             $.ajax({
-                                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                                url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/api/gestion_turnos.php',
                                 type: 'POST',
                                 data: {
                                     accion: 'seleccionar_producto',

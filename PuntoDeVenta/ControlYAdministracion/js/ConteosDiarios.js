@@ -14,7 +14,7 @@ function CargarConteosDiarios(pagina = 1) {
         registros: registrosPorPagina
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataConteosDiarios.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataConteosDiarios.php", 
         filtros, 
         function(data) {
             $("#DataConteosDiarios").html(data);
@@ -27,7 +27,7 @@ function CargarConteosDiarios(pagina = 1) {
 }
 
 function CargarSucursales() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataSucursales.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataSucursales.php", 
         {}, 
         function(data) {
             $("#filtroSucursal").html(data);
@@ -55,7 +55,7 @@ function ExportarConteosDiarios() {
 
     // Crear URL con parámetros
     const params = new URLSearchParams(filtros);
-    const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarConteosDiarios.php?${params.toString()}`;
+    const url = `${window.__FDP_BASE_URL__ || ''}ControlYAdministracion/Controladores/ExportarConteosDiarios.php?${params.toString()}`;
     
     // Abrir en nueva ventana para descargar
     window.open(url, '_blank');
@@ -73,7 +73,7 @@ function ImprimirConteosDiarios() {
 
     // Crear URL con parámetros
     const params = new URLSearchParams(filtros);
-    const url = `https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ImprimirConteosDiarios.php?${params.toString()}`;
+    const url = `${window.__FDP_BASE_URL__ || ''}ControlYAdministracion/Controladores/ImprimirConteosDiarios.php?${params.toString()}`;
     
     // Abrir en nueva ventana para imprimir
     window.open(url, '_blank');
@@ -121,7 +121,7 @@ function MostrarEstadisticas() {
         fechaHasta: $('#fechaHasta').val()
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EstadisticasConteosDiarios.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EstadisticasConteosDiarios.php", 
         filtros, 
         function(data) {
             if (data.success) {

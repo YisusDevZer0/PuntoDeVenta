@@ -1,7 +1,7 @@
 function CargaListadoDeProductos(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/CEDIS/Controladores/VentasDelDia.php","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"CEDIS/Controladores/VentasDelDia.php","",function(data){
       $("#DataDeServicios").html(data);
     })
   

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once("db_connect.php");
+include_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/pos_password_verify.php';
 
 if(isset($_POST['login_button'])) {

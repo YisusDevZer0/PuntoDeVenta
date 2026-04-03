@@ -114,7 +114,7 @@ if ($stmt) {
                 
                 const formData = $(this).serialize();
                 
-                $.post('https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ActualizarConteo.php', 
+                $.post('<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ActualizarConteo.php', 
                     formData, 
                     function(data) {
                         if (data.success) {

@@ -230,7 +230,7 @@ function showInstructions() {
         Swal.fire({
             title: 'Cargando',
             html: '<div class="loader-container">' +
-                    '<img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish">' +
+                    '<img src="<?= BASE_URL ?>FotosMedidores/pez.gif" alt="Peces nadando" class="fish">' +
                     '<div class="loaderPill-text">' + getRandomMessage() + '</div>' +
                   '</div>',
             showCancelButton: false,

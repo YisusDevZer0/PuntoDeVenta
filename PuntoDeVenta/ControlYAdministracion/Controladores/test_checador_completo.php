@@ -7,7 +7,8 @@ echo "<h1>Prueba Completa del Controlador del Checador</h1>";
 
 // Función para hacer la petición POST
 function testController($data) {
-    $url = 'http://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ChecadorController.php';
+    require_once __DIR__ . '/../../config/app.php';
+    $url = str_replace('https://', 'http://', BASE_URL) . 'ControlYAdministracion/Controladores/ChecadorController.php';
     
     // Configurar cURL
     $ch = curl_init();

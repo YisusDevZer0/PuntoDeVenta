@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataUsuariosVigentes","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataUsuariosVigentes","",function(data){
       $("#DataDeServicios").html(data);
     })
   

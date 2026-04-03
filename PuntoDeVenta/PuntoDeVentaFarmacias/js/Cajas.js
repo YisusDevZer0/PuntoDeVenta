@@ -1,7 +1,7 @@
 function CargaCajas(){
 
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/Cajas.php","",function(data){
+    $.post((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/Cajas.php","",function(data){
       $("#Cajas").html(data);
     })
   

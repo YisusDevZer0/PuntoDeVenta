@@ -206,7 +206,7 @@ tabla = $('#Clientes').DataTable({
   "bProcessing": true,
  "ordering": true,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrrayTraspasos.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrrayTraspasos.php",
  "aoColumns": [
        { mData: 'IDTraspasoGenerado' },
        { mData: 'Cod_Barra' },

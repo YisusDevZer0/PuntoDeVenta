@@ -47,7 +47,7 @@ $('document').ready(function($) {
   function submitForm() {
       $.ajax({
           type: 'POST',
-          url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/RegistraGastos.php",
+          url: (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/RegistraGastos.php",
           data: $('#EliminaServiciosForm').serialize(),
           cache: false,
           beforeSend: function() {

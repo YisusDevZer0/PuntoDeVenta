@@ -1,7 +1,7 @@
 function CargaListadoDeProductos(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ListadoDeProductosCedis.php","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/ListadoDeProductosCedis.php","",function(data){
       $("#DataDeProductos").html(data);
     })
   

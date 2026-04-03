@@ -234,7 +234,7 @@
     "order": [
       [0, "desc"]
     ],
-    "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayReporteInventariosSucursales.php",
+    "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayReporteInventariosSucursales.php",
     "aoColumns": [  { mData: 'ID_Traspaso_Generado' },
             { mData: 'Cod_Barra' },
             { mData: 'Nombre_Prod' },

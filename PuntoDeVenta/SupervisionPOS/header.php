@@ -1,5 +1,11 @@
- <!-- Favicon -->
- <link href="img/favicon.ico" rel="icon">
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../config/app.php';
+}
+?>
+<script>window.__FDP_BASE_URL__=<?= json_encode(BASE_URL, JSON_UNESCAPED_SLASHES) ?>;</script>
+<!-- Favicon -->
+<link href="img/favicon.ico" rel="icon">
 
 <!-- Google Web Fonts --><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">

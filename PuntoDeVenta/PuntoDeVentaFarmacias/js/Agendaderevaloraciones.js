@@ -67,7 +67,7 @@ $('document').ready(function($) {
 
         $.ajax({
             type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/GuardaCitasDeRevaloracion.php",
+            url: (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/GuardaCitasDeRevaloracion.php",
             data: $('#AgendaExternoRevaloraciones').serialize(),
             cache: false,
             beforeSend: function() {

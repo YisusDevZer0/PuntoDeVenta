@@ -251,7 +251,7 @@ $filtroEstatus = isset($_GET['estatus']) ? trim($_GET['estatus']) : '';
       [0, "desc"]
     ],
     "ajax": {
-      "url": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
+      "url": "' . BASE_URL . 'ControlYAdministracion/Controladores/ArrayListadoDeTraspasos.php",
       "dataSrc": "aaData",
       "data": function(d) {
         return $.extend(d || {}, filtrosTraspasos);

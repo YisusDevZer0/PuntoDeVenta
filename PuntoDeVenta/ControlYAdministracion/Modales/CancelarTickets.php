@@ -120,7 +120,7 @@ WHERE
     }).then((result) => {
         if (result.isConfirmed) {
             // Hacer la solicitud AJAX para eliminar el ticket
-            fetch('https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/eliminar_ticket.php', {
+            fetch(<?= json_encode(BASE_URL . 'ControlYAdministracion/Controladores/eliminar_ticket.php', JSON_UNESCAPED_SLASHES) ?>, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'

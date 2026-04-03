@@ -28,7 +28,7 @@
       <div class="text-center">
              <div class="modal-body">
      
- <form  method="POST" action="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/GeneradorTraspasosCEDIS">
+ <form  method="POST" action="' . BASE_URL . 'ControlYAdministracion/GeneradorTraspasosCEDIS">
   <div class="form-group">
   <label for="exampleInputEmail1">Elija proveedor</label>
   <input type="text" class="form-control" name="NombreProveedor" value="CEDIS">

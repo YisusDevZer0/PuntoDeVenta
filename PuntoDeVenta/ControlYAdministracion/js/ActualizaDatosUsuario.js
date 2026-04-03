@@ -63,7 +63,7 @@ $('document').ready(function ($) {
 
         $.ajax({
             type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ActualizaDatosDeUsuario.php",
+            url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/ActualizaDatosDeUsuario.php",
             data: $('#ActualizaDatosDelUsuario').serialize(),
             cache: false,
             beforeSend: function () {

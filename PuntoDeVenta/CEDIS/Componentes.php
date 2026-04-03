@@ -63,7 +63,7 @@ include_once "Controladores/ControladorUsuario.php";
       $(document).on("click", ".btn-edita", function() {
         console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/CEDIS/Modales/EditaComponente.php", {
+        $.post("<?php echo BASE_URL; ?>CEDIS/Modales/EditaComponente.php", {
           id: id
         }, function(data) {
           $("#FormCajas").html(data);
@@ -76,7 +76,7 @@ include_once "Controladores/ControladorUsuario.php";
       // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
       $(document).on("click", ".btn-elimina", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/CEDIS/Modales/EliminarComponente.php", {
+        $.post("<?php echo BASE_URL; ?>CEDIS/Modales/EliminarComponente.php", {
           id: id
         }, function(data) {
           $("#FormCajas").html(data);

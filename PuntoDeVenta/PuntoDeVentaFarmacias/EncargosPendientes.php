@@ -54,7 +54,7 @@ include_once "Controladores/ControladorUsuario.php";
     $(document).on("click", ".btn-Cobrar", function() {
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/CobraEncargosPendiente.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/CobraEncargosPendiente.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
@@ -70,7 +70,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");

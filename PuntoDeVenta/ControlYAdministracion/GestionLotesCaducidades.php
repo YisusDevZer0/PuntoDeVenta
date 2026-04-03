@@ -144,7 +144,7 @@ include_once "Controladores/ControladorUsuario.php";
             // Evento para actualizar lote
             $(document).on("click", "#btn-actualizar-lote", function() {
                 $('#Di').removeClass('modal-xl').addClass('modal-dialog');
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", {}, function(data) {
+                $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", {}, function(data) {
                     $("#FormCajas").html(data);
                     $("#TitulosCajas").html("<i class='fa-solid fa-plus-circle me-2'></i>Registrar Nuevo Lote");
                 });
@@ -155,7 +155,7 @@ include_once "Controladores/ControladorUsuario.php";
             $(document).on("click", ".btn-editar-lote", function() {
                 var id = $(this).data("id");
                 $('#Di').removeClass('modal-xl').addClass('modal-dialog');
-                $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", { id: id }, function(data) {
+                $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/ActualizarLoteCaducidad.php", { id: id }, function(data) {
                     $("#FormCajas").html(data);
                     $("#TitulosCajas").html("<i class='fa-solid fa-edit me-2'></i>Editar Lote y Fecha de Caducidad");
                 });

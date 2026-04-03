@@ -178,7 +178,7 @@ tabla = $('#Productos').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayProductosActualizados.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayProductosActualizados.php",
  "aoColumns": [
     { mData: 'IdProdCedis' },
        { mData: 'Cod_Barra' },

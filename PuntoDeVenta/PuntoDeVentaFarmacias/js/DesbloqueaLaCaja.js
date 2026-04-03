@@ -63,7 +63,7 @@ $('document').ready(function ($) {
 
         $.ajax({
             type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ReactivaLasCajas.php",
+            url: (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/ReactivaLasCajas.php",
             data: $('#ReactivaCajaForm').serialize(),
             cache: false,
             beforeSend: function () {

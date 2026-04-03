@@ -103,7 +103,7 @@ if (!$ValorCaja) {
         var id = $(this).data("id");
         // Validar que el ID sea válido
         if (id && id != '0') {
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/RegistrarGasto.php", {
+            $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/RegistrarGasto.php", {
                 id: id
             }, function(data) {
                 $("#FormCajas").html(data);
@@ -125,7 +125,7 @@ if (!$ValorCaja) {
     $(document).on("click", ".btn-edita", function() {
         var id = $(this).data("id");
         console.log("Botón de cancelar clickeado para el ID:", id);
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaTipoDeUsuario.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EditaTipoDeUsuario.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Editar servicios");
             
@@ -136,7 +136,7 @@ if (!$ValorCaja) {
     // Delegación de eventos para el botón "btn-Ventas" dentro de .dropdown-menu
     $(document).on("click", ".btn-elimina", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminarTipoUsuario.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EliminarTipoUsuario.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Eliminar servicio");
            

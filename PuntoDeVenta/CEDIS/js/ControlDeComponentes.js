@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/CEDIS/Controladores/DataComponentes","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"CEDIS/Controladores/DataComponentes","",function(data){
       $("#DataDeServicios").html(data);
     })
   

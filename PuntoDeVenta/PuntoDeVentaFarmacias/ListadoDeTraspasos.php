@@ -50,7 +50,7 @@ include_once "Controladores/ControladorUsuario.php";
       $(document).on("click", ".btn-AceptarTraspaso", function() {
       
           var id = $(this).data("id");
-          $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/AceptaTraspasosPez.php", { id: id }, function(data) {
+          $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/AceptaTraspasosPez.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
               $("#TitulosCajas").html("Verificacion del traspaso");
               $("#Di").addClass("modal-dialog modal-xl modal-notify modal-info");

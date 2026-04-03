@@ -130,7 +130,7 @@ $(document).ready(function() {
         }
         
         $.ajax({
-            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/buscar_producto.php',
+            url: '<?php echo BASE_URL; ?>ControlYAdministracion/api/buscar_producto.php',
             type: 'POST',
             data: { cod_barra: codigo },
             dataType: 'json',
@@ -222,7 +222,7 @@ $(document).ready(function() {
         var formData = $(this).serialize();
         
         $.ajax({
-            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/actualizar_lote_caducidad.php',
+            url: '<?php echo BASE_URL; ?>ControlYAdministracion/api/actualizar_lote_caducidad.php',
             type: 'POST',
             data: formData,
             dataType: 'json',

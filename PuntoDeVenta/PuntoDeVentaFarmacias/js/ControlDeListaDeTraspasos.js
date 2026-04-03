@@ -1,7 +1,7 @@
 function CargaClientes(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ListaTraspasos","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/ListaTraspasos","",function(data){
       $("#DataDeClientes").html(data);
     })
   

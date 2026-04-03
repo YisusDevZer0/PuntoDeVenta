@@ -212,7 +212,7 @@ include_once "Controladores/ControladorUsuario.php";
     $(document).on("click", ".btn-MostrarElCorte", function() {
         var id = $(this).data("id");
         console.log("Botón de mostrar corte clickeado para el ID:", id);
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/MuestraElCorteDeCaja.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/MuestraElCorteDeCaja.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Mostrando el desglose del corte");
             

@@ -178,7 +178,7 @@ tabla = $('#StocksDESucursales').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/ArrayStocks.php",
  "aoColumns": [
   { mData: 'Cod_Barra' },
   { mData: 'Nombre_Prod' },

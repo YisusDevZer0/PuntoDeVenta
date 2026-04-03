@@ -60,7 +60,7 @@ include_once "Controladores/ControladorUsuario.php";
         var id = $(this).data("id");  // Asignar el valor correcto aquí
         console.log("Botón de cancelar clickeado para el ID:", id); // Mover console.log después de la asignación de id
         $('#CajasDi').removeClass('modal-dialog  modal-xl modal-notify modal-success').addClass('modal-dialog  modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaMinMaxStocks.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EditaMinMaxStocks.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Generando archivo para reimpresion");
         });
@@ -76,7 +76,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EditaProductoStocks.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EditaProductoStocks.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
@@ -92,7 +92,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AjusteInventarioManual.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/AjusteInventarioManual.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
@@ -110,7 +110,7 @@ include_once "Controladores/ControladorUsuario.php";
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Desglose de ticket");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desglose de ticket");
@@ -128,7 +128,7 @@ $(document).on("click", ".btn-GeneraOrdenCompra", function() {
         
     $('#CajasDi').removeClass('modal-dialog  modal-notify modal-success').addClass('modal-dialog  modal-xl modal-notify modal-success');  // Asegúrate de que solo tenga el tamaño grande
    
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/GeneraOrdenCompra.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/GeneraOrdenCompra.php", { id: id }, function(data) {
           $("#TitulosCajas").html("Generando orden de compra");  
           $("#FormCajas").html(data);
             $("#TitulosCajas").html("Generando orden de compra");

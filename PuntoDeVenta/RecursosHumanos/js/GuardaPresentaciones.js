@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/NuevasPresentaciones.php",
+            url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/NuevasPresentaciones.php",
             data: $('#NewTypeUser').serialize(),
             cache: false,
             beforeSend: function(){	

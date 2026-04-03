@@ -56,7 +56,7 @@ $(document).ready(function() {
     // Delegación de eventos para el botón "btn-AutorizaIngreso"
     $(document).on("click", ".btn-AutorizaIngreso", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/AutorizarIngreso.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/AutorizarIngreso.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Autorizar ingreso");
         });

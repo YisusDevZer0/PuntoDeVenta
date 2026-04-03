@@ -165,7 +165,7 @@ include_once "Controladores/ControladorUsuario.php";
     $(document).on("click", ".btn-EliminarData", function() {
       
       var id = $(this).data("id");
-      $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/EliminaProductosCedis.php", { id: id }, function(data) {
+      $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/EliminaProductosCedis.php", { id: id }, function(data) {
         $("#FormCajas").html(data);
           $("#TitulosCajas").html("Eliminar datos");
           $("#Di").addClass("modal-dialog  modal-notify modal-warning");
@@ -178,7 +178,7 @@ include_once "Controladores/ControladorUsuario.php";
       $(document).on("click", ".btn-LotesYCaducidades", function() {
       
       var id = $(this).data("id");
-      $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/LotesYCaducidadesCedis.php", { id: id }, function(data) {
+      $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/LotesYCaducidadesCedis.php", { id: id }, function(data) {
         $("#FormCajas").html(data);
           $("#TitulosCajas").html("Lotes y cadudicades");
           $("#Di").addClass("modal-dialog  modal-notify modal-warning");
@@ -190,7 +190,7 @@ include_once "Controladores/ControladorUsuario.php";
     $(document).on("click", ".btn-RealizarIngresos", function() {
       
       var id = $(this).data("id");
-      $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/IngresaProductosCedis.php", { id: id }, function(data) {
+      $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/IngresaProductosCedis.php", { id: id }, function(data) {
         $("#FormCajas").html(data);
           $("#TitulosCajas").html("Eliminar datos");
           $("#Di").addClass("modal-dialog  modal-notify modal-warning");

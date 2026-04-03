@@ -49,7 +49,7 @@ $('document').ready(function($){
   function submitForm() {
       $.ajax({				
           type: 'POST',
-          url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/NuevasCategorias.php",
+          url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/NuevasCategorias.php",
           data: $('#NewTypeUser').serialize(),
           cache: false,
           beforeSend: function(){	

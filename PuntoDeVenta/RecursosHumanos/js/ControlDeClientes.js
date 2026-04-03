@@ -1,7 +1,7 @@
 function CargaClientes(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataClientes","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataClientes","",function(data){
       $("#DataDeClientes").html(data);
     })
   

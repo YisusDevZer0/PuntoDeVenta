@@ -1,4 +1,4 @@
-var baseUrl = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion";
+var baseUrl = (window.__FDP_BASE_URL__||"")+"ControlYAdministracion";
 
 function getFiltrosTraspasos() {
     return {

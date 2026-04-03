@@ -1,12 +1,13 @@
 <?php
 
+require_once __DIR__ . '/config/app.php';
 session_start();
-include ("Consultas/ValidadorUsuario.php");
+include __DIR__ . '/Consultas/ValidadorUsuario.php';
 if($_SESSION["ControlMaestro"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
+	header('Location: ' . fdp_url('ControlYAdministracion/'));
 
 }
 
@@ -14,7 +15,7 @@ if($_SESSION["VentasPos"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/");	
+	header('Location: ' . fdp_url('PuntoDeVentaFarmacias/'));
 
 }
 
@@ -22,7 +23,7 @@ if($_SESSION["AdministradorGeneral"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/POSAdministracion/");	
+	header('Location: ' . fdp_url('POSAdministracion/'));
 
 }
 
@@ -30,28 +31,28 @@ if($_SESSION["Supervision"] || $_SESSION["ResponsableDeSupervision"])	// Supervi
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/Supervision/");	
+	header('Location: ' . fdp_url('SupervisionPOS/'));
 
 }
 if($_SESSION["Inventarios"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/Inventarios/");	
+	header('Location: ' . fdp_url('Inventarios/'));
 
 }
 if($_SESSION["AdministradorRH"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
+	header('Location: ' . fdp_url('ControlYAdministracion/'));
 
 }
 if($_SESSION["ResponsableDelCedis"])	//Condicion admin
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/CEDIS/");	
+	header('Location: ' . fdp_url('CEDIS/'));
 
 }
 
@@ -59,7 +60,7 @@ if($_SESSION["Marketing"])	//Condicion MKT
 {
 	
 
-	header("location:https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/");	
+	header('Location: ' . fdp_url('ControlYAdministracion/'));
 
 }
 

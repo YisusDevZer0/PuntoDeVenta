@@ -29,8 +29,7 @@ foreach ($sessionKeys as $key) {
     }
 }
 
-$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
-$errorUrl = $baseUrl . 'bridge_error.php?code=';
+$errorUrl = fdp_url('bridge_error.php?code=');
 if ($legacy_user_id === null || $legacy_user_id === '') {
     header('Location: ' . $errorUrl . 'no_session');
     exit;

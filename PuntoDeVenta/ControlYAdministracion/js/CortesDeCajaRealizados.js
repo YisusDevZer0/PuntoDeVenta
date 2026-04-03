@@ -10,7 +10,7 @@ function CargaFCajas(){
     if (sucursal) params.sucursal = sucursal;
     if (cajero) params.cajero = cajero;
     
-    var url = "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CortesDeCajasRealizados.php";
+    var url = (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/CortesDeCajasRealizados.php";
     if (Object.keys(params).length > 0) {
         url += "?" + $.param(params);
     }
@@ -115,7 +115,7 @@ function exportarExcel() {
         tabla.button('.buttons-excel').trigger();
     } else {
         // Si no hay tabla DataTable, crear un enlace de descarga simple
-        var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/exportar_cortes_caja.php';
+        var url = (window.__FDP_BASE_URL__||'')+'ControlYAdministracion/Controladores/exportar_cortes_caja.php';
         var params = [];
         if (fecha_inicio) params.push('fecha_inicio=' + fecha_inicio);
         if (fecha_fin) params.push('fecha_fin=' + fecha_fin);

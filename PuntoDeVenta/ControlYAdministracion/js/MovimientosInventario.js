@@ -2,7 +2,7 @@ var paginaActualMovimientos = 1;
 var registrosPorPaginaMovimientos = 25;
 
 function CargarSucursalesMovimientos() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataSucursales.php",
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataSucursales.php",
         {},
         function(data) {
             if (data && data.length > 0) {
@@ -31,7 +31,7 @@ function CargarMovimientosInventario(pagina) {
         registros: registrosPorPaginaMovimientos
     };
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataMovimientosInventario.php",
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataMovimientosInventario.php",
         filtros,
         function(data) {
             $("#DataMovimientosInventario").html(data);

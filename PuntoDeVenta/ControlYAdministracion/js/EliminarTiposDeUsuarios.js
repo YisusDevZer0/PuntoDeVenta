@@ -62,7 +62,7 @@ VigenciaProdT: {
   
         $.ajax({				
             type : 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/EliminaTiposDeUsuarios.php",
+            url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/EliminaTiposDeUsuarios.php",
             data: $('#EliminaServiciosForm').serialize(),
             cache: false,
             beforeSend: function(){	

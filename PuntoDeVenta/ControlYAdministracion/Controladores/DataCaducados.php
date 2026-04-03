@@ -256,7 +256,7 @@ tabla = $('#Caducados').DataTable({
     "stateSave": true,
     "bAutoWidth": false,
     "order": [[ 3, "asc" ]], // Ordenar por fecha de caducidad
-    "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayCaducados.php",
+    "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayCaducados.php",
     "aoColumns": [
         { mData: 'cod_barra' },
         { mData: 'nombre_producto' },

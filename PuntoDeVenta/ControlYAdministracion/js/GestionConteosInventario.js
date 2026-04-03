@@ -1,4 +1,4 @@
-var BASE_URL_CONFIG = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion';
+var BASE_URL_CONFIG = (window.__FDP_BASE_URL__||'')+'ControlYAdministracion';
 
 // Cargar sucursales en el filtro y en selects de configuración
 function CargarSucursales() {
@@ -26,7 +26,7 @@ function CargarSucursales() {
 
 // Cargar usuarios que han realizado conteos
 function CargarUsuarios() {
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataUsuariosConteos.php", 
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataUsuariosConteos.php", 
         function(data) {
             if (data && data.length > 0) {
                 var options = '<option value="">Todos los usuarios</option>';
@@ -74,7 +74,7 @@ function CargarProductosContados() {
     }
     
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataGestionConteos.php',
+        url: (window.__FDP_BASE_URL__||'')+'ControlYAdministracion/Controladores/DataGestionConteos.php',
         type: 'GET',
         data: filtros,
         dataType: 'json',
@@ -219,7 +219,7 @@ function mostrarModalLiberarProductos() {
         cancelButtonColor: '#6c757d',
         didOpen: function() {
             // Cargar sucursales en el select del modal
-            $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataSucursales.php", 
+            $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataSucursales.php", 
                 function(data) {
                     if (data && data.length > 0) {
                         var options = '<option value="">Todas las sucursales</option>';
@@ -283,7 +283,7 @@ window.ExportarConteosInventario = function() {
     
     // Crear URL con parámetros usando URLSearchParams
     const params = new URLSearchParams(filtros);
-    const url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ExportarGestionConteos.php?' + params.toString();
+    const url = (window.__FDP_BASE_URL__||'')+'ControlYAdministracion/Controladores/ExportarGestionConteos.php?' + params.toString();
     
     console.log('Exportando reporte a Excel. URL:', url);
     console.log('Filtros aplicados:', filtros);

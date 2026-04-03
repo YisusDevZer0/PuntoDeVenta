@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="container">
-    <img src="https://doctorpez.mx/PuntoDeVenta/FotosMedidores/pez.gif" alt="Peces nadando" class="fish" style="
+    <img src="<?= BASE_URL ?>FotosMedidores/pez.gif" alt="Peces nadando" class="fish" style="
     width: 35%;
 ">
         <h1>¡Estamos realizando mantenimiento!</h1>

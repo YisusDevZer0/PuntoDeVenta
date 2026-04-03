@@ -122,7 +122,7 @@ $(document).ready(function() {
         if (abonado === saldoPendiente && saldoPendiente > 0) {
             // Realizar la llamada AJAX para guardar los datos
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_liquidacion.php',
+                url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/guardar_liquidacion.php',
                 type: 'POST',
                 data: {
                     FkCaja: $('input[name="FkCaja"]').val(),

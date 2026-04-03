@@ -209,7 +209,7 @@ var tabla = $('#Clientes').DataTable({
  "stateSave": false, // Desactivar para que siempre recargue con filtros
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeCajasCortes.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayDeCajasCortes.php",
  "fnServerData": function ( sSource, aoData, fnCallback ) {
      // Agregar parámetros de filtro a la petición
      var fecha_inicio = $('#fecha_inicio').val();

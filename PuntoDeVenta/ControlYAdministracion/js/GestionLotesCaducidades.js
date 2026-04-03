@@ -4,7 +4,7 @@ function CargarLotesCaducidades() {
     var sucursal = $('#filtro-sucursal').val();
     var estado = $('#filtro-estado').val();
     
-    var url = 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/DataLotesCaducidades.php';
+    var url = (window.__FDP_BASE_URL__||'')+'ControlYAdministracion/Controladores/DataLotesCaducidades.php';
     var params = [];
     
     if (codigo) params.push('codigo=' + encodeURIComponent(codigo));

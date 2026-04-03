@@ -1,7 +1,7 @@
 function IngresosProductos(){
 
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/IngresosProductos.php","",function(data){
+    $.post((window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/Controladores/IngresosProductos.php","",function(data){
       $("#DataDeProductos").html(data);
     })
   

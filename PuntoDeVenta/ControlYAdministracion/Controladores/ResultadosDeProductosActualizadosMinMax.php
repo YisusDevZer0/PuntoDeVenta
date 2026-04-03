@@ -67,7 +67,7 @@
       "stateSave": true,
       "bAutoWidth": false,
       "order": [[0, "desc"]],
-      "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayProductosActualizadosminmax.php", // Cambiar la fuente de datos
+      "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayProductosActualizadosminmax.php", // Cambiar la fuente de datos
       "aoColumns": [
         { mData: 'id' }, // ID único
         { mData: 'Folio_Prod_Stock' }, // Folio del producto

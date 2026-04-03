@@ -32,7 +32,7 @@ include_once "Controladores/ControladorUsuario.php";
                 <div class="text-center">
                 <h6 class="mb-4">Datos de la Cuenta</h6>
                 <div class="account-info">
-                    <img class="img-fluid rounded-circle mx-auto mb-4"  src="https://doctorpez.mx/PuntoDeVenta/PerfilesImg/<?php echo $row['file_name']?>" style="width: 100px; height: 100px;">
+                    <img class="img-fluid rounded-circle mx-auto mb-4"  src="<?= BASE_URL ?>PerfilesImg/<?php echo $row['file_name']?>" style="width: 100px; height: 100px;">
                     <div class="row mb-3">
                     <form id="NewTypeUser">
                     <h5 class="mb-1">Tu Nombre</h5>

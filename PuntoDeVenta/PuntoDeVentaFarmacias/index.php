@@ -173,7 +173,7 @@ body[data-theme="light"] .navbar.bg-light {
    $(document).ready(function() {
     $(document).on("click", ".btn-cambiaestadomensaje", function() {
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desactivar caja actual");
         });
@@ -187,7 +187,7 @@ body[data-theme="light"] .navbar.bg-light {
     $(document).on("click", ".btn-cambiaestadomensaje", function() {
       console.log("Botón de cancelar clickeado para el ID:", id);
         var id = $(this).data("id");
-        $.post("https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
+        $.post("<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Modales/MarcaMensajeComoLeido.php", { id: id }, function(data) {
             $("#FormCajas").html(data);
             $("#TitulosCajas").html("Desactivar caja actual");
             

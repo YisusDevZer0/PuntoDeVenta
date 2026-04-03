@@ -262,7 +262,7 @@ if ($sucursal_id > 0 && !empty($nombre_usuario)) {
                     $('#buscar-producto').val('');
                     if (turnoActivo && turnoActivo.ID_Turno && idProducto) {
                         $.ajax({
-                            url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/api/gestion_turnos.php',
+                            url: '<?php echo BASE_URL; ?>ControlYAdministracion/api/gestion_turnos.php',
                             type: 'POST',
                             data: { accion: 'seleccionar_producto', id_turno: turnoActivo.ID_Turno, id_producto: idProducto, cod_barra: codigo },
                             dataType: 'json',
@@ -316,7 +316,7 @@ if ($sucursal_id > 0 && !empty($nombre_usuario)) {
                 formData.append('codigo', codigo.trim());
                 formData.append('id_turno', turnoActivo.ID_Turno);
                 $.ajax({
-                    url: 'https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/BusquedaEscanerInventarioTurnos.php',
+                    url: '<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/BusquedaEscanerInventarioTurnos.php',
                     type: 'POST',
                     data: formData,
                     processData: false,

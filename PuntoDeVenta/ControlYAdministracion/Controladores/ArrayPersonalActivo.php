@@ -75,13 +75,13 @@ while ($fila = $result->fetch_assoc()) {
                 <li><a class="dropdown-item btn-edita" href="#" data-id="' . $fila["Id_PvUser"] . '">
                     <i class="fas fa-edit me-2"></i>Editar datos
                 </a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/AsignacionSucursalesStock?idProd=' . base64_encode($fila["Id_PvUser"]) . '">
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/AsignacionSucursalesStock?idProd=' . base64_encode($fila["Id_PvUser"]) . '">
                     <i class="fas fa-clinic-medical me-2"></i>Asignar sucursales
                 </a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/DistribucionSucursales?Disid=' . base64_encode($fila["Id_PvUser"]) . '">
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/DistribucionSucursales?Disid=' . base64_encode($fila["Id_PvUser"]) . '">
                     <i class="fas fa-table me-2"></i>Consultar distribución
                 </a></li>
-                <li><a class="dropdown-item" href="https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/HistorialProducto?idProd=' . base64_encode($fila["Id_PvUser"]) . '">
+                <li><a class="dropdown-item" href="' . BASE_URL . 'ControlYAdministracion/HistorialProducto?idProd=' . base64_encode($fila["Id_PvUser"]) . '">
                     <i class="fas fa-history me-2"></i>Ver historial
                 </a></li>
                 <li><hr class="dropdown-divider"></li>

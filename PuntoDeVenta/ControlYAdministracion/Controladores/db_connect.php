@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../config/app.php';
+
 /* Database connection start */
 $servername = getenv('DB_HOST') ?: 'localhost';
 $username = getenv('DB_USER') ?: 'u858848268_devpezer0';

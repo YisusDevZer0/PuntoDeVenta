@@ -1,7 +1,7 @@
 function CargaCajas(){
 
 
-    $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/IngresosCompletados.php","",function(data){
+    $.post((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/IngresosCompletados.php","",function(data){
       $("#Cajas").html(data);
     })
   

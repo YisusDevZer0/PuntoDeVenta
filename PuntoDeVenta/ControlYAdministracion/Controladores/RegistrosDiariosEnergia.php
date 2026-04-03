@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDeRegistroDiarioEnergiaPez.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayDeRegistroDiarioEnergiaPez.php",
  "aoColumns": [
   { mData: 'Id_Registro' },  
   { mData: 'Registro_Watts' },

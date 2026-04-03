@@ -4,7 +4,8 @@
  * Recibe ?code= validate_failed | token_failed | bridge_key | bridge_user | bridge_net | …
  * Sin datos sensibles; diseño cuidado.
  */
-$baseUrl = 'https://doctorpez.mx/PuntoDeVenta/';
+require_once __DIR__ . '/config/app.php';
+$baseUrl = BASE_URL;
 $code = isset($_GET['code']) ? trim($_GET['code']) : '';
 
 $messages = [

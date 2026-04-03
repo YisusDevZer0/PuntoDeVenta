@@ -221,7 +221,7 @@ tabla = $('#PagosServicios').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ArrayDataPagosServicios.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayDataPagosServicios.php",
  "aoColumns": [
   { mData: 'NumTicket' },
   { mData: 'NombrePaciente' },

@@ -1,7 +1,7 @@
 function CargaListadoDeProductos(){
 
 
-    $.get("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AbonosDeCreditosRealizados.php","",function(data){
+    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/AbonosDeCreditosRealizados.php","",function(data){
       $("#DataDeServicios").html(data);
     })
   

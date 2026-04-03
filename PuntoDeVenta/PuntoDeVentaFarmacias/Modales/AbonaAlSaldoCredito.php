@@ -151,7 +151,7 @@ $(document).ready(function() {
 
     if (abonado && parseFloat(abonado) > 0) {
         $.ajax({
-            url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
+            url: '<?php echo BASE_URL; ?>PuntoDeVentaFarmacias/Controladores/guardar_abono.php',
             type: 'POST',
             data: {
                 FkCaja: $('input[name="FkCaja"]').val(),

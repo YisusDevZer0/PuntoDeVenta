@@ -99,7 +99,7 @@ $('document').ready(function ($) {
             setTimeout(function () {
               $('#TraspasoCompleto').modal('hide')
             }, 3000); // abrir
-            setTimeout(' window.location.href = "https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/ListadoDeTraspasos"; ',3000);
+            setTimeout(' window.location.href = (window.__FDP_BASE_URL__||"")+"PuntoDeVentaFarmacias/ListadoDeTraspasos"; ',3000);
   
   
             //  Solucionar muestra de modal de TraspasoCompleto

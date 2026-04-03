@@ -48,7 +48,7 @@ $('document').ready(function ($) {
     function submitForm() {
         $.ajax({
             type: 'POST',
-            url: "https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/AjustaElInventarioManual.php",
+            url: (window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/AjustaElInventarioManual.php",
             data: $('#AjusteInventarioManualForm').serialize(),
             cache: false,
             beforeSend: function () {

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../config/app.php';
+
 /* Database connection start */
 $servername = "localhost";
 $username = "u858848268_devpezer0";

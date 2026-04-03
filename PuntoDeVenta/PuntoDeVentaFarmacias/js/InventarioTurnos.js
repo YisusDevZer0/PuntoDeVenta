@@ -23,7 +23,7 @@ function CargarProductosTurno(idTurno) {
     var buscar = $('#buscar-producto').val();
     var estado = $('#filtro-estado-producto').val();
     
-    var url = 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/DataInventarioTurnos.php';
+    var url = (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/Controladores/DataInventarioTurnos.php';
     var params = ['id_turno=' + (idTurno || 0)];
     
     if (buscar && buscar.trim() !== '') {
@@ -127,7 +127,7 @@ function iniciarTurno() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
                 data: {
                     accion: 'iniciar'
@@ -164,7 +164,7 @@ function pausarTurno(idTurno) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
                 data: {
                     accion: 'pausar',
@@ -188,7 +188,7 @@ function pausarTurno(idTurno) {
 // Reanudar turno
 function reanudarTurno(idTurno) {
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+        url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'reanudar',
@@ -217,7 +217,7 @@ function finalizarTurno(idTurno) {
     
     // Verificar primero con el servidor para obtener datos actualizados
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+        url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'obtener_estado',
@@ -296,7 +296,7 @@ function confirmarFinalizarTurno(idTurno, total_productos, productos_completados
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
                 data: {
                     accion: 'finalizar',
@@ -335,7 +335,7 @@ $(document).on('click', '.btn-seleccionar-producto', function() {
     }
     
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+        url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'seleccionar_producto',
@@ -493,7 +493,7 @@ $(document).on('click', '.btn-contar-producto', function() {
                 lotes_json: JSON.stringify(d.lotes || [])
             };
             $.ajax({
-                url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+                url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
                 type: 'POST',
                 data: payload,
                 dataType: 'json',
@@ -558,7 +558,7 @@ function buscarYSeleccionarProducto(codigo) {
     formData.append('id_turno', turnoActivo.ID_Turno);
     
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/Controladores/BusquedaEscanerInventarioTurnos.php',
+        url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/Controladores/BusquedaEscanerInventarioTurnos.php',
         type: 'POST',
         data: formData,
         processData: false,
@@ -615,7 +615,7 @@ function buscarYSeleccionarProducto(codigo) {
 // Función para seleccionar producto en el turno
 function seleccionarProductoEnTurno(idProducto, codigo, nombre) {
     $.ajax({
-        url: 'https://doctorpez.mx/PuntoDeVenta/PuntoDeVentaFarmacias/api/gestion_turnos.php',
+        url: (window.__FDP_BASE_URL__||'')+'PuntoDeVentaFarmacias/api/gestion_turnos.php',
         type: 'POST',
         data: {
             accion: 'seleccionar_producto',

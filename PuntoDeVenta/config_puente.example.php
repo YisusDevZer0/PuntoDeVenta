@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/config/app.php';
+
 /**
  * Ejemplo de configuración del puente para PRODUCCIÓN.
  * Copiar a config_puente.php y ajustar si aplica.

@@ -100,7 +100,7 @@ $(document).ready(function() {
             $('#codigoBarras').val(codigo);
             
             // Obtener existencia real del producto
-            $.get('https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/ObtenerExistenciaReal.php', 
+            $.get('<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ObtenerExistenciaReal.php', 
                 { codigo: codigo, sucursal: $('select[name="sucursal"]').val() }, 
                 function(data) {
                     if (data.success) {
@@ -128,7 +128,7 @@ $(document).ready(function() {
         
         const formData = $(this).serialize();
         
-        $.post('https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Controladores/CrearConteo.php', 
+        $.post('<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/CrearConteo.php', 
             formData, 
             function(data) {
                 if (data.success) {

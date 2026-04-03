@@ -266,7 +266,7 @@ include_once "Controladores/ControladorUsuario.php";
             console.log("Botón de reimpresión clickeado para el ID:", id);
             $('#CajasDi').removeClass('modal-dialog modal-xl modal-notify modal-success').addClass('modal-dialog modal-notify modal-success');
             
-            $.post("https://doctorpez.mx/PuntoDeVentaControlYAdministracion/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
+            $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/ReimprimeTicketsVenta.php", { id: id }, function(data) {
                 $("#FormCajas").html(data);
                 $("#TitulosCajas").html("Generando archivo para reimpresión");
             });
@@ -281,7 +281,7 @@ include_once "Controladores/ControladorUsuario.php";
             
             $('#CajasDi').removeClass('modal-dialog modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
             
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
+            $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/DesgloseTicketsVenta.php", { id: id }, function(data) {
                 $("#TitulosCajas").html("Desglose de ticket");  
                 $("#FormCajas").html(data);
             });
@@ -296,7 +296,7 @@ include_once "Controladores/ControladorUsuario.php";
             
             $('#CajasDi').removeClass('modal-dialog modal-notify modal-success').addClass('modal-dialog modal-xl modal-notify modal-success');
             
-            $.post("https://doctorpez.mx/PuntoDeVenta/ControlYAdministracion/Modales/eliminar_ticket.php", { id: id }, function(data) {
+            $.post("<?php echo BASE_URL; ?>ControlYAdministracion/Modales/eliminar_ticket.php", { id: id }, function(data) {
                 $("#TitulosCajas").html("Eliminar ticket");  
                 $("#FormCajas").html(data);
             });
