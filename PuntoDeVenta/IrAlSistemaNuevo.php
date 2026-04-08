@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/config/fragment_init.php';
 /**
  * Redirige al usuario al sistema nuevo con un token de un solo uso.
  * Detecta la sesión POS activa (VentasPos, ControlMaestro, etc.),

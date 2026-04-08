@@ -4,6 +4,7 @@ if (!defined('BASE_URL')) {
 }
 ?>
 <script>window.__FDP_BASE_URL__=<?= json_encode(BASE_URL, JSON_UNESCAPED_SLASHES) ?>;</script>
+<script src="../js/fdp-url.js"></script>
 <!-- Favicon -->
 <link href="img/favicon.ico" rel="icon">
 

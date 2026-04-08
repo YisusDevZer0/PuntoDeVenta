@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../../config/fragment_init.php';
 $filtroFechaDesde = isset($_GET['fechaDesde']) ? trim($_GET['fechaDesde']) : '';
 $filtroFechaHasta = isset($_GET['fechaHasta']) ? trim($_GET['fechaHasta']) : '';
 $filtroSucursalOrigen = isset($_GET['sucursalOrigen']) ? trim($_GET['sucursalOrigen']) : '';

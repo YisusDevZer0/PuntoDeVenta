@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 include_once "Controladores/ControladorUsuario.php";
 $fechaActual = date('Y-m-d'); // Esto obtiene la fecha actual en el formato 'Año-Mes-Día'$fecha
   $sql = "SELECT * FROM IngresosFarmacias ORDER BY IdProdCedis  DESC LIMIT 1";

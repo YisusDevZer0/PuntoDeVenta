@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 include_once "Controladores/ControladorUsuario.php";
 
 // Verificar si hay un turno activo para el usuario

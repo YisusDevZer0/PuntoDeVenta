@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 include_once "Controladores/ControladorUsuario.php";
 
 $nombre_usuario = isset($row['Nombre_Apellidos']) ? $row['Nombre_Apellidos'] : '';

@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../../config/fragment_init.php';
 include_once "../Controladores/db_connect.php";
 
 $folio = isset($_POST['folio']) ? $_POST['folio'] : '';

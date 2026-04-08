@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 include_once "Controladores/ControladorUsuario.php";
  include "Controladores/ConsultaCaja.php";
 include "Controladores/SumadeFolioTicketsNuevo.php";

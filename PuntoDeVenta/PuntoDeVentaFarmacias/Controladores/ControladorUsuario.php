@@ -1,4 +1,6 @@
 <?php 
+
+require_once __DIR__ . '/../../config/fragment_init.php';
 date_default_timezone_set("America/Monterrey");
 if (session_status() == PHP_SESSION_NONE) {
   session_start();

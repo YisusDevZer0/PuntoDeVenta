@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../../config/fragment_init.php';
+?>
 
 <?php
   $sql = "SELECT * FROM Traspasos_generados ORDER BY ID_Traspaso_Generado DESC LIMIT 1";

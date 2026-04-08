@@ -57,7 +57,7 @@ $(document).ready(function() {
                         theme: 'metroui'
                     }).show();
                     setTimeout(function() {
-                        window.location.href = (window.__FDP_BASE_URL__||"")+"ControlPOS";
+                        window.location.href = (typeof fdpUrl === 'function' ? fdpUrl('ControlPOS') : ((window.__FDP_BASE_URL__||"")+"ControlPOS"));
                     }, 2000);
                 } else {                                    
                     // Muestra una notificación de error con Noty.js

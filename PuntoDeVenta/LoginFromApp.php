@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/config/fragment_init.php';
 /**
  * Entrada al POS desde el sistema nuevo (puente de sesión).
  * Recibe ?token=xxx, valida el token con el API del sistema nuevo,

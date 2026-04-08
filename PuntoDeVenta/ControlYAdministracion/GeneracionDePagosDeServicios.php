@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 include_once "Controladores/ControladorUsuario.php";
 
 // Obtener el valor de Fk_Sucursal y Nombre_Apellidos

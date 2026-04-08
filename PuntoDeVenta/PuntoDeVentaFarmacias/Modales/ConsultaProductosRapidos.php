@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../../config/fragment_init.php';
+?>
 <!-- Botón para abrir el modal -->
 
 <!-- Modal -->

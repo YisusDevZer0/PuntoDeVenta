@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../../config/fragment_init.php';
 include "../Controladores/db_connect.php";
 include "../Controladores/ControladorUsuario.php";
 

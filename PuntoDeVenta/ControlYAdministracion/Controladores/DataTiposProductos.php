@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../../config/fragment_init.php';
+?>
 
 <style>
   /* Personalizar el diseño de la paginación con CSS */

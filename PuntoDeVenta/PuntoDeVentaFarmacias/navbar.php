@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/fragment_init.php';
 // Asegúrate de que $Licencia y $Fk_Sucursal están definidos y tienen valores
 $Licencia = isset($row['Licencia']) ? $row['Licencia'] : '';
 $Fk_Sucursal = isset($row['Fk_Sucursal']) ? $row['Fk_Sucursal'] : '';?>

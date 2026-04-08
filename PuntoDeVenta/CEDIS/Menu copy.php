@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../config/fragment_init.php';
+?>
 <div class="sidebar pe-4 pb-3">
             <nav class="navbar bg-light navbar-light">
                 <a href="index.html" class="navbar-brand mx-4 mb-3">

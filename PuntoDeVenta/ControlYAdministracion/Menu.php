@@ -1,4 +1,6 @@
 <?php 
+
+require_once __DIR__ . '/../config/fragment_init.php';
 // Verificar si $row está disponible, si no, obtener los datos del usuario
 if (!isset($row) || !isset($row['TipoUsuario'])) {
     // Incluir el controlador de usuario si no está ya incluido
