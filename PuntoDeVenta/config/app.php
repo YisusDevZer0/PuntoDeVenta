@@ -16,7 +16,21 @@ define('FDP_APP_BOOTSTRAPPED', true);
 
 $docRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
 $appRoot = realpath(__DIR__ . '/..');
-if ($docRoot === false || $appRoot === false || strpos($appRoot, $docRoot) !== 0) {
+$norm = static function (string $p): string {
+    if ($p === '') {
+        return '';
+    }
+    return str_replace('\\', '/', strtolower($p));
+};
+$docN = $norm($docRoot !== false ? $docRoot : '');
+$appN = $norm($appRoot !== false ? $appRoot : '');
+$docPrefix = rtrim($docN, '/') . '/';
+$appInsideDocroot = $docN !== '' && $appN !== ''
+    && (strpos($appN, $docPrefix) === 0 || $appN === rtrim($docN, '/'));
+if (
+    ($docRoot === false || $appRoot === false || !$appInsideDocroot)
+    && getenv('FDP_RELAX_DOCROOT_CHECK') !== '1'
+) {
     http_response_code(500);
     exit('Configuración de rutas: DOCUMENT_ROOT no contiene la aplicación.');
 }

@@ -43,23 +43,18 @@ function fdp_db_connect(bool $dieOnError = true): ?mysqli
         return $conn;
     };
 
-    $sslFlags = 0;
-    if (in_array($sslMode, ['require', 'verify-full', 'verify-ca', 'prefer'], true)) {
-        $sslFlags = MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
-    }
-
-    if ($sslFlags !== 0) {
+    // Hostinger / PHP: forzar SSL con flags suele fallar o dar 500; "prefer" = conexión TCP normal (MySQL puede negociar TLS según servidor).
+    $sslStrict = in_array($sslMode, ['require', 'verify-full', 'verify-ca'], true);
+    if ($sslStrict && defined('MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT')) {
         $mysqli = mysqli_init();
         if ($mysqli === false) {
             return $fail($dieOnError, 'No podemos inicializar MySQLi.');
         }
-        $ok = @mysqli_real_connect($mysqli, $host, $user, $password, $dbname, $port, null, $sslFlags);
+        $flags = (int) constant('MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT');
+        $ok = @mysqli_real_connect($mysqli, $host, $user, $password, $dbname, $port, null, $flags);
         if ($ok) {
             $applySession($mysqli);
             return $mysqli;
-        }
-        if ($sslMode === 'prefer') {
-            return $connectPlain();
         }
         $err = $mysqli->connect_error ?: mysqli_connect_error();
         return $fail($dieOnError, 'No podemos conectar a la base de datos (SSL): ' . $err);
