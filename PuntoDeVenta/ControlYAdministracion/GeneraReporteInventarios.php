@@ -10,16 +10,29 @@ if (!isset($_GET['fecha']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fecha'
 
 $fecha = $_GET['fecha'];
 
-// Las fechas del modal vienen de InventariosStocks_Conteos (CargaFechaDeInventarios.php).
-// Los precios en pantalla salen de InventariosSucursales / catálogo; en conteos suelen ir vacíos.
+// Fechas del modal: InventariosStocks_Conteos.
+// Precios: igual que búsqueda POS (FarmacitasCore): COALESCE(Stock_POS, Productos_POS).
+// InventariosSucursales: un registro por (código, sucursal, día) vía subconsulta (evita JOIN por fecha que no calza).
 $sql = "SELECT 
     inv_suc.`IdProdCedis`,
     inv_stocks.`Folio_Prod_Stock`,
     inv_stocks.`ID_Prod_POS`,
     inv_stocks.`Cod_Barra`,
     inv_stocks.`Nombre_Prod`,
-    COALESCE(inv_suc.`Precio_Venta`, inv_stocks.`Precio_Venta`, pp.`Precio_Venta`) AS `Precio_Venta`,
-    COALESCE(inv_suc.`Precio_C`, inv_stocks.`Precio_C`, pp.`Precio_C`) AS `Precio_Compra`,
+    COALESCE(
+        inv_suc.`Precio_Venta`,
+        inv_stocks.`Precio_Venta`,
+        sp.`Precio_Venta`,
+        pp.`Precio_Venta`,
+        pp_cod.`Precio_Venta`
+    ) AS `Precio_Venta`,
+    COALESCE(
+        inv_suc.`Precio_C`,
+        inv_stocks.`Precio_C`,
+        sp.`Precio_C`,
+        pp.`Precio_C`,
+        pp_cod.`Precio_C`
+    ) AS `Precio_Compra`,
     inv_stocks.`Contabilizado`,
     inv_stocks.`StockEnMomento`,
     COALESCE(inv_suc.`ExistenciasAjuste`, inv_stocks.`Diferencia`) AS `Ajuste_Realizado`,
@@ -32,17 +45,38 @@ $sql = "SELECT
     inv_stocks.`Tipo_Ajuste`,
     inv_stocks.`Anaquel`,
     inv_stocks.`Repisa`,
-    (inv_stocks.`Contabilizado` * COALESCE(inv_suc.`Precio_Venta`, inv_stocks.`Precio_Venta`, pp.`Precio_Venta`)) AS `Total_Precio_Venta`,
-    (inv_stocks.`Contabilizado` * COALESCE(inv_suc.`Precio_C`, inv_stocks.`Precio_C`, pp.`Precio_C`)) AS `Total_Precio_Compra`
+    (inv_stocks.`Contabilizado` * COALESCE(
+        inv_suc.`Precio_Venta`,
+        inv_stocks.`Precio_Venta`,
+        sp.`Precio_Venta`,
+        pp.`Precio_Venta`,
+        pp_cod.`Precio_Venta`
+    )) AS `Total_Precio_Venta`,
+    (inv_stocks.`Contabilizado` * COALESCE(
+        inv_suc.`Precio_C`,
+        inv_stocks.`Precio_C`,
+        sp.`Precio_C`,
+        pp.`Precio_C`,
+        pp_cod.`Precio_C`
+    )) AS `Total_Precio_Compra`
 FROM `InventariosStocks_Conteos` inv_stocks
 LEFT JOIN `InventariosSucursales` inv_suc
-    ON inv_stocks.`Cod_Barra` = inv_suc.`Cod_Barra`
-    AND inv_stocks.`Fk_sucursal` = inv_suc.`Fk_Sucursal`
-    AND DATE(inv_stocks.`FechaInventario`) = DATE(inv_suc.`FechaInventario`)
+    ON inv_suc.`IdProdCedis` = (
+        SELECT i2.`IdProdCedis`
+        FROM `InventariosSucursales` i2
+        WHERE TRIM(i2.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
+          AND i2.`Fk_Sucursal` = inv_stocks.`Fk_sucursal`
+          AND DATE(i2.`FechaInventario`) = DATE(inv_stocks.`FechaInventario`)
+        ORDER BY i2.`IdProdCedis` DESC
+        LIMIT 1
+    )
 LEFT JOIN `Stock_POS` sp
-    ON inv_stocks.`Cod_Barra` = sp.`Cod_Barra`
-    AND inv_stocks.`Fk_sucursal` = sp.`Fk_sucursal`
-LEFT JOIN `Productos_POS` pp ON sp.`ID_Prod_POS` = pp.`ID_Prod_POS`
+    ON sp.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
+    AND sp.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
+LEFT JOIN `Productos_POS` pp
+    ON pp.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
+LEFT JOIN `Productos_POS` pp_cod
+    ON TRIM(pp_cod.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
 LEFT JOIN `Sucursales` s ON inv_stocks.`Fk_sucursal` = s.`ID_Sucursal`
 WHERE DATE(inv_stocks.`FechaInventario`) = ?";
 
