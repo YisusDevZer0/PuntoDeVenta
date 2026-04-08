@@ -64,3 +64,22 @@ if($_SESSION["Marketing"])	//Condicion MKT
 
 }
 
+if (!empty($_SESSION['Enfermeria'])) {
+	header('Location: ' . fdp_url('ControlDeEnfermeria/'));
+	exit;
+}
+
+// Sin sesión de ningún rol: evitar respuesta vacía; el login canónico está en index.php
+$fdpHasPosSession = !empty($_SESSION['ControlMaestro'])
+	|| !empty($_SESSION['VentasPos'])
+	|| !empty($_SESSION['AdministradorGeneral'])
+	|| !empty($_SESSION['Supervision'])
+	|| !empty($_SESSION['ResponsableDeSupervision'])
+	|| !empty($_SESSION['Inventarios'])
+	|| !empty($_SESSION['AdministradorRH'])
+	|| !empty($_SESSION['ResponsableDelCedis'])
+	|| !empty($_SESSION['Marketing']);
+if (!$fdpHasPosSession) {
+	header('Location: ' . fdp_url('index.php'));
+	exit;
+}

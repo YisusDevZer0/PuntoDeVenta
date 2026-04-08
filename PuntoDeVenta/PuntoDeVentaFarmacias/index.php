@@ -11,6 +11,11 @@ include_once "Controladores/ControladorUsuario.php"
     <meta content="" name="keywords">
     <meta content="" name="description">
 
+   <?php
+   include "header.php";?>
+
+<body data-theme="light">
+
     <div id="loading-overlay">
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
@@ -98,10 +103,7 @@ body[data-theme="light"] .navbar.bg-light {
 
 </style>
 
-   <?php
-   include "header.php";?>
 
-<body data-theme="light">
   
 
 

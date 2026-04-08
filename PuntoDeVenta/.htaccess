@@ -1,3 +1,6 @@
+# Si esta carpeta se publica bajo un subpath (no es la raíz del vhost), ajusta RewriteBase a ese path,
+# por ejemplo: RewriteBase /PuntoDeVenta/PuntoDeVenta/
+# (debe coincidir con FDP_BASE_PATH en el servidor si usas override).
 
 RewriteEngine On
 RewriteBase /

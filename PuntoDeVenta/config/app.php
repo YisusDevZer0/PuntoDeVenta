@@ -8,6 +8,13 @@
  *
  * La ruta web se infiere desde SCRIPT_NAME + SCRIPT_FILENAME respecto a la raíz de la app (directorio
  * padre de /config), no desde nombres fijos de carpetas ni asumiendo /develop en la URL.
+ *
+ * Variables de entorno opcionales:
+ * - FDP_BASE_PATH: path URI público de la app (p. ej. /PuntoDeVenta/PuntoDeVenta/ o /). Si está definido
+ *   y no vacío, sustituye la inferencia automática (útil tras proxy o SCRIPT_NAME incorrecto).
+ * - FDP_RELAX_DOCROOT_CHECK=1: no exige que DOCUMENT_ROOT contenga la carpeta de la app (solo entornos especiales).
+ *
+ * Diagnóstico: en la página de login, window.__FDP_BASE_URL__ debe coincidir con el origen + path base real.
  */
 if (defined('FDP_APP_BOOTSTRAPPED')) {
     return;
@@ -52,7 +59,10 @@ $scriptFile = isset($_SERVER['SCRIPT_FILENAME']) ? realpath($_SERVER['SCRIPT_FIL
 
 $basePath = null;
 
-if (!$isCli && $scriptFile && strpos($scriptFile, $appRoot) === 0) {
+$fdpEnvBase = getenv('FDP_BASE_PATH');
+if ($fdpEnvBase !== false && trim($fdpEnvBase) !== '') {
+    $basePath = $fdp_uri_base(trim($fdpEnvBase));
+} elseif (!$isCli && $scriptFile && strpos($scriptFile, $appRoot) === 0) {
     // Ruta del script bajo la raíz de la app (filesystem), p.ej. ControlPOS.php o Modulo/sub/archivo.php
     $relFs = ltrim(str_replace('\\', '/', substr($scriptFile, strlen($appRoot))), '/');
 
@@ -69,7 +79,7 @@ if (!$isCli && $scriptFile && strpos($scriptFile, $appRoot) === 0) {
         $baseDir = dirname($baseDir);
     }
     $basePath = $fdp_uri_base($baseDir);
-} else {
+} elseif ($basePath === null) {
     // CLI, pruebas o SCRIPT fuera de la app: usar posición bajo DOCUMENT_ROOT
     $rel = trim(str_replace('\\', '/', substr($appRoot, strlen($docRoot))), '/');
     $basePath = $rel === '' ? '/' : '/' . $rel . '/';

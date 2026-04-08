@@ -208,7 +208,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/CEDIS/ArrayComponentes.php",
+ "sAjaxSource": "<?php echo BASE_URL; ?>CEDIS/Controladores/ArrayComponentes.php",
  "aoColumns": [
   { mData: 'ServicioID' },  
   { mData: 'Nombre_Servicio' },
