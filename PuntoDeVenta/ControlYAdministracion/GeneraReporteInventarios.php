@@ -10,9 +10,8 @@ if (!isset($_GET['fecha']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fecha'
 
 $fecha = $_GET['fecha'];
 
-// Fechas del modal: InventariosStocks_Conteos.
-// Precios: igual que búsqueda POS (FarmacitasCore): COALESCE(Stock_POS, Productos_POS).
-// InventariosSucursales: un registro por (código, sucursal, día) vía subconsulta (evita JOIN por fecha que no calza).
+// En conteos, Precio_Venta / Precio_C suelen guardarse como 0 (no NULL). COALESCE(0, catálogo) nunca llega al catálogo.
+// Se usa NULLIF(col, 0) para saltar esos ceros y priorizar: inventario sucursal → stock por ID → stock por código → producto.
 $sql = "SELECT 
     inv_suc.`IdProdCedis`,
     inv_stocks.`Folio_Prod_Stock`,
@@ -20,18 +19,20 @@ $sql = "SELECT
     inv_stocks.`Cod_Barra`,
     inv_stocks.`Nombre_Prod`,
     COALESCE(
-        inv_suc.`Precio_Venta`,
-        inv_stocks.`Precio_Venta`,
-        sp.`Precio_Venta`,
-        pp.`Precio_Venta`,
-        pp_cod.`Precio_Venta`
+        NULLIF(inv_suc.`Precio_Venta`, 0),
+        NULLIF(sp_id.`Precio_Venta`, 0),
+        NULLIF(sp_cod.`Precio_Venta`, 0),
+        NULLIF(pp.`Precio_Venta`, 0),
+        NULLIF(pp_cod.`Precio_Venta`, 0),
+        NULLIF(inv_stocks.`Precio_Venta`, 0)
     ) AS `Precio_Venta`,
     COALESCE(
-        inv_suc.`Precio_C`,
-        inv_stocks.`Precio_C`,
-        sp.`Precio_C`,
-        pp.`Precio_C`,
-        pp_cod.`Precio_C`
+        NULLIF(inv_suc.`Precio_C`, 0),
+        NULLIF(sp_id.`Precio_C`, 0),
+        NULLIF(sp_cod.`Precio_C`, 0),
+        NULLIF(pp.`Precio_C`, 0),
+        NULLIF(pp_cod.`Precio_C`, 0),
+        NULLIF(inv_stocks.`Precio_C`, 0)
     ) AS `Precio_Compra`,
     inv_stocks.`Contabilizado`,
     inv_stocks.`StockEnMomento`,
@@ -46,18 +47,20 @@ $sql = "SELECT
     inv_stocks.`Anaquel`,
     inv_stocks.`Repisa`,
     (inv_stocks.`Contabilizado` * COALESCE(
-        inv_suc.`Precio_Venta`,
-        inv_stocks.`Precio_Venta`,
-        sp.`Precio_Venta`,
-        pp.`Precio_Venta`,
-        pp_cod.`Precio_Venta`
+        NULLIF(inv_suc.`Precio_Venta`, 0),
+        NULLIF(sp_id.`Precio_Venta`, 0),
+        NULLIF(sp_cod.`Precio_Venta`, 0),
+        NULLIF(pp.`Precio_Venta`, 0),
+        NULLIF(pp_cod.`Precio_Venta`, 0),
+        NULLIF(inv_stocks.`Precio_Venta`, 0)
     )) AS `Total_Precio_Venta`,
     (inv_stocks.`Contabilizado` * COALESCE(
-        inv_suc.`Precio_C`,
-        inv_stocks.`Precio_C`,
-        sp.`Precio_C`,
-        pp.`Precio_C`,
-        pp_cod.`Precio_C`
+        NULLIF(inv_suc.`Precio_C`, 0),
+        NULLIF(sp_id.`Precio_C`, 0),
+        NULLIF(sp_cod.`Precio_C`, 0),
+        NULLIF(pp.`Precio_C`, 0),
+        NULLIF(pp_cod.`Precio_C`, 0),
+        NULLIF(inv_stocks.`Precio_C`, 0)
     )) AS `Total_Precio_Compra`
 FROM `InventariosStocks_Conteos` inv_stocks
 LEFT JOIN `InventariosSucursales` inv_suc
@@ -70,9 +73,12 @@ LEFT JOIN `InventariosSucursales` inv_suc
         ORDER BY i2.`IdProdCedis` DESC
         LIMIT 1
     )
-LEFT JOIN `Stock_POS` sp
-    ON sp.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
-    AND sp.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
+LEFT JOIN `Stock_POS` sp_id
+    ON sp_id.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
+    AND sp_id.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
+LEFT JOIN `Stock_POS` sp_cod
+    ON TRIM(sp_cod.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
+    AND sp_cod.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
 LEFT JOIN `Productos_POS` pp
     ON pp.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
 LEFT JOIN `Productos_POS` pp_cod
