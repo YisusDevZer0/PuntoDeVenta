@@ -1,3 +1,8 @@
+<?php
+if (!defined('BASE_URL')) {
+    require_once __DIR__ . '/../../config/app.php';
+}
+?>
 <style>
   /* Personalizar el diseño de la paginación con CSS */
   .dataTables_wrapper .dataTables_paginate {
@@ -290,23 +295,26 @@ if (cajasAbiertasCount >= 2) {
 </script>
 <div class="text-center">
   <div class="table-responsive">
-  <table  id="Clientes" class="table table-hover">
-<thead>
-<th>Id de caja</th>
-<th>Nombre Cajero</th>
-<th>Fondo de caja</th>
-    <th>Fecha de apertura</th>
-    <th>Estado</th>
-    <th>Turno</th> 
-    <th>Activo / Inactivo</th> 
-    <th>Valor total de caja</th> 
-    <th>Desactivar Caja</th>
-    <th>Reactivar Caja</th>
-    <th>Registrar gasto</th>
-    <th>Realizar corte</th>
-</thead>
-
-</div>
+  <table id="Clientes" class="table table-hover">
+    <thead>
+      <tr>
+        <th>Id de caja</th>
+        <th>Nombre Cajero</th>
+        <th>Fondo de caja</th>
+        <th>Fecha de apertura</th>
+        <th>Estado</th>
+        <th>Turno</th>
+        <th>Activo / Inactivo</th>
+        <th>Valor total de caja</th>
+        <th>Desactivar Caja</th>
+        <th>Reactivar Caja</th>
+        <th>Registrar gasto</th>
+        <th>Realizar corte</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
 </div>
 
 
