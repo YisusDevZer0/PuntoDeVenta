@@ -211,7 +211,7 @@ tabla = $('#Clientes').DataTable({
  "stateSave":true,
  "bAutoWidth": false,
  "order": [[ 0, "desc" ]],
- "sAjaxSource": "<?php echo BASE_URL; ?>ControlYAdministracion/Controladores/ArrayStocks.php",
+ "sAjaxSource": "Controladores/ArrayStocks.php",
  "aoColumns": [
     { mData: 'Cod_Barra' },
       
@@ -295,26 +295,26 @@ return '<button class="btn btn-default btn-sm" style="background-color:#fd7e14!i
 </script>
 <div class="text-center">
   <div class="table-responsive">
-  <table  id="Clientes"  class="order-column">
-<thead>
-<th style="background-color:#ef7980 !important;">Codigo de barras</th>
-
-<th style="background-color:#ef7980 !important;">Nombre</th>
-<th style="background-color:#ef7980 !important;">PV</th>
-<th style="background-color:#ef7980 !important;">Servicio</th>
-<th style="background-color:#ef7980 !important;">Tipo</th>
-<th style="background-color:#ef7980 !important;">Proveedor 1</th>
-
-<th style="background-color:#ef7980 !important;">Sucursal</th>
-<th style="background-color:#ef7980 !important;">Existencias</th>
-<th style="background-color:#ef7980 !important;">Min</th>
-<th style="background-color:#ef7980 !important;">Max</th>
-<th style="background-color:#ef7980 !important;">Estatus</th>
-
-    <th>Opciones</th> 
-</thead>
-
-</div>
+  <table id="Clientes" class="order-column table table-hover">
+    <thead>
+      <tr>
+        <th style="background-color:#ef7980 !important;">Codigo de barras</th>
+        <th style="background-color:#ef7980 !important;">Nombre</th>
+        <th style="background-color:#ef7980 !important;">PV</th>
+        <th style="background-color:#ef7980 !important;">Servicio</th>
+        <th style="background-color:#ef7980 !important;">Tipo</th>
+        <th style="background-color:#ef7980 !important;">Proveedor 1</th>
+        <th style="background-color:#ef7980 !important;">Sucursal</th>
+        <th style="background-color:#ef7980 !important;">Existencias</th>
+        <th style="background-color:#ef7980 !important;">Min</th>
+        <th style="background-color:#ef7980 !important;">Max</th>
+        <th style="background-color:#ef7980 !important;">Estatus</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  </div>
 </div>
 
 

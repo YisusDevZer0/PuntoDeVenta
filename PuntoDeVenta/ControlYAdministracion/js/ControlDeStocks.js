@@ -1,7 +1,7 @@
 function CargaServicios(){
 
 
-    $.get((window.__FDP_BASE_URL__||"")+"ControlYAdministracion/Controladores/DataStocks","",function(data){
+    $.get("Controladores/DataStocks.php","",function(data){
       $("#DataDeServicios").html(data);
     })
   

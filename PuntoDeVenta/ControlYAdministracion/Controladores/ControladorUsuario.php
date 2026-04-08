@@ -1,13 +1,15 @@
-<?php 
-date_default_timezone_set("America/Monterrey");
-if (session_status() == PHP_SESSION_NONE) {
+<?php
+date_default_timezone_set('America/Monterrey');
+require_once __DIR__ . '/../../config/app.php';
+if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
 
-if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])){
-	header("Location: Expiro.php");
+if (!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) && !isset($_SESSION['Marketing'])) {
+	header('Location: ' . fdp_url('ControlYAdministracion/Expiro.php'));
+	exit;
 }
-include_once("db_connect.php");
+include_once 'db_connect.php';
 
 // Determinar el ID de usuario según la sesión activa
 $userId = isset($_SESSION['ControlMaestro']) ? $_SESSION['ControlMaestro'] : (isset($_SESSION['AdministradorRH']) ? $_SESSION['AdministradorRH'] : $_SESSION['Marketing']);
@@ -58,8 +60,7 @@ $row = $result->fetch_assoc();
 // Verificar si se obtuvo el resultado
 if (!$row) {
 	error_log("No se encontró el usuario con ID: " . $userId);
-	// En lugar de die(), redirigir a la página de expiración
-	header("Location: Expiro.php");
+	header('Location: ' . fdp_url('ControlYAdministracion/Expiro.php'));
 	exit();
 }
 

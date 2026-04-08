@@ -1,9 +1,9 @@
 <?php
-header('Content-Type: application/json');
-include("db_connect.php");
-include_once "ControladorUsuario.php";
+header('Content-Type: application/json; charset=utf-8');
 
-// Consulta segura utilizando una sentencia preparada
+include 'db_connect.php';
+include_once 'ControladorUsuario.php';
+
 $sql = "SELECT Stock_POS.Folio_Prod_Stock,Stock_POS.Clave_adicional,Stock_POS.ID_Prod_POS,Stock_POS.AgregadoEl,Stock_POS.Clave_adicional,Stock_POS.Clave_Levic,
 Stock_POS.Cod_Barra,Stock_POS.Nombre_Prod,Stock_POS.Tipo_Servicio,Stock_POS.Tipo,Stock_POS.Fk_sucursal,
 Stock_POS.Max_Existencia,Stock_POS.Min_Existencia, Stock_POS.Existencias_R,Stock_POS.Proveedor1,
@@ -15,100 +15,90 @@ INNER JOIN Sucursales ON Stock_POS.Fk_sucursal = Sucursales.ID_Sucursal
 INNER JOIN Servicios_POS ON Stock_POS.Tipo_Servicio= Servicios_POS.Servicio_ID
 INNER JOIN Productos_POS ON Productos_POS.ID_Prod_POS =Stock_POS.ID_Prod_POS";
 
-// Preparar la declaración
-$stmt = $conn->prepare($sql);
-
-// Ejecutar la declaración
-$stmt->execute();
-
-// Obtener resultado
-$result = $stmt->get_result();
-
-// Inicializar array para almacenar los resultados
+$result = mysqli_query($conn, $sql);
 $data = [];
 
-// Procesar resultados
-while ($fila = $result->fetch_assoc()) {
-    // Verificar si las existencias están por debajo del mínimo
-    $mostrarBotonOrden = ($fila['Existencias_R'] <= $fila['Min_Existencia']);
-    
-    // Construir el array de datos
-    $data[] = [
-        "Cod_Barra" => $fila["Cod_Barra"],
-        "Clave_adicional" => $fila["Clave_adicional"],
-        "Clave_Levic" => $fila["Clave_Levic"],
-        "Nombre_Prod" => $fila["Nombre_Prod"],
-        "Precio_Venta" => $fila["Precio_Venta"],
-        "Nom_Serv" => $fila["Nom_Serv"],
-        "Tipo" => $fila["Tipo"],
-        "Proveedor1" => $fila["Proveedor1"],
-        "Proveedor2" => $fila["Proveedor2"],
-        "Sucursal" => $fila["Nombre_Sucursal"],
-        "UltimoMovimiento" => $fila["AgregadoEl"],
-        "Existencias_R" => $fila["Existencias_R"],
-        "Min_Existencia" => $fila["Min_Existencia"],
-        "Max_Existencia" => $fila["Max_Existencia"],
-        'Editar' => "<div class='btn-group'>
+if ($result) {
+    while ($fila = mysqli_fetch_assoc($result)) {
+        $mostrarBotonOrden = ($fila['Existencias_R'] <= $fila['Min_Existencia']);
+
+        $data[] = [
+            'Cod_Barra' => $fila['Cod_Barra'],
+            'Clave_adicional' => $fila['Clave_adicional'],
+            'Clave_Levic' => $fila['Clave_Levic'],
+            'Nombre_Prod' => $fila['Nombre_Prod'],
+            'Precio_Venta' => $fila['Precio_Venta'],
+            'Nom_Serv' => $fila['Nom_Serv'],
+            'Tipo' => $fila['Tipo'],
+            'Proveedor1' => $fila['Proveedor1'],
+            'Proveedor2' => $fila['Proveedor2'],
+            'Sucursal' => $fila['Nombre_Sucursal'],
+            'UltimoMovimiento' => $fila['AgregadoEl'],
+            'Existencias_R' => $fila['Existencias_R'],
+            'Min_Existencia' => $fila['Min_Existencia'],
+            'Max_Existencia' => $fila['Max_Existencia'],
+            'Editar' => "<div class='btn-group'>
             <button type='button' class='btn btn-info btn-sm dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
                 Selecciona por favor<i class='fa-solid fa-chevron-down'></i>
             </button>
             <ul class='dropdown-menu'>
                 <li>
-                    <a class='dropdown-item btn-minimomaximo' data-id='$fila[Folio_Prod_Stock]'>
+                    <a class='dropdown-item btn-minimomaximo' data-id='{$fila['Folio_Prod_Stock']}'>
                         Editar minimo y maximo
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item btn-editproducto' data-id='$fila[Folio_Prod_Stock]'>
+                    <a class='dropdown-item btn-editproducto' data-id='{$fila['Folio_Prod_Stock']}'>
                         Editar datos del producto
                     </a>
                 </li>
                 <li>
-                    <a class='dropdown-item btn-AjustInvetario' data-id='$fila[Folio_Prod_Stock]'>
+                    <a class='dropdown-item btn-AjustInvetario' data-id='{$fila['Folio_Prod_Stock']}'>
                         Ajuste de inventario
                     </a>
                 </li>
                 " . ($mostrarBotonOrden ? "
                 <li>
                     <a class='dropdown-item btn-GeneraOrdenCompra' 
-                       data-id='$fila[Folio_Prod_Stock]'
-                       data-nombre='$fila[Nombre_Prod]'
-                       data-codigo='$fila[Cod_Barra]'
-                       data-existencias='$fila[Existencias_R]'
-                       data-minimo='$fila[Min_Existencia]'
-                       data-maximo='$fila[Max_Existencia]'
-                       data-sucursal='$fila[Fk_sucursal]'
-                       data-proveedor='$fila[Proveedor1]'
-                       data-hod='$fila[ID_H_O_D]'>
+                       data-id='{$fila['Folio_Prod_Stock']}'
+                       data-nombre='" . htmlspecialchars((string) $fila['Nombre_Prod'], ENT_QUOTES, 'UTF-8') . "'
+                       data-codigo='" . htmlspecialchars((string) $fila['Cod_Barra'], ENT_QUOTES, 'UTF-8') . "'
+                       data-existencias='" . htmlspecialchars((string) $fila['Existencias_R'], ENT_QUOTES, 'UTF-8') . "'
+                       data-minimo='" . htmlspecialchars((string) $fila['Min_Existencia'], ENT_QUOTES, 'UTF-8') . "'
+                       data-maximo='" . htmlspecialchars((string) $fila['Max_Existencia'], ENT_QUOTES, 'UTF-8') . "'
+                       data-sucursal='" . htmlspecialchars((string) $fila['Fk_sucursal'], ENT_QUOTES, 'UTF-8') . "'
+                       data-proveedor='" . htmlspecialchars((string) $fila['Proveedor1'], ENT_QUOTES, 'UTF-8') . "'
+                       data-hod='" . htmlspecialchars((string) $fila['ID_H_O_D'], ENT_QUOTES, 'UTF-8') . "'>
                         Generar orden de compra
                     </a>
                 </li>
-                " : "") . "
+                " : '') . "
                 <li>
-                    <a class='dropdown-item eliminarprod' data-id='$fila[Folio_Prod_Stock]'>
+                    <a class='dropdown-item eliminarprod' data-id='{$fila['Folio_Prod_Stock']}'>
                         Eliminar producto
                     </a>
                 </li>
             </ul>
         </div>",
-        "Eliminar" => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode($fila["Folio_Prod_Stock"]) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
-    ];
+            'Eliminar' => "<a href='https://saludapos.com/AdminPOS/ActualizaOne?idProd=" . base64_encode((string) $fila['Folio_Prod_Stock']) . "' type='button' class='btn btn-info btn-sm'><i class='fas fa-capsules'></i></a>",
+        ];
+    }
+    mysqli_free_result($result);
+} else {
+    error_log('ArrayStocks mysqli_query: ' . mysqli_error($conn));
 }
 
-// Cerrar la declaración
-$stmt->close();
-
-// Construir el array de resultados para la respuesta JSON
 $results = [
-    "sEcho" => 1,
-    "iTotalRecords" => count($data),
-    "iTotalDisplayRecords" => count($data),
-    "aaData" => $data
+    'sEcho' => 1,
+    'iTotalRecords' => count($data),
+    'iTotalDisplayRecords' => count($data),
+    'aaData' => $data,
 ];
 
-// Imprimir la respuesta JSON
-echo json_encode($results);
+$jsonFlags = JSON_UNESCAPED_UNICODE;
+if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+    $jsonFlags |= JSON_INVALID_UTF8_SUBSTITUTE;
+}
+echo json_encode($results, $jsonFlags);
 
-// Cerrar conexión
-$conn->close();
-?>
+mysqli_close($conn);
