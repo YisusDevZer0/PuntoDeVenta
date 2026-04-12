@@ -152,7 +152,7 @@ try {
         $totalVentaGlobal = $sumaImportes;
     }
 
-    // 33 columnas: Venta_POS_ID = NULL obliga a AUTO_INCREMENT (evita varios INSERT con 0 y Duplicate entry '0')
+    // Venta_POS_ID explícito: si el AUTO_INCREMENT del servidor no avanza, todos los INSERT quedan en 0 → duplicate PK.
     $sql = 'INSERT INTO Ventas_POS (
     Venta_POS_ID,
     ID_Prod_POS, Identificador_tipo, Turno, FolioSucursal, Folio_Ticket, Folio_Ticket_Aleatorio,
@@ -161,7 +161,7 @@ try {
     Motivo_Cancelacion, Estatus, Sistema, AgregadoPor, ID_H_O_D, FolioSignoVital, TicketAnterior,
     Pagos_tarjeta, Tipo, FolioRifa
 ) VALUES (
-    NULL,
+    ?,
     ?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,
@@ -174,8 +174,8 @@ try {
         $respond('error', 'Error al preparar inserción: ' . $conn->error, 500);
     }
 
-    // 32 tipos: 6 + 8 + 8 + 7 + 3 → iissss + sssiiddd + isddssis + 7×s (motivo..ticket ant.) + dss
-    $types = 'iissss' . 'sssiiddd' . 'isddssis' . str_repeat('s', 7) . 'dss';
+    // 33 tipos: Venta_POS_ID (i) + 32 restantes
+    $types = 'i' . 'iissss' . 'sssiiddd' . 'isddssis' . str_repeat('s', 7) . 'dss';
 
     $lookupHod = static function (mysqli $mysqli, int $idProd, int $fkSuc): string {
         $q = sprintf(
@@ -194,6 +194,17 @@ try {
     };
 
     $conn->begin_transaction();
+
+    $maxRes = $conn->query('SELECT COALESCE(MAX(Venta_POS_ID), 0) AS m FROM Ventas_POS FOR UPDATE');
+    if ($maxRes === false) {
+        throw new RuntimeException('No se pudo obtener el siguiente folio de venta: ' . $conn->error);
+    }
+    $maxRow = $maxRes->fetch_assoc();
+    $nextVentaId = (int) ($maxRow['m'] ?? 0) + 1;
+    if ($nextVentaId < 1) {
+        $nextVentaId = 1;
+    }
+
     $insertadas = 0;
     $motivoCancel = 'N/A';
 
@@ -281,6 +292,7 @@ try {
 
         $stmtIns->bind_param(
             $types,
+            $nextVentaId,
             $idProd,
             $identTipo,
             $turno,
@@ -319,6 +331,7 @@ try {
             throw new RuntimeException($stmtIns->error);
         }
         $insertadas++;
+        $nextVentaId++;
     }
 
     if ($insertadas === 0) {
