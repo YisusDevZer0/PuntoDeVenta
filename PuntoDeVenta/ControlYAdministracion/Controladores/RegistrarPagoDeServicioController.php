@@ -108,8 +108,8 @@ try {
             $pago_id = $stmt->insert_id;
             $stmt->close();
             
-            // El valor de la caja se actualiza automáticamente por el trigger tr_pago_servicio_insert
-            // que suma costo + comisión. No actualizar aquí para evitar doble suma.
+            // El valor de la caja se actualiza por el trigger tr_pago_servicio_insert (solo suma la
+            // comisión de ListadoServicios; el costo queda en PagosServicios para cortes). No actualizar aquí.
 
             echo json_encode([
                 'success' => true, 
@@ -172,8 +172,8 @@ try {
         if (mysqli_query($conn, $sql_fallback)) {
             $pago_id = mysqli_insert_id($conn);
             
-            // El valor de la caja se actualiza automáticamente por el trigger tr_pago_servicio_insert
-            // que suma costo + comisión. No actualizar aquí para evitar doble suma.
+            // El valor de la caja se actualiza por el trigger tr_pago_servicio_insert (solo suma la
+            // comisión de ListadoServicios; el costo queda en PagosServicios para cortes). No actualizar aquí.
 
             echo json_encode([
                 'success' => true, 
