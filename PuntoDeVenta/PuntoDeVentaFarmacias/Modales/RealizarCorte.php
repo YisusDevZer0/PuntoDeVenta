@@ -552,12 +552,7 @@ try {
         $totales_encargos_credito = 0;
         $totales_encargos_transferencia = 0;
         
-        $totales_pagos_servicios_efectivo = 0;
-        $totales_pagos_servicios_tarjeta = 0;
-        $totales_pagos_servicios_credito = 0;
-        $totales_pagos_servicios_transferencia = 0;
-        
-        // Variables para comisiones de pagos de servicios por forma de pago
+        // Comisiones de pagos de servicios por forma de pago (el costo no entra al desglose por forma de pago)
         $comisiones_pagos_servicios_efectivo = 0;
         $comisiones_pagos_servicios_tarjeta = 0;
         $comisiones_pagos_servicios_credito = 0;
@@ -605,12 +600,10 @@ try {
             }
         }
 
-        // Calcular totales de pagos de servicios por forma de pago (incluyendo comisiones)
-        // Necesitamos una consulta adicional para obtener FormaDePago de PagosServicios con comisiones
+        // Comisiones de pagos de servicios por FormaDePago (costo + comisión sigue en desglose por concepto, no aquí)
         if ($result_check_pagos && $result_check_pagos->num_rows > 0) {
             $sql_pagos_servicios_totales = "SELECT 
                 ps.FormaDePago,
-                SUM(ps.costo) AS total_costo,
                 SUM(IFNULL(ls.Comision, 0)) AS total_comision
             FROM PagosServicios ps
             LEFT JOIN ListadoServicios ls ON ps.Servicio = ls.Servicio
@@ -621,36 +614,29 @@ try {
             $query_pagos_totales = $conn->query($sql_pagos_servicios_totales);
             if ($query_pagos_totales && $query_pagos_totales->num_rows > 0) {
                 while ($row_ps = $query_pagos_totales->fetch_assoc()) {
-                    $monto_costo = floatval($row_ps['total_costo'] ?? 0);
                     $monto_comision = floatval($row_ps['total_comision'] ?? 0);
                     $forma_pago = strtolower(trim($row_ps['FormaDePago'] ?? ''));
                     
                     if (strpos($forma_pago, 'efectivo') !== false || $forma_pago == 'efectivo') {
-                        $totales_pagos_servicios_efectivo += $monto_costo;
                         $comisiones_pagos_servicios_efectivo += $monto_comision;
                     } elseif (strpos($forma_pago, 'tarjeta') !== false || $forma_pago == 'tarjeta' || $forma_pago == 'tarjeta de credito' || $forma_pago == 'tarjeta de debito') {
-                        $totales_pagos_servicios_tarjeta += $monto_costo;
                         $comisiones_pagos_servicios_tarjeta += $monto_comision;
                     } elseif (strpos($forma_pago, 'crédito') !== false || strpos($forma_pago, 'credito') !== false) {
-                        $totales_pagos_servicios_credito += $monto_costo;
                         $comisiones_pagos_servicios_credito += $monto_comision;
                     } elseif (strpos($forma_pago, 'transferencia') !== false || $forma_pago == 'transferencia') {
-                        $totales_pagos_servicios_transferencia += $monto_costo;
                         $comisiones_pagos_servicios_transferencia += $monto_comision;
                     } else {
-                        // Si no coincide con ninguna, por defecto sumar a efectivo
-                        $totales_pagos_servicios_efectivo += $monto_costo;
                         $comisiones_pagos_servicios_efectivo += $monto_comision;
                     }
                 }
             }
         }
 
-        // Sumar los totales adicionales a los totales principales
-        $totalPagosEnEfectivo = $totalPagosEnEfectivo_base + $totales_abonos_efectivo + $totales_encargos_efectivo + $totales_pagos_servicios_efectivo;
-        $totalPagosEnTarjeta = $totalPagosEnTarjeta_base + $totales_abonos_tarjeta + $totales_encargos_tarjeta + $totales_pagos_servicios_tarjeta;
-        $totalPagosEnCreditos = $totalPagosEnCreditos_base + $totales_abonos_credito + $totales_encargos_credito + $totales_pagos_servicios_credito;
-        $totalPagosEnTransferencia = $totalPagosEnTransferencia_base + $totales_abonos_transferencia + $totales_encargos_transferencia + $totales_pagos_servicios_transferencia;
+        // Sumar abonos y encargos; pagos de servicios solo aportan comisión en totalPagosEn*Final
+        $totalPagosEnEfectivo = $totalPagosEnEfectivo_base + $totales_abonos_efectivo + $totales_encargos_efectivo;
+        $totalPagosEnTarjeta = $totalPagosEnTarjeta_base + $totales_abonos_tarjeta + $totales_encargos_tarjeta;
+        $totalPagosEnCreditos = $totalPagosEnCreditos_base + $totales_abonos_credito + $totales_encargos_credito;
+        $totalPagosEnTransferencia = $totalPagosEnTransferencia_base + $totales_abonos_transferencia + $totales_encargos_transferencia;
 
         // Actualizar TotalCantidad sumando los montos de abonos, encargos y pagos de servicios
         $TotalCantidad = $TotalCantidad_base;
@@ -688,7 +674,7 @@ try {
             $VentaTotalCompleto += floatval($pago['total_con_comision'] ?? $pago['total_costo'] ?? 0);
         }
         
-        // Calcular totales con comisión por forma de pago (el Total ya incluye la comisión cuando aplica)
+        // Por forma de pago: ventas POS + abonos + encargos + solo comisión de pagos de servicios
         $totalPagosEnEfectivoFinal = $totalPagosEnEfectivo + $comisiones_pagos_servicios_efectivo;
         $totalPagosEnTarjetaFinal = $totalPagosEnTarjeta + $comisiones_pagos_servicios_tarjeta;
         $totalPagosEnCreditosFinal = $totalPagosEnCreditos + $comisiones_pagos_servicios_credito;
