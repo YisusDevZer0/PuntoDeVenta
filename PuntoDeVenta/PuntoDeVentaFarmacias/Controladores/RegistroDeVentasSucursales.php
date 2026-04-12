@@ -152,14 +152,16 @@ try {
         $totalVentaGlobal = $sumaImportes;
     }
 
-    // 32 columnas = 32 placeholders (6 + 8 + 8 + 7 + 3)
+    // 33 columnas: Venta_POS_ID = NULL obliga a AUTO_INCREMENT (evita varios INSERT con 0 y Duplicate entry '0')
     $sql = 'INSERT INTO Ventas_POS (
+    Venta_POS_ID,
     ID_Prod_POS, Identificador_tipo, Turno, FolioSucursal, Folio_Ticket, Folio_Ticket_Aleatorio,
     Clave_adicional, Cod_Barra, Nombre_Prod, Cantidad_Venta, Fk_sucursal, Total_Venta, Importe, Total_VentaG,
     DescuentoAplicado, FormaDePago, CantidadPago, Cambio, Cliente, Fecha_venta, Fk_Caja, Lote,
     Motivo_Cancelacion, Estatus, Sistema, AgregadoPor, ID_H_O_D, FolioSignoVital, TicketAnterior,
     Pagos_tarjeta, Tipo, FolioRifa
 ) VALUES (
+    NULL,
     ?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,
