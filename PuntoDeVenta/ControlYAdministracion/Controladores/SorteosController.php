@@ -80,7 +80,7 @@ function listarSorteos($conn) {
 }
 
 function obtenerSorteo($conn) {
-    $id = intval($_GET['id']);
+    $id = isset($_POST['id']) ? intval($_POST['id']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
     $sql = "SELECT * FROM Sorteos WHERE ID_Sorteo = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
