@@ -1,46 +1,90 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-header('Content-Type: text/csv');
+header('Content-Type: text/csv; charset=UTF-8');
 header('Content-Disposition: attachment;filename=inventario_sucursal.csv');
 
 include("Controladores/db_connect.php");
 
-// Verificar si se ha enviado la fecha y si es válida
 if (!isset($_GET['fecha']) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $_GET['fecha'])) {
-    die("Fecha no válida. Parámetro recibido: " . htmlspecialchars($_GET['fecha']));
+    die("Fecha no válida. Parámetro recibido: " . htmlspecialchars($_GET['fecha'] ?? ''));
 }
 
 $fecha = $_GET['fecha'];
 
-// Adaptar la consulta para la tabla InventariosStocks_Conteos
+// En conteos, Precio_Venta / Precio_C suelen guardarse como 0 (no NULL). COALESCE(0, catálogo) nunca llega al catálogo.
+// Se usa NULLIF(col, 0) para saltar esos ceros y priorizar: inventario sucursal → stock por ID → stock por código → producto.
 $sql = "SELECT 
-            inv_stocks.`Folio_Prod_Stock`, 
-            inv_stocks.`ID_Prod_POS`, 
-            inv_stocks.`Cod_Barra`, 
-            inv_stocks.`Nombre_Prod`, 
-            inv_stocks.`Fk_sucursal` AS `Fk_Sucursal`, 
-            inv_stocks.`Precio_Venta`, 
-            inv_stocks.`Precio_C`, 
-            inv_stocks.`Contabilizado`, 
-            inv_stocks.`StockEnMomento`, 
-            inv_stocks.`Diferencia`, 
-            inv_stocks.`Sistema`, 
-            inv_stocks.`AgregadoPor`, 
-            inv_stocks.`AgregadoEl`, 
-            inv_stocks.`ID_H_O_D`, 
-            inv_stocks.`FechaInventario`,
-            inv_stocks.`Tipo_Ajuste`,
-            inv_stocks.`Anaquel`,
-            inv_stocks.`Repisa`,
-            (inv_stocks.`Contabilizado` * inv_stocks.`Precio_Venta`) AS `Total_Precio_Venta`,
-            (inv_stocks.`Contabilizado` * inv_stocks.`Precio_C`) AS `Total_Precio_Compra`
-        FROM 
-            `InventariosStocks_Conteos` inv_stocks
-        WHERE 
-            inv_stocks.`FechaInventario` = ?";
+    inv_suc.`IdProdCedis`,
+    inv_stocks.`Folio_Prod_Stock`,
+    inv_stocks.`ID_Prod_POS`,
+    inv_stocks.`Cod_Barra`,
+    inv_stocks.`Nombre_Prod`,
+    COALESCE(
+        NULLIF(inv_suc.`Precio_Venta`, 0),
+        NULLIF(sp_id.`Precio_Venta`, 0),
+        NULLIF(sp_cod.`Precio_Venta`, 0),
+        NULLIF(pp.`Precio_Venta`, 0),
+        NULLIF(pp_cod.`Precio_Venta`, 0),
+        NULLIF(inv_stocks.`Precio_Venta`, 0)
+    ) AS `Precio_Venta`,
+    COALESCE(
+        NULLIF(inv_suc.`Precio_C`, 0),
+        NULLIF(sp_id.`Precio_C`, 0),
+        NULLIF(sp_cod.`Precio_C`, 0),
+        NULLIF(pp.`Precio_C`, 0),
+        NULLIF(pp_cod.`Precio_C`, 0),
+        NULLIF(inv_stocks.`Precio_C`, 0)
+    ) AS `Precio_Compra`,
+    inv_stocks.`Contabilizado`,
+    inv_stocks.`StockEnMomento`,
+    COALESCE(inv_suc.`ExistenciasAjuste`, inv_stocks.`Diferencia`) AS `Ajuste_Realizado`,
+    inv_stocks.`AgregadoPor`,
+    inv_stocks.`AgregadoEl`,
+    inv_stocks.`FechaInventario`,
+    inv_stocks.`Fk_sucursal` AS `Fk_Sucursal`,
+    s.`Nombre_Sucursal`,
+    inv_stocks.`Sistema`,
+    inv_stocks.`Tipo_Ajuste`,
+    inv_stocks.`Anaquel`,
+    inv_stocks.`Repisa`,
+    (inv_stocks.`Contabilizado` * COALESCE(
+        NULLIF(inv_suc.`Precio_Venta`, 0),
+        NULLIF(sp_id.`Precio_Venta`, 0),
+        NULLIF(sp_cod.`Precio_Venta`, 0),
+        NULLIF(pp.`Precio_Venta`, 0),
+        NULLIF(pp_cod.`Precio_Venta`, 0),
+        NULLIF(inv_stocks.`Precio_Venta`, 0)
+    )) AS `Total_Precio_Venta`,
+    (inv_stocks.`Contabilizado` * COALESCE(
+        NULLIF(inv_suc.`Precio_C`, 0),
+        NULLIF(sp_id.`Precio_C`, 0),
+        NULLIF(sp_cod.`Precio_C`, 0),
+        NULLIF(pp.`Precio_C`, 0),
+        NULLIF(pp_cod.`Precio_C`, 0),
+        NULLIF(inv_stocks.`Precio_C`, 0)
+    )) AS `Total_Precio_Compra`
+FROM `InventariosStocks_Conteos` inv_stocks
+LEFT JOIN `InventariosSucursales` inv_suc
+    ON inv_suc.`IdProdCedis` = (
+        SELECT i2.`IdProdCedis`
+        FROM `InventariosSucursales` i2
+        WHERE TRIM(i2.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
+          AND i2.`Fk_Sucursal` = inv_stocks.`Fk_sucursal`
+          AND DATE(i2.`FechaInventario`) = DATE(inv_stocks.`FechaInventario`)
+        ORDER BY i2.`IdProdCedis` DESC
+        LIMIT 1
+    )
+LEFT JOIN `Stock_POS` sp_id
+    ON sp_id.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
+    AND sp_id.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
+LEFT JOIN `Stock_POS` sp_cod
+    ON TRIM(sp_cod.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
+    AND sp_cod.`Fk_sucursal` = inv_stocks.`Fk_sucursal`
+LEFT JOIN `Productos_POS` pp
+    ON pp.`ID_Prod_POS` = inv_stocks.`ID_Prod_POS`
+LEFT JOIN `Productos_POS` pp_cod
+    ON TRIM(pp_cod.`Cod_Barra`) = TRIM(inv_stocks.`Cod_Barra`)
+LEFT JOIN `Sucursales` s ON inv_stocks.`Fk_sucursal` = s.`ID_Sucursal`
+WHERE DATE(inv_stocks.`FechaInventario`) = ?";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -62,41 +106,58 @@ if (!$output) {
     die("Error al abrir el flujo de salida.");
 }
 
-// Escribir encabezados CSV
+fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
 fputcsv($output, [
-    'Folio_Prod_Stock', 'ID_Prod_POS', 'Cod_Barra', 'Nombre_Prod', 'Fk_Sucursal', 
-    'Precio_Venta', 'Precio_C', 'Contabilizado', 'Existencia previa', 'Diferencia', 
-    'Sistema', 'AgregadoPor', 'AgregadoEl',  'FechaInventario', 
-    'Tipo_Ajuste', 'Anaquel', 'Repisa', 'Total_Precio_Venta', 'Total_Precio_Compra'
+    'IdProdCedis',
+    'Folio_Prod_Stock',
+    'ID_Prod_POS',
+    'Cod_Barra',
+    'Nombre_Prod',
+    'Precio_Venta',
+    'Precio_Compra',
+    'Contabilizado',
+    'Existencia_Previa',
+    'Ajuste_Realizado',
+    'FechaInventario',
+    'AgregadoPor',
+    'AgregadoEl',
+    'Fk_Sucursal',
+    'Nombre_Sucursal',
+    'Sistema',
+    'Tipo_Ajuste',
+    'Anaquel',
+    'Repisa',
+    'Total_Precio_Venta',
+    'Total_Precio_Compra',
 ], ',', '"', '\\');
 
-// Escribir los datos en el archivo CSV
 while ($fila = $result->fetch_assoc()) {
     fputcsv($output, [
-        $fila["Folio_Prod_Stock"],
-        $fila["ID_Prod_POS"],
-        $fila["Cod_Barra"],
-        $fila["Nombre_Prod"],
-        $fila["Fk_Sucursal"],
-        $fila["Precio_Venta"],
-        $fila["Precio_C"],
-        $fila["Contabilizado"],
-        $fila["StockEnMomento"],
-        $fila["Diferencia"],
-        $fila["Sistema"],
-        $fila["AgregadoPor"],
-        $fila["AgregadoEl"],
-       
-        $fila["FechaInventario"],
-        $fila["Tipo_Ajuste"],
-        $fila["Anaquel"],
-        $fila["Repisa"],
-        $fila["Total_Precio_Venta"],
-        $fila["Total_Precio_Compra"]
+        $fila['IdProdCedis'],
+        $fila['Folio_Prod_Stock'],
+        $fila['ID_Prod_POS'],
+        $fila['Cod_Barra'],
+        $fila['Nombre_Prod'],
+        $fila['Precio_Venta'],
+        $fila['Precio_Compra'],
+        $fila['Contabilizado'],
+        $fila['StockEnMomento'],
+        $fila['Ajuste_Realizado'],
+        $fila['FechaInventario'],
+        $fila['AgregadoPor'],
+        $fila['AgregadoEl'],
+        $fila['Fk_Sucursal'],
+        $fila['Nombre_Sucursal'],
+        $fila['Sistema'],
+        $fila['Tipo_Ajuste'],
+        $fila['Anaquel'],
+        $fila['Repisa'],
+        $fila['Total_Precio_Venta'],
+        $fila['Total_Precio_Compra'],
     ], ',', '"', '\\');
 }
 
 fclose($output);
 $stmt->close();
 $conn->close();
-?>

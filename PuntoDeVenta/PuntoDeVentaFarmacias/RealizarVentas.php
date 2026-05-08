@@ -6,6 +6,44 @@ include_once "Controladores/ControladorUsuario.php";
 include "Controladores/SumadeFolioTicketsNuevo.php";
 include "Controladores/SumadeFolioRifas.php";
 include("Controladores/db_connect.php");
+
+// === SORTEO ACTIVO: Verificar si hay un sorteo vigente para esta sucursal ===
+$sorteoActivo = null;
+$sorteoActivo_id = 0;
+$sorteoActivo_nombre = '';
+$sorteoActivo_prefijo = '';
+$sorteoActivo_siguienteFolio = 0;
+
+$sqlSorteo = "SELECT s.* FROM Sorteos s
+    WHERE s.Activo = 1 
+    AND CURDATE() BETWEEN s.Fecha_Inicio AND s.Fecha_Fin
+    AND (
+        s.Aplica_Todas_Sucursales = 1
+        OR EXISTS (
+            SELECT 1 FROM Sorteo_Sucursales ss 
+            WHERE ss.Fk_Sorteo = s.ID_Sorteo AND ss.Fk_Sucursal='".$row['Fk_Sucursal']."'
+        )
+    )
+    ORDER BY s.ID_Sorteo DESC
+    LIMIT 1";
+$resSorteo = mysqli_query($conn, $sqlSorteo);
+if ($resSorteo && mysqli_num_rows($resSorteo) > 0) {
+    $sorteoActivo = mysqli_fetch_assoc($resSorteo);
+    $sorteoActivo_id = $sorteoActivo['ID_Sorteo'];
+    $sorteoActivo_nombre = $sorteoActivo['Nombre_Sorteo'];
+    $sorteoActivo_prefijo = $sorteoActivo['Prefijo_Folio'];
+    
+    // Obtener siguiente folio para este sorteo en esta sucursal
+    $sqlFolioSorteo = "SELECT MAX(CAST(sp.FolioRifa AS UNSIGNED)) as UltimoFolio 
+                       FROM Sorteo_Participaciones sp 
+                       WHERE sp.Fk_Sorteo = ".$sorteoActivo_id." AND sp.Fk_Sucursal = '".$row['Fk_Sucursal']."'";
+    $resFolioSorteo = mysqli_query($conn, $sqlFolioSorteo);
+    $rowFolio = mysqli_fetch_assoc($resFolioSorteo);
+    $sorteoActivo_siguienteFolio = ($rowFolio && $rowFolio['UltimoFolio']) 
+        ? intval($rowFolio['UltimoFolio']) + 1 
+        : intval($sorteoActivo['Folio_Inicio']);
+}
+// === FIN SORTEO ACTIVO ===
 $primeras_tres_letras = strtoupper(substr($row['Nombre_Sucursal'], 0, 3));
 
 
@@ -462,17 +500,58 @@ function CapturaFormadePago() {
 
 
     <div class="form-group mb-2" id="divCliente">
+      <?php if ($sorteoActivo): ?>
+      <!-- === SECCIÓN SORTEO ACTIVO === -->
+      <div class="card border-warning mb-2" id="seccionSorteo">
+        <div class="card-header py-1" style="background-color: #ffc107; color: #333; font-size: 0.8rem;">
+          <i class="fa-solid fa-gift"></i> <strong>Sorteo activo:</strong> <?php echo htmlspecialchars($sorteoActivo_nombre); ?>
+          <span class="badge bg-success ms-2">Folio: <?php echo ($sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras) . $sorteoActivo_siguienteFolio; ?></span>
+        </div>
+        <div class="card-body p-2">
+          <!-- Buscar cliente existente -->
+          <label style="font-size: 0.75rem !important;">Buscar cliente <span class="text-danger">*</span></label>
+          <div class="input-group mb-1">
+            <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
+                   placeholder="Escribe nombre o teléfono del cliente..." autocomplete="off">
+            <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
+              <i class="fa-solid fa-eraser"></i>
+            </button>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-1">
+              <label style="font-size: 0.7rem !important;">Teléfono</label>
+              <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
+            </div>
+            <div class="col-md-6 mb-1">
+              <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
+              <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
+            </div>
+          </div>
+          
+          <!-- Opción de no participar -->
+          <div class="form-check mt-1">
+            <input class="form-check-input" type="checkbox" id="chkNoParticipa">
+            <label class="form-check-label" for="chkNoParticipa" style="font-size: 0.7rem;">
+              El cliente <strong>no desea participar</strong> en el sorteo
+            </label>
+          </div>
+          
+          <!-- Campos ocultos del sorteo -->
+          <input type="hidden" id="sorteoClienteId" value="0">
+          <input type="hidden" id="sorteoId" value="<?php echo $sorteoActivo_id; ?>">
+          <input type="hidden" id="sorteoFolioRifa" value="<?php echo $sorteoActivo_siguienteFolio; ?>">
+          <input type="hidden" id="sorteoPrefijoFolio" value="<?php echo $sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras; ?>">
+        </div>
+      </div>
+      <?php else: ?>
+      <!-- === SIN SORTEO: Campo original de cliente === -->
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Cliente</label>
       <div class="input-group mb-3">
-       
         <input type="text" class="form-control " id="clienteInput" name="NombreDelCliente[]">
-        <?php
-$fechaActual = date('Y-m-d H:i:s');
-
-?>
-      
       </div>
-
+      <?php endif; ?>
+      <?php $fechaActual = date('Y-m-d H:i:s'); ?>
     </div>
     <div id="PersonalEnfermeria" style="display: none;">
 <div class="form-group">
@@ -693,22 +772,58 @@ document.getElementById("selTipoPago").addEventListener("change", function() {
 
 <script>
   $(function() {
+    <?php if ($sorteoActivo): ?>
+    // === AUTOCOMPLETE MEJORADO PARA SORTEO ===
     $("#clienteInput").autocomplete({
       source: function(request, response) {
         $.ajax({
-          url: "Controladores/clientes.php",
+          url: "Controladores/BusquedaClientes.php",
+          type: "POST",
           dataType: "json",
-          data: {
-            term: request.term
-          },
+          data: { term: request.term },
           success: function(data) {
             response(data);
           }
         });
       },
-      minLength: 0
+      minLength: 2,
+      select: function(event, ui) {
+        event.preventDefault();
+        // Autocompletar campos con datos del cliente seleccionado
+        $('#clienteInput').val(ui.item.value);
+        $('#sorteoTelefono').val(ui.item.telefono || '');
+        $('#sorteoFechaNac').val(ui.item.fecha_nacimiento || '');
+        $('#sorteoClienteId').val(ui.item.id || 0);
+      }
     });
+    <?php else: ?>
+    // === AUTOCOMPLETE ORIGINAL SIN SORTEO ===
+    $("#clienteInput").autocomplete({
+      source: function(request, response) {
+        $.ajax({
+          url: "Controladores/BusquedaClientes.php",
+          type: "POST",
+          dataType: "json",
+          data: { term: request.term },
+          success: function(data) {
+            response(data);
+          }
+        });
+      },
+      minLength: 2
+    });
+    <?php endif; ?>
   });
+
+  // Función para limpiar datos del cliente (sorteo)
+  function limpiarDatosCliente() {
+    $('#clienteInput').val('');
+    $('#sorteoTelefono').val('');
+    $('#sorteoFechaNac').val('');
+    $('#sorteoClienteId').val('0');
+    $('#chkNoParticipa').prop('checked', false);
+    $('#clienteInput').focus();
+  }
 </script>
 <script>
   table = $('#tablaAgregarArticulos').DataTable({

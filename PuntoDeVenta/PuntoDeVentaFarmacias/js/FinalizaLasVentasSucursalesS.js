@@ -7,6 +7,13 @@ $(document).ready(function () {
   var TicketVal = "";
   var TicketRifa = "";
   var Vendedor = "";
+  // Variables de sorteo
+  var sorteoId = 0;
+  var sorteoClienteId = 0;
+  var sorteoTelefono = "";
+  var sorteoFechaNac = "";
+  var sorteoFolioRifa = "";
+  var sorteoParticipa = 1;
 
   function validarFormulario() {
     var clienteInput = document.getElementById("clienteInput");
@@ -61,7 +68,26 @@ $(document).ready(function () {
            TicketVal = $("#Folio_Ticket").val();
            Vendedor = $("#VendedorFarma").val();
 
+          // Capturar datos de sorteo si existen
+          if ($('#sorteoId').length && $('#sorteoId').val() != '0') {
+            sorteoId = $('#sorteoId').val();
+            sorteoClienteId = $('#sorteoClienteId').val() || '0';
+            sorteoTelefono = $('#sorteoTelefono').val() || '';
+            sorteoFechaNac = $('#sorteoFechaNac').val() || '';
+            sorteoFolioRifa = $('#sorteoFolioRifa').val() || '';
+            sorteoParticipa = $('#chkNoParticipa').is(':checked') ? 0 : 1;
+          }
+
           var mensajeConfirmacion = '<div class="dataTable">';
+          // Mostrar info de sorteo si hay sorteo activo
+          if (sorteoId > 0) {
+            var folioSorteo = ($('#sorteoPrefijoFolio').val() || '') + sorteoFolioRifa;
+            var participaText = sorteoParticipa ? '<span style="color:green;font-weight:bold;">Sí participa</span>' : '<span style="color:red;font-weight:bold;">No participa</span>';
+            mensajeConfirmacion += '<div style="background:#fff3cd;padding:8px;border-radius:6px;margin-bottom:10px;border:1px solid #ffc107;">';
+            mensajeConfirmacion += '<strong><i class="fa-solid fa-gift"></i> Sorteo:</strong> Folio <strong>' + folioSorteo + '</strong> | ';
+            mensajeConfirmacion += 'Tel: ' + (sorteoTelefono || 'N/A') + ' | F.Nac: ' + (sorteoFechaNac || 'N/A') + ' | ' + participaText;
+            mensajeConfirmacion += '</div>';
+          }
           mensajeConfirmacion += '<table id="tablaConfirmacion">';
           mensajeConfirmacion += '<thead><tr><th>Total de venta</th><th>Cambio del cliente</th><th>Nombre del cliente</th><th>Forma de pago</th></tr></thead>';
           mensajeConfirmacion += '<tbody>';
@@ -187,10 +213,24 @@ $(document).ready(function () {
                   url: 'http://localhost/ticket/TicketVenta.php',
                   data: data,
                   success: function(response) {
-                    location.reload();
+                    // === REGISTRAR PARTICIPACIÓN EN SORTEO ===
+                    if (sorteoId > 0) {
+                      registrarParticipacionSorteo(function() {
+                        location.reload();
+                      });
+                    } else {
+                      location.reload();
+                    }
                   },
                   error: function(error) {
-                    location.reload();
+                    // Aun en error de ticket, intentar registrar sorteo
+                    if (sorteoId > 0) {
+                      registrarParticipacionSorteo(function() {
+                        location.reload();
+                      });
+                    } else {
+                      location.reload();
+                    }
                   }
                 });
 
@@ -215,6 +255,78 @@ $(document).ready(function () {
     });
 
     return false;
+  }
+
+  // === FUNCIÓN PARA REGISTRAR PARTICIPACIÓN EN SORTEO ===
+  function registrarParticipacionSorteo(callback) {
+    var sucursalVal = $("input[name='SucursalEnVenta[]']").first().val() || '0';
+    
+    // Si el cliente no existe en la BD (sorteoClienteId == 0), registrarlo primero
+    if (sorteoClienteId == '0' && clienteInputValue && clienteInputValue.trim() !== '') {
+      registrarClienteYParticipacion(sucursalVal, callback);
+    } else {
+      // Cliente ya existe, registrar participación directamente
+      enviarParticipacion(sucursalVal, sorteoClienteId, callback);
+    }
+  }
+
+  function registrarClienteYParticipacion(sucursalVal, callback) {
+    var licencia = ''; // Se puede obtener del DOM si es necesario
+    var sucursalNombre = '';
+    
+    $.ajax({
+      type: 'POST',
+      url: 'Controladores/RegistrarClienteRapido.php',
+      data: {
+        nombre: clienteInputValue,
+        telefono: sorteoTelefono,
+        fecha_nacimiento: sorteoFechaNac,
+        sucursal: sucursalVal,
+        sucursal_nombre: sucursalNombre,
+        licencia: licencia,
+        ingreso: Vendedor
+      },
+      dataType: 'json',
+      success: function(resp) {
+        var clienteIdFinal = '0';
+        if (resp.status === 'success' || resp.status === 'exists') {
+          clienteIdFinal = resp.cliente.id;
+        }
+        enviarParticipacion(sucursalVal, clienteIdFinal, callback);
+      },
+      error: function() {
+        // En caso de error, registrar participación sin ID de cliente
+        enviarParticipacion(sucursalVal, '0', callback);
+      }
+    });
+  }
+
+  function enviarParticipacion(sucursalVal, clienteIdFinal, callback) {
+    var folioRifaCompleto = ($('#sorteoPrefijoFolio').val() || '') + sorteoFolioRifa;
+    
+    $.ajax({
+      type: 'POST',
+      url: 'Controladores/RegistrarParticipacionSorteo.php',
+      data: {
+        sorteo_id: sorteoId,
+        venta_ticket: TicketVal,
+        cliente_id: clienteIdFinal,
+        nombre_cliente: clienteInputValue,
+        telefono_cliente: sorteoTelefono,
+        fecha_nac_cliente: sorteoFechaNac,
+        folio_rifa: folioRifaCompleto,
+        sucursal: sucursalVal,
+        registrado_por: Vendedor,
+        participa: sorteoParticipa
+      },
+      dataType: 'json',
+      success: function(resp) {
+        if (callback) callback();
+      },
+      error: function() {
+        if (callback) callback();
+      }
+    });
   }
 
   // Prevenir el submit por defecto del formulario
