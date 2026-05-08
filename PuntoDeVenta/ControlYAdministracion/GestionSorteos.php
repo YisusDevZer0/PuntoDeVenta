@@ -12,6 +12,14 @@ include_once "Controladores/ControladorUsuario.php";
 
     <?php
    include "header.php";?>
+   <style>
+        .nav-pills .nav-link.active {
+            background-color: #ef7980 !important;
+        }
+        .nav-pills .nav-link {
+            color: #ef7980;
+        }
+   </style>
    <div id="loading-overlay">
   <div class="loader"></div>
   <div id="loading-text" style="color: white; margin-top: 10px; font-size: 18px;"></div>
@@ -30,41 +38,65 @@ include_once "Controladores/ControladorUsuario.php";
             <!-- Navbar End -->
 
 
-            <!-- Table Start -->
-          
+            <!-- Tabs + Botón -->
             <div class="container-fluid pt-4 px-4">
-    <div class="col-12">
-        <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#ef7980;"><i class="fa-solid fa-gift"></i> Gestión de Sorteos - <?php echo $row['Licencia']?></h6>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoSorteo">
-  <i class="fa-solid fa-plus"></i> Nuevo Sorteo
-</button> <br><br>
-            <div id="SorteosDisponibles"></div>
-            </div></div></div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <ul class="nav nav-pills" id="sorteoTabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="tab-sorteos" data-bs-toggle="pill" href="#panel-sorteos" role="tab">
+                                <i class="fa-solid fa-gift"></i> Sorteos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-participaciones" data-bs-toggle="pill" href="#panel-participaciones" role="tab">
+                                <i class="fa-solid fa-users"></i> Participaciones
+                            </a>
+                        </li>
+                    </ul>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoSorteo">
+                        <i class="fa-solid fa-plus"></i> Nuevo Sorteo
+                    </button>
+                </div>
 
-            <div class="container-fluid pt-4 px-4">
-    <div class="col-12">
-        <div class="bg-light rounded h-100 p-4">
-            <h6 class="mb-4" style="color:#17a2b8;"><i class="fa-solid fa-users"></i> Participaciones en Sorteos</h6>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label>Filtrar por sorteo:</label>
-                    <select id="filtroSorteoParticipaciones" class="form-control">
-                        <option value="0">Todos los sorteos</option>
-                        <?php
-                        $sqlFiltro = "SELECT ID_Sorteo, Nombre_Sorteo FROM Sorteos ORDER BY ID_Sorteo DESC";
-                        $resFiltro = mysqli_query($conn, $sqlFiltro);
-                        if ($resFiltro) {
-                            while ($sf = mysqli_fetch_assoc($resFiltro)) {
-                                echo '<option value="'.$sf['ID_Sorteo'].'">'.$sf['Nombre_Sorteo'].'</option>';
-                            }
-                        }
-                        ?>
-                    </select>
+                <div class="tab-content">
+                    <!-- Panel Sorteos -->
+                    <div class="tab-pane fade show active" id="panel-sorteos" role="tabpanel">
+                        <div class="col-12">
+                            <div class="bg-light rounded h-100 p-4">
+                                <h6 class="mb-4" style="color:#ef7980;"><i class="fa-solid fa-trophy"></i> Gestión de Sorteos - <?php echo $row['Licencia']?></h6>
+                                <div id="SorteosDisponibles"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Participaciones -->
+                    <div class="tab-pane fade" id="panel-participaciones" role="tabpanel">
+                        <div class="col-12">
+                            <div class="bg-light rounded h-100 p-4">
+                                <h6 class="mb-4" style="color:#17a2b8;"><i class="fa-solid fa-users"></i> Participaciones en Sorteos</h6>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label>Filtrar por sorteo:</label>
+                                        <select id="filtroSorteoParticipaciones" class="form-control">
+                                            <option value="0">Todos los sorteos</option>
+                                            <?php
+                                            $sqlFiltro = "SELECT ID_Sorteo, Nombre_Sorteo FROM Sorteos ORDER BY ID_Sorteo DESC";
+                                            $resFiltro = mysqli_query($conn, $sqlFiltro);
+                                            if ($resFiltro) {
+                                                while ($sf = mysqli_fetch_assoc($resFiltro)) {
+                                                    echo '<option value="'.$sf['ID_Sorteo'].'">'.$sf['Nombre_Sorteo'].'</option>';
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="ParticipacionesDisponibles"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="ParticipacionesDisponibles"></div>
-            </div></div></div>
             </div>
 
 <script src="js/GestionSorteosTabla.js"></script>
@@ -82,8 +114,16 @@ include_once "Controladores/ControladorUsuario.php";
 <script>
 $(document).ready(function() {
 
+    // Cargar participaciones al hacer clic en el tab
+    $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+        if ($(e.target).attr('id') === 'tab-participaciones') {
+            CargaParticipaciones();
+        }
+    });
+
     // Delegar clic en botón editar
-    $(document).on("click", ".btn-editar-sorteo", function() {
+    $(document).on("click", ".btn-editar-sorteo", function(e) {
+        e.preventDefault();
         var id = $(this).data("id");
         $.post("Controladores/SorteosController.php", { action: 'obtener', id: id }, function(data) {
             var resp = typeof data === 'string' ? JSON.parse(data) : data;
@@ -114,7 +154,8 @@ $(document).ready(function() {
     });
 
     // Delegar clic en botón toggle activo
-    $(document).on("click", ".btn-toggle-sorteo", function() {
+    $(document).on("click", ".btn-toggle-sorteo", function(e) {
+        e.preventDefault();
         var id = $(this).data("id");
         Swal.fire({
             title: '¿Cambiar estado del sorteo?',
@@ -136,7 +177,8 @@ $(document).ready(function() {
     });
 
     // Delegar clic en botón eliminar
-    $(document).on("click", ".btn-eliminar-sorteo", function() {
+    $(document).on("click", ".btn-eliminar-sorteo", function(e) {
+        e.preventDefault();
         var id = $(this).data("id");
         Swal.fire({
             title: '¿Eliminar este sorteo?',
