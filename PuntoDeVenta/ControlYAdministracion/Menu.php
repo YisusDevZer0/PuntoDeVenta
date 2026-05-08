@@ -140,6 +140,13 @@ $isAdmin = ($tipoUsuario == 'Administrador' || $tipoUsuario == 'MKT');
             </div>
             
             <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-gift"></i>Sorteos</a>
+                <div class="dropdown-menu bg-transparent border-0">
+                    <a href="GestionSorteos" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-trophy"></i>Gestión de sorteos</a>
+                </div>
+            </div>
+            
+            <div class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" <?php echo $disabledAttr; ?>><i class="fa-solid fa-receipt"></i></i></i></i>Tickets</a>
                 <div class="dropdown-menu bg-transparent border-0">
                     <a href="Tickets" class="dropdown-item" <?php echo $disabledAttr; ?>><i class="fa-solid fa-coins"></i>Desglose de tickets</a>
