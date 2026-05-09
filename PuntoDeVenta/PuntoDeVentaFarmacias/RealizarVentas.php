@@ -14,34 +14,40 @@ $sorteoActivo_nombre = '';
 $sorteoActivo_prefijo = '';
 $sorteoActivo_siguienteFolio = 0;
 
-$sqlSorteo = "SELECT s.* FROM Sorteos s
-    WHERE s.Activo = 1 
-    AND CURDATE() BETWEEN s.Fecha_Inicio AND s.Fecha_Fin
-    AND (
-        s.Aplica_Todas_Sucursales = 1
-        OR EXISTS (
-            SELECT 1 FROM Sorteo_Sucursales ss 
-            WHERE ss.Fk_Sorteo = s.ID_Sorteo AND ss.Fk_Sucursal='".$row['Fk_Sucursal']."'
+// Verificar primero si la tabla Sorteos existe
+$tablaExiste = @mysqli_query($conn, "SELECT 1 FROM Sorteos LIMIT 1");
+if ($tablaExiste) {
+    $sqlSorteo = "SELECT s.* FROM Sorteos s
+        WHERE s.Activo = 1 
+        AND CURDATE() BETWEEN s.Fecha_Inicio AND s.Fecha_Fin
+        AND (
+            s.Aplica_Todas_Sucursales = 1
+            OR EXISTS (
+                SELECT 1 FROM Sorteo_Sucursales ss 
+                WHERE ss.Fk_Sorteo = s.ID_Sorteo AND ss.Fk_Sucursal='".$row['Fk_Sucursal']."'
+            )
         )
-    )
-    ORDER BY s.ID_Sorteo DESC
-    LIMIT 1";
-$resSorteo = mysqli_query($conn, $sqlSorteo);
-if ($resSorteo && mysqli_num_rows($resSorteo) > 0) {
-    $sorteoActivo = mysqli_fetch_assoc($resSorteo);
-    $sorteoActivo_id = $sorteoActivo['ID_Sorteo'];
-    $sorteoActivo_nombre = $sorteoActivo['Nombre_Sorteo'];
-    $sorteoActivo_prefijo = $sorteoActivo['Prefijo_Folio'];
-    
-    // Obtener siguiente folio para este sorteo en esta sucursal
-    $sqlFolioSorteo = "SELECT MAX(CAST(sp.FolioRifa AS UNSIGNED)) as UltimoFolio 
-                       FROM Sorteo_Participaciones sp 
-                       WHERE sp.Fk_Sorteo = ".$sorteoActivo_id." AND sp.Fk_Sucursal = '".$row['Fk_Sucursal']."'";
-    $resFolioSorteo = mysqli_query($conn, $sqlFolioSorteo);
-    $rowFolio = mysqli_fetch_assoc($resFolioSorteo);
-    $sorteoActivo_siguienteFolio = ($rowFolio && $rowFolio['UltimoFolio']) 
-        ? intval($rowFolio['UltimoFolio']) + 1 
-        : intval($sorteoActivo['Folio_Inicio']);
+        ORDER BY s.ID_Sorteo DESC
+        LIMIT 1";
+    $resSorteo = mysqli_query($conn, $sqlSorteo);
+    if ($resSorteo && mysqli_num_rows($resSorteo) > 0) {
+        $sorteoActivo = mysqli_fetch_assoc($resSorteo);
+        $sorteoActivo_id = $sorteoActivo['ID_Sorteo'];
+        $sorteoActivo_nombre = $sorteoActivo['Nombre_Sorteo'];
+        $sorteoActivo_prefijo = $sorteoActivo['Prefijo_Folio'];
+        
+        // Obtener siguiente folio para este sorteo en esta sucursal
+        $sqlFolioSorteo = "SELECT MAX(CAST(sp.FolioRifa AS UNSIGNED)) as UltimoFolio 
+                           FROM Sorteo_Participaciones sp 
+                           WHERE sp.Fk_Sorteo = ".$sorteoActivo_id." AND sp.Fk_Sucursal = '".$row['Fk_Sucursal']."'";
+        $resFolioSorteo = @mysqli_query($conn, $sqlFolioSorteo);
+        if ($resFolioSorteo) {
+            $rowFolio = mysqli_fetch_assoc($resFolioSorteo);
+            $sorteoActivo_siguienteFolio = ($rowFolio && $rowFolio['UltimoFolio']) 
+                ? intval($rowFolio['UltimoFolio']) + 1 
+                : intval($sorteoActivo['Folio_Inicio']);
+        }
+    }
 }
 // === FIN SORTEO ACTIVO ===
 $primeras_tres_letras = strtoupper(substr($row['Nombre_Sucursal'], 0, 3));
@@ -551,7 +557,7 @@ function CapturaFormadePago() {
       <!-- === SIN SORTEO: Campo original de cliente === -->
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Cliente</label>
       <div class="input-group mb-3">
-        <input type="text" class="form-control " id="clienteInput" name="NombreDelCliente[]">
+        <input type="text" class="form-control" id="clienteInput" name="NombreDelCliente[]" placeholder="Nombre del cliente">
       </div>
       <?php endif; ?>
       <?php $fechaActual = date('Y-m-d H:i:s'); ?>

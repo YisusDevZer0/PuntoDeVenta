@@ -17,11 +17,12 @@ $sql = "SELECT sp.*, s.Nombre_Sorteo, su.Nombre_Sucursal
         $where
         ORDER BY sp.ID_Participacion DESC";
 
-$result = mysqli_query($conn, $sql);
+$result = @mysqli_query($conn, $sql);
 
 $c = 0;
 $data = [];
 
+if ($result) {
 while ($fila = $result->fetch_assoc()) {
     $data[$c]["ID"] = $fila["ID_Participacion"];
     $data[$c]["Sorteo"] = $fila["Nombre_Sorteo"] ? $fila["Nombre_Sorteo"] : '-';
@@ -42,6 +43,7 @@ while ($fila = $result->fetch_assoc()) {
     
     $c++;
 }
+} // end if ($result)
 
 $results = [
     "sEcho" => 1,
