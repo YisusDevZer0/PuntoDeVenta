@@ -199,6 +199,9 @@ $(document).ready(function () {
                 var encodedTicketRifa = encodeURIComponent(folioRifaFinal);
                 var encodedVendedor = encodeURIComponent(Vendedor);
 
+                // Datos del sorteo para el ticket
+                var sorteoFolioCompleto = (sorteoId > 0) ? ($('#sorteoPrefijoFolio').val() || '') + sorteoFolioRifa : folioRifaFinal;
+
                 var data = 'BoletaTotal=' + encodedBoletaTotal +
                            '&CambioCliente=' + encodedCambioCliente +
                            '&ClienteInputValue=' + encodedClienteInputValue +
@@ -207,6 +210,39 @@ $(document).ready(function () {
                            '&TicketRifa=' + encodedTicketRifa +
                            '&Vendedor=' + encodedVendedor +
                            '&ValoresTabla=' + encodedValoresTabla;
+
+                // Agregar datos de sorteo al payload del ticket
+                if (sorteoId > 0) {
+                  data += '&SorteoId=' + encodeURIComponent(sorteoId);
+                  data += '&SorteoClienteId=' + encodeURIComponent(sorteoClienteId);
+                  data += '&SorteoClienteNombre=' + encodeURIComponent(clienteInputValue);
+                  data += '&SorteoTelefono=' + encodeURIComponent(sorteoTelefono);
+                  data += '&SorteoFechaNac=' + encodeURIComponent(sorteoFechaNac);
+                  data += '&SorteoFolioRifa=' + encodeURIComponent(sorteoFolioCompleto);
+                  data += '&SorteoParticipa=' + encodeURIComponent(sorteoParticipa);
+                }
+
+                // === CONSOLE.LOG PARA PREPARAR TICKET ===
+                console.log('========== DATOS ENVIADOS PARA TICKET ==========');
+                console.log('Ticket:', TicketVal);
+                console.log('Folio Rifa:', folioRifaFinal);
+                console.log('Total:', boletaTotal);
+                console.log('Cambio:', cambiocliente);
+                console.log('Cliente:', clienteInputValue);
+                console.log('Forma de Pago:', formaPagoSeleccionada);
+                console.log('Vendedor:', Vendedor);
+                console.log('Productos:', valoresTabla);
+                if (sorteoId > 0) {
+                  console.log('--- DATOS SORTEO ---');
+                  console.log('Sorteo ID:', sorteoId);
+                  console.log('Cliente ID:', sorteoClienteId);
+                  console.log('Teléfono:', sorteoTelefono);
+                  console.log('Fecha Nacimiento:', sorteoFechaNac);
+                  console.log('Folio Sorteo:', sorteoFolioCompleto);
+                  console.log('Participa:', sorteoParticipa ? 'SÍ' : 'NO');
+                }
+                console.log('Data completa enviada:', data);
+                console.log('=================================================');
 
                 $.ajax({
                   type: 'POST',
