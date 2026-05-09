@@ -52,10 +52,20 @@ include_once "Controladores/ControladorUsuario.php";
                                 <i class="fa-solid fa-users"></i> Participaciones
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="tab-clientes" data-bs-toggle="pill" href="#panel-clientes" role="tab">
+                                <i class="fa-solid fa-address-book"></i> Clientes
+                            </a>
+                        </li>
                     </ul>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoSorteo">
-                        <i class="fa-solid fa-plus"></i> Nuevo Sorteo
-                    </button>
+                    <div>
+                        <button type="button" class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modalNuevoCliente">
+                            <i class="fa-solid fa-user-plus"></i> Nuevo Cliente
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuevoSorteo">
+                            <i class="fa-solid fa-plus"></i> Nuevo Sorteo
+                        </button>
+                    </div>
                 </div>
 
                 <div class="tab-content">
@@ -96,6 +106,17 @@ include_once "Controladores/ControladorUsuario.php";
                         </div>
                     </div>
                 </div>
+
+                    <!-- Panel Clientes -->
+                    <div class="tab-pane fade" id="panel-clientes" role="tabpanel">
+                        <div class="col-12">
+                            <div class="bg-light rounded h-100 p-4">
+                                <h6 class="mb-4" style="color:#28a745;"><i class="fa-solid fa-address-book"></i> Clientes Registrados</h6>
+                                <div id="ClientesDisponibles"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             </div>
 
@@ -107,6 +128,7 @@ include_once "Controladores/ControladorUsuario.php";
             <?php 
             include "Modales/NuevoSorteo.php";
             include "Modales/EditarSorteo.php";
+            include "Modales/NuevoClienteSorteo.php";
             include "Modales/Modales_Errores.php";
             include "Modales/Modales_Referencias.php";
             include "Footer.php";?>
@@ -118,6 +140,9 @@ $(document).ready(function() {
     $('a[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
         if ($(e.target).attr('id') === 'tab-participaciones') {
             CargaParticipaciones();
+        }
+        if ($(e.target).attr('id') === 'tab-clientes') {
+            CargaClientes();
         }
     });
 

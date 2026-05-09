@@ -511,6 +511,9 @@ function CapturaFormadePago() {
           <div class="input-group mb-1">
             <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
                    placeholder="Escribe nombre o teléfono del cliente..." autocomplete="off">
+            <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
+              <i class="fa-solid fa-user-plus"></i>
+            </button>
             <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
               <i class="fa-solid fa-eraser"></i>
             </button>
@@ -821,6 +824,59 @@ document.getElementById("selTipoPago").addEventListener("change", function() {
     $('#sorteoClienteId').val('0');
     $('#chkNoParticipa').prop('checked', false);
     $('#clienteInput').focus();
+  }
+
+  // Función para registrar un nuevo cliente desde el POS
+  function registrarNuevoCliente() {
+    var nombre = $('#clienteInput').val().trim();
+    var telefono = $('#sorteoTelefono').val().trim();
+    var fechaNac = $('#sorteoFechaNac').val();
+
+    if (!nombre) {
+      Swal.fire({ icon: 'warning', title: 'Nombre requerido', text: 'Escribe el nombre del cliente antes de registrarlo' });
+      $('#clienteInput').focus();
+      return;
+    }
+
+    if (!telefono) {
+      Swal.fire({ icon: 'warning', title: 'Teléfono requerido', text: 'Ingresa el teléfono del cliente para registrarlo' });
+      $('#sorteoTelefono').focus();
+      return;
+    }
+
+    var sucursal = $("input[name='SucursalEnVenta[]']").first().val() || '0';
+    var vendedor = $("#VendedorFarma").val() || '';
+
+    $.ajax({
+      type: 'POST',
+      url: 'Controladores/RegistrarClienteRapido.php',
+      data: {
+        nombre: nombre,
+        telefono: telefono,
+        fecha_nacimiento: fechaNac,
+        sucursal: sucursal,
+        sucursal_nombre: '',
+        licencia: '',
+        ingreso: vendedor
+      },
+      dataType: 'json',
+      success: function(resp) {
+        if (resp.status === 'success') {
+          $('#sorteoClienteId').val(resp.cliente.id);
+          Swal.fire({ icon: 'success', title: 'Cliente registrado', text: 'ID: ' + resp.cliente.id + ' — ' + resp.cliente.nombre, timer: 2000, showConfirmButton: false });
+        } else if (resp.status === 'exists') {
+          $('#sorteoClienteId').val(resp.cliente.id);
+          $('#sorteoTelefono').val(resp.cliente.telefono || telefono);
+          $('#sorteoFechaNac').val(resp.cliente.fecha_nacimiento || fechaNac);
+          Swal.fire({ icon: 'info', title: 'Cliente ya existe', text: 'Se encontró al cliente: ' + resp.cliente.nombre + ' (ID: ' + resp.cliente.id + ')', timer: 2500, showConfirmButton: false });
+        } else {
+          Swal.fire({ icon: 'error', title: 'Error', text: resp.message });
+        }
+      },
+      error: function() {
+        Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'No se pudo registrar el cliente' });
+      }
+    });
   }
 </script>
 <script>
