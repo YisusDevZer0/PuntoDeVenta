@@ -14,11 +14,12 @@ $sql = "SELECT s.*,
         FROM Sorteos s 
         ORDER BY s.ID_Sorteo DESC";
 
-$result = mysqli_query($conn, $sql);
+$result = @mysqli_query($conn, $sql);
 
 $c = 0;
 $data = [];
 
+if ($result) {
 while ($fila = $result->fetch_assoc()) {
     $data[$c]["ID"] = $fila["ID_Sorteo"];
     $data[$c]["Nombre"] = $fila["Nombre_Sorteo"];
@@ -81,6 +82,7 @@ while ($fila = $result->fetch_assoc()) {
     
     $c++;
 }
+} // end if ($result)
 
 $results = [
     "sEcho" => 1,

@@ -91,7 +91,7 @@ include_once "Controladores/ControladorUsuario.php";
                                             <option value="0">Todos los sorteos</option>
                                             <?php
                                             $sqlFiltro = "SELECT ID_Sorteo, Nombre_Sorteo FROM Sorteos ORDER BY ID_Sorteo DESC";
-                                            $resFiltro = mysqli_query($conn, $sqlFiltro);
+                                            $resFiltro = @mysqli_query($conn, $sqlFiltro);
                                             if ($resFiltro) {
                                                 while ($sf = mysqli_fetch_assoc($resFiltro)) {
                                                     echo '<option value="'.$sf['ID_Sorteo'].'">'.$sf['Nombre_Sorteo'].'</option>';
