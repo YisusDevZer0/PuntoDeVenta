@@ -552,11 +552,30 @@ function CapturaFormadePago() {
         </div>
       </div>
       <?php else: ?>
-      <!-- === SIN SORTEO: Campo original de cliente === -->
-      <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;">Cliente</label>
-      <div class="input-group mb-3">
-        <input type="text" class="form-control" id="clienteInput" name="NombreDelCliente[]" placeholder="Nombre del cliente">
+      <!-- === SIN SORTEO: Campo de cliente con registro rápido === -->
+      <label style="font-size: 0.75rem !important;">Cliente</label>
+      <div class="input-group mb-1">
+        <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
+               placeholder="Buscar o escribir nombre del cliente..." autocomplete="off">
+        <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
+          <i class="fa-solid fa-eraser"></i>
+        </button>
       </div>
+      <div class="row">
+        <div class="col-md-6 mb-1">
+          <label style="font-size: 0.7rem !important;">Teléfono</label>
+          <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
+        </div>
+        <div class="col-md-6 mb-1">
+          <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
+          <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
+        </div>
+      </div>
+      <input type="hidden" id="sorteoClienteId" value="0">
+      <input type="hidden" id="sorteoId" value="0">
       <?php endif; ?>
       <?php $fechaActual = date('Y-m-d H:i:s'); ?>
     </div>
@@ -779,8 +798,7 @@ document.getElementById("selTipoPago").addEventListener("change", function() {
 
 <script>
   $(function() {
-    <?php if ($sorteoActivo): ?>
-    // === AUTOCOMPLETE MEJORADO PARA SORTEO ===
+    // === AUTOCOMPLETE UNIFICADO: siempre busca y autocompleta datos del cliente ===
     $("#clienteInput").autocomplete({
       source: function(request, response) {
         $.ajax({
@@ -803,23 +821,6 @@ document.getElementById("selTipoPago").addEventListener("change", function() {
         $('#sorteoClienteId').val(ui.item.id || 0);
       }
     });
-    <?php else: ?>
-    // === AUTOCOMPLETE ORIGINAL SIN SORTEO ===
-    $("#clienteInput").autocomplete({
-      source: function(request, response) {
-        $.ajax({
-          url: "Controladores/BusquedaClientes.php",
-          type: "POST",
-          dataType: "json",
-          data: { term: request.term },
-          success: function(data) {
-            response(data);
-          }
-        });
-      },
-      minLength: 2
-    });
-    <?php endif; ?>
   });
 
   // Función para limpiar datos del cliente (sorteo)
