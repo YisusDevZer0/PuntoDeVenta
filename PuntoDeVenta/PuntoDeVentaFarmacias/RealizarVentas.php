@@ -363,7 +363,83 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
 
   <div class="card-body p-2">
 
-    <!-- SELECCIONAR TIPO DE DOCUMENTO -->
+    <!-- === SECCIÓN CLIENTE / SORTEO (movido arriba del pago) === -->
+    <div class="form-group mb-2" id="divCliente">
+      <?php if ($sorteoActivo): ?>
+      <!-- === SECCIÓN SORTEO ACTIVO === -->
+      <div class="card border-warning mb-2" id="seccionSorteo">
+        <div class="card-header py-1" style="background-color: #ffc107; color: #333; font-size: 0.8rem;">
+          <i class="fa-solid fa-gift"></i> <strong>Sorteo activo:</strong> <?php echo htmlspecialchars($sorteoActivo_nombre); ?>
+          <span class="badge bg-success ms-2">Folio: <?php echo ($sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras) . $sorteoActivo_siguienteFolio; ?></span>
+        </div>
+        <div class="card-body p-2">
+          <!-- Buscar cliente existente -->
+          <label style="font-size: 0.75rem !important;">Buscar cliente <span class="text-danger">*</span></label>
+          <div class="input-group mb-1">
+            <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
+                   placeholder="Escribe nombre o teléfono del cliente..." autocomplete="off">
+            <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
+              <i class="fa-solid fa-user-plus"></i>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
+              <i class="fa-solid fa-eraser"></i>
+            </button>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-1">
+              <label style="font-size: 0.7rem !important;">Teléfono</label>
+              <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
+            </div>
+            <div class="col-md-6 mb-1">
+              <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
+              <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
+            </div>
+          </div>
+          
+          <!-- Opción de no participar -->
+          <div class="form-check mt-1">
+            <input class="form-check-input" type="checkbox" id="chkNoParticipa">
+            <label class="form-check-label" for="chkNoParticipa" style="font-size: 0.7rem;">
+              El cliente <strong>no desea participar</strong> en el sorteo
+            </label>
+          </div>
+          
+          <!-- Campos ocultos del sorteo -->
+          <input type="hidden" id="sorteoClienteId" value="0">
+          <input type="hidden" id="sorteoId" value="<?php echo $sorteoActivo_id; ?>">
+          <input type="hidden" id="sorteoFolioRifa" value="<?php echo $sorteoActivo_siguienteFolio; ?>">
+          <input type="hidden" id="sorteoPrefijoFolio" value="<?php echo $sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras; ?>">
+        </div>
+      </div>
+      <?php else: ?>
+      <!-- === SIN SORTEO: Campo de cliente con registro rápido === -->
+      <label style="font-size: 0.75rem !important;">Cliente</label>
+      <div class="input-group mb-1">
+        <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
+               placeholder="Buscar o escribir nombre del cliente..." autocomplete="off">
+        <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
+          <i class="fa-solid fa-user-plus"></i>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
+          <i class="fa-solid fa-eraser"></i>
+        </button>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-1">
+          <label style="font-size: 0.7rem !important;">Teléfono</label>
+          <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
+        </div>
+        <div class="col-md-6 mb-1">
+          <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
+          <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
+        </div>
+      </div>
+      <input type="hidden" id="sorteoClienteId" value="0">
+      <input type="hidden" id="sorteoId" value="0">
+      <?php endif; ?>
+      <?php $fechaActual = date('Y-m-d H:i:s'); ?>
+    </div>
 
     <!-- SELECCIONAR TIPO DE PAGO -->
     <div class="form-group mb-2">
@@ -505,82 +581,7 @@ function CapturaFormadePago() {
     <!-- SERIE Y NRO DE BOLETA -->
 
 
-    <div class="form-group mb-2" id="divCliente">
-      <?php if ($sorteoActivo): ?>
-      <!-- === SECCIÓN SORTEO ACTIVO === -->
-      <div class="card border-warning mb-2" id="seccionSorteo">
-        <div class="card-header py-1" style="background-color: #ffc107; color: #333; font-size: 0.8rem;">
-          <i class="fa-solid fa-gift"></i> <strong>Sorteo activo:</strong> <?php echo htmlspecialchars($sorteoActivo_nombre); ?>
-          <span class="badge bg-success ms-2">Folio: <?php echo ($sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras) . $sorteoActivo_siguienteFolio; ?></span>
-        </div>
-        <div class="card-body p-2">
-          <!-- Buscar cliente existente -->
-          <label style="font-size: 0.75rem !important;">Buscar cliente <span class="text-danger">*</span></label>
-          <div class="input-group mb-1">
-            <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
-                   placeholder="Escribe nombre o teléfono del cliente..." autocomplete="off">
-            <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
-              <i class="fa-solid fa-user-plus"></i>
-            </button>
-            <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
-              <i class="fa-solid fa-eraser"></i>
-            </button>
-          </div>
-          
-          <div class="row">
-            <div class="col-md-6 mb-1">
-              <label style="font-size: 0.7rem !important;">Teléfono</label>
-              <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
-            </div>
-            <div class="col-md-6 mb-1">
-              <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
-              <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
-            </div>
-          </div>
-          
-          <!-- Opción de no participar -->
-          <div class="form-check mt-1">
-            <input class="form-check-input" type="checkbox" id="chkNoParticipa">
-            <label class="form-check-label" for="chkNoParticipa" style="font-size: 0.7rem;">
-              El cliente <strong>no desea participar</strong> en el sorteo
-            </label>
-          </div>
-          
-          <!-- Campos ocultos del sorteo -->
-          <input type="hidden" id="sorteoClienteId" value="0">
-          <input type="hidden" id="sorteoId" value="<?php echo $sorteoActivo_id; ?>">
-          <input type="hidden" id="sorteoFolioRifa" value="<?php echo $sorteoActivo_siguienteFolio; ?>">
-          <input type="hidden" id="sorteoPrefijoFolio" value="<?php echo $sorteoActivo_prefijo ? $sorteoActivo_prefijo : $primeras_tres_letras; ?>">
-        </div>
-      </div>
-      <?php else: ?>
-      <!-- === SIN SORTEO: Campo de cliente con registro rápido === -->
-      <label style="font-size: 0.75rem !important;">Cliente</label>
-      <div class="input-group mb-1">
-        <input type="text" class="form-control form-control-sm" id="clienteInput" name="NombreDelCliente[]" 
-               placeholder="Buscar o escribir nombre del cliente..." autocomplete="off">
-        <button class="btn btn-outline-success btn-sm" type="button" id="btnNuevoCliente" onclick="registrarNuevoCliente()" title="Registrar nuevo cliente">
-          <i class="fa-solid fa-user-plus"></i>
-        </button>
-        <button class="btn btn-outline-secondary btn-sm" type="button" id="btnLimpiarCliente" onclick="limpiarDatosCliente()" title="Limpiar">
-          <i class="fa-solid fa-eraser"></i>
-        </button>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-1">
-          <label style="font-size: 0.7rem !important;">Teléfono</label>
-          <input type="tel" class="form-control form-control-sm" id="sorteoTelefono" placeholder="10 dígitos" maxlength="15">
-        </div>
-        <div class="col-md-6 mb-1">
-          <label style="font-size: 0.7rem !important;">Fecha de nacimiento</label>
-          <input type="date" class="form-control form-control-sm" id="sorteoFechaNac">
-        </div>
-      </div>
-      <input type="hidden" id="sorteoClienteId" value="0">
-      <input type="hidden" id="sorteoId" value="0">
-      <?php endif; ?>
-      <?php $fechaActual = date('Y-m-d H:i:s'); ?>
-    </div>
+    <!-- divCliente movido arriba del tipo de pago -->
     <div id="PersonalEnfermeria" style="display: none;">
 <div class="form-group">
   
@@ -612,7 +613,7 @@ function CapturaFormadePago() {
 
     </div>
 
-    <div class="form-group mb-2">
+    <div class="form-group mb-2" style="display: none;">
       <label for="exampleFormControlInput1" style="font-size: 0.75rem !important;"># de ticket anterior</label>
       <div class="input-group mb-3">
         <div class="input-group-prepend"> <span class="input-group-text" id="Tarjeta2"><i class="fas fa-receipt"></i></span>
