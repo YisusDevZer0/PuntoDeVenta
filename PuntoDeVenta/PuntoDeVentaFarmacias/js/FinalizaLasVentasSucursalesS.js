@@ -76,6 +76,9 @@ $(document).ready(function () {
             sorteoFechaNac = $('#sorteoFechaNac').val() || '';
             sorteoFolioRifa = $('#sorteoFolioRifa').val() || '';
             sorteoParticipa = $('#chkNoParticipa').is(':checked') ? 0 : 1;
+            console.log('[SORTEO] Datos capturados:', { sorteoId, sorteoClienteId, sorteoTelefono, sorteoFechaNac, sorteoFolioRifa, sorteoParticipa });
+          } else {
+            console.log('[SORTEO] No hay sorteo activo. sorteoId input:', $('#sorteoId').length ? $('#sorteoId').val() : 'NO EXISTE');
           }
 
           var mensajeConfirmacion = '<div class="dataTable">';
@@ -296,11 +299,14 @@ $(document).ready(function () {
   // === FUNCIÓN PARA REGISTRAR PARTICIPACIÓN EN SORTEO ===
   function registrarParticipacionSorteo(callback) {
     var sucursalVal = $("input[name='SucursalEnVenta[]']").first().val() || '0';
+    console.log('[SORTEO] registrarParticipacionSorteo - sucursal:', sucursalVal, 'clienteId:', sorteoClienteId, 'clienteNombre:', clienteInputValue);
     
     // Si el cliente no existe en la BD (sorteoClienteId == 0), registrarlo primero
     if (sorteoClienteId == '0' && clienteInputValue && clienteInputValue.trim() !== '') {
+      console.log('[SORTEO] Cliente nuevo, registrando primero...');
       registrarClienteYParticipacion(sucursalVal, callback);
     } else {
+      console.log('[SORTEO] Cliente existente, registrando participación directamente...');
       // Cliente ya existe, registrar participación directamente
       enviarParticipacion(sucursalVal, sorteoClienteId, callback);
     }
@@ -340,10 +346,7 @@ $(document).ready(function () {
   function enviarParticipacion(sucursalVal, clienteIdFinal, callback) {
     var folioRifaCompleto = ($('#sorteoPrefijoFolio').val() || '') + sorteoFolioRifa;
     
-    $.ajax({
-      type: 'POST',
-      url: 'Controladores/RegistrarParticipacionSorteo.php',
-      data: {
+    var participacionData = {
         sorteo_id: sorteoId,
         venta_ticket: TicketVal,
         cliente_id: clienteIdFinal,
@@ -354,12 +357,20 @@ $(document).ready(function () {
         sucursal: sucursalVal,
         registrado_por: Vendedor,
         participa: sorteoParticipa
-      },
+    };
+    console.log('[SORTEO] enviarParticipacion - datos:', participacionData);
+    
+    $.ajax({
+      type: 'POST',
+      url: 'Controladores/RegistrarParticipacionSorteo.php',
+      data: participacionData,
       dataType: 'json',
       success: function(resp) {
+        console.log('[SORTEO] Respuesta participación:', resp);
         if (callback) callback();
       },
-      error: function() {
+      error: function(xhr, status, error) {
+        console.error('[SORTEO] Error al registrar participación:', status, error, xhr.responseText);
         if (callback) callback();
       }
     });
