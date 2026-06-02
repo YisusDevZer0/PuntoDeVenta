@@ -6,8 +6,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- Icon Font Stylesheet -->
-<script src="https://kit.fontawesome.com/a337b4cc32.js" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/0c131ec925.js" crossorigin="anonymous"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
 <!-- Libraries Stylesheet -->
