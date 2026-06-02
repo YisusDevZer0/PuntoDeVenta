@@ -126,7 +126,6 @@ $(document).ready(function () {
             confirmButtonText: 'Sí',
             cancelButtonText: 'No',
             width: '800px',
-            height: '800px',
           }).then((result) => {
             if (result.isConfirmed) {
               submitForm();
@@ -172,7 +171,7 @@ $(document).ready(function () {
         $("#submit_registro").html("Verificando datos... <span class='fa fa-refresh fa-spin' role='status' aria-hidden='true'></span>");
       },
       success: function (data) {
-        var response = JSON.parse(data);
+        var response = typeof data === 'string' ? JSON.parse(data) : data;
         if (response.status === 'success') {
           Swal.fire({
             icon: 'success',

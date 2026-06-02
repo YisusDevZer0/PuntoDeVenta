@@ -467,13 +467,15 @@ $resultado_en_mayusculas = strtoupper($resultado_concatenado);
       </div>
 
 
-      <script>
+<script>
 function CapturaFormadePago() {
   var selectElement = document.getElementById("selTipoPago");
   var divTarjeta = document.getElementById("divTarjeta");
   var divPersonalEnfermeria = document.getElementById("PersonalEnfermeria");
   var divCliente = document.getElementById("divCliente");
   var formaPagoInputs = document.getElementsByName("FormaDePago[]");
+
+  if (!selectElement) return;
 
   // Actualizar todos los campos ocultos de forma de pago
   for (var i = 0; i < formaPagoInputs.length; i++) {
@@ -482,27 +484,31 @@ function CapturaFormadePago() {
 
   // Mostrar el campo de tarjeta para las opciones específicas
   if (selectElement.value === "Efectivo y Tarjeta" || selectElement.value === "Efectivo Y Credito" || selectElement.value === "Efectivo Y Transferencia") {
-    divTarjeta.style.display = "block";
+    if (divTarjeta) divTarjeta.style.display = "block";
     // Limpiar los campos cuando se cambia el método de pago
-    document.getElementById("iptTarjeta").value = "";
-    document.getElementById("iptEfectivoRecibido").value = "";
-    document.getElementById("Vuelto").textContent = "0.00";
-    document.getElementById("btnIniciarVenta").disabled = true;
+    var iptTarjeta = document.getElementById("iptTarjeta");
+    var iptEfectivoRecibido = document.getElementById("iptEfectivoRecibido");
+    var btnIniciarVenta = document.getElementById("btnIniciarVenta");
+    var lblVuelto = document.getElementById("Vuelto");
+    
+    if (iptTarjeta) iptTarjeta.value = "";
+    if (iptEfectivoRecibido) iptEfectivoRecibido.value = "";
+    if (lblVuelto) lblVuelto.textContent = "0.00";
+    if (btnIniciarVenta) btnIniciarVenta.disabled = true;
   } else {
-    divTarjeta.style.display = "none";
-    document.getElementById("iptTarjeta").value = "0";
+    if (divTarjeta) divTarjeta.style.display = "none";
+    var iptTarjeta = document.getElementById("iptTarjeta");
+    if (iptTarjeta) iptTarjeta.value = "0";
   }
 
   if (selectElement.value === "CreditoEnfermeria") {
-    divPersonalEnfermeria.style.display = "block";
-    divCliente.style.display = "none";
+    if (divPersonalEnfermeria) divPersonalEnfermeria.style.display = "block";
+    if (divCliente) divCliente.style.display = "none";
   } else {
-    divPersonalEnfermeria.style.display = "none";
-    divCliente.style.display = "block";
+    if (divPersonalEnfermeria) divPersonalEnfermeria.style.display = "none";
+    if (divCliente) divCliente.style.display = "block";
   }
 }
-
-
 </script>
 
 
