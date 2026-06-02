@@ -40,6 +40,7 @@
     <script src="lib/tempusdominus/js/moment.min.js"></script>
     <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="js/icons-config.js"></script>
 
     <script src="js/dark-mode.js"></script>
     <!-- Template Javascript -->

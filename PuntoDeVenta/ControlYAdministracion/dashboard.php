@@ -162,7 +162,7 @@ $showDashboard = true;
                 
                 <div class="col-sm-6 col-xl-3">
                     <div class="bg-light rounded d-flex align-items-center justify-content-between p-4 dashboard-card alert-card danger">
-                        <i class="fa fa-times-circle fa-3x text-danger"></i>
+                        <i class="fa-solid fa-xmark-circle fa-3x text-danger"></i>
                         <div class="ms-3">
                             <p class="mb-2 stats-label">Sin stock</p>
                             <h6 class="mb-0 stats-number"><?php echo isset($productosSinStock) ? $productosSinStock : '0'; ?> productos</h6>

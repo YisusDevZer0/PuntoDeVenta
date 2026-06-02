@@ -15,7 +15,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa fa-times me-2"></i>Cerrar
+                    <i class="fa-solid fa-xmark me-2"></i>Cerrar
                 </button>
             </div>
         </div>

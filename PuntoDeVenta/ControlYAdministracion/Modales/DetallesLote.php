@@ -68,7 +68,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa fa-times me-1"></i>Cerrar
+                    <i class="fa-solid fa-xmark me-1"></i>Cerrar
                 </button>
                 <button type="button" class="btn btn-warning" onclick="abrirModalActualizarCaducidad()">
                     <i class="fa fa-edit me-1"></i>Actualizar Fecha

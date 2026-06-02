@@ -211,7 +211,7 @@ if(!isset($_SESSION['ControlMaestro']) && !isset($_SESSION['AdministradorRH']) &
                         <div class="col-md-3">
                             <div class="stats-card-primary">
                                 <div class="stats-icon">
-                                    <i class="fas fa-calendar-alt"></i>
+                                    <i class="fa-solid fa-calendar-days"></i>
                                 </div>
                                 <div class="stats-number" id="totalPeriodos">0</div>
                                 <div class="stats-label">Períodos Analizados</div>

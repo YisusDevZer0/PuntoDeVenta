@@ -232,10 +232,10 @@ tabla = $('#Clientes').DataTable({
   "infoFiltered": "(filtrado de un total de _MAX_ registros)",
   "sSearch": "Buscar:",
   "paginate": {
-    "first": '<i class="fas fa-angle-double-left"></i>',
-    "last": '<i class="fas fa-angle-double-right"></i>',
-    "next": '<i class="fas fa-angle-right"></i>',
-    "previous": '<i class="fas fa-angle-left"></i>'
+    "first": '<i class="fa-solid fa-angles-left" aria-hidden="true"></i>',
+    "last": '<i class="fa-solid fa-angles-right" aria-hidden="true"></i>',
+    "next": '<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>',
+    "previous": '<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>'
   },
   "processing": function () {
     mostrarCargando();
@@ -249,7 +249,7 @@ tabla = $('#Clientes').DataTable({
 "buttons": [
   {
     extend: 'excelHtml5',
-    text: 'Exportar a Excel  <i Exportar a Excel class="fas fa-file-excel"></i> ',
+    text: 'Exportar a Excel <i class="fa-solid fa-file-excel" aria-hidden="true"></i>',
     titleAttr: 'Exportar a Excel',
     title: 'Base de Clientes',
     className: 'btn btn-success',

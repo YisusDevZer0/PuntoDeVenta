@@ -114,7 +114,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fa fa-times me-1"></i>Cancelar
+                    <i class="fa-solid fa-xmark me-1"></i>Cancelar
                 </button>
                 <button type="button" class="btn btn-primary" onclick="guardarConfiguracion()">
                     <i class="fa fa-save me-1"></i>Guardar Configuración

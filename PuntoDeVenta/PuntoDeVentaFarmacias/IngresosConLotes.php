@@ -359,7 +359,7 @@ $totalmonto = max($maxSolicitudes, $maxIngresos) + 1;
           <div class="col-md-2 col-6 mb-3">
             <label class="small font-weight-bold text-secondary">Fecha</label>
             <div class="input-group">
-              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fas fa-calendar-alt"></i></span></div>
+              <div class="input-group-prepend"><span class="input-group-text ico"><i class="fa-solid fa-calendar-days"></i></span></div>
               <input type="text" class="form-control" readonly value="<?php echo $fechaActual ?>">
             </div>
           </div>

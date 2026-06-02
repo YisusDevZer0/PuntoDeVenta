@@ -45,10 +45,10 @@ function CargarLotesCaducidadesFarmacias() {
             infoFiltered: '(filtrado de un total de _MAX_ registros)',
             search: 'Buscar:',
             paginate: {
-                first: '<i class="fas fa-angle-double-left"></i>',
-                last: '<i class="fas fa-angle-double-right"></i>',
-                next: '<i class="fas fa-angle-right"></i>',
-                previous: '<i class="fas fa-angle-left"></i>'
+                first: '<i class="fa-solid fa-angles-left"></i>',
+                last: '<i class="fa-solid fa-angles-right"></i>',
+                next: '<i class="fa-solid fa-chevron-right"></i>',
+                previous: '<i class="fa-solid fa-chevron-left"></i>'
             }
         },
         order: [[3, 'asc']],

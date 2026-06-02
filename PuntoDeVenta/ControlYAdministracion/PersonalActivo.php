@@ -170,7 +170,7 @@ include_once "Controladores/ControladorUsuario.php";
                 <div class="col-md-3">
                     <div class="stats-card-warning">
                         <div class="stats-icon">
-                            <i class="fas fa-calendar-alt"></i>
+                            <i class="fa-solid fa-calendar-days"></i>
                         </div>
                         <div class="stats-number" id="personalReciente">0</div>
                         <div class="stats-label">Nuevos este mes</div>

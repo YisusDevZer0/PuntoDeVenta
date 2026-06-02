@@ -228,7 +228,7 @@ $tareasController = new TareasController($conn, $userId);
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="stats-card stats-card-info">
                         <div class="stats-icon">
-                            <i class="fas fa-calendar-alt"></i>
+                            <i class="fa-solid fa-calendar-days"></i>
                         </div>
                         <div class="stats-number"><?php echo $tareasController->getTareasProximasVencer()->num_rows; ?></div>
                         <div class="stats-label">Próximas a Vencer</div>

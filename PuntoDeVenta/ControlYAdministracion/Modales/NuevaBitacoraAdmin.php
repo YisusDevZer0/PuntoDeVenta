@@ -107,7 +107,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fa fa-times me-2"></i>Cancelar
+                        <i class="fa-solid fa-xmark me-2"></i>Cancelar
                     </button>
                     <button type="submit" class="btn btn-primary">
                         <i class="fa fa-save me-2"></i>Crear Bitácora

@@ -40,7 +40,7 @@ $(function() {
       infoEmpty: 'Mostrando 0 a 0 de 0',
       infoFiltered: '(filtrado de _MAX_)',
       search: 'Buscar:',
-      paginate: { first: '<i class="fas fa-angle-double-left"></i>', last: '<i class="fas fa-angle-double-right"></i>', next: '<i class="fas fa-angle-right"></i>', previous: '<i class="fas fa-angle-left"></i>' }
+      paginate: { first: '<i class="fa-solid fa-angles-left"></i>', last: '<i class="fa-solid fa-angles-right"></i>', next: '<i class="fa-solid fa-chevron-right"></i>', previous: '<i class="fa-solid fa-chevron-left"></i>' }
     },
     dom: '<"d-flex justify-content-between"lf>rtip',
     responsive: true
